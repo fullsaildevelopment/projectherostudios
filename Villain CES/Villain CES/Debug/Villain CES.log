@@ -1,0 +1,10 @@
+﻿  stdafx.cpp
+  Auger.cpp
+  Entity.cpp
+d:\rippin repos\thing\villain ces\villain ces\entity.cpp(415): warning C4101: 'emissiveTexture': unreferenced local variable
+d:\rippin repos\thing\villain ces\villain ces\entity.cpp(414): warning C4101: 'specularTexture': unreferenced local variable
+d:\rippin repos\thing\villain ces\villain ces\entity.cpp(413): warning C4101: 'diffuseTexture': unreferenced local variable
+  Graphics_System.cpp
+  Villain CES.cpp
+  Generating Code...
+  Villain CES.vcxproj -> D:\Rippin Repos\Thing\Villain CES\Debug\Villain CES.exe
