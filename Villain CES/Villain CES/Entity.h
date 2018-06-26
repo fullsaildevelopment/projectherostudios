@@ -1,5 +1,9 @@
 #pragma once
 #include "Graphics_Component.h"
+#include "AI_Component.h"
+#include "UI_Component.h"
+#include "Collision_Component.h"
+#include "Physics_Component.h"
 #define NearRight 1.0f
 #define NearTop	  1.0f
 #define NearLeftt -1.0f
@@ -14,10 +18,25 @@
 #define Farr 2.0f
 struct World
 {
-	int mask[ENTITY_COUNT];
-	Mesh		mesh[ENTITY_COUNT];
-	DebugMesh	debug_mesh[ENTITY_COUNT];
-	Animation	animation[ENTITY_COUNT];
+	int				mask[ENTITY_COUNT];
+	//Graphics
+	Mesh			mesh[ENTITY_COUNT];
+	DebugMesh		debug_mesh[ENTITY_COUNT];
+	Animation		animation[ENTITY_COUNT];
+	Material		material[ENTITY_COUNT];
+	Texture			texture[ENTITY_COUNT];
+	Shader_ID		shader_ID[ENTITY_COUNT];
+	//UI
+	Bar				bar[ENTITY_COUNT];
+	Text			text[ENTITY_COUNT];
+	Label			label[ENTITY_COUNT];
+	//Physics
+	Physics_ID		physics_ID[ENTITY_COUNT];
+	Rigidbody		rigidbody[ENTITY_COUNT];
+	//AI
+	AI_ID			ai_ID[ENTITY_COUNT];
+	//Collision
+	Collision_ID	collision_ID[ENTITY_COUNT];
 	
 };
 

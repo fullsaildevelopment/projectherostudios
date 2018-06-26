@@ -148,20 +148,31 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="AI_Component.h" />
+    <ClInclude Include="AI_System.h" />
     <ClInclude Include="Auger.h" />
+    <ClInclude Include="Collision_Component.h" />
+    <ClInclude Include="Collision_System.h" />
     <ClInclude Include="Graphics_Component.h" />
     <ClInclude Include="Entity.h" />
     <ClInclude Include="frustum_culling.h" />
+    <ClInclude Include="Physics_Component.h" />
+    <ClInclude Include="Physics_System.h" />
     <ClInclude Include="pools.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="Graphics_System.h" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="UI_Component.h" />
+    <ClInclude Include="UI_System.h" />
     <ClInclude Include="Villain CES.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AI_System.cpp" />
     <ClCompile Include="Auger.cpp" />
+    <ClCompile Include="Collision_System.cpp" />
     <ClCompile Include="Entity.cpp" />
+    <ClCompile Include="Physics_System.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -169,6 +180,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Graphics_System.cpp" />
+    <ClCompile Include="UI_System.cpp" />
     <ClCompile Include="Villain CES.cpp" />
   </ItemGroup>
   <ItemGroup>

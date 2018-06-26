@@ -64,7 +64,7 @@ typedef struct
 typedef struct
 {
 	int shaderID = 0;
-} ShaderID;
+} Shader_ID;
 
 
 #endif
