@@ -1,15 +1,8 @@
-﻿Graphics_System.obj : error LNK2019: unresolved external symbol __imp_GetClientRect referenced in function "public: void __cdecl Graphics_System::InitD3D(struct HWND__ *)" (?InitD3D@Graphics_System@@QEAAXPEAUHWND__@@@Z)
-Villain CES.obj : error LNK2019: unresolved external symbol __imp_LoadStringW referenced in function wWinMain
-Villain CES.obj : error LNK2019: unresolved external symbol __imp_TranslateMessage referenced in function wWinMain
-Villain CES.obj : error LNK2019: unresolved external symbol __imp_DispatchMessageW referenced in function wWinMain
-Villain CES.obj : error LNK2019: unresolved external symbol __imp_PeekMessageW referenced in function wWinMain
-Villain CES.obj : error LNK2019: unresolved external symbol __imp_DefWindowProcW referenced in function "__int64 __cdecl WndProc(struct HWND__ *,unsigned int,unsigned __int64,__int64)" (?WndProc@@YA_JPEAUHWND__@@I_K_J@Z)
-Villain CES.obj : error LNK2019: unresolved external symbol __imp_PostQuitMessage referenced in function "__int64 __cdecl WndProc(struct HWND__ *,unsigned int,unsigned __int64,__int64)" (?WndProc@@YA_JPEAUHWND__@@I_K_J@Z)
-Villain CES.obj : error LNK2019: unresolved external symbol __imp_RegisterClassExW referenced in function "unsigned short __cdecl MyRegisterClass(struct HINSTANCE__ *)" (?MyRegisterClass@@YAGPEAUHINSTANCE__@@@Z)
-Villain CES.obj : error LNK2019: unresolved external symbol __imp_CreateWindowExW referenced in function "int __cdecl InitInstance(struct HINSTANCE__ *,int)" (?InitInstance@@YAHPEAUHINSTANCE__@@H@Z)
-Villain CES.obj : error LNK2019: unresolved external symbol __imp_ShowWindow referenced in function "int __cdecl InitInstance(struct HINSTANCE__ *,int)" (?InitInstance@@YAHPEAUHINSTANCE__@@H@Z)
-Villain CES.obj : error LNK2019: unresolved external symbol __imp_LoadAcceleratorsW referenced in function wWinMain
-Villain CES.obj : error LNK2019: unresolved external symbol __imp_UpdateWindow referenced in function "int __cdecl InitInstance(struct HINSTANCE__ *,int)" (?InitInstance@@YAHPEAUHINSTANCE__@@H@Z)
-Villain CES.obj : error LNK2019: unresolved external symbol __imp_LoadCursorW referenced in function "unsigned short __cdecl MyRegisterClass(struct HINSTANCE__ *)" (?MyRegisterClass@@YAGPEAUHINSTANCE__@@@Z)
-Villain CES.obj : error LNK2019: unresolved external symbol __imp_LoadIconW referenced in function "unsigned short __cdecl MyRegisterClass(struct HINSTANCE__ *)" (?MyRegisterClass@@YAGPEAUHINSTANCE__@@@Z)
-D:\Rippin Repos\projectherostudios\Villain CES\x64\Debug\Villain CES.exe : fatal error LNK1120: 14 unresolved externals
+﻿D:\Rippin Repos\projectherostudios\Villain CES\Villain CES\MyPixelShader.hlsl(74,31-60): warning X3206: implicit truncation of vector type
+D:\Rippin Repos\projectherostudios\Villain CES\Villain CES\MyPixelShader.hlsl(80,50-79): warning X3206: implicit truncation of vector type
+D:\Rippin Repos\projectherostudios\Villain CES\Villain CES\MyPixelShader.hlsl(80,82-111): warning X3206: implicit truncation of vector type
+D:\Rippin Repos\projectherostudios\Villain CES\Villain CES\MyPixelShader.hlsl(83,34-59): warning X3206: implicit truncation of vector type
+D:\Rippin Repos\projectherostudios\Villain CES\Villain CES\MyPixelShader.hlsl(94,4): warning X3206: implicit truncation of vector type
+FXC : error X3501: 'main': entrypoint not found
+  
+  compilation failed; no code produced
