@@ -1,8 +1,0 @@
-﻿D:\Rippin Repos\projectherostudios\Villain CES\Villain CES\MyPixelShader.hlsl(74,31-60): warning X3206: implicit truncation of vector type
-D:\Rippin Repos\projectherostudios\Villain CES\Villain CES\MyPixelShader.hlsl(80,50-79): warning X3206: implicit truncation of vector type
-D:\Rippin Repos\projectherostudios\Villain CES\Villain CES\MyPixelShader.hlsl(80,82-111): warning X3206: implicit truncation of vector type
-D:\Rippin Repos\projectherostudios\Villain CES\Villain CES\MyPixelShader.hlsl(83,34-59): warning X3206: implicit truncation of vector type
-D:\Rippin Repos\projectherostudios\Villain CES\Villain CES\MyPixelShader.hlsl(94,4): warning X3206: implicit truncation of vector type
-FXC : error X3501: 'main': entrypoint not found
-  
-  compilation failed; no code produced
