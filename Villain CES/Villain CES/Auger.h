@@ -1,17 +1,17 @@
 #pragma once
 #include "Graphics_System.h"
 #include "Entity.h"
-class Auger
+class CAuger
 {
 public:
-	HWND appWindow;
-	Graphics_System* vGraphicsSystem; 
-	World thisWorld;
+	HWND cApplicationWindow;
+	CGraphicsSystem* pcGraphicsSystem; 
+	TWorld tThisWorld;
 
-	Auger();
-	Auger(HWND window);
+	CAuger();
+	CAuger(HWND cTheWindow);
 
-	~Auger();
+	~CAuger();
 
 	void Start();
 	void InitializeSystems();

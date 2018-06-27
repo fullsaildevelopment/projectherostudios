@@ -1,8 +1,8 @@
 #pragma once
-class AI_System
+class CAISystem
 {
 public:
-	AI_System();
-	~AI_System();
+	CAISystem();
+	~CAISystem();
 };
 

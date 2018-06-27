@@ -30,12 +30,6 @@
     <ClInclude Include="Entity.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="frustum_culling.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="pools.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Graphics_System.h">
       <Filter>Header Files</Filter>
     </ClInclude>

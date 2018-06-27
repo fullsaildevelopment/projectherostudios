@@ -1,9 +1,9 @@
 #pragma once
 #include "Entity.h"
-class Physics_System
+class CPhysicsSystem
 {
 public:
-	Physics_System();
-	~Physics_System();
+	CPhysicsSystem();
+	~CPhysicsSystem();
 };
 

@@ -1,69 +1,67 @@
 /////////////
-// GLOBALS //
+// CBUFFER //
 /////////////
 cbuffer MatrixBuffer : register(b0)
 {
-	matrix worldMatrix;
-	matrix viewMatrix;
-	matrix projectionMatrix;
-	float4x4 joints[33];//large number
+	matrix d3dWorldMatrix;
+	matrix d3dViewMatrix;
+	matrix d3dProjectionMatrix;
+	float4x4 ad3dJoints[33];//large number
 };
 
 //////////////
 // TYPEDEFS //
 //////////////
-struct VertexInputType
+struct TVertexInputType
 {
-	float4 Position : POSITION0;
-	float3 Normal : NORMAL;
-	float2 tex : TEXCOORD;
-	float4 weights : BLENDWEIGHT;
-	uint4 index : BLENDINDICES;
+	float4 d3dPosition : POSITION0;
+	float3 d3dNormal : NORMAL;
+	float2 d3dTexture : TEXCOORD;
+	float4 d3dWeights : BLENDWEIGHT;
+	uint4 d3dIndex : BLENDINDICES;
 };
 
-struct PixelInputType
+struct TPixelInputType
 {
-	float4 Position : SV_POSITION;
-	float3 Normal : NORMAL;
-	float2 tex : TEXCOORD;
-	float4 WorldPos : POSITION1;
+	float4 d3dPosition : SV_POSITION;
+	float3 d3dNormal : NORMAL;
+	float2 d3dTexture : TEXCOORD;
+	float4 d3dWorldPosition : POSITION1;
 };
 
 
 ////////////////////////////////////////////////////////////////////////////////
 // Vertex Shader
 ////////////////////////////////////////////////////////////////////////////////
-PixelInputType MyVertexShader(VertexInputType input)
+TPixelInputType MyVertexShader(TVertexInputType tInput)
 {
-	PixelInputType output;
-	float4 skinned_pos = float4(0.0f,0.0f,0.0f,0.0f);
-	//input.Position.w = 1;
-	for (int i = 0; i < 4; ++i)
+	TPixelInputType output;
+	float4 d3dSkinnedPosition = float4(0.0f,0.0f,0.0f,0.0f);
+	//tInput.Position.w = 1;
+	for (int nSkinnedPositionIndex = 0; nSkinnedPositionIndex < 4; ++nSkinnedPositionIndex)
 	{
-		skinned_pos += mul(input.Position, joints[input.index[i]]) * input.weights[i];
+		d3dSkinnedPosition += mul(tInput.d3dPosition, ad3dJoints[tInput.d3dIndex[nSkinnedPositionIndex]]) * tInput.d3dWeights[nSkinnedPositionIndex];
 	}
-	//skinned_pos += mul(input.Position, joints[input.index[0]]);
-	skinned_pos.w = 1;
-	//	skinned_pos.z *= -1;
-	// Calculate the position of the vertex against the world, view, and projection matrices.
-	if (input.weights[0] > 0)
-		output.Position = mul(skinned_pos, worldMatrix);
+	d3dSkinnedPosition.w = 1;
+
+	if (tInput.d3dWeights[0] > 0)
+		output.d3dPosition = mul(d3dSkinnedPosition, d3dWorldMatrix);
 	else
 	{
-		input.Position.w = 1;
-		output.Position = mul(input.Position, worldMatrix);
+		tInput.d3dPosition.w = 1;
+		output.d3dPosition = mul(tInput.d3dPosition, d3dWorldMatrix);
 	}
 
-	output.Position = mul(output.Position, viewMatrix);
-	output.Position = mul(output.Position, projectionMatrix);
+	output.d3dPosition = mul(output.d3dPosition, d3dViewMatrix);
+	output.d3dPosition = mul(output.d3dPosition, d3dProjectionMatrix);
 
-	output.Normal = input.Normal;
+	output.d3dNormal = tInput.d3dNormal;
 
 	// Store the texture coordinates for the pixel shader.
-	output.tex = input.tex;
+	output.d3dTexture = tInput.d3dTexture;
 
 	// Store the World Position
-	output.WorldPos = mul(skinned_pos, worldMatrix);
+	output.d3dWorldPosition = mul(d3dSkinnedPosition, d3dWorldMatrix);
 
 	return output;
 }
