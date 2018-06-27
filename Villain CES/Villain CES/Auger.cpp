@@ -21,6 +21,7 @@ Auger::~Auger()
 
 void Auger::Start()
 {
+	//Initializes Systems
 	InitializeSystems();
 }
 
