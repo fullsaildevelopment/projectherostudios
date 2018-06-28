@@ -161,6 +161,9 @@
 <<<<<<< HEAD
 =======
     <ClInclude Include="frustum_culling.h" />
+<<<<<<< HEAD
+>>>>>>> parent of 2c495f3... added GInput.cpp and GInput.h
+=======
 >>>>>>> parent of 2c495f3... added GInput.cpp and GInput.h
     <ClInclude Include="Physics_Component.h" />
     <ClInclude Include="Physics_System.h" />
