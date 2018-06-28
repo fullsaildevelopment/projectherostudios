@@ -158,11 +158,6 @@
     <ClInclude Include="Collision_System.h" />
     <ClInclude Include="Graphics_Component.h" />
     <ClInclude Include="Entity.h" />
-<<<<<<< HEAD
-=======
-    <ClInclude Include="frustum_culling.h" />
-    <ClInclude Include="GInput.h" />
->>>>>>> WS_ZaynBakir
     <ClInclude Include="Physics_Component.h" />
     <ClInclude Include="Physics_System.h" />
     <ClInclude Include="resource.h" />
@@ -178,7 +173,6 @@
     <ClCompile Include="Auger.cpp" />
     <ClCompile Include="Collision_System.cpp" />
     <ClCompile Include="Entity.cpp" />
-    <ClCompile Include="GInput.cpp" />
     <ClCompile Include="Physics_System.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
