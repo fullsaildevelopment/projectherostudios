@@ -1,24 +1,24 @@
 #pragma once
 #ifndef CES_PHYSICS_COMPONENT_H
 #define CES_PHYSICS_COMPONENT_H
-typedef enum
+enum ePhysicsComponent
 {
 	//COMPONENT_NONE = 0,
-	COMPONENT_PHYSICSID = 1 << 1,
-	COMPONENT_RIGIDBODY = 1 << 2,//Velocity, mass
-} Physics_Component;
+	COMPONENT_PHYSICSMASK	= 1 << 1,
+	COMPONENT_RIGIDBODY		= 1 << 2,//Velocity, mass
+};
 
-typedef struct
+struct TPhysicsMask
 {
-	int Physics_ID = 0;
-} Physics_ID;
+	int m_tnPhysicsMask = 0;
+};
 
-typedef struct
+struct TRigidbody
 {
 	/*
 	TODO:
 		Fill out Rigidbody Struct
 	*/
 
-} Rigidbody;
+};
 #endif

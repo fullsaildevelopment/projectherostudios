@@ -2,69 +2,86 @@
 #ifndef CES_GRAPHICS_COMPONENT_H
 #define CES_GRAPHICS_COMPONENT_H
 
-typedef enum
+enum eGraphicsComponent
 {
-	COMPONENT_NONE = 0,
-	COMPONENT_MESH = 1 << 1,
-	COMPONENT_DEBUGMESH = 1 << 2,
-	COMPONENT_ANIMATION = 1 << 3,
-	COMPONENT_MATERIAL = 1 << 4,
-	COMPONENT_TEXTURE = 1 << 5,
-	COMPONENT_SHADERID = 1 << 6 // have information on what inputs and outputs go to other shaders as well
-} Graphics_Component;
+	COMPONENT_NONE			= 0,
+	COMPONENT_GRAPHICSMASK	= 1 << 1,
+	COMPONENT_MESH			= 1 << 2,
+	COMPONENT_DEBUGMESH		= 1 << 3,
+	COMPONENT_ANIMATION		= 1 << 4,
+	COMPONENT_MATERIAL		= 1 << 5,
+	COMPONENT_TEXTURE		= 1 << 6,
+	COMPONENT_SHADERID		= 1 << 7 // have information on what inputs and outputs go to other shaders as well
+};
 
-struct keyframe { double time = 0; std::vector<XMMATRIX> joints; }; struct anim_clip { double duration = 0; std::vector<keyframe> frames; std::vector<int> parent_Indicies; };
+struct TKeyframe 
+{ 
+	double dTime = 0; 
+	std::vector<XMMATRIX> m_vd3dJointMatrices; 
+}; 
 
-typedef struct
+struct TAnimationClip 
+{ 
+	double dDuration = 0;
+	std::vector<TKeyframe> m_vtKeyFrames; 
+	std::vector<int> m_vnParentIndicies; 
+};
+
+struct TGraphicsMask
 {
-	ID3D11Buffer *vertexBuffer;
-	ID3D11Buffer *indexBuffer;
-	D3D11_BUFFER_DESC vertexBufferDesc;
-	D3D11_BUFFER_DESC indexBufferDesc;
-	D3D11_SUBRESOURCE_DATA vertexData;
-	D3D11_SUBRESOURCE_DATA indexData;
-	UINT vertexCount;
-	UINT indexCount;
-	UINT vertexBufferStride;
-	UINT vertexBufferOffset;
-} Mesh;
+	int m_tnGraphicsMask = 0;
+};
 
-typedef struct
+struct TMesh
 {
-	ID3D11Buffer *vertexBuffer;
-	int vertexCount;
-	D3D11_BUFFER_DESC vertexBufferDesc;
-	D3D11_SUBRESOURCE_DATA vertexData;
-	UINT			vertexBufferStride;
-	UINT			vertexBufferOffset;
-} DebugMesh;
+	ID3D11Buffer *m_pd3dVertexBuffer;
+	ID3D11Buffer *m_pd3dIndexBuffer;
+	D3D11_BUFFER_DESC m_d3dVertexBufferDesc;
+	D3D11_BUFFER_DESC m_d3dIndexBufferDesc;
+	D3D11_SUBRESOURCE_DATA m_d3dVertexData;
+	D3D11_SUBRESOURCE_DATA m_d3dIndexData;
+	UINT m_nVertexCount;
+	UINT m_nIndexCount;
+	UINT m_nVertexBufferStride;
+	UINT m_nVertexBufferOffset;
+};
 
-typedef struct
+struct TDebugMesh
 {
-	anim_clip anim;
-	std::vector<int> parent_Indices;
-} Animation;
+	ID3D11Buffer *m_pd3dVertexBuffer;
+	int m_nVertexCount;
+	D3D11_BUFFER_DESC m_d3dVertexBufferDesc;
+	D3D11_SUBRESOURCE_DATA m_d3dVertexData;
+	UINT			m_nVertexBufferStride;
+	UINT			m_nVertexBufferOffset;
+};
 
-typedef struct
+struct TAnimation
+{
+	TAnimationClip m_tAnim;
+	std::vector<int> m_vnParentIndices;
+};
+
+struct TMaterial
 {
 	/*
 		TODO:
 		Fill out Material Struct
 	*/
-} Material;
+};
 
-typedef struct
+struct TTexture
 {
 	/*
 		TODO:
 		Fill out Material Struct
 	*/
-} Texture;
+};
 
-typedef struct
+struct TShaderID	
 {
-	int shaderID = 0;
-} Shader_ID;
+	int m_nShaderID = 0;
+};
 
 
 #endif

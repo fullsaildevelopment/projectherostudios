@@ -1,35 +1,40 @@
 #pragma once
 #ifndef CES_UI_COMPONENT_H
 #define CES_UI_COMPONENT_H
-typedef enum
+enum eUIComponent
 {
-//	COMPONENT_NONE  = 0,
-	COMPONENT_BAR	= 1 << 1,
-	COMPONENT_TEXT  = 1 << 2,
-	COMPONENT_LABEL = 1 << 3
-} UI_Component;
+	COMPONENT_MASK  = 1 << 1,
+	COMPONENT_BAR	= 1 << 2,
+	COMPONENT_TEXT  = 1 << 3,
+	COMPONENT_LABEL = 1 << 4
+};
 
-typedef struct
+struct TUIMask
+{
+	int m_tnUIMask = 0;
+};
+
+struct TBar
 {
 	 /*
 	 TODO:
 		 Fill out Bar Struct
 	 */
-} Bar;
+};
 
-typedef struct
+struct TText
 {
 	/*
 	TODO:
 		Fill out Text Struct
 	*/
-} Text;
+};
 
-typedef struct
+struct TLabel
 {
 	/*
 	TODO:
 		Fill out Label Struct
 	*/
-} Label;
+};
 #endif

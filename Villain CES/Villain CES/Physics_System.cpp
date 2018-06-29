@@ -2,11 +2,11 @@
 #include "Physics_System.h"
 
 
-Physics_System::Physics_System()
+CPhysicsSystem::CPhysicsSystem()
 {
 }
 
 
-Physics_System::~Physics_System()
+CPhysicsSystem::~CPhysicsSystem()
 {
 }

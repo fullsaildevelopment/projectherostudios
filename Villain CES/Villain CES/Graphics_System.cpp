@@ -1,39 +1,39 @@
 #include "stdafx.h"
 #include "Graphics_System.h"
 
-Graphics_System::Graphics_System()
+CGraphicsSystem::CGraphicsSystem()
 {
 }
 
-Graphics_System::~Graphics_System()
+CGraphicsSystem::~CGraphicsSystem()
 {
 }
 
-void Graphics_System::InitD3D(HWND hWnd)
+void CGraphicsSystem::InitD3D(HWND cTheWindow)
 {
 	#pragma region Window Stuff
 
 	// create a struct to hold information about the swap chain
-	DXGI_SWAP_CHAIN_DESC scd;
+	DXGI_SWAP_CHAIN_DESC d3dSwapchainDescription;
 
 	// clear out the struct for use
-	ZeroMemory(&scd, sizeof(DXGI_SWAP_CHAIN_DESC));
+	ZeroMemory(&d3dSwapchainDescription, sizeof(DXGI_SWAP_CHAIN_DESC));
 
-	RECT rect;
-	GetClientRect(hWnd, &rect);
+	RECT cRectangle;
+	GetClientRect(cTheWindow, &cRectangle);
 
 	// fill the swap chain description struct
-	scd.BufferCount = 1;                                    // one back buffer
-	scd.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;     // use 32-bit color
-	scd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;      // how swap chain is to be used
-	scd.OutputWindow = hWnd;                                // the window to be used
-	scd.SampleDesc.Count = 1;                               // how many multisamples
-	scd.Windowed = TRUE;                                    // windowed/full-screen mode
-	scd.BufferDesc.Width = rect.right - rect.left;
-	scd.BufferDesc.Height = rect.bottom - rect.top;
-	scd.BufferDesc.RefreshRate.Numerator = 60;
-	scd.BufferDesc.RefreshRate.Denominator = 1;
-	unsigned int flag = 0;
+	d3dSwapchainDescription.BufferCount = 1;                                    // one back buffer
+	d3dSwapchainDescription.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;     // use 32-bit color
+	d3dSwapchainDescription.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;      // how swap chain is to be used
+	d3dSwapchainDescription.OutputWindow = cTheWindow;                                // the window to be used
+	d3dSwapchainDescription.SampleDesc.Count = 1;                               // how many multisamples
+	d3dSwapchainDescription.Windowed = TRUE;                                    // windowed/full-screen mode
+	d3dSwapchainDescription.BufferDesc.Width = cRectangle.right - cRectangle.left;
+	d3dSwapchainDescription.BufferDesc.Height = cRectangle.bottom - cRectangle.top;
+	d3dSwapchainDescription.BufferDesc.RefreshRate.Numerator = 60;
+	d3dSwapchainDescription.BufferDesc.RefreshRate.Denominator = 1;
+	unsigned int nDeviceAndSwapchainFlag = 0;
 #ifdef _DEBUG
 	flag = D3D11_CREATE_DEVICE_DEBUG;
 #endif // DEBUG
@@ -41,47 +41,46 @@ void Graphics_System::InitD3D(HWND hWnd)
 	D3D11CreateDeviceAndSwapChain(NULL,
 		D3D_DRIVER_TYPE_HARDWARE,
 		NULL,
-		flag,
+		nDeviceAndSwapchainFlag,
 		NULL,
 		NULL,
 		D3D11_SDK_VERSION,
-		&scd,
-		&swapchain,
-		&dev,
+		&d3dSwapchainDescription,
+		&m_pd3dSwapchain,
+		&m_pd3dDevice,
 		NULL,
-		&devcon);
+		&m_pd3dDeviceContext);
 
 
 #pragma region RenderTargetView And Viewport
-	D3D11_TEXTURE2D_DESC textDesc;
-	ZeroMemory(&textDesc, sizeof(textDesc));
+	D3D11_TEXTURE2D_DESC d3dTextureDescription;
+	ZeroMemory(&d3dTextureDescription, sizeof(d3dTextureDescription));
 
-	ID3D11Texture2D *renderTargetText;
+	ID3D11Texture2D *pd3dRenderTargetTexture;
 
-	swapchain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&renderTargetText);
-	dev->CreateRenderTargetView(renderTargetText, NULL, &rtv);
+	m_pd3dSwapchain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&pd3dRenderTargetTexture);
+	m_pd3dDevice->CreateRenderTargetView(pd3dRenderTargetTexture, NULL, &m_pd3dRenderTargetView);
 
-	float width = 0;
-	float height = 0;
-	D3D11_TEXTURE2D_DESC textdesc;
+	float fViewportWidth = 0;
+	float fViewportHeight = 0;
 
-	renderTargetText->GetDesc(&textdesc);
-	width = (float)textdesc.Width;
-	height = (float)textdesc.Height;
+	pd3dRenderTargetTexture->GetDesc(&d3dTextureDescription);
+	fViewportWidth = (float)d3dTextureDescription.Width;
+	fViewportHeight = (float)d3dTextureDescription.Height;
 
-	viewport = {
+	m_d3dViewport = {
 		0,
 		0,
-		width,
-		height,
+		fViewportWidth,
+		fViewportHeight,
 		0,
 		1
 	};
 #pragma endregion
 
 	D3D11_TEXTURE2D_DESC descDepth;
-	descDepth.Width = (UINT)width;
-	descDepth.Height = (UINT)height;
+	descDepth.Width = (UINT)fViewportWidth;
+	descDepth.Height = (UINT)fViewportHeight;
 	descDepth.MipLevels = 1;
 	descDepth.ArraySize = 1;
 	descDepth.Format = DXGI_FORMAT_D32_FLOAT;
@@ -92,88 +91,57 @@ void Graphics_System::InitD3D(HWND hWnd)
 	descDepth.CPUAccessFlags = 0;
 	descDepth.MiscFlags = 0;
 
-	dev->CreateTexture2D(&descDepth, NULL, &pDepthStencil);
+	m_pd3dDevice->CreateTexture2D(&descDepth, NULL, &m_pd3dDepthStencil);
 
 
-	D3D11_DEPTH_STENCIL_VIEW_DESC descDSV;
-	descDSV.Format = DXGI_FORMAT_D32_FLOAT;
-	descDSV.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
-	descDSV.Texture2D.MipSlice = 0;
-	descDSV.Flags = 0;
-	dev->CreateDepthStencilView(pDepthStencil, NULL, &depthStencilView);
+	D3D11_DEPTH_STENCIL_VIEW_DESC d3dDepthStencilViewDescription;
+	d3dDepthStencilViewDescription.Format = DXGI_FORMAT_D32_FLOAT;
+	d3dDepthStencilViewDescription.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
+	d3dDepthStencilViewDescription.Texture2D.MipSlice = 0;
+	d3dDepthStencilViewDescription.Flags = 0;
+	m_pd3dDevice->CreateDepthStencilView(m_pd3dDepthStencil, NULL, &m_pd3dDepthStencilView);
 
-	D3D11_DEPTH_STENCIL_DESC dsDesc;
+	D3D11_DEPTH_STENCIL_DESC d3dDepthStencilDescription;
 
 	// Depth test parameters
-	dsDesc.DepthEnable = true;
-	dsDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
-	dsDesc.DepthFunc = D3D11_COMPARISON_LESS;
+	d3dDepthStencilDescription.DepthEnable = true;
+	d3dDepthStencilDescription.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
+	d3dDepthStencilDescription.DepthFunc = D3D11_COMPARISON_LESS;
 
 	// Stencil test parameters
-	dsDesc.StencilEnable = true;
-	dsDesc.StencilReadMask = 0xFF;
-	dsDesc.StencilWriteMask = 0xFF;
+	d3dDepthStencilDescription.StencilEnable = true;
+	d3dDepthStencilDescription.StencilReadMask = 0xFF;
+	d3dDepthStencilDescription.StencilWriteMask = 0xFF;
 
 	// Stencil operations if pixel is front-facing
-	dsDesc.FrontFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
-	dsDesc.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_INCR;
-	dsDesc.FrontFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
-	dsDesc.FrontFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
+	d3dDepthStencilDescription.FrontFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+	d3dDepthStencilDescription.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_INCR;
+	d3dDepthStencilDescription.FrontFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
+	d3dDepthStencilDescription.FrontFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
 
 	// Stencil operations if pixel is back-facing
-	dsDesc.BackFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
-	dsDesc.BackFace.StencilDepthFailOp = D3D11_STENCIL_OP_DECR;
-	dsDesc.BackFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
-	dsDesc.BackFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
+	d3dDepthStencilDescription.BackFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+	d3dDepthStencilDescription.BackFace.StencilDepthFailOp = D3D11_STENCIL_OP_DECR;
+	d3dDepthStencilDescription.BackFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
+	d3dDepthStencilDescription.BackFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
 
 	// Create depth stencil state
-	dev->CreateDepthStencilState(&dsDesc, &depthStencilState);
-
-
-	D3D11_RASTERIZER_DESC RasterizerStateWireframe
-	{
-		D3D11_FILL_WIREFRAME,
-		D3D11_CULL_NONE,
-		FALSE,
-		0,
-		0.0f,
-		0.0f,
-		TRUE,
-		FALSE,
-		FALSE,
-		FALSE
-	};
-	D3D11_RASTERIZER_DESC RasterizerStateNotWireframe
-	{
-		D3D11_FILL_SOLID,
-		D3D11_CULL_BACK,
-		FALSE,
-		0,
-		0.0f,
-		0.0f,
-		TRUE,
-		FALSE,
-		FALSE,
-		FALSE
-	};
-
-	dev->CreateRasterizerState(&RasterizerStateWireframe, &pRSWireFrame);
-	dev->CreateRasterizerState(&RasterizerStateNotWireframe, &pRSNotWireFrame);
+	m_pd3dDevice->CreateDepthStencilState(&d3dDepthStencilDescription, &m_pd3dDepthStencilState);
 #pragma endregion
 
 }
 
-void Graphics_System::UpdateD3D()
+void CGraphicsSystem::UpdateD3D()
 {
-	const float purple[] = { .5f, .05f, .5f, 1 };
+	const float afBackgroundColor[] = { .5f, .05f, .5f, 1 };
 
-	devcon->OMSetRenderTargets(1, &rtv, depthStencilView);
-	devcon->ClearRenderTargetView(rtv, purple);
-	devcon->ClearDepthStencilView(depthStencilView, D3D11_CLEAR_DEPTH, 1, 0); // clear it to Z exponential Far.
-	devcon->RSSetViewports(1, &viewport);
+	m_pd3dDeviceContext->OMSetRenderTargets(1, &m_pd3dRenderTargetView, m_pd3dDepthStencilView);
+	m_pd3dDeviceContext->ClearRenderTargetView(m_pd3dRenderTargetView, afBackgroundColor);
+	m_pd3dDeviceContext->ClearDepthStencilView(m_pd3dDepthStencilView, D3D11_CLEAR_DEPTH, 1, 0); // clear it to Z exponential Far.
+	m_pd3dDeviceContext->RSSetViewports(1, &m_d3dViewport);
 }
 
-void Graphics_System::CleanD3D(World *planet)
+void CGraphicsSystem::CleanD3D(TWorld *ptPlanet)
 {
 	// close and release all existing COM objects
 	//for (int i = 0; i < ENTITY_COUNT; i++)
@@ -186,15 +154,15 @@ void Graphics_System::CleanD3D(World *planet)
 	//	}
 	//	destroyEntity(planet, i);
 	//}
-	swapchain->Release();
-	dev->Release();
-	devcon->Release();
-	depthStencilState->Release();
-	depthStencilView->Release();
-	rtv->Release();
+	m_pd3dSwapchain->Release();
+	m_pd3dDevice->Release();
+	m_pd3dDeviceContext->Release();
+	m_pd3dDepthStencilState->Release();
+	m_pd3dDepthStencilView->Release();
+	m_pd3dRenderTargetView->Release();
 }
 
-void Graphics_System::CreateShaders(ID3D11Device * device)
+void CGraphicsSystem::CreateShaders(ID3D11Device * device)
 {
 	//D3D11_BUFFER_DESC matrixBufferDesc;
 	//D3D11_BUFFER_DESC bpBufferDesc;
@@ -234,9 +202,9 @@ void Graphics_System::CreateShaders(ID3D11Device * device)
 	//device->CreateBuffer(&bpBufferDesc, NULL, &m_blinnPhong);
 }
 
-void Graphics_System::CreateBuffers(World *planet)//init first frame
+void CGraphicsSystem::CreateBuffers(TWorld *ptPlanet)//init first frame
 {
-	CreateShaders(dev);
+	CreateShaders(m_pd3dDevice);
 	//for (int i = 0; i < ENTITY_COUNT; i++)
 	//{
 	//	//Check Mask to see what buffers need to get created
@@ -253,45 +221,45 @@ void Graphics_System::CreateBuffers(World *planet)//init first frame
 
 }
 
-void Graphics_System::UpdateBuffer(World * wurld, std::vector<simple_mesh> vertVector, int entity, int mask)
+void CGraphicsSystem::UpdateBuffer(TWorld * ptWorld, std::vector<TSimpleMesh> vtVertexVector, int nEntity, int nMask)
 {
 	
-	bool isVertexBufferSet = false;
-		if (isVertexBufferSet)
+	bool bIsVertexBufferSet = false;
+		if (bIsVertexBufferSet)
 		{
 			// This is where it copies the new vertices to the buffer.
 			// but it's causing flickering in the entire screen...
-			D3D11_MAPPED_SUBRESOURCE resource;
-			if (mask == COMPONENT_DEBUGMESH)
+			D3D11_MAPPED_SUBRESOURCE d3dMappedBufferResource;
+			if (nMask == COMPONENT_DEBUGMESH)
 			{
-				devcon->Map(wurld->debug_mesh[entity].vertexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &resource);
-				memcpy(resource.pData, &vertVector[0], sizeof(vertVector));
-				devcon->Unmap(wurld->debug_mesh[entity].vertexBuffer, 0);
+				m_pd3dDeviceContext->Map(ptWorld->atDebugMesh[nEntity].m_pd3dVertexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &d3dMappedBufferResource);
+				memcpy(d3dMappedBufferResource.pData, &vtVertexVector[0], sizeof(vtVertexVector));
+				m_pd3dDeviceContext->Unmap(ptWorld->atDebugMesh[nEntity].m_pd3dVertexBuffer, 0);
 			}
 		}
 		else
 		{			
-			UINT stride = sizeof(simple_mesh);
-			UINT offset = 0;
+			UINT nVertexBufferStride = sizeof(TSimpleMesh);
+			UINT nVertexBufferOffset = 0;
 
-			D3D11_SUBRESOURCE_DATA resourceData;
-			ZeroMemory(&resourceData, sizeof(resourceData));
-			resourceData.pSysMem = &vertVector[0];
-			if (mask == COMPONENT_DEBUGMESH)
+			D3D11_SUBRESOURCE_DATA d3dBufferResourceData;
+			ZeroMemory(&d3dBufferResourceData, sizeof(d3dBufferResourceData));
+			d3dBufferResourceData.pSysMem = &vtVertexVector[0];
+			if (nMask == COMPONENT_DEBUGMESH)
 			{
 				// This is run in the first frame. But what if new vertices are added to the scene?
-				wurld->debug_mesh[entity].vertexBufferDesc.ByteWidth = sizeof(simple_mesh) * wurld->debug_mesh[entity].vertexCount;
+				ptWorld->atDebugMesh[nEntity].m_d3dVertexBufferDesc.ByteWidth = sizeof(TSimpleMesh) * ptWorld->atDebugMesh[nEntity].m_nVertexCount;
 
-				if (wurld->debug_mesh[entity].vertexBuffer)
-					wurld->debug_mesh[entity].vertexBuffer->Release();
-				dev->CreateBuffer(&wurld->debug_mesh[entity].vertexBufferDesc, &resourceData, &wurld->debug_mesh[entity].vertexBuffer);
-				devcon->IASetVertexBuffers(0, 1, &wurld->debug_mesh[entity].vertexBuffer, &stride, &offset);
+				if (ptWorld->atDebugMesh[nEntity].m_pd3dVertexBuffer)
+					ptWorld->atDebugMesh[nEntity].m_pd3dVertexBuffer->Release();
+				m_pd3dDevice->CreateBuffer(&ptWorld->atDebugMesh[nEntity].m_d3dVertexBufferDesc, &d3dBufferResourceData, &ptWorld->atDebugMesh[nEntity].m_pd3dVertexBuffer);
+				m_pd3dDeviceContext->IASetVertexBuffers(0, 1, &ptWorld->atDebugMesh[nEntity].m_pd3dVertexBuffer, &nVertexBufferStride, &nVertexBufferOffset);
 			}
-			isVertexBufferSet = true;
+			bIsVertexBufferSet = true;
 		}
 }
 
-void Graphics_System::InitShaderData(ID3D11DeviceContext * deviceContext, XMMATRIX worldMatrix, XMMATRIX viewMatrix, XMMATRIX projectionMatrix, bool collide, int mask, XMFLOAT3 lightPos, XMFLOAT3 camPos, XMFLOAT4X4 *x)
+void CGraphicsSystem::InitShaderData(ID3D11DeviceContext * pd3dDeviceContext, XMMATRIX d3dWorldMatrix, XMMATRIX d3dViewMatrix, XMMATRIX d3dProjectionMatrix, bool bCollide, int nMask, XMFLOAT3 d3dLightPosition, XMFLOAT3 d3dCameraPosition, XMFLOAT4X4 *pd3dJointsForVS)
 {
 	//HRESULT result;
 	
@@ -315,7 +283,7 @@ void Graphics_System::InitShaderData(ID3D11DeviceContext * deviceContext, XMMATR
 
 }
 
-void Graphics_System::ExecutePipeline(World * wurld, ID3D11DeviceContext *deviceContext, int indexCount, int entity)
+void CGraphicsSystem::ExecutePipeline(TWorld * ptWorld, ID3D11DeviceContext *pd3dDeviceContext, int m_nIndexCount, int nEntity)
 {
 	//Set Input_Layout
 

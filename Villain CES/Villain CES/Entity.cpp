@@ -1,249 +1,208 @@
 #include "stdafx.h"
 #include "Entity.h"
 
-unsigned int createEntity(World * world)
+unsigned int createEntity(TWorld * ptWorld)
 {
-	unsigned int entity;
+	unsigned int nCurrentEntity;
 	//Mark entity for Creation by finding the first index in the entity list that has no components. 
 	//Return the index of this marked entity
-	for (entity = 0; entity < ENTITY_COUNT; ++entity)
+	for (nCurrentEntity = 0; nCurrentEntity < ENTITYCOUNT; ++nCurrentEntity)
 	{
-		if (world->mask[entity] == COMPONENT_NONE)
+		if (ptWorld->anComponentMask[nCurrentEntity] == COMPONENT_NONE)
 		{
-			printf("Entity created: %d\n", entity);
-			return(entity);
+			printf("Entity created: %d\n", nCurrentEntity);
+			return(nCurrentEntity);
 		}
 	}
 
 	printf("Error!  No more entities left!\n");
-	return(ENTITY_COUNT);
+	return(ENTITYCOUNT);
 }
 
-void destroyEntity(World * world, unsigned int entity)
+void destroyEntity(TWorld * ptWorld, unsigned int nThisEntity)
 {
 	//Set component list for current entity to none.
-	printf("Entity destroyed: %d\n", entity);
-	world->mask[entity] = COMPONENT_NONE;
+	printf("Entity destroyed: %d\n", nThisEntity);
+	ptWorld->anComponentMask[nThisEntity] = COMPONENT_NONE;
 }
 
-unsigned int createDebugTransformLines(World * world, DebugMesh mesh)
+unsigned int createDebugTransformLines(TWorld * ptWorld, TDebugMesh atMesh)
 {
-	unsigned int entity = createEntity(world);
-	world->mask[entity] =  COMPONENT_DEBUGMESH;
-	world->debug_mesh[entity].vertexCount = 6;
+	unsigned int nThisEntity = createEntity(ptWorld);
+	ptWorld->anComponentMask[nThisEntity] =  COMPONENT_DEBUGMESH;
+	ptWorld->atDebugMesh[nThisEntity].m_nVertexCount = 6;
 
-	static simple_mesh lineVerts[]
+	static TSimpleMesh atLineVertices[]
 	{
-		simple_mesh{ 0,	0, 0, 0, 0,0,0,0,0},//00	Green
-		simple_mesh{ 0,	2.0f, 0, 0,0,0,0,0},//01	Green
-		simple_mesh{ 0,	0, 0, 0, 0,0,0,0,0},//00	Red
-		simple_mesh{ 2.0f, 0, 0, 0,0,0,0,0},//01	Red
-		simple_mesh{ 0,	0, 0, 0, 0,0,0,0,0},//00	Blue
-		simple_mesh{ 0,	0, 2.0f, 0,0,0,0,0},//01	Blue	
+		TSimpleMesh{ 0,	0, 0, 0, 0,0,0,0,0},//00	Green
+		TSimpleMesh{ 0,	2.0f, 0, 0,0,0,0,0},//01	Green
+		TSimpleMesh{ 0,	0, 0, 0, 0,0,0,0,0},//00	Red
+		TSimpleMesh{ 2.0f, 0, 0, 0,0,0,0,0},//01	Red
+		TSimpleMesh{ 0,	0, 0, 0, 0,0,0,0,0},//00	Blue
+		TSimpleMesh{ 0,	0, 2.0f, 0,0,0,0,0},//01	Blue	
 	};
 
 	
 
-	world->debug_mesh[entity].vertexBufferStride = sizeof(simple_mesh);
-	world->debug_mesh[entity].vertexBufferOffset = 0;
+	ptWorld->atDebugMesh[nThisEntity].m_nVertexBufferStride = sizeof(TSimpleMesh);
+	ptWorld->atDebugMesh[nThisEntity].m_nVertexBufferOffset = 0;
 
-	world->debug_mesh[entity].vertexBufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
-	world->debug_mesh[entity].vertexBufferDesc.ByteWidth = sizeof(simple_mesh) * world->debug_mesh[entity].vertexCount;
-	world->debug_mesh[entity].vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-	world->debug_mesh[entity].vertexBufferDesc.CPUAccessFlags = 0;
-	world->debug_mesh[entity].vertexBufferDesc.MiscFlags = 0;
-	world->debug_mesh[entity].vertexBufferDesc.StructureByteStride = 0;
+	ptWorld->atDebugMesh[nThisEntity].m_d3dVertexBufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
+	ptWorld->atDebugMesh[nThisEntity].m_d3dVertexBufferDesc.ByteWidth = sizeof(TSimpleMesh) * ptWorld->atDebugMesh[nThisEntity].m_nVertexCount;
+	ptWorld->atDebugMesh[nThisEntity].m_d3dVertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	ptWorld->atDebugMesh[nThisEntity].m_d3dVertexBufferDesc.CPUAccessFlags = 0;
+	ptWorld->atDebugMesh[nThisEntity].m_d3dVertexBufferDesc.MiscFlags = 0;
+	ptWorld->atDebugMesh[nThisEntity].m_d3dVertexBufferDesc.StructureByteStride = 0;
 
-	world->debug_mesh[entity].vertexData.pSysMem = lineVerts;
-	world->debug_mesh[entity].vertexData.SysMemPitch = 0;
-	world->debug_mesh[entity].vertexData.SysMemSlicePitch = 0;
+	ptWorld->atDebugMesh[nThisEntity].m_d3dVertexData.pSysMem = atLineVertices;
+	ptWorld->atDebugMesh[nThisEntity].m_d3dVertexData.SysMemPitch = 0;
+	ptWorld->atDebugMesh[nThisEntity].m_d3dVertexData.SysMemSlicePitch = 0;
 	return 0;
 }
 
-unsigned int createDebugGrid(World * world, DebugMesh mesh)
+unsigned int createDebugGrid(TWorld * ptWorld, TDebugMesh atMesh)
 {
-	unsigned int entity = createEntity(world);
-	world->mask[entity] = COMPONENT_DEBUGMESH;
-	world->debug_mesh[entity].vertexCount = 44;
+	unsigned int nThisEntity = createEntity(ptWorld);
+	ptWorld->anComponentMask[nThisEntity] = COMPONENT_DEBUGMESH;
+	ptWorld->atDebugMesh[nThisEntity].m_nVertexCount = 44;
 
-	static primalVert gridVerts[]
+	static TPrimalVert atDebugGridVertices[]
 	{
-		primalVert{ XMFLOAT3(-.5f, 0,  .5f),		XMFLOAT4(0, 1.0f,	0.0f, 1.0f) },//00	Green
-		primalVert{ XMFLOAT3(-.5f, 0, -.5f),		XMFLOAT4(0, 1.0f,	0.0f, 1.0f) },//01	Green
-		primalVert{ XMFLOAT3(-.4f, 0,  .5f),		XMFLOAT4(0, 1.0f,	0.0f, 1.0f) },//02	Red
-		primalVert{ XMFLOAT3(-.4f, 0, -.5f),		XMFLOAT4(0, 1.0f,	0.0f, 1.0f) },//03	Red
-		primalVert{ XMFLOAT3(-.3f, 0,  .5f),		XMFLOAT4(0, 1.0f,	0.0f, 1.0f) },//04	Blue
-		primalVert{ XMFLOAT3(-.3f, 0, -.5f),		XMFLOAT4(0, 1.0f,	0.0f, 1.0f) },//05	Blue	
-		primalVert{ XMFLOAT3(-.2f, 0,  .5f),		XMFLOAT4(0, 1.0f,	0.0f, 1.0f) },//06	Blue
-		primalVert{ XMFLOAT3(-.2f, 0, -.5f),		XMFLOAT4(0, 1.0f,	0.0f, 1.0f) },//07	Red
-		primalVert{ XMFLOAT3(-.1f, 0,  .5f),		XMFLOAT4(0, 1.0f,	0.0f, 1.0f) },//08	Red
-		primalVert{ XMFLOAT3(-.1f, 0, -.5f),		XMFLOAT4(0, 1.0f,	0.0f, 1.0f) },//09	Green
-		primalVert{ XMFLOAT3( .0f, 0,  .5f),		XMFLOAT4(0, 1.0f,	0.0f, 1.0f) },//10	Green							 		   
-		primalVert{ XMFLOAT3( .0f, 0, -.5f),		XMFLOAT4(0, 1.0f,	0.0f, 1.0f) },//11	Green
-		primalVert{ XMFLOAT3( .1f, 0,  .5f),		XMFLOAT4(0, 1.0f,	0.0f, 1.0f) },//12	Green	
-		primalVert{ XMFLOAT3( .1f, 0, -.5f),		XMFLOAT4(0, 1.0f,	0.0f, 1.0f) },//13	Green
-		primalVert{ XMFLOAT3( .2f, 0,  .5f),		XMFLOAT4(0, 1.0f,	0.0f, 1.0f) },//14	Green	
-		primalVert{ XMFLOAT3( .2f, 0, -.5f),		XMFLOAT4(0, 1.0f,	0.0f, 1.0f) },//15	Green
-		primalVert{ XMFLOAT3( .3f, 0,  .5f),		XMFLOAT4(0, 1.0f,	0.0f, 1.0f) },//16	Green								  
-		primalVert{ XMFLOAT3( .3f, 0, -.5f),		XMFLOAT4(0, 1.0f,	0.0f, 1.0f) },//17	Green
-		primalVert{ XMFLOAT3( .4f, 0,  .5f),		XMFLOAT4(0, 1.0f,	0.0f, 1.0f) },//18	Green	
-		primalVert{ XMFLOAT3( .4f, 0, -.5f),		XMFLOAT4(0, 1.0f,	0.0f, 1.0f) },//19	Green
-		primalVert{ XMFLOAT3( .5f, 0,  .5f),		XMFLOAT4(0, 1.0f,	0.0f, 1.0f) },//20	Green	
-		primalVert{ XMFLOAT3( .5f, 0, -.5f),		XMFLOAT4(0, 1.0f,	0.0f, 1.0f) },//21	Green
+		TPrimalVert{ XMFLOAT3(-.5f, 0,  .5f),		XMFLOAT4(0, 1.0f,	0.0f, 1.0f) },//00	Green
+		TPrimalVert{ XMFLOAT3(-.5f, 0, -.5f),		XMFLOAT4(0, 1.0f,	0.0f, 1.0f) },//01	Green
+		TPrimalVert{ XMFLOAT3(-.4f, 0,  .5f),		XMFLOAT4(0, 1.0f,	0.0f, 1.0f) },//02	Red
+		TPrimalVert{ XMFLOAT3(-.4f, 0, -.5f),		XMFLOAT4(0, 1.0f,	0.0f, 1.0f) },//03	Red
+		TPrimalVert{ XMFLOAT3(-.3f, 0,  .5f),		XMFLOAT4(0, 1.0f,	0.0f, 1.0f) },//04	Blue
+		TPrimalVert{ XMFLOAT3(-.3f, 0, -.5f),		XMFLOAT4(0, 1.0f,	0.0f, 1.0f) },//05	Blue	
+		TPrimalVert{ XMFLOAT3(-.2f, 0,  .5f),		XMFLOAT4(0, 1.0f,	0.0f, 1.0f) },//06	Blue
+		TPrimalVert{ XMFLOAT3(-.2f, 0, -.5f),		XMFLOAT4(0, 1.0f,	0.0f, 1.0f) },//07	Red
+		TPrimalVert{ XMFLOAT3(-.1f, 0,  .5f),		XMFLOAT4(0, 1.0f,	0.0f, 1.0f) },//08	Red
+		TPrimalVert{ XMFLOAT3(-.1f, 0, -.5f),		XMFLOAT4(0, 1.0f,	0.0f, 1.0f) },//09	Green
+		TPrimalVert{ XMFLOAT3( .0f, 0,  .5f),		XMFLOAT4(0, 1.0f,	0.0f, 1.0f) },//10	Green							 		   
+		TPrimalVert{ XMFLOAT3( .0f, 0, -.5f),		XMFLOAT4(0, 1.0f,	0.0f, 1.0f) },//11	Green
+		TPrimalVert{ XMFLOAT3( .1f, 0,  .5f),		XMFLOAT4(0, 1.0f,	0.0f, 1.0f) },//12	Green	
+		TPrimalVert{ XMFLOAT3( .1f, 0, -.5f),		XMFLOAT4(0, 1.0f,	0.0f, 1.0f) },//13	Green
+		TPrimalVert{ XMFLOAT3( .2f, 0,  .5f),		XMFLOAT4(0, 1.0f,	0.0f, 1.0f) },//14	Green	
+		TPrimalVert{ XMFLOAT3( .2f, 0, -.5f),		XMFLOAT4(0, 1.0f,	0.0f, 1.0f) },//15	Green
+		TPrimalVert{ XMFLOAT3( .3f, 0,  .5f),		XMFLOAT4(0, 1.0f,	0.0f, 1.0f) },//16	Green								  
+		TPrimalVert{ XMFLOAT3( .3f, 0, -.5f),		XMFLOAT4(0, 1.0f,	0.0f, 1.0f) },//17	Green
+		TPrimalVert{ XMFLOAT3( .4f, 0,  .5f),		XMFLOAT4(0, 1.0f,	0.0f, 1.0f) },//18	Green	
+		TPrimalVert{ XMFLOAT3( .4f, 0, -.5f),		XMFLOAT4(0, 1.0f,	0.0f, 1.0f) },//19	Green
+		TPrimalVert{ XMFLOAT3( .5f, 0,  .5f),		XMFLOAT4(0, 1.0f,	0.0f, 1.0f) },//20	Green	
+		TPrimalVert{ XMFLOAT3( .5f, 0, -.5f),		XMFLOAT4(0, 1.0f,	0.0f, 1.0f) },//21	Green
 		
-		primalVert{ XMFLOAT3( .5f, 0, -.5f),		XMFLOAT4(0, 1.0f,	0.0f, 1.0f) },//00	Green
-		primalVert{ XMFLOAT3(-.5f, 0, -.5f),		XMFLOAT4(0, 1.0f,	0.0f, 1.0f) },//01	Green
-		primalVert{ XMFLOAT3( .5f, 0, -.4f),		XMFLOAT4(0, 1.0f,	0.0f, 1.0f) },//02	Red
-		primalVert{ XMFLOAT3(-.5f, 0, -.4f),		XMFLOAT4(0, 1.0f,	0.0f, 1.0f) },//03	Red
-		primalVert{ XMFLOAT3( .5f, 0, -.3f),		XMFLOAT4(0, 1.0f,	0.0f, 1.0f) },//04	Blue
-		primalVert{ XMFLOAT3(-.5f, 0, -.3f),		XMFLOAT4(0, 1.0f,	0.0f, 1.0f) },//05	Blue	
-		primalVert{ XMFLOAT3( .5f, 0, -.2f),		XMFLOAT4(0, 1.0f,	0.0f, 1.0f) },//06	Blue
-		primalVert{ XMFLOAT3(-.5f, 0, -.2f),		XMFLOAT4(0, 1.0f,	0.0f, 1.0f) },//07	Red
-		primalVert{ XMFLOAT3( .5f, 0, -.1f),		XMFLOAT4(0, 1.0f,	0.0f, 1.0f) },//08	Red
-		primalVert{ XMFLOAT3(-.5f, 0, -.1f),		XMFLOAT4(0, 1.0f,	0.0f, 1.0f) },//09	Green
-		primalVert{ XMFLOAT3( .5f, 0,  .0f),		XMFLOAT4(0, 1.0f,	0.0f, 1.0f) },//10	Green							 		   
-		primalVert{ XMFLOAT3(-.5f, 0,  .0f),		XMFLOAT4(0, 1.0f,	0.0f, 1.0f) },//11	Green
-		primalVert{ XMFLOAT3( .5f, 0,  .1f),		XMFLOAT4(0, 1.0f,	0.0f, 1.0f) },//12	Green	
-		primalVert{ XMFLOAT3(-.5f, 0,  .1f),		XMFLOAT4(0, 1.0f,	0.0f, 1.0f) },//13	Green
-		primalVert{ XMFLOAT3( .5f, 0,  .2f),		XMFLOAT4(0, 1.0f,	0.0f, 1.0f) },//14	Green	
-		primalVert{ XMFLOAT3(-.5f, 0,  .2f),		XMFLOAT4(0, 1.0f,	0.0f, 1.0f) },//15	Green
-		primalVert{ XMFLOAT3( .5f, 0,  .3f),		XMFLOAT4(0, 1.0f,	0.0f, 1.0f) },//16	Green								  
-		primalVert{ XMFLOAT3(-.5f, 0,  .3f),		XMFLOAT4(0, 1.0f,	0.0f, 1.0f) },//17	Green
-		primalVert{ XMFLOAT3( .5f, 0,  .4f),		XMFLOAT4(0, 1.0f,	0.0f, 1.0f) },//18	Green	
-		primalVert{ XMFLOAT3(-.5f, 0,  .4f),		XMFLOAT4(0, 1.0f,	0.0f, 1.0f) },//19	Green
-		primalVert{ XMFLOAT3( .5f, 0,  .5f),		XMFLOAT4(0, 1.0f,	0.0f, 1.0f) },//20	Green	
-		primalVert{ XMFLOAT3(-.5f, 0,  .5f),		XMFLOAT4(0, 1.0f,	0.0f, 1.0f) },//21	Green
+		TPrimalVert{ XMFLOAT3( .5f, 0, -.5f),		XMFLOAT4(0, 1.0f,	0.0f, 1.0f) },//00	Green
+		TPrimalVert{ XMFLOAT3(-.5f, 0, -.5f),		XMFLOAT4(0, 1.0f,	0.0f, 1.0f) },//01	Green
+		TPrimalVert{ XMFLOAT3( .5f, 0, -.4f),		XMFLOAT4(0, 1.0f,	0.0f, 1.0f) },//02	Red
+		TPrimalVert{ XMFLOAT3(-.5f, 0, -.4f),		XMFLOAT4(0, 1.0f,	0.0f, 1.0f) },//03	Red
+		TPrimalVert{ XMFLOAT3( .5f, 0, -.3f),		XMFLOAT4(0, 1.0f,	0.0f, 1.0f) },//04	Blue
+		TPrimalVert{ XMFLOAT3(-.5f, 0, -.3f),		XMFLOAT4(0, 1.0f,	0.0f, 1.0f) },//05	Blue	
+		TPrimalVert{ XMFLOAT3( .5f, 0, -.2f),		XMFLOAT4(0, 1.0f,	0.0f, 1.0f) },//06	Blue
+		TPrimalVert{ XMFLOAT3(-.5f, 0, -.2f),		XMFLOAT4(0, 1.0f,	0.0f, 1.0f) },//07	Red
+		TPrimalVert{ XMFLOAT3( .5f, 0, -.1f),		XMFLOAT4(0, 1.0f,	0.0f, 1.0f) },//08	Red
+		TPrimalVert{ XMFLOAT3(-.5f, 0, -.1f),		XMFLOAT4(0, 1.0f,	0.0f, 1.0f) },//09	Green
+		TPrimalVert{ XMFLOAT3( .5f, 0,  .0f),		XMFLOAT4(0, 1.0f,	0.0f, 1.0f) },//10	Green							 		   
+		TPrimalVert{ XMFLOAT3(-.5f, 0,  .0f),		XMFLOAT4(0, 1.0f,	0.0f, 1.0f) },//11	Green
+		TPrimalVert{ XMFLOAT3( .5f, 0,  .1f),		XMFLOAT4(0, 1.0f,	0.0f, 1.0f) },//12	Green	
+		TPrimalVert{ XMFLOAT3(-.5f, 0,  .1f),		XMFLOAT4(0, 1.0f,	0.0f, 1.0f) },//13	Green
+		TPrimalVert{ XMFLOAT3( .5f, 0,  .2f),		XMFLOAT4(0, 1.0f,	0.0f, 1.0f) },//14	Green	
+		TPrimalVert{ XMFLOAT3(-.5f, 0,  .2f),		XMFLOAT4(0, 1.0f,	0.0f, 1.0f) },//15	Green
+		TPrimalVert{ XMFLOAT3( .5f, 0,  .3f),		XMFLOAT4(0, 1.0f,	0.0f, 1.0f) },//16	Green								  
+		TPrimalVert{ XMFLOAT3(-.5f, 0,  .3f),		XMFLOAT4(0, 1.0f,	0.0f, 1.0f) },//17	Green
+		TPrimalVert{ XMFLOAT3( .5f, 0,  .4f),		XMFLOAT4(0, 1.0f,	0.0f, 1.0f) },//18	Green	
+		TPrimalVert{ XMFLOAT3(-.5f, 0,  .4f),		XMFLOAT4(0, 1.0f,	0.0f, 1.0f) },//19	Green
+		TPrimalVert{ XMFLOAT3( .5f, 0,  .5f),		XMFLOAT4(0, 1.0f,	0.0f, 1.0f) },//20	Green	
+		TPrimalVert{ XMFLOAT3(-.5f, 0,  .5f),		XMFLOAT4(0, 1.0f,	0.0f, 1.0f) },//21	Green
 	};
 
 	
-	world->debug_mesh[entity].vertexBufferStride = sizeof(primalVert);
-	world->debug_mesh[entity].vertexBufferOffset = 0;
+	ptWorld->atDebugMesh[nThisEntity].m_nVertexBufferStride = sizeof(TPrimalVert);
+	ptWorld->atDebugMesh[nThisEntity].m_nVertexBufferOffset = 0;
 
-	world->debug_mesh[entity].vertexBufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
-	world->debug_mesh[entity].vertexBufferDesc.ByteWidth = sizeof(primalVert) * world->debug_mesh[entity].vertexCount;
-	world->debug_mesh[entity].vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-	world->debug_mesh[entity].vertexBufferDesc.CPUAccessFlags = 0;
-	world->debug_mesh[entity].vertexBufferDesc.MiscFlags = 0;
-	world->debug_mesh[entity].vertexBufferDesc.StructureByteStride = 0;
+	ptWorld->atDebugMesh[nThisEntity].m_d3dVertexBufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
+	ptWorld->atDebugMesh[nThisEntity].m_d3dVertexBufferDesc.ByteWidth = sizeof(TPrimalVert) * ptWorld->atDebugMesh[nThisEntity].m_nVertexCount;
+	ptWorld->atDebugMesh[nThisEntity].m_d3dVertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	ptWorld->atDebugMesh[nThisEntity].m_d3dVertexBufferDesc.CPUAccessFlags = 0;
+	ptWorld->atDebugMesh[nThisEntity].m_d3dVertexBufferDesc.MiscFlags = 0;
+	ptWorld->atDebugMesh[nThisEntity].m_d3dVertexBufferDesc.StructureByteStride = 0;
 
-	world->debug_mesh[entity].vertexData.pSysMem = gridVerts;
-	world->debug_mesh[entity].vertexData.SysMemPitch = 0;
-	world->debug_mesh[entity].vertexData.SysMemSlicePitch = 0;
+	ptWorld->atDebugMesh[nThisEntity].m_d3dVertexData.pSysMem = atDebugGridVertices;
+	ptWorld->atDebugMesh[nThisEntity].m_d3dVertexData.SysMemPitch = 0;
+	ptWorld->atDebugMesh[nThisEntity].m_d3dVertexData.SysMemSlicePitch = 0;
 	return 0;
 }
 
-unsigned int createFrustum(World * world, Mesh meshd)
+unsigned int createMesh(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMesh tMesh)
 {
-	//Create entity
-	unsigned int entity = createEntity(world);
-	world->mask[entity] = COMPONENT_MESH;
-
-
-	world->mesh[entity].indexCount = 36;
-	world->mesh[entity].vertexCount = 0;
-
-	// Set up the description of the static index buffer.
-	world->mesh[entity].indexBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
-	world->mesh[entity].indexBufferDesc.ByteWidth = sizeof(unsigned int) * world->mesh[entity].indexCount;
-	world->mesh[entity].indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
-	world->mesh[entity].indexBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-	world->mesh[entity].indexBufferDesc.MiscFlags = 0;
-	world->mesh[entity].indexBufferDesc.StructureByteStride = 0;
-
-	// Give the subresource structure a pointer to the index data.
-//	world->mesh[entity].indexData.pSysMem = PainInTheFrust_Intdices;
-	world->mesh[entity].indexData.SysMemPitch = 0;
-	world->mesh[entity].indexData.SysMemSlicePitch = 0;
-
-//	world->mesh[entity].texture = nullptr;
-	world->mesh[entity].vertexBufferStride = sizeof(primalVert);
-	world->mesh[entity].vertexBufferOffset = 0;
-	world->mesh[entity].vertexBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
-	world->mesh[entity].vertexBufferDesc.ByteWidth = sizeof(primalVert) * world->mesh[entity].vertexCount;
-	world->mesh[entity].vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-	world->mesh[entity].vertexBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-	world->mesh[entity].vertexBufferDesc.MiscFlags = 0;
-	world->mesh[entity].vertexBufferDesc.StructureByteStride = 0;
-	D3D11_SUBRESOURCE_DATA g;
-	ZeroMemory(&g, sizeof(g));
-
-	world->mesh[entity].vertexData.pSysMem = &g;
-	world->mesh[entity].vertexData.SysMemPitch = 0;
-	world->mesh[entity].vertexData.SysMemSlicePitch = 0;
-	return 0;
-}
-
-unsigned int createMesh(ID3D11Device * dev, World * world, Mesh mesh)
-{
-	unsigned int entity = createEntity(world);
+	unsigned int nThisEntity = createEntity(ptWorld);
 	
 	#pragma region ReadAnimationData	
-	int animFrameCount = 0;
-	int nodeCount = 0;
-	double duration = 0;
-	std::vector<int> parent_Indices;
-	std::vector<XMMATRIX> invBindPosesForJoints;
-	std::ifstream matFile("../meshData.txt", std::ios::in | std::ios::binary);
-	matFile.read((char*)&duration, sizeof(double));	
-	matFile.read((char*)&nodeCount, sizeof(int));
-	matFile.read((char*)&animFrameCount, sizeof(int));
-	anim_clip myAnim;
-	char * fileName1, *fileName2, *fileName3;
+	int nAnimationFrameCount = 0;
+	int nNodeCount = 0;
+	double dAnimationDuration = 0;
+	std::vector<int> m_vnParentIndices;
+	std::vector<XMMATRIX> vd3dInvertedBindPoseMatrices;
+	std::ifstream cMeshDataFile("../meshData.txt", std::ios::in | std::ios::binary);
+	cMeshDataFile.read((char*)&dAnimationDuration, sizeof(double));	
+	cMeshDataFile.read((char*)&nNodeCount, sizeof(int));
+	cMeshDataFile.read((char*)&nAnimationFrameCount, sizeof(int));
+	TAnimationClip tAnimationClip;
+	char * pchFileName1, *pchFileName2, *pchFileName3;
 
-	int bSize = sizeof(double) + sizeof(int) + sizeof(int);
-	for (int i = 0; i < animFrameCount; i++)
+	int nFileReadingCursorIndex = sizeof(double) + sizeof(int) + sizeof(int);
+	for (int nKeyframeIndex = 0; nKeyframeIndex < nAnimationFrameCount; nKeyframeIndex++)
 	{
-		keyframe myKey;
+		TKeyframe tCurrentKeyframe;
 
 		//current frame time offset
-		double curTime = 0;
-		matFile.read((char*)&curTime, sizeof(double));
-		bSize += sizeof(double);
-		XMFLOAT4X4 temp;
-		for (int h = 0; h < nodeCount; h++)
+		double dCurrentTime = 0;
+		cMeshDataFile.read((char*)&dCurrentTime, sizeof(double));
+		nFileReadingCursorIndex += sizeof(double);
+		XMFLOAT4X4 d3dCurrentJointMatrix;
+		for (int nCurrentNodeIndex = 0; nCurrentNodeIndex < nNodeCount; nCurrentNodeIndex++)
 		{
-			for (int j = 0; j < 4; j++)
+			for (int nCurrentRowIndex = 0; nCurrentRowIndex < 4; nCurrentRowIndex++)
 			{
-				for (int k = 0; k < 4; k++)
+				for (int nCurrentColumnIndex = 0; nCurrentColumnIndex < 4; nCurrentColumnIndex++)
 				{
 					//joint matrix data
 
-					matFile.read((char*)&temp(j,k), sizeof(float));
-					bSize += sizeof(float);
+					cMeshDataFile.read((char*)&d3dCurrentJointMatrix(nCurrentRowIndex, nCurrentColumnIndex), sizeof(float));
+					nFileReadingCursorIndex += sizeof(float);
 				}
 			}	
-			myKey.joints.push_back(XMLoadFloat4x4(&temp));
+			tCurrentKeyframe.m_vd3dJointMatrices.push_back(XMLoadFloat4x4(&d3dCurrentJointMatrix));
 		}
 		//myKey.joints = XMLoadFloat4x4(&temp);
-		myKey.time = curTime / 1000;
-		myAnim.frames.push_back(myKey);
+		tCurrentKeyframe.dTime = dCurrentTime / 1000;
+		tAnimationClip.m_vtKeyFrames.push_back(tCurrentKeyframe);
 	}
-	for (int i = 0; i < nodeCount; i++)
+	for (int nCurrentParentIndex = 0; nCurrentParentIndex < nNodeCount; nCurrentParentIndex++)
 	{
-		int j = 0;
-		matFile.read((char*)&j, sizeof(int));
-		bSize += sizeof(int);
-		parent_Indices.push_back(j);
+		int nParentIndexToPush = 0;
+		cMeshDataFile.read((char*)&nParentIndexToPush, sizeof(int));
+		nFileReadingCursorIndex += sizeof(int);
+		m_vnParentIndices.push_back(nParentIndexToPush);
 	}
-	XMFLOAT4X4 fTemp;
-	for (int h = 0; h < nodeCount; h++)
+	XMFLOAT4X4 d3dCurrentInvertedBindPoseMatrix;
+	for (int nCurrentNodeIndex = 0; nCurrentNodeIndex < nNodeCount; nCurrentNodeIndex++)
 	{
-		for (int j = 0; j < 4; j++)
+		for (int nCurrentRowIndex = 0; nCurrentRowIndex < 4; nCurrentRowIndex++)
 		{
-			for (int k = 0; k < 4; k++)
+			for (int nCurrentColumnIndex = 0; nCurrentColumnIndex < 4; nCurrentColumnIndex++)
 			{
 				//joint matrix data
 
-				matFile.read((char*)&fTemp(j,k), sizeof(float));
-				bSize += sizeof(float);
+				cMeshDataFile.read((char*)&d3dCurrentInvertedBindPoseMatrix(nCurrentRowIndex,nCurrentColumnIndex), sizeof(float));
+				nFileReadingCursorIndex += sizeof(float);
 			}
 		}
-		invBindPosesForJoints.push_back(XMMatrixInverse(NULL, XMLoadFloat4x4(&fTemp)));
+		vd3dInvertedBindPoseMatrices.push_back(XMMatrixInverse(NULL, XMLoadFloat4x4(&d3dCurrentInvertedBindPoseMatrix)));
 	}
 
-	myAnim.duration = duration;
+	tAnimationClip.dDuration = dAnimationDuration;
 
-	myAnim.parent_Indicies = parent_Indices;
+	tAnimationClip.m_vnParentIndicies = m_vnParentIndices;
 #pragma endregion
 
 	#pragma region ReadMaterials
@@ -266,22 +225,22 @@ unsigned int createMesh(ID3D11Device * dev, World * world, Mesh mesh)
 				-EmmisiveColor(24 byte double3)
 				-TransparencyFactor(8 byte double)
 	*/
-	int materialCount = 0;
+	int nMaterialCount = 0;
 	//matFile.read((char*)&materialCount, sizeof(int));
-	char lambert = false;
-	double ambientColor[3];
-	double diffuseColor[3];
-	double specularColor[3];
-	double emmissiveColor[3];
+	char chLambert = false;
+	double adAmbientColor[3];
+	double adDiffuseColor[3];
+	double adSpecularColor[3];
+	double adEmmissiveColor[3];
 	//double transparencyFactor;
-	double shininess, transparency;
+	double dShininess, dTransparency;
 	//double reflectionFactor;
-	int bufferSize = 0;
-	bufferSize = sizeof(lambert) + sizeof(ambientColor) + sizeof(diffuseColor) + sizeof(specularColor) + sizeof(emmissiveColor) + sizeof(shininess);
-	char *matBuffer = new char[bufferSize];
-	matFile.clear();
-	matFile.seekg(bSize);
-	matFile.read(matBuffer, bufferSize);
+	int nMaterialBufferSize = 0;
+	nMaterialBufferSize = sizeof(chLambert) + sizeof(adAmbientColor) + sizeof(adDiffuseColor) + sizeof(adSpecularColor) + sizeof(adEmmissiveColor) + sizeof(dShininess);
+	char *pchMaterialBuffer = new char[nMaterialBufferSize];
+	cMeshDataFile.clear();
+	cMeshDataFile.seekg(nFileReadingCursorIndex);
+	cMeshDataFile.read(pchMaterialBuffer, nMaterialBufferSize);
 	/*
 		-AmbientColor(24 byte double3)
 		- DiffuseColor(24 byte double3)
@@ -290,33 +249,33 @@ unsigned int createMesh(ID3D11Device * dev, World * world, Mesh mesh)
 		- Shininess(8 byte double)
 	*/
 
-	memcpy(&lambert, &matBuffer[0], sizeof(lambert));
+	memcpy(&chLambert, &pchMaterialBuffer[0], sizeof(chLambert));
 
-	if (lambert)
+	if (chLambert)
 	{
-		bSize += sizeof(lambert) + sizeof(ambientColor) + sizeof(diffuseColor) + sizeof(emmissiveColor) + sizeof(transparency);
+		nFileReadingCursorIndex += sizeof(chLambert) + sizeof(adAmbientColor) + sizeof(adDiffuseColor) + sizeof(adEmmissiveColor) + sizeof(dTransparency);
 
-		memcpy(&ambientColor, &matBuffer[sizeof(lambert)], sizeof(ambientColor));
+		memcpy(&adAmbientColor, &pchMaterialBuffer[sizeof(chLambert)], sizeof(adAmbientColor));
 
-		memcpy(&diffuseColor, &matBuffer[sizeof(lambert) + sizeof(ambientColor)], sizeof(diffuseColor));
+		memcpy(&adDiffuseColor, &pchMaterialBuffer[sizeof(chLambert) + sizeof(adAmbientColor)], sizeof(adDiffuseColor));
 
-		memcpy(&emmissiveColor, &matBuffer[sizeof(lambert) + sizeof(ambientColor) + sizeof(diffuseColor)], sizeof(emmissiveColor));
+		memcpy(&adEmmissiveColor, &pchMaterialBuffer[sizeof(chLambert) + sizeof(adAmbientColor) + sizeof(adDiffuseColor)], sizeof(adEmmissiveColor));
 
-		memcpy(&transparency, &matBuffer[sizeof(lambert) + sizeof(ambientColor) + sizeof(diffuseColor)] + sizeof(emmissiveColor), sizeof(double));
+		memcpy(&dTransparency, &pchMaterialBuffer[sizeof(chLambert) + sizeof(adAmbientColor) + sizeof(adDiffuseColor)] + sizeof(adEmmissiveColor), sizeof(double));
 	}
 	else
 	{
-		bSize += sizeof(lambert) + sizeof(ambientColor) + sizeof(diffuseColor) + sizeof(specularColor) + sizeof(emmissiveColor) + sizeof(shininess);
+		nFileReadingCursorIndex += sizeof(chLambert) + sizeof(adAmbientColor) + sizeof(adDiffuseColor) + sizeof(adSpecularColor) + sizeof(adEmmissiveColor) + sizeof(dShininess);
 
-		memcpy(&ambientColor, &matBuffer[sizeof(lambert)], sizeof(ambientColor));
+		memcpy(&adAmbientColor, &pchMaterialBuffer[sizeof(chLambert)], sizeof(adAmbientColor));
 
-		memcpy(&diffuseColor, &matBuffer[sizeof(lambert) + sizeof(ambientColor)], sizeof(diffuseColor));
+		memcpy(&adDiffuseColor, &pchMaterialBuffer[sizeof(chLambert) + sizeof(adAmbientColor)], sizeof(adDiffuseColor));
 
-		memcpy(&specularColor, &matBuffer[sizeof(lambert) + sizeof(ambientColor) + sizeof(diffuseColor)], sizeof(specularColor));
+		memcpy(&adSpecularColor, &pchMaterialBuffer[sizeof(chLambert) + sizeof(adAmbientColor) + sizeof(adDiffuseColor)], sizeof(adSpecularColor));
 
-		memcpy(&emmissiveColor, &matBuffer[sizeof(lambert) + sizeof(ambientColor) + sizeof(diffuseColor) + sizeof(specularColor)], sizeof(emmissiveColor));
+		memcpy(&adEmmissiveColor, &pchMaterialBuffer[sizeof(chLambert) + sizeof(adAmbientColor) + sizeof(adDiffuseColor) + sizeof(adSpecularColor)], sizeof(adEmmissiveColor));
 
-		memcpy(&shininess, &matBuffer[sizeof(lambert) + sizeof(ambientColor) + sizeof(diffuseColor) + sizeof(specularColor) + sizeof(emmissiveColor)], sizeof(double));
+		memcpy(&dShininess, &pchMaterialBuffer[sizeof(chLambert) + sizeof(adAmbientColor) + sizeof(adDiffuseColor) + sizeof(adSpecularColor) + sizeof(adEmmissiveColor)], sizeof(double));
 	}
 
 
@@ -324,131 +283,97 @@ unsigned int createMesh(ID3D11Device * dev, World * world, Mesh mesh)
 #pragma endregion
 
 	#pragma region ReadMesh
-	int polyVertCount = 0;
-	matFile.clear();
-	matFile.seekg(bSize);
-	matFile.read((char*)&polyVertCount, sizeof(int));
-	int mySize = polyVertCount * sizeof(simple_mesh);
-	char *buffer = new char[mySize];
-	matFile.read(buffer, mySize);
+	int nPolygonVertexCount = 0;
+	cMeshDataFile.clear();
+	cMeshDataFile.seekg(nFileReadingCursorIndex);
+	cMeshDataFile.read((char*)&nPolygonVertexCount, sizeof(int));
+	int nMeshBufferSize = nPolygonVertexCount * sizeof(TSimpleMesh);
+	char *pchMeshBuffer = new char[nMeshBufferSize];
+	cMeshDataFile.read(pchMeshBuffer, nMeshBufferSize);
 
-	if (!matFile) {
+	if (!cMeshDataFile) {
 		// An error occurred!
 		// myFile.gcount() returns the number of bytes read.
 		// calling myFile.clear() will reset the stream state
 		// so it is usable again.
-		matFile.clear();
+		cMeshDataFile.clear();
 	}
 
-	simple_mesh * meshArray = new simple_mesh[polyVertCount];
-	for (int i = 0; i < polyVertCount; i++)
+	TSimpleMesh * ptSimpleMesh = new TSimpleMesh[nPolygonVertexCount];
+	for (int nCurrentSimpleMeshMember = 0; nCurrentSimpleMeshMember < nPolygonVertexCount; nCurrentSimpleMeshMember++)
 	{
-		memcpy(&meshArray[i], &buffer[i * sizeof(simple_mesh)], sizeof(simple_mesh));
+		memcpy(&ptSimpleMesh[nCurrentSimpleMeshMember], &pchMeshBuffer[nCurrentSimpleMeshMember * sizeof(TSimpleMesh)], sizeof(TSimpleMesh));
 	}
 
 #pragma endregion
 
 	#pragma region ReadTextures
 
-	int fileSize[3];
-	char*fileBuffer = new char[sizeof(fileSize)];
+	int anFileSizes[3];
+	char*pchTextureFileBuffer = new char[sizeof(anFileSizes)];
 
-	matFile.read(fileBuffer, sizeof(fileSize));
-	if (!matFile) {
+	cMeshDataFile.read(pchTextureFileBuffer, sizeof(anFileSizes));
+	if (!cMeshDataFile) {
 		// An error occurred!
 		// matFile.gcount() returns the number of bytes read.
 		// calling matFile.clear() will reset the stream state
 		// so it is usable again.
-		matFile.clear();
+		cMeshDataFile.clear();
 	}
-	int sizeOfNames = 0;
+	int nFileNamesSize = 0;
 	for (int i = 0; i < 3; i++)
 	{
-		memcpy(&fileSize[i], &fileBuffer[i * sizeof(int)], sizeof(int));
-		sizeOfNames += fileSize[i];
+		memcpy(&anFileSizes[i], &pchTextureFileBuffer[i * sizeof(int)], sizeof(int));
+		nFileNamesSize += anFileSizes[i];
 	}
 
-	char * textureBuffer = new char[sizeOfNames];
-	fileName1 = new char[fileSize[0]];
-	fileName2 = new char[fileSize[1]];
-	fileName3 = new char[fileSize[2]];
+	char * pchTextureFileNameBuffer = new char[nFileNamesSize];
+	pchFileName1 = new char[anFileSizes[0]];
+	pchFileName2 = new char[anFileSizes[1]];
+	pchFileName3 = new char[anFileSizes[2]];
 	
 	//matFile.seekg(sizeof(fileSize), std::ios_base::cur);
-	matFile.read(fileName1, fileSize[0]);
+	cMeshDataFile.read(pchFileName1, anFileSizes[0]);
 	
 	//matFile.seekg(fileSize[0], std::ios_base::cur);
-	matFile.read(fileName2, fileSize[1]);
+	cMeshDataFile.read(pchFileName2, anFileSizes[1]);
 	
 	//matFile.seekg(fileSize[1], std::ios_base::cur);
-	matFile.read(fileName3, fileSize[2]);
+	cMeshDataFile.read(pchFileName3, anFileSizes[2]);
 
-	matFile.close();
+	cMeshDataFile.close();
 
 #pragma endregion
 
 	#pragma region CreateTexturesFromFile
-	wchar_t fn1[260];
-	wchar_t fn2[260];
-	wchar_t fn3[260];
-	size_t result = 0;
-	mbstate_t d;
-	/*
-		size_t * numberOfCharactersConverted,
-		wchar_t * wchar_tFileName,
-		size_t countOfWordsInCharArray,
-		const char ** charArrayFileName,
-		size_t numberOfBytesInCharArrayFileName,
-		mbstate_t * mbstate
-	*/
-	//const char * thing;
-	//mbstate_t *d = nullptr;
-	mbsrtowcs_s(&result, fn1, 260, (const char **)(&fileName1), fileSize[0], &d);
-	mbsrtowcs_s(&result, fn2, 260, (const char **)(&fileName2), fileSize[1], &d);
-	mbsrtowcs_s(&result, fn3, 260, (const char **)(&fileName3), fileSize[2], &d);
+	wchar_t acFileName1[260];
+	wchar_t acFileName2[260];
+	wchar_t acFileName3[260];
+	size_t nResult = 0;
+	mbstate_t cMBState;
 
-	//mbstowcs(fn1, fileName1, fileSize[0]);
-	//mbstowcs(fn2, fileName2, fileSize[1]);
-	//mbstowcs(fn3, fileName3, fileSize[2]);
+	mbsrtowcs_s(&nResult, acFileName1, 260, (const char **)(&pchFileName1), anFileSizes[0], &cMBState);
+	mbsrtowcs_s(&nResult, acFileName2, 260, (const char **)(&pchFileName2), anFileSizes[1], &cMBState);
+	mbsrtowcs_s(&nResult, acFileName3, 260, (const char **)(&pchFileName3), anFileSizes[2], &cMBState);
 
-	ID3D11Resource * diffuseTexture;
-	ID3D11Resource * specularTexture;
-	ID3D11Resource * emissiveTexture;
-	//result = CreateWICTextureFromFile(dev, fn1, &diffuseTexture, nullptr, NULL);
-	//result = CreateWICTextureFromFile(dev, fn2, &specularTexture, nullptr, NULL);
-	//result = CreateWICTextureFromFile(dev, fn3, &emissiveTexture, nullptr, NULL);
 
 #pragma endregion
 
-	world->mask[entity] = COMPONENT_MESH;
+	ptWorld->anComponentMask[nThisEntity] = COMPONENT_MESH;
 
-	//memcpy(&world->model[entity].ambientColor,   &ambientColor, sizeof(ambientColor));
-	//memcpy(&world->model[entity].diffuseColor,   &diffuseColor, sizeof(diffuseColor));
-	//memcpy(&world->model[entity].specularColor,  &specularColor, sizeof(specularColor));
-	//memcpy(&world->model[entity].emmissiveColor, &emmissiveColor, sizeof(emmissiveColor));
+	ptWorld->atMesh[nThisEntity].m_nVertexCount = nPolygonVertexCount;
+	ptWorld->atMesh[nThisEntity].m_nVertexBufferStride = sizeof(TSimpleMesh);
+	ptWorld->atMesh[nThisEntity].m_nVertexBufferOffset = 0;
+	ptWorld->atMesh[nThisEntity].m_d3dVertexBufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
+	ptWorld->atMesh[nThisEntity].m_d3dVertexBufferDesc.ByteWidth = sizeof(TSimpleMesh) * ptWorld->atMesh[nThisEntity].m_nVertexCount;
+	ptWorld->atMesh[nThisEntity].m_d3dVertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	ptWorld->atMesh[nThisEntity].m_d3dVertexBufferDesc.CPUAccessFlags = 0;
+	ptWorld->atMesh[nThisEntity].m_d3dVertexBufferDesc.MiscFlags = 0;
+	ptWorld->atMesh[nThisEntity].m_d3dVertexBufferDesc.StructureByteStride = 0;
 
-	////world->model[entity].transparencyFactor = transparencyFactor;
-	//world->model[entity].shininess = shininess;
-	////world->model[entity].reflectionFactor = reflectionFactor;
-	
-	world->mesh[entity].vertexCount = polyVertCount;
-	world->mesh[entity].vertexBufferStride = sizeof(simple_mesh);
-	world->mesh[entity].vertexBufferOffset = 0;
-	world->mesh[entity].vertexBufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
-	world->mesh[entity].vertexBufferDesc.ByteWidth = sizeof(simple_mesh) * world->mesh[entity].vertexCount;
-	world->mesh[entity].vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-	world->mesh[entity].vertexBufferDesc.CPUAccessFlags = 0;
-	world->mesh[entity].vertexBufferDesc.MiscFlags = 0;
-	world->mesh[entity].vertexBufferDesc.StructureByteStride = 0;
+	ptWorld->atMesh[nThisEntity].m_d3dVertexData.pSysMem = ptSimpleMesh;
+	ptWorld->atMesh[nThisEntity].m_d3dVertexData.SysMemPitch = 0;
+	ptWorld->atMesh[nThisEntity].m_d3dVertexData.SysMemSlicePitch = 0;
 
-	world->mesh[entity].vertexData.pSysMem = meshArray;
-	world->mesh[entity].vertexData.SysMemPitch = 0;
-	world->mesh[entity].vertexData.SysMemSlicePitch = 0;
-
-	//dev->CreateShaderResourceView(diffuseTexture,   NULL, &world->mesh[entity].shaderResourceView1);
-	//dev->CreateShaderResourceView(specularTexture,  NULL, &world->mesh[entity].shaderResourceView2);
-	//dev->CreateShaderResourceView(emissiveTexture,	NULL, &world->mesh[entity].shaderResourceView3);
-
-	//world->model[entity].anim = myAnim;
-	//world->model[entity].inverseBindPoseJointMatrices = invBindPosesForJoints;
 	return 0;
 }

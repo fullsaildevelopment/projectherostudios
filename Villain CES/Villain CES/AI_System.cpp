@@ -2,11 +2,11 @@
 #include "AI_System.h"
 
 
-AI_System::AI_System()
+CAISystem::CAISystem()
 {
 }
 
 
-AI_System::~AI_System()
+CAISystem::~CAISystem()
 {
 }

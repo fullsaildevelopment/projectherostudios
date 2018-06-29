@@ -1,13 +1,13 @@
 #pragma once
 #ifndef CES_COLLISION_COMPONENT_H
 #define CES_COLLISION_COMPONENT_H
-typedef enum
+enum eCollision_Component
 {
-//	COMPONENT_NONE = 0,
-	COMPONENT_COLLISIONID = 1 << 1
-} Collision_Component;
-typedef struct
+	COMPONENT_COLLISIONMASK = 1 << 1,
+};
+
+struct TCollisionMask
 {
-	int Collision_ID = 0;
-} Collision_ID;
+	int m_tnCollisionMask = 0;
+};
 #endif

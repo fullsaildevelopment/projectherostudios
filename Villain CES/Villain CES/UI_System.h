@@ -1,9 +1,9 @@
 #pragma once
 #include "Entity.h"
-class UI_System
+class CUISystem
 {
 public:
-	UI_System();
-	~UI_System();
+	CUISystem();
+	~CUISystem();
 };
 

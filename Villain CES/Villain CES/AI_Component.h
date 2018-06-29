@@ -1,14 +1,15 @@
 #pragma once
 #ifndef CES_AI_COMPONENT_H
 #define CES_AI_COMPONENT_H
-typedef enum
+enum eAIComponent
 {
-//	COMPONENT_NONE = 0,
-	COMPONENT_AIID = 1 << 1
-} AI_Component;
+	COMPONENT_AIMASK = 1 << 1,
+	COMPONENT_FOLLOW = 1 << 2
+};
 
-typedef struct
+struct TAIMask
 {
-	int AIID = 0;
-} AI_ID;
+	int m_tnAIMask = 0;
+};
+
 #endif

@@ -2,38 +2,38 @@
 #include "Auger.h"
 
 
-Auger::Auger()
+CAuger::CAuger()
 {
 
 }
 
-Auger::Auger(HWND window)
+CAuger::CAuger(HWND window)
 {
-	appWindow = window;
-	vGraphicsSystem = new Graphics_System();
+	cApplicationWindow = window;
+	pcGraphicsSystem = new CGraphicsSystem();
 }
 
 
-Auger::~Auger()
+CAuger::~CAuger()
 {
 
 }
 
-void Auger::Start()
+void CAuger::Start()
 {
 	//Initializes Systems
 	InitializeSystems();
 }
 
-void Auger::InitializeSystems()
+void CAuger::InitializeSystems()
 {
-	vGraphicsSystem->InitD3D(appWindow);
+	pcGraphicsSystem->InitD3D(cApplicationWindow);
 }
 
-void Auger::Update()
+void CAuger::Update()
 {
-	vGraphicsSystem->UpdateD3D();
-	for (int currentEntity = 0; currentEntity < ENTITY_COUNT; currentEntity++)
+	pcGraphicsSystem->UpdateD3D();
+	for (int currentEntity = 0; currentEntity < ENTITYCOUNT; currentEntity++)
 	{
 		/*
 		Notes from Lari about multithreading systems:
@@ -129,11 +129,11 @@ void Auger::Update()
 		*/
 
 	}
-	vGraphicsSystem->swapchain->Present(0, 0);
+	pcGraphicsSystem->m_pd3dSwapchain->Present(0, 0);
 }
 
-void Auger::End()
+void CAuger::End()
 {
-	vGraphicsSystem->CleanD3D(&thisWorld);
+	pcGraphicsSystem->CleanD3D(&tThisWorld);
 }
 

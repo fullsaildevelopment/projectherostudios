@@ -2,11 +2,11 @@
 #include "UI_System.h"
 
 
-UI_System::UI_System()
+CUISystem::CUISystem()
 {
 }
 
 
-UI_System::~UI_System()
+CUISystem::~CUISystem()
 {
 }

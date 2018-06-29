@@ -2,11 +2,11 @@
 #include "Collision_System.h"
 
 
-Collision_System::Collision_System()
+CCollisionSystem::CCollisionSystem()
 {
 }
 
 
-Collision_System::~Collision_System()
+CCollisionSystem::~CCollisionSystem()
 {
 }
