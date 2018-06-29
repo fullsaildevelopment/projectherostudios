@@ -78,7 +78,7 @@ public:
 	* Mod. Date:              06/29/2018
 	* Mod. Initials:          ZFB
 	*/
-	XMMATRIX DebugCamera(TMatrixBufferType tWVP, HWND cTheWindow);
+	XMMATRIX DebugCamera(TPrimalMatrixBufferType tWVP, HWND cTheWindow);
 	
 
 private:

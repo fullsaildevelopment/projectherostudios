@@ -282,6 +282,11 @@ void CGraphicsSystem::UpdateBuffer(TWorld * ptWorld, std::vector<TSimpleMesh> vt
 		}
 }
 
+XMMATRIX CGraphicsSystem::DebugCamera(TPrimalMatrixBufferType tWVP, HWND cTheWindow)
+{
+	return XMMATRIX();
+}
+
 void CGraphicsSystem::InitMyShaderData(ID3D11DeviceContext * pd3dDeviceContext, XMMATRIX d3dWorldMatrix, XMMATRIX d3dViewMatrix, XMMATRIX d3dProjectionMatrix, int nMask, XMFLOAT3 d3dLightPosition, XMFLOAT3 d3dCameraPosition, XMFLOAT4X4 *pd3dJointsForVS)
 {
 
