@@ -154,8 +154,10 @@
     <ClInclude Include="AI_Component.h" />
     <ClInclude Include="AI_System.h" />
     <ClInclude Include="Auger.h" />
+    <ClInclude Include="CEventManger.h" />
     <ClInclude Include="Collision_Component.h" />
     <ClInclude Include="Collision_System.h" />
+    <ClInclude Include="Gateware Redistribution R5B\Interface\G_System\GInput.h" />
     <ClInclude Include="Graphics_Component.h" />
     <ClInclude Include="Entity.h" />
     <ClInclude Include="frustum_culling.h" />
@@ -173,6 +175,7 @@
   <ItemGroup>
     <ClCompile Include="AI_System.cpp" />
     <ClCompile Include="Auger.cpp" />
+    <ClCompile Include="CEventManger.cpp" />
     <ClCompile Include="Collision_System.cpp" />
     <ClCompile Include="Entity.cpp" />
     <ClCompile Include="Physics_System.cpp" />
