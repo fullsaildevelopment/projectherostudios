@@ -116,5 +116,11 @@
     <FxCompile Include="MyPixelShader.hlsl">
       <Filter>Header Files</Filter>
     </FxCompile>
+    <FxCompile Include="PrimalVertexShader.hlsl">
+      <Filter>Header Files</Filter>
+    </FxCompile>
+    <FxCompile Include="PrimalPixelShader.hlsl">
+      <Filter>Header Files</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

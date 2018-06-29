@@ -3,10 +3,10 @@
 #define CES_UI_COMPONENT_H
 enum eUIComponent
 {
-	COMPONENT_MASK  = 1 << 1,
-	COMPONENT_BAR	= 1 << 2,
-	COMPONENT_TEXT  = 1 << 3,
-	COMPONENT_LABEL = 1 << 4
+	COMPONENT_UIMASK	= 1 << 0,
+	COMPONENT_BAR		= 1 << 1,
+	COMPONENT_TEXT		= 1 << 2,
+	COMPONENT_LABEL		= 1 << 3
 };
 
 struct TUIMask

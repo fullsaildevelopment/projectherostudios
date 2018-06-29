@@ -3,8 +3,8 @@
 #define CES_AI_COMPONENT_H
 enum eAIComponent
 {
-	COMPONENT_AIMASK = 1 << 1,
-	COMPONENT_FOLLOW = 1 << 2
+	COMPONENT_AIMASK = 1 << 0,
+	COMPONENT_FOLLOW = 1 << 1
 };
 
 struct TAIMask
