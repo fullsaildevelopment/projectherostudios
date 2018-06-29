@@ -63,10 +63,13 @@
     <ClInclude Include="UI_System.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="CEventManger.h">
+    <ClInclude Include="DLL_Export_Symbols.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Gateware Redistribution R5B\Interface\G_System\GInput.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Gateware Redistribution R5B\Interface\G_System\GKeyDefines.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -98,7 +101,7 @@
     <ClCompile Include="UI_System.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="CEventManger.cpp">
+    <ClCompile Include="Gateware Redistribution R5B\Source\G_System\GInput.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -123,6 +126,12 @@
       <Filter>Header Files</Filter>
     </FxCompile>
     <FxCompile Include="MyPixelShader.hlsl">
+      <Filter>Header Files</Filter>
+    </FxCompile>
+    <FxCompile Include="PrimalVertexShader.hlsl">
+      <Filter>Header Files</Filter>
+    </FxCompile>
+    <FxCompile Include="PrimalPixelShader.hlsl">
       <Filter>Header Files</Filter>
     </FxCompile>
   </ItemGroup>

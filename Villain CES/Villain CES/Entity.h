@@ -16,6 +16,7 @@ struct TWorld
 	TMaterial		atMaterial[ENTITYCOUNT];
 	TTexture		atTexture[ENTITYCOUNT];
 	TShaderID		atShaderID[ENTITYCOUNT];
+	TCamera			atCamera[ENTITYCOUNT];
 	//UI
 	TUIMask			atUIMask[ENTITYCOUNT];
 	TBar			atBar[ENTITYCOUNT];
@@ -28,6 +29,9 @@ struct TWorld
 	TAIMask			atAIMask[ENTITYCOUNT];
 	//Collision
 	TCollisionMask	atCollisionMask[ENTITYCOUNT];
+	TAABB			atAABB[ENTITYCOUNT];
+	TOBB			atOBB[ENTITYCOUNT];
+	TSphere			atSphere[ENTITYCOUNT];
 	
 };
 
@@ -53,6 +57,6 @@ void destroyEntity(TWorld *ptWorld, unsigned int nEntity);
 
 unsigned int createDebugTransformLines(TWorld *ptWorld, TDebugMesh tDebugMesh);
 
-unsigned int createDebugGrid(TWorld * ptWorld, TDebugMesh tDebugMesh);
+unsigned int createDebugGrid(TWorld * ptWorld);
 
 unsigned int createMesh(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMesh tMesh);
