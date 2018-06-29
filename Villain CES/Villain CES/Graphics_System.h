@@ -1,6 +1,8 @@
 #pragma once
 #include "Entity.h"
 #include "Graphics_Component.h"
+#include"Gateware Redistribution R5B/Interface/G_System/GInput.h"
+#include"Gateware Redistribution R5B/Interface/G_System/GKeyDefines.h"
 #include "MyVertexShader.csh"
 #include "MyPixelShader.csh"
 #include "PrimalVertexShader.csh"
@@ -62,6 +64,22 @@ public:
 	void ExecutePipeline(ID3D11DeviceContext *pd3dDeviceContext, int m_nIndexCount, int nGraphicsMask, int nShaderID);
 	void UpdateBuffer(TWorld * ptWorld, std::vector<TSimpleMesh> vtVertexVector, int nEntity, int nMask);
 
+
+	/*
+	* DebugCamera(): This fuction checks what keys are being pressed and modifing a camera's trasforms according to key response.
+	*  
+	* Ins:                  
+	*                    TMatrixBufferType tWVP
+	*					HWND cTheWindow
+	* Outs:
+	*
+	* Returns:              XMMARIX
+	*
+	* Mod. Date:              06/29/2018
+	* Mod. Initials:          ZFB
+	*/
+	XMMATRIX DebugCamera(TMatrixBufferType tWVP, HWND cTheWindow);
+	
 
 private:
 	ID3D11VertexShader * m_pd3dPrimalVertexShader;

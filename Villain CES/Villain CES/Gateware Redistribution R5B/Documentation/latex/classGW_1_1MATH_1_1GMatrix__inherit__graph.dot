@@ -1,0 +1,10 @@
+digraph "GW::MATH::GMatrix"
+{
+  edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
+  node [fontname="Helvetica",fontsize="10",shape=record];
+  Node0 [label="GW::MATH::GMatrix",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled", fontcolor="black"];
+  Node1 -> Node0 [dir="back",color="midnightblue",fontsize="10",style="solid"];
+  Node1 [label="GW::CORE::GSingleThreaded",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classGW_1_1CORE_1_1GSingleThreaded.html",tooltip="This interface is only used to label and query interfaces which are not designed internally to suppor..."];
+  Node2 -> Node1 [dir="back",color="midnightblue",fontsize="10",style="solid"];
+  Node2 [label="GW::CORE::GInterface",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classGW_1_1CORE_1_1GInterface.html",tooltip="Base interface all Gateware interfaces must support at a minimum. "];
+}

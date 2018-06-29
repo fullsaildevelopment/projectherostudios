@@ -1,0 +1,31 @@
+digraph "GW::CORE::GMultiThreaded"
+{
+  edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
+  node [fontname="Helvetica",fontsize="10",shape=record];
+  rankdir="LR";
+  Node0 [label="GW::CORE::GMultiThreaded",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled", fontcolor="black"];
+  Node1 -> Node0 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node1 [label="GW::CORE::GInterface",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classGW_1_1CORE_1_1GInterface.html",tooltip="Base interface all Gateware interfaces must support at a minimum. "];
+  Node0 -> Node2 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node2 [label="GW::AUDIO::GAudio",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classGW_1_1AUDIO_1_1GAudio.html"];
+  Node0 -> Node3 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node3 [label="GW::AUDIO::GMusic",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classGW_1_1AUDIO_1_1GMusic.html"];
+  Node0 -> Node4 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node4 [label="GW::AUDIO::GSound",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classGW_1_1AUDIO_1_1GSound.html"];
+  Node0 -> Node5 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node5 [label="GW::CORE::GBroadcasting",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classGW_1_1CORE_1_1GBroadcasting.html",tooltip="The GBroadcasting Interface is capable of registering & deregistering GListener interfaces. "];
+  Node5 -> Node6 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node6 [label="GW::SYSTEM::GBufferedInput",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classGW_1_1SYSTEM_1_1GBufferedInput.html",tooltip="A Multi-threaded buffered input library. "];
+  Node5 -> Node7 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node7 [label="GW::SYSTEM::GWindow",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classGW_1_1SYSTEM_1_1GWindow.html",tooltip="A thread-safe window creation and management library. "];
+  Node0 -> Node8 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node8 [label="GW::CORE::GListener",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classGW_1_1CORE_1_1GListener.html",tooltip="A GListener Interface may be registered with a GBroadcaster interface to receive event notifications..."];
+  Node8 -> Node9 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node9 [label="GW::GRAPHICS::GDirectX11\lSurface",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classGW_1_1GRAPHICS_1_1GDirectX11Surface.html",tooltip="A library used to initialize, create, and manage a DirectX11 rendering context. "];
+  Node8 -> Node10 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node10 [label="GW::GRAPHICS::GOpenGLSurface",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classGW_1_1GRAPHICS_1_1GOpenGLSurface.html",tooltip="A library used to initialize, create, and manage an OpenGL rendering context. "];
+  Node0 -> Node11 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node11 [label="GW::SYSTEM::GFile",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classGW_1_1SYSTEM_1_1GFile.html",tooltip="Cross platform FileIO/Directory handling. "];
+  Node0 -> Node12 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node12 [label="GW::SYSTEM::GLog",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classGW_1_1SYSTEM_1_1GLog.html",tooltip="Cross platform threadsafe logger. "];
+}
