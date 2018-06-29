@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "Graphics_System.h"
-
+using namespace GW;
+using namespace SYSTEM;
 CGraphicsSystem::CGraphicsSystem()
 {
 }
@@ -35,7 +36,7 @@ void CGraphicsSystem::InitD3D(HWND cTheWindow)
 	d3dSwapchainDescription.BufferDesc.RefreshRate.Denominator = 1;
 	unsigned int nDeviceAndSwapchainFlag = 0;
 #ifdef _DEBUG
-	flag = D3D11_CREATE_DEVICE_DEBUG;
+	d3dSwapchainDescription.Flags = D3D11_CREATE_DEVICE_DEBUG;
 #endif // DEBUG
 	// create a device, device context and swap chain using the information in the scd struct
 	D3D11CreateDeviceAndSwapChain(NULL,
@@ -257,6 +258,65 @@ void CGraphicsSystem::UpdateBuffer(TWorld * ptWorld, std::vector<TSimpleMesh> vt
 			}
 			bIsVertexBufferSet = true;
 		}
+}
+
+ XMMATRIX CGraphicsSystem::DebugCamera(TMatrixBufferType tWVP, HWND cTheWindow)
+{
+	 XMMATRIX d3dTmpViewM, d3dTmpProjectionM, m_d3dTmpWorldM, d3dMovementM, d3dRotation;
+	 GInput* myInput;
+	 GReturn passOrFail;
+	   passOrFail = CreateGInput(cTheWindow, sizeof(cTheWindow), &myInput);
+
+
+
+
+
+	 //Forward && Back Movement
+	 if (myInput->GetState())
+	 {
+		 if (GetAsyncKeyState('W') && GetAsyncKeyState('S'))
+		 {
+		 }
+		 else if (true)
+		 {
+
+		 }
+		 else {
+
+			  }
+	 }
+
+	 //Right && Left Movement
+	 if (true)
+	 {
+		 if (GetAsyncKeyState('A') && GetAsyncKeyState('D'))
+		 {
+		 }
+		 else if (true)
+		 {
+
+		 }
+		 else {
+
+		     }
+	 }
+
+	 // Up && Down Rotation(keybord implemented, soon to be changed in the mouse)
+	 if (true)
+	 {
+
+	 }
+
+	 //Right && Left Rotation(keybord implemented, soon to be changed in the mouse)
+	 if (true)
+	 {
+
+	 }
+
+
+
+	return tWVP.m_d3dViewMatrix;
+
 }
 
 void CGraphicsSystem::InitShaderData(ID3D11DeviceContext * pd3dDeviceContext, XMMATRIX d3dWorldMatrix, XMMATRIX d3dViewMatrix, XMMATRIX d3dProjectionMatrix, bool bCollide, int nMask, XMFLOAT3 d3dLightPosition, XMFLOAT3 d3dCameraPosition, XMFLOAT4X4 *pd3dJointsForVS)

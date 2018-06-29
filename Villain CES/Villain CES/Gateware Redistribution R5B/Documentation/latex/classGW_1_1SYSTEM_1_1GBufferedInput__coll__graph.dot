@@ -1,0 +1,12 @@
+digraph "GW::SYSTEM::GBufferedInput"
+{
+  edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
+  node [fontname="Helvetica",fontsize="10",shape=record];
+  Node4 [label="GW::SYSTEM::GBufferedInput",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled", fontcolor="black"];
+  Node5 -> Node4 [dir="back",color="midnightblue",fontsize="10",style="solid"];
+  Node5 [label="GW::CORE::GBroadcasting",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classGW_1_1CORE_1_1GBroadcasting.html",tooltip="The GBroadcasting Interface is capable of registering & deregistering GListener interfaces. "];
+  Node6 -> Node5 [dir="back",color="midnightblue",fontsize="10",style="solid"];
+  Node6 [label="GW::CORE::GMultiThreaded",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classGW_1_1CORE_1_1GMultiThreaded.html",tooltip="This interface is only used to label and query interfaces which promise to 100% internally support th..."];
+  Node7 -> Node6 [dir="back",color="midnightblue",fontsize="10",style="solid"];
+  Node7 [label="GW::CORE::GInterface",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classGW_1_1CORE_1_1GInterface.html",tooltip="Base interface all Gateware interfaces must support at a minimum. "];
+}

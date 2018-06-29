@@ -156,6 +156,9 @@
     <ClInclude Include="Auger.h" />
     <ClInclude Include="Collision_Component.h" />
     <ClInclude Include="Collision_System.h" />
+    <ClInclude Include="DLL_Export_Symbols.h" />
+    <ClInclude Include="Gateware Redistribution R5B\Interface\G_System\GInput.h" />
+    <ClInclude Include="Gateware Redistribution R5B\Interface\G_System\GKeyDefines.h" />
     <ClInclude Include="Graphics_Component.h" />
     <ClInclude Include="Entity.h" />
     <ClInclude Include="Physics_Component.h" />
@@ -173,6 +176,7 @@
     <ClCompile Include="Auger.cpp" />
     <ClCompile Include="Collision_System.cpp" />
     <ClCompile Include="Entity.cpp" />
+    <ClCompile Include="Gateware Redistribution R5B\Source\G_System\GInput.cpp" />
     <ClCompile Include="Physics_System.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

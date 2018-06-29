@@ -1,0 +1,7 @@
+digraph "Graphical Class Hierarchy"
+{
+  edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
+  node [fontname="Helvetica",fontsize="10",shape=record];
+  rankdir="LR";
+  Node0 [label="GW::SYSTEM::LINUX_WINDOW",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$structGW_1_1SYSTEM_1_1LINUX__WINDOW.html",tooltip="The structure used to pass into Input libraries on Linux. "];
+}
