@@ -424,6 +424,15 @@ XMMATRIX CGraphicsSystem::SetDefaultWorldPosition()
 	return DefaultPerspectiveMatrix;
 }
 
+XMVECTOR CGraphicsSystem::GetCameraPos()
+{
+	XMVECTOR campos;
+	campos.m128_f32[0] = m_ncameraXPosition;
+	campos.m128_f32[1] = m_ncameraYPosition;
+	campos.m128_f32[2] = m_ncameraZPosition;
+	return campos;
+}
+
 
 XMMATRIX CGraphicsSystem::DebugCamera(XMMATRIX tWVP)
 {

@@ -73,6 +73,7 @@ public:
 	XMMATRIX SetDefaultViewMatrix();
 	XMMATRIX SetDefaultPerspective();
 	XMMATRIX SetDefaultWorldPosition();
+	XMVECTOR GetCameraPos();
 
 	/*
 	* DebugCamera(): This fuction checks what keys are being pressed and modifing a camera's trasforms according to key response.

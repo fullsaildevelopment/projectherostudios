@@ -43,6 +43,7 @@ void CAuger::Update()
 	XMMATRIX d3dWorldMatrix = pcGraphicsSystem->SetDefaultWorldPosition();//Call some sort of function from the graphics system to create this matrix
 	XMMATRIX d3dViewMatrix = pcGraphicsSystem->SetDefaultViewMatrix();//Call some sort of function from the graphics system to create this matrix
 	XMMATRIX d3dProjectionMatrix = pcGraphicsSystem->SetDefaultPerspective();//Call some sort of function from the graphics system to create this matrix
+	tThisWorld.atWorldMatrix[0].worldMatrix = d3dWorldMatrix;
 	pcGraphicsSystem->DebugCamera(d3dWorldMatrix);
 	for (int nCurrentEntity = 0; nCurrentEntity < ENTITYCOUNT; nCurrentEntity++)
 	{
@@ -142,8 +143,14 @@ void CAuger::Update()
 		{
 			if (nCurrentEntity == 1) {
 				d3dWorldMatrix.r[3].m128_f32[1] = 1;
+				tThisWorld.atWorldMatrix[1].worldMatrix = d3dWorldMatrix;
+				tThisWorld.atWorldMatrix[1].worldMatrix.r[3].m128_f32[0] = pcGraphicsSystem->GetCameraPos().m128_f32[0];
+				tThisWorld.atWorldMatrix[1].worldMatrix.r[3].m128_f32[1] = pcGraphicsSystem->GetCameraPos().m128_f32[1];
+				tThisWorld.atWorldMatrix[1].worldMatrix.r[3].m128_f32[2] = pcGraphicsSystem->GetCameraPos().m128_f32[2]+2;
+
+
 			}
-			pcGraphicsSystem->InitPrimalShaderData(pcGraphicsSystem->m_pd3dDeviceContext, d3dWorldMatrix, d3dViewMatrix, d3dProjectionMatrix, tThisWorld.atDebugMesh[nCurrentEntity]);
+			pcGraphicsSystem->InitPrimalShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, d3dViewMatrix, d3dProjectionMatrix, tThisWorld.atDebugMesh[nCurrentEntity]);
 		}
 		
 		pcGraphicsSystem->ExecutePipeline(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atDebugMesh->m_nVertexCount, tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask, tThisWorld.atShaderID[nCurrentEntity].m_nShaderID);
