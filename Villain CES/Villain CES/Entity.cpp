@@ -69,12 +69,38 @@ unsigned int createPlayerBox(TWorld * ptWorld)
 	ptWorld->atUIMask[nThisEntity].m_tnUIMask = COMPONENT_UIMASK;
 	ptWorld->atPhysicsMask[nThisEntity].m_tnPhysicsMask = COMPONENT_PHYSICSMASK;
 	static TPrimalVert atDebugGridVertices[]{
-		TPrimalVert{ XMFLOAT3(-.5f, 0,  .5f),		XMFLOAT4(0, 1.0f,	0.0f, 1.0f) },//00	Green
-		TPrimalVert{ XMFLOAT3(-.5f, 0, -.5f),		XMFLOAT4(0, 1.0f,	0.0f, 1.0f) },//01	Green
-		TPrimalVert{ XMFLOAT3(.5f,  0, -.5f),		XMFLOAT4(0 ,1.0F,	0.0F, 1.0F)},
-		TPrimalVert{ XMFLOAT3(.5F,  0, .5f),		XMFLOAT4(0,1.0F,	0.0F,1.0F)}
+		//8
+		TPrimalVert{ XMFLOAT3(-.2f, 0,  -0.4f),		XMFLOAT4(0, 1.0f,	0.0f, 1.0f) },//00	Green
+		TPrimalVert{ XMFLOAT3(-.2f, 0, -.5f),		XMFLOAT4(0, 1.0f,	0.0f, 1.0f) },//01	Green
+		TPrimalVert{ XMFLOAT3(.0f,  0, -.5f),		XMFLOAT4(0 ,1.0F,	0.0F, 1.0F)},
+		TPrimalVert{ XMFLOAT3(.0F,  0, -0.4f),		XMFLOAT4(0,1.0F,	0.0F,1.0F)},
+		TPrimalVert{ XMFLOAT3(-.2f, 0, -.5f),		XMFLOAT4(0, 1.0f,	0.0f, 1.0f) },//01	Green
+		TPrimalVert{ XMFLOAT3(.0f,  0, -.5f),		XMFLOAT4(0 ,1.0F,	0.0F, 1.0F) },
+		TPrimalVert{ XMFLOAT3(.0F,  0, -0.4f),		XMFLOAT4(0,1.0F,	0.0F,1.0F) },
+		TPrimalVert{ XMFLOAT3(-.2f, 0,  -0.4f),		XMFLOAT4(0, 1.0f,	0.0f, 1.0f) },
+
+		//16
+		TPrimalVert{ XMFLOAT3(-.2f, 0.3f,  -0.4f),		XMFLOAT4(0, 1.0f,	0.0f, 1.0f) },//00	Green
+		TPrimalVert{ XMFLOAT3(-.2f, 0.3f, -.5f),		XMFLOAT4(0, 1.0f,	0.0f, 1.0f) },//01	Green
+		TPrimalVert{ XMFLOAT3(.0f,  0.3f, -.5f),		XMFLOAT4(0 ,1.0F,	0.0F, 1.0F) },
+		TPrimalVert{ XMFLOAT3(.0F,  0.3f, -0.4f),		XMFLOAT4(0,1.0F,	0.0F,1.0F) },
+		TPrimalVert{ XMFLOAT3(-.2f, 0.3f, -.5f),		XMFLOAT4(0, 1.0f,	0.0f, 1.0f) },//01	Green
+		TPrimalVert{ XMFLOAT3(.0f,  0.3f, -.5f),		XMFLOAT4(0 ,1.0F,	0.0F, 1.0F) },
+		TPrimalVert{ XMFLOAT3(.0F,  0.3f, -0.4f),		XMFLOAT4(0,1.0F,	0.0F,1.0F) },
+		TPrimalVert{ XMFLOAT3(-.2f, 0.3f,  -0.4f),		XMFLOAT4(0, 1.0f,	0.0f, 1.0f) },
+		//26
+		TPrimalVert{ XMFLOAT3(-.2f, 0.3f,  -0.4f),		XMFLOAT4(0, 1.0f,	0.0f, 1.0f) },
+		TPrimalVert{ XMFLOAT3(-.2f, 0,  -0.4f),		XMFLOAT4(0, 1.0f,	0.0f, 1.0f) },
+		TPrimalVert{ XMFLOAT3(-.2f, 0, -.5f),		XMFLOAT4(0, 1.0f,	0.0f, 1.0f) },
+		TPrimalVert{ XMFLOAT3(-.2f, 0.3f, -.5f),		XMFLOAT4(0, 1.0f,	0.0f, 1.0f) },
+		TPrimalVert{ XMFLOAT3(.0f,  0, -.5f),		XMFLOAT4(0 ,1.0F,	0.0F, 1.0F) },
+		TPrimalVert{ XMFLOAT3(.0f,  0.3f, -.5f),		XMFLOAT4(0 ,1.0F,	0.0F, 1.0F) },
+		TPrimalVert{ XMFLOAT3(.0F,  0, -0.4f),		XMFLOAT4(0,1.0F,	0.0F,1.0F) },
+		TPrimalVert{ XMFLOAT3(.0F,  0.3f, -0.4f),		XMFLOAT4(0,1.0F,	0.0F,1.0F) },
+	/*	TPrimalVert{ XMFLOAT3(-.2f, 0, -.5f),		XMFLOAT4(0, 1.0f,	0.0f, 1.0f) },
+		TPrimalVert{ XMFLOAT3(-.2f, 0.3f, -.5f),		XMFLOAT4(0, 1.0f,	0.0f, 1.0f) },*/
 	};
-	ptWorld->atDebugMesh[nThisEntity].m_nVertexCount = 4;
+	ptWorld->atDebugMesh[nThisEntity].m_nVertexCount = 24;
 	ptWorld->atDebugMesh[nThisEntity].m_nVertexBufferStride = sizeof(TPrimalVert);
 	ptWorld->atDebugMesh[nThisEntity].m_nVertexBufferOffset = 0;
 	ptWorld->atDebugMesh[nThisEntity].m_d3dVertexBufferDesc.Usage = D3D11_USAGE_IMMUTABLE;

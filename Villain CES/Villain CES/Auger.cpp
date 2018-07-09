@@ -32,7 +32,7 @@ void CAuger::InitializeSystems()
 	pcGraphicsSystem->InitD3D(cApplicationWindow);
 	createDebugGrid(&tThisWorld);
 	createPlayerBox(&tThisWorld);
-
+	// do not make things that u want to draw after this line of code or shit will  break;
 	pcGraphicsSystem->CreateBuffers(&tThisWorld);
 	
 }
@@ -141,7 +141,7 @@ void CAuger::Update()
 		if (tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_DEBUGMESH | COMPONENT_SHADERID))
 		{
 			if (nCurrentEntity == 1) {
-				d3dWorldMatrix.r[3].m128_f32[1] = 4;
+				d3dWorldMatrix.r[3].m128_f32[1] = 1;
 			}
 			pcGraphicsSystem->InitPrimalShaderData(pcGraphicsSystem->m_pd3dDeviceContext, d3dWorldMatrix, d3dViewMatrix, d3dProjectionMatrix, tThisWorld.atDebugMesh[nCurrentEntity]);
 		}
