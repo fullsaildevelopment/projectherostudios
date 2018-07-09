@@ -80,6 +80,7 @@ unsigned int createDebugGrid(TWorld * ptWorld)
 				Random number
 	*/
 	unsigned int nThisEntity = createEntity(ptWorld);
+	ptWorld->anComponentMask[nThisEntity] = COMPONENT_DEBUGMESH;
 	ptWorld->atGraphicsMask[nThisEntity].m_tnGraphicsMask	= COMPONENT_GRAPHICSMASK | COMPONENT_DEBUGMESH | COMPONENT_SHADERID;//138
 	ptWorld->atAIMask[nThisEntity].m_tnAIMask				= COMPONENT_AIMASK;
 	ptWorld->atCollisionMask[nThisEntity].m_tnCollisionMask = COMPONENT_COLLISIONMASK;
@@ -395,6 +396,19 @@ unsigned int createMesh(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMesh tMe
 	ptWorld->atMesh[nThisEntity].m_d3dVertexData.pSysMem = ptSimpleMesh;
 	ptWorld->atMesh[nThisEntity].m_d3dVertexData.SysMemPitch = 0;
 	ptWorld->atMesh[nThisEntity].m_d3dVertexData.SysMemSlicePitch = 0;
+
+	return 0;
+}
+
+unsigned int createPlayerBox(TWorld * ptWorld)
+{
+	unsigned int nThisEntity = createEntity(ptWorld);
+	ptWorld->anComponentMask[nThisEntity] = COMPONENT_DEBUGMESH;
+	ptWorld->atGraphicsMask[nThisEntity].m_tnGraphicsMask = COMPONENT_GRAPHICSMASK | COMPONENT_DEBUGMESH | COMPONENT_SHADERID;//138
+	ptWorld->atAIMask[nThisEntity].m_tnAIMask = COMPONENT_AIMASK;
+	ptWorld->atCollisionMask[nThisEntity].m_tnCollisionMask = COMPONENT_COLLISIONMASK;
+	ptWorld->atUIMask[nThisEntity].m_tnUIMask = COMPONENT_UIMASK;
+	ptWorld->atPhysicsMask[nThisEntity].m_tnPhysicsMask = COMPONENT_PHYSICSMASK;
 
 	return 0;
 }

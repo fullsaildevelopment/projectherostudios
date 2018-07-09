@@ -1,6 +1,8 @@
 /////////////
 // CBUFFER //
 /////////////
+#pragma pack_matrix( row_major )
+
 cbuffer MatrixBuffer : register(b0)
 {
 	matrix d3dWorldMatrix;

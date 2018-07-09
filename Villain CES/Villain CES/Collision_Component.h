@@ -16,10 +16,9 @@ struct TCollisionMask
 
 struct TAABB
 {
-	XMFLOAT3 m_d3dSmallestWidth;
-	XMFLOAT3 m_d3dLargestWidth;
-	XMFLOAT3 m_d3dSmallestHeight;
-	XMFLOAT3 m_d3dLargestHeight;
+	XMFLOAT3 m_dMinPoint;
+	XMFLOAT3 m_dMaxPoint;
+
 };
 
 struct TOBB

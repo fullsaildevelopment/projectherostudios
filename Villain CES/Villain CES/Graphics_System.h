@@ -8,6 +8,8 @@
 #include "PrimalVertexShader.csh"
 #include "PrimalPixelShader.csh"
 #include <vector>
+using namespace GW;
+using namespace SYSTEM;
 class CGraphicsSystem
 {
 public:
@@ -45,6 +47,11 @@ public:
 		float m_fShininess;
 		int m_nPadding;
 	};
+	struct TCamera {
+		TPrimalMatrixBufferType t_cameraMatrix;
+	};
+
+
 										   // function prototypes
 	CGraphicsSystem();
 	~CGraphicsSystem();
@@ -63,7 +70,9 @@ public:
 	//Every Frame
 	void ExecutePipeline(ID3D11DeviceContext *pd3dDeviceContext, int m_nIndexCount, int nGraphicsMask, int nShaderID);
 	void UpdateBuffer(TWorld * ptWorld, std::vector<TSimpleMesh> vtVertexVector, int nEntity, int nMask);
-
+	XMMATRIX SetDefaultViewMatrix();
+	XMMATRIX SetDefaultPerspective();
+	XMMATRIX SetDefaultWorldPosition();
 
 	/*
 	* DebugCamera(): This fuction checks what keys are being pressed and modifing a camera's trasforms according to key response.
@@ -78,9 +87,12 @@ public:
 	* Mod. Date:              06/29/2018
 	* Mod. Initials:          ZFB
 	*/
-	XMMATRIX DebugCamera(TPrimalMatrixBufferType tWVP, HWND cTheWindow);
-	
 
+	XMMATRIX DebugCamera(XMMATRIX tWVP);
+	
+	GReturn InitlizeGInput(HWND cTheWindow);
+private:
+	int InputCheck(int GInput);
 private:
 	ID3D11VertexShader * m_pd3dPrimalVertexShader;
 	ID3D11PixelShader	*m_pd3dPrimalPixelShader;
@@ -93,6 +105,11 @@ private:
 	ID3D11Buffer		*m_pd3dMyMatrixBuffer;
 
 	ID3D11Buffer		*m_pd3dBlinnPhongBuffer;
+	float					m_ncameraXPosition;
+	float					m_ncameraYPosition;
+	float					m_ncameraZPosition;
+	GInput*				m_pcMyInput;
+	
 
 };
 
