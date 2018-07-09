@@ -90,4 +90,7 @@ struct TCamera
 		Fill out this structure
 	*/
 };
+struct TWorldMatrix {
+	XMMATRIX worldMatrix;
+};
 #endif

@@ -17,6 +17,7 @@ struct TWorld
 	TTexture		atTexture[ENTITYCOUNT];
 	TShaderID		atShaderID[ENTITYCOUNT];
 	TCamera			atCamera[ENTITYCOUNT];
+	TWorldMatrix	atWorldMatrix[ENTITYCOUNT];
 	//UI
 	TUIMask			atUIMask[ENTITYCOUNT];
 	TBar			atBar[ENTITYCOUNT];

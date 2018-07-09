@@ -31,8 +31,9 @@ void CAuger::InitializeSystems()
 {
 	pcGraphicsSystem->InitD3D(cApplicationWindow);
 	createDebugGrid(&tThisWorld);
+	createPlayerBox(&tThisWorld);
+
 	pcGraphicsSystem->CreateBuffers(&tThisWorld);
-	createEntity(&tThisWorld);
 	
 }
 
@@ -139,11 +140,12 @@ void CAuger::Update()
 		*/
 		if (tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_DEBUGMESH | COMPONENT_SHADERID))
 		{
+			if (nCurrentEntity == 1) {
+				d3dWorldMatrix.r[3].m128_f32[1] = 4;
+			}
 			pcGraphicsSystem->InitPrimalShaderData(pcGraphicsSystem->m_pd3dDeviceContext, d3dWorldMatrix, d3dViewMatrix, d3dProjectionMatrix, tThisWorld.atDebugMesh[nCurrentEntity]);
 		}
-		if (tThisWorld.atCollisionMask) {
-
-		}
+		
 		pcGraphicsSystem->ExecutePipeline(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atDebugMesh->m_nVertexCount, tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask, tThisWorld.atShaderID[nCurrentEntity].m_nShaderID);
 	}
 	pcGraphicsSystem->m_pd3dSwapchain->Present(0, 0);

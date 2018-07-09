@@ -89,6 +89,7 @@ public:
 	*/
 
 	XMMATRIX DebugCamera(XMMATRIX tWVP);
+
 	
 	GReturn InitlizeGInput(HWND cTheWindow);
 private:
