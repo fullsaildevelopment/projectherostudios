@@ -3,6 +3,11 @@
 
 CGraphicsSystem::CGraphicsSystem()
 {
+	m_ncameraXPosition = 0;
+	m_ncameraYPosition = 0.5;
+	m_ncameraZPosition = -10;
+
+
 }
 
 CGraphicsSystem::~CGraphicsSystem()
@@ -282,9 +287,238 @@ void CGraphicsSystem::UpdateBuffer(TWorld * ptWorld, std::vector<TSimpleMesh> vt
 		}
 }
 
-XMMATRIX CGraphicsSystem::DebugCamera(TPrimalMatrixBufferType tWVP, HWND cTheWindow)
+XMMATRIX CGraphicsSystem::SetDefaultViewMatrix()
 {
-	return XMMATRIX();
+	/*DefaultViewMatrix.view._11 = 1;
+
+	DefaultViewMatrix.view._22 = cos((-18 * 3.14) / 180.0f);
+
+	DefaultViewMatrix.view._23 = -sin((-18 * 3.14) / 180.0f);
+
+	DefaultViewMatrix.view._32 = sin((-18 * 3.14) / 180.0f);
+
+	DefaultViewMatrix.view._33 = cos((-18 * 3.14) / 180.0f);
+
+	DefaultViewMatrix.view._44 = 1;*/
+	XMMATRIX DefaultViewMatrix;
+	DefaultViewMatrix.r[0].m128_f32[0] = 1;
+	DefaultViewMatrix.r[0].m128_f32[1] = 0;
+	DefaultViewMatrix.r[0].m128_f32[2] = 0;
+	DefaultViewMatrix.r[0].m128_f32[3] = 0;
+
+	DefaultViewMatrix.r[1].m128_f32[0] = 0;
+	DefaultViewMatrix.r[1].m128_f32[1] = cos((-18 * 3.14) / 180.0f);
+	DefaultViewMatrix.r[1].m128_f32[2] = -sin((-18 * 3.14) / 180.0f);;
+	DefaultViewMatrix.r[1].m128_f32[3] = 0;
+
+	DefaultViewMatrix.r[2].m128_f32[0] = 0;
+	DefaultViewMatrix.r[2].m128_f32[1] = sin((-18 * 3.14) / 180.0f);;
+	DefaultViewMatrix.r[2].m128_f32[2] = cos((-18 * 3.14) / 180.0f);;
+	DefaultViewMatrix.r[2].m128_f32[3] = 0;
+
+	DefaultViewMatrix.r[3].m128_f32[0] = m_ncameraXPosition;
+	DefaultViewMatrix.r[3].m128_f32[1] = m_ncameraYPosition;
+	DefaultViewMatrix.r[3].m128_f32[2] = m_ncameraZPosition;
+	DefaultViewMatrix.r[3].m128_f32[3] = 1;
+
+	DefaultViewMatrix.r[0].m128_f32[0] = DefaultViewMatrix.r[0].m128_f32[0];
+	//DefaultViewMatrix.view._21 = DefaultViewMatrix.view._12;
+	DefaultViewMatrix.r[1].m128_f32[0] = DefaultViewMatrix.r[0].m128_f32[1];
+//	DefaultViewMatrix.view._31 = DefaultViewMatrix.view._13;
+	DefaultViewMatrix.r[2].m128_f32[0] = DefaultViewMatrix.r[0].m128_f32[2];
+	//DefaultViewMatrix.view._12 = DefaultViewMatrix.view._21;
+	DefaultViewMatrix.r[0].m128_f32[1] = DefaultViewMatrix.r[1].m128_f32[0];
+	//DefaultViewMatrix.view._22 = DefaultViewMatrix.view._22;
+	DefaultViewMatrix.r[1].m128_f32[1] = DefaultViewMatrix.r[1].m128_f32[1];
+//	DefaultViewMatrix.view._32 = DefaultViewMatrix.view._23;
+	DefaultViewMatrix.r[2].m128_f32[1] = DefaultViewMatrix.r[1].m128_f32[2];
+//	DefaultViewMatrix.view._13 = DefaultViewMatrix.view._31;
+	DefaultViewMatrix.r[0].m128_f32[2] = DefaultViewMatrix.r[2].m128_f32[0];
+	DefaultViewMatrix.r[1].m128_f32[2] = DefaultViewMatrix.r[2].m128_f32[1];
+	DefaultViewMatrix.r[2].m128_f32[2] = DefaultViewMatrix.r[2].m128_f32[2];
+	XMFLOAT4 pos; //pos.x = toShader.view._41;
+	pos.x = m_ncameraXPosition;
+	pos.y = m_ncameraYPosition;
+	pos.z = m_ncameraZPosition;
+	pos.w = 0;
+	XMVECTOR temptpos;
+	temptpos.m128_f32[0] = pos.x;
+	temptpos.m128_f32[1] = pos.y;
+	temptpos.m128_f32[2] = pos.z;
+	temptpos.m128_f32[3] = pos.w;
+
+	temptpos = XMVector4Transform(temptpos, DefaultViewMatrix);
+	temptpos.m128_f32[0] *= -1;
+	temptpos.m128_f32[1] *= -1;
+	temptpos.m128_f32[2] *= -1;
+	DefaultViewMatrix.r[3].m128_f32[0] = temptpos.m128_f32[0];
+	DefaultViewMatrix.r[3].m128_f32[1] = temptpos.m128_f32[1];
+	DefaultViewMatrix.r[3].m128_f32[2] = temptpos.m128_f32[2];
+	
+	/*DefaultViewMatrix.view._23 = DefaultViewMatrix.view._32;
+	DefaultViewMatrix.view._33 = DefaultViewMatrix.view._33;*/
+
+
+
+
+	return DefaultViewMatrix;
+}
+
+XMMATRIX CGraphicsSystem::SetDefaultPerspective()
+{
+	/*DefaultViewMatrix.perspective._22 = 1 / tan(fov * 0.5 * 3.15f / 180);
+	DefaultViewMatrix.perspective._11 = DefaultViewMatrix.perspective._22;
+	DefaultViewMatrix.perspective._34 = 1;
+	DefaultViewMatrix.perspective._33 = farplane / (farplane - nearplane);
+	DefaultViewMatrix.perspective._43 = -(farplane * nearplane) / (farplane - nearplane);
+	DefaultViewMatrix.perspective = DefaultViewMatrix.perspective;*/
+
+	XMMATRIX DefaultPerspectiveMatrix;
+	// the 90 is for fov if we want to implament field of view
+	DefaultPerspectiveMatrix.r[0].m128_f32[0] = 1 / tan(90* 0.5 * 3.15f / 180);
+	DefaultPerspectiveMatrix.r[0].m128_f32[1] = 0;
+	DefaultPerspectiveMatrix.r[0].m128_f32[2] = 0;
+	DefaultPerspectiveMatrix.r[0].m128_f32[3] = 0;
+
+	DefaultPerspectiveMatrix.r[1].m128_f32[0] = 0;
+	DefaultPerspectiveMatrix.r[1].m128_f32[1] = 1 / tan(90 * 0.5 * 3.15f / 180);
+	DefaultPerspectiveMatrix.r[1].m128_f32[2] = 0;
+	DefaultPerspectiveMatrix.r[1].m128_f32[3] = 0;
+
+	DefaultPerspectiveMatrix.r[2].m128_f32[0] = 0;
+	DefaultPerspectiveMatrix.r[2].m128_f32[1] = 0;
+	DefaultPerspectiveMatrix.r[2].m128_f32[2] = 100 / (100 - 0.1);
+	DefaultPerspectiveMatrix.r[2].m128_f32[3] = 1;
+
+	DefaultPerspectiveMatrix.r[3].m128_f32[0] = 0;
+	DefaultPerspectiveMatrix.r[3].m128_f32[1] = 0;
+	DefaultPerspectiveMatrix.r[3].m128_f32[2] = -(100 * 0.1) / (100 - 0.1);
+	DefaultPerspectiveMatrix.r[3].m128_f32[3] = 0;
+	return DefaultPerspectiveMatrix;
+}
+
+XMMATRIX CGraphicsSystem::SetDefaultWorldPosition()
+{
+
+	XMMATRIX DefaultPerspectiveMatrix;
+	// the 90 is for fov if we want to implament field of view
+	DefaultPerspectiveMatrix.r[0].m128_f32[0] = 1;
+	DefaultPerspectiveMatrix.r[0].m128_f32[1] = 0;
+	DefaultPerspectiveMatrix.r[0].m128_f32[2] = 0;
+	DefaultPerspectiveMatrix.r[0].m128_f32[3] = 0;
+
+	DefaultPerspectiveMatrix.r[1].m128_f32[0] = 0;
+	DefaultPerspectiveMatrix.r[1].m128_f32[1] = 1;
+	DefaultPerspectiveMatrix.r[1].m128_f32[2] = 0;
+	DefaultPerspectiveMatrix.r[1].m128_f32[3] = 0;
+
+	DefaultPerspectiveMatrix.r[2].m128_f32[0] = 0;
+	DefaultPerspectiveMatrix.r[2].m128_f32[1] = 0;
+	DefaultPerspectiveMatrix.r[2].m128_f32[2] = 1;
+	DefaultPerspectiveMatrix.r[2].m128_f32[3] = 0;
+
+	DefaultPerspectiveMatrix.r[3].m128_f32[0] = 0;
+	DefaultPerspectiveMatrix.r[3].m128_f32[1] = 0.2;
+	DefaultPerspectiveMatrix.r[3].m128_f32[2] = -9;
+	DefaultPerspectiveMatrix.r[3].m128_f32[3] = 1;
+	return DefaultPerspectiveMatrix;
+}
+
+
+XMMATRIX CGraphicsSystem::DebugCamera(XMMATRIX tWVP)
+{
+	XMMATRIX d3dTmpViewM, d3dTmpProjectionM, m_d3dTmpWorldM, d3dMovementM, d3dRotation;
+
+
+	m_d3dTmpWorldM.r[0].m128_f32[0] = 0;
+
+
+
+
+	//Forward && Back Movement
+
+	// up key movement
+	
+	if (InputCheck(G_KEY_UP) == 1) {
+		m_ncameraZPosition += 0.01;
+	}
+	// down key movement
+	if (InputCheck(G_KEY_DOWN) == 1) {
+		m_ncameraZPosition -= 0.01;
+	}
+	// left key movement
+	if (InputCheck(G_KEY_LEFT) == 1) {
+		m_ncameraXPosition -= 0.01;
+	}
+	// right key movement
+	if (InputCheck(G_KEY_RIGHT) == 1) {
+		m_ncameraXPosition += 0.01;
+	}
+	if (InputCheck(G_KEY_SPACE) == 1) {
+		m_ncameraYPosition += 0.01;
+	}
+	if (InputCheck(G_KEY_RIGHTSHIFT) == 1) {
+		m_ncameraYPosition -= 0.01;
+	}
+
+	
+	//{
+	//if (GetAsyncKeyState('W') && GetAsyncKeyState('S'))
+	//{
+	//}
+	//else if (true)
+	//{
+
+	//}
+	//else {
+
+	//}
+	//}
+
+	////Right && Left Movement
+	//if (true)
+	//{
+	//	if (GetAsyncKeyState('A') && GetAsyncKeyState('D'))
+	//	{
+	//	}
+	//	else if (true)
+	//	{
+
+	//	}
+	//	else {
+
+	//	}
+	//}
+
+	//// Up && Down Rotation(keybord implemented, soon to be changed in the mouse)
+	//if (true)
+	//{
+
+	//}
+
+	////Right && Left Rotation(keybord implemented, soon to be changed in the mouse)
+	//if (true)
+	//{
+
+	//}
+
+
+
+	return m_d3dTmpWorldM;
+}
+
+GReturn CGraphicsSystem::InitlizeGInput(HWND cTheWindow)
+{
+	// returns the results of function
+	return CreateGInput(cTheWindow, sizeof(cTheWindow), &m_pcMyInput);
+
+}
+
+int CGraphicsSystem::InputCheck(int GInputKey)
+{
+	float fInputReturnValue = -1;
+	m_pcMyInput->GetState(GInputKey, fInputReturnValue);
+	return fInputReturnValue;
 }
 
 void CGraphicsSystem::InitMyShaderData(ID3D11DeviceContext * pd3dDeviceContext, XMMATRIX d3dWorldMatrix, XMMATRIX d3dViewMatrix, XMMATRIX d3dProjectionMatrix, int nMask, XMFLOAT3 d3dLightPosition, XMFLOAT3 d3dCameraPosition, XMFLOAT4X4 *pd3dJointsForVS)
@@ -300,12 +534,22 @@ void CGraphicsSystem::InitPrimalShaderData(ID3D11DeviceContext * pd3dDeviceConte
 	unsigned int bufferNumber;
 
 	XMMATRIX d3dView;
+
 	d3dView = d3dViewMatrix;
 	//Transpose the matrices to prepare them for the shader.
-	d3dWorldMatrix = DirectX::XMMatrixTranspose(d3dWorldMatrix);
-	d3dView = XMMatrixInverse(NULL, d3dView);
-	d3dView = XMMatrixTranspose(d3dView);
-	d3dProjectionMatrix = DirectX::XMMatrixTranspose(d3dProjectionMatrix);
+//	d3dWorldMatrix = DirectX::XMMatrixTranspose(d3dWorldMatrix);
+//	d3dView = DirectX::XMMatrixTranspose(d3dView);
+
+
+	/*d3dView = XMMatrixInverse(NULL, d3dView);
+	d3dView.r[3].m128_f32[0] = 0;
+	d3dView.r[3].m128_f32[1] = 0;
+	d3dView.r[3].m128_f32[2] = -10;
+	d3dView.r[3].m128_f32[0] = 1;*/
+
+
+	//d3dView = XMMatrixTranspose(d3dView);
+	//d3dProjectionMatrix = DirectX::XMMatrixTranspose(d3dProjectionMatrix);
 
 	pd3dDeviceContext->Map(m_pd3dPrimalMatrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &d3dPrimalMappedResource);
 
