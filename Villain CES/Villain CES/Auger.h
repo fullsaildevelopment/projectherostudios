@@ -17,5 +17,9 @@ public:
 	void InitializeSystems();
 	void Update();
 	void End();
+private:
+	XMMATRIX m_d3dWorldMatrix;
+	XMMATRIX m_d3dViewMatrix;
+	XMMATRIX m_d3dProjectionMatrix;
 };
 

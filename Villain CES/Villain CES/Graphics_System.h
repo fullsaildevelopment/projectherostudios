@@ -61,6 +61,9 @@ public:
 	void CleanD3D(TWorld * ptWorld);         // closes Direct3D and releases memory
 	//First Frame
 	void CreateBuffers(TWorld * ptWorld);
+	XMMATRIX SetDefaultViewMatrix();
+	
+	XMMATRIX SetDefaultWorldPosition();
 	//First Frame
 	void CreateShaders(ID3D11Device* pd3dDevice);
 	//Every Frame
@@ -70,12 +73,10 @@ public:
 	//Every Frame
 	void ExecutePipeline(ID3D11DeviceContext *pd3dDeviceContext, int m_nIndexCount, int nGraphicsMask, int nShaderID);
 	void UpdateBuffer(TWorld * ptWorld, std::vector<TSimpleMesh> vtVertexVector, int nEntity, int nMask);
-	XMMATRIX SetDefaultViewMatrix();
 	XMMATRIX SetDefaultPerspective();
-	XMMATRIX SetDefaultWorldPosition();
 
 	/*
-	* DebugCamera(): This fuction checks what keys are being pressed and modifing a camera's trasforms according to key response.
+	* DebugCamera(): This fuction checks what keys are being pressed and modifing a camera's trasforms according to keys pressed.
 	*  
 	* Ins:                  
 	*                    TMatrixBufferType tWVP
@@ -88,7 +89,7 @@ public:
 	* Mod. Initials:          ZFB
 	*/
 
-	XMMATRIX DebugCamera(XMMATRIX tWVP);
+	XMMATRIX DebugCamera(XMMATRIX d3d_ViewM, XMMATRIX d3d_WorldM);
 	
 	GReturn InitlizeGInput(HWND cTheWindow);
 private:
@@ -108,6 +109,8 @@ private:
 	float					m_ncameraXPosition;
 	float					m_ncameraYPosition;
 	float					m_ncameraZPosition;
+	float					m_aspectRatio;
+	float					m_FOV;
 	GInput*				m_pcMyInput;
 	
 

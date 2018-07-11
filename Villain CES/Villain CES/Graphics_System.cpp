@@ -39,6 +39,8 @@ void CGraphicsSystem::InitD3D(HWND cTheWindow)
 	d3dSwapchainDescription.BufferDesc.RefreshRate.Numerator = 60;
 	d3dSwapchainDescription.BufferDesc.RefreshRate.Denominator = 1;
 	unsigned int nDeviceAndSwapchainFlag = 0;
+
+	m_aspectRatio = cRectangle.bottom - cRectangle.top / cRectangle.right - cRectangle.left;
 #ifdef _DEBUG
 	int nFlag = D3D11_CREATE_DEVICE_DEBUG;
 #endif // DEBUG
@@ -301,59 +303,61 @@ XMMATRIX CGraphicsSystem::SetDefaultViewMatrix()
 
 	DefaultViewMatrix.view._44 = 1;*/
 	XMMATRIX DefaultViewMatrix;
-	DefaultViewMatrix.r[0].m128_f32[0] = 1;
-	DefaultViewMatrix.r[0].m128_f32[1] = 0;
-	DefaultViewMatrix.r[0].m128_f32[2] = 0;
-	DefaultViewMatrix.r[0].m128_f32[3] = 0;
 
-	DefaultViewMatrix.r[1].m128_f32[0] = 0;
-	DefaultViewMatrix.r[1].m128_f32[1] = cos((-18 * 3.14) / 180.0f);
-	DefaultViewMatrix.r[1].m128_f32[2] = -sin((-18 * 3.14) / 180.0f);;
-	DefaultViewMatrix.r[1].m128_f32[3] = 0;
-
-	DefaultViewMatrix.r[2].m128_f32[0] = 0;
-	DefaultViewMatrix.r[2].m128_f32[1] = sin((-18 * 3.14) / 180.0f);;
-	DefaultViewMatrix.r[2].m128_f32[2] = cos((-18 * 3.14) / 180.0f);;
-	DefaultViewMatrix.r[2].m128_f32[3] = 0;
-
-	DefaultViewMatrix.r[3].m128_f32[0] = m_ncameraXPosition;
-	DefaultViewMatrix.r[3].m128_f32[1] = m_ncameraYPosition;
-	DefaultViewMatrix.r[3].m128_f32[2] = m_ncameraZPosition;
-	DefaultViewMatrix.r[3].m128_f32[3] = 1;
-
-	DefaultViewMatrix.r[0].m128_f32[0] = DefaultViewMatrix.r[0].m128_f32[0];
-	//DefaultViewMatrix.view._21 = DefaultViewMatrix.view._12;
-	DefaultViewMatrix.r[1].m128_f32[0] = DefaultViewMatrix.r[0].m128_f32[1];
-//	DefaultViewMatrix.view._31 = DefaultViewMatrix.view._13;
-	DefaultViewMatrix.r[2].m128_f32[0] = DefaultViewMatrix.r[0].m128_f32[2];
-	//DefaultViewMatrix.view._12 = DefaultViewMatrix.view._21;
-	DefaultViewMatrix.r[0].m128_f32[1] = DefaultViewMatrix.r[1].m128_f32[0];
-	//DefaultViewMatrix.view._22 = DefaultViewMatrix.view._22;
-	DefaultViewMatrix.r[1].m128_f32[1] = DefaultViewMatrix.r[1].m128_f32[1];
-//	DefaultViewMatrix.view._32 = DefaultViewMatrix.view._23;
-	DefaultViewMatrix.r[2].m128_f32[1] = DefaultViewMatrix.r[1].m128_f32[2];
-//	DefaultViewMatrix.view._13 = DefaultViewMatrix.view._31;
-	DefaultViewMatrix.r[0].m128_f32[2] = DefaultViewMatrix.r[2].m128_f32[0];
-	DefaultViewMatrix.r[1].m128_f32[2] = DefaultViewMatrix.r[2].m128_f32[1];
-	DefaultViewMatrix.r[2].m128_f32[2] = DefaultViewMatrix.r[2].m128_f32[2];
-	XMFLOAT4 pos; //pos.x = toShader.view._41;
-	pos.x = m_ncameraXPosition;
-	pos.y = m_ncameraYPosition;
-	pos.z = m_ncameraZPosition;
-	pos.w = 0;
-	XMVECTOR temptpos;
-	temptpos.m128_f32[0] = pos.x;
-	temptpos.m128_f32[1] = pos.y;
-	temptpos.m128_f32[2] = pos.z;
-	temptpos.m128_f32[3] = pos.w;
-
-	temptpos = XMVector4Transform(temptpos, DefaultViewMatrix);
-	temptpos.m128_f32[0] *= -1;
-	temptpos.m128_f32[1] *= -1;
-	temptpos.m128_f32[2] *= -1;
-	DefaultViewMatrix.r[3].m128_f32[0] = temptpos.m128_f32[0];
-	DefaultViewMatrix.r[3].m128_f32[1] = temptpos.m128_f32[1];
-	DefaultViewMatrix.r[3].m128_f32[2] = temptpos.m128_f32[2];
+	DefaultViewMatrix = XMMatrixLookAtLH(XMVectorSet(0, 10.f, -15.0f, 1.0f), XMVectorSet(0, 0, 0, 1.0f), XMVectorSet(0, 1.0f, 0, 1.0f));
+//	DefaultViewMatrix.r[0].m128_f32[0] = 1;
+//	DefaultViewMatrix.r[0].m128_f32[1] = 0;
+//	DefaultViewMatrix.r[0].m128_f32[2] = 0;
+//	DefaultViewMatrix.r[0].m128_f32[3] = 0;
+//
+//	DefaultViewMatrix.r[1].m128_f32[0] = 0;
+//	DefaultViewMatrix.r[1].m128_f32[1] = cos((-18 * 3.14) / 180.0f);
+//	DefaultViewMatrix.r[1].m128_f32[2] = -sin((-18 * 3.14) / 180.0f);
+//	DefaultViewMatrix.r[1].m128_f32[3] = 0;
+//
+//	DefaultViewMatrix.r[2].m128_f32[0] = 0;
+//	DefaultViewMatrix.r[2].m128_f32[1] = sin((-18 * 3.14) / 180.0f);
+//	DefaultViewMatrix.r[2].m128_f32[2] = cos((-18 * 3.14) / 180.0f);
+//	DefaultViewMatrix.r[2].m128_f32[3] = 0;
+//
+//	DefaultViewMatrix.r[3].m128_f32[0] = m_ncameraXPosition;
+//	DefaultViewMatrix.r[3].m128_f32[1] = m_ncameraYPosition;
+//	DefaultViewMatrix.r[3].m128_f32[2] = m_ncameraZPosition;
+//	DefaultViewMatrix.r[3].m128_f32[3] = 1;
+//
+//	DefaultViewMatrix.r[0].m128_f32[0] = DefaultViewMatrix.r[0].m128_f32[0];
+//	//DefaultViewMatrix.view._21 = DefaultViewMatrix.view._12;
+//	DefaultViewMatrix.r[1].m128_f32[0] = DefaultViewMatrix.r[0].m128_f32[1];
+////	DefaultViewMatrix.view._31 = DefaultViewMatrix.view._13;
+//	DefaultViewMatrix.r[2].m128_f32[0] = DefaultViewMatrix.r[0].m128_f32[2];
+//	//DefaultViewMatrix.view._12 = DefaultViewMatrix.view._21;
+//	DefaultViewMatrix.r[0].m128_f32[1] = DefaultViewMatrix.r[1].m128_f32[0];
+//	//DefaultViewMatrix.view._22 = DefaultViewMatrix.view._22;
+//	DefaultViewMatrix.r[1].m128_f32[1] = DefaultViewMatrix.r[1].m128_f32[1];
+////	DefaultViewMatrix.view._32 = DefaultViewMatrix.view._23;
+//	DefaultViewMatrix.r[2].m128_f32[1] = DefaultViewMatrix.r[1].m128_f32[2];
+////	DefaultViewMatrix.view._13 = DefaultViewMatrix.view._31;
+//	DefaultViewMatrix.r[0].m128_f32[2] = DefaultViewMatrix.r[2].m128_f32[0];
+//	DefaultViewMatrix.r[1].m128_f32[2] = DefaultViewMatrix.r[2].m128_f32[1];
+//	DefaultViewMatrix.r[2].m128_f32[2] = DefaultViewMatrix.r[2].m128_f32[2];
+//	XMFLOAT4 pos; //pos.x = toShader.view._41;
+//	pos.x = m_ncameraXPosition;
+//	pos.y = m_ncameraYPosition;
+//	pos.z = m_ncameraZPosition;
+//	pos.w = 0;
+//	XMVECTOR temptpos;
+//	temptpos.m128_f32[0] = pos.x;
+//	temptpos.m128_f32[1] = pos.y;
+//	temptpos.m128_f32[2] = pos.z;
+//	temptpos.m128_f32[3] = pos.w;
+//
+//	temptpos = XMVector4Transform(temptpos, DefaultViewMatrix);
+//	temptpos.m128_f32[0] *= -1;
+//	temptpos.m128_f32[1] *= -1;
+//	temptpos.m128_f32[2] *= -1;
+//	DefaultViewMatrix.r[3].m128_f32[0] = temptpos.m128_f32[0];
+//	DefaultViewMatrix.r[3].m128_f32[1] = temptpos.m128_f32[1];
+//	DefaultViewMatrix.r[3].m128_f32[2] = temptpos.m128_f32[2];
 	
 	/*DefaultViewMatrix.view._23 = DefaultViewMatrix.view._32;
 	DefaultViewMatrix.view._33 = DefaultViewMatrix.view._33;*/
@@ -374,7 +378,10 @@ XMMATRIX CGraphicsSystem::SetDefaultPerspective()
 	DefaultViewMatrix.perspective = DefaultViewMatrix.perspective;*/
 
 	XMMATRIX DefaultPerspectiveMatrix;
+	m_FOV = 90;
 	// the 90 is for fov if we want to implament field of view
+	//DefaultPerspectiveMatrix = XMMatrixPerspectiveFovLH(XMConvertToRadians(m_FOV), m_aspectRatio, 0.1f, 1000.0f);
+
 	DefaultPerspectiveMatrix.r[0].m128_f32[0] = 1 / tan(90* 0.5 * 3.15f / 180);
 	DefaultPerspectiveMatrix.r[0].m128_f32[1] = 0;
 	DefaultPerspectiveMatrix.r[0].m128_f32[2] = 0;
@@ -418,50 +425,117 @@ XMMATRIX CGraphicsSystem::SetDefaultWorldPosition()
 	DefaultPerspectiveMatrix.r[2].m128_f32[3] = 0;
 
 	DefaultPerspectiveMatrix.r[3].m128_f32[0] = 0;
-	DefaultPerspectiveMatrix.r[3].m128_f32[1] = 0.2;
-	DefaultPerspectiveMatrix.r[3].m128_f32[2] = -9;
-	DefaultPerspectiveMatrix.r[3].m128_f32[3] = 1;
+	DefaultPerspectiveMatrix.r[3].m128_f32[1] = 0.2f;
+	DefaultPerspectiveMatrix.r[3].m128_f32[2] = -10.0f;
+	DefaultPerspectiveMatrix.r[3].m128_f32[3] = 1.0f;
 	return DefaultPerspectiveMatrix;
 }
 
 
-XMMATRIX CGraphicsSystem::DebugCamera(XMMATRIX tWVP)
+XMMATRIX CGraphicsSystem::DebugCamera(XMMATRIX d3d_ViewM, XMMATRIX d3d_WorldM)
 {
-	XMMATRIX d3dTmpViewM, d3dTmpProjectionM, m_d3dTmpWorldM, d3dMovementM, d3dRotation;
+	XMMATRIX d3dTmpViewM, d3dMovementM, d3dRotation;
 
 
-	m_d3dTmpWorldM.r[0].m128_f32[0] = 0;
+	//m_d3dTmpWorldM.r[0].m128_f32[0] = 0;
 
 
+	d3dTmpViewM = XMMatrixInverse(NULL, d3d_ViewM);
 
+	XMVECTOR d3d_newX, d3d_newY, d3d_existingZ;
 
 	//Forward && Back Movement
 
 	// up key movement
 	
 	if (InputCheck(G_KEY_UP) == 1) {
-		m_ncameraZPosition += 0.01;
+		d3dMovementM = XMMatrixTranslation(0, 0, 0.01f);
+		d3dTmpViewM = XMMatrixMultiply(d3dMovementM, d3dTmpViewM);
+
 	}
 	// down key movement
 	if (InputCheck(G_KEY_DOWN) == 1) {
-		m_ncameraZPosition -= 0.01;
+		d3dMovementM = XMMatrixTranslation(0, 0, -0.01f);
+
+		d3dTmpViewM = XMMatrixMultiply(d3dMovementM, d3dTmpViewM);
+
 	}
 	// left key movement
 	if (InputCheck(G_KEY_LEFT) == 1) {
-		m_ncameraXPosition -= 0.01;
+		d3dMovementM = XMMatrixTranslation(-0.1f, 0, 0);
+		d3dTmpViewM = XMMatrixMultiply(d3dMovementM, d3dTmpViewM);
+
 	}
 	// right key movement
 	if (InputCheck(G_KEY_RIGHT) == 1) {
-		m_ncameraXPosition += 0.01;
+		d3dMovementM = XMMatrixTranslation(0.1f, 0, 0);
+		d3dTmpViewM = XMMatrixMultiply(d3dMovementM, d3dTmpViewM);
+
 	}
 	if (InputCheck(G_KEY_SPACE) == 1) {
-		m_ncameraYPosition += 0.01;
+		d3dMovementM = XMMatrixTranslation(0, 0.01f, 0);
+		d3dTmpViewM = XMMatrixMultiply(d3dMovementM, d3dTmpViewM);
+
 	}
 	if (InputCheck(G_KEY_RIGHTSHIFT) == 1) {
-		m_ncameraYPosition -= 0.01;
+		d3dMovementM = XMMatrixTranslation(0, -0.01f, 0);
+		d3dTmpViewM = XMMatrixMultiply(d3dMovementM, d3dTmpViewM);
 	}
 
-	
+	 //Up && Down Rotation(keybord implemented, soon to be changed in the mouse)
+	if (InputCheck(G_KEY_W) == 1)
+	{
+		d3dRotation = XMMatrixRotationX(-0.001f);
+
+		d3dTmpViewM = XMMatrixMultiply(d3dRotation, d3dTmpViewM);
+	}
+	if (InputCheck(G_KEY_S) == 1)
+	{
+		d3dRotation = XMMatrixRotationX(0.001f);
+		d3dTmpViewM = XMMatrixMultiply(d3dRotation, d3dTmpViewM);
+
+	}
+
+
+	//Right && Left Rotation(keybord implemented, soon to be changed in the mouse)
+	if (InputCheck(G_KEY_A) == 1)
+	{
+		d3dRotation = XMMatrixRotationY(-0.001f);
+
+		d3dTmpViewM = XMMatrixMultiply(d3dRotation, d3dTmpViewM);
+
+		d3d_existingZ = d3dTmpViewM.r[2];
+		d3d_newX = XMVector3Cross(d3d_WorldM.r[1], d3d_existingZ);
+		d3d_newY = XMVector3Cross(d3d_existingZ, d3d_newX);
+
+		d3d_newX = XMVector3Normalize(d3d_newX);
+		d3d_newY = XMVector3Normalize(d3d_newY);
+
+		d3d_existingZ = XMVector3Normalize(d3d_existingZ);
+
+		d3dTmpViewM.r[0] = d3d_newX;
+		d3dTmpViewM.r[1] = d3d_newY;
+		d3dTmpViewM.r[2] = d3d_existingZ;
+
+	}
+	if (InputCheck(G_KEY_D) == 1)
+	{
+		d3dRotation = XMMatrixRotationY(0.001f);
+
+		d3dTmpViewM = XMMatrixMultiply(d3dRotation, d3dTmpViewM);
+		d3d_existingZ = d3dTmpViewM.r[2];
+		d3d_newX = XMVector3Cross(d3d_WorldM.r[1], d3d_existingZ);
+		d3d_newY = XMVector3Cross(d3d_existingZ, d3d_newX);
+
+		d3d_newX = XMVector3Normalize(d3d_newX);
+		d3d_newY = XMVector3Normalize(d3d_newY);
+
+		d3d_existingZ = XMVector3Normalize(d3d_existingZ);
+
+		d3dTmpViewM.r[0] = d3d_newX;
+		d3dTmpViewM.r[1] = d3d_newY;
+		d3dTmpViewM.r[2] = d3d_existingZ;
+	}
 	//{
 	//if (GetAsyncKeyState('W') && GetAsyncKeyState('S'))
 	//{
@@ -490,21 +564,11 @@ XMMATRIX CGraphicsSystem::DebugCamera(XMMATRIX tWVP)
 	//	}
 	//}
 
-	//// Up && Down Rotation(keybord implemented, soon to be changed in the mouse)
-	//if (true)
-	//{
-
-	//}
-
-	////Right && Left Rotation(keybord implemented, soon to be changed in the mouse)
-	//if (true)
-	//{
-
-	//}
+	
 
 
 
-	return m_d3dTmpWorldM;
+	return d3dTmpViewM;
 }
 
 GReturn CGraphicsSystem::InitlizeGInput(HWND cTheWindow)

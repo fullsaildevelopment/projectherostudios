@@ -33,16 +33,23 @@ void CAuger::InitializeSystems()
 	createDebugGrid(&tThisWorld);
 	pcGraphicsSystem->CreateBuffers(&tThisWorld);
 	createEntity(&tThisWorld);
-	
+	 m_d3dWorldMatrix = pcGraphicsSystem->SetDefaultWorldPosition();//Call some sort of function from the graphics system to create this matrix
+	 m_d3dViewMatrix = pcGraphicsSystem->SetDefaultViewMatrix();//Call some sort of function from the graphics system to create this matrix
+	 m_d3dProjectionMatrix = pcGraphicsSystem->SetDefaultPerspective();
 }
 
 void CAuger::Update()
 {
+	//Call some sort of function from the graphics system to create this matrix
+	XMMATRIX d3d_ResultMatrix;
+	m_d3dProjectionMatrix = pcGraphicsSystem->SetDefaultPerspective();
+	d3d_ResultMatrix = pcGraphicsSystem->DebugCamera(m_d3dViewMatrix, m_d3dWorldMatrix);
+
+	m_d3dViewMatrix = XMMatrixInverse(NULL, d3d_ResultMatrix);
+
 	pcGraphicsSystem->UpdateD3D();
-	XMMATRIX d3dWorldMatrix = pcGraphicsSystem->SetDefaultWorldPosition();//Call some sort of function from the graphics system to create this matrix
-	XMMATRIX d3dViewMatrix = pcGraphicsSystem->SetDefaultViewMatrix();//Call some sort of function from the graphics system to create this matrix
-	XMMATRIX d3dProjectionMatrix = pcGraphicsSystem->SetDefaultPerspective();//Call some sort of function from the graphics system to create this matrix
-	pcGraphicsSystem->DebugCamera(d3dWorldMatrix);
+	
+
 	for (int nCurrentEntity = 0; nCurrentEntity < ENTITYCOUNT; nCurrentEntity++)
 	{
 		/*
@@ -139,7 +146,7 @@ void CAuger::Update()
 		*/
 		if (tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_DEBUGMESH | COMPONENT_SHADERID))
 		{
-			pcGraphicsSystem->InitPrimalShaderData(pcGraphicsSystem->m_pd3dDeviceContext, d3dWorldMatrix, d3dViewMatrix, d3dProjectionMatrix, tThisWorld.atDebugMesh[nCurrentEntity]);
+			pcGraphicsSystem->InitPrimalShaderData(pcGraphicsSystem->m_pd3dDeviceContext, m_d3dWorldMatrix, m_d3dViewMatrix, m_d3dProjectionMatrix, tThisWorld.atDebugMesh[nCurrentEntity]);
 		}
 		if (tThisWorld.atCollisionMask) {
 
