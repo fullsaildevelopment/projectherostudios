@@ -6,8 +6,11 @@ enum eCollision_Component
 	COMPONENT_COLLISIONMASK = 1 << 0,
 	COMPONENT_AABB			= 1 << 1,
 	COMPONENT_OBB			= 1 << 2,
-	COMPONENT_SPHERE		= 1 << 3
-};
+	COMPONENT_SPHERE		= 1 << 3,
+	COMPONENT_STATIC		= 1 << 4,
+	COMPONENT_NONSTATIC	    = 1 << 6
+
+}; 
 
 struct TCollisionMask
 {
@@ -18,6 +21,10 @@ struct TAABB
 {
 	XMFLOAT3 m_dMinPoint;
 	XMFLOAT3 m_dMaxPoint;
+	XMFLOAT3 m_dMinPointOrginal;
+	XMFLOAT3 m_dMaxPointOrginal;
+	int		 m_IndexLocation;
+	int		 m_LocationinList;
 
 };
 

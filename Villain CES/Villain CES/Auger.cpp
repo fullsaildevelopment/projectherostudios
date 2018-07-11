@@ -12,6 +12,7 @@ CAuger::CAuger(HWND window)
 {
 	cApplicationWindow = window;
 	pcGraphicsSystem = new CGraphicsSystem();
+	pcCollisionSystem = new CCollisionSystem();
 	pcGraphicsSystem->InitlizeGInput(window);
 }
 
@@ -31,7 +32,9 @@ void CAuger::InitializeSystems()
 {
 	pcGraphicsSystem->InitD3D(cApplicationWindow);
 	createDebugGrid(&tThisWorld);
-	createPlayerBox(&tThisWorld);
+	createPlayerBox(&tThisWorld, pcCollisionSystem);
+	createPlayerBox(&tThisWorld, pcCollisionSystem);
+
 	// do not make things that u want to draw after this line of code or shit will  break;
 	pcGraphicsSystem->CreateBuffers(&tThisWorld);
 	
@@ -147,10 +150,22 @@ void CAuger::Update()
 				tThisWorld.atWorldMatrix[1].worldMatrix.r[3].m128_f32[0] = pcGraphicsSystem->GetCameraPos().m128_f32[0];
 				tThisWorld.atWorldMatrix[1].worldMatrix.r[3].m128_f32[1] = pcGraphicsSystem->GetCameraPos().m128_f32[1];
 				tThisWorld.atWorldMatrix[1].worldMatrix.r[3].m128_f32[2] = pcGraphicsSystem->GetCameraPos().m128_f32[2]+2;
+				
+				tThisWorld.atAABB[1] = updateAABB(tThisWorld.atWorldMatrix[1].worldMatrix, tThisWorld.atAABB[1],pcCollisionSystem);
+				
+			}
+			if (nCurrentEntity == 2) {
 
-
+				tThisWorld.atWorldMatrix[2].worldMatrix = d3dWorldMatrix;
+				tThisWorld.atAABB[2] = updateAABB(tThisWorld.atWorldMatrix[2].worldMatrix, tThisWorld.atAABB[2],pcCollisionSystem);
+				
 			}
 			pcGraphicsSystem->InitPrimalShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, d3dViewMatrix, d3dProjectionMatrix, tThisWorld.atDebugMesh[nCurrentEntity]);
+		}
+		if ((tThisWorld.atCollisionMask[nCurrentEntity].m_tnCollisionMask == 66)) {
+			if (pcCollisionSystem->AABBtoAABBCollisionCheck(tThisWorld.atAABB[nCurrentEntity]) == true) {
+				float x = 0;
+			}
 		}
 		
 		pcGraphicsSystem->ExecutePipeline(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atDebugMesh->m_nVertexCount, tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask, tThisWorld.atShaderID[nCurrentEntity].m_nShaderID);

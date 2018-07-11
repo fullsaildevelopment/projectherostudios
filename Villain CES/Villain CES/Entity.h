@@ -4,7 +4,7 @@
 #include "UI_Component.h"
 #include "Collision_Component.h"
 #include "Physics_Component.h"
-
+#include"Collision_System.h"
 struct TWorld
 {
 	int				anComponentMask[ENTITYCOUNT];
@@ -61,4 +61,6 @@ unsigned int createDebugTransformLines(TWorld *ptWorld, TDebugMesh tDebugMesh);
 unsigned int createDebugGrid(TWorld * ptWorld);
 
 unsigned int createMesh(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMesh tMesh);
-unsigned int createPlayerBox(TWorld * ptWorld);
+unsigned int createPlayerBox(TWorld * ptWorld, CCollisionSystem* pcCollisionSystem);
+TAABB createAABBS(TPrimalVert verticies[],int size);
+TAABB updateAABB(XMMATRIX worldMatrix, TAABB aabb, CCollisionSystem* pcCollisionSystem);

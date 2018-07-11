@@ -59,13 +59,13 @@ unsigned int createDebugTransformLines(TWorld * ptWorld, TDebugMesh atMesh)
 	ptWorld->atDebugMesh[nThisEntity].m_d3dVertexData.SysMemSlicePitch = 0;
 	return 0;
 }
-unsigned int createPlayerBox(TWorld * ptWorld)
+unsigned int createPlayerBox(TWorld * ptWorld, CCollisionSystem* pcCollisionSystem)
 {
 	unsigned int nThisEntity = createEntity(ptWorld);
 	ptWorld->anComponentMask[nThisEntity] = COMPONENT_DEBUGMESH;
 	ptWorld->atGraphicsMask[nThisEntity].m_tnGraphicsMask = COMPONENT_GRAPHICSMASK | COMPONENT_DEBUGMESH | COMPONENT_SHADERID;//138
 	ptWorld->atAIMask[nThisEntity].m_tnAIMask = COMPONENT_AIMASK;
-	ptWorld->atCollisionMask[nThisEntity].m_tnCollisionMask = COMPONENT_COLLISIONMASK;
+	ptWorld->atCollisionMask[nThisEntity].m_tnCollisionMask = COMPONENT_AABB | COMPONENT_NONSTATIC;
 	ptWorld->atUIMask[nThisEntity].m_tnUIMask = COMPONENT_UIMASK;
 	ptWorld->atPhysicsMask[nThisEntity].m_tnPhysicsMask = COMPONENT_PHYSICSMASK;
 	static TPrimalVert atDebugGridVertices[]{
@@ -100,6 +100,10 @@ unsigned int createPlayerBox(TWorld * ptWorld)
 	/*	TPrimalVert{ XMFLOAT3(-.2f, 0, -.5f),		XMFLOAT4(0, 1.0f,	0.0f, 1.0f) },
 		TPrimalVert{ XMFLOAT3(-.2f, 0.3f, -.5f),		XMFLOAT4(0, 1.0f,	0.0f, 1.0f) },*/
 	};
+	TAABB MyAbb = createAABBS(atDebugGridVertices, 24);
+	MyAbb.m_IndexLocation = nThisEntity;
+	ptWorld->atAABB[nThisEntity] = MyAbb;
+	pcCollisionSystem->AddAABBCollider(MyAbb, nThisEntity);
 	ptWorld->atDebugMesh[nThisEntity].m_nVertexCount = 24;
 	ptWorld->atDebugMesh[nThisEntity].m_nVertexBufferStride = sizeof(TPrimalVert);
 	ptWorld->atDebugMesh[nThisEntity].m_nVertexBufferOffset = 0;
@@ -115,6 +119,96 @@ unsigned int createPlayerBox(TWorld * ptWorld)
 
 	ptWorld->atShaderID[nThisEntity].m_nShaderID = 1;//Shader that supports TPrimalVert
 	return 0;
+}
+
+TAABB createAABBS(TPrimalVert verticies[],int size)
+{
+	TAABB aabb;
+	aabb.m_dMaxPoint.x = verticies[0].m_d3dfPosition.x;
+	aabb.m_dMaxPoint.y = verticies[0].m_d3dfPosition.y;
+	aabb.m_dMaxPoint.z = verticies[0].m_d3dfPosition.z;
+	aabb.m_dMaxPointOrginal.x = verticies[0].m_d3dfPosition.x;
+	aabb.m_dMaxPointOrginal.y = verticies[0].m_d3dfPosition.y;
+	aabb.m_dMaxPointOrginal.z = verticies[0].m_d3dfPosition.z;
+	aabb.m_dMinPointOrginal.x = verticies[0].m_d3dfPosition.x;
+	aabb.m_dMinPointOrginal.y = verticies[0].m_d3dfPosition.y;
+	aabb.m_dMinPointOrginal.z = verticies[0].m_d3dfPosition.z;
+
+
+
+	aabb.m_dMinPoint.x = verticies[0].m_d3dfPosition.x;
+	aabb.m_dMinPoint.y = verticies[0].m_d3dfPosition.y;
+	aabb.m_dMinPoint.z = verticies[0].m_d3dfPosition.z;
+
+	for (int i = 1; i < size - 1; ++i) {
+		if (verticies[i].m_d3dfPosition.x > aabb.m_dMaxPoint.x) {
+			aabb.m_dMaxPoint.x = verticies[i].m_d3dfPosition.x;
+			aabb.m_dMaxPointOrginal.x = aabb.m_dMaxPoint.x;
+
+		}
+		if (verticies[i].m_d3dfPosition.x < aabb.m_dMinPoint.x) {
+			aabb.m_dMinPoint.x = verticies[i].m_d3dfPosition.x;
+			aabb.m_dMinPointOrginal.x = aabb.m_dMinPoint.x;
+
+		}
+
+		if (verticies[i].m_d3dfPosition.y > aabb.m_dMaxPoint.y) {
+			aabb.m_dMaxPoint.y = verticies[i].m_d3dfPosition.y;
+			aabb.m_dMaxPointOrginal.y = aabb.m_dMaxPoint.y;
+
+		}
+		if (verticies[i].m_d3dfPosition.y < aabb.m_dMinPoint.y) {
+			aabb.m_dMinPoint.y = verticies[i].m_d3dfPosition.y;
+			aabb.m_dMinPointOrginal.y = aabb.m_dMinPoint.y;
+
+		}
+
+		if (verticies[i].m_d3dfPosition.z > aabb.m_dMaxPoint.z) {
+			aabb.m_dMaxPoint.z = verticies[i].m_d3dfPosition.z;
+			aabb.m_dMaxPointOrginal.z = aabb.m_dMaxPoint.z;
+
+		}
+		if (verticies[i].m_d3dfPosition.z < aabb.m_dMinPoint.z) {
+			aabb.m_dMinPoint.z = verticies[i].m_d3dfPosition.z;
+			aabb.m_dMinPointOrginal.z = aabb.m_dMinPoint.z;
+
+		}
+	}
+	return aabb;
+	
+}
+
+TAABB updateAABB(XMMATRIX worldMatrix,TAABB aabb, CCollisionSystem* pcCollisionSystem)
+{
+	XMVECTOR max;
+	max.m128_f32[0] = aabb.m_dMaxPointOrginal.x;
+	max.m128_f32[1] = aabb.m_dMaxPointOrginal.y;
+	max.m128_f32[2] = aabb.m_dMaxPointOrginal.z;
+	max.m128_f32[3] = 1;
+	max=XMVector4Transform(max, worldMatrix);
+
+	XMVECTOR min;
+	min.m128_f32[0] = aabb.m_dMinPointOrginal.x;
+	min.m128_f32[1] = aabb.m_dMinPointOrginal.y;
+	min.m128_f32[2] = aabb.m_dMinPointOrginal.z;
+	min.m128_f32[3] = 1;
+	min = XMVector4Transform(min, worldMatrix);
+	TAABB newaabb;
+	newaabb = aabb;
+	newaabb.m_dMaxPoint.x = max.m128_f32[0];
+	newaabb.m_dMaxPoint.y = max.m128_f32[1];
+	newaabb.m_dMaxPoint.z = max.m128_f32[2];
+
+	newaabb.m_dMinPoint.x = min.m128_f32[0];
+	newaabb.m_dMinPoint.y = min.m128_f32[1];
+	newaabb.m_dMinPoint.z = min.m128_f32[2];
+	newaabb.m_dMinPointOrginal = aabb.m_dMinPointOrginal;
+	newaabb.m_dMaxPointOrginal = aabb.m_dMaxPointOrginal;
+
+	pcCollisionSystem->replaceAABB(aabb.m_IndexLocation,newaabb);
+	return newaabb;
+
+	
 }
 
 
@@ -142,7 +236,7 @@ unsigned int createDebugGrid(TWorld * ptWorld)
 
 	ptWorld->atGraphicsMask[nThisEntity].m_tnGraphicsMask	= COMPONENT_GRAPHICSMASK | COMPONENT_DEBUGMESH | COMPONENT_SHADERID;//138
 	ptWorld->atAIMask[nThisEntity].m_tnAIMask				= COMPONENT_AIMASK;
-	ptWorld->atCollisionMask[nThisEntity].m_tnCollisionMask = COMPONENT_COLLISIONMASK;
+	ptWorld->atCollisionMask[nThisEntity].m_tnCollisionMask =  COMPONENT_STATIC| COMPONENT_AABB;
 	ptWorld->atUIMask[nThisEntity].m_tnUIMask				= COMPONENT_UIMASK;
 	ptWorld->atPhysicsMask[nThisEntity].m_tnPhysicsMask		= COMPONENT_PHYSICSMASK;
 

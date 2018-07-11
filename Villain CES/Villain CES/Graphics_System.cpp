@@ -449,25 +449,25 @@ XMMATRIX CGraphicsSystem::DebugCamera(XMMATRIX tWVP)
 	// up key movement
 	
 	if (InputCheck(G_KEY_UP) == 1) {
-		m_ncameraZPosition += 0.01;
+		m_ncameraZPosition += 0.001;
 	}
 	// down key movement
 	if (InputCheck(G_KEY_DOWN) == 1) {
-		m_ncameraZPosition -= 0.01;
+		m_ncameraZPosition -= 0.001;
 	}
 	// left key movement
 	if (InputCheck(G_KEY_LEFT) == 1) {
-		m_ncameraXPosition -= 0.01;
+		m_ncameraXPosition -= 0.001;
 	}
 	// right key movement
 	if (InputCheck(G_KEY_RIGHT) == 1) {
-		m_ncameraXPosition += 0.01;
+		m_ncameraXPosition += 0.001;
 	}
 	if (InputCheck(G_KEY_SPACE) == 1) {
-		m_ncameraYPosition += 0.01;
+		m_ncameraYPosition += 0.001;
 	}
 	if (InputCheck(G_KEY_RIGHTSHIFT) == 1) {
-		m_ncameraYPosition -= 0.01;
+		m_ncameraYPosition -= 0.001;
 	}
 
 	
