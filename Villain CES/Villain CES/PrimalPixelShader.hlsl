@@ -11,7 +11,8 @@
 //////////////
 struct TPrimalPixelInputType
 {
-	float4 d3dColor : SV_POSITION;
+	float4 d3dPos : SV_POSITION;
+	float4 d3dColor : POSITION1;
 };
 
 

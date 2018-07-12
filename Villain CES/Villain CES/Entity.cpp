@@ -8,7 +8,7 @@ unsigned int createEntity(TWorld * ptWorld)
 	//Return the index of this marked entity
 	for (nCurrentEntity = 0; nCurrentEntity < ENTITYCOUNT; ++nCurrentEntity)
 	{
-		if (ptWorld->anComponentMask[nCurrentEntity] == COMPONENT_NONE)
+		if (ptWorld->atGraphicsMask[nCurrentEntity].m_tnGraphicsMask == COMPONENT_NONE)
 		{
 			printf("Entity created: %d\n", nCurrentEntity);
 			return(nCurrentEntity);
@@ -26,10 +26,15 @@ void destroyEntity(TWorld * ptWorld, unsigned int nThisEntity)
 	ptWorld->anComponentMask[nThisEntity] = COMPONENT_NONE;
 }
 
-unsigned int createDebugTransformLines(TWorld * ptWorld, TDebugMesh atMesh)
+unsigned int createDebugTransformLines(TWorld * ptWorld)
 {
 	unsigned int nThisEntity = createEntity(ptWorld);
-	ptWorld->anComponentMask[nThisEntity] =  COMPONENT_DEBUGMESH;
+	//ptWorld->anComponentMask[nThisEntity] =  COMPONENT_DEBUGMESH;
+	ptWorld->atGraphicsMask[nThisEntity].m_tnGraphicsMask = COMPONENT_GRAPHICSMASK | COMPONENT_DEBUGMESH | COMPONENT_SHADERID;//138
+	ptWorld->atAIMask[nThisEntity].m_tnAIMask = COMPONENT_AIMASK;
+	ptWorld->atCollisionMask[nThisEntity].m_tnCollisionMask = COMPONENT_COLLISIONMASK;
+	ptWorld->atUIMask[nThisEntity].m_tnUIMask = COMPONENT_UIMASK;
+	ptWorld->atPhysicsMask[nThisEntity].m_tnPhysicsMask = COMPONENT_PHYSICSMASK;
 	ptWorld->atDebugMesh[nThisEntity].m_nVertexCount = 6;
 
 	static TPrimalVert atLineVertices[]
@@ -89,51 +94,51 @@ unsigned int createDebugGrid(TWorld * ptWorld)
 
 	static TPrimalVert atDebugGridVertices[]
 	{
-		TPrimalVert{ XMFLOAT3(-.5f, 0,  .5f),		XMFLOAT4(0, 1.0f,	0.0f, 1.0f) },//00	Green
-		TPrimalVert{ XMFLOAT3(-.5f, 0, -.5f),		XMFLOAT4(0, 1.0f,	0.0f, 1.0f) },//01	Green
-		TPrimalVert{ XMFLOAT3(-.4f, 0,  .5f),		XMFLOAT4(0, 1.0f,	0.0f, 1.0f) },//02	Red
-		TPrimalVert{ XMFLOAT3(-.4f, 0, -.5f),		XMFLOAT4(0, 1.0f,	0.0f, 1.0f) },//03	Red
-		TPrimalVert{ XMFLOAT3(-.3f, 0,  .5f),		XMFLOAT4(0, 1.0f,	0.0f, 1.0f) },//04	Blue
-		TPrimalVert{ XMFLOAT3(-.3f, 0, -.5f),		XMFLOAT4(0, 1.0f,	0.0f, 1.0f) },//05	Blue	
-		TPrimalVert{ XMFLOAT3(-.2f, 0,  .5f),		XMFLOAT4(0, 1.0f,	0.0f, 1.0f) },//06	Blue
-		TPrimalVert{ XMFLOAT3(-.2f, 0, -.5f),		XMFLOAT4(0, 1.0f,	0.0f, 1.0f) },//07	Red
-		TPrimalVert{ XMFLOAT3(-.1f, 0,  .5f),		XMFLOAT4(0, 1.0f,	0.0f, 1.0f) },//08	Red
-		TPrimalVert{ XMFLOAT3(-.1f, 0, -.5f),		XMFLOAT4(0, 1.0f,	0.0f, 1.0f) },//09	Green
-		TPrimalVert{ XMFLOAT3( .0f, 0,  .5f),		XMFLOAT4(0, 1.0f,	0.0f, 1.0f) },//10	Green							 		   
-		TPrimalVert{ XMFLOAT3( .0f, 0, -.5f),		XMFLOAT4(0, 1.0f,	0.0f, 1.0f) },//11	Green
-		TPrimalVert{ XMFLOAT3( .1f, 0,  .5f),		XMFLOAT4(0, 1.0f,	0.0f, 1.0f) },//12	Green	
-		TPrimalVert{ XMFLOAT3( .1f, 0, -.5f),		XMFLOAT4(0, 1.0f,	0.0f, 1.0f) },//13	Green
-		TPrimalVert{ XMFLOAT3( .2f, 0,  .5f),		XMFLOAT4(0, 1.0f,	0.0f, 1.0f) },//14	Green	
-		TPrimalVert{ XMFLOAT3( .2f, 0, -.5f),		XMFLOAT4(0, 1.0f,	0.0f, 1.0f) },//15	Green
-		TPrimalVert{ XMFLOAT3( .3f, 0,  .5f),		XMFLOAT4(0, 1.0f,	0.0f, 1.0f) },//16	Green								  
-		TPrimalVert{ XMFLOAT3( .3f, 0, -.5f),		XMFLOAT4(0, 1.0f,	0.0f, 1.0f) },//17	Green
-		TPrimalVert{ XMFLOAT3( .4f, 0,  .5f),		XMFLOAT4(0, 1.0f,	0.0f, 1.0f) },//18	Green	
-		TPrimalVert{ XMFLOAT3( .4f, 0, -.5f),		XMFLOAT4(0, 1.0f,	0.0f, 1.0f) },//19	Green
-		TPrimalVert{ XMFLOAT3( .5f, 0,  .5f),		XMFLOAT4(0, 1.0f,	0.0f, 1.0f) },//20	Green	
-		TPrimalVert{ XMFLOAT3( .5f, 0, -.5f),		XMFLOAT4(0, 1.0f,	0.0f, 1.0f) },//21	Green
+		TPrimalVert{ XMFLOAT3(-.5f, 0,  .5f),		XMFLOAT4(1.0f, 1.0f,	1.0f, 1.0f) },//00	Green
+		TPrimalVert{ XMFLOAT3(-.5f, 0, -.5f),		XMFLOAT4(1.0f, 1.0f,	1.0f, 1.0f) },//01	Green
+		TPrimalVert{ XMFLOAT3(-.4f, 0,  .5f),		XMFLOAT4(1.0f, 1.0f,	1.0f, 1.0f) },//02	Red
+		TPrimalVert{ XMFLOAT3(-.4f, 0, -.5f),		XMFLOAT4(1.0f, 1.0f,	1.0f, 1.0f) },//03	Red
+		TPrimalVert{ XMFLOAT3(-.3f, 0,  .5f),		XMFLOAT4(1.0f, 1.0f,	1.0f, 1.0f) },//04	Blue
+		TPrimalVert{ XMFLOAT3(-.3f, 0, -.5f),		XMFLOAT4(1.0f, 1.0f,	1.0f, 1.0f) },//05	Blue	
+		TPrimalVert{ XMFLOAT3(-.2f, 0,  .5f),		XMFLOAT4(1.0f, 1.0f,	1.0f, 1.0f) },//06	Blue
+		TPrimalVert{ XMFLOAT3(-.2f, 0, -.5f),		XMFLOAT4(1.0f, 1.0f,	1.0f, 1.0f) },//07	Red
+		TPrimalVert{ XMFLOAT3(-.1f, 0,  .5f),		XMFLOAT4(1.0f, 1.0f,	1.0f, 1.0f) },//08	Red
+		TPrimalVert{ XMFLOAT3(-.1f, 0, -.5f),		XMFLOAT4(1.0f, 1.0f,	1.0f, 1.0f) },//09	Green
+		TPrimalVert{ XMFLOAT3( .0f, 0,  .5f),		XMFLOAT4(1.0f, 1.0f,	1.0f, 1.0f) },//10	Green							 		   
+		TPrimalVert{ XMFLOAT3( .0f, 0, -.5f),		XMFLOAT4(1.0f, 1.0f,	1.0f, 1.0f) },//11	Green
+		TPrimalVert{ XMFLOAT3( .1f, 0,  .5f),		XMFLOAT4(1.0f, 1.0f,	1.0f, 1.0f) },//12	Green	
+		TPrimalVert{ XMFLOAT3( .1f, 0, -.5f),		XMFLOAT4(1.0f, 1.0f,	1.0f, 1.0f) },//13	Green
+		TPrimalVert{ XMFLOAT3( .2f, 0,  .5f),		XMFLOAT4(1.0f, 1.0f,	1.0f, 1.0f) },//14	Green	
+		TPrimalVert{ XMFLOAT3( .2f, 0, -.5f),		XMFLOAT4(1.0f, 1.0f,	1.0f, 1.0f) },//15	Green
+		TPrimalVert{ XMFLOAT3( .3f, 0,  .5f),		XMFLOAT4(1.0f, 1.0f,	1.0f, 1.0f) },//16	Green								  
+		TPrimalVert{ XMFLOAT3( .3f, 0, -.5f),		XMFLOAT4(1.0f, 1.0f,	1.0f, 1.0f) },//17	Green
+		TPrimalVert{ XMFLOAT3( .4f, 0,  .5f),		XMFLOAT4(1.0f, 1.0f,	1.0f, 1.0f) },//18	Green	
+		TPrimalVert{ XMFLOAT3( .4f, 0, -.5f),		XMFLOAT4(1.0f, 1.0f,	1.0f, 1.0f) },//19	Green
+		TPrimalVert{ XMFLOAT3( .5f, 0,  .5f),		XMFLOAT4(1.0f, 1.0f,	1.0f, 1.0f) },//20	Green	
+		TPrimalVert{ XMFLOAT3( .5f, 0, -.5f),		XMFLOAT4(1.0f, 1.0f,	1.0f, 1.0f) },//21	Green
 		
-		TPrimalVert{ XMFLOAT3( .5f, 0, -.5f),		XMFLOAT4(0, 1.0f,	0.0f, 1.0f) },//00	Green
-		TPrimalVert{ XMFLOAT3(-.5f, 0, -.5f),		XMFLOAT4(0, 1.0f,	0.0f, 1.0f) },//01	Green
-		TPrimalVert{ XMFLOAT3( .5f, 0, -.4f),		XMFLOAT4(0, 1.0f,	0.0f, 1.0f) },//02	Red
-		TPrimalVert{ XMFLOAT3(-.5f, 0, -.4f),		XMFLOAT4(0, 1.0f,	0.0f, 1.0f) },//03	Red
-		TPrimalVert{ XMFLOAT3( .5f, 0, -.3f),		XMFLOAT4(0, 1.0f,	0.0f, 1.0f) },//04	Blue
-		TPrimalVert{ XMFLOAT3(-.5f, 0, -.3f),		XMFLOAT4(0, 1.0f,	0.0f, 1.0f) },//05	Blue	
-		TPrimalVert{ XMFLOAT3( .5f, 0, -.2f),		XMFLOAT4(0, 1.0f,	0.0f, 1.0f) },//06	Blue
-		TPrimalVert{ XMFLOAT3(-.5f, 0, -.2f),		XMFLOAT4(0, 1.0f,	0.0f, 1.0f) },//07	Red
-		TPrimalVert{ XMFLOAT3( .5f, 0, -.1f),		XMFLOAT4(0, 1.0f,	0.0f, 1.0f) },//08	Red
-		TPrimalVert{ XMFLOAT3(-.5f, 0, -.1f),		XMFLOAT4(0, 1.0f,	0.0f, 1.0f) },//09	Green
-		TPrimalVert{ XMFLOAT3( .5f, 0,  .0f),		XMFLOAT4(0, 1.0f,	0.0f, 1.0f) },//10	Green							 		   
-		TPrimalVert{ XMFLOAT3(-.5f, 0,  .0f),		XMFLOAT4(0, 1.0f,	0.0f, 1.0f) },//11	Green
-		TPrimalVert{ XMFLOAT3( .5f, 0,  .1f),		XMFLOAT4(0, 1.0f,	0.0f, 1.0f) },//12	Green	
-		TPrimalVert{ XMFLOAT3(-.5f, 0,  .1f),		XMFLOAT4(0, 1.0f,	0.0f, 1.0f) },//13	Green
-		TPrimalVert{ XMFLOAT3( .5f, 0,  .2f),		XMFLOAT4(0, 1.0f,	0.0f, 1.0f) },//14	Green	
-		TPrimalVert{ XMFLOAT3(-.5f, 0,  .2f),		XMFLOAT4(0, 1.0f,	0.0f, 1.0f) },//15	Green
-		TPrimalVert{ XMFLOAT3( .5f, 0,  .3f),		XMFLOAT4(0, 1.0f,	0.0f, 1.0f) },//16	Green								  
-		TPrimalVert{ XMFLOAT3(-.5f, 0,  .3f),		XMFLOAT4(0, 1.0f,	0.0f, 1.0f) },//17	Green
-		TPrimalVert{ XMFLOAT3( .5f, 0,  .4f),		XMFLOAT4(0, 1.0f,	0.0f, 1.0f) },//18	Green	
-		TPrimalVert{ XMFLOAT3(-.5f, 0,  .4f),		XMFLOAT4(0, 1.0f,	0.0f, 1.0f) },//19	Green
-		TPrimalVert{ XMFLOAT3( .5f, 0,  .5f),		XMFLOAT4(0, 1.0f,	0.0f, 1.0f) },//20	Green	
-		TPrimalVert{ XMFLOAT3(-.5f, 0,  .5f),		XMFLOAT4(0, 1.0f,	0.0f, 1.0f) },//21	Green
+		TPrimalVert{ XMFLOAT3( .5f, 0, -.5f),		XMFLOAT4(1.0f, 1.0f,	1.0f, 1.0f) },//00	Green
+		TPrimalVert{ XMFLOAT3(-.5f, 0, -.5f),		XMFLOAT4(1.0f, 1.0f,	1.0f, 1.0f) },//01	Green
+		TPrimalVert{ XMFLOAT3( .5f, 0, -.4f),		XMFLOAT4(1.0f, 1.0f,	1.0f, 1.0f) },//02	Red
+		TPrimalVert{ XMFLOAT3(-.5f, 0, -.4f),		XMFLOAT4(1.0f, 1.0f,	1.0f, 1.0f) },//03	Red
+		TPrimalVert{ XMFLOAT3( .5f, 0, -.3f),		XMFLOAT4(1.0f, 1.0f,	1.0f, 1.0f) },//04	Blue
+		TPrimalVert{ XMFLOAT3(-.5f, 0, -.3f),		XMFLOAT4(1.0f, 1.0f,	1.0f, 1.0f) },//05	Blue	
+		TPrimalVert{ XMFLOAT3( .5f, 0, -.2f),		XMFLOAT4(1.0f, 1.0f,	1.0f, 1.0f) },//06	Blue
+		TPrimalVert{ XMFLOAT3(-.5f, 0, -.2f),		XMFLOAT4(1.0f, 1.0f,	1.0f, 1.0f) },//07	Red
+		TPrimalVert{ XMFLOAT3( .5f, 0, -.1f),		XMFLOAT4(1.0f, 1.0f,	1.0f, 1.0f) },//08	Red
+		TPrimalVert{ XMFLOAT3(-.5f, 0, -.1f),		XMFLOAT4(1.0f, 1.0f,	1.0f, 1.0f) },//09	Green
+		TPrimalVert{ XMFLOAT3( .5f, 0,  .0f),		XMFLOAT4(1.0f, 1.0f,	1.0f, 1.0f) },//10	Green							 		   
+		TPrimalVert{ XMFLOAT3(-.5f, 0,  .0f),		XMFLOAT4(1.0f, 1.0f,	1.0f, 1.0f) },//11	Green
+		TPrimalVert{ XMFLOAT3( .5f, 0,  .1f),		XMFLOAT4(1.0f, 1.0f,	1.0f, 1.0f) },//12	Green	
+		TPrimalVert{ XMFLOAT3(-.5f, 0,  .1f),		XMFLOAT4(1.0f, 1.0f,	1.0f, 1.0f) },//13	Green
+		TPrimalVert{ XMFLOAT3( .5f, 0,  .2f),		XMFLOAT4(1.0f, 1.0f,	1.0f, 1.0f) },//14	Green	
+		TPrimalVert{ XMFLOAT3(-.5f, 0,  .2f),		XMFLOAT4(1.0f, 1.0f,	1.0f, 1.0f) },//15	Green
+		TPrimalVert{ XMFLOAT3( .5f, 0,  .3f),		XMFLOAT4(1.0f, 1.0f,	1.0f, 1.0f) },//16	Green								  
+		TPrimalVert{ XMFLOAT3(-.5f, 0,  .3f),		XMFLOAT4(1.0f, 1.0f,	1.0f, 1.0f) },//17	Green
+		TPrimalVert{ XMFLOAT3( .5f, 0,  .4f),		XMFLOAT4(1.0f, 1.0f,	1.0f, 1.0f) },//18	Green	
+		TPrimalVert{ XMFLOAT3(-.5f, 0,  .4f),		XMFLOAT4(1.0f, 1.0f,	1.0f, 1.0f) },//19	Green
+		TPrimalVert{ XMFLOAT3( .5f, 0,  .5f),		XMFLOAT4(1.0f, 1.0f,	1.0f, 1.0f) },//20	Green	
+		TPrimalVert{ XMFLOAT3(-.5f, 0,  .5f),		XMFLOAT4(1.0f, 1.0f,	1.0f, 1.0f) },//21	Green
 	};
 	
 	ptWorld->atDebugMesh[nThisEntity].m_nVertexCount = 44;

@@ -55,9 +55,10 @@ unsigned int createEntity(TWorld *ptWorld);
 
 void destroyEntity(TWorld *ptWorld, unsigned int nEntity);
 
-unsigned int createDebugTransformLines(TWorld *ptWorld, TDebugMesh tDebugMesh);
+unsigned int createDebugTransformLines(TWorld *ptWorld);
 
 unsigned int createDebugGrid(TWorld * ptWorld);
 
 unsigned int createMesh(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMesh tMesh);
+
 unsigned int createPlayerBox(TWorld * ptWorld);

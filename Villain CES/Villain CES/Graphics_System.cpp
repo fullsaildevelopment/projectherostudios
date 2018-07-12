@@ -219,7 +219,7 @@ void CGraphicsSystem::CreateShaders(ID3D11Device * device)
 	//Now setup the layout of the data that goes into the shader.
 	D3D11_INPUT_ELEMENT_DESC m_d3dPrimalLayoutDesc[] =
 	{
-		{ "POSITION", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 		{ "POSITION", 1, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 	};
 	//Get a count of the elements in the layout.
@@ -414,14 +414,14 @@ XMMATRIX CGraphicsSystem::DebugCamera(XMMATRIX d3d_ViewM, XMMATRIX d3d_WorldM)
 	}
 
 	 //Up && Down Rotation(keybord implemented, soon to be changed in the mouse)
-	if (InputCheck(G_KEY_DOWN) == 1)
+	if (InputCheck(G_KEY_UP) == 1)
 	{
 		d3dRotation = XMMatrixRotationX(-0.001f);
 
 		d3dTmpViewM = XMMatrixMultiply(d3dRotation, d3dTmpViewM);
 	}
 
-	if (InputCheck(G_KEY_UP) == 1)
+	if (InputCheck(G_KEY_DOWN) == 1)
 	{
 		d3dRotation = XMMatrixRotationX(0.001f);
 		d3dTmpViewM = XMMatrixMultiply(d3dRotation, d3dTmpViewM);

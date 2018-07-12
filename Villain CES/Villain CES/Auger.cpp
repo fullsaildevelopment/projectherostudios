@@ -31,6 +31,7 @@ void CAuger::InitializeSystems()
 {
 	pcGraphicsSystem->InitD3D(cApplicationWindow);
 	createDebugGrid(&tThisWorld);
+	createDebugTransformLines(&tThisWorld);
 	pcGraphicsSystem->CreateBuffers(&tThisWorld);
 	//createEntity(&tThisWorld);
 	 m_d3dWorldMatrix = pcGraphicsSystem->SetDefaultWorldPosition();//Call some sort of function from the graphics system to create this matrix

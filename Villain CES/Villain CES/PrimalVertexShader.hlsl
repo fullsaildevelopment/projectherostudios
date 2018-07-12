@@ -15,7 +15,7 @@ cbuffer MatrixBuffer : register(b0)
 //////////////
 struct TPrimalVertexInputType
 {
-	float4 d3dPosition : POSITION0;
+	float3 d3dPosition : POSITION0;
 	float4 d3dColor : POSITION1;
 };
 
