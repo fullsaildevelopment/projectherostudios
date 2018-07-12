@@ -388,18 +388,22 @@ XMMATRIX CGraphicsSystem::DebugCamera(XMMATRIX d3d_ViewM, XMMATRIX d3d_WorldM)
 
 	// up key movement
 	
-	if (InputCheck(G_KEY_W) == 1) {
+	if (InputCheck(G_BUTTON_LEFT) == 1) {
 		d3dMovementM = XMMatrixTranslation(0, 0, m_fMouseMovementSpeed);
 		d3dTmpViewM = XMMatrixMultiply(d3dMovementM, d3dTmpViewM);
 
 	}
 	// down key movement
 <<<<<<< HEAD
+<<<<<<< HEAD
 	if (InputCheck(G_KEY_S) == 1) 
 	{
 		d3dMovementM = XMMatrixTranslation(0, 0, -0.01f);
 =======
 	if (InputCheck(G_KEY_S) == 1) {
+=======
+	if (InputCheck(G_BUTTON_RIGHT) == 1) {
+>>>>>>> master
 		d3dMovementM = XMMatrixTranslation(0, 0, -m_fMouseMovementSpeed);
 
 >>>>>>> master
@@ -417,12 +421,12 @@ XMMATRIX CGraphicsSystem::DebugCamera(XMMATRIX d3d_ViewM, XMMATRIX d3d_WorldM)
 		d3dTmpViewM = XMMatrixMultiply(d3dMovementM, d3dTmpViewM);
 
 	}
-	if (InputCheck(G_KEY_E) == 1) {
+	if (InputCheck(G_KEY_W) == 1) {
 		d3dMovementM = XMMatrixTranslation(0, m_fMouseMovementSpeed, 0);
 		d3dTmpViewM = XMMatrixMultiply(d3dMovementM, d3dTmpViewM);
 
 	}
-	if (InputCheck(G_KEY_Q) == 1) {
+	if (InputCheck(G_KEY_S) == 1) {
 		d3dMovementM = XMMatrixTranslation(0, -m_fMouseMovementSpeed, 0);
 		d3dTmpViewM = XMMatrixMultiply(d3dMovementM, d3dTmpViewM);
 	}
@@ -454,7 +458,7 @@ XMMATRIX CGraphicsSystem::DebugCamera(XMMATRIX d3d_ViewM, XMMATRIX d3d_WorldM)
 		
 	}
 
-	else if (fXchange > 0 && fYchange < 0)
+	 if (fXchange > 0 && fYchange < 0)
 	{
 		d3dRotation = XMMatrixRotationY(fXchange * m_fMouseRotationSpeed);
 
@@ -478,7 +482,7 @@ XMMATRIX CGraphicsSystem::DebugCamera(XMMATRIX d3d_ViewM, XMMATRIX d3d_WorldM)
 
 	}
 
-	else if (fXchange < 0 && fYchange > 0)
+	 if (fXchange < 0 && fYchange > 0)
 	{
 		d3dRotation = XMMatrixRotationY(fXchange * m_fMouseRotationSpeed);
 
@@ -501,7 +505,7 @@ XMMATRIX CGraphicsSystem::DebugCamera(XMMATRIX d3d_ViewM, XMMATRIX d3d_WorldM)
 		d3dTmpViewM = XMMatrixMultiply(d3dRotation, d3dTmpViewM);
 
 	}
-	else if (fXchange > 0 && fYchange > 0)
+	 if (fXchange > 0 && fYchange > 0)
 	{
 		d3dRotation = XMMatrixRotationY(fXchange * m_fMouseRotationSpeed);
 
