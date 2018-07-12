@@ -105,11 +105,27 @@ private:
 	ID3D11Buffer		*m_pd3dMyMatrixBuffer;
 
 	ID3D11Buffer		*m_pd3dBlinnPhongBuffer;
+<<<<<<< HEAD
 	GInput				*m_pcMyInput;
 	float				m_ncameraXPosition;
 	float				m_ncameraYPosition;
 	float				m_ncameraZPosition;
 	float				m_aspectRatio;
 	float				m_FOV;
+=======
+	float					m_fCameraXPosition;
+	float					m_fCameraYPosition;
+	float					m_fCameraZPosition;
+	float					m_fAspectRatio;
+	float					m_fFOV;
+	float					m_fNewX;
+	float					m_fNewY;
+	float					m_fMouseRotationSpeed;
+	float					m_fMouseMovementSpeed;
+	 
+	GInput*				m_pcMyInput;
+	
+
+>>>>>>> master
 };
 

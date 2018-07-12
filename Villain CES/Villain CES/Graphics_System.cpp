@@ -3,11 +3,11 @@
 
 CGraphicsSystem::CGraphicsSystem()
 {
-	m_ncameraXPosition = 0;
-	m_ncameraYPosition = 0.5;
-	m_ncameraZPosition = -10;
-
-
+	m_fCameraXPosition = 0;
+	m_fCameraYPosition = 0.5;
+	m_fCameraZPosition = -10;
+	m_fMouseRotationSpeed = .001f;
+	m_fMouseMovementSpeed = .01f;
 }
 
 CGraphicsSystem::~CGraphicsSystem()
@@ -39,7 +39,7 @@ void CGraphicsSystem::InitD3D(HWND cTheWindow)
 	d3dSwapchainDescription.BufferDesc.RefreshRate.Numerator = 60;
 	d3dSwapchainDescription.BufferDesc.RefreshRate.Denominator = 1;
 
-	m_aspectRatio = cRectangle.bottom - cRectangle.top / cRectangle.right - cRectangle.left;
+	m_fAspectRatio = cRectangle.bottom - cRectangle.top / cRectangle.right - cRectangle.left;
 #ifdef _DEBUG
 	unsigned int nDeviceAndSwapchainFlag = D3D11_CREATE_DEVICE_DEBUG;
 #endif // DEBUG
@@ -135,10 +135,14 @@ void CGraphicsSystem::InitD3D(HWND cTheWindow)
 	m_pd3dDevice->CreateDepthStencilState(&d3dDepthStencilDescription, &m_pd3dDepthStencilState);
 #pragma endregion
 
+	m_pcMyInput->GetMousePosition(m_fNewX, m_fNewY);
+
 }
 
 void CGraphicsSystem::UpdateD3D()
 {
+	
+
 	const float afBackgroundColor[] = { .5f, .05f, .5f, 1 };
 
 	m_pd3dDeviceContext->OMSetRenderTargets(1, &m_pd3dRenderTargetView, m_pd3dDepthStencilView);
@@ -311,15 +315,15 @@ XMMATRIX CGraphicsSystem::SetDefaultPerspective()
 
 	XMMATRIX DefaultPerspectiveMatrix;
 	// the 90 is for fov if we want to implement field of view
-	m_FOV = 90;
+	m_fFOV = 90;
 
-	DefaultPerspectiveMatrix.r[0].m128_f32[0] = 1 / tan(m_FOV* 0.5 * 3.15f / 180);
+	DefaultPerspectiveMatrix.r[0].m128_f32[0] = 1 / tan(m_fFOV* 0.5 * 3.15f / 180);
 	DefaultPerspectiveMatrix.r[0].m128_f32[1] = 0;
 	DefaultPerspectiveMatrix.r[0].m128_f32[2] = 0;
 	DefaultPerspectiveMatrix.r[0].m128_f32[3] = 0;
 
 	DefaultPerspectiveMatrix.r[1].m128_f32[0] = 0;
-	DefaultPerspectiveMatrix.r[1].m128_f32[1] = 1 / tan(m_FOV * 0.5 * 3.15f / 180);
+	DefaultPerspectiveMatrix.r[1].m128_f32[1] = 1 / tan(m_fFOV * 0.5 * 3.15f / 180);
 	DefaultPerspectiveMatrix.r[1].m128_f32[2] = 0;
 	DefaultPerspectiveMatrix.r[1].m128_f32[3] = 0;
 
@@ -366,72 +370,69 @@ XMMATRIX CGraphicsSystem::SetDefaultWorldPosition()
 XMMATRIX CGraphicsSystem::DebugCamera(XMMATRIX d3d_ViewM, XMMATRIX d3d_WorldM)
 {
 	XMMATRIX d3dTmpViewM, d3dMovementM, d3dRotation;
-
-
+	float fXchange = 0 , fYchange = 0,  fXEnd = 0, fYEnd = 0;
+	
 	//m_d3dTmpWorldM.r[0].m128_f32[0] = 0;
 
 
 	d3dTmpViewM = XMMatrixInverse(NULL, d3d_ViewM);
 
 	XMVECTOR d3d_newX, d3d_newY, d3d_existingZ;
+	m_pcMyInput->GetMouseDelta(fXchange, fYchange);
+	m_pcMyInput->GetMousePosition(fXEnd, fYEnd);
+
+	std::cout << "\nDelta X = " << fXchange;
+	std::cout << "\nDelta Y = " << fYchange;
 
 	//Forward && Back Movement
 
 	// up key movement
 	
 	if (InputCheck(G_KEY_W) == 1) {
-		d3dMovementM = XMMatrixTranslation(0, 0, 0.01f);
+		d3dMovementM = XMMatrixTranslation(0, 0, m_fMouseMovementSpeed);
 		d3dTmpViewM = XMMatrixMultiply(d3dMovementM, d3dTmpViewM);
 
 	}
 	// down key movement
+<<<<<<< HEAD
 	if (InputCheck(G_KEY_S) == 1) 
 	{
 		d3dMovementM = XMMatrixTranslation(0, 0, -0.01f);
+=======
+	if (InputCheck(G_KEY_S) == 1) {
+		d3dMovementM = XMMatrixTranslation(0, 0, -m_fMouseMovementSpeed);
+
+>>>>>>> master
 		d3dTmpViewM = XMMatrixMultiply(d3dMovementM, d3dTmpViewM);
 	}
 	// left key movement
 	if (InputCheck(G_KEY_A) == 1) {
-		d3dMovementM = XMMatrixTranslation(-0.01f, 0, 0);
+		d3dMovementM = XMMatrixTranslation(-m_fMouseMovementSpeed, 0, 0);
 		d3dTmpViewM = XMMatrixMultiply(d3dMovementM, d3dTmpViewM);
 
 	}
 	// right key movement
 	if (InputCheck(G_KEY_D) == 1) {
-		d3dMovementM = XMMatrixTranslation(0.01f, 0, 0);
+		d3dMovementM = XMMatrixTranslation(m_fMouseMovementSpeed, 0, 0);
 		d3dTmpViewM = XMMatrixMultiply(d3dMovementM, d3dTmpViewM);
 
 	}
 	if (InputCheck(G_KEY_E) == 1) {
-		d3dMovementM = XMMatrixTranslation(0, 0.01f, 0);
+		d3dMovementM = XMMatrixTranslation(0, m_fMouseMovementSpeed, 0);
 		d3dTmpViewM = XMMatrixMultiply(d3dMovementM, d3dTmpViewM);
 
 	}
 	if (InputCheck(G_KEY_Q) == 1) {
-		d3dMovementM = XMMatrixTranslation(0, -0.01f, 0);
+		d3dMovementM = XMMatrixTranslation(0, -m_fMouseMovementSpeed, 0);
 		d3dTmpViewM = XMMatrixMultiply(d3dMovementM, d3dTmpViewM);
 	}
 
 	 //Up && Down Rotation(keybord implemented, soon to be changed in the mouse)
-	if (InputCheck(G_KEY_UP) == 1)
-	{
-		d3dRotation = XMMatrixRotationX(-0.001f);
-
-		d3dTmpViewM = XMMatrixMultiply(d3dRotation, d3dTmpViewM);
-	}
-
-	if (InputCheck(G_KEY_DOWN) == 1)
-	{
-		d3dRotation = XMMatrixRotationX(0.001f);
-		d3dTmpViewM = XMMatrixMultiply(d3dRotation, d3dTmpViewM);
-
-	}
-
 
 	//Right && Left Rotation(keybord implemented, soon to be changed in the mouse)
-	if (InputCheck(G_KEY_LEFT) == 1)
+	if (fXchange < 0 && fYchange < 0)
 	{
-		d3dRotation = XMMatrixRotationY(-0.001f);
+		d3dRotation = XMMatrixRotationY(fXchange * m_fMouseRotationSpeed);
 
 		d3dTmpViewM = XMMatrixMultiply(d3dRotation, d3dTmpViewM);
 
@@ -447,12 +448,62 @@ XMMATRIX CGraphicsSystem::DebugCamera(XMMATRIX d3d_ViewM, XMMATRIX d3d_WorldM)
 		d3dTmpViewM.r[0] = d3d_newX;
 		d3dTmpViewM.r[1] = d3d_newY;
 		d3dTmpViewM.r[2] = d3d_existingZ;
+		d3dRotation = XMMatrixRotationX(fYchange * m_fMouseRotationSpeed);
+
+		d3dTmpViewM = XMMatrixMultiply(d3dRotation, d3dTmpViewM);
+		
+	}
+
+	else if (fXchange > 0 && fYchange < 0)
+	{
+		d3dRotation = XMMatrixRotationY(fXchange * m_fMouseRotationSpeed);
+
+		d3dTmpViewM = XMMatrixMultiply(d3dRotation, d3dTmpViewM);
+
+		d3d_existingZ = d3dTmpViewM.r[2];
+		d3d_newX = XMVector3Cross(d3d_WorldM.r[1], d3d_existingZ);
+		d3d_newY = XMVector3Cross(d3d_existingZ, d3d_newX);
+
+		d3d_newX = XMVector3Normalize(d3d_newX);
+		d3d_newY = XMVector3Normalize(d3d_newY);
+
+		d3d_existingZ = XMVector3Normalize(d3d_existingZ);
+
+		d3dTmpViewM.r[0] = d3d_newX;
+		d3dTmpViewM.r[1] = d3d_newY;
+		d3dTmpViewM.r[2] = d3d_existingZ;
+		d3dRotation = XMMatrixRotationX(fYchange * m_fMouseRotationSpeed);
+
+		d3dTmpViewM = XMMatrixMultiply(d3dRotation, d3dTmpViewM);
 
 	}
 
-	if (InputCheck(G_KEY_RIGHT) == 1)
+	else if (fXchange < 0 && fYchange > 0)
 	{
-		d3dRotation = XMMatrixRotationY(0.001f);
+		d3dRotation = XMMatrixRotationY(fXchange * m_fMouseRotationSpeed);
+
+		d3dTmpViewM = XMMatrixMultiply(d3dRotation, d3dTmpViewM);
+
+		d3d_existingZ = d3dTmpViewM.r[2];
+		d3d_newX = XMVector3Cross(d3d_WorldM.r[1], d3d_existingZ);
+		d3d_newY = XMVector3Cross(d3d_existingZ, d3d_newX);
+
+		d3d_newX = XMVector3Normalize(d3d_newX);
+		d3d_newY = XMVector3Normalize(d3d_newY);
+
+		d3d_existingZ = XMVector3Normalize(d3d_existingZ);
+
+		d3dTmpViewM.r[0] = d3d_newX;
+		d3dTmpViewM.r[1] = d3d_newY;
+		d3dTmpViewM.r[2] = d3d_existingZ;
+		d3dRotation = XMMatrixRotationX(fYchange * m_fMouseRotationSpeed);
+
+		d3dTmpViewM = XMMatrixMultiply(d3dRotation, d3dTmpViewM);
+
+	}
+	else if (fXchange > 0 && fYchange > 0)
+	{
+		d3dRotation = XMMatrixRotationY(fXchange * m_fMouseRotationSpeed);
 
 		d3dTmpViewM = XMMatrixMultiply(d3dRotation, d3dTmpViewM);
 		d3d_existingZ = d3dTmpViewM.r[2];
@@ -467,7 +518,13 @@ XMMATRIX CGraphicsSystem::DebugCamera(XMMATRIX d3d_ViewM, XMMATRIX d3d_WorldM)
 		d3dTmpViewM.r[0] = d3d_newX;
 		d3dTmpViewM.r[1] = d3d_newY;
 		d3dTmpViewM.r[2] = d3d_existingZ;
+
+		d3dRotation = XMMatrixRotationX(fYchange * m_fMouseRotationSpeed);
+		d3dTmpViewM = XMMatrixMultiply(d3dRotation, d3dTmpViewM);
+		
 	}
+
+	
 
 	return d3dTmpViewM;
 }
