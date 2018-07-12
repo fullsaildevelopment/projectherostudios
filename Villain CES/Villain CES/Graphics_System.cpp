@@ -517,7 +517,7 @@ XMMATRIX CGraphicsSystem::DebugCamera(XMMATRIX d3d_ViewM, XMMATRIX d3d_WorldM)
 		d3dRotation = XMMatrixRotationX(fYchange * m_fMouseRotationSpeed);
 		d3dTmpViewM = XMMatrixMultiply(d3dRotation, d3dTmpViewM);
 		
-	}
+	}//
 
 	
 
