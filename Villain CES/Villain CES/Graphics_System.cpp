@@ -1,5 +1,4 @@
-<<<<<<< HEAD
-=======
+
 #include "stdafx.h"
 #include "Graphics_System.h"
 
@@ -616,4 +615,4 @@ void CGraphicsSystem::ExecutePipeline(ID3D11DeviceContext *pd3dDeviceContext, in
 	}
 }
 
->>>>>>> master
+
