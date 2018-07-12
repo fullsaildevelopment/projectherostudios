@@ -385,11 +385,10 @@ XMMATRIX CGraphicsSystem::DebugCamera(XMMATRIX d3d_ViewM, XMMATRIX d3d_WorldM)
 
 	}
 	// down key movement
-	if (InputCheck(G_KEY_S) == 1) {
+	if (InputCheck(G_KEY_S) == 1) 
+	{
 		d3dMovementM = XMMatrixTranslation(0, 0, -0.01f);
-
 		d3dTmpViewM = XMMatrixMultiply(d3dMovementM, d3dTmpViewM);
-
 	}
 	// left key movement
 	if (InputCheck(G_KEY_A) == 1) {
@@ -471,6 +470,11 @@ XMMATRIX CGraphicsSystem::DebugCamera(XMMATRIX d3d_ViewM, XMMATRIX d3d_WorldM)
 	}
 
 	return d3dTmpViewM;
+}
+
+XMMATRIX CGraphicsSystem::FollowCamera()
+{
+	return XMMATRIX();
 }
 
 GReturn CGraphicsSystem::InitlizeGInput(HWND cTheWindow)

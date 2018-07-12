@@ -23,7 +23,7 @@ void destroyEntity(TWorld * ptWorld, unsigned int nThisEntity)
 {
 	//Set component list for current entity to none.
 	printf("Entity destroyed: %d\n", nThisEntity);
-	ptWorld->anComponentMask[nThisEntity] = COMPONENT_NONE;
+	ptWorld->atGraphicsMask[nThisEntity].m_tnGraphicsMask = COMPONENT_NONE;
 }
 
 unsigned int createDebugTransformLines(TWorld * ptWorld)
