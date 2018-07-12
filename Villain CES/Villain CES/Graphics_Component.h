@@ -13,7 +13,7 @@ enum eGraphicsComponent
 	COMPONENT_TEXTURE		= 1 << 5,
 	COMPONENT_SHADERID		= 1 << 6, // have information on what inputs and outputs go to other shaders as well
 	COMPONENT_CAMERA		= 1 << 7,
-	COMPONENT_SIMPLEMESH = 1 << 8,
+	COMPONENT_SIMPLEMESH	= 1 << 8,
 };
 
 struct TKeyframe 

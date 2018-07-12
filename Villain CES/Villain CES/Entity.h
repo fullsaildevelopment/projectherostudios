@@ -1,9 +1,11 @@
 #pragma once
+#include "stdafx.h"
 #include "Graphics_Component.h"
 #include "AI_Component.h"
 #include "UI_Component.h"
 #include "Collision_Component.h"
 #include "Physics_Component.h"
+#include "Input_Component.h"
 
 struct TWorld
 {
@@ -33,7 +35,12 @@ struct TWorld
 	TAABB			atAABB[ENTITYCOUNT];
 	TOBB			atOBB[ENTITYCOUNT];
 	TSphere			atSphere[ENTITYCOUNT];
-	
+	//Input
+	TInputMask		atInputMask[ENTITYCOUNT];
+	TTest			atTest[ENTITYCOUNT];
+	TClayton		atClayton[ENTITYCOUNT];
+	TSeth			atSeth[ENTITYCOUNT];
+	TCaelis			atCaelis[ENTITYCOUNT];
 };
 
 struct TPrimalVert
@@ -50,7 +57,6 @@ struct TSmartMesh
 	float m_afJointWeights[4];
 	int m_anJointIndices[4];
 };
-
 
 unsigned int createEntity(TWorld *ptWorld);
 

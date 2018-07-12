@@ -1,12 +1,14 @@
 #pragma once
 #include "Graphics_System.h"
+#include "InputSystem.h"
 #include "Entity.h"
 class CAuger
 {
 public:
 	HWND cApplicationWindow;
-	CGraphicsSystem* pcGraphicsSystem; 
 	TWorld tThisWorld;
+	CGraphicsSystem	*pcGraphicsSystem; 
+	CInputSystem	*pcInputSystem;
 
 	CAuger();
 	CAuger(HWND cTheWindow);
