@@ -32,7 +32,7 @@ void CAuger::InitializeSystems()
 	pcGraphicsSystem->InitD3D(cApplicationWindow);
 	createDebugGrid(&tThisWorld);
 	pcGraphicsSystem->CreateBuffers(&tThisWorld);
-	createEntity(&tThisWorld);
+	//createEntity(&tThisWorld);
 	 m_d3dWorldMatrix = pcGraphicsSystem->SetDefaultWorldPosition();//Call some sort of function from the graphics system to create this matrix
 	 m_d3dViewMatrix = pcGraphicsSystem->SetDefaultViewMatrix();//Call some sort of function from the graphics system to create this matrix
 	 m_d3dProjectionMatrix = pcGraphicsSystem->SetDefaultPerspective();
@@ -159,5 +159,7 @@ void CAuger::Update()
 void CAuger::End()
 {
 	pcGraphicsSystem->CleanD3D(&tThisWorld);
+	delete pcGraphicsSystem;
+
 }
 

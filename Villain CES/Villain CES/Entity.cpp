@@ -32,23 +32,23 @@ unsigned int createDebugTransformLines(TWorld * ptWorld, TDebugMesh atMesh)
 	ptWorld->anComponentMask[nThisEntity] =  COMPONENT_DEBUGMESH;
 	ptWorld->atDebugMesh[nThisEntity].m_nVertexCount = 6;
 
-	static TSimpleMesh atLineVertices[]
+	static TPrimalVert atLineVertices[]
 	{
-		TSimpleMesh{ 0,	0, 0, 0, 0,0,0,0,0},//00	Green
-		TSimpleMesh{ 0,	2.0f, 0, 0,0,0,0,0},//01	Green
-		TSimpleMesh{ 0,	0, 0, 0, 0,0,0,0,0},//00	Red
-		TSimpleMesh{ 2.0f, 0, 0, 0,0,0,0,0},//01	Red
-		TSimpleMesh{ 0,	0, 0, 0, 0,0,0,0,0},//00	Blue
-		TSimpleMesh{ 0,	0, 2.0f, 0,0,0,0,0},//01	Blue	
+		TPrimalVert{ XMFLOAT3(0, 0, 0),    XMFLOAT4(1,0,0,1)},//00	Green
+		TPrimalVert{ XMFLOAT3(0, 2.0f, 0), XMFLOAT4(1,0,0,1)},//01	Green
+		TPrimalVert{ XMFLOAT3(0, 0, 0),    XMFLOAT4(0,1,0,1)},//00	Red
+		TPrimalVert{ XMFLOAT3(2.0f, 0, 0), XMFLOAT4(0,1,0,1)},//01	Red
+		TPrimalVert{ XMFLOAT3(0, 0, 0),    XMFLOAT4(0,0,1,1)},//00	Blue
+		TPrimalVert{ XMFLOAT3(0, 0, 2.0f), XMFLOAT4(0,0,1,1)},//01	Blue	
 	};
 
 	
 
-	ptWorld->atDebugMesh[nThisEntity].m_nVertexBufferStride = sizeof(TSimpleMesh);
+	ptWorld->atDebugMesh[nThisEntity].m_nVertexBufferStride = sizeof(TPrimalVert);
 	ptWorld->atDebugMesh[nThisEntity].m_nVertexBufferOffset = 0;
 
 	ptWorld->atDebugMesh[nThisEntity].m_d3dVertexBufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
-	ptWorld->atDebugMesh[nThisEntity].m_d3dVertexBufferDesc.ByteWidth = sizeof(TSimpleMesh) * ptWorld->atDebugMesh[nThisEntity].m_nVertexCount;
+	ptWorld->atDebugMesh[nThisEntity].m_d3dVertexBufferDesc.ByteWidth = sizeof(TPrimalVert) * ptWorld->atDebugMesh[nThisEntity].m_nVertexCount;
 	ptWorld->atDebugMesh[nThisEntity].m_d3dVertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	ptWorld->atDebugMesh[nThisEntity].m_d3dVertexBufferDesc.CPUAccessFlags = 0;
 	ptWorld->atDebugMesh[nThisEntity].m_d3dVertexBufferDesc.MiscFlags = 0;
@@ -57,6 +57,7 @@ unsigned int createDebugTransformLines(TWorld * ptWorld, TDebugMesh atMesh)
 	ptWorld->atDebugMesh[nThisEntity].m_d3dVertexData.pSysMem = atLineVertices;
 	ptWorld->atDebugMesh[nThisEntity].m_d3dVertexData.SysMemPitch = 0;
 	ptWorld->atDebugMesh[nThisEntity].m_d3dVertexData.SysMemSlicePitch = 0;
+	ptWorld->atShaderID[nThisEntity].m_nShaderID = 2;
 	return 0;
 }
 
@@ -148,7 +149,7 @@ unsigned int createDebugGrid(TWorld * ptWorld)
 	ptWorld->atDebugMesh[nThisEntity].m_d3dVertexData.SysMemPitch = 0;
 	ptWorld->atDebugMesh[nThisEntity].m_d3dVertexData.SysMemSlicePitch = 0;
 
-	ptWorld->atShaderID[nThisEntity].m_nShaderID = 1;//Shader that supports TPrimalVert
+	ptWorld->atShaderID[nThisEntity].m_nShaderID = 2;//Shader that supports TPrimalVert
 
 	return 0;
 }

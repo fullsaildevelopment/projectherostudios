@@ -17,11 +17,11 @@ public:
 	IDXGISwapChain * m_pd3dSwapchain;             // the pointer to the swap chain interface
 	ID3D11Device *m_pd3dDevice;                     // the pointer to our Direct3D device interface
 	ID3D11DeviceContext *m_pd3dDeviceContext;           // the pointer to our Direct3D device context
-	D3D11_VIEWPORT m_d3dViewport;
 	ID3D11RenderTargetView *m_pd3dRenderTargetView;
 	ID3D11DepthStencilState* m_pd3dDepthStencilState;
 	ID3D11DepthStencilView * m_pd3dDepthStencilView;
 	ID3D11Texture2D* m_pd3dDepthStencil;
+	D3D11_VIEWPORT m_d3dViewport;
 	std::vector<TPrimalVert> m_ctVectorPosition;
 
 	struct TMyMatrixBufferType
@@ -47,11 +47,6 @@ public:
 		float m_fShininess;
 		int m_nPadding;
 	};
-	struct TCamera {
-		TPrimalMatrixBufferType t_cameraMatrix;
-	};
-
-
 										   // function prototypes
 	CGraphicsSystem();
 	~CGraphicsSystem();
