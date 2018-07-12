@@ -12,7 +12,8 @@ enum eGraphicsComponent
 	COMPONENT_MATERIAL		= 1 << 4,
 	COMPONENT_TEXTURE		= 1 << 5,
 	COMPONENT_SHADERID		= 1 << 6, // have information on what inputs and outputs go to other shaders as well
-	COMPONENT_CAMERA		= 1 << 7
+	COMPONENT_CAMERA		= 1 << 7,
+	COMPONENT_SIMPLEMESH = 1 << 8,
 };
 
 struct TKeyframe 
@@ -57,6 +58,21 @@ struct TDebugMesh
 	UINT					m_nVertexBufferOffset = 0;
 };
 
+struct TSimpleMesh
+{
+	ID3D11Buffer *			m_pd3dVertexBuffer;
+	ID3D11Buffer *			m_pd3dIndexBuffer;
+	D3D11_BUFFER_DESC		m_d3dVertexBufferDesc;
+	D3D11_BUFFER_DESC		m_d3dIndexBufferDesc;
+
+	D3D11_SUBRESOURCE_DATA	m_d3dVertexData;
+	D3D11_SUBRESOURCE_DATA	m_d3dIndexData;
+
+	UINT					m_nVertexCount = 0;
+	UINT					m_nIndexCount = 0;
+	UINT					m_nVertexBufferStride = 0;
+	UINT					m_nVertexBufferOffset = 0;
+};
 struct TAnimation
 {
 	TAnimationClip m_tAnim;

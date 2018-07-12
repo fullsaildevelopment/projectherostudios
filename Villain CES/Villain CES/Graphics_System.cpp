@@ -257,7 +257,18 @@ void CGraphicsSystem::CreateBuffers(TWorld *ptPlanet)//init first frame
 		{
 			if (ptPlanet->atDebugMesh[nCurrentEntity].m_nVertexCount)
 				m_pd3dDevice->CreateBuffer(&ptPlanet->atDebugMesh[nCurrentEntity].m_d3dVertexBufferDesc, &ptPlanet->atDebugMesh[nCurrentEntity].m_d3dVertexData, &ptPlanet->atDebugMesh[nCurrentEntity].m_pd3dVertexBuffer);
+
 		}
+		if (ptPlanet->atGraphicsMask[nCurrentEntity].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_SIMPLEMESH | COMPONENT_SHADERID))
+		{
+			if (ptPlanet->atSimpleMesh[nCurrentEntity].m_nIndexCount && ptPlanet->atSimpleMesh[nCurrentEntity].m_nVertexCount)
+			{
+				m_pd3dDevice->CreateBuffer(&ptPlanet->atSimpleMesh[nCurrentEntity].m_d3dVertexBufferDesc, &ptPlanet->atSimpleMesh[nCurrentEntity].m_d3dVertexData, &ptPlanet->atSimpleMesh[nCurrentEntity].m_pd3dVertexBuffer);
+				m_pd3dDevice->CreateBuffer(&ptPlanet->atSimpleMesh[nCurrentEntity].m_d3dIndexBufferDesc, &ptPlanet->atSimpleMesh[nCurrentEntity].m_d3dIndexData, &ptPlanet->atSimpleMesh[nCurrentEntity].m_pd3dIndexBuffer);
+
+			}
+		}
+			
 	
 	}
 
@@ -575,6 +586,44 @@ void CGraphicsSystem::InitPrimalShaderData(ID3D11DeviceContext * pd3dDeviceConte
 	pd3dDeviceContext->VSSetConstantBuffers(bufferNumber, 1, &m_pd3dPrimalMatrixBuffer);
 	pd3dDeviceContext->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_LINELIST);
 	pd3dDeviceContext->IASetVertexBuffers(0, 1, &tDebugMesh.m_pd3dVertexBuffer, &tDebugMesh.m_nVertexBufferStride, &tDebugMesh.m_nVertexBufferOffset);
+
+}
+
+void CGraphicsSystem::InitPrimalShaderData2(ID3D11DeviceContext * pd3dDeviceContext, XMMATRIX d3dWorldMatrix, XMMATRIX d3dViewMatrix, XMMATRIX d3dProjectionMatrix, TSimpleMesh tSimpleMesh)
+{
+	D3D11_MAPPED_SUBRESOURCE d3dPrimalMappedResource;
+	TPrimalMatrixBufferType* ptPrimalMatrixBufferDataPointer = nullptr;
+
+	unsigned int bufferNumber;
+
+	XMMATRIX d3dView;
+
+	d3dView = d3dViewMatrix;
+
+	pd3dDeviceContext->Map(m_pd3dPrimalMatrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &d3dPrimalMappedResource);
+
+
+	// Get a pointer to the data in the constant buffer.
+	ptPrimalMatrixBufferDataPointer = (TPrimalMatrixBufferType*)d3dPrimalMappedResource.pData;
+
+	// Copy the matrices into the constant buffer.
+	ptPrimalMatrixBufferDataPointer->m_d3dWorldMatrix = d3dWorldMatrix;
+	ptPrimalMatrixBufferDataPointer->m_d3dViewMatrix = d3dView;
+	ptPrimalMatrixBufferDataPointer->m_d3dProjectionMatrix = d3dProjectionMatrix;
+
+	// Unlock the constant buffer.
+	pd3dDeviceContext->Unmap(m_pd3dPrimalMatrixBuffer, 0);
+
+	// Position of the constant buffer in the vertex shader.
+	bufferNumber = 0;
+
+	// Set the constant buffer in the vertex shader with the updated values.
+	pd3dDeviceContext->VSSetConstantBuffers(bufferNumber, 1, &m_pd3dPrimalMatrixBuffer);
+	pd3dDeviceContext->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	pd3dDeviceContext->IASetVertexBuffers(0, 1, &tSimpleMesh.m_pd3dVertexBuffer, &tSimpleMesh.m_nVertexBufferStride, &tSimpleMesh.m_nVertexBufferOffset);
+	pd3dDeviceContext->IASetIndexBuffer(tSimpleMesh.m_pd3dIndexBuffer, DXGI_FORMAT_R16_UINT, 0);
+
+
 }
 
 void CGraphicsSystem::ExecutePipeline(ID3D11DeviceContext *pd3dDeviceContext, int m_nIndexCount, int nGraphicsMask, int nShaderID)
@@ -606,6 +655,19 @@ void CGraphicsSystem::ExecutePipeline(ID3D11DeviceContext *pd3dDeviceContext, in
 			if (nGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_DEBUGMESH | COMPONENT_SHADERID))
 			{
 				pd3dDeviceContext->Draw(m_nIndexCount, 0);
+			}
+			break;
+		}
+		case 3:
+		{
+			pd3dDeviceContext->IASetInputLayout(m_pd3dPrimalInputLayout);
+			//Set Shader
+			pd3dDeviceContext->VSSetShader(m_pd3dPrimalVertexShader, NULL, 0);
+			pd3dDeviceContext->PSSetShader(m_pd3dPrimalPixelShader, NULL, 0);
+			//Draw
+			if (nGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_SIMPLEMESH | COMPONENT_SHADERID))
+			{
+				pd3dDeviceContext->DrawIndexed(m_nIndexCount, 0,0);
 			}
 			break;
 		}
