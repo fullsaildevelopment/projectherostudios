@@ -30,6 +30,7 @@ void CAuger::Start()
 void CAuger::InitializeSystems()
 {
 	pcGraphicsSystem->InitD3D(cApplicationWindow);
+	createCube(&tThisWorld);
 	createDebugGrid(&tThisWorld);
 	createDebugTransformLines(&tThisWorld);
 	pcGraphicsSystem->CreateBuffers(&tThisWorld);
@@ -145,14 +146,22 @@ void CAuger::Update()
 			Use VS Profiler to see where slow downs are in code
 
 		*/
+		if (tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_SIMPLEMESH | COMPONENT_SHADERID))
+		{
+			pcGraphicsSystem->InitPrimalShaderData2(pcGraphicsSystem->m_pd3dDeviceContext, m_d3dWorldMatrix, m_d3dViewMatrix, m_d3dProjectionMatrix, tThisWorld.atSimpleMesh[nCurrentEntity]);
+			pcGraphicsSystem->ExecutePipeline(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atSimpleMesh[nCurrentEntity].m_nIndexCount, tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask, tThisWorld.atShaderID[nCurrentEntity].m_nShaderID);
+
+		}
 		if (tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_DEBUGMESH | COMPONENT_SHADERID))
 		{
 			pcGraphicsSystem->InitPrimalShaderData(pcGraphicsSystem->m_pd3dDeviceContext, m_d3dWorldMatrix, m_d3dViewMatrix, m_d3dProjectionMatrix, tThisWorld.atDebugMesh[nCurrentEntity]);
+			pcGraphicsSystem->ExecutePipeline(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atDebugMesh[nCurrentEntity].m_nVertexCount, tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask, tThisWorld.atShaderID[nCurrentEntity].m_nShaderID);
+
 		}
 		if (tThisWorld.atCollisionMask) {
 
 		}
-		pcGraphicsSystem->ExecutePipeline(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atDebugMesh->m_nVertexCount, tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask, tThisWorld.atShaderID[nCurrentEntity].m_nShaderID);
+		
 	}
 	pcGraphicsSystem->m_pd3dSwapchain->Present(0, 0);
 }

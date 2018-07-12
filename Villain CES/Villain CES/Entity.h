@@ -12,6 +12,7 @@ struct TWorld
 	TGraphicsMask	atGraphicsMask[ENTITYCOUNT];
 	TMesh			atMesh[ENTITYCOUNT];
 	TDebugMesh		atDebugMesh[ENTITYCOUNT];
+	TSimpleMesh		atSimpleMesh[ENTITYCOUNT];
 	TAnimation		atAnimation[ENTITYCOUNT];
 	TMaterial		atMaterial[ENTITYCOUNT];
 	TTexture		atTexture[ENTITYCOUNT];
@@ -41,7 +42,7 @@ struct TPrimalVert
 	XMFLOAT4 m_d3dfColor;
 };
 
-struct TSimpleMesh
+struct TSmartMesh
 {
 	float m_afPosition[4];
 	float m_afNormals[3];
@@ -56,6 +57,8 @@ unsigned int createEntity(TWorld *ptWorld);
 void destroyEntity(TWorld *ptWorld, unsigned int nEntity);
 
 unsigned int createDebugTransformLines(TWorld *ptWorld);
+
+unsigned int createCube(TWorld * ptWorld);
 
 unsigned int createDebugGrid(TWorld * ptWorld);
 
