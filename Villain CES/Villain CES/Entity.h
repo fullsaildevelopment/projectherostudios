@@ -1,10 +1,13 @@
 #pragma once
+#include "stdafx.h"
 #include "Graphics_Component.h"
 #include "AI_Component.h"
 #include "UI_Component.h"
 #include "Collision_Component.h"
 #include "Physics_Component.h"
 #include"Collision_System.h"
+#include "Input_Component.h"
+
 struct TWorld
 {
 	int				anComponentMask[ENTITYCOUNT];
@@ -12,6 +15,7 @@ struct TWorld
 	TGraphicsMask	atGraphicsMask[ENTITYCOUNT];
 	TMesh			atMesh[ENTITYCOUNT];
 	TDebugMesh		atDebugMesh[ENTITYCOUNT];
+	TSimpleMesh		atSimpleMesh[ENTITYCOUNT];
 	TAnimation		atAnimation[ENTITYCOUNT];
 	TMaterial		atMaterial[ENTITYCOUNT];
 	TTexture		atTexture[ENTITYCOUNT];
@@ -33,7 +37,12 @@ struct TWorld
 	TAABB			atAABB[ENTITYCOUNT];
 	TOBB			atOBB[ENTITYCOUNT];
 	TSphere			atSphere[ENTITYCOUNT];
-	
+	//Input
+	TInputMask		atInputMask[ENTITYCOUNT];
+	TTest			atTest[ENTITYCOUNT];
+	TClayton		atClayton[ENTITYCOUNT];
+	TSeth			atSeth[ENTITYCOUNT];
+	TCaelis			atCaelis[ENTITYCOUNT];
 };
 
 struct TPrimalVert
@@ -42,7 +51,7 @@ struct TPrimalVert
 	XMFLOAT4 m_d3dfColor;
 };
 
-struct TSimpleMesh
+struct TSmartMesh
 {
 	float m_afPosition[4];
 	float m_afNormals[3];
@@ -51,12 +60,13 @@ struct TSimpleMesh
 	int m_anJointIndices[4];
 };
 
-
 unsigned int createEntity(TWorld *ptWorld);
 
 void destroyEntity(TWorld *ptWorld, unsigned int nEntity);
 
-unsigned int createDebugTransformLines(TWorld *ptWorld, TDebugMesh tDebugMesh);
+unsigned int createDebugTransformLines(TWorld *ptWorld);
+
+unsigned int createCube(TWorld * ptWorld);
 
 unsigned int createDebugGrid(TWorld * ptWorld);
 

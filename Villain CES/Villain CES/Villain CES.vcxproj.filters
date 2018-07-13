@@ -72,6 +72,12 @@
     <ClInclude Include="Gateware Redistribution R5B\Interface\G_System\GKeyDefines.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Input_Component.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="InputSystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -103,6 +109,9 @@
     </ClCompile>
     <ClCompile Include="Gateware Redistribution R5B\Source\G_System\GInput.cpp">
       <Filter>Header Files\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="InputSystem.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

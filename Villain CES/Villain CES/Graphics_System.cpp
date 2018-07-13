@@ -3,10 +3,9 @@
 
 CGraphicsSystem::CGraphicsSystem()
 {
-	m_ncameraXPosition = 0;
-	m_ncameraYPosition = 0.5;
-	m_ncameraZPosition = -10;
-
+	m_fCameraXPosition = 0;
+	m_fCameraYPosition = 0.5;
+	m_fCameraZPosition = -10;
 
 }
 
@@ -38,9 +37,10 @@ void CGraphicsSystem::InitD3D(HWND cTheWindow)
 	d3dSwapchainDescription.BufferDesc.Height = cRectangle.bottom - cRectangle.top;
 	d3dSwapchainDescription.BufferDesc.RefreshRate.Numerator = 60;
 	d3dSwapchainDescription.BufferDesc.RefreshRate.Denominator = 1;
-	unsigned int nDeviceAndSwapchainFlag = 0;
+
+	m_fAspectRatio = cRectangle.bottom - cRectangle.top / cRectangle.right - cRectangle.left;
 #ifdef _DEBUG
-	int nFlag = D3D11_CREATE_DEVICE_DEBUG;
+	unsigned int nDeviceAndSwapchainFlag = D3D11_CREATE_DEVICE_DEBUG;
 #endif // DEBUG
 	// create a device, device context and swap chain using the information in the scd struct
 	D3D11CreateDeviceAndSwapChain(NULL,
@@ -65,11 +65,11 @@ void CGraphicsSystem::InitD3D(HWND cTheWindow)
 
 	m_pd3dSwapchain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&pd3dRenderTargetTexture);
 	m_pd3dDevice->CreateRenderTargetView(pd3dRenderTargetTexture, NULL, &m_pd3dRenderTargetView);
-
 	float fViewportWidth = 0;
 	float fViewportHeight = 0;
 
 	pd3dRenderTargetTexture->GetDesc(&d3dTextureDescription);
+	pd3dRenderTargetTexture->Release();
 	fViewportWidth = (float)d3dTextureDescription.Width;
 	fViewportHeight = (float)d3dTextureDescription.Height;
 
@@ -138,6 +138,8 @@ void CGraphicsSystem::InitD3D(HWND cTheWindow)
 
 void CGraphicsSystem::UpdateD3D()
 {
+	
+
 	const float afBackgroundColor[] = { .5f, .05f, .5f, 1 };
 
 	m_pd3dDeviceContext->OMSetRenderTargets(1, &m_pd3dRenderTargetView, m_pd3dDepthStencilView);
@@ -154,17 +156,32 @@ void CGraphicsSystem::CleanD3D(TWorld *ptPlanet)
 		//Check planet's mask at [i] to see what needs to be released
 		if (ptPlanet->atGraphicsMask[nEntityIndex].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_DEBUGMESH | COMPONENT_SHADERID))
 		{
-			ptPlanet->atDebugMesh[nEntityIndex].m_pd3dVertexBuffer->Release();
+			ptPlanet->atDebugMesh[nEntityIndex].m_pd3dVertexBuffer->Release();			
 		}
 
+		if (ptPlanet->atGraphicsMask[nEntityIndex].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_SIMPLEMESH | COMPONENT_SHADERID))
+		{
+			ptPlanet->atSimpleMesh[nEntityIndex].m_pd3dVertexBuffer->Release();
+			ptPlanet->atSimpleMesh[nEntityIndex].m_pd3dIndexBuffer->Release();
+
+		}
 		destroyEntity(ptPlanet, nEntityIndex);
 	}
 	m_pd3dSwapchain->Release();
 	m_pd3dDevice->Release();
 	m_pd3dDeviceContext->Release();
+	m_pd3dDepthStencil->Release();
 	m_pd3dDepthStencilState->Release();
 	m_pd3dDepthStencilView->Release();
 	m_pd3dRenderTargetView->Release();
+		
+	m_pd3dPrimalVertexShader->Release();
+	m_pd3dPrimalPixelShader->Release();
+	m_pd3dPrimalInputLayout->Release();
+	m_pd3dPrimalMatrixBuffer->Release();
+
+	
+	//m_pcMyInput->DecrementCount();
 }
 
 void CGraphicsSystem::CreateShaders(ID3D11Device * device)
@@ -209,7 +226,7 @@ void CGraphicsSystem::CreateShaders(ID3D11Device * device)
 	//Now setup the layout of the data that goes into the shader.
 	D3D11_INPUT_ELEMENT_DESC m_d3dPrimalLayoutDesc[] =
 	{
-		{ "POSITION", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 		{ "POSITION", 1, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 	};
 	//Get a count of the elements in the layout.
@@ -243,7 +260,18 @@ void CGraphicsSystem::CreateBuffers(TWorld *ptPlanet)//init first frame
 		{
 			if (ptPlanet->atDebugMesh[nCurrentEntity].m_nVertexCount)
 				m_pd3dDevice->CreateBuffer(&ptPlanet->atDebugMesh[nCurrentEntity].m_d3dVertexBufferDesc, &ptPlanet->atDebugMesh[nCurrentEntity].m_d3dVertexData, &ptPlanet->atDebugMesh[nCurrentEntity].m_pd3dVertexBuffer);
+
 		}
+		if (ptPlanet->atGraphicsMask[nCurrentEntity].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_SIMPLEMESH | COMPONENT_SHADERID))
+		{
+			if (ptPlanet->atSimpleMesh[nCurrentEntity].m_nIndexCount && ptPlanet->atSimpleMesh[nCurrentEntity].m_nVertexCount)
+			{
+				m_pd3dDevice->CreateBuffer(&ptPlanet->atSimpleMesh[nCurrentEntity].m_d3dVertexBufferDesc, &ptPlanet->atSimpleMesh[nCurrentEntity].m_d3dVertexData, &ptPlanet->atSimpleMesh[nCurrentEntity].m_pd3dVertexBuffer);
+				m_pd3dDevice->CreateBuffer(&ptPlanet->atSimpleMesh[nCurrentEntity].m_d3dIndexBufferDesc, &ptPlanet->atSimpleMesh[nCurrentEntity].m_d3dIndexData, &ptPlanet->atSimpleMesh[nCurrentEntity].m_pd3dIndexBuffer);
+
+			}
+		}
+			
 	
 	}
 
@@ -289,99 +317,27 @@ void CGraphicsSystem::UpdateBuffer(TWorld * ptWorld, std::vector<TSimpleMesh> vt
 
 XMMATRIX CGraphicsSystem::SetDefaultViewMatrix()
 {
-	/*DefaultViewMatrix.view._11 = 1;
-
-	DefaultViewMatrix.view._22 = cos((-18 * 3.14) / 180.0f);
-
-	DefaultViewMatrix.view._23 = -sin((-18 * 3.14) / 180.0f);
-
-	DefaultViewMatrix.view._32 = sin((-18 * 3.14) / 180.0f);
-
-	DefaultViewMatrix.view._33 = cos((-18 * 3.14) / 180.0f);
-
-	DefaultViewMatrix.view._44 = 1;*/
 	XMMATRIX DefaultViewMatrix;
-	DefaultViewMatrix.r[0].m128_f32[0] = 1;
-	DefaultViewMatrix.r[0].m128_f32[1] = 0;
-	DefaultViewMatrix.r[0].m128_f32[2] = 0;
-	DefaultViewMatrix.r[0].m128_f32[3] = 0;
 
-	DefaultViewMatrix.r[1].m128_f32[0] = 0;
-	DefaultViewMatrix.r[1].m128_f32[1] = cos((-18 * 3.14) / 180.0f);
-	DefaultViewMatrix.r[1].m128_f32[2] = -sin((-18 * 3.14) / 180.0f);;
-	DefaultViewMatrix.r[1].m128_f32[3] = 0;
-
-	DefaultViewMatrix.r[2].m128_f32[0] = 0;
-	DefaultViewMatrix.r[2].m128_f32[1] = sin((-18 * 3.14) / 180.0f);;
-	DefaultViewMatrix.r[2].m128_f32[2] = cos((-18 * 3.14) / 180.0f);;
-	DefaultViewMatrix.r[2].m128_f32[3] = 0;
-
-	DefaultViewMatrix.r[3].m128_f32[0] = m_ncameraXPosition;
-	DefaultViewMatrix.r[3].m128_f32[1] = m_ncameraYPosition;
-	DefaultViewMatrix.r[3].m128_f32[2] = m_ncameraZPosition;
-	DefaultViewMatrix.r[3].m128_f32[3] = 1;
-
-	DefaultViewMatrix.r[0].m128_f32[0] = DefaultViewMatrix.r[0].m128_f32[0];
-	//DefaultViewMatrix.view._21 = DefaultViewMatrix.view._12;
-	DefaultViewMatrix.r[1].m128_f32[0] = DefaultViewMatrix.r[0].m128_f32[1];
-//	DefaultViewMatrix.view._31 = DefaultViewMatrix.view._13;
-	DefaultViewMatrix.r[2].m128_f32[0] = DefaultViewMatrix.r[0].m128_f32[2];
-	//DefaultViewMatrix.view._12 = DefaultViewMatrix.view._21;
-	DefaultViewMatrix.r[0].m128_f32[1] = DefaultViewMatrix.r[1].m128_f32[0];
-	//DefaultViewMatrix.view._22 = DefaultViewMatrix.view._22;
-	DefaultViewMatrix.r[1].m128_f32[1] = DefaultViewMatrix.r[1].m128_f32[1];
-//	DefaultViewMatrix.view._32 = DefaultViewMatrix.view._23;
-	DefaultViewMatrix.r[2].m128_f32[1] = DefaultViewMatrix.r[1].m128_f32[2];
-//	DefaultViewMatrix.view._13 = DefaultViewMatrix.view._31;
-	DefaultViewMatrix.r[0].m128_f32[2] = DefaultViewMatrix.r[2].m128_f32[0];
-	DefaultViewMatrix.r[1].m128_f32[2] = DefaultViewMatrix.r[2].m128_f32[1];
-	DefaultViewMatrix.r[2].m128_f32[2] = DefaultViewMatrix.r[2].m128_f32[2];
-	XMFLOAT4 pos; //pos.x = toShader.view._41;
-	pos.x = m_ncameraXPosition;
-	pos.y = m_ncameraYPosition;
-	pos.z = m_ncameraZPosition;
-	pos.w = 0;
-	XMVECTOR temptpos;
-	temptpos.m128_f32[0] = pos.x;
-	temptpos.m128_f32[1] = pos.y;
-	temptpos.m128_f32[2] = pos.z;
-	temptpos.m128_f32[3] = pos.w;
-
-	temptpos = XMVector4Transform(temptpos, DefaultViewMatrix);
-	temptpos.m128_f32[0] *= -1;
-	temptpos.m128_f32[1] *= -1;
-	temptpos.m128_f32[2] *= -1;
-	DefaultViewMatrix.r[3].m128_f32[0] = temptpos.m128_f32[0];
-	DefaultViewMatrix.r[3].m128_f32[1] = temptpos.m128_f32[1];
-	DefaultViewMatrix.r[3].m128_f32[2] = temptpos.m128_f32[2];
-	
-	/*DefaultViewMatrix.view._23 = DefaultViewMatrix.view._32;
-	DefaultViewMatrix.view._33 = DefaultViewMatrix.view._33;*/
-
-
-
+	DefaultViewMatrix = XMMatrixLookAtLH(XMVectorSet(0, 10.f, -15.0f, 1.0f), XMVectorSet(0, 0, 0, 1.0f), XMVectorSet(0, 1.0f, 0, 1.0f));
 
 	return DefaultViewMatrix;
 }
 
 XMMATRIX CGraphicsSystem::SetDefaultPerspective()
 {
-	/*DefaultViewMatrix.perspective._22 = 1 / tan(fov * 0.5 * 3.15f / 180);
-	DefaultViewMatrix.perspective._11 = DefaultViewMatrix.perspective._22;
-	DefaultViewMatrix.perspective._34 = 1;
-	DefaultViewMatrix.perspective._33 = farplane / (farplane - nearplane);
-	DefaultViewMatrix.perspective._43 = -(farplane * nearplane) / (farplane - nearplane);
-	DefaultViewMatrix.perspective = DefaultViewMatrix.perspective;*/
 
 	XMMATRIX DefaultPerspectiveMatrix;
-	// the 90 is for fov if we want to implament field of view
-	DefaultPerspectiveMatrix.r[0].m128_f32[0] = 1 / tan(90* 0.5 * 3.15f / 180);
+	// the 90 is for fov if we want to implement field of view
+	m_fFOV = 90;
+
+	DefaultPerspectiveMatrix.r[0].m128_f32[0] = 1 / tan(m_fFOV* 0.5 * 3.15f / 180);
 	DefaultPerspectiveMatrix.r[0].m128_f32[1] = 0;
 	DefaultPerspectiveMatrix.r[0].m128_f32[2] = 0;
 	DefaultPerspectiveMatrix.r[0].m128_f32[3] = 0;
 
 	DefaultPerspectiveMatrix.r[1].m128_f32[0] = 0;
-	DefaultPerspectiveMatrix.r[1].m128_f32[1] = 1 / tan(90 * 0.5 * 3.15f / 180);
+	DefaultPerspectiveMatrix.r[1].m128_f32[1] = 1 / tan(m_fFOV * 0.5 * 3.15f / 180);
 	DefaultPerspectiveMatrix.r[1].m128_f32[2] = 0;
 	DefaultPerspectiveMatrix.r[1].m128_f32[3] = 0;
 
@@ -418,122 +374,26 @@ XMMATRIX CGraphicsSystem::SetDefaultWorldPosition()
 	DefaultPerspectiveMatrix.r[2].m128_f32[3] = 0;
 
 	DefaultPerspectiveMatrix.r[3].m128_f32[0] = 0;
-	DefaultPerspectiveMatrix.r[3].m128_f32[1] = 0.2;
-	DefaultPerspectiveMatrix.r[3].m128_f32[2] = -9;
-	DefaultPerspectiveMatrix.r[3].m128_f32[3] = 1;
+	DefaultPerspectiveMatrix.r[3].m128_f32[1] = 0.2f;
+	DefaultPerspectiveMatrix.r[3].m128_f32[2] = -10.0f;
+	DefaultPerspectiveMatrix.r[3].m128_f32[3] = 1.0f;
 	return DefaultPerspectiveMatrix;
+}
+
+void CGraphicsSystem::InitMyShaderData(ID3D11DeviceContext * pd3dDeviceContext, XMMATRIX d3dWorldMatrix, XMMATRIX d3dViewMatrix, XMMATRIX d3dProjectionMatrix, int nMask, XMFLOAT3 d3dLightPosition, XMFLOAT3 d3dCameraPosition, XMFLOAT4X4 *pd3dJointsForVS) {
+
 }
 
 XMVECTOR CGraphicsSystem::GetCameraPos()
 {
 	XMVECTOR campos;
-	campos.m128_f32[0] = m_ncameraXPosition;
-	campos.m128_f32[1] = m_ncameraYPosition;
-	campos.m128_f32[2] = m_ncameraZPosition;
+	campos.m128_f32[0] = m_fCameraXPosition;
+	campos.m128_f32[1] = m_fCameraYPosition;
+	campos.m128_f32[2] = m_fCameraZPosition;
 	return campos;
 }
 
 
-XMMATRIX CGraphicsSystem::DebugCamera(XMMATRIX tWVP)
-{
-	XMMATRIX d3dTmpViewM, d3dTmpProjectionM, m_d3dTmpWorldM, d3dMovementM, d3dRotation;
-
-
-	m_d3dTmpWorldM.r[0].m128_f32[0] = 0;
-
-
-
-
-	//Forward && Back Movement
-
-	// up key movement
-	
-	if (InputCheck(G_KEY_UP) == 1) {
-		m_ncameraZPosition += 0.001;
-	}
-	// down key movement
-	if (InputCheck(G_KEY_DOWN) == 1) {
-		m_ncameraZPosition -= 0.001;
-	}
-	// left key movement
-	if (InputCheck(G_KEY_LEFT) == 1) {
-		m_ncameraXPosition -= 0.001;
-	}
-	// right key movement
-	if (InputCheck(G_KEY_RIGHT) == 1) {
-		m_ncameraXPosition += 0.001;
-	}
-	if (InputCheck(G_KEY_SPACE) == 1) {
-		m_ncameraYPosition += 0.001;
-	}
-	if (InputCheck(G_KEY_RIGHTSHIFT) == 1) {
-		m_ncameraYPosition -= 0.001;
-	}
-
-	
-	//{
-	//if (GetAsyncKeyState('W') && GetAsyncKeyState('S'))
-	//{
-	//}
-	//else if (true)
-	//{
-
-	//}
-	//else {
-
-	//}
-	//}
-
-	////Right && Left Movement
-	//if (true)
-	//{
-	//	if (GetAsyncKeyState('A') && GetAsyncKeyState('D'))
-	//	{
-	//	}
-	//	else if (true)
-	//	{
-
-	//	}
-	//	else {
-
-	//	}
-	//}
-
-	//// Up && Down Rotation(keybord implemented, soon to be changed in the mouse)
-	//if (true)
-	//{
-
-	//}
-
-	////Right && Left Rotation(keybord implemented, soon to be changed in the mouse)
-	//if (true)
-	//{
-
-	//}
-
-
-
-	return m_d3dTmpWorldM;
-}
-
-GReturn CGraphicsSystem::InitlizeGInput(HWND cTheWindow)
-{
-	// returns the results of function
-	return CreateGInput(cTheWindow, sizeof(cTheWindow), &m_pcMyInput);
-
-}
-
-int CGraphicsSystem::InputCheck(int GInputKey)
-{
-	float fInputReturnValue = -1;
-	m_pcMyInput->GetState(GInputKey, fInputReturnValue);
-	return fInputReturnValue;
-}
-
-void CGraphicsSystem::InitMyShaderData(ID3D11DeviceContext * pd3dDeviceContext, XMMATRIX d3dWorldMatrix, XMMATRIX d3dViewMatrix, XMMATRIX d3dProjectionMatrix, int nMask, XMFLOAT3 d3dLightPosition, XMFLOAT3 d3dCameraPosition, XMFLOAT4X4 *pd3dJointsForVS)
-{
-
-}
 
 void CGraphicsSystem::InitPrimalShaderData(ID3D11DeviceContext * pd3dDeviceContext, XMMATRIX d3dWorldMatrix, XMMATRIX d3dViewMatrix, XMMATRIX d3dProjectionMatrix, TDebugMesh tDebugMesh)
 {
@@ -545,20 +405,7 @@ void CGraphicsSystem::InitPrimalShaderData(ID3D11DeviceContext * pd3dDeviceConte
 	XMMATRIX d3dView;
 
 	d3dView = d3dViewMatrix;
-	//Transpose the matrices to prepare them for the shader.
-//	d3dWorldMatrix = DirectX::XMMatrixTranspose(d3dWorldMatrix);
-//	d3dView = DirectX::XMMatrixTranspose(d3dView);
 
-
-	/*d3dView = XMMatrixInverse(NULL, d3dView);
-	d3dView.r[3].m128_f32[0] = 0;
-	d3dView.r[3].m128_f32[1] = 0;
-	d3dView.r[3].m128_f32[2] = -10;
-	d3dView.r[3].m128_f32[0] = 1;*/
-
-
-	//d3dView = XMMatrixTranspose(d3dView);
-	//d3dProjectionMatrix = DirectX::XMMatrixTranspose(d3dProjectionMatrix);
 
 	pd3dDeviceContext->Map(m_pd3dPrimalMatrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &d3dPrimalMappedResource);
 
@@ -584,6 +431,48 @@ void CGraphicsSystem::InitPrimalShaderData(ID3D11DeviceContext * pd3dDeviceConte
 
 }
 
+void CGraphicsSystem::InitPrimalShaderData2(ID3D11DeviceContext * pd3dDeviceContext, XMMATRIX d3dWorldMatrix, XMMATRIX d3dViewMatrix, XMMATRIX d3dProjectionMatrix, TSimpleMesh tSimpleMesh)
+{
+	D3D11_MAPPED_SUBRESOURCE d3dPrimalMappedResource;
+	TPrimalMatrixBufferType* ptPrimalMatrixBufferDataPointer = nullptr;
+
+	unsigned int bufferNumber;
+	XMMATRIX d3dTmpViewM;
+	d3dTmpViewM = XMMatrixInverse(NULL, d3dViewMatrix);
+	m_fCameraXPosition = d3dTmpViewM.r[3].m128_f32[0];
+	m_fCameraYPosition = d3dTmpViewM.r[3].m128_f32[1];
+	m_fCameraZPosition = d3dTmpViewM.r[3].m128_f32[2];
+
+	XMMATRIX d3dView;
+
+	d3dView = d3dViewMatrix;
+
+	pd3dDeviceContext->Map(m_pd3dPrimalMatrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &d3dPrimalMappedResource);
+
+
+	// Get a pointer to the data in the constant buffer.
+	ptPrimalMatrixBufferDataPointer = (TPrimalMatrixBufferType*)d3dPrimalMappedResource.pData;
+
+	// Copy the matrices into the constant buffer.
+	ptPrimalMatrixBufferDataPointer->m_d3dWorldMatrix = d3dWorldMatrix;
+	ptPrimalMatrixBufferDataPointer->m_d3dViewMatrix = d3dView;
+	ptPrimalMatrixBufferDataPointer->m_d3dProjectionMatrix = d3dProjectionMatrix;
+
+	// Unlock the constant buffer.
+	pd3dDeviceContext->Unmap(m_pd3dPrimalMatrixBuffer, 0);
+
+	// Position of the constant buffer in the vertex shader.
+	bufferNumber = 0;
+
+	// Set the constant buffer in the vertex shader with the updated values.
+	pd3dDeviceContext->VSSetConstantBuffers(bufferNumber, 1, &m_pd3dPrimalMatrixBuffer);
+	pd3dDeviceContext->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	pd3dDeviceContext->IASetVertexBuffers(0, 1, &tSimpleMesh.m_pd3dVertexBuffer, &tSimpleMesh.m_nVertexBufferStride, &tSimpleMesh.m_nVertexBufferOffset);
+	pd3dDeviceContext->IASetIndexBuffer(tSimpleMesh.m_pd3dIndexBuffer, DXGI_FORMAT_R16_UINT, 0);
+
+
+}
+
 void CGraphicsSystem::ExecutePipeline(ID3D11DeviceContext *pd3dDeviceContext, int m_nIndexCount, int nGraphicsMask, int nShaderID)
 {
 	switch (nShaderID)
@@ -600,6 +489,7 @@ void CGraphicsSystem::ExecutePipeline(ID3D11DeviceContext *pd3dDeviceContext, in
 			//{
 			//	pd3dDeviceContext->Draw(m_nIndexCount, 0);
 			//}
+			break;
 		}
 		case 2:
 		{
@@ -613,9 +503,22 @@ void CGraphicsSystem::ExecutePipeline(ID3D11DeviceContext *pd3dDeviceContext, in
 			{
 				pd3dDeviceContext->Draw(m_nIndexCount, 0);
 			}
+			break;
+		}
+		case 3:
+		{
+			pd3dDeviceContext->IASetInputLayout(m_pd3dPrimalInputLayout);
+			//Set Shader
+			pd3dDeviceContext->VSSetShader(m_pd3dPrimalVertexShader, NULL, 0);
+			pd3dDeviceContext->PSSetShader(m_pd3dPrimalPixelShader, NULL, 0);
+			//Draw
+			if (nGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_SIMPLEMESH | COMPONENT_SHADERID))
+			{
+				pd3dDeviceContext->DrawIndexed(m_nIndexCount, 0,0);
+			}
+			break;
 		}
 		default:
 			break;
 	}
 }
-
