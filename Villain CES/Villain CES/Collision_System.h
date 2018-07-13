@@ -2,9 +2,19 @@
 #include"Collision_Component.h"
 #include <list>
 using namespace std;
+//File header :
+/***
+* Filename:          Collision_System.h
+* Date:              07/11/2018
+* Mod. Date:         07/11/2018
+* Mod. Initials:    AP
+* Author:            Arthur E. Parker
+* Purpose:           Controls Collision in Game
+*            
+**/
 class CCollisionSystem
 {
-	//panda
+	
 public:
 
 	CCollisionSystem();
