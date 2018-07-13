@@ -5,7 +5,10 @@
 /////////////
 // CBUFFER //
 /////////////
-
+cbuffer PixelBuffer : register(b0)
+{
+	float4 d3dCollisionColor;
+}
 //////////////
 // TYPEDEFS //
 //////////////
@@ -21,5 +24,12 @@ struct TPrimalPixelInputType
 ////////////////////////////////////////////////////////////////////////////////
 float4 PrimalPixelShader(TPrimalPixelInputType tInput) : SV_TARGET
 {
-	return tInput.d3dColor;
+	if (d3dCollisionColor.w)
+	{
+		return d3dCollisionColor;
+	}
+	else
+	{
+		return tInput.d3dColor;
+	}
 }

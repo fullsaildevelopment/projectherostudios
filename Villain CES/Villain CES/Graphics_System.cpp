@@ -178,8 +178,8 @@ void CGraphicsSystem::CleanD3D(TWorld *ptPlanet)
 	m_pd3dPrimalVertexShader->Release();
 	m_pd3dPrimalPixelShader->Release();
 	m_pd3dPrimalInputLayout->Release();
-	m_pd3dPrimalMatrixBuffer->Release();
-
+	m_pd3dPrimalVertexBuffer->Release();
+	m_pd3dPrimalPixelBuffer->Release();
 	
 	//m_pcMyInput->DecrementCount();
 }
@@ -220,6 +220,7 @@ void CGraphicsSystem::CreateShaders(ID3D11Device * device)
 
 	#pragma region PrimalShaders
 	D3D11_BUFFER_DESC d3dPrimalMatrixBufferDesc;
+	D3D11_BUFFER_DESC d3dPrimalPixelBufferDesc;
 	device->CreateVertexShader(PrimalVertexShader, sizeof(PrimalVertexShader), NULL, &m_pd3dPrimalVertexShader);
 	device->CreatePixelShader(PrimalPixelShader, sizeof(PrimalPixelShader), NULL, &m_pd3dPrimalPixelShader);
 	//Input Layout Setup
@@ -238,14 +239,25 @@ void CGraphicsSystem::CreateShaders(ID3D11Device * device)
 
 	//Setup the description of the dynamic matrix constant buffer that is in the vertex shader.
 	d3dPrimalMatrixBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
-	d3dPrimalMatrixBufferDesc.ByteWidth = sizeof(TPrimalMatrixBufferType);
+	d3dPrimalMatrixBufferDesc.ByteWidth = sizeof(TPrimalVertexBufferType);
 	d3dPrimalMatrixBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
 	d3dPrimalMatrixBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 	d3dPrimalMatrixBufferDesc.MiscFlags = 0;
 	d3dPrimalMatrixBufferDesc.StructureByteStride = 0;
 
 	//Create the constant buffer pointer so we can access the vertex shader constant buffer from within this class.
-	device->CreateBuffer(&d3dPrimalMatrixBufferDesc, NULL, &m_pd3dPrimalMatrixBuffer);
+	device->CreateBuffer(&d3dPrimalMatrixBufferDesc, NULL, &m_pd3dPrimalVertexBuffer);
+
+	//Setup the description of the dynamic matrix constant buffer that is in the vertex shader.
+	d3dPrimalPixelBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+	d3dPrimalPixelBufferDesc.ByteWidth = sizeof(TPrimalPixelBufferType);
+	d3dPrimalPixelBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	d3dPrimalPixelBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	d3dPrimalPixelBufferDesc.MiscFlags = 0;
+	d3dPrimalPixelBufferDesc.StructureByteStride = 0;
+
+	//Create the constant buffer pointer so we can access the vertex shader constant buffer from within this class.
+	device->CreateBuffer(&d3dPrimalPixelBufferDesc, NULL, &m_pd3dPrimalPixelBuffer);
 #pragma endregion
 
 }
@@ -270,11 +282,8 @@ void CGraphicsSystem::CreateBuffers(TWorld *ptPlanet)//init first frame
 				m_pd3dDevice->CreateBuffer(&ptPlanet->atSimpleMesh[nCurrentEntity].m_d3dIndexBufferDesc, &ptPlanet->atSimpleMesh[nCurrentEntity].m_d3dIndexData, &ptPlanet->atSimpleMesh[nCurrentEntity].m_pd3dIndexBuffer);
 
 			}
-		}
-			
-	
+		}	
 	}
-
 }
 
 void CGraphicsSystem::UpdateBuffer(TWorld * ptWorld, std::vector<TSimpleMesh> vtVertexVector, int nEntity, int nMask)
@@ -373,14 +382,15 @@ XMMATRIX CGraphicsSystem::SetDefaultWorldPosition()
 	DefaultPerspectiveMatrix.r[2].m128_f32[2] = 1;
 	DefaultPerspectiveMatrix.r[2].m128_f32[3] = 0;
 
-	DefaultPerspectiveMatrix.r[3].m128_f32[0] = 0;
+	DefaultPerspectiveMatrix.r[3].m128_f32[0] = 1.0f;
 	DefaultPerspectiveMatrix.r[3].m128_f32[1] = 0.2f;
 	DefaultPerspectiveMatrix.r[3].m128_f32[2] = -10.0f;
 	DefaultPerspectiveMatrix.r[3].m128_f32[3] = 1.0f;
 	return DefaultPerspectiveMatrix;
 }
 
-void CGraphicsSystem::InitMyShaderData(ID3D11DeviceContext * pd3dDeviceContext, XMMATRIX d3dWorldMatrix, XMMATRIX d3dViewMatrix, XMMATRIX d3dProjectionMatrix, int nMask, XMFLOAT3 d3dLightPosition, XMFLOAT3 d3dCameraPosition, XMFLOAT4X4 *pd3dJointsForVS) {
+void CGraphicsSystem::InitMyShaderData(ID3D11DeviceContext * pd3dDeviceContext, XMMATRIX d3dWorldMatrix, XMMATRIX d3dViewMatrix, XMMATRIX d3dProjectionMatrix, int nMask, XMFLOAT3 d3dLightPosition, XMFLOAT3 d3dCameraPosition, XMFLOAT4X4 *pd3dJointsForVS) 
+{
 
 }
 
@@ -398,7 +408,7 @@ XMVECTOR CGraphicsSystem::GetCameraPos()
 void CGraphicsSystem::InitPrimalShaderData(ID3D11DeviceContext * pd3dDeviceContext, XMMATRIX d3dWorldMatrix, XMMATRIX d3dViewMatrix, XMMATRIX d3dProjectionMatrix, TDebugMesh tDebugMesh)
 {
 	D3D11_MAPPED_SUBRESOURCE d3dPrimalMappedResource;
-	TPrimalMatrixBufferType* ptPrimalMatrixBufferDataPointer = nullptr;
+	TPrimalVertexBufferType* ptPrimalMatrixBufferDataPointer = nullptr;
 
 	unsigned int bufferNumber;
 
@@ -407,11 +417,11 @@ void CGraphicsSystem::InitPrimalShaderData(ID3D11DeviceContext * pd3dDeviceConte
 	d3dView = d3dViewMatrix;
 
 
-	pd3dDeviceContext->Map(m_pd3dPrimalMatrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &d3dPrimalMappedResource);
+	pd3dDeviceContext->Map(m_pd3dPrimalVertexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &d3dPrimalMappedResource);
 
 
 	// Get a pointer to the data in the constant buffer.
-	ptPrimalMatrixBufferDataPointer = (TPrimalMatrixBufferType*)d3dPrimalMappedResource.pData;
+	ptPrimalMatrixBufferDataPointer = (TPrimalVertexBufferType*)d3dPrimalMappedResource.pData;
 
 	// Copy the matrices into the constant buffer.
 	ptPrimalMatrixBufferDataPointer->m_d3dWorldMatrix = d3dWorldMatrix;
@@ -419,53 +429,76 @@ void CGraphicsSystem::InitPrimalShaderData(ID3D11DeviceContext * pd3dDeviceConte
 	ptPrimalMatrixBufferDataPointer->m_d3dProjectionMatrix = d3dProjectionMatrix;
 
 	// Unlock the constant buffer.
-	pd3dDeviceContext->Unmap(m_pd3dPrimalMatrixBuffer, 0);
+	pd3dDeviceContext->Unmap(m_pd3dPrimalVertexBuffer, 0);
 
 	// Position of the constant buffer in the vertex shader.
 	bufferNumber = 0;
 
 	// Set the constant buffer in the vertex shader with the updated values.
-	pd3dDeviceContext->VSSetConstantBuffers(bufferNumber, 1, &m_pd3dPrimalMatrixBuffer);
+	pd3dDeviceContext->VSSetConstantBuffers(bufferNumber, 1, &m_pd3dPrimalVertexBuffer);
 	pd3dDeviceContext->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_LINELIST);
 	pd3dDeviceContext->IASetVertexBuffers(0, 1, &tDebugMesh.m_pd3dVertexBuffer, &tDebugMesh.m_nVertexBufferStride, &tDebugMesh.m_nVertexBufferOffset);
 
 }
 
-void CGraphicsSystem::InitPrimalShaderData2(ID3D11DeviceContext * pd3dDeviceContext, XMMATRIX d3dWorldMatrix, XMMATRIX d3dViewMatrix, XMMATRIX d3dProjectionMatrix, TSimpleMesh tSimpleMesh)
+void CGraphicsSystem::InitPrimalShaderData2(ID3D11DeviceContext * pd3dDeviceContext, TPrimalVertexBufferType d3dVertexBuffer, TPrimalPixelBufferType d3dPixelBuffer, TSimpleMesh tSimpleMesh)
 {
-	D3D11_MAPPED_SUBRESOURCE d3dPrimalMappedResource;
-	TPrimalMatrixBufferType* ptPrimalMatrixBufferDataPointer = nullptr;
+	D3D11_MAPPED_SUBRESOURCE d3dPrimalVertexMappedResource;
+	D3D11_MAPPED_SUBRESOURCE d3dPrimalPixelMappedResource;
+
+	TPrimalVertexBufferType	*ptPrimalVertexBufferDataPointer = nullptr;
+	TPrimalPixelBufferType	*ptPrimalPixelBufferDataPointer = nullptr;
 
 	unsigned int bufferNumber;
 	XMMATRIX d3dTmpViewM;
-	d3dTmpViewM = XMMatrixInverse(NULL, d3dViewMatrix);
+	d3dTmpViewM = XMMatrixInverse(NULL, d3dVertexBuffer.m_d3dViewMatrix);
 	m_fCameraXPosition = d3dTmpViewM.r[3].m128_f32[0];
 	m_fCameraYPosition = d3dTmpViewM.r[3].m128_f32[1];
 	m_fCameraZPosition = d3dTmpViewM.r[3].m128_f32[2];
 
 	XMMATRIX d3dView;
 
-	d3dView = d3dViewMatrix;
-
-	pd3dDeviceContext->Map(m_pd3dPrimalMatrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &d3dPrimalMappedResource);
+	d3dView = d3dVertexBuffer.m_d3dViewMatrix;
+	#pragma region Map To Vertex Constant Buffer
+	pd3dDeviceContext->Map(m_pd3dPrimalVertexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &d3dPrimalVertexMappedResource);
 
 
 	// Get a pointer to the data in the constant buffer.
-	ptPrimalMatrixBufferDataPointer = (TPrimalMatrixBufferType*)d3dPrimalMappedResource.pData;
+	ptPrimalVertexBufferDataPointer = (TPrimalVertexBufferType*)d3dPrimalVertexMappedResource.pData;
 
 	// Copy the matrices into the constant buffer.
-	ptPrimalMatrixBufferDataPointer->m_d3dWorldMatrix = d3dWorldMatrix;
-	ptPrimalMatrixBufferDataPointer->m_d3dViewMatrix = d3dView;
-	ptPrimalMatrixBufferDataPointer->m_d3dProjectionMatrix = d3dProjectionMatrix;
+	ptPrimalVertexBufferDataPointer->m_d3dWorldMatrix = d3dVertexBuffer.m_d3dWorldMatrix;
+	ptPrimalVertexBufferDataPointer->m_d3dViewMatrix = d3dView;
+	ptPrimalVertexBufferDataPointer->m_d3dProjectionMatrix = d3dVertexBuffer.m_d3dProjectionMatrix;
 
 	// Unlock the constant buffer.
-	pd3dDeviceContext->Unmap(m_pd3dPrimalMatrixBuffer, 0);
+	pd3dDeviceContext->Unmap(m_pd3dPrimalVertexBuffer, 0);
+
+#pragma endregion
+
+
+	#pragma region Map To Pixel Constant Buffer
+	pd3dDeviceContext->Map(m_pd3dPrimalPixelBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &d3dPrimalPixelMappedResource);
+
+	// Get a pointer to the data in the constant buffer.
+	ptPrimalPixelBufferDataPointer = (TPrimalPixelBufferType*)d3dPrimalPixelMappedResource.pData;
+
+	// Copy the matrices into the constant buffer.
+	ptPrimalPixelBufferDataPointer->m_d3dCollisionColor = d3dPixelBuffer.m_d3dCollisionColor;
+
+	// Unlock the constant buffer.
+	pd3dDeviceContext->Unmap(m_pd3dPrimalPixelBuffer, 0);
+
+#pragma endregion
+
 
 	// Position of the constant buffer in the vertex shader.
 	bufferNumber = 0;
 
+	pd3dDeviceContext->PSSetConstantBuffers(bufferNumber, 1, &m_pd3dPrimalPixelBuffer);
 	// Set the constant buffer in the vertex shader with the updated values.
-	pd3dDeviceContext->VSSetConstantBuffers(bufferNumber, 1, &m_pd3dPrimalMatrixBuffer);
+	pd3dDeviceContext->VSSetConstantBuffers(bufferNumber, 1, &m_pd3dPrimalVertexBuffer);
+
 	pd3dDeviceContext->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	pd3dDeviceContext->IASetVertexBuffers(0, 1, &tSimpleMesh.m_pd3dVertexBuffer, &tSimpleMesh.m_nVertexBufferStride, &tSimpleMesh.m_nVertexBufferOffset);
 	pd3dDeviceContext->IASetIndexBuffer(tSimpleMesh.m_pd3dIndexBuffer, DXGI_FORMAT_R16_UINT, 0);
@@ -477,7 +510,7 @@ void CGraphicsSystem::ExecutePipeline(ID3D11DeviceContext *pd3dDeviceContext, in
 {
 	switch (nShaderID)
 	{
-		case 1:
+		case 1:	
 		{
 			//Set Input_Layout
 			pd3dDeviceContext->IASetInputLayout(m_pd3dMyInputLayout);
