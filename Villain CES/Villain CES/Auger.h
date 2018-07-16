@@ -11,6 +11,9 @@ public:
 	TWorld tThisWorld;
 	CGraphicsSystem	*pcGraphicsSystem; 
 	CInputSystem	*pcInputSystem;
+	list<int> bulletsAvailables;
+	list<int> BulletsFired;
+
 
 	CAuger();
 	CAuger(HWND cTheWindow);
@@ -25,5 +28,8 @@ private:
 	XMMATRIX m_d3dWorldMatrix;
 	XMMATRIX m_d3dViewMatrix;
 	XMMATRIX m_d3dProjectionMatrix;
+	XMMATRIX peguins;
+
+	bool tempt;
 };
 

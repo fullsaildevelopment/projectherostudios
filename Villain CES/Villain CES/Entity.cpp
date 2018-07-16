@@ -146,7 +146,7 @@ unsigned int createCube(TWorld * ptWorld)
 	return 0;
 }
 
-unsigned int createPlayerBox(TWorld * ptWorld, CCollisionSystem* pcCollisionSystem)
+unsigned int createPlayerBox(TWorld * ptWorld)
 {
 	unsigned int nThisEntity = createEntity(ptWorld);
 	
@@ -217,104 +217,109 @@ unsigned int createPlayerBox(TWorld * ptWorld, CCollisionSystem* pcCollisionSyst
 	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexData.SysMemSlicePitch = 0;
 
 	ptWorld->atShaderID[nThisEntity].m_nShaderID = 3;
-	
-	TAABB MyAbb = createAABBS(atCubeVertices, 16);
-	MyAbb.m_IndexLocation = nThisEntity;
-	ptWorld->atAABB[nThisEntity] = MyAbb;
-	pcCollisionSystem->AddAABBCollider(MyAbb, nThisEntity);
+	for (int i = 0; i < ptWorld->atSimpleMesh[nThisEntity].m_nVertexCount; ++i) {
+		ptWorld->atSimpleMesh[nThisEntity].m_VertexData.push_back(atCubeVertices[i].m_d3dfPosition);
+	}
+
 
 	return 0;
 }
 
-TAABB createAABBS(TPrimalVert verticies[],int size)
+unsigned int createBullet(TWorld * ptWorld,XMMATRIX BulletSpawnLocation)
 {
-	TAABB aabb;
-	aabb.m_dMaxPoint.x = verticies[0].m_d3dfPosition.x;
-	aabb.m_dMaxPoint.y = verticies[0].m_d3dfPosition.y;
-	aabb.m_dMaxPoint.z = verticies[0].m_d3dfPosition.z;
-	aabb.m_dMaxPointOrginal.x = verticies[0].m_d3dfPosition.x;
-	aabb.m_dMaxPointOrginal.y = verticies[0].m_d3dfPosition.y;
-	aabb.m_dMaxPointOrginal.z = verticies[0].m_d3dfPosition.z;
-	aabb.m_dMinPointOrginal.x = verticies[0].m_d3dfPosition.x;
-	aabb.m_dMinPointOrginal.y = verticies[0].m_d3dfPosition.y;
-	aabb.m_dMinPointOrginal.z = verticies[0].m_d3dfPosition.z;
+	unsigned int nThisEntity = createEntity(ptWorld);
 
+	ptWorld->atCollisionMask[nThisEntity].m_tnCollisionMask = COMPONENT_AABB | COMPONENT_NONSTATIC;
+	ptWorld->atGraphicsMask[nThisEntity].m_tnGraphicsMask = COMPONENT_GRAPHICSMASK | COMPONENT_SIMPLEMESH | COMPONENT_SHADERID;
+	ptWorld->atAIMask[nThisEntity].m_tnAIMask = COMPONENT_AIMASK;
+	ptWorld->atUIMask[nThisEntity].m_tnUIMask = COMPONENT_UIMASK;
+	ptWorld->atPhysicsMask[nThisEntity].m_tnPhysicsMask = COMPONENT_PHYSICSMASK;
+	static TPrimalVert atCubeVertices[]
+	{
+		TPrimalVert{ XMFLOAT3(-0, 0.5f, 0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//0 Top F Left
+		TPrimalVert{ XMFLOAT3(0.5f, 0.5f, 0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//1 Top F Right
+		TPrimalVert{ XMFLOAT3(-0, -0, 0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//2 Bottom F Left
+		TPrimalVert{ XMFLOAT3(0.5f, -0, 0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//3 Bottom F Right
+		TPrimalVert{ XMFLOAT3(-0, 0.5f, -0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//4 Top B Left
+		TPrimalVert{ XMFLOAT3(0.5f, 0.5f, -0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//5 Top B Right
+		TPrimalVert{ XMFLOAT3(-0, -0, -0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//6 Bottom B Left
+		TPrimalVert{ XMFLOAT3(0.5f, -0, -0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//7 Bottom B Right
 
+		TPrimalVert{ XMFLOAT3(0.5f, 0.5f, 0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//8 //Top F Right
+		TPrimalVert{ XMFLOAT3(-0, 0.5f, 0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//9 // Top F Left
+		TPrimalVert{ XMFLOAT3(-0, -0, -0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//10 Bottom B Left
+		TPrimalVert{ XMFLOAT3(0.5f, -0, -0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//11 Bottom B Right
+		TPrimalVert{ XMFLOAT3(-0, -0, 0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//12 Bottom F Left
+		TPrimalVert{ XMFLOAT3(-0, 0.5f, 0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//13 Top F Left
+		TPrimalVert{ XMFLOAT3(0.5f, 0.5f, 0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//14 Top F Right
+		TPrimalVert{ XMFLOAT3(0.5f, -0, 0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) }//15 Bottm F Right
+	};
+	for (int i = 0; i < 16; ++i) {
+		//atCubeVertices[i].m_d3dfPosition.x *= 1;
+		//atCubeVertices[i].m_d3dfPosition.y *= 1;
+		//atCubeVertices[i].m_d3dfPosition.z *= 1;
 
-	aabb.m_dMinPoint.x = verticies[0].m_d3dfPosition.x;
-	aabb.m_dMinPoint.y = verticies[0].m_d3dfPosition.y;
-	aabb.m_dMinPoint.z = verticies[0].m_d3dfPosition.z;
-
-	for (int i = 1; i < size - 1; ++i) {
-		if (verticies[i].m_d3dfPosition.x > aabb.m_dMaxPoint.x) {
-			aabb.m_dMaxPoint.x = verticies[i].m_d3dfPosition.x;
-			aabb.m_dMaxPointOrginal.x = aabb.m_dMaxPoint.x;
-
-		}
-		if (verticies[i].m_d3dfPosition.x < aabb.m_dMinPoint.x) {
-			aabb.m_dMinPoint.x = verticies[i].m_d3dfPosition.x;
-			aabb.m_dMinPointOrginal.x = aabb.m_dMinPoint.x;
-
-		}
-
-		if (verticies[i].m_d3dfPosition.y > aabb.m_dMaxPoint.y) {
-			aabb.m_dMaxPoint.y = verticies[i].m_d3dfPosition.y;
-			aabb.m_dMaxPointOrginal.y = aabb.m_dMaxPoint.y;
-
-		}
-		if (verticies[i].m_d3dfPosition.y < aabb.m_dMinPoint.y) {
-			aabb.m_dMinPoint.y = verticies[i].m_d3dfPosition.y;
-			aabb.m_dMinPointOrginal.y = aabb.m_dMinPoint.y;
-
-		}
-
-		if (verticies[i].m_d3dfPosition.z > aabb.m_dMaxPoint.z) {
-			aabb.m_dMaxPoint.z = verticies[i].m_d3dfPosition.z;
-			aabb.m_dMaxPointOrginal.z = aabb.m_dMaxPoint.z;
-
-		}
-		if (verticies[i].m_d3dfPosition.z < aabb.m_dMinPoint.z) {
-			aabb.m_dMinPoint.z = verticies[i].m_d3dfPosition.z;
-			aabb.m_dMinPointOrginal.z = aabb.m_dMinPoint.z;
-
-		}
 	}
-	return aabb;
+	static short cubeIndices[]
+	{
+		3,1,0,0,2,3,
+		4,5,7,7,6,4,
+		4,8,5,4,9,8,
+		11,3,10,10,3,2,
+		12,13,4,4,6,12,
+		14,7,5,14,15,7
+	};
+
+	ptWorld->atSimpleMesh[nThisEntity].m_nIndexCount = 36;
+	ptWorld->atSimpleMesh[nThisEntity].m_nVertexCount = 16;
+
+	ptWorld->atSimpleMesh[nThisEntity].m_nVertexBufferStride = sizeof(TPrimalVert);
+	ptWorld->atSimpleMesh[nThisEntity].m_nVertexBufferOffset = 0;
+
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dVertexBufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dVertexBufferDesc.ByteWidth = sizeof(TPrimalVert) * ptWorld->atSimpleMesh[nThisEntity].m_nVertexCount;
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dVertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dVertexBufferDesc.CPUAccessFlags = 0;
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dVertexBufferDesc.MiscFlags = 0;
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dVertexBufferDesc.StructureByteStride = 0;
+
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexBufferDesc.ByteWidth = sizeof(short) * ptWorld->atSimpleMesh[nThisEntity].m_nIndexCount;
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexBufferDesc.CPUAccessFlags = 0;
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexBufferDesc.MiscFlags = 0;
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexBufferDesc.StructureByteStride = 0;
+
+
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dVertexData.pSysMem = atCubeVertices;
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexData.pSysMem = cubeIndices;
+
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dVertexData.SysMemPitch = 0;
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dVertexData.SysMemSlicePitch = 0;
+
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexData.SysMemPitch = 0;
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexData.SysMemSlicePitch = 0;
+	ptWorld->name[nThisEntity] = "Bullet";
 	
+	XMMATRIX DefaultPerspectiveMatrix;
+	// the 90 is for fov if we want to implament field of view
+	/*BulletSpawnLocation.r[0].m128_f32[0] = 0.5;
+	BulletSpawnLocation.r[1].m128_f32[1] = 0.5;
+	BulletSpawnLocation.r[2].m128_f32[2] = 0.5;*/
+//	BulletSpawnLocation.r[3].m128_f32[0] += 0.5;
+
+	ptWorld->atWorldMatrix[nThisEntity].worldMatrix = BulletSpawnLocation;
+
+	ptWorld->atShaderID[nThisEntity].m_nShaderID = 3;
+	for (int i = 0; i < ptWorld->atSimpleMesh[nThisEntity].m_nVertexCount; ++i) {
+		ptWorld->atSimpleMesh[nThisEntity].m_VertexData.push_back(atCubeVertices[i].m_d3dfPosition);
+	}
+	return nThisEntity;
 }
 
-TAABB updateAABB(XMMATRIX worldMatrix,TAABB aabb, CCollisionSystem* pcCollisionSystem)
-{
-	XMVECTOR max;
-	max.m128_f32[0] = aabb.m_dMaxPointOrginal.x;
-	max.m128_f32[1] = aabb.m_dMaxPointOrginal.y;
-	max.m128_f32[2] = aabb.m_dMaxPointOrginal.z;
-	max.m128_f32[3] = 1;
-	max=XMVector4Transform(max, worldMatrix);
 
-	XMVECTOR min;
-	min.m128_f32[0] = aabb.m_dMinPointOrginal.x;
-	min.m128_f32[1] = aabb.m_dMinPointOrginal.y;
-	min.m128_f32[2] = aabb.m_dMinPointOrginal.z;
-	min.m128_f32[3] = 1;
-	min = XMVector4Transform(min, worldMatrix);
-	TAABB newaabb;
-	newaabb = aabb;
-	newaabb.m_dMaxPoint.x = max.m128_f32[0];
-	newaabb.m_dMaxPoint.y = max.m128_f32[1];
-	newaabb.m_dMaxPoint.z = max.m128_f32[2];
 
-	newaabb.m_dMinPoint.x = min.m128_f32[0];
-	newaabb.m_dMinPoint.y = min.m128_f32[1];
-	newaabb.m_dMinPoint.z = min.m128_f32[2];
-	newaabb.m_dMinPointOrginal = aabb.m_dMinPointOrginal;
-	newaabb.m_dMaxPointOrginal = aabb.m_dMaxPointOrginal;
 
-	pcCollisionSystem->replaceAABB(aabb.m_IndexLocation,newaabb);
-	return newaabb;
-
-	
-}
 
 
 unsigned int createDebugGrid(TWorld * ptWorld)
@@ -341,7 +346,11 @@ unsigned int createDebugGrid(TWorld * ptWorld)
 
 	ptWorld->atGraphicsMask[nThisEntity].m_tnGraphicsMask	= COMPONENT_GRAPHICSMASK | COMPONENT_DEBUGMESH | COMPONENT_SHADERID;//138
 	ptWorld->atAIMask[nThisEntity].m_tnAIMask				= COMPONENT_AIMASK;
+<<<<<<< HEAD
 	ptWorld->atCollisionMask[nThisEntity].m_tnInputMask =  COMPONENT_STATIC| COMPONENT_AABB;
+=======
+	//ptWorld->atCollisionMask[nThisEntity].m_tnCollisionMask =  COMPONENT_STATIC| COMPONENT_AABB;
+>>>>>>> master
 	ptWorld->atUIMask[nThisEntity].m_tnUIMask				= COMPONENT_UIMASK;
 	ptWorld->atPhysicsMask[nThisEntity].m_tnPhysicsMask		= COMPONENT_PHYSICSMASK;
 
