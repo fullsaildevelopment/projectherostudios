@@ -36,7 +36,7 @@ void CAuger::InitializeSystems()
 	createDebugGrid(&tThisWorld);
 	createPlayerBox(&tThisWorld, pcCollisionSystem);
 	createPlayerBox(&tThisWorld, pcCollisionSystem);
-
+	
 	// do not make things that u want to draw after this line of code or shit will  break;
 	//createDebugTransformLines(&tThisWorld);
 	pcGraphicsSystem->CreateBuffers(&tThisWorld);
@@ -45,6 +45,14 @@ void CAuger::InitializeSystems()
 	 m_d3dViewMatrix = pcGraphicsSystem->SetDefaultViewMatrix();//Call some sort of function from the graphics system to create this matrix
 	 m_d3dProjectionMatrix = pcGraphicsSystem->SetDefaultPerspective();
 	 tThisWorld.atWorldMatrix[1].worldMatrix = m_d3dWorldMatrix;
+	 for (int nCurrentEntity = 0; nCurrentEntity < ENTITYCOUNT; nCurrentEntity++) {
+		 if (tThisWorld.atCollisionMask[nCurrentEntity].m_tnCollisionMask != 0) {
+			 TAABB MyAbb = pcCollisionSystem->createAABBS(tThisWorld.atSimpleMesh[nCurrentEntity].m_VertexData);
+			 MyAbb.m_IndexLocation = nCurrentEntity;
+			 tThisWorld.atAABB[nCurrentEntity] = MyAbb;
+			 pcCollisionSystem->AddAABBCollider(MyAbb, nCurrentEntity);
+		 }
+	 }
 
 }
 
@@ -84,7 +92,7 @@ void CAuger::Update()
 				tThisWorld.atWorldMatrix[1].worldMatrix.r[3].m128_f32[1] = pcGraphicsSystem->GetCameraPos().m128_f32[1]-1;
 				tThisWorld.atWorldMatrix[1].worldMatrix.r[3].m128_f32[2] = pcGraphicsSystem->GetCameraPos().m128_f32[2]+2;
 				
-				tThisWorld.atAABB[1] = updateAABB(tThisWorld.atWorldMatrix[1].worldMatrix, tThisWorld.atAABB[1],pcCollisionSystem);
+				tThisWorld.atAABB[1] = pcCollisionSystem->updateAABB(tThisWorld.atWorldMatrix[1].worldMatrix, tThisWorld.atAABB[1]);
 				
 			}
 			if (nCurrentEntity == 2) 
@@ -92,7 +100,7 @@ void CAuger::Update()
 
 				tThisWorld.atWorldMatrix[2].worldMatrix = m_d3dWorldMatrix;
 				tThisWorld.atWorldMatrix[2].worldMatrix.r[3].m128_f32[1] += 5;
-				tThisWorld.atAABB[2] = updateAABB(tThisWorld.atWorldMatrix[2].worldMatrix, tThisWorld.atAABB[2],pcCollisionSystem);
+				tThisWorld.atAABB[2] = pcCollisionSystem->updateAABB(tThisWorld.atWorldMatrix[2].worldMatrix, tThisWorld.atAABB[2]);
 				
 			}
 			tTempVertexBuffer.m_d3dWorldMatrix = tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix;

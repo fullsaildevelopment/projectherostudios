@@ -73,4 +73,3 @@ unsigned int createDebugGrid(TWorld * ptWorld);
 unsigned int createMesh(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMesh tMesh);
 unsigned int createPlayerBox(TWorld * ptWorld, CCollisionSystem* pcCollisionSystem);
 TAABB createAABBS(TPrimalVert verticies[],int size);
-TAABB updateAABB(XMMATRIX worldMatrix, TAABB aabb, CCollisionSystem* pcCollisionSystem);

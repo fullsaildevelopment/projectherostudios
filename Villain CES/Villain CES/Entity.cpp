@@ -211,11 +211,10 @@ unsigned int createPlayerBox(TWorld * ptWorld, CCollisionSystem* pcCollisionSyst
 	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexData.SysMemSlicePitch = 0;
 
 	ptWorld->atShaderID[nThisEntity].m_nShaderID = 3;
-	
-	TAABB MyAbb = createAABBS(atCubeVertices, 16);
-	MyAbb.m_IndexLocation = nThisEntity;
-	ptWorld->atAABB[nThisEntity] = MyAbb;
-	pcCollisionSystem->AddAABBCollider(MyAbb, nThisEntity);
+	for (int i = 0; i < ptWorld->atSimpleMesh[nThisEntity].m_nVertexCount; ++i) {
+		ptWorld->atSimpleMesh[nThisEntity].m_VertexData.push_back(atCubeVertices[i].m_d3dfPosition);
+	}
+
 
 	return 0;
 }
@@ -277,38 +276,7 @@ TAABB createAABBS(TPrimalVert verticies[],int size)
 	
 }
 
-TAABB updateAABB(XMMATRIX worldMatrix,TAABB aabb, CCollisionSystem* pcCollisionSystem)
-{
-	XMVECTOR max;
-	max.m128_f32[0] = aabb.m_dMaxPointOrginal.x;
-	max.m128_f32[1] = aabb.m_dMaxPointOrginal.y;
-	max.m128_f32[2] = aabb.m_dMaxPointOrginal.z;
-	max.m128_f32[3] = 1;
-	max=XMVector4Transform(max, worldMatrix);
 
-	XMVECTOR min;
-	min.m128_f32[0] = aabb.m_dMinPointOrginal.x;
-	min.m128_f32[1] = aabb.m_dMinPointOrginal.y;
-	min.m128_f32[2] = aabb.m_dMinPointOrginal.z;
-	min.m128_f32[3] = 1;
-	min = XMVector4Transform(min, worldMatrix);
-	TAABB newaabb;
-	newaabb = aabb;
-	newaabb.m_dMaxPoint.x = max.m128_f32[0];
-	newaabb.m_dMaxPoint.y = max.m128_f32[1];
-	newaabb.m_dMaxPoint.z = max.m128_f32[2];
-
-	newaabb.m_dMinPoint.x = min.m128_f32[0];
-	newaabb.m_dMinPoint.y = min.m128_f32[1];
-	newaabb.m_dMinPoint.z = min.m128_f32[2];
-	newaabb.m_dMinPointOrginal = aabb.m_dMinPointOrginal;
-	newaabb.m_dMaxPointOrginal = aabb.m_dMaxPointOrginal;
-
-	pcCollisionSystem->replaceAABB(aabb.m_IndexLocation,newaabb);
-	return newaabb;
-
-	
-}
 
 
 unsigned int createDebugGrid(TWorld * ptWorld)

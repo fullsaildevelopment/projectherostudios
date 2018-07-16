@@ -23,6 +23,8 @@ public:
 	bool RemoveAABBCollider(int nIndex);
 	bool AABBtoAABBCollisionCheck(TAABB m_AABB);
 	bool replaceAABB(int nIndex, TAABB m_AABB2);
+	TAABB updateAABB(XMMATRIX worldMatrix, TAABB aabb);
+	TAABB createAABBS(std::vector<XMFLOAT3> verticies);
 private:
 	bool ContainAABB(int nIndex);
 	bool classify_aabb_to_aabb(TAABB aabb1, TAABB aabb2);
