@@ -3,7 +3,7 @@
 CInputSystem::CInputSystem()
 {
 	m_fMouseRotationSpeed = .0001f;
-	m_fMouseMovementSpeed = .01f;
+	m_fMouseMovementSpeed = .001f;
 }
 
 

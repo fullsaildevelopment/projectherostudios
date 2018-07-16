@@ -49,9 +49,29 @@ bool CCollisionSystem::ContainAABB(int nIndex)
 
 bool CCollisionSystem::classify_aabb_to_aabb(TAABB aabb1, TAABB aabb2)
 {
+
+	if (aabb1.m_dMinPoint.x <= aabb2.m_dMaxPoint.x) {
+		float x = 0;
+	}
+	if (aabb1.m_dMaxPoint.x >= aabb2.m_dMinPoint.x)
+	{
+		float x = 0;
+	}
+	if (aabb1.m_dMinPoint.y <= aabb2.m_dMaxPoint.y) {
+		float x = 0;
+	}
+	if (aabb1.m_dMaxPoint.y >= aabb2.m_dMinPoint.y) {
+		float x = 0;
+	}
+	if (aabb1.m_dMinPoint.z <= aabb2.m_dMaxPoint.z) {
+		float x = 0;
+	}
+	if (aabb1.m_dMaxPoint.z >= aabb2.m_dMinPoint.z) {
+		float x = 0;
+	}
 	return (aabb1.m_dMinPoint.x <= aabb2.m_dMaxPoint.x&&aabb1.m_dMaxPoint.x >= aabb2.m_dMinPoint.x) &&
-		(aabb1.m_dMinPoint.y <= aabb2.m_dMaxPoint.y&&aabb1.m_dMaxPoint.y >= aabb2.m_dMinPoint.y) &&
-		(aabb1.m_dMinPoint.z <= aabb2.m_dMaxPoint.z&&aabb1.m_dMaxPoint.z >= aabb2.m_dMinPoint.z);
+	(aabb1.m_dMinPoint.y <= aabb2.m_dMaxPoint.y&&aabb1.m_dMaxPoint.y >= aabb2.m_dMinPoint.y) &&
+	(aabb1.m_dMinPoint.z <= aabb2.m_dMaxPoint.z&&aabb1.m_dMaxPoint.z >= aabb2.m_dMinPoint.z);
 }
 /*
 * replaceAABB():  finds an AABB if able in the list and then replaces the data with the new AABB
