@@ -40,6 +40,15 @@ void CAuger::InitializeSystems()
 	XMMATRIX TEMPT = pcGraphicsSystem->SetDefaultWorldPosition();
 	TEMPT.r[3].m128_f32[1] += 10;
 	bulletsAvailables.push_back( createBullet(&tThisWorld, TEMPT));
+	bulletsAvailables.push_back(createBullet(&tThisWorld, TEMPT));
+	bulletsAvailables.push_back(createBullet(&tThisWorld, TEMPT));
+	bulletsAvailables.push_back(createBullet(&tThisWorld, TEMPT));
+	bulletsAvailables.push_back(createBullet(&tThisWorld, TEMPT));
+	bulletsAvailables.push_back(createBullet(&tThisWorld, TEMPT));
+	bulletsAvailables.push_back(createBullet(&tThisWorld, TEMPT));
+	bulletsAvailables.push_back(createBullet(&tThisWorld, TEMPT));
+
+
 	aiminglineIndex = AimingLine(&tThisWorld);
 	// do not make things that u want to draw after this line of code or shit will  break;
 	//createDebugTransformLines(&tThisWorld);
@@ -74,8 +83,10 @@ void CAuger::Update()
 	tTempVertexBuffer.m_d3dProjectionMatrix = m_d3dProjectionMatrix;
 	tTempVertexBuffer.m_d3dViewMatrix = m_d3dViewMatrix;
 	pcGraphicsSystem->UpdateD3D();
-	if (pcInputSystem->InputCheck(G_KEY_CAPSLOCK)==1) {
+	shootingCoolDown -= 0.1;
+	if (pcInputSystem->InputCheck(G_KEY_CAPSLOCK)==1&&shootingCoolDown<=0) {
 		if(bulletsAvailables.size() != 0) {
+			shootingCoolDown = 100;
 			int indextoBullet = *bulletsAvailables.begin();
 			bulletsAvailables.pop_front();
 			BulletsFired.push_back(indextoBullet);

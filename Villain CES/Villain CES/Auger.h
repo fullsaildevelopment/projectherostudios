@@ -30,6 +30,7 @@ private:
 	XMMATRIX m_d3dProjectionMatrix;
 	XMMATRIX peguins;
 	int aiminglineIndex;
+	float shootingCoolDown = 0;
 
 	bool tempt;
 };
