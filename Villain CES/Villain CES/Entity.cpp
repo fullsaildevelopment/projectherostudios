@@ -140,6 +140,7 @@ unsigned int createCube(TWorld * ptWorld)
 	ptWorld->atShaderID[nThisEntity].m_nShaderID = 3;
 	return 0;
 }
+
 unsigned int createPlayerBox(TWorld * ptWorld, CCollisionSystem* pcCollisionSystem)
 {
 	unsigned int nThisEntity = createEntity(ptWorld);

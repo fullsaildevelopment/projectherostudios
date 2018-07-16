@@ -408,7 +408,10 @@ XMVECTOR CGraphicsSystem::GetCameraPos()
 void CGraphicsSystem::InitPrimalShaderData(ID3D11DeviceContext * pd3dDeviceContext, XMMATRIX d3dWorldMatrix, XMMATRIX d3dViewMatrix, XMMATRIX d3dProjectionMatrix, TDebugMesh tDebugMesh)
 {
 	D3D11_MAPPED_SUBRESOURCE d3dPrimalMappedResource;
+	D3D11_MAPPED_SUBRESOURCE d3dPrimalPixelMappedResource;
+
 	TPrimalVertexBufferType* ptPrimalMatrixBufferDataPointer = nullptr;
+	TPrimalPixelBufferType	*ptPrimalPixelBufferDataPointer = nullptr;
 
 	unsigned int bufferNumber;
 
@@ -431,9 +434,26 @@ void CGraphicsSystem::InitPrimalShaderData(ID3D11DeviceContext * pd3dDeviceConte
 	// Unlock the constant buffer.
 	pd3dDeviceContext->Unmap(m_pd3dPrimalVertexBuffer, 0);
 
+
+#pragma region Map To Pixel Constant Buffer
+	pd3dDeviceContext->Map(m_pd3dPrimalPixelBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &d3dPrimalPixelMappedResource);
+
+	// Get a pointer to the data in the constant buffer.
+	ptPrimalPixelBufferDataPointer = (TPrimalPixelBufferType*)d3dPrimalPixelMappedResource.pData;
+
+	// Copy the matrices into the constant buffer.
+	ptPrimalPixelBufferDataPointer->m_d3dCollisionColor = XMFLOAT4(0,0,0,0);
+
+	// Unlock the constant buffer.
+	pd3dDeviceContext->Unmap(m_pd3dPrimalPixelBuffer, 0);
+
+#pragma endregion
+
+
 	// Position of the constant buffer in the vertex shader.
 	bufferNumber = 0;
 
+	pd3dDeviceContext->PSSetConstantBuffers(bufferNumber, 1, &m_pd3dPrimalPixelBuffer);
 	// Set the constant buffer in the vertex shader with the updated values.
 	pd3dDeviceContext->VSSetConstantBuffers(bufferNumber, 1, &m_pd3dPrimalVertexBuffer);
 	pd3dDeviceContext->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_LINELIST);
