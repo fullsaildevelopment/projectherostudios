@@ -24,6 +24,11 @@ void destroyEntity(TWorld * ptWorld, unsigned int nThisEntity)
 	//Set component list for current entity to none.
 	printf("Entity destroyed: %d\n", nThisEntity);
 	ptWorld->atGraphicsMask[nThisEntity].m_tnGraphicsMask = COMPONENT_NONE;
+	ptWorld->atAIMask[nThisEntity].m_tnAIMask = COMPONENT_NONE;
+	ptWorld->atCollisionMask[nThisEntity].m_tnInputMask = COMPONENT_NONE;
+	ptWorld->atUIMask[nThisEntity].m_tnUIMask = COMPONENT_NONE;
+	ptWorld->atPhysicsMask[nThisEntity].m_tnPhysicsMask = COMPONENT_NONE;
+	ptWorld->atInputMask[nThisEntity].m_tnInputMask = COMPONENT_NONE;
 }
 
 unsigned int createDebugTransformLines(TWorld * ptWorld)
@@ -32,7 +37,7 @@ unsigned int createDebugTransformLines(TWorld * ptWorld)
 	//ptWorld->anComponentMask[nThisEntity] =  COMPONENT_DEBUGMESH;
 	ptWorld->atGraphicsMask[nThisEntity].m_tnGraphicsMask = COMPONENT_GRAPHICSMASK | COMPONENT_DEBUGMESH | COMPONENT_SHADERID;//138
 	ptWorld->atAIMask[nThisEntity].m_tnAIMask = COMPONENT_AIMASK;
-	ptWorld->atCollisionMask[nThisEntity].m_tnCollisionMask = COMPONENT_COLLISIONMASK;
+	ptWorld->atCollisionMask[nThisEntity].m_tnInputMask = COMPONENT_COLLISIONMASK;
 	ptWorld->atUIMask[nThisEntity].m_tnUIMask = COMPONENT_UIMASK;
 	ptWorld->atPhysicsMask[nThisEntity].m_tnPhysicsMask = COMPONENT_PHYSICSMASK;
 	ptWorld->atDebugMesh[nThisEntity].m_nVertexCount = 6;
@@ -71,7 +76,7 @@ unsigned int createCube(TWorld * ptWorld)
 	unsigned int nThisEntity = createEntity(ptWorld);
 	ptWorld->atGraphicsMask[nThisEntity].m_tnGraphicsMask = COMPONENT_GRAPHICSMASK | COMPONENT_SIMPLEMESH | COMPONENT_SHADERID;
 	ptWorld->atAIMask[nThisEntity].m_tnAIMask = COMPONENT_AIMASK;
-	ptWorld->atCollisionMask[nThisEntity].m_tnCollisionMask = COMPONENT_COLLISIONMASK;
+	ptWorld->atCollisionMask[nThisEntity].m_tnInputMask = COMPONENT_COLLISIONMASK;
 	ptWorld->atUIMask[nThisEntity].m_tnUIMask = COMPONENT_UIMASK;
 	ptWorld->atPhysicsMask[nThisEntity].m_tnPhysicsMask = COMPONENT_PHYSICSMASK;
 
@@ -145,7 +150,7 @@ unsigned int createPlayerBox(TWorld * ptWorld, CCollisionSystem* pcCollisionSyst
 {
 	unsigned int nThisEntity = createEntity(ptWorld);
 	
-	ptWorld->atCollisionMask[nThisEntity].m_tnCollisionMask = COMPONENT_AABB | COMPONENT_NONSTATIC;
+	ptWorld->atCollisionMask[nThisEntity].m_tnInputMask = COMPONENT_AABB | COMPONENT_NONSTATIC;
 	ptWorld->atGraphicsMask[nThisEntity].m_tnGraphicsMask = COMPONENT_GRAPHICSMASK | COMPONENT_SIMPLEMESH | COMPONENT_SHADERID;
 	ptWorld->atAIMask[nThisEntity].m_tnAIMask = COMPONENT_AIMASK;
 	ptWorld->atUIMask[nThisEntity].m_tnUIMask = COMPONENT_UIMASK;
@@ -336,7 +341,7 @@ unsigned int createDebugGrid(TWorld * ptWorld)
 
 	ptWorld->atGraphicsMask[nThisEntity].m_tnGraphicsMask	= COMPONENT_GRAPHICSMASK | COMPONENT_DEBUGMESH | COMPONENT_SHADERID;//138
 	ptWorld->atAIMask[nThisEntity].m_tnAIMask				= COMPONENT_AIMASK;
-	ptWorld->atCollisionMask[nThisEntity].m_tnCollisionMask =  COMPONENT_STATIC| COMPONENT_AABB;
+	ptWorld->atCollisionMask[nThisEntity].m_tnInputMask =  COMPONENT_STATIC| COMPONENT_AABB;
 	ptWorld->atUIMask[nThisEntity].m_tnUIMask				= COMPONENT_UIMASK;
 	ptWorld->atPhysicsMask[nThisEntity].m_tnPhysicsMask		= COMPONENT_PHYSICSMASK;
 
