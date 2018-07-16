@@ -328,7 +328,7 @@ XMMATRIX CGraphicsSystem::SetDefaultViewMatrix()
 {
 	XMMATRIX DefaultViewMatrix;
 
-	DefaultViewMatrix = XMMatrixLookAtLH(XMVectorSet(0, 10.f, -15.0f, 1.0f), XMVectorSet(0, 0, 0, 1.0f), XMVectorSet(0, 1.0f, 0, 1.0f));
+	DefaultViewMatrix = XMMatrixLookAtLH(XMVectorSet(0, 10.f, -15.0f, 1.0f), XMVectorSet(1, 0, -5.0f, 1.0f), XMVectorSet(0, 1.0f, 0, 1.0f));
 
 	return DefaultViewMatrix;
 }

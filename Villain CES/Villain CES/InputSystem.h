@@ -38,8 +38,7 @@ public:
 	* TrackCamera(): This fuction makes a camera follow an in-game object.
 	*
 	* Ins:
-	*                  XMVECTOR V
-	*				   XMVECTOR T
+	*                 XMMATRIX playerMatrix
 					   
 	* Outs:
 	*
@@ -48,11 +47,11 @@ public:
 	* Mod. Date:              07/16/2018
 	* Mod. Initials:          ZFB
 	*/
-	XMMATRIX TrackCamera(XMVECTOR V, XMVECTOR T, XMMATRIX playerMatrix);
+	XMMATRIX TrackCamera( XMMATRIX playerMatrix);
 
 
 
-	XMMATRIX MyLookAt(XMVECTOR V, XMVECTOR T, XMVECTOR U);
+	XMMATRIX WalkLookAt(XMVECTOR V, XMVECTOR T, XMVECTOR U, XMMATRIX viewM);
 	/*
 		Seth Specific Functions
 	*/
