@@ -141,6 +141,52 @@ unsigned int createCube(TWorld * ptWorld)
 	return 0;
 }
 
+unsigned int createDummyPlayer(TWorld* ptWorld, XMMATRIX playerMatrix)
+{
+	unsigned int nThisEntity = createEntity(ptWorld);
+	//ptWorld->anComponentMask[nThisEntity] =  COMPONENT_DEBUGMESH;
+	ptWorld->atGraphicsMask[nThisEntity].m_tnGraphicsMask = COMPONENT_GRAPHICSMASK | COMPONENT_DEBUGMESH | COMPONENT_SHADERID;//138
+	ptWorld->atAIMask[nThisEntity].m_tnAIMask = COMPONENT_AIMASK;
+	ptWorld->atCollisionMask[nThisEntity].m_tnCollisionMask = COMPONENT_COLLISIONMASK;
+	ptWorld->atUIMask[nThisEntity].m_tnUIMask = COMPONENT_UIMASK;
+	ptWorld->atPhysicsMask[nThisEntity].m_tnPhysicsMask = COMPONENT_PHYSICSMASK;
+	ptWorld->atDebugMesh[nThisEntity].m_nVertexCount = 6;
+	XMVECTOR vectorPos = playerMatrix.r[3];
+	XMFLOAT3 playerPos;
+	playerPos.x = vectorPos.m128_f32[0];
+	playerPos.y = vectorPos.m128_f32[1];
+	playerPos.z = vectorPos.m128_f32[2];
+
+	static TPrimalVert atPlayerVertices[]
+	{
+		TPrimalVert{ XMFLOAT3(0, 0, 0),    XMFLOAT4(1,0,0,1) },//00	Green
+		TPrimalVert{ XMFLOAT3(0, playerPos.y , 0), XMFLOAT4(1,0,0,1) },//01	Green
+		TPrimalVert{ XMFLOAT3(0, 0, 0),    XMFLOAT4(0,1,0,1) },//00	Red
+		TPrimalVert{ XMFLOAT3(playerPos.x, 0, 0), XMFLOAT4(0,1,0,1) },//01	Red
+		TPrimalVert{ XMFLOAT3(0, 0, 0),    XMFLOAT4(0,0,1,1) },//00	Blue
+		TPrimalVert{ XMFLOAT3(0, 0, playerPos.z), XMFLOAT4(0,0,1,1) },//01	Blue	
+	};
+
+
+
+	ptWorld->atDebugMesh[nThisEntity].m_nVertexBufferStride = sizeof(TPrimalVert);
+	ptWorld->atDebugMesh[nThisEntity].m_nVertexBufferOffset = 0;
+
+	ptWorld->atDebugMesh[nThisEntity].m_d3dVertexBufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
+	ptWorld->atDebugMesh[nThisEntity].m_d3dVertexBufferDesc.ByteWidth = sizeof(TPrimalVert) * ptWorld->atDebugMesh[nThisEntity].m_nVertexCount;
+	ptWorld->atDebugMesh[nThisEntity].m_d3dVertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	ptWorld->atDebugMesh[nThisEntity].m_d3dVertexBufferDesc.CPUAccessFlags = 0;
+	ptWorld->atDebugMesh[nThisEntity].m_d3dVertexBufferDesc.MiscFlags = 0;
+	ptWorld->atDebugMesh[nThisEntity].m_d3dVertexBufferDesc.StructureByteStride = 0;
+
+	ptWorld->atDebugMesh[nThisEntity].m_d3dVertexData.pSysMem = atPlayerVertices;
+	ptWorld->atDebugMesh[nThisEntity].m_d3dVertexData.SysMemPitch = 0;
+	ptWorld->atDebugMesh[nThisEntity].m_d3dVertexData.SysMemSlicePitch = 0;
+	ptWorld->atShaderID[nThisEntity].m_nShaderID = 2;
+	return 0;
+}
+
+
 unsigned int createPlayerBox(TWorld * ptWorld, CCollisionSystem* pcCollisionSystem)
 {
 	unsigned int nThisEntity = createEntity(ptWorld);
@@ -219,11 +265,6 @@ unsigned int createPlayerBox(TWorld * ptWorld, CCollisionSystem* pcCollisionSyst
 
 	return 0;
 }
-
-
-
-
-
 
 unsigned int createDebugGrid(TWorld * ptWorld)
 {

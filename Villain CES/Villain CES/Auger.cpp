@@ -32,15 +32,18 @@ void CAuger::Start()
 void CAuger::InitializeSystems()
 {
 	pcGraphicsSystem->InitD3D(cApplicationWindow);
-//	createCube(&tThisWorld);
+	createCube(&tThisWorld);
 	createDebugGrid(&tThisWorld);
 	createPlayerBox(&tThisWorld, pcCollisionSystem);
-	createPlayerBox(&tThisWorld, pcCollisionSystem);
+	//createPlayerBox(&tThisWorld, pcCollisionSystem);
+	createDummyPlayer(&tThisWorld, m_d3dPlayerMatrix);
+	m_d3dPlayerMatrix = pcGraphicsSystem->SetDefaultWorldPosition();
 	
 	// do not make things that u want to draw after this line of code or shit will  break;
 	//createDebugTransformLines(&tThisWorld);
 	pcGraphicsSystem->CreateBuffers(&tThisWorld);
 	//createEntity(&tThisWorld);
+
 	 m_d3dWorldMatrix = pcGraphicsSystem->SetDefaultWorldPosition();//Call some sort of function from the graphics system to create this matrix
 	 m_d3dViewMatrix = pcGraphicsSystem->SetDefaultViewMatrix();//Call some sort of function from the graphics system to create this matrix
 	 m_d3dProjectionMatrix = pcGraphicsSystem->SetDefaultPerspective();
@@ -61,11 +64,16 @@ void CAuger::Update()
 	//Call some sort of function from the graphics system to create this matrix
 	XMMATRIX d3d_ResultMatrix;
 	m_d3dProjectionMatrix = pcGraphicsSystem->SetDefaultPerspective();
-	d3d_ResultMatrix = pcInputSystem->DebugCamera(m_d3dViewMatrix, m_d3dWorldMatrix);
-
+	//createDummyPlayer(&tThisWorld, m_d3dPlayerMatrix);
+	d3d_ResultMatrix = pcInputSystem->TrackCamera(m_d3dViewMatrix.r[3], m_d3dPlayerMatrix.r[3], m_d3dPlayerMatrix);
+	d3d_ResultMatrix = XMMatrixInverse(NULL, m_d3dViewMatrix);
+	d3d_ResultMatrix = pcInputSystem->MyLookAt(d3d_ResultMatrix.r[3], m_d3dPlayerMatrix.r[3], XMVectorSet(0, 1.0f, 0, 0));
+	//d3d_ResultMatrix = pcInputSystem->DebugCamera(m_d3dViewMatrix, m_d3dWorldMatrix);
 	m_d3dViewMatrix = XMMatrixInverse(NULL, d3d_ResultMatrix);
 	CGraphicsSystem::TPrimalVertexBufferType tTempVertexBuffer;
 	CGraphicsSystem::TPrimalPixelBufferType tTempPixelBuffer;
+	tTempPixelBuffer.m_d3dCollisionColor = XMFLOAT4(1.0f, 0.0f, 0.0f, 0.0f);
+
 	tTempVertexBuffer.m_d3dProjectionMatrix = m_d3dProjectionMatrix;
 	tTempVertexBuffer.m_d3dViewMatrix = m_d3dViewMatrix;
 	pcGraphicsSystem->UpdateD3D();
@@ -73,7 +81,6 @@ void CAuger::Update()
 	{
 		if (tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_DEBUGMESH | COMPONENT_SHADERID))
 		{
-			tTempPixelBuffer.m_d3dCollisionColor = XMFLOAT4(1.0f, 0.0f, 0.0f, 0.0f);
 			tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = m_d3dWorldMatrix;
 			tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = XMMatrixMultiply(XMMatrixScaling(100, 100, 100), tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix);
 			pcGraphicsSystem->InitPrimalShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, m_d3dViewMatrix, m_d3dProjectionMatrix, tThisWorld.atDebugMesh[nCurrentEntity]);
