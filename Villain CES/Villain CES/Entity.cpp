@@ -141,7 +141,7 @@ unsigned int createCube(TWorld * ptWorld)
 	return 0;
 }
 
-unsigned int createPlayerBox(TWorld * ptWorld, CCollisionSystem* pcCollisionSystem)
+unsigned int createPlayerBox(TWorld * ptWorld)
 {
 	unsigned int nThisEntity = createEntity(ptWorld);
 	

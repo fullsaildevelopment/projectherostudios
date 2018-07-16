@@ -34,8 +34,8 @@ void CAuger::InitializeSystems()
 	pcGraphicsSystem->InitD3D(cApplicationWindow);
 //	createCube(&tThisWorld);
 	createDebugGrid(&tThisWorld);
-	createPlayerBox(&tThisWorld, pcCollisionSystem);
-	createPlayerBox(&tThisWorld, pcCollisionSystem);
+	createPlayerBox(&tThisWorld);
+	createPlayerBox(&tThisWorld);
 	
 	// do not make things that u want to draw after this line of code or shit will  break;
 	//createDebugTransformLines(&tThisWorld);

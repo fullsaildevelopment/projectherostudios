@@ -71,5 +71,6 @@ unsigned int createCube(TWorld * ptWorld);
 unsigned int createDebugGrid(TWorld * ptWorld);
 
 unsigned int createMesh(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMesh tMesh);
-unsigned int createPlayerBox(TWorld * ptWorld, CCollisionSystem* pcCollisionSystem);
+unsigned int createPlayerBox(TWorld * ptWorld);
+//unsigned int createBullet(TWorld * ptWorld, );
 
