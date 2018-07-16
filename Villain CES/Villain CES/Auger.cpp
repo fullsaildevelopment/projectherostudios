@@ -88,19 +88,24 @@ void CAuger::Update()
 
 			
 			
+
 				tThisWorld.atWorldMatrix[1].worldMatrix.r[3].m128_f32[0]=  pcGraphicsSystem->GetCameraPos().m128_f32[0];
 				tThisWorld.atWorldMatrix[1].worldMatrix.r[3].m128_f32[1] = pcGraphicsSystem->GetCameraPos().m128_f32[1]-1;
 				tThisWorld.atWorldMatrix[1].worldMatrix.r[3].m128_f32[2] = pcGraphicsSystem->GetCameraPos().m128_f32[2]+2;
 				
+
 				tThisWorld.atAABB[1] = pcCollisionSystem->updateAABB(tThisWorld.atWorldMatrix[1].worldMatrix, tThisWorld.atAABB[1]);
+
 				
 			}
 			if (nCurrentEntity == 2) 
 			{
 
+
 				tThisWorld.atWorldMatrix[2].worldMatrix = m_d3dWorldMatrix;
 				tThisWorld.atWorldMatrix[2].worldMatrix.r[3].m128_f32[1] += 5;
 				tThisWorld.atAABB[2] = pcCollisionSystem->updateAABB(tThisWorld.atWorldMatrix[2].worldMatrix, tThisWorld.atAABB[2]);
+
 				
 			}
 			tTempVertexBuffer.m_d3dWorldMatrix = tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix;
