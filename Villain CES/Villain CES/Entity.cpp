@@ -220,62 +220,7 @@ unsigned int createPlayerBox(TWorld * ptWorld, CCollisionSystem* pcCollisionSyst
 	return 0;
 }
 
-TAABB createAABBS(TPrimalVert verticies[],int size)
-{
-	TAABB aabb;
-	aabb.m_dMaxPoint.x = verticies[0].m_d3dfPosition.x;
-	aabb.m_dMaxPoint.y = verticies[0].m_d3dfPosition.y;
-	aabb.m_dMaxPoint.z = verticies[0].m_d3dfPosition.z;
-	aabb.m_dMaxPointOrginal.x = verticies[0].m_d3dfPosition.x;
-	aabb.m_dMaxPointOrginal.y = verticies[0].m_d3dfPosition.y;
-	aabb.m_dMaxPointOrginal.z = verticies[0].m_d3dfPosition.z;
-	aabb.m_dMinPointOrginal.x = verticies[0].m_d3dfPosition.x;
-	aabb.m_dMinPointOrginal.y = verticies[0].m_d3dfPosition.y;
-	aabb.m_dMinPointOrginal.z = verticies[0].m_d3dfPosition.z;
 
-
-
-	aabb.m_dMinPoint.x = verticies[0].m_d3dfPosition.x;
-	aabb.m_dMinPoint.y = verticies[0].m_d3dfPosition.y;
-	aabb.m_dMinPoint.z = verticies[0].m_d3dfPosition.z;
-
-	for (int i = 1; i < size - 1; ++i) {
-		if (verticies[i].m_d3dfPosition.x > aabb.m_dMaxPoint.x) {
-			aabb.m_dMaxPoint.x = verticies[i].m_d3dfPosition.x;
-			aabb.m_dMaxPointOrginal.x = aabb.m_dMaxPoint.x;
-
-		}
-		if (verticies[i].m_d3dfPosition.x < aabb.m_dMinPoint.x) {
-			aabb.m_dMinPoint.x = verticies[i].m_d3dfPosition.x;
-			aabb.m_dMinPointOrginal.x = aabb.m_dMinPoint.x;
-
-		}
-
-		if (verticies[i].m_d3dfPosition.y > aabb.m_dMaxPoint.y) {
-			aabb.m_dMaxPoint.y = verticies[i].m_d3dfPosition.y;
-			aabb.m_dMaxPointOrginal.y = aabb.m_dMaxPoint.y;
-
-		}
-		if (verticies[i].m_d3dfPosition.y < aabb.m_dMinPoint.y) {
-			aabb.m_dMinPoint.y = verticies[i].m_d3dfPosition.y;
-			aabb.m_dMinPointOrginal.y = aabb.m_dMinPoint.y;
-
-		}
-
-		if (verticies[i].m_d3dfPosition.z > aabb.m_dMaxPoint.z) {
-			aabb.m_dMaxPoint.z = verticies[i].m_d3dfPosition.z;
-			aabb.m_dMaxPointOrginal.z = aabb.m_dMaxPoint.z;
-
-		}
-		if (verticies[i].m_d3dfPosition.z < aabb.m_dMinPoint.z) {
-			aabb.m_dMinPoint.z = verticies[i].m_d3dfPosition.z;
-			aabb.m_dMinPointOrginal.z = aabb.m_dMinPoint.z;
-
-		}
-	}
-	return aabb;
-	
-}
 
 
 
