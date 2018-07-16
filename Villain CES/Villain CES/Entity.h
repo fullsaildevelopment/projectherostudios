@@ -10,7 +10,7 @@
 
 struct TWorld
 {
-	std::string name[ENTITYCOUNT];
+	std::string szName[ENTITYCOUNT];
 	int				anComponentMask[ENTITYCOUNT];
 	//Graphics
 	TGraphicsMask	atGraphicsMask[ENTITYCOUNT];
@@ -73,6 +73,6 @@ unsigned int createDebugGrid(TWorld * ptWorld);
 
 unsigned int createMesh(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMesh tMesh);
 unsigned int createPlayerBox(TWorld * ptWorld);
-unsigned int createBullet(TWorld * ptWorld,XMMATRIX bulletSpawnLocation );
+unsigned int CreateBullet(TWorld * ptWorld,XMMATRIX bulletSpawnLocation );
 unsigned int AimingLine(TWorld * ptWorld);
 

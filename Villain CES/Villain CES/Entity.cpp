@@ -140,12 +140,25 @@ unsigned int createCube(TWorld * ptWorld)
 	ptWorld->atShaderID[nThisEntity].m_nShaderID = 3;
 	return 0;
 }
-
+/*
+* createPlayerBox():  creates a simple box
+*
+* Ins:                  the world pointer
+*						the location to spawn the inactive Bullet
+*
+*
+* Outs:
+*
+* Returns:              returns the index of the bullet that was made for the world index
+*
+* Mod. Date:              07/16/2018
+* Mod. Initials:          AP
+*/
 unsigned int createPlayerBox(TWorld * ptWorld)
 {
 	unsigned int nThisEntity = createEntity(ptWorld);
 	
-	ptWorld->atCollisionMask[nThisEntity].m_tnCollisionMask = COMPONENT_AABB | COMPONENT_NONSTATIC;
+	ptWorld->atCollisionMask[nThisEntity].m_tnCollisionMask = COMPONENT_COLLISIONMASK | COMPONENT_AABB | COMPONENT_NONSTATIC;
 	ptWorld->atGraphicsMask[nThisEntity].m_tnGraphicsMask = COMPONENT_GRAPHICSMASK | COMPONENT_SIMPLEMESH | COMPONENT_SHADERID;
 	ptWorld->atAIMask[nThisEntity].m_tnAIMask = COMPONENT_AIMASK;
 	ptWorld->atUIMask[nThisEntity].m_tnUIMask = COMPONENT_UIMASK;
@@ -219,8 +232,21 @@ unsigned int createPlayerBox(TWorld * ptWorld)
 
 	return 0;
 }
-
-unsigned int createBullet(TWorld * ptWorld,XMMATRIX BulletSpawnLocation)
+/*
+* CreateBullet():  This function creates a inactivebullet
+*
+* Ins:                  the world pointer
+*						the location to spawn the inactive Bullet
+*
+*
+* Outs:
+*
+* Returns:              returns the index of the bullet that was made for the world index
+*
+* Mod. Date:              07/16/2018
+* Mod. Initials:          AP
+*/
+unsigned int CreateBullet(TWorld * ptWorld,XMMATRIX BulletSpawnLocation)
 {
 	unsigned int nThisEntity = createEntity(ptWorld);
 
@@ -294,14 +320,9 @@ unsigned int createBullet(TWorld * ptWorld,XMMATRIX BulletSpawnLocation)
 
 	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexData.SysMemPitch = 0;
 	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexData.SysMemSlicePitch = 0;
-	ptWorld->name[nThisEntity] = "Bullet";
+	ptWorld->szName[nThisEntity] = "Bullet";
 	
-	XMMATRIX DefaultPerspectiveMatrix;
-	// the 90 is for fov if we want to implament field of view
-	/*BulletSpawnLocation.r[0].m128_f32[0] = 0.5;
-	BulletSpawnLocation.r[1].m128_f32[1] = 0.5;
-	BulletSpawnLocation.r[2].m128_f32[2] = 0.5;*/
-//	BulletSpawnLocation.r[3].m128_f32[0] += 0.5;
+	
 
 	ptWorld->atWorldMatrix[nThisEntity].worldMatrix = BulletSpawnLocation;
 
@@ -311,6 +332,21 @@ unsigned int createBullet(TWorld * ptWorld,XMMATRIX BulletSpawnLocation)
 	}
 	return nThisEntity;
 }
+
+/*
+* AimingLine():  Creates a line for the player to aim with
+*
+* Ins:                  the world pointer
+*				
+*
+*
+* Outs:
+*
+* Returns:              returns the index of the bullet that was made for the world index
+*
+* Mod. Date:              07/16/2018
+* Mod. Initials:          AP
+*/
 
 unsigned int AimingLine(TWorld * ptWorld)
 {

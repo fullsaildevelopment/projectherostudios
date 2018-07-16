@@ -11,8 +11,8 @@ public:
 	TWorld tThisWorld;
 	CGraphicsSystem	*pcGraphicsSystem; 
 	CInputSystem	*pcInputSystem;
-	list<int> bulletsAvailables;
-	list<int> BulletsFired;
+	list<int> nBulletsAvailables;
+	list<int> nBulletsFired;
 
 
 	CAuger();

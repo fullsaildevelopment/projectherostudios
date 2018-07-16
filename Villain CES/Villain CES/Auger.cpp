@@ -37,16 +37,16 @@ void CAuger::InitializeSystems()
 	createPlayerBox(&tThisWorld);
 	createPlayerBox(&tThisWorld);
 	
-	XMMATRIX TEMPT = pcGraphicsSystem->SetDefaultWorldPosition();
-	TEMPT.r[3].m128_f32[1] += 10;
-	bulletsAvailables.push_back( createBullet(&tThisWorld, TEMPT));
-	bulletsAvailables.push_back(createBullet(&tThisWorld, TEMPT));
-	bulletsAvailables.push_back(createBullet(&tThisWorld, TEMPT));
-	bulletsAvailables.push_back(createBullet(&tThisWorld, TEMPT));
-	bulletsAvailables.push_back(createBullet(&tThisWorld, TEMPT));
-	bulletsAvailables.push_back(createBullet(&tThisWorld, TEMPT));
-	bulletsAvailables.push_back(createBullet(&tThisWorld, TEMPT));
-	bulletsAvailables.push_back(createBullet(&tThisWorld, TEMPT));
+	XMMATRIX  m_dDefaultWorldMa4rix = pcGraphicsSystem->SetDefaultWorldPosition();
+	m_dDefaultWorldMa4rix.r[3].m128_f32[1] += 10;
+	nBulletsAvailables.push_back(CreateBullet(&tThisWorld, m_dDefaultWorldMa4rix));
+	nBulletsAvailables.push_back(CreateBullet(&tThisWorld, m_dDefaultWorldMa4rix));
+	nBulletsAvailables.push_back(CreateBullet(&tThisWorld, m_dDefaultWorldMa4rix));
+	nBulletsAvailables.push_back(CreateBullet(&tThisWorld, m_dDefaultWorldMa4rix));
+	nBulletsAvailables.push_back(CreateBullet(&tThisWorld, m_dDefaultWorldMa4rix));
+	nBulletsAvailables.push_back(CreateBullet(&tThisWorld, m_dDefaultWorldMa4rix));
+	nBulletsAvailables.push_back(CreateBullet(&tThisWorld, m_dDefaultWorldMa4rix));
+	nBulletsAvailables.push_back(CreateBullet(&tThisWorld, m_dDefaultWorldMa4rix));
 
 
 	aiminglineIndex = AimingLine(&tThisWorld);
@@ -66,7 +66,8 @@ void CAuger::InitializeSystems()
 			 pcCollisionSystem->AddAABBCollider(MyAbb, nCurrentEntity);
 		 }
 	 }
-
+	 tThisWorld.atWorldMatrix[2].worldMatrix = m_d3dWorldMatrix;
+	 tThisWorld.atWorldMatrix[2].worldMatrix.r[3].m128_f32[1] += 5;
 }
 
 void CAuger::Update()
@@ -85,12 +86,12 @@ void CAuger::Update()
 	pcGraphicsSystem->UpdateD3D();
 	shootingCoolDown -= 0.1;
 	if (pcInputSystem->InputCheck(G_KEY_CAPSLOCK)==1&&shootingCoolDown<=0) {
-		if(bulletsAvailables.size() != 0) {
+		if(nBulletsAvailables.size() != 0) {
 			shootingCoolDown = 100;
-			int indextoBullet = *bulletsAvailables.begin();
-			bulletsAvailables.pop_front();
-			BulletsFired.push_back(indextoBullet);
-			tThisWorld.name[indextoBullet] = "BulletFired";
+			int indextoBullet = *nBulletsAvailables.begin();
+			nBulletsAvailables.pop_front();
+			nBulletsFired.push_back(indextoBullet);
+			tThisWorld.szName[indextoBullet] = "BulletFired";
 			XMMATRIX bulletSpawnLocation = tThisWorld.atWorldMatrix[1].worldMatrix;
 			/*	DefaultPerspectiveMatrix.r[0].m128_f32[0] = 1;
 	DefaultPerspectiveMatrix.r[0].m128_f32[1] = 0;
@@ -121,7 +122,7 @@ void CAuger::Update()
 	tThisWorld.atWorldMatrix[aiminglineIndex].worldMatrix.r[3].m128_f32[2] += 1.5;
 	tThisWorld.atWorldMatrix[aiminglineIndex].worldMatrix.r[3].m128_f32[0] -= 0.3;
 
-	for (list<int>::iterator ptr = BulletsFired.begin(); ptr != BulletsFired.end(); ++ptr) {
+	for (list<int>::iterator ptr = nBulletsFired.begin(); ptr != nBulletsFired.end(); ++ptr) {
 		XMVECTOR localpos;
 		localpos.m128_f32[0] = 0;
 		localpos.m128_f32[1] = 0;
@@ -163,49 +164,38 @@ void CAuger::Update()
 			//	tThisWorld.atAABB[1] = pcCollisionSystem->updateAABB(tThisWorld.atWorldMatrix[1].worldMatrix, tThisWorld.atAABB[1]);
 			
 			}
-			if (nCurrentEntity == 2) 
-			{
-
-
-				tThisWorld.atWorldMatrix[2].worldMatrix = m_d3dWorldMatrix;
-				tThisWorld.atWorldMatrix[2].worldMatrix.r[3].m128_f32[1] += 5;
-		//		tThisWorld.atAABB[2] = pcCollisionSystem->updateAABB(tThisWorld.atWorldMatrix[2].worldMatrix, tThisWorld.atAABB[2]);
-				
-			}
+		
 			tTempVertexBuffer.m_d3dWorldMatrix = tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix;
-
-			
-		}
-		if(tThisWorld.atCollisionMask[nCurrentEntity].m_tnCollisionMask!=0)
-		tThisWorld.atAABB[nCurrentEntity] = pcCollisionSystem->updateAABB(tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, tThisWorld.atAABB[nCurrentEntity]);
-		if (tThisWorld.name[nCurrentEntity] != "Bullet") {
-			if ((tThisWorld.atCollisionMask[nCurrentEntity].m_tnCollisionMask == (COMPONENT_AABB | COMPONENT_NONSTATIC)))
-			{
-				if (pcCollisionSystem->AABBtoAABBCollisionCheck(tThisWorld.atAABB[nCurrentEntity]) == true)
+			if (tThisWorld.atCollisionMask[nCurrentEntity].m_tnCollisionMask != 0)
+				tThisWorld.atAABB[nCurrentEntity] = pcCollisionSystem->updateAABB(tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, tThisWorld.atAABB[nCurrentEntity]);
+			if (tThisWorld.szName[nCurrentEntity] != "Bullet") {
+				if ((tThisWorld.atCollisionMask[nCurrentEntity].m_tnCollisionMask == (COMPONENT_COLLISIONMASK | COMPONENT_AABB | COMPONENT_NONSTATIC)))
 				{
-					float x = 0;
-					tTempPixelBuffer.m_d3dCollisionColor = XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f);
-				}
-				else {
-					if (nCurrentEntity == 3) {
-						float X = 0;
-					}
-					tTempPixelBuffer.m_d3dCollisionColor = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
+					if (pcCollisionSystem->AABBtoAABBCollisionCheck(tThisWorld.atAABB[nCurrentEntity]) == true)
+					{
 
+						tTempPixelBuffer.m_d3dCollisionColor = XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f);
+					}
+					else {
+
+						tTempPixelBuffer.m_d3dCollisionColor = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
+
+					}
 				}
 			}
-		}
-		if (tThisWorld.name[nCurrentEntity] != "Bullet") {
-			//	tTempPixelBuffer.m_d3dCollisionColor = XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f);
-
-
 			pcGraphicsSystem->InitPrimalShaderData2(pcGraphicsSystem->m_pd3dDeviceContext, tTempVertexBuffer, tTempPixelBuffer, tThisWorld.atSimpleMesh[nCurrentEntity]);
 
 			pcGraphicsSystem->ExecutePipeline(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atSimpleMesh[nCurrentEntity].m_nIndexCount, tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask, tThisWorld.atShaderID[nCurrentEntity].m_nShaderID);
+			
 		}
-		else {
-			float x = 0;
-		}
+		
+		/*if (tThisWorld.szName[nCurrentEntity] != "Bullet") {*/
+			//	tTempPixelBuffer.m_d3dCollisionColor = XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f);
+
+
+		
+	//	}
+		
 	}
 	pcGraphicsSystem->m_pd3dSwapchain->Present(0, 0);
 }
