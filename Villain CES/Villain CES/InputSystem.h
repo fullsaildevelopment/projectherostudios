@@ -34,6 +34,8 @@ public:
 
 	XMMATRIX DebugCamera(XMMATRIX d3d_ViewM, XMMATRIX d3d_WorldM);
 
+	XMMATRIX TrackCamera(XMMATRIX d3d_ViewM, XMMATRIX d3d_WorldM);
+
 	/*
 		Seth Specific Functions
 	*/
