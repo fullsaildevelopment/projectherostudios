@@ -29,11 +29,16 @@ public:
 	};
 
 
-	struct TPrimalMatrixBufferType
+	struct TPrimalVertexBufferType
 	{
 		XMMATRIX m_d3dWorldMatrix;
 		XMMATRIX m_d3dViewMatrix;
 		XMMATRIX m_d3dProjectionMatrix;
+	};
+
+	struct TPrimalPixelBufferType
+	{
+		XMFLOAT4 m_d3dCollisionColor;
 	};
 
 	struct TBlinnPhongType
@@ -61,9 +66,10 @@ public:
 	void UpdateD3D();
 	void InitMyShaderData(ID3D11DeviceContext * pd3dDeviceContext, XMMATRIX d3dWorldMatrix, XMMATRIX d3dViewMatrix, XMMATRIX d3dProjectionMatrix, int nMask, XMFLOAT3 d3dLightPosition, XMFLOAT3 d3dCameraPosition, XMFLOAT4X4 *pd3dJointsForVS);
 	void InitPrimalShaderData(ID3D11DeviceContext * pd3dDeviceContext, XMMATRIX d3dWorldMatrix, XMMATRIX d3dViewMatrix, XMMATRIX d3dProjectionMatrix, TDebugMesh tDebugMesh);
-	void InitPrimalShaderData2(ID3D11DeviceContext * pd3dDeviceContext, XMMATRIX d3dWorldMatrix, XMMATRIX d3dViewMatrix, XMMATRIX d3dProjectionMatrix, TSimpleMesh tSimpleMesh);
+	void InitPrimalShaderData2(ID3D11DeviceContext * pd3dDeviceContext, TPrimalVertexBufferType d3dVertexBuffer, TPrimalPixelBufferType d3dPixelBuffer, TSimpleMesh tSimpleMesh);
 	void ExecutePipeline(ID3D11DeviceContext *pd3dDeviceContext, int m_nIndexCount, int nGraphicsMask, int nShaderID);
 	void UpdateBuffer(TWorld * ptWorld, std::vector<TSimpleMesh> vtVertexVector, int nEntity, int nMask);
+	XMVECTOR GetCameraPos();
 
 	//Last Frame
 	void CleanD3D(TWorld * ptWorld);         // closes Direct3D and releases memory
@@ -72,7 +78,9 @@ private:
 	ID3D11VertexShader * m_pd3dPrimalVertexShader;
 	ID3D11PixelShader	*m_pd3dPrimalPixelShader;
 	ID3D11InputLayout	*m_pd3dPrimalInputLayout;
-	ID3D11Buffer		*m_pd3dPrimalMatrixBuffer;
+	ID3D11Buffer		*m_pd3dPrimalVertexBuffer;
+	ID3D11Buffer		*m_pd3dPrimalPixelBuffer;
+
 
 	ID3D11VertexShader	*m_pd3dMyVertexShader;
 	ID3D11PixelShader	*m_pd3dMyPixelShader;

@@ -5,6 +5,7 @@
 #include "UI_Component.h"
 #include "Collision_Component.h"
 #include "Physics_Component.h"
+#include"Collision_System.h"
 #include "Input_Component.h"
 
 struct TWorld
@@ -20,6 +21,7 @@ struct TWorld
 	TTexture		atTexture[ENTITYCOUNT];
 	TShaderID		atShaderID[ENTITYCOUNT];
 	TCamera			atCamera[ENTITYCOUNT];
+	TWorldMatrix	atWorldMatrix[ENTITYCOUNT];
 	//UI
 	TUIMask			atUIMask[ENTITYCOUNT];
 	TBar			atBar[ENTITYCOUNT];
@@ -69,5 +71,5 @@ unsigned int createCube(TWorld * ptWorld);
 unsigned int createDebugGrid(TWorld * ptWorld);
 
 unsigned int createMesh(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMesh tMesh);
+unsigned int createPlayerBox(TWorld * ptWorld, CCollisionSystem* pcCollisionSystem);
 
-unsigned int createPlayerBox(TWorld * ptWorld);

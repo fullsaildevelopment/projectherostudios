@@ -1,6 +1,8 @@
+
 #pragma once
 #ifndef CES_GRAPHICS_COMPONENT_H
 #define CES_GRAPHICS_COMPONENT_H
+
 
 enum eGraphicsComponent
 {
@@ -68,10 +70,15 @@ struct TSimpleMesh
 	D3D11_SUBRESOURCE_DATA	m_d3dVertexData;
 	D3D11_SUBRESOURCE_DATA	m_d3dIndexData;
 
+
 	UINT					m_nVertexCount = 0;
 	UINT					m_nIndexCount = 0;
 	UINT					m_nVertexBufferStride = 0;
 	UINT					m_nVertexBufferOffset = 0;
+
+	std::vector<XMFLOAT3>		m_VertexData;
+
+
 };
 struct TAnimation
 {
@@ -105,5 +112,8 @@ struct TCamera
 	/*
 		Fill out this structure
 	*/
+};
+struct TWorldMatrix {
+	XMMATRIX worldMatrix;
 };
 #endif

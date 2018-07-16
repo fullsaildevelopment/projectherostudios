@@ -1,11 +1,13 @@
 #pragma once
 #include "Graphics_System.h"
 #include "InputSystem.h"
+#include"Collision_System.h"
 #include "Entity.h"
 class CAuger
 {
 public:
 	HWND cApplicationWindow;
+	CCollisionSystem* pcCollisionSystem;
 	TWorld tThisWorld;
 	CGraphicsSystem	*pcGraphicsSystem; 
 	CInputSystem	*pcInputSystem;
@@ -23,5 +25,8 @@ private:
 	XMMATRIX m_d3dWorldMatrix;
 	XMMATRIX m_d3dViewMatrix;
 	XMMATRIX m_d3dProjectionMatrix;
+	XMMATRIX peguins;
+
+	bool tempt;
 };
 
