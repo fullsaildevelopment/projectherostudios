@@ -29,6 +29,7 @@ private:
 	XMMATRIX m_d3dViewMatrix;
 	XMMATRIX m_d3dProjectionMatrix;
 	XMMATRIX peguins;
+	int aiminglineIndex;
 
 	bool tempt;
 };
