@@ -141,7 +141,7 @@ unsigned int createCube(TWorld * ptWorld)
 	return 0;
 }
 
-
+/*
 unsigned int createDummyPlayer(TWorld* ptWorld, XMMATRIX playerMatrix)
 {
 	unsigned int nThisEntity = createEntity(ptWorld);
@@ -186,6 +186,7 @@ unsigned int createDummyPlayer(TWorld* ptWorld, XMMATRIX playerMatrix)
 	ptWorld->atShaderID[nThisEntity].m_nShaderID = 2;
 	return 0;
 }
+*/
 
 
 unsigned int createPlayerBox(TWorld * ptWorld, CCollisionSystem* pcCollisionSystem)

@@ -340,20 +340,115 @@ XMMATRIX CInputSystem::TrackCamera(XMMATRIX playerMatrix)
 XMMATRIX CInputSystem::WalkLookAt(XMVECTOR V, XMVECTOR T, XMVECTOR U, XMMATRIX viewM) {
 	XMVECTOR X, Y, Z, X2, Y2, Z2, W;
 	XMVECTOR d3d_newX, d3d_newY, d3d_existingZ;
-	XMMATRIX d3dTmpViewM, d3dRotation;
-	//d3dTmpViewM = viewM;
-	XMMATRIX newV;
-	W = T;
-	W.m128_f32[1] = T.m128_f32[1] + 2;
-	W.m128_f32[2] = T.m128_f32[2] - 2;
-	
+	XMMATRIX d3dTmpViewM, d3dMovementM,d3dRotation;
+	d3dTmpViewM = viewM;
+	//XMMATRIX newV;
+	/*W = T;
+	W.m128_f32[0] = T.m128_f32[0] - 0.5f;
+	W.m128_f32[1] = T.m128_f32[1] + 0.5;
+	W.m128_f32[2] = T.m128_f32[2] - 3;
+	*/
+	Z = DirectX::XMVectorSubtract(T, V);
+	Z2.m128_f32[0] = T.m128_f32[0] - V.m128_f32[0];
+	Z2.m128_f32[1] = T.m128_f32[1] - V.m128_f32[1];
+	Z2.m128_f32[2] = T.m128_f32[2] - V.m128_f32[2];
+	Z2.m128_f32[3] = 0;
 
+	Z = DirectX::XMVector3Normalize(Z);
+
+	X = DirectX::XMVector3Cross(U, Z);
+
+	X2.m128_f32[0] = (U.m128_f32[1] * Z.m128_f32[2]) - (U.m128_f32[2] * Z.m128_f32[1]);
+	X2.m128_f32[1] = (U.m128_f32[2] * Z.m128_f32[0]) - (U.m128_f32[0] * Z.m128_f32[2]);
+	X2.m128_f32[2] = (U.m128_f32[0] * Z.m128_f32[1]) - (U.m128_f32[1] * Z.m128_f32[0]);
+	X2.m128_f32[3] = 0;
+
+	X = DirectX::XMVector3Normalize(X);
+
+	Y = DirectX::XMVector3Cross(Z, X);
+	Y2.m128_f32[0] = (Z.m128_f32[1] * X.m128_f32[2]) - (Z.m128_f32[2] * X.m128_f32[1]);
+	Y2.m128_f32[1] = (Z.m128_f32[2] * X.m128_f32[0]) - (Z.m128_f32[0] * X.m128_f32[2]);
+	Y2.m128_f32[2] = (Z.m128_f32[0] * X.m128_f32[1]) - (Z.m128_f32[1] * X.m128_f32[0]);
+	Y2.m128_f32[3] = 0;
+	Y = DirectX::XMVector3Normalize(Y);
+
+
+	d3dTmpViewM.r[0] = X;
+	d3dTmpViewM.r[1] = Y;
+	d3dTmpViewM.r[2] = Z; 
+
+	if (Z2.m128_f32[0] > 10.0f)
+	{
+		d3dMovementM = XMMatrixTranslation(1, 0, 0);
+		d3dTmpViewM = XMMatrixMultiply(d3dMovementM, d3dTmpViewM);
+	}
+	if (Z2.m128_f32[0] < -10.0f)
+	{
+		d3dMovementM = XMMatrixTranslation(1, 0, 0);
+		d3dTmpViewM = XMMatrixMultiply(d3dMovementM, d3dTmpViewM);
+	}
+	if (Z2.m128_f32[2] > 4.0f)
+	{
+	//	/*XMVECTOR zCheck;
+	//	zCheck = T;
+	//	zCheck.m128_f32[2] = d3dTmpViewM.r[3].m128_f32[2];
+	//	zCheck.m128_f32[2] += 0.5f;
+	//	m_fDistance = zCheck.m128_f32[2] / d3dTmpViewM.r[3].m128_f32[2];*/
+		d3dTmpViewM.r[3].m128_f32[2] += 0.1f;
+
+
+
+	}
+	if (Z2.m128_f32[2] < -4.0f)
+	{
+		/*XMVECTOR zCheck;
+		zCheck = T;
+		zCheck.m128_f32[2] = d3dTmpViewM.r[3].m128_f32[2];
+		zCheck.m128_f32[2] += 0.5f;
+		m_fDistance = zCheck.m128_f32[2] / d3dTmpViewM.r[3].m128_f32[2];*/
+		 d3dTmpViewM.r[3].m128_f32[2] -= 0.1f;
+	 }
+	//if (InputCheck(G_BUTTON_LEFT) == 1) {
+	//	d3dMovementM = XMMatrixTranslation(0, 0, m_fMouseMovementSpeed);
+	//	d3dTmpViewM = XMMatrixMultiply(d3dMovementM, d3dTmpViewM);
+
+	//}
+	//// down key movement
+	//if (InputCheck(G_BUTTON_RIGHT) == 1) {
+	//	d3dMovementM = XMMatrixTranslation(0, 0, -m_fMouseMovementSpeed);
+
+	//	d3dTmpViewM = XMMatrixMultiply(d3dMovementM, d3dTmpViewM);
+
+	//}
+	//// left key movement
+	//if (InputCheck(G_KEY_A) == 1) {
+	//	d3dMovementM = XMMatrixTranslation(-m_fMouseMovementSpeed, 0, 0);
+	//	d3dTmpViewM = XMMatrixMultiply(d3dMovementM, d3dTmpViewM);
+
+	//}
+	//// right key movement
+	//if (InputCheck(G_KEY_D) == 1) {
+	//	d3dMovementM = XMMatrixTranslation(m_fMouseMovementSpeed, 0, 0);
+	//	d3dTmpViewM = XMMatrixMultiply(d3dMovementM, d3dTmpViewM);
+
+	//}
+	//if (InputCheck(G_KEY_W) == 1) {
+	//	d3dMovementM = XMMatrixTranslation(0, m_fMouseMovementSpeed, 0);
+	//	d3dTmpViewM = XMMatrixMultiply(d3dMovementM, d3dTmpViewM);
+
+	//}
+	//if (InputCheck(G_KEY_S) == 1) {
+	//	d3dMovementM = XMMatrixTranslation(0, -m_fMouseMovementSpeed, 0);
+	//	d3dTmpViewM = XMMatrixMultiply(d3dMovementM, d3dTmpViewM);
+	//}
+
+	//}
 	//Right && Left Rotation(keybord implemented, soon to be changed in the mouse)
 	if (InputCheck(G_KEY_J) == 1)
 	{
-		d3dRotation = XMMatrixRotationY(-1.0f * m_fMouseRotationSpeed);
+		d3dRotation = XMMatrixRotationY(1.0f * m_fMouseRotationSpeed);
 
-		d3dTmpViewM = XMMatrixMultiply(d3dRotation, d3dTmpViewM);
+		d3dTmpViewM = XMMatrixMultiply(d3dTmpViewM, d3dRotation);
 
 		d3d_existingZ = d3dTmpViewM.r[2];
 		d3d_newX = XMVector3Cross(XMVectorSet(0, 1, 0, 0), d3d_existingZ);
@@ -375,7 +470,7 @@ XMMATRIX CInputSystem::WalkLookAt(XMVECTOR V, XMVECTOR T, XMVECTOR U, XMMATRIX v
 
 	if (InputCheck(G_KEY_L) == 1)
 	{
-		d3dRotation = XMMatrixRotationY(1.0f * m_fMouseRotationSpeed);
+		d3dRotation = XMMatrixRotationY(-1.0f * m_fMouseRotationSpeed);
 
 		d3dTmpViewM = XMMatrixMultiply(d3dTmpViewM, d3dRotation);
 
@@ -399,7 +494,7 @@ XMMATRIX CInputSystem::WalkLookAt(XMVECTOR V, XMVECTOR T, XMVECTOR U, XMMATRIX v
 
 	if (InputCheck(G_KEY_I) == 1)
 	{
-		d3dRotation = XMMatrixRotationX(1.0f * m_fMouseRotationSpeed);
+		d3dRotation = XMMatrixRotationX(-1.0f * m_fMouseRotationSpeed);
 
 		d3dTmpViewM = XMMatrixMultiply(d3dTmpViewM, d3dRotation);
 
@@ -424,9 +519,9 @@ XMMATRIX CInputSystem::WalkLookAt(XMVECTOR V, XMVECTOR T, XMVECTOR U, XMMATRIX v
 	}
 	if (InputCheck(G_KEY_K) == 1)
 	{
-		d3dRotation = XMMatrixRotationX(-1.0f * m_fMouseRotationSpeed);
+		d3dRotation = XMMatrixRotationX(1.0f * m_fMouseRotationSpeed);
 
-		d3dTmpViewM = XMMatrixMultiply(d3dRotation, d3dTmpViewM);
+		d3dTmpViewM = XMMatrixMultiply(d3dTmpViewM, d3dRotation);
 		d3d_existingZ = d3dTmpViewM.r[2];
 		d3d_newX = XMVector3Cross(XMVectorSet(0, 1, 0, 0), d3d_existingZ);
 		d3d_newY = XMVector3Cross(d3d_existingZ, d3d_newX);
@@ -441,7 +536,7 @@ XMMATRIX CInputSystem::WalkLookAt(XMVECTOR V, XMVECTOR T, XMVECTOR U, XMMATRIX v
 		d3dTmpViewM.r[2] = d3d_existingZ;
 
 
-		//newV = XMMatrixMultiply(d3dTmpViewM, d3dRotation);
+	//	//newV = XMMatrixMultiply(d3dTmpViewM, d3dRotation);
 
 
 	}
@@ -467,13 +562,17 @@ XMMATRIX CInputSystem::WalkLookAt(XMVECTOR V, XMVECTOR T, XMVECTOR U, XMMATRIX v
 	Y2.m128_f32[1] = (Z.m128_f32[2] * X.m128_f32[0]) - (Z.m128_f32[0] * X.m128_f32[2]);
 	Y2.m128_f32[2] = (Z.m128_f32[0] * X.m128_f32[1]) - (Z.m128_f32[1] * X.m128_f32[0]);
 	Y2.m128_f32[3] = 0;
-	Y = DirectX::XMVector3Normalize(Y);*/
+	Y = DirectX::XMVector3Normalize(Y);
 
 	
+	d3dTmpViewM.r[0] = X;
+		d3dTmpViewM.r[1] = Y;
+		d3dTmpViewM.r[2] = Z;*/
 	
-	
-	newV.r[3] = W;
 	
 
-	return newV;
+
+	//d3dTmpViewM.r[3] = W;
+
+	return d3dTmpViewM;
 }

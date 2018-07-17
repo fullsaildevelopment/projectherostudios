@@ -34,6 +34,7 @@ void CAuger::InitializeSystems()
 	pcGraphicsSystem->InitD3D(cApplicationWindow);
 	createDebugGrid(&tThisWorld);
 	createCube(&tThisWorld);
+	m_bDebugMode = false;
 
 	//createPlayerBox(&tThisWorld, pcCollisionSystem);
 	//createPlayerBox(&tThisWorld, pcCollisionSystem);
@@ -70,14 +71,30 @@ void CAuger::InitializeSystems()
 void CAuger::Update()
 {
 	//Call some sort of function from the graphics system to create this matrix
+	if (pcInputSystem->InputCheck(G_KEY_9) == 1)
+	{
+		m_bDebugMode = !m_bDebugMode;
+	}
 	XMMATRIX d3d_ResultMatrix;
 	m_d3dProjectionMatrix = pcGraphicsSystem->SetDefaultPerspective();
 	//createDummyPlayer(&tThisWorld, m_d3dPlayerMatrix);
+	if (m_bDebugMode == false )
+	{
+		//XMVECTOR testW = m_d3dViewMatrix.r[3];
+		//m_d3dViewMatrix = pcGraphicsSystem->SetPlayerViewMatrix(m_d3dViewMatrix, m_d3dPlayerMatrix);
+		d3d_ResultMatrix = XMMatrixIdentity();
+		//m_d3dViewMatrix.r[3] = testW;
+		d3d_ResultMatrix = XMMatrixInverse(NULL, m_d3dViewMatrix);
+		//d3d_ResultMatrix = XMMatrixMultiply(m_d3dViewMatrix, m_d3dPlayerMatrix);
+		d3d_ResultMatrix = pcInputSystem->WalkLookAt(d3d_ResultMatrix.r[3], m_d3dPlayerMatrix.r[3], XMVectorSet(0, 1.0f, 0, 0), d3d_ResultMatrix);
+		m_d3dViewMatrix = XMMatrixInverse(NULL, d3d_ResultMatrix);
+	}
+	else 
+	{
+	d3d_ResultMatrix = pcInputSystem->DebugCamera(m_d3dViewMatrix, m_d3dWorldMatrix);
+	m_d3dViewMatrix = XMMatrixInverse(NULL, d3d_ResultMatrix);
+	}
 	
-	d3d_ResultMatrix = XMMatrixInverse(NULL, m_d3dViewMatrix);
-	d3d_ResultMatrix = pcInputSystem->WalkLookAt(d3d_ResultMatrix.r[3], m_d3dPlayerMatrix.r[3], XMVectorSet(0, 1.0f, 0, 0), d3d_ResultMatrix);
-	//d3d_ResultMatrix = pcInputSystem->DebugCamera(m_d3dViewMatrix, m_d3dWorldMatrix);
-	//m_d3dViewMatrix = XMMatrixInverse(NULL, d3d_ResultMatrix);
 
 	CGraphicsSystem::TPrimalVertexBufferType tTempVertexBuffer;
 	CGraphicsSystem::TPrimalPixelBufferType tTempPixelBuffer;
@@ -141,9 +158,14 @@ void CAuger::Update()
 			if (nCurrentEntity == 1) 
 			{
 				// = pcGraphicsSystem->SetDefaultWorldPosition();//Call some sort of function from the graphics system to create this matrix
+				if (m_bDebugMode == false)
+				{
+					m_d3dPlayerMatrix = pcInputSystem->TrackCamera(m_d3dPlayerMatrix);
+					tTempVertexBuffer.m_d3dWorldMatrix = m_d3dPlayerMatrix;
 
+				}
 			
-				m_d3dPlayerMatrix = pcInputSystem->TrackCamera(m_d3dPlayerMatrix);
+				
 				//tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix.r[3].m128_f32[0] = m_d3dPlayerMatrix.r[3].m128_f32[0];
 				//tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix.r[3].m128_f32[1] = m_d3dPlayerMatrix.r[3].m128_f32[1];
 				//tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix.r[3].m128_f32[2] = m_d3dPlayerMatrix.r[3].m128_f32[2];
@@ -152,7 +174,6 @@ void CAuger::Update()
 				tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix.r[3].m128_f32[2] = pcGraphicsSystem->GetCameraPos().m128_f32[2] + 2;*/
 				
 				
-				tTempVertexBuffer.m_d3dWorldMatrix = m_d3dPlayerMatrix;
 		
 			//	tThisWorld.atAABB[1] = pcCollisionSystem->updateAABB(tThisWorld.atWorldMatrix[1].worldMatrix, tThisWorld.atAABB[1]);
 			

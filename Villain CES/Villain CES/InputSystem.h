@@ -74,5 +74,6 @@ public:
 private:
 	float				m_fMouseRotationSpeed;
 	float				m_fMouseMovementSpeed;
+	float				m_fDistance;
 };
 

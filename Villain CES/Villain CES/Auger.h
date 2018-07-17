@@ -34,5 +34,6 @@ private:
 	XMMATRIX peguins;
 
 	bool tempt;
+	bool m_bDebugMode;
 };
 

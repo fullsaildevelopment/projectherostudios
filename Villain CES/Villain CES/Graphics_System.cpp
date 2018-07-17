@@ -333,6 +333,15 @@ XMMATRIX CGraphicsSystem::SetDefaultViewMatrix()
 	return DefaultViewMatrix;
 }
 
+XMMATRIX CGraphicsSystem::SetPlayerViewMatrix(XMMATRIX d3d_ViewM, XMMATRIX d3d_playerM)
+{
+	XMMATRIX DefaultViewMatrix;
+
+	DefaultViewMatrix = XMMatrixLookAtLH(d3d_ViewM.r[3],d3d_playerM.r[3], XMVectorSet(0, 1.0f, 0, 1.0f));
+
+	return DefaultViewMatrix;
+}
+
 XMMATRIX CGraphicsSystem::SetDefaultPerspective()
 {
 
