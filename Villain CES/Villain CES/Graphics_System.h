@@ -48,13 +48,13 @@ public:
 		float m_fShininess;
 		int m_nPadding;
 	};
-										   // function prototypes
+										   
 
 	//First Frame
 	CGraphicsSystem();
 	~CGraphicsSystem();
 
-	void InitD3D(HWND cTheWindow);     // sets up and initializes Direct3D
+	void InitD3D(HWND cTheWindow);     
 	void CreateBuffers(TWorld * ptWorld);
 	void CreateShaders(ID3D11Device* pd3dDevice);
 	
@@ -72,7 +72,7 @@ public:
 	XMVECTOR GetCameraPos();
 
 	//Last Frame
-	void CleanD3D(TWorld * ptWorld);         // closes Direct3D and releases memory
+	void CleanD3D(TWorld * ptWorld);
 
 private:
 	ID3D11VertexShader * m_pd3dPrimalVertexShader;

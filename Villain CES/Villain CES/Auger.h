@@ -11,8 +11,8 @@ public:
 	TWorld tThisWorld;
 	CGraphicsSystem	*pcGraphicsSystem; 
 	CInputSystem	*pcInputSystem;
-	list<int> bulletsAvailables;
-	list<int> BulletsFired;
+	std::vector<int> bulletsAvailables;
+	std::vector<int> BulletsFired;
 
 
 	CAuger();
@@ -29,7 +29,7 @@ private:
 	XMMATRIX m_d3dViewMatrix;
 	XMMATRIX m_d3dProjectionMatrix;
 	XMMATRIX peguins;
-
+	bool m_bCheckAgain;
 	bool tempt;
 };
 

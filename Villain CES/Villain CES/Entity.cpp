@@ -26,6 +26,12 @@ void destroyEntity(TWorld * ptWorld, unsigned int nThisEntity)
 	//Set component list for current entity to none.
 	printf("Entity destroyed: %d\n", nThisEntity);
 	ptWorld->atGraphicsMask[nThisEntity].m_tnGraphicsMask = COMPONENT_NONE;
+	ptWorld->atCollisionMask[nThisEntity].m_tnCollisionMask = COMPONENT_NONE;
+	ptWorld->atAIMask[nThisEntity].m_tnAIMask = COMPONENT_NONE;
+	ptWorld->atUIMask[nThisEntity].m_tnUIMask = COMPONENT_NONE;
+	ptWorld->atInputMask[nThisEntity].m_tnInputMask = COMPONENT_NONE;
+	ptWorld->atPhysicsMask[nThisEntity].m_tnPhysicsMask = COMPONENT_NONE;
+
 }
 
 unsigned int createDebugTransformLines(TWorld * ptWorld)
@@ -37,6 +43,8 @@ unsigned int createDebugTransformLines(TWorld * ptWorld)
 	ptWorld->atCollisionMask[nThisEntity].m_tnCollisionMask = COMPONENT_COLLISIONMASK;
 	ptWorld->atUIMask[nThisEntity].m_tnUIMask = COMPONENT_UIMASK;
 	ptWorld->atPhysicsMask[nThisEntity].m_tnPhysicsMask = COMPONENT_PHYSICSMASK;
+	ptWorld->atInputMask[nThisEntity].m_tnInputMask = COMPONENT_INPUTMASK;
+
 	ptWorld->atDebugMesh[nThisEntity].m_nVertexCount = 6;
 
 	static TPrimalVert atLineVertices[]
@@ -76,6 +84,7 @@ unsigned int createCube(TWorld * ptWorld)
 	ptWorld->atCollisionMask[nThisEntity].m_tnCollisionMask = COMPONENT_COLLISIONMASK;
 	ptWorld->atUIMask[nThisEntity].m_tnUIMask = COMPONENT_UIMASK;
 	ptWorld->atPhysicsMask[nThisEntity].m_tnPhysicsMask = COMPONENT_PHYSICSMASK;
+	ptWorld->atInputMask[nThisEntity].m_tnInputMask = COMPONENT_INPUTMASK;
 
 
 	static TPrimalVert atCubeVertices[]
@@ -147,7 +156,7 @@ unsigned int createPlayerBox(TWorld * ptWorld)
 {
 	unsigned int nThisEntity = createEntity(ptWorld);
 
-	ptWorld->atCollisionMask[nThisEntity].m_tnCollisionMask = COMPONENT_AABB | COMPONENT_NONSTATIC;
+	ptWorld->atCollisionMask[nThisEntity].m_tnCollisionMask = COMPONENT_COLLISIONMASK | COMPONENT_AABB | COMPONENT_NONSTATIC;
 	ptWorld->atGraphicsMask[nThisEntity].m_tnGraphicsMask = COMPONENT_GRAPHICSMASK | COMPONENT_SIMPLEMESH | COMPONENT_SHADERID;
 	ptWorld->atAIMask[nThisEntity].m_tnAIMask = COMPONENT_AIMASK;
 	ptWorld->atUIMask[nThisEntity].m_tnUIMask = COMPONENT_UIMASK;
@@ -226,11 +235,13 @@ unsigned int createBullet(TWorld * ptWorld, XMMATRIX BulletSpawnLocation)
 {
 	unsigned int nThisEntity = createEntity(ptWorld);
 
-	ptWorld->atCollisionMask[nThisEntity].m_tnCollisionMask = COMPONENT_AABB | COMPONENT_NONSTATIC;
+	ptWorld->atCollisionMask[nThisEntity].m_tnCollisionMask = COMPONENT_COLLISIONMASK | COMPONENT_AABB | COMPONENT_NONSTATIC;
 	ptWorld->atGraphicsMask[nThisEntity].m_tnGraphicsMask = COMPONENT_GRAPHICSMASK | COMPONENT_SIMPLEMESH | COMPONENT_SHADERID;
 	ptWorld->atAIMask[nThisEntity].m_tnAIMask = COMPONENT_AIMASK;
 	ptWorld->atUIMask[nThisEntity].m_tnUIMask = COMPONENT_UIMASK;
 	ptWorld->atPhysicsMask[nThisEntity].m_tnPhysicsMask = COMPONENT_PHYSICSMASK;
+	ptWorld->atInputMask[nThisEntity].m_tnInputMask = COMPONENT_INPUTMASK;
+
 	static TPrimalVert atCubeVertices[]
 	{
 		TPrimalVert{ XMFLOAT3(-0, 0.5f, 0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//0 Top F Left
@@ -251,12 +262,7 @@ unsigned int createBullet(TWorld * ptWorld, XMMATRIX BulletSpawnLocation)
 		TPrimalVert{ XMFLOAT3(0.5f, 0.5f, 0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//14 Top F Right
 		TPrimalVert{ XMFLOAT3(0.5f, -0, 0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) }//15 Bottm F Right
 	};
-	for (int i = 0; i < 16; ++i) {
-		//atCubeVertices[i].m_d3dfPosition.x *= 1;
-		//atCubeVertices[i].m_d3dfPosition.y *= 1;
-		//atCubeVertices[i].m_d3dfPosition.z *= 1;
 
-	}
 	static short cubeIndices[]
 	{
 		3,1,0,0,2,3,
@@ -297,20 +303,12 @@ unsigned int createBullet(TWorld * ptWorld, XMMATRIX BulletSpawnLocation)
 	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexData.SysMemPitch = 0;
 	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexData.SysMemSlicePitch = 0;
 	ptWorld->name[nThisEntity] = "Bullet";
+	XMMATRIX BulletSpawnLocationCopy = BulletSpawnLocation;
 
-	XMMATRIX DefaultPerspectiveMatrix;
-	// the 90 is for fov if we want to implament field of view
-	/*BulletSpawnLocation.r[0].m128_f32[0] = 0.5;
-	BulletSpawnLocation.r[1].m128_f32[1] = 0.5;
-	BulletSpawnLocation.r[2].m128_f32[2] = 0.5;*/
-	//	BulletSpawnLocation.r[3].m128_f32[0] += 0.5;
-
-	ptWorld->atWorldMatrix[nThisEntity].worldMatrix = BulletSpawnLocation;
+	ptWorld->atWorldMatrix[nThisEntity].worldMatrix = BulletSpawnLocationCopy;
 
 	ptWorld->atShaderID[nThisEntity].m_nShaderID = 3;
-	for (int i = 0; i < ptWorld->atSimpleMesh[nThisEntity].m_nVertexCount; ++i) {
-		ptWorld->atSimpleMesh[nThisEntity].m_VertexData.push_back(atCubeVertices[i].m_d3dfPosition);
-	}
+
 	return nThisEntity;
 }
 
@@ -343,9 +341,10 @@ unsigned int createDebugGrid(TWorld * ptWorld)
 
 	ptWorld->atGraphicsMask[nThisEntity].m_tnGraphicsMask = COMPONENT_GRAPHICSMASK | COMPONENT_DEBUGMESH | COMPONENT_SHADERID;//138
 	ptWorld->atAIMask[nThisEntity].m_tnAIMask = COMPONENT_AIMASK;
-	//ptWorld->atCollisionMask[nThisEntity].m_tnCollisionMask =  COMPONENT_STATIC| COMPONENT_AABB;
+	//ptWorld->atCollisionMask[nThisEntity].m_tnCollisionMask = COMPONENT_COLLISIONMASK | COMPONENT_STATIC| COMPONENT_AABB;
 	ptWorld->atUIMask[nThisEntity].m_tnUIMask = COMPONENT_UIMASK;
 	ptWorld->atPhysicsMask[nThisEntity].m_tnPhysicsMask = COMPONENT_PHYSICSMASK;
+	ptWorld->atInputMask[nThisEntity].m_tnInputMask = COMPONENT_INPUTMASK;
 
 	static TPrimalVert atDebugGridVertices[]
 	{

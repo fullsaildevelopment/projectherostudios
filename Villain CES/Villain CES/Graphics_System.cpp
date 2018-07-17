@@ -138,8 +138,6 @@ void CGraphicsSystem::InitD3D(HWND cTheWindow)
 
 void CGraphicsSystem::UpdateD3D()
 {
-	
-
 	const float afBackgroundColor[] = { .5f, .05f, .5f, 1 };
 
 	m_pd3dDeviceContext->OMSetRenderTargets(1, &m_pd3dRenderTargetView, m_pd3dDepthStencilView);
@@ -171,6 +169,7 @@ void CGraphicsSystem::CleanD3D(TWorld *ptPlanet)
 	m_pd3dDevice->Release();
 	m_pd3dDeviceContext->Release();
 	m_pd3dDepthStencil->Release();
+	
 	m_pd3dDepthStencilState->Release();
 	m_pd3dDepthStencilView->Release();
 	m_pd3dRenderTargetView->Release();
@@ -271,7 +270,9 @@ void CGraphicsSystem::CreateBuffers(TWorld *ptPlanet)//init first frame
 		if (ptPlanet->atGraphicsMask[nCurrentEntity].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_DEBUGMESH | COMPONENT_SHADERID))
 		{
 			if (ptPlanet->atDebugMesh[nCurrentEntity].m_nVertexCount)
+			{
 				m_pd3dDevice->CreateBuffer(&ptPlanet->atDebugMesh[nCurrentEntity].m_d3dVertexBufferDesc, &ptPlanet->atDebugMesh[nCurrentEntity].m_d3dVertexData, &ptPlanet->atDebugMesh[nCurrentEntity].m_pd3dVertexBuffer);
+			}
 
 		}
 		if (ptPlanet->atGraphicsMask[nCurrentEntity].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_SIMPLEMESH | COMPONENT_SHADERID))
@@ -418,7 +419,6 @@ void CGraphicsSystem::InitPrimalShaderData2(ID3D11DeviceContext * pd3dDeviceCont
 	pd3dDeviceContext->Unmap(m_pd3dPrimalVertexBuffer, 0);
 
 #pragma endregion
-
 
 	#pragma region Map To Pixel Constant Buffer
 	pd3dDeviceContext->Map(m_pd3dPrimalPixelBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &d3dPrimalPixelMappedResource);
