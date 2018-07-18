@@ -110,7 +110,7 @@ void CAuger::Update()
 			MyAbb.m_IndexLocation = indextoBullet;
 			tThisWorld.atAABB[indextoBullet] = MyAbb;
 			pcCollisionSystem->AddAABBCollider(MyAbb, indextoBullet);
-			tThisWorld.atCollisionMask[indextoBullet].m_tnCollisionMask = COMPONENT_AABB | COMPONENT_NONSTATIC;
+			tThisWorld.atCollisionMask[indextoBullet].m_tnCollisionMask = COMPONENT_COLLISIONMASK | COMPONENT_AABB | COMPONENT_NONSTATIC;
 			tThisWorld.atGraphicsMask[indextoBullet].m_tnGraphicsMask = COMPONENT_GRAPHICSMASK | COMPONENT_SIMPLEMESH | COMPONENT_SHADERID;
 			tThisWorld.atAIMask[indextoBullet].m_tnAIMask = COMPONENT_AIMASK;
 			tThisWorld.atUIMask[indextoBullet].m_tnUIMask = COMPONENT_UIMASK;
@@ -165,6 +165,7 @@ void CAuger::Update()
 	//	
 	//}
 	m_nIndexToBullets = 0;
+	m_nIndexToBullets2 = 0;
 	if (pcInputSystem->InputCheck(G_KEY_R) == 1) {
 		for (int i = 0; i < nDeadBullets.size(); ++i) {
 			nBulletsAvailables.push_back(nDeadBullets[i]);
@@ -230,8 +231,25 @@ void CAuger::Update()
 				{
 					if (pcCollisionSystem->AABBtoAABBCollisionCheck(tThisWorld.atAABB[nCurrentEntity]) == true)
 					{
-
+					/*
+						if (nBulletsFired.size() > m_nIndexToBullets2 &&nBulletsFired[m_nIndexToBullets2] == nCurrentEntity) {
+							fAliveTime.erase(fAliveTime.begin() + m_nIndexToBullets2);
+							nDeadBullets.push_back(nBulletsFired[m_nIndexToBullets2]);
+							tThisWorld.atCollisionMask[nCurrentEntity].m_tnCollisionMask = COMPONENT_AABB;
+							tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask = COMPONENT_GRAPHICSMASK;
+							tThisWorld.atAIMask[nCurrentEntity].m_tnAIMask = COMPONENT_AIMASK;
+							tThisWorld.atUIMask[nCurrentEntity].m_tnUIMask = COMPONENT_UIMASK;
+							tThisWorld.atPhysicsMask[nCurrentEntity].m_tnPhysicsMask = COMPONENT_PHYSICSMASK;
+							tThisWorld.atRigidBody[nCurrentEntity].velocity = pcPhysicsSystem->ZeroVector();
+							tThisWorld.atRigidBody[nCurrentEntity].totalForce = pcPhysicsSystem->ZeroVector();
+							pcCollisionSystem->RemoveAABBCollider(nCurrentEntity);
+							nBulletsFired.erase(nBulletsFired.begin() + m_nIndexToBullets2);
+							pcGraphicsSystem->CreateBuffers(&tThisWorld);
+							m_nIndexToBullets2++;
+						}*/
 						tTempPixelBuffer.m_d3dCollisionColor = XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f);
+					
+
 					}
 					else {
 

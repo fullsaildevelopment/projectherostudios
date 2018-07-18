@@ -36,6 +36,8 @@ private:
 	XMMATRIX m_d3dProjectionMatrix;
 	int		nAiminglineIndex;
 	int		m_nIndexToBullets;
+	int		m_nIndexToBullets2;
+
 	float	fShootingCoolDown = 0;
 	int		m_nClipSize = 10;
 
