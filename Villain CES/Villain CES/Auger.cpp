@@ -168,9 +168,13 @@ void CAuger::Update()
 	m_nIndexToBullets2 = 0;
 	if (pcInputSystem->InputCheck(G_KEY_R) == 1) {
 		for (int i = 0; i < nDeadBullets.size(); ++i) {
-			nBulletsAvailables.push_back(nDeadBullets[i]);
-			nDeadBullets.erase(nDeadBullets.begin() + i);
-
+			if (nBulletsAvailables.size() < m_nClipSize) {
+				nBulletsAvailables.push_back(nDeadBullets[i]);
+				nDeadBullets.erase(nDeadBullets.begin() + i);
+			}
+			else {
+				break;
+			}
 		}
 	}
 	for (int nCurrentEntity = 0; nCurrentEntity < ENTITYCOUNT; nCurrentEntity++)
