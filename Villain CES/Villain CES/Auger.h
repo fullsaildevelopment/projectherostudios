@@ -39,7 +39,7 @@ private:
 
 
 	XMMATRIX peguins;
-	int aiminglineIndex;
+	int nAiminglineIndex;
 	int		m_nIndexToBullets;
 	int		m_nIndexToBullets2;
 

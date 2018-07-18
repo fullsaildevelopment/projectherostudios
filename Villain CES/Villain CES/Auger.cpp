@@ -321,11 +321,11 @@ void CAuger::Update()
 				pcGraphicsSystem->ExecutePipeline(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atSimpleMesh[nCurrentEntity].m_nIndexCount, tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask, tThisWorld.atShaderID[nCurrentEntity].m_nShaderID);
 			
 		}
-		
+		pcGraphicsSystem->m_pd3dSwapchain->Present(0, 0);
+
 		
 	}
-	pcGraphicsSystem->m_pd3dSwapchain->Present(0, 0);
-}
+
 
 void CAuger::End()
 {
