@@ -35,7 +35,8 @@ private:
 	XMMATRIX m_d3dViewMatrix;
 	XMMATRIX m_d3dProjectionMatrix;
 	XMMATRIX m_d3dPlayerMatrix;
-	
+	XMMATRIX m_d3dCameraMatrix;
+
 
 	XMMATRIX peguins;
 	int aiminglineIndex;

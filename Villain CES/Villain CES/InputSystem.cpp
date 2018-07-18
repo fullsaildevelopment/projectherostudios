@@ -348,7 +348,7 @@ XMMATRIX CInputSystem::WalkLookAt(XMVECTOR V, XMVECTOR T, XMVECTOR U, XMMATRIX v
 	W.m128_f32[1] = T.m128_f32[1] + 0.5;
 	W.m128_f32[2] = T.m128_f32[2] - 3;
 	*/
-	Z = DirectX::XMVectorSubtract(T, V);
+	/*Z = DirectX::XMVectorSubtract(T, V);
 	Z2.m128_f32[0] = T.m128_f32[0] - V.m128_f32[0];
 	Z2.m128_f32[1] = T.m128_f32[1] - V.m128_f32[1];
 	Z2.m128_f32[2] = T.m128_f32[2] - V.m128_f32[2];
@@ -375,7 +375,7 @@ XMMATRIX CInputSystem::WalkLookAt(XMVECTOR V, XMVECTOR T, XMVECTOR U, XMMATRIX v
 
 	d3dTmpViewM.r[0] = X;
 	d3dTmpViewM.r[1] = Y;
-	d3dTmpViewM.r[2] = Z; 
+	d3dTmpViewM.r[2] = Z; */
 
 	//if (Z2.m128_f32[0] > 10.0f)
 	//{
@@ -573,6 +573,5 @@ XMMATRIX CInputSystem::WalkLookAt(XMVECTOR V, XMVECTOR T, XMVECTOR U, XMMATRIX v
 
 
 	//d3dTmpViewM.r[3] = W;
-
 	return d3dTmpViewM;
 }
