@@ -19,7 +19,6 @@ public:
 	ID3D11Texture2D* m_pd3dDepthStencil;
 	D3D11_VIEWPORT m_d3dViewport;
 	std::vector<TPrimalVert> m_ctVectorPosition;
-
 	struct TMyMatrixBufferType
 	{
 		XMMATRIX m_d3dWorldMatrix;
@@ -65,12 +64,13 @@ public:
 	//Every Frame
 	void UpdateD3D();
 	void InitMyShaderData(ID3D11DeviceContext * pd3dDeviceContext, XMMATRIX d3dWorldMatrix, XMMATRIX d3dViewMatrix, XMMATRIX d3dProjectionMatrix, int nMask, XMFLOAT3 d3dLightPosition, XMFLOAT3 d3dCameraPosition, XMFLOAT4X4 *pd3dJointsForVS);
-	void InitPrimalShaderData(ID3D11DeviceContext * pd3dDeviceContext, XMMATRIX d3dWorldMatrix, XMMATRIX d3dViewMatrix, XMMATRIX d3dProjectionMatrix, TDebugMesh tDebugMesh);
-	void InitPrimalShaderData2(ID3D11DeviceContext * pd3dDeviceContext, TPrimalVertexBufferType d3dVertexBuffer, TPrimalPixelBufferType d3dPixelBuffer, TSimpleMesh tSimpleMesh);
+	void InitPrimalShaderData(ID3D11DeviceContext * pd3dDeviceContext, XMMATRIX d3dWorldMatrix, XMMATRIX d3dViewMatrix, XMMATRIX d3dProjectionMatrix, TDebugMesh tDebugMesh, XMMATRIX CameraMatrix);
+	void InitPrimalShaderData2(ID3D11DeviceContext * pd3dDeviceContext, TPrimalVertexBufferType d3dVertexBuffer, TPrimalPixelBufferType d3dPixelBuffer, TSimpleMesh tSimpleMesh, XMMATRIX CameraMatrix);
 	void ExecutePipeline(ID3D11DeviceContext *pd3dDeviceContext, int m_nIndexCount, int nGraphicsMask, int nShaderID);
 	void UpdateBuffer(TWorld * ptWorld, std::vector<TSimpleMesh> vtVertexVector, int nEntity, int nMask);
 	XMVECTOR GetCameraPos();
-
+	//XMMATRIX SetPlayerViewMatrix(XMMATRIX d3d_ViewM, XMMATRIX d3d_playerM);
+	XMMATRIX SetDefaultCameraMatrix();
 	//Last Frame
 	void CleanD3D(TWorld * ptWorld);         // closes Direct3D and releases memory
 

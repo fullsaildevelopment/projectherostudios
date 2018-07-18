@@ -35,6 +35,24 @@ public:
 	XMMATRIX DebugCamera(XMMATRIX d3d_ViewM, XMMATRIX d3d_WorldM);
 
 	/*
+	* TrackCamera(): This fuction makes a camera follow an in-game object.
+	*
+	* Ins:
+	*                 XMMATRIX playerMatrix
+					   
+	* Outs:
+	*
+	* Returns:          XMMATRIX
+	*
+	* Mod. Date:              07/16/2018
+	* Mod. Initials:          ZFB
+	*/
+	XMMATRIX TrackCamera( XMMATRIX playerMatrix);
+
+
+
+	XMMATRIX WalkLookAt(XMVECTOR V, XMVECTOR T, XMVECTOR U, XMMATRIX viewM);
+	/*
 		Seth Specific Functions
 	*/
 
@@ -56,5 +74,6 @@ public:
 private:
 	float				m_fMouseRotationSpeed;
 	float				m_fMouseMovementSpeed;
+	float				m_fDistance;
 };
 

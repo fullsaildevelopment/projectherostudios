@@ -34,7 +34,12 @@ private:
 	XMMATRIX m_d3dWorldMatrix;
 	XMMATRIX m_d3dViewMatrix;
 	XMMATRIX m_d3dProjectionMatrix;
-	int		nAiminglineIndex;
+	XMMATRIX m_d3dPlayerMatrix;
+	XMMATRIX m_d3dCameraMatrix;
+
+
+	XMMATRIX peguins;
+	int nAiminglineIndex;
 	int		m_nIndexToBullets;
 	int		m_nIndexToBullets2;
 
@@ -43,5 +48,6 @@ private:
 
 
 	bool tempt;
+	bool m_bDebugMode;
 };
 
