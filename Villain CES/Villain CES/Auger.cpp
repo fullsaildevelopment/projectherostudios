@@ -59,7 +59,7 @@ void CAuger::InitializeSystems()
 	 m_d3dProjectionMatrix = pcGraphicsSystem->SetDefaultPerspective();
 	 tThisWorld.atWorldMatrix[1].worldMatrix = m_d3dWorldMatrix;
 	 for (int nCurrentEntity = 0; nCurrentEntity < ENTITYCOUNT; nCurrentEntity++) {
-		 if (tThisWorld.atCollisionMask[nCurrentEntity].m_tnCollisionMask != 0) {
+		 if (tThisWorld.atCollisionMask[nCurrentEntity].m_tnCollisionMask > 1) {
 			 TAABB MyAbb = pcCollisionSystem->createAABBS(tThisWorld.atSimpleMesh[nCurrentEntity].m_VertexData);
 			 MyAbb.m_IndexLocation = nCurrentEntity;
 			 tThisWorld.atAABB[nCurrentEntity] = MyAbb;
@@ -193,7 +193,7 @@ void CAuger::Update()
 					tThisWorld.atPhysicsMask[nCurrentEntity].m_tnPhysicsMask = COMPONENT_PHYSICSMASK;
 					tThisWorld.atRigidBody[nCurrentEntity].velocity = pcPhysicsSystem->ZeroVector();
 					tThisWorld.atRigidBody[nCurrentEntity].totalForce = pcPhysicsSystem->ZeroVector();
-
+					pcCollisionSystem->RemoveAABBCollider(nCurrentEntity);
 					nBulletsFired.erase(nBulletsFired.begin() + m_nIndexToBullets);
 					pcGraphicsSystem->CreateBuffers(&tThisWorld);
 
