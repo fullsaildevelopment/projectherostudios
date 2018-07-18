@@ -16,7 +16,7 @@ public:
 	list<int> nBulletsAvailables;
 	vector<int> nBulletsFired;
 	vector<int> nDeadBullets;
-	vector<float> AliveTime;
+	vector<float> fAliveTime;
 
 
 
@@ -34,10 +34,9 @@ private:
 	XMMATRIX m_d3dWorldMatrix;
 	XMMATRIX m_d3dViewMatrix;
 	XMMATRIX m_d3dProjectionMatrix;
-	XMMATRIX peguins;
-	int aiminglineIndex;
+	int		nAiminglineIndex;
 	int		m_nIndexToBullets;
-	float shootingCoolDown = 0;
+	float	fShootingCoolDown = 0;
 	int		m_nClipSize = 10;
 
 
