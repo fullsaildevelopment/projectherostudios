@@ -77,17 +77,17 @@ void CAuger::InitializeSystems()
 			 pcCollisionSystem->AddAABBCollider(MyAbb, nCurrentEntity);
 		 }
 	 }
-	// tThisWorld.atWorldMatrix[2].worldMatrix = m_d3dWorldMatrix;
-	// tThisWorld.atWorldMatrix[3].worldMatrix = m_d3dWorldMatrix;
-	// tThisWorld.atWorldMatrix[4].worldMatrix = m_d3dWorldMatrix;
-	 //tThisWorld.atWorldMatrix[5].worldMatrix = m_d3dWorldMatrix;
-//	 tThisWorld.atWorldMatrix[2].worldMatrix = m_d3dWorldMatrix;
+	 tThisWorld.atWorldMatrix[2].worldMatrix = m_d3dWorldMatrix;
+	 tThisWorld.atWorldMatrix[3].worldMatrix = m_d3dWorldMatrix;
+	 tThisWorld.atWorldMatrix[4].worldMatrix = m_d3dWorldMatrix;
+	 tThisWorld.atWorldMatrix[5].worldMatrix = m_d3dWorldMatrix;
+	 tThisWorld.atWorldMatrix[2].worldMatrix = m_d3dWorldMatrix;
 
-	// tThisWorld.atWorldMatrix[2].worldMatrix.r[3].m128_f32[1] += 5;
-	 //tThisWorld.atWorldMatrix[3].worldMatrix.r[3].m128_f32[1] += 1;
-	 //tThisWorld.atWorldMatrix[4].worldMatrix.r[3].m128_f32[1] += -5;
-	 //tThisWorld.atWorldMatrix[5].worldMatrix.r[3].m128_f32[1] += -5;
-	 //tThisWorld.atWorldMatrix[5].worldMatrix.r[3].m128_f32[0] += -5;
+	 tThisWorld.atWorldMatrix[2].worldMatrix.r[3].m128_f32[1] += 5;
+	 tThisWorld.atWorldMatrix[3].worldMatrix.r[3].m128_f32[1] += 1;
+	 tThisWorld.atWorldMatrix[4].worldMatrix.r[3].m128_f32[1] += -5;
+	 tThisWorld.atWorldMatrix[5].worldMatrix.r[3].m128_f32[1] += -5;
+	 tThisWorld.atWorldMatrix[5].worldMatrix.r[3].m128_f32[0] += -5;
 
 
 
