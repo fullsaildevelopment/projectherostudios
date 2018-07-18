@@ -38,7 +38,7 @@ private:
 	int aiminglineIndex;
 	int		m_nIndexToBullets;
 	float shootingCoolDown = 0;
-	int		m_nClipSize = 30;
+	int		m_nClipSize = 10;
 
 
 	bool tempt;
