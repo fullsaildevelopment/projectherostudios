@@ -321,6 +321,14 @@ unsigned int CreateBullet(TWorld * ptWorld,XMMATRIX BulletSpawnLocation)
 	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexData.SysMemPitch = 0;
 	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexData.SysMemSlicePitch = 0;
 	ptWorld->szName[nThisEntity] = "Bullet";
+	XMVECTOR zerovector;
+	zerovector.m128_f32[0] = 0;
+	zerovector.m128_f32[1] = 0;
+	zerovector.m128_f32[2] = 0;
+	zerovector.m128_f32[3] = 0;
+	ptWorld->atRigidBody[nThisEntity].gravity = zerovector;
+	ptWorld->atRigidBody[nThisEntity].totalForce = zerovector;
+
 	
 	
 

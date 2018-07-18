@@ -14,6 +14,7 @@ CAuger::CAuger(HWND window)
 	pcGraphicsSystem = new CGraphicsSystem();
 	pcInputSystem = new CInputSystem();
 	pcCollisionSystem = new CCollisionSystem();
+	pcPhysicsSystem = new CPhysicsSystem();
 	pcInputSystem->InitializeGInput(window);
 }
 
@@ -122,16 +123,19 @@ void CAuger::Update()
 	tThisWorld.atWorldMatrix[aiminglineIndex].worldMatrix.r[3].m128_f32[2] += 1.5;
 	tThisWorld.atWorldMatrix[aiminglineIndex].worldMatrix.r[3].m128_f32[0] -= 0.3;
 
-	for (list<int>::iterator ptr = nBulletsFired.begin(); ptr != nBulletsFired.end(); ++ptr) {
-		XMVECTOR localpos;
-		localpos.m128_f32[0] = 0;
-		localpos.m128_f32[1] = 0;
-		localpos.m128_f32[2] = 0.001;
+	//for (list<int>::iterator ptr = nBulletsFired.begin(); ptr != nBulletsFired.end(); ++ptr) {
+	//	XMVECTOR localpos;
+	//	localpos.m128_f32[0] = 0;
+	//	localpos.m128_f32[1] = 0;
+	//	localpos.m128_f32[2] = 0.0001;
 
-		XMMATRIX localMatrix=XMMatrixTranslationFromVector(localpos);
-		tThisWorld.atWorldMatrix[*ptr].worldMatrix = XMMatrixMultiply(localMatrix, tThisWorld.atWorldMatrix[*ptr].worldMatrix);
-		float x = 0;
-	}
+	//	//XMMATRIX localMatrix=XMMatrixTranslationFromVector(localpos);
+	//	//tThisWorld.atWorldMatrix[*ptr].worldMatrix = XMMatrixMultiply(localMatrix, tThisWorld.atWorldMatrix[*ptr].worldMatrix);
+	//	tThisWorld.atRigidBody[*ptr].totalForce += localpos;
+	//	tThisWorld.atWorldMatrix[*ptr].worldMatrix = pcPhysicsSystem->ResolveForces(&tThisWorld.atRigidBody[*ptr], tThisWorld.atWorldMatrix[*ptr].worldMatrix);
+	//	
+	//}
+	m_nIndexToBullets = 0;
 	for (int nCurrentEntity = 0; nCurrentEntity < ENTITYCOUNT; nCurrentEntity++)
 	{
 		if (tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_DEBUGMESH | COMPONENT_SHADERID))
@@ -144,7 +148,13 @@ void CAuger::Update()
 			pcGraphicsSystem->ExecutePipeline(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atDebugMesh[nCurrentEntity].m_nVertexCount, tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask, tThisWorld.atShaderID[nCurrentEntity].m_nShaderID);
 
 		}
-
+		if(COMPONENT_PHYSICSMASK | COMPONENT_RIGIDBODY) {
+			if (nBulletsFired.size()> m_nIndexToBullets &&nBulletsFired[m_nIndexToBullets] == nCurrentEntity) {
+				pcPhysicsSystem->AddBulletForce(&tThisWorld.atRigidBody[nCurrentEntity]);
+				m_nIndexToBullets++;
+			}
+			tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = pcPhysicsSystem->ResolveForces(&tThisWorld.atRigidBody[nCurrentEntity], tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix);
+		}
 		if (tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_SIMPLEMESH | COMPONENT_SHADERID))
 		{
 			if (nCurrentEntity == 1) 

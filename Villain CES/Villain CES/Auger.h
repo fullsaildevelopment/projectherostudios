@@ -2,6 +2,7 @@
 #include "Graphics_System.h"
 #include "InputSystem.h"
 #include"Collision_System.h"
+#include"Physics_System.h"
 #include "Entity.h"
 class CAuger
 {
@@ -11,8 +12,9 @@ public:
 	TWorld tThisWorld;
 	CGraphicsSystem	*pcGraphicsSystem; 
 	CInputSystem	*pcInputSystem;
+	CPhysicsSystem  *pcPhysicsSystem;
 	list<int> nBulletsAvailables;
-	list<int> nBulletsFired;
+	vector<int> nBulletsFired;
 
 
 	CAuger();
@@ -30,6 +32,7 @@ private:
 	XMMATRIX m_d3dProjectionMatrix;
 	XMMATRIX peguins;
 	int aiminglineIndex;
+	int		m_nIndexToBullets;
 	float shootingCoolDown = 0;
 
 	bool tempt;
