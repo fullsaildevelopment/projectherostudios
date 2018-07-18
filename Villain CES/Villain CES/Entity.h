@@ -10,7 +10,7 @@
 
 struct TWorld
 {
-	std::string szName[ENTITYCOUNT];
+
 	int				anComponentMask[ENTITYCOUNT];
 	//Graphics
 	TGraphicsMask	atGraphicsMask[ENTITYCOUNT];
