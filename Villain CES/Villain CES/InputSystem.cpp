@@ -377,37 +377,37 @@ XMMATRIX CInputSystem::WalkLookAt(XMVECTOR V, XMVECTOR T, XMVECTOR U, XMMATRIX v
 	d3dTmpViewM.r[1] = Y;
 	d3dTmpViewM.r[2] = Z; 
 
-	if (Z2.m128_f32[0] > 10.0f)
-	{
-		d3dMovementM = XMMatrixTranslation(1, 0, 0);
-		d3dTmpViewM = XMMatrixMultiply(d3dMovementM, d3dTmpViewM);
-	}
-	if (Z2.m128_f32[0] < -10.0f)
-	{
-		d3dMovementM = XMMatrixTranslation(1, 0, 0);
-		d3dTmpViewM = XMMatrixMultiply(d3dMovementM, d3dTmpViewM);
-	}
-	if (Z2.m128_f32[2] > 4.0f)
-	{
+	//if (Z2.m128_f32[0] > 10.0f)
+	//{
+	//	d3dMovementM = XMMatrixTranslation(1, 0, 0);
+	//	d3dTmpViewM = XMMatrixMultiply(d3dMovementM, d3dTmpViewM);
+	//}
+	//if (Z2.m128_f32[0] < -10.0f)
+	//{
+	//	d3dMovementM = XMMatrixTranslation(1, 0, 0);
+	//	d3dTmpViewM = XMMatrixMultiply(d3dMovementM, d3dTmpViewM);
+	//}
+	//if (Z2.m128_f32[2] > 4.0f)
+	//{
+	////	/*XMVECTOR zCheck;
+	////	zCheck = T;
+	////	zCheck.m128_f32[2] = d3dTmpViewM.r[3].m128_f32[2];
+	////	zCheck.m128_f32[2] += 0.5f;
+	////	m_fDistance = zCheck.m128_f32[2] / d3dTmpViewM.r[3].m128_f32[2];*/
+	//	d3dTmpViewM.r[3].m128_f32[2] += 0.1f;
+
+
+
+	//}
+	//if (Z2.m128_f32[2] < -4.0f)
+	//{
 	//	/*XMVECTOR zCheck;
 	//	zCheck = T;
 	//	zCheck.m128_f32[2] = d3dTmpViewM.r[3].m128_f32[2];
 	//	zCheck.m128_f32[2] += 0.5f;
 	//	m_fDistance = zCheck.m128_f32[2] / d3dTmpViewM.r[3].m128_f32[2];*/
-		d3dTmpViewM.r[3].m128_f32[2] += 0.1f;
-
-
-
-	}
-	if (Z2.m128_f32[2] < -4.0f)
-	{
-		/*XMVECTOR zCheck;
-		zCheck = T;
-		zCheck.m128_f32[2] = d3dTmpViewM.r[3].m128_f32[2];
-		zCheck.m128_f32[2] += 0.5f;
-		m_fDistance = zCheck.m128_f32[2] / d3dTmpViewM.r[3].m128_f32[2];*/
-		 d3dTmpViewM.r[3].m128_f32[2] -= 0.1f;
-	 }
+	//	 d3dTmpViewM.r[3].m128_f32[2] -= 0.1f;
+	// }
 	//if (InputCheck(G_BUTTON_LEFT) == 1) {
 	//	d3dMovementM = XMMatrixTranslation(0, 0, m_fMouseMovementSpeed);
 	//	d3dTmpViewM = XMMatrixMultiply(d3dMovementM, d3dTmpViewM);
