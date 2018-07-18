@@ -15,6 +15,10 @@ public:
 	CPhysicsSystem  *pcPhysicsSystem;
 	list<int> nBulletsAvailables;
 	vector<int> nBulletsFired;
+	vector<int> nDeadBullets;
+	vector<float> AliveTime;
+
+
 
 
 	CAuger();
@@ -34,6 +38,8 @@ private:
 	int aiminglineIndex;
 	int		m_nIndexToBullets;
 	float shootingCoolDown = 0;
+	int		m_nClipSize = 3;
+
 
 	bool tempt;
 };

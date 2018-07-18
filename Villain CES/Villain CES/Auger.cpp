@@ -44,14 +44,9 @@ void CAuger::InitializeSystems()
 	
 	XMMATRIX  m_dDefaultWorldMa4rix = pcGraphicsSystem->SetDefaultWorldPosition();
 	m_dDefaultWorldMa4rix.r[3].m128_f32[1] += 10;
-	nBulletsAvailables.push_back(CreateBullet(&tThisWorld, m_dDefaultWorldMa4rix));
-	nBulletsAvailables.push_back(CreateBullet(&tThisWorld, m_dDefaultWorldMa4rix));
-	nBulletsAvailables.push_back(CreateBullet(&tThisWorld, m_dDefaultWorldMa4rix));
-	nBulletsAvailables.push_back(CreateBullet(&tThisWorld, m_dDefaultWorldMa4rix));
-	nBulletsAvailables.push_back(CreateBullet(&tThisWorld, m_dDefaultWorldMa4rix));
-	nBulletsAvailables.push_back(CreateBullet(&tThisWorld, m_dDefaultWorldMa4rix));
-	nBulletsAvailables.push_back(CreateBullet(&tThisWorld, m_dDefaultWorldMa4rix));
-	nBulletsAvailables.push_back(CreateBullet(&tThisWorld, m_dDefaultWorldMa4rix));
+	for (int i = 0; i < m_nClipSize; ++i) {
+		nBulletsAvailables.push_back(CreateBullet(&tThisWorld, m_dDefaultWorldMa4rix));	
+	}
 
 
 	aiminglineIndex = AimingLine(&tThisWorld);
@@ -109,8 +104,21 @@ void CAuger::Update()
 			int indextoBullet = *nBulletsAvailables.begin();
 			nBulletsAvailables.pop_front();
 			nBulletsFired.push_back(indextoBullet);
+			AliveTime.push_back(0);
 			tThisWorld.szName[indextoBullet] = "BulletFired";
+			tThisWorld.atCollisionMask[indextoBullet].m_tnCollisionMask = COMPONENT_AABB | COMPONENT_NONSTATIC;
+			tThisWorld.atGraphicsMask[indextoBullet].m_tnGraphicsMask = COMPONENT_GRAPHICSMASK | COMPONENT_SIMPLEMESH | COMPONENT_SHADERID;
+			tThisWorld.atAIMask[indextoBullet].m_tnAIMask = COMPONENT_AIMASK;
+			tThisWorld.atUIMask[indextoBullet].m_tnUIMask = COMPONENT_UIMASK;
+			tThisWorld.atPhysicsMask[indextoBullet].m_tnPhysicsMask = COMPONENT_PHYSICSMASK | COMPONENT_RIGIDBODY;
 			XMMATRIX bulletSpawnLocation = tThisWorld.atWorldMatrix[1].worldMatrix;
+			pcGraphicsSystem->CreateBuffers(&tThisWorld);
+
+	/*		tThisWorld.atCollisionMask[indextoBullet].m_tnCollisionMask = COMPONENT_AABB | COMPONENT_NONSTATIC;
+			tThisWorld.atGraphicsMask[indextoBullet].m_tnGraphicsMask = COMPONENT_GRAPHICSMASK | COMPONENT_SIMPLEMESH | COMPONENT_SHADERID;
+			tThisWorld.atAIMask[indextoBullet].m_tnAIMask = COMPONENT_AIMASK;
+			tThisWorld.atUIMask[indextoBullet].m_tnUIMask = COMPONENT_UIMASK;
+			tThisWorld.atPhysicsMask[indextoBullet].m_tnPhysicsMask = COMPONENT_PHYSICSMASK | COMPONENT_RIGIDBODY;*/
 			/*	DefaultPerspectiveMatrix.r[0].m128_f32[0] = 1;
 	DefaultPerspectiveMatrix.r[0].m128_f32[1] = 0;
 	DefaultPerspectiveMatrix.r[0].m128_f32[2] = 0;
@@ -153,6 +161,13 @@ void CAuger::Update()
 	//	
 	//}
 	m_nIndexToBullets = 0;
+	if (pcInputSystem->InputCheck(G_KEY_R) == 1) {
+		for (int i = 0; i < nDeadBullets.size(); ++i) {
+			nBulletsAvailables.push_back(nDeadBullets[i]);
+			nDeadBullets.erase(nDeadBullets.begin() + i);
+
+		}
+	}
 	for (int nCurrentEntity = 0; nCurrentEntity < ENTITYCOUNT; nCurrentEntity++)
 	{
 		if (tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_DEBUGMESH | COMPONENT_SHADERID))
@@ -165,8 +180,24 @@ void CAuger::Update()
 			pcGraphicsSystem->ExecutePipeline(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atDebugMesh[nCurrentEntity].m_nVertexCount, tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask, tThisWorld.atShaderID[nCurrentEntity].m_nShaderID);
 
 		}
-		if(COMPONENT_PHYSICSMASK | COMPONENT_RIGIDBODY) {
+		if(tThisWorld.atPhysicsMask[nCurrentEntity].m_tnPhysicsMask== (COMPONENT_PHYSICSMASK | COMPONENT_RIGIDBODY)) {
 			if (nBulletsFired.size()> m_nIndexToBullets &&nBulletsFired[m_nIndexToBullets] == nCurrentEntity) {
+				AliveTime[m_nIndexToBullets] += 0.1;
+				if (AliveTime[m_nIndexToBullets] > 100) {
+					AliveTime.erase(AliveTime.begin() + m_nIndexToBullets);
+					nDeadBullets.push_back(nBulletsFired[m_nIndexToBullets]);
+					tThisWorld.atCollisionMask[nCurrentEntity].m_tnCollisionMask = COMPONENT_AABB;
+					tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask = COMPONENT_GRAPHICSMASK;
+					tThisWorld.atAIMask[nCurrentEntity].m_tnAIMask = COMPONENT_AIMASK;
+					tThisWorld.atUIMask[nCurrentEntity].m_tnUIMask = COMPONENT_UIMASK;
+					tThisWorld.atPhysicsMask[nCurrentEntity].m_tnPhysicsMask = COMPONENT_PHYSICSMASK;
+					tThisWorld.atRigidBody[nCurrentEntity].velocity = pcPhysicsSystem->ZeroVector();
+					tThisWorld.atRigidBody[nCurrentEntity].totalForce = pcPhysicsSystem->ZeroVector();
+
+					nBulletsFired.erase(nBulletsFired.begin() + m_nIndexToBullets);
+					pcGraphicsSystem->CreateBuffers(&tThisWorld);
+
+				}
 				pcPhysicsSystem->AddBulletForce(&tThisWorld.atRigidBody[nCurrentEntity]);
 				m_nIndexToBullets++;
 			}
