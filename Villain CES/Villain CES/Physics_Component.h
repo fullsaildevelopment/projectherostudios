@@ -19,6 +19,12 @@ struct TRigidbody
 	TODO:
 		Fill out Rigidbody Struct
 	*/
+	XMVECTOR totalForce;
+	XMVECTOR velocity;
+	XMVECTOR gravity;
+	XMVECTOR maxVelocity;
+
+
 
 };
 #endif
