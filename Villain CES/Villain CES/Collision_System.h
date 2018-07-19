@@ -21,7 +21,7 @@ public:
 	~CCollisionSystem();
 	int AddAABBCollider(TAABB m_AABB,int nIndex);
 	bool RemoveAABBCollider(int nIndex);
-	bool AABBtoAABBCollisionCheck(TAABB m_AABB);
+	bool AABBtoAABBCollisionCheck(TAABB m_AABB, vector<int>* m_OtherColision);
 	bool replaceAABB(int nIndex, TAABB m_AABB2);
 	TAABB updateAABB(XMMATRIX worldMatrix, TAABB aabb);
 	TAABB createAABBS(std::vector<XMFLOAT3> verticies);

@@ -236,15 +236,20 @@ bool CCollisionSystem::RemoveAABBCollider(int nIndex)
 }
 
 
-bool CCollisionSystem::AABBtoAABBCollisionCheck(TAABB m_AABB2)
+bool CCollisionSystem::AABBtoAABBCollisionCheck(TAABB m_AABB2, vector<int>* m_OtherColision)
 {
 	for (list<TAABB>::iterator ptr = m_AAbb.begin(); ptr != m_AAbb.end(); ++ptr) {
 		if (m_AABB2.m_IndexLocation != ptr->m_IndexLocation) {
 			if (classify_aabb_to_aabb(m_AABB2, *ptr) == true) {
-				return true;
+				m_OtherColision->push_back(ptr->m_IndexLocation);
+				
 			}
 		}
 	}
+	if (m_OtherColision->size() != 0) {
+		return true;
+	}
+	
 	return false;
 }
 
