@@ -25,9 +25,10 @@ public:
 	bool replaceAABB(int nIndex, TAABB m_AABB2);
 	TAABB updateAABB(XMMATRIX worldMatrix, TAABB aabb);
 	TAABB createAABBS(std::vector<XMFLOAT3> verticies);
+	bool classify_aabb_to_aabb(TAABB aabb1, TAABB aabb2);
 private:
 	bool ContainAABB(int nIndex);
-	bool classify_aabb_to_aabb(TAABB aabb1, TAABB aabb2);
+	
 	
 	list<TAABB> m_AAbb;
 

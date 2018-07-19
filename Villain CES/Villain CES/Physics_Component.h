@@ -24,7 +24,9 @@ struct TRigidbody
 	XMVECTOR gravity;
 	XMVECTOR maxVelocity;
 	XMVECTOR CollissionForce;
-	bool NeatrlizeForce;
+	bool ground;
+	bool wall;
+
 
 
 
