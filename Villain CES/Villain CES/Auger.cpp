@@ -35,6 +35,7 @@ void CAuger::InitializeSystems()
 	pcGraphicsSystem->InitD3D(cApplicationWindow);
 	//createDebugGrid(&tThisWorld);
 	CreateGround(&tThisWorld);
+
 //createCube(&tThisWorld);
 	m_bDebugMode = false;
 
@@ -46,6 +47,10 @@ void CAuger::InitializeSystems()
 
 	createPlayerBox(&tThisWorld);
 	CreateWall(&tThisWorld);
+	CreateWall(&tThisWorld);
+	CreateCelling(&tThisWorld);
+
+
 	//createPlayerBox(&tThisWorld);
 	//createPlayerBox(&tThisWorld);//3
 	//createPlayerBox(&tThisWorld);//4
@@ -99,8 +104,10 @@ void CAuger::InitializeSystems()
 	 tThisWorld.atWorldMatrix[2].worldMatrix = m_d3dWorldMatrix;
 
 	 tThisWorld.atWorldMatrix[2].worldMatrix.r[3].m128_f32[1] += -1;
-	 tThisWorld.atWorldMatrix[3].worldMatrix.r[3].m128_f32[1] += 1;
-	 tThisWorld.atWorldMatrix[4].worldMatrix.r[3].m128_f32[1] += -5;
+	 tThisWorld.atWorldMatrix[3].worldMatrix.r[3].m128_f32[1] += -1;
+	 tThisWorld.atWorldMatrix[3].worldMatrix.r[3].m128_f32[0] += -12;
+
+	 tThisWorld.atWorldMatrix[4].worldMatrix.r[3].m128_f32[1] += 5;
 	 tThisWorld.atWorldMatrix[5].worldMatrix.r[3].m128_f32[1] += -5;
 	 tThisWorld.atWorldMatrix[5].worldMatrix.r[3].m128_f32[0] += -5;
 
@@ -314,19 +321,67 @@ void CAuger::Update()
 								tThisWorld.atRigidBody[nCurrentEntity].totalForce =-tThisWorld.atRigidBody[nCurrentEntity].velocity;
 								tTempVertexBuffer.m_d3dWorldMatrix =pcPhysicsSystem->ResolveForces(&tThisWorld.atRigidBody[nCurrentEntity], tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix);
 							}
-							if (tThisWorld.atRigidBody[otherCollisionsIndex[i]].wall == true&&tThisWorld.atRigidBody[nCurrentEntity].ground==false) {
-								while (pcCollisionSystem->classify_aabb_to_aabb(tThisWorld.atAABB[otherCollisionsIndex[i]],tThisWorld.atAABB[nCurrentEntity]))
-								{
-									//d3d_ResultMatrix = pcGraphicsSystem->SetDefaultWorldPosition();;
-									XMMATRIX moveback;
-									moveback = tTempVertexBuffer.m_d3dWorldMatrix;
-									moveback.r[3].m128_f32[0] -= 0.01;
-									tTempVertexBuffer.m_d3dWorldMatrix = moveback;
-									tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = moveback;
-									tThisWorld.atAABB[nCurrentEntity] = pcCollisionSystem->updateAABB(tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, tThisWorld.atAABB[nCurrentEntity]);
+							if (  tThisWorld.atRigidBody[nCurrentEntity].ground == false&& tThisWorld.atRigidBody[nCurrentEntity].wall==false) {
+								float xRight = abs(tThisWorld.atAABB[otherCollisionsIndex[i]].m_dMaxPoint.x - tThisWorld.atAABB[nCurrentEntity].m_dMinPoint.x);
+								float xLeft = abs(tThisWorld.atAABB[otherCollisionsIndex[i]].m_dMinPoint.x - tThisWorld.atAABB[nCurrentEntity].m_dMaxPoint.x);
+								float yTop = abs(tThisWorld.atAABB[otherCollisionsIndex[i]].m_dMinPoint.y - tThisWorld.atAABB[nCurrentEntity].m_dMaxPoint.y);
+								float yBottom = abs(tThisWorld.atAABB[otherCollisionsIndex[i]].m_dMaxPoint.y - tThisWorld.atAABB[nCurrentEntity].m_dMinPoint.y);
+
+								if (xRight < xLeft&&xRight < yTop
+									&&xRight<yBottom) {
+									while (pcCollisionSystem->classify_aabb_to_aabb(tThisWorld.atAABB[otherCollisionsIndex[i]], tThisWorld.atAABB[nCurrentEntity]))
+									{
+										//d3d_ResultMatrix = pcGraphicsSystem->SetDefaultWorldPosition();;
+										XMMATRIX moveback;
+										moveback = tTempVertexBuffer.m_d3dWorldMatrix;
+										moveback.r[3].m128_f32[0] += 0.01;
+										tTempVertexBuffer.m_d3dWorldMatrix = moveback;
+										tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = moveback;
+										tThisWorld.atAABB[nCurrentEntity] = pcCollisionSystem->updateAABB(tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, tThisWorld.atAABB[nCurrentEntity]);
+									}
+									m_d3dPlayerMatrix = tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix;
 								}
-								m_d3dPlayerMatrix = tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix;
-							
+
+
+								else if(xLeft<xRight&&xLeft<yTop&&xLeft<yBottom){
+									while (pcCollisionSystem->classify_aabb_to_aabb(tThisWorld.atAABB[otherCollisionsIndex[i]], tThisWorld.atAABB[nCurrentEntity]))
+									{
+										//d3d_ResultMatrix = pcGraphicsSystem->SetDefaultWorldPosition();;
+										XMMATRIX moveback;
+										moveback = tTempVertexBuffer.m_d3dWorldMatrix;
+										moveback.r[3].m128_f32[0] -= 0.01;
+										tTempVertexBuffer.m_d3dWorldMatrix = moveback;
+										tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = moveback;
+										tThisWorld.atAABB[nCurrentEntity] = pcCollisionSystem->updateAABB(tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, tThisWorld.atAABB[nCurrentEntity]);
+									}
+									m_d3dPlayerMatrix = tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix;
+								}
+								else if (yTop < xLeft&&yTop < xRight&&yTop<yBottom) {
+									while (pcCollisionSystem->classify_aabb_to_aabb(tThisWorld.atAABB[otherCollisionsIndex[i]], tThisWorld.atAABB[nCurrentEntity]))
+									{
+										//d3d_ResultMatrix = pcGraphicsSystem->SetDefaultWorldPosition();;
+										XMMATRIX moveback;
+										moveback = tTempVertexBuffer.m_d3dWorldMatrix;
+										moveback.r[3].m128_f32[1] -= 0.01;
+										tTempVertexBuffer.m_d3dWorldMatrix = moveback;
+										tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = moveback;
+										tThisWorld.atAABB[nCurrentEntity] = pcCollisionSystem->updateAABB(tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, tThisWorld.atAABB[nCurrentEntity]);
+									}
+									m_d3dPlayerMatrix = tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix;
+								}
+								else if (yBottom < xLeft&&yBottom < xRight&&yBottom < yTop) {
+									while (pcCollisionSystem->classify_aabb_to_aabb(tThisWorld.atAABB[otherCollisionsIndex[i]], tThisWorld.atAABB[nCurrentEntity]))
+									{
+										//d3d_ResultMatrix = pcGraphicsSystem->SetDefaultWorldPosition();;
+										XMMATRIX moveback;
+										moveback = tTempVertexBuffer.m_d3dWorldMatrix;
+										moveback.r[3].m128_f32[1] += 0.01;
+										tTempVertexBuffer.m_d3dWorldMatrix = moveback;
+										tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = moveback;
+										tThisWorld.atAABB[nCurrentEntity] = pcCollisionSystem->updateAABB(tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, tThisWorld.atAABB[nCurrentEntity]);
+									}
+									m_d3dPlayerMatrix = tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix;
+								}
 							}
 						}
 					/*
