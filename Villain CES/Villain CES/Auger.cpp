@@ -119,7 +119,7 @@ void CAuger::InitializeSystems()
 	 tThisWorld.atWorldMatrix[5].worldMatrix.r[3].m128_f32[0] += -5;
 
 	 XMVECTOR playerGravity = pcPhysicsSystem->ZeroVector();
-	 playerGravity.m128_f32[1] = 0; //-0.000001;
+	 playerGravity.m128_f32[1] = -0.000001;
 	 tThisWorld.atRigidBody[1].gravity = playerGravity;
 	 tThisWorld.atRigidBody[5].gravity = playerGravity;
 
