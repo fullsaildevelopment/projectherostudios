@@ -335,8 +335,8 @@ void CAuger::Update()
 								tThisWorld.atCollisionMask[nCurrentEntity].m_tnCollisionMask==(COMPONENT_COLLISIONMASK | 
 									COMPONENT_NONTRIGGER | COMPONENT_AABB| COMPONENT_NONSTATIC )
 								&&(tThisWorld.atCollisionMask[otherCollisionsIndex[i]].m_tnCollisionMask==(COMPONENT_COLLISIONMASK |
-									COMPONENT_NONTRIGGER | COMPONENT_AABB | COMPONENT_NONSTATIC))| (COMPONENT_COLLISIONMASK |
-								COMPONENT_NONTRIGGER | COMPONENT_AABB | COMPONENT_STATIC)) {
+									COMPONENT_NONTRIGGER | COMPONENT_AABB | COMPONENT_STATIC))| tThisWorld.atCollisionMask[otherCollisionsIndex[i]].m_tnCollisionMask==(COMPONENT_COLLISIONMASK |
+										COMPONENT_NONTRIGGER | COMPONENT_AABB | COMPONENT_STATIC)) {
 								tTempVertexBuffer.m_d3dWorldMatrix = pcCollisionSystem->WalkingThrewObjectCheck(tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, tThisWorld.atAABB[otherCollisionsIndex[i]], tThisWorld.atAABB[nCurrentEntity]);
 								tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = tTempVertexBuffer.m_d3dWorldMatrix;
 								if (nCurrentEntity == 1) {
