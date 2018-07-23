@@ -207,7 +207,7 @@ void CAuger::Update()
 			tThisWorld.atAIMask[indextoBullet].m_tnAIMask = COMPONENT_AIMASK;
 			tThisWorld.atUIMask[indextoBullet].m_tnUIMask = COMPONENT_UIMASK;
 			tThisWorld.atPhysicsMask[indextoBullet].m_tnPhysicsMask = COMPONENT_PHYSICSMASK | COMPONENT_RIGIDBODY;
-			XMMATRIX bulletSpawnLocation = tThisWorld.atWorldMatrix[1].worldMatrix;
+			XMMATRIX bulletSpawnLocation = m_d3dPlayerMatrix;
 			pcGraphicsSystem->CreateBuffers(&tThisWorld);
 
 	/*		tThisWorld.atCollisionMask[indextoBullet].m_tnCollisionMask = COMPONENT_AABB | COMPONENT_NONSTATIC;
@@ -231,8 +231,8 @@ void CAuger::Update()
 	DefaultPerspectiveMatrix.r[2].m128_f32[3] = 0;*/
 		
 
-			bulletSpawnLocation.r[3].m128_f32[2] += 1;
-			bulletSpawnLocation.r[3].m128_f32[0] += -0.1;
+			/*bulletSpawnLocation.r[3].m128_f32[2] += 1;
+			bulletSpawnLocation.r[3].m128_f32[0] += -0.1;*/
 
 			tThisWorld.atWorldMatrix[indextoBullet].worldMatrix = bulletSpawnLocation;
 			
@@ -307,6 +307,8 @@ void CAuger::Update()
 				m_nIndexToBullets++;
 			}
 			tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = pcPhysicsSystem->ResolveForces(&tThisWorld.atRigidBody[nCurrentEntity], tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix);
+			//tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = pcPhysicsSystem->ResolveGravity(&tThisWorld.atRigidBody[nCurrentEntity], tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix);
+
 		}
 		if (tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_SIMPLEMESH | COMPONENT_SHADERID))
 		{

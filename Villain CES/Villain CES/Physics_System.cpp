@@ -26,13 +26,32 @@ CPhysicsSystem::~CPhysicsSystem()
 */
 XMMATRIX CPhysicsSystem::ResolveForces(TRigidbody* _myRigbody, XMMATRIX worldMatrix)
 {
+	XMMATRIX newWorldMatrix = XMMatrixIdentity();
+	newWorldMatrix.r[3].m128_f32[0] = worldMatrix.r[3].m128_f32[0];
+	newWorldMatrix.r[3].m128_f32[1] = worldMatrix.r[3].m128_f32[1];
+	newWorldMatrix.r[3].m128_f32[2] = worldMatrix.r[3].m128_f32[2];
 
 //	tThisWorld.atWorldMatrix[*ptr].worldMatrix = XMMatrixMultiply(localMatrix, tThisWorld.atWorldMatrix[*ptr].worldMatrix);
 	_myRigbody->totalForce += _myRigbody->gravity + _myRigbody->velocity;
 	_myRigbody->velocity = _myRigbody->totalForce;
 	XMMATRIX localMatrix2 = XMMatrixTranslationFromVector(_myRigbody->totalForce);
+
 	XMMATRIX FinalMatrix;
-	FinalMatrix = XMMatrixMultiply(localMatrix2, worldMatrix);
+	FinalMatrix = XMMatrixMultiply(localMatrix2, newWorldMatrix);
+	FinalMatrix.r[0].m128_f32[0] = worldMatrix.r[0].m128_f32[0];
+	FinalMatrix.r[0].m128_f32[1] = worldMatrix.r[0].m128_f32[1];
+	FinalMatrix.r[0].m128_f32[2] = worldMatrix.r[0].m128_f32[2];
+	FinalMatrix.r[0].m128_f32[3] = worldMatrix.r[0].m128_f32[3];
+
+	FinalMatrix.r[1].m128_f32[0] = worldMatrix.r[1].m128_f32[0];
+	FinalMatrix.r[1].m128_f32[1] = worldMatrix.r[1].m128_f32[1];
+	FinalMatrix.r[1].m128_f32[2] = worldMatrix.r[1].m128_f32[2];
+	FinalMatrix.r[1].m128_f32[3] = worldMatrix.r[1].m128_f32[3];
+
+	FinalMatrix.r[2].m128_f32[0] = worldMatrix.r[2].m128_f32[0];
+	FinalMatrix.r[2].m128_f32[1] = worldMatrix.r[2].m128_f32[1];
+	FinalMatrix.r[2].m128_f32[2] = worldMatrix.r[2].m128_f32[2];
+	FinalMatrix.r[2].m128_f32[3] = worldMatrix.r[2].m128_f32[3];
 
 
 	_myRigbody->totalForce = ZeroVector();
