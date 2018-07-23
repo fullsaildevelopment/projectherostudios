@@ -85,3 +85,6 @@ unsigned int CreateBullet(TWorld * ptWorld,XMMATRIX bulletSpawnLocation );
 unsigned int AimingLine(TWorld * ptWorld);
 
 unsigned int createDummyPlayer(TWorld* ptWorld, XMMATRIX playerMatrix);
+unsigned int CreateGround(TWorld* ptWorld);
+unsigned int CreateWall(TWorld* ptWorld);
+unsigned int CreateCelling(TWorld* ptWorld);

@@ -73,6 +73,126 @@ bool CCollisionSystem::classify_aabb_to_aabb(TAABB aabb1, TAABB aabb2)
 	(aabb1.m_dMinPoint.y <= aabb2.m_dMaxPoint.y&&aabb1.m_dMaxPoint.y >= aabb2.m_dMinPoint.y) &&
 	(aabb1.m_dMinPoint.z <= aabb2.m_dMaxPoint.z&&aabb1.m_dMaxPoint.z >= aabb2.m_dMinPoint.z);
 }
+XMMATRIX CCollisionSystem::WalkingThrewObjectCheck(XMMATRIX worldPos, TAABB otherCollision, TAABB currentCollision)
+{
+	XMMATRIX D3DMatrix=worldPos;
+	TAABB UpdateCollision=currentCollision;
+	float xRight = abs(otherCollision.m_dMaxPoint.x - currentCollision.m_dMinPoint.x);
+	float xLeft = abs(otherCollision.m_dMinPoint.x - currentCollision.m_dMaxPoint.x);
+	float yTop = abs(otherCollision.m_dMinPoint.y - currentCollision.m_dMaxPoint.y);
+	float yBottom = abs(otherCollision.m_dMaxPoint.y - currentCollision.m_dMinPoint.y);
+	float zFar = abs(otherCollision.m_dMaxPoint.z - currentCollision.m_dMinPoint.z);
+	float zClose = abs(otherCollision.m_dMinPoint.z - currentCollision.m_dMaxPoint.z);
+	if (xRight < xLeft&&
+		xRight < yTop&&
+
+		xRight<yBottom&&
+		xRight<zFar
+		&&xRight<zClose
+		) {
+		while (classify_aabb_to_aabb(otherCollision, UpdateCollision))
+		{
+			//d3d_ResultMatrix = pcGraphicsSystem->SetDefaultWorldPosition();;
+			XMMATRIX moveback;
+			moveback = D3DMatrix;
+			moveback.r[3].m128_f32[0] += 0.01;
+			D3DMatrix = moveback;
+			
+			UpdateCollision = updateAABB(D3DMatrix, UpdateCollision);
+		}
+		
+	}
+	else if(xLeft<xRight
+		&&xLeft<yTop
+		&&xLeft<yBottom
+		&&xLeft<zFar
+		&&xLeft<zClose){
+		while (classify_aabb_to_aabb(otherCollision, UpdateCollision))
+		{
+			//d3d_ResultMatrix = pcGraphicsSystem->SetDefaultWorldPosition();;
+			XMMATRIX moveback;
+			moveback = D3DMatrix;
+			moveback.r[3].m128_f32[0] -= 0.01;
+			D3DMatrix = moveback;
+			UpdateCollision = updateAABB(D3DMatrix, UpdateCollision);
+			
+		}
+		
+	}
+	else if (yTop < xLeft&&
+		yTop < xRight&&
+		yTop<yBottom
+		&&yTop<zFar
+		&&yTop<zClose) {
+		while (classify_aabb_to_aabb(otherCollision, UpdateCollision))
+		{
+			//d3d_ResultMatrix = pcGraphicsSystem->SetDefaultWorldPosition();;
+			XMMATRIX moveback;
+			moveback = D3DMatrix;
+			moveback.r[3].m128_f32[1] -= 0.01;
+			D3DMatrix = moveback;
+			UpdateCollision = updateAABB(D3DMatrix, UpdateCollision);
+
+		
+		}
+	
+	}
+	else if (yBottom < xLeft
+		&&yBottom < xRight
+		&&yBottom < yTop
+		&&yBottom<zClose
+		&&yBottom<zFar) {
+		while (classify_aabb_to_aabb(otherCollision, UpdateCollision))
+		{
+			//d3d_ResultMatrix = pcGraphicsSystem->SetDefaultWorldPosition();;
+			XMMATRIX moveback;
+			moveback = D3DMatrix;
+			moveback.r[3].m128_f32[1] += 0.01;
+			D3DMatrix = moveback;
+			UpdateCollision = updateAABB(D3DMatrix, UpdateCollision);
+		
+		}
+	
+	}
+	else if (zFar < zClose
+		&&zFar < xLeft
+		&&zFar < xRight
+		&&zFar < yBottom
+		&&zFar < yTop)
+	{
+		while (classify_aabb_to_aabb(otherCollision, UpdateCollision))
+		{
+			//d3d_ResultMatrix = pcGraphicsSystem->SetDefaultWorldPosition();;
+			XMMATRIX moveback;
+			moveback = D3DMatrix;
+			moveback.r[3].m128_f32[2] += 0.01;
+			D3DMatrix = moveback;
+			UpdateCollision = updateAABB(D3DMatrix, UpdateCollision);
+
+		}
+		
+	}
+	else if (zClose < zFar
+		&&zClose < xLeft
+		&&zClose < xRight
+		&&zClose < yBottom
+		&&zClose < yTop) {
+		while (classify_aabb_to_aabb(otherCollision, UpdateCollision))
+		{
+			//d3d_ResultMatrix = pcGraphicsSystem->SetDefaultWorldPosition();;
+			XMMATRIX moveback;
+			moveback = D3DMatrix;
+			moveback.r[3].m128_f32[2] -= 0.01;
+			D3DMatrix = moveback;
+			UpdateCollision = updateAABB(D3DMatrix, UpdateCollision);
+
+		}
+		
+
+
+	}
+	return D3DMatrix;
+}
 /*
 * replaceAABB():  finds an AABB if able in the list and then replaces the data with the new AABB
 *
@@ -236,15 +356,20 @@ bool CCollisionSystem::RemoveAABBCollider(int nIndex)
 }
 
 
-bool CCollisionSystem::AABBtoAABBCollisionCheck(TAABB m_AABB2)
+bool CCollisionSystem::AABBtoAABBCollisionCheck(TAABB m_AABB2, vector<int>* m_OtherColision)
 {
 	for (list<TAABB>::iterator ptr = m_AAbb.begin(); ptr != m_AAbb.end(); ++ptr) {
 		if (m_AABB2.m_IndexLocation != ptr->m_IndexLocation) {
 			if (classify_aabb_to_aabb(m_AABB2, *ptr) == true) {
-				return true;
+				m_OtherColision->push_back(ptr->m_IndexLocation);
+				
 			}
 		}
 	}
+	if (m_OtherColision->size() != 0) {
+		return true;
+	}
+	
 	return false;
 }
 
