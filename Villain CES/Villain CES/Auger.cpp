@@ -49,6 +49,8 @@ void CAuger::InitializeSystems()
 	CreateWall(&tThisWorld);
 	CreateWall(&tThisWorld);
 	CreateCelling(&tThisWorld);
+	createPlayerBox(&tThisWorld);
+
 
 
 	//createPlayerBox(&tThisWorld);
@@ -105,15 +107,16 @@ void CAuger::InitializeSystems()
 
 	 tThisWorld.atWorldMatrix[2].worldMatrix.r[3].m128_f32[1] += -1;
 	 tThisWorld.atWorldMatrix[3].worldMatrix.r[3].m128_f32[1] += -1;
-	 tThisWorld.atWorldMatrix[3].worldMatrix.r[3].m128_f32[0] += -12;
+	 tThisWorld.atWorldMatrix[3].worldMatrix.r[3].m128_f32[0] += -22;
 
-	 tThisWorld.atWorldMatrix[4].worldMatrix.r[3].m128_f32[1] += 5;
-	 tThisWorld.atWorldMatrix[5].worldMatrix.r[3].m128_f32[1] += -5;
+	 tThisWorld.atWorldMatrix[4].worldMatrix.r[3].m128_f32[1] += 10;
+	 tThisWorld.atWorldMatrix[5].worldMatrix.r[3].m128_f32[1] += 0;
 	 tThisWorld.atWorldMatrix[5].worldMatrix.r[3].m128_f32[0] += -5;
 
 	 XMVECTOR playerGravity = pcPhysicsSystem->ZeroVector();
 	 playerGravity.m128_f32[1] =-0.000001;
 	 tThisWorld.atRigidBody[1].gravity = playerGravity;
+	 tThisWorld.atRigidBody[5].gravity = playerGravity;
 
 
 }
@@ -321,7 +324,7 @@ void CAuger::Update()
 								tThisWorld.atRigidBody[nCurrentEntity].totalForce =-tThisWorld.atRigidBody[nCurrentEntity].velocity;
 								tTempVertexBuffer.m_d3dWorldMatrix =pcPhysicsSystem->ResolveForces(&tThisWorld.atRigidBody[nCurrentEntity], tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix);
 							}
-							if (  tThisWorld.atRigidBody[nCurrentEntity].ground == false&& tThisWorld.atRigidBody[nCurrentEntity].wall==false) {
+							if (  tThisWorld.atRigidBody[nCurrentEntity].ground == false&& tThisWorld.atRigidBody[nCurrentEntity].wall==false&&tThisWorld.atPhysicsMask[nCurrentEntity].m_tnPhysicsMask==(COMPONENT_PHYSICSMASK | COMPONENT_RIGIDBODY)) {
 								float xRight = abs(tThisWorld.atAABB[otherCollisionsIndex[i]].m_dMaxPoint.x - tThisWorld.atAABB[nCurrentEntity].m_dMinPoint.x);
 								float xLeft = abs(tThisWorld.atAABB[otherCollisionsIndex[i]].m_dMinPoint.x - tThisWorld.atAABB[nCurrentEntity].m_dMaxPoint.x);
 								float yTop = abs(tThisWorld.atAABB[otherCollisionsIndex[i]].m_dMinPoint.y - tThisWorld.atAABB[nCurrentEntity].m_dMaxPoint.y);
@@ -339,6 +342,7 @@ void CAuger::Update()
 										tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = moveback;
 										tThisWorld.atAABB[nCurrentEntity] = pcCollisionSystem->updateAABB(tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, tThisWorld.atAABB[nCurrentEntity]);
 									}
+									if(nCurrentEntity==1)
 									m_d3dPlayerMatrix = tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix;
 								}
 
@@ -354,6 +358,7 @@ void CAuger::Update()
 										tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = moveback;
 										tThisWorld.atAABB[nCurrentEntity] = pcCollisionSystem->updateAABB(tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, tThisWorld.atAABB[nCurrentEntity]);
 									}
+									if (nCurrentEntity == 1)
 									m_d3dPlayerMatrix = tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix;
 								}
 								else if (yTop < xLeft&&yTop < xRight&&yTop<yBottom) {
@@ -367,6 +372,7 @@ void CAuger::Update()
 										tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = moveback;
 										tThisWorld.atAABB[nCurrentEntity] = pcCollisionSystem->updateAABB(tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, tThisWorld.atAABB[nCurrentEntity]);
 									}
+									if (nCurrentEntity == 1)
 									m_d3dPlayerMatrix = tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix;
 								}
 								else if (yBottom < xLeft&&yBottom < xRight&&yBottom < yTop) {
@@ -380,6 +386,7 @@ void CAuger::Update()
 										tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = moveback;
 										tThisWorld.atAABB[nCurrentEntity] = pcCollisionSystem->updateAABB(tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, tThisWorld.atAABB[nCurrentEntity]);
 									}
+									if (nCurrentEntity == 1)
 									m_d3dPlayerMatrix = tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix;
 								}
 							}
