@@ -119,7 +119,7 @@ void CAuger::InitializeSystems()
 	 tThisWorld.atWorldMatrix[5].worldMatrix.r[3].m128_f32[0] += -5;
 
 	 XMVECTOR playerGravity = pcPhysicsSystem->ZeroVector();
-	 playerGravity.m128_f32[1] =-0.000001;
+	 playerGravity.m128_f32[1] = 0; //-0.000001;
 	 tThisWorld.atRigidBody[1].gravity = playerGravity;
 	 tThisWorld.atRigidBody[5].gravity = playerGravity;
 
@@ -160,9 +160,11 @@ void CAuger::Update()
 
 	else if (tCameraMode.bAimMode == true)
 	{
-		 m_d3d_ResultMatrix = pcInputSystem->AimMode(m_d3d_ResultMatrix);
+		m_d3dPlayerMatrix = pcInputSystem->AimMode(m_d3dPlayerMatrix);
 
 		 m_d3dCameraMatrix = XMMatrixMultiply(m_d3d_ResultMatrix, m_d3dPlayerMatrix);
+
+		 m_d3dCameraMatrix = XMMatrixMultiply(m_d3dOffsetMatrix, m_d3dCameraMatrix);
 		// m_d3dCameraMatrix = XMMatrixMultiply(m_d3dOffsetMatrix, m_d3dCameraMatrix);
 	}
 	else
@@ -320,6 +322,13 @@ void CAuger::Update()
 					m_d3dPlayerMatrix = tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix;
 				}
 			
+				else if (tCameraMode.bAimMode == true)
+				{
+
+					tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = m_d3dPlayerMatrix;
+					tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = pcPhysicsSystem->ResolveForces(&tThisWorld.atRigidBody[nCurrentEntity], tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix);
+					m_d3dPlayerMatrix = tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix;
+				}
 				
 				//tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix.r[3].m128_f32[0] = m_d3dPlayerMatrix.r[3].m128_f32[0];
 				//tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix.r[3].m128_f32[1] = m_d3dPlayerMatrix.r[3].m128_f32[1];
