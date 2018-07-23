@@ -45,7 +45,15 @@ struct TWorld
 	TSeth			atSeth[ENTITYCOUNT];
 	TCaelis			atCaelis[ENTITYCOUNT];
 };
+struct TCameraToggle
+{
+	bool bDebugMode;
+	bool bWalkMode;
+	bool bAimMode;
+	//bool bDebugMode;
 
+
+};
 struct TPrimalVert
 {
 	XMFLOAT3 m_d3dfPosition;

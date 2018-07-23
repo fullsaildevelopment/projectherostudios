@@ -35,7 +35,7 @@ public:
 	XMMATRIX DebugCamera(XMMATRIX d3d_ViewM, XMMATRIX d3d_WorldM);
 
 	/*
-	* TrackCamera(): This fuction makes a camera follow an in-game object.
+	* WalkCamera(): This fuction makes a camera follow an in-game object.
 	*
 	* Ins:
 	*                 XMMATRIX playerMatrix
@@ -44,14 +44,26 @@ public:
 	*
 	* Returns:          XMMATRIX
 	*
+	* Mod. Date:              07/18/2018
+	* Mod. Initials:          ZFB
+	*/
+	XMMATRIX WalkCamera( XMMATRIX d3dplayerMatrix);
+	/*
+	* AimMode(): This fuction makes a camera rotation locked to player rotation for combat.
+	*
+	* Ins:
+	*              XMMATRIX  d3dplayerMatrix
+
+	* Outs:
+	*
+	* Returns:          XMMATRIX
+	*
 	* Mod. Date:              07/16/2018
 	* Mod. Initials:          ZFB
 	*/
-	XMMATRIX TrackCamera( XMMATRIX playerMatrix);
+	XMMATRIX AimMode(XMMATRIX d3dplayerMatrix);
 
-
-
-	XMMATRIX WalkLookAt(XMVECTOR V, XMVECTOR T, XMVECTOR U, XMMATRIX viewM);
+	XMMATRIX WalkLookAt(XMVECTOR U, XMMATRIX viewM);
 	/*
 		Seth Specific Functions
 	*/
@@ -67,7 +79,10 @@ public:
 	/*
 		Caelis Specific Functions
 	*/
+
 	int InputCheck(int GInput);
+
+	TCameraToggle CameraModeListen(TCameraToggle tMyCam);
 
 	GInput * m_pcMyInput;
 

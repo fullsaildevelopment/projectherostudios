@@ -36,7 +36,7 @@ private:
 	XMMATRIX m_d3dProjectionMatrix;
 	XMMATRIX m_d3dPlayerMatrix;
 	XMMATRIX m_d3dCameraMatrix;
-
+    XMMATRIX m_d3d_ResultMatrix;
 
 	XMMATRIX peguins;
 	int nAiminglineIndex;
@@ -46,8 +46,7 @@ private:
 	float	fShootingCoolDown = 0;
 	int		m_nClipSize = 10;
 
-
+	TCameraToggle tCameraMode;
 	bool tempt;
-	bool m_bDebugMode;
 };
 
