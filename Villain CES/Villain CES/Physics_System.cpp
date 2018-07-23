@@ -24,12 +24,18 @@ CPhysicsSystem::~CPhysicsSystem()
 * Mod. Date:              07/18/2018
 * Mod. Initials:          AP
 */
-XMMATRIX CPhysicsSystem::ResolveForces(TRigidbody* _myRigbody, XMMATRIX worldMatrix)
+XMMATRIX CPhysicsSystem::ResolveForces(TRigidbody* _myRigbody, XMMATRIX worldMatrix,bool RotationWithForce)
 {
 	XMMATRIX newWorldMatrix = XMMatrixIdentity();
-	newWorldMatrix.r[3].m128_f32[0] = worldMatrix.r[3].m128_f32[0];
-	newWorldMatrix.r[3].m128_f32[1] = worldMatrix.r[3].m128_f32[1];
-	newWorldMatrix.r[3].m128_f32[2] = worldMatrix.r[3].m128_f32[2];
+	if (RotationWithForce == false) {
+		newWorldMatrix.r[3].m128_f32[0] = worldMatrix.r[3].m128_f32[0];
+		newWorldMatrix.r[3].m128_f32[1] = worldMatrix.r[3].m128_f32[1];
+		newWorldMatrix.r[3].m128_f32[2] = worldMatrix.r[3].m128_f32[2];
+	}
+	else
+	{
+		newWorldMatrix = worldMatrix;
+	}
 
 //	tThisWorld.atWorldMatrix[*ptr].worldMatrix = XMMatrixMultiply(localMatrix, tThisWorld.atWorldMatrix[*ptr].worldMatrix);
 	_myRigbody->totalForce += _myRigbody->gravity + _myRigbody->velocity;
@@ -38,20 +44,22 @@ XMMATRIX CPhysicsSystem::ResolveForces(TRigidbody* _myRigbody, XMMATRIX worldMat
 
 	XMMATRIX FinalMatrix;
 	FinalMatrix = XMMatrixMultiply(localMatrix2, newWorldMatrix);
-	FinalMatrix.r[0].m128_f32[0] = worldMatrix.r[0].m128_f32[0];
-	FinalMatrix.r[0].m128_f32[1] = worldMatrix.r[0].m128_f32[1];
-	FinalMatrix.r[0].m128_f32[2] = worldMatrix.r[0].m128_f32[2];
-	FinalMatrix.r[0].m128_f32[3] = worldMatrix.r[0].m128_f32[3];
+	if (RotationWithForce == false) {
+		FinalMatrix.r[0].m128_f32[0] = worldMatrix.r[0].m128_f32[0];
+		FinalMatrix.r[0].m128_f32[1] = worldMatrix.r[0].m128_f32[1];
+		FinalMatrix.r[0].m128_f32[2] = worldMatrix.r[0].m128_f32[2];
+		FinalMatrix.r[0].m128_f32[3] = worldMatrix.r[0].m128_f32[3];
 
-	FinalMatrix.r[1].m128_f32[0] = worldMatrix.r[1].m128_f32[0];
-	FinalMatrix.r[1].m128_f32[1] = worldMatrix.r[1].m128_f32[1];
-	FinalMatrix.r[1].m128_f32[2] = worldMatrix.r[1].m128_f32[2];
-	FinalMatrix.r[1].m128_f32[3] = worldMatrix.r[1].m128_f32[3];
+		FinalMatrix.r[1].m128_f32[0] = worldMatrix.r[1].m128_f32[0];
+		FinalMatrix.r[1].m128_f32[1] = worldMatrix.r[1].m128_f32[1];
+		FinalMatrix.r[1].m128_f32[2] = worldMatrix.r[1].m128_f32[2];
+		FinalMatrix.r[1].m128_f32[3] = worldMatrix.r[1].m128_f32[3];
 
-	FinalMatrix.r[2].m128_f32[0] = worldMatrix.r[2].m128_f32[0];
-	FinalMatrix.r[2].m128_f32[1] = worldMatrix.r[2].m128_f32[1];
-	FinalMatrix.r[2].m128_f32[2] = worldMatrix.r[2].m128_f32[2];
-	FinalMatrix.r[2].m128_f32[3] = worldMatrix.r[2].m128_f32[3];
+		FinalMatrix.r[2].m128_f32[0] = worldMatrix.r[2].m128_f32[0];
+		FinalMatrix.r[2].m128_f32[1] = worldMatrix.r[2].m128_f32[1];
+		FinalMatrix.r[2].m128_f32[2] = worldMatrix.r[2].m128_f32[2];
+		FinalMatrix.r[2].m128_f32[3] = worldMatrix.r[2].m128_f32[3];
+	}
 
 
 	_myRigbody->totalForce = ZeroVector();
