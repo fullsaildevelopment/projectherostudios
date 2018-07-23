@@ -6,7 +6,7 @@ using namespace std;
 /***
 * Filename:          Collision_System.h
 * Date:              07/11/2018
-* Mod. Date:         07/11/2018
+* Mod. Date:         07/23/2018
 * Mod. Initials:    AP
 * Author:            Arthur E. Parker
 * Purpose:           Controls Collision in Game
@@ -26,6 +26,7 @@ public:
 	TAABB updateAABB(XMMATRIX worldMatrix, TAABB aabb);
 	TAABB createAABBS(std::vector<XMFLOAT3> verticies);
 	bool classify_aabb_to_aabb(TAABB aabb1, TAABB aabb2);
+	XMMATRIX WalkingThrewObjectCheck(XMMATRIX worldPos,TAABB otherCollision,TAABB currentCollision);
 private:
 	bool ContainAABB(int nIndex);
 	
