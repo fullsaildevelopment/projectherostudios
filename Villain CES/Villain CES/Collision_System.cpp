@@ -220,19 +220,24 @@ bool CCollisionSystem::replaceAABB(int nIndex, TAABB m_AABB2)
 }
 TAABB CCollisionSystem::updateAABB(XMMATRIX worldMatrix, TAABB aabb)
 {
+	XMMATRIX newWorldMatrix = XMMatrixIdentity();
+	newWorldMatrix.r[3].m128_f32[0] = worldMatrix.r[3].m128_f32[0];
+	newWorldMatrix.r[3].m128_f32[1] = worldMatrix.r[3].m128_f32[1];
+	newWorldMatrix.r[3].m128_f32[2] = worldMatrix.r[3].m128_f32[2];
+
 	XMVECTOR max;
 	max.m128_f32[0] = aabb.m_dMaxPointOrginal.x;
 	max.m128_f32[1] = aabb.m_dMaxPointOrginal.y;
 	max.m128_f32[2] = aabb.m_dMaxPointOrginal.z;
 	max.m128_f32[3] = 1;
-	max = XMVector4Transform(max, worldMatrix);
+	max = XMVector4Transform(max, newWorldMatrix);
 
 	XMVECTOR min;
 	min.m128_f32[0] = aabb.m_dMinPointOrginal.x;
 	min.m128_f32[1] = aabb.m_dMinPointOrginal.y;
 	min.m128_f32[2] = aabb.m_dMinPointOrginal.z;
 	min.m128_f32[3] = 1;
-	min = XMVector4Transform(min, worldMatrix);
+	min = XMVector4Transform(min, newWorldMatrix);
 	TAABB newaabb;
 	newaabb = aabb;
 	newaabb.m_dMaxPoint.x = max.m128_f32[0];
