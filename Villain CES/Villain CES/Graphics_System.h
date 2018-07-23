@@ -60,7 +60,7 @@ public:
 	XMMATRIX SetDefaultViewMatrix();
 	XMMATRIX SetDefaultWorldPosition();
 	XMMATRIX SetDefaultPerspective();
-	
+	XMMATRIX SetDefaultOffset();
 	//Every Frame
 	void UpdateD3D();
 	void InitMyShaderData(ID3D11DeviceContext * pd3dDeviceContext, XMMATRIX d3dWorldMatrix, XMMATRIX d3dViewMatrix, XMMATRIX d3dProjectionMatrix, int nMask, XMFLOAT3 d3dLightPosition, XMFLOAT3 d3dCameraPosition, XMFLOAT4X4 *pd3dJointsForVS);
@@ -69,8 +69,8 @@ public:
 	void ExecutePipeline(ID3D11DeviceContext *pd3dDeviceContext, int m_nIndexCount, int nGraphicsMask, int nShaderID);
 	void UpdateBuffer(TWorld * ptWorld, std::vector<TSimpleMesh> vtVertexVector, int nEntity, int nMask);
 	XMVECTOR GetCameraPos();
-	//XMMATRIX SetPlayerViewMatrix(XMMATRIX d3d_ViewM, XMMATRIX d3d_playerM);
 	XMMATRIX SetDefaultCameraMatrix();
+	//XMMATRIX SetPlayerViewMatrix(XMMATRIX d3d_ViewM, XMMATRIX d3d_playerM);
 	//Last Frame
 	void CleanD3D(TWorld * ptWorld);         // closes Direct3D and releases memory
 
