@@ -138,6 +138,8 @@ void CGraphicsSystem::InitD3D(HWND cTheWindow)
 
 void CGraphicsSystem::UpdateD3D()
 {
+	
+
 	const float afBackgroundColor[] = { .5f, .05f, .5f, 1 };
 
 	m_pd3dDeviceContext->OMSetRenderTargets(1, &m_pd3dRenderTargetView, m_pd3dDepthStencilView);
@@ -169,7 +171,6 @@ void CGraphicsSystem::CleanD3D(TWorld *ptPlanet)
 	m_pd3dDevice->Release();
 	m_pd3dDeviceContext->Release();
 	m_pd3dDepthStencil->Release();
-	
 	m_pd3dDepthStencilState->Release();
 	m_pd3dDepthStencilView->Release();
 	m_pd3dRenderTargetView->Release();
@@ -270,9 +271,7 @@ void CGraphicsSystem::CreateBuffers(TWorld *ptPlanet)//init first frame
 		if (ptPlanet->atGraphicsMask[nCurrentEntity].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_DEBUGMESH | COMPONENT_SHADERID))
 		{
 			if (ptPlanet->atDebugMesh[nCurrentEntity].m_nVertexCount)
-			{
 				m_pd3dDevice->CreateBuffer(&ptPlanet->atDebugMesh[nCurrentEntity].m_d3dVertexBufferDesc, &ptPlanet->atDebugMesh[nCurrentEntity].m_d3dVertexData, &ptPlanet->atDebugMesh[nCurrentEntity].m_pd3dVertexBuffer);
-			}
 
 		}
 		if (ptPlanet->atGraphicsMask[nCurrentEntity].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_SIMPLEMESH | COMPONENT_SHADERID))
@@ -288,7 +287,8 @@ void CGraphicsSystem::CreateBuffers(TWorld *ptPlanet)//init first frame
 }
 
 void CGraphicsSystem::UpdateBuffer(TWorld * ptWorld, std::vector<TSimpleMesh> vtVertexVector, int nEntity, int nMask)
-{	
+{
+	
 	bool bIsVertexBufferSet = false;
 		if (bIsVertexBufferSet)
 		{
@@ -324,12 +324,110 @@ void CGraphicsSystem::UpdateBuffer(TWorld * ptWorld, std::vector<TSimpleMesh> vt
 		}
 }
 
+XMMATRIX CGraphicsSystem::SetDefaultCameraMatrix()
+{
+	XMMATRIX DefaultCameraMatrix;
+	DefaultCameraMatrix = SetDefaultWorldPosition();
+
+	return DefaultCameraMatrix;
+
+}
+XMMATRIX CGraphicsSystem::SetDefaultViewMatrix()
+{
+	XMMATRIX DefaultViewMatrix;
+
+	DefaultViewMatrix = SetDefaultWorldPosition();
+
+	return DefaultViewMatrix;
+}
+
+//XMMATRIX CGraphicsSystem::SetPlayerViewMatrix(XMMATRIX d3d_ViewM, XMMATRIX d3d_playerM)
+//{
+//	XMMATRIX DefaultViewMatrix;
+//
+//	DefaultViewMatrix = XMMatrixLookAtLH(d3d_ViewM.r[3],d3d_playerM.r[3], XMVectorSet(0, 1.0f, 0, 1.0f));
+//
+//	return DefaultViewMatrix;
+//}
+
+XMMATRIX CGraphicsSystem::SetDefaultPerspective()
+{
+
+	XMMATRIX DefaultPerspectiveMatrix;
+	// the 90 is for fov if we want to implement field of view
+	m_fFOV = 90;
+
+	DefaultPerspectiveMatrix.r[0].m128_f32[0] = 1 / tan(m_fFOV* 0.5 * 3.15f / 180);
+	DefaultPerspectiveMatrix.r[0].m128_f32[1] = 0;
+	DefaultPerspectiveMatrix.r[0].m128_f32[2] = 0;
+	DefaultPerspectiveMatrix.r[0].m128_f32[3] = 0;
+
+	DefaultPerspectiveMatrix.r[1].m128_f32[0] = 0;
+	DefaultPerspectiveMatrix.r[1].m128_f32[1] = 1 / tan(m_fFOV * 0.5 * 3.15f / 180);
+	DefaultPerspectiveMatrix.r[1].m128_f32[2] = 0;
+	DefaultPerspectiveMatrix.r[1].m128_f32[3] = 0;
+
+	DefaultPerspectiveMatrix.r[2].m128_f32[0] = 0;
+	DefaultPerspectiveMatrix.r[2].m128_f32[1] = 0;
+	DefaultPerspectiveMatrix.r[2].m128_f32[2] = 100 / (100 - 0.1);
+	DefaultPerspectiveMatrix.r[2].m128_f32[3] = 1;
+
+	DefaultPerspectiveMatrix.r[3].m128_f32[0] = 0;
+	DefaultPerspectiveMatrix.r[3].m128_f32[1] = 0;
+	DefaultPerspectiveMatrix.r[3].m128_f32[2] = -(100 * 0.1) / (100 - 0.1);
+	DefaultPerspectiveMatrix.r[3].m128_f32[3] = 0;
+	return DefaultPerspectiveMatrix;
+}
+
+XMMATRIX CGraphicsSystem::SetDefaultOffset()
+{
+	return XMMatrixTranslation(0, 1.5f, 5.5f);
+}
+
+XMMATRIX CGraphicsSystem::SetDefaultWorldPosition()
+{
+
+	XMMATRIX DefaultPerspectiveMatrix;
+	// the 90 is for fov if we want to implament field of view
+	DefaultPerspectiveMatrix.r[0].m128_f32[0] = 1;
+	DefaultPerspectiveMatrix.r[0].m128_f32[1] = 0;
+	DefaultPerspectiveMatrix.r[0].m128_f32[2] = 0;
+	DefaultPerspectiveMatrix.r[0].m128_f32[3] = 0;
+
+	DefaultPerspectiveMatrix.r[1].m128_f32[0] = 0;
+	DefaultPerspectiveMatrix.r[1].m128_f32[1] = 1;
+	DefaultPerspectiveMatrix.r[1].m128_f32[2] = 0;
+	DefaultPerspectiveMatrix.r[1].m128_f32[3] = 0;
+
+	DefaultPerspectiveMatrix.r[2].m128_f32[0] = 0;
+	DefaultPerspectiveMatrix.r[2].m128_f32[1] = 0;
+	DefaultPerspectiveMatrix.r[2].m128_f32[2] = 1;
+	DefaultPerspectiveMatrix.r[2].m128_f32[3] = 0;
+
+	DefaultPerspectiveMatrix.r[3].m128_f32[0] = 1.0f;
+	DefaultPerspectiveMatrix.r[3].m128_f32[1] = 0;
+	DefaultPerspectiveMatrix.r[3].m128_f32[2] = -10.0f;
+	DefaultPerspectiveMatrix.r[3].m128_f32[3] = 1.0f;
+	return DefaultPerspectiveMatrix;
+}
+
 void CGraphicsSystem::InitMyShaderData(ID3D11DeviceContext * pd3dDeviceContext, XMMATRIX d3dWorldMatrix, XMMATRIX d3dViewMatrix, XMMATRIX d3dProjectionMatrix, int nMask, XMFLOAT3 d3dLightPosition, XMFLOAT3 d3dCameraPosition, XMFLOAT4X4 *pd3dJointsForVS) 
 {
 
 }
 
-void CGraphicsSystem::InitPrimalShaderData(ID3D11DeviceContext * pd3dDeviceContext, XMMATRIX d3dWorldMatrix, XMMATRIX d3dViewMatrix, XMMATRIX d3dProjectionMatrix, TDebugMesh tDebugMesh)
+XMVECTOR CGraphicsSystem::GetCameraPos()
+{
+	XMVECTOR campos;
+	campos.m128_f32[0] = m_fCameraXPosition;
+	campos.m128_f32[1] = m_fCameraYPosition;
+	campos.m128_f32[2] = m_fCameraZPosition;
+	return campos;
+}
+
+
+
+void CGraphicsSystem::InitPrimalShaderData(ID3D11DeviceContext * pd3dDeviceContext, XMMATRIX d3dWorldMatrix, XMMATRIX d3dViewMatrix, XMMATRIX d3dProjectionMatrix, TDebugMesh tDebugMesh, XMMATRIX CameraMatrix)
 {
 	D3D11_MAPPED_SUBRESOURCE d3dPrimalMappedResource;
 	D3D11_MAPPED_SUBRESOURCE d3dPrimalPixelMappedResource;
@@ -339,11 +437,13 @@ void CGraphicsSystem::InitPrimalShaderData(ID3D11DeviceContext * pd3dDeviceConte
 
 	unsigned int bufferNumber;
 
+	d3dViewMatrix = XMMatrixInverse(NULL, CameraMatrix);
+
 	XMMATRIX d3dView;
 
 	d3dView = d3dViewMatrix;
 
-	#pragma region Map To Vertex Constant Buffer
+
 	pd3dDeviceContext->Map(m_pd3dPrimalVertexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &d3dPrimalMappedResource);
 
 
@@ -357,9 +457,9 @@ void CGraphicsSystem::InitPrimalShaderData(ID3D11DeviceContext * pd3dDeviceConte
 
 	// Unlock the constant buffer.
 	pd3dDeviceContext->Unmap(m_pd3dPrimalVertexBuffer, 0);
-#pragma endregion
 
-	#pragma region Map To Pixel Constant Buffer
+
+#pragma region Map To Pixel Constant Buffer
 	pd3dDeviceContext->Map(m_pd3dPrimalPixelBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &d3dPrimalPixelMappedResource);
 
 	// Get a pointer to the data in the constant buffer.
@@ -385,20 +485,22 @@ void CGraphicsSystem::InitPrimalShaderData(ID3D11DeviceContext * pd3dDeviceConte
 
 }
 
-void CGraphicsSystem::InitPrimalShaderData2(ID3D11DeviceContext * pd3dDeviceContext, TPrimalVertexBufferType d3dVertexBuffer, TPrimalPixelBufferType d3dPixelBuffer, TSimpleMesh tSimpleMesh)
+void CGraphicsSystem::InitPrimalShaderData2(ID3D11DeviceContext * pd3dDeviceContext, TPrimalVertexBufferType d3dVertexBuffer, TPrimalPixelBufferType d3dPixelBuffer, TSimpleMesh tSimpleMesh, XMMATRIX CameraMatrix)
 {
 	D3D11_MAPPED_SUBRESOURCE d3dPrimalVertexMappedResource;
 	D3D11_MAPPED_SUBRESOURCE d3dPrimalPixelMappedResource;
 
 	TPrimalVertexBufferType	*ptPrimalVertexBufferDataPointer = nullptr;
 	TPrimalPixelBufferType	*ptPrimalPixelBufferDataPointer = nullptr;
-
+	
+	d3dVertexBuffer.m_d3dViewMatrix = XMMatrixInverse(NULL, CameraMatrix);
 	unsigned int bufferNumber;
 	XMMATRIX d3dTmpViewM;
-	d3dTmpViewM = XMMatrixInverse(NULL, d3dVertexBuffer.m_d3dViewMatrix);
-	m_fCameraXPosition = d3dTmpViewM.r[3].m128_f32[0];
-	m_fCameraYPosition = d3dTmpViewM.r[3].m128_f32[1];
-	m_fCameraZPosition = d3dTmpViewM.r[3].m128_f32[2];
+
+	//d3dTmpViewM = XMMatrixInverse(NULL, );
+		 m_fCameraXPosition = CameraMatrix.r[3].m128_f32[0];// d3dTmpViewM.r[3].m128_f32[0];
+		m_fCameraYPosition = CameraMatrix.r[3].m128_f32[1];//d3dTmpViewM.r[3].m128_f32[1];
+		m_fCameraZPosition = CameraMatrix.r[3].m128_f32[2];//d3dTmpViewM.r[3].m128_f32[2];
 
 	XMMATRIX d3dView;
 
@@ -419,6 +521,7 @@ void CGraphicsSystem::InitPrimalShaderData2(ID3D11DeviceContext * pd3dDeviceCont
 	pd3dDeviceContext->Unmap(m_pd3dPrimalVertexBuffer, 0);
 
 #pragma endregion
+
 
 	#pragma region Map To Pixel Constant Buffer
 	pd3dDeviceContext->Map(m_pd3dPrimalPixelBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &d3dPrimalPixelMappedResource);
@@ -498,80 +601,3 @@ void CGraphicsSystem::ExecutePipeline(ID3D11DeviceContext *pd3dDeviceContext, in
 			break;
 	}
 }
-
-#pragma region Camera & Matrix Functions
-
-XMVECTOR CGraphicsSystem::GetCameraPos()
-{
-	XMVECTOR campos;
-	campos.m128_f32[0] = m_fCameraXPosition;
-	campos.m128_f32[1] = m_fCameraYPosition;
-	campos.m128_f32[2] = m_fCameraZPosition;
-	return campos;
-}
-
-XMMATRIX CGraphicsSystem::SetDefaultViewMatrix()
-{
-	XMMATRIX DefaultViewMatrix;
-
-	DefaultViewMatrix = XMMatrixLookAtLH(XMVectorSet(0, 10.f, -15.0f, 1.0f), XMVectorSet(0, 0, 0, 1.0f), XMVectorSet(0, 1.0f, 0, 1.0f));
-
-	return DefaultViewMatrix;
-}
-
-XMMATRIX CGraphicsSystem::SetDefaultPerspective()
-{
-
-	XMMATRIX DefaultPerspectiveMatrix;
-	// the 90 is for fov if we want to implement field of view
-	m_fFOV = 90;
-
-	DefaultPerspectiveMatrix.r[0].m128_f32[0] = 1 / tan(m_fFOV* 0.5 * 3.15f / 180);
-	DefaultPerspectiveMatrix.r[0].m128_f32[1] = 0;
-	DefaultPerspectiveMatrix.r[0].m128_f32[2] = 0;
-	DefaultPerspectiveMatrix.r[0].m128_f32[3] = 0;
-
-	DefaultPerspectiveMatrix.r[1].m128_f32[0] = 0;
-	DefaultPerspectiveMatrix.r[1].m128_f32[1] = 1 / tan(m_fFOV * 0.5 * 3.15f / 180);
-	DefaultPerspectiveMatrix.r[1].m128_f32[2] = 0;
-	DefaultPerspectiveMatrix.r[1].m128_f32[3] = 0;
-
-	DefaultPerspectiveMatrix.r[2].m128_f32[0] = 0;
-	DefaultPerspectiveMatrix.r[2].m128_f32[1] = 0;
-	DefaultPerspectiveMatrix.r[2].m128_f32[2] = 100 / (100 - 0.1);
-	DefaultPerspectiveMatrix.r[2].m128_f32[3] = 1;
-
-	DefaultPerspectiveMatrix.r[3].m128_f32[0] = 0;
-	DefaultPerspectiveMatrix.r[3].m128_f32[1] = 0;
-	DefaultPerspectiveMatrix.r[3].m128_f32[2] = -(100 * 0.1) / (100 - 0.1);
-	DefaultPerspectiveMatrix.r[3].m128_f32[3] = 0;
-	return DefaultPerspectiveMatrix;
-}
-
-XMMATRIX CGraphicsSystem::SetDefaultWorldPosition()
-{
-
-	XMMATRIX DefaultPerspectiveMatrix;
-	// the 90 is for fov if we want to implament field of view
-	DefaultPerspectiveMatrix.r[0].m128_f32[0] = 1;
-	DefaultPerspectiveMatrix.r[0].m128_f32[1] = 0;
-	DefaultPerspectiveMatrix.r[0].m128_f32[2] = 0;
-	DefaultPerspectiveMatrix.r[0].m128_f32[3] = 0;
-
-	DefaultPerspectiveMatrix.r[1].m128_f32[0] = 0;
-	DefaultPerspectiveMatrix.r[1].m128_f32[1] = 1;
-	DefaultPerspectiveMatrix.r[1].m128_f32[2] = 0;
-	DefaultPerspectiveMatrix.r[1].m128_f32[3] = 0;
-
-	DefaultPerspectiveMatrix.r[2].m128_f32[0] = 0;
-	DefaultPerspectiveMatrix.r[2].m128_f32[1] = 0;
-	DefaultPerspectiveMatrix.r[2].m128_f32[2] = 1;
-	DefaultPerspectiveMatrix.r[2].m128_f32[3] = 0;
-
-	DefaultPerspectiveMatrix.r[3].m128_f32[0] = 1.0f;
-	DefaultPerspectiveMatrix.r[3].m128_f32[1] = 0.2f;
-	DefaultPerspectiveMatrix.r[3].m128_f32[2] = -10.0f;
-	DefaultPerspectiveMatrix.r[3].m128_f32[3] = 1.0f;
-	return DefaultPerspectiveMatrix;
-}
-#pragma endregion	

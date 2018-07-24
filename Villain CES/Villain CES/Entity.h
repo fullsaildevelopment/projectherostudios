@@ -10,7 +10,7 @@
 
 struct TWorld
 {
-	std::string		name[ENTITYCOUNT];
+
 	int				anComponentMask[ENTITYCOUNT];
 	//Graphics
 	TGraphicsMask	atGraphicsMask[ENTITYCOUNT];
@@ -45,7 +45,15 @@ struct TWorld
 	TSeth			atSeth[ENTITYCOUNT];
 	TCaelis			atCaelis[ENTITYCOUNT];
 };
+struct TCameraToggle
+{
+	bool bDebugMode;
+	bool bWalkMode;
+	bool bAimMode;
+	//bool bDebugMode;
 
+
+};
 struct TPrimalVert
 {
 	XMFLOAT3 m_d3dfPosition;
@@ -73,5 +81,10 @@ unsigned int createDebugGrid(TWorld * ptWorld);
 
 unsigned int createMesh(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMesh tMesh);
 unsigned int createPlayerBox(TWorld * ptWorld);
-unsigned int createBullet(TWorld * ptWorld,XMMATRIX bulletSpawnLocation );
+unsigned int CreateBullet(TWorld * ptWorld,XMMATRIX bulletSpawnLocation );
+unsigned int AimingLine(TWorld * ptWorld);
 
+unsigned int createDummyPlayer(TWorld* ptWorld, XMMATRIX playerMatrix);
+unsigned int CreateGround(TWorld* ptWorld);
+unsigned int CreateWall(TWorld* ptWorld);
+unsigned int CreateCelling(TWorld* ptWorld);
