@@ -2,7 +2,7 @@
 
 CInputSystem::CInputSystem()
 {
-	m_fMouseRotationSpeed = .0001f;
+	m_fMouseRotationSpeed = .001f;
 	m_fMouseMovementSpeed = .01f;
 }
 
@@ -516,7 +516,12 @@ XMMATRIX CInputSystem::WalkLookAt(XMVECTOR U, XMMATRIX viewM) {
 	//XMVECTOR X, Y, Z, X2, Y2, Z2, W;
 	XMVECTOR d3d_newX, d3d_newY, d3d_existingZ;
 	XMMATRIX d3dTmpViewM, d3dMovementM,d3dRotation;
+	float fXchange = 0, fYchange = 0, fXEnd = 0, fYEnd = 0;
+
 	d3dTmpViewM = viewM;
+	m_pcMyInput->GetMouseDelta(fXchange, fYchange);
+
+	m_pcMyInput->GetMousePosition(fXEnd, fYEnd);
 	//XMMATRIX newV;
 	/*W = T;
 	W.m128_f32[0] = T.m128_f32[0] - 0.5f;
@@ -621,9 +626,9 @@ XMMATRIX CInputSystem::WalkLookAt(XMVECTOR U, XMMATRIX viewM) {
 	//Right && Left Rotation(keybord implemented, soon to be changed in the mouse)
 
 // Left Rotation
-	if (InputCheck(G_KEY_J) == 1)
+	if (fXchange < 0 && fYchange < 0)
 	{
-		d3dRotation = XMMatrixRotationY(-1.0f * m_fMouseRotationSpeed);
+		d3dRotation = XMMatrixRotationY(fXchange * m_fMouseRotationSpeed);
 
 		d3dTmpViewM = XMMatrixMultiply(d3dTmpViewM, d3dRotation);
 
@@ -645,9 +650,9 @@ XMMATRIX CInputSystem::WalkLookAt(XMVECTOR U, XMMATRIX viewM) {
 
 	}
 	//Right Rotation
-	if (InputCheck(G_KEY_L) == 1)
+	if (fXchange > 0 && fYchange < 0)
 	{
-		d3dRotation = XMMatrixRotationY(1.0f * m_fMouseRotationSpeed);
+		d3dRotation = XMMatrixRotationY(fXchange * m_fMouseRotationSpeed);
 
 		d3dTmpViewM = XMMatrixMultiply(d3dTmpViewM, d3dRotation);
 
@@ -669,9 +674,9 @@ XMMATRIX CInputSystem::WalkLookAt(XMVECTOR U, XMMATRIX viewM) {
 
 	}
 	// Up rotation
-	if (InputCheck(G_KEY_I) == 1)
+	if (fXchange < 0 && fYchange > 0)
 	{
-		d3dRotation = XMMatrixRotationX(-1.0f * m_fMouseRotationSpeed);
+		d3dRotation = XMMatrixRotationX(fXchange * m_fMouseRotationSpeed);
 
 		d3dTmpViewM = XMMatrixMultiply(d3dTmpViewM, d3dRotation);
 
@@ -696,9 +701,9 @@ XMMATRIX CInputSystem::WalkLookAt(XMVECTOR U, XMMATRIX viewM) {
 	}
 	// Down rotation
 
-	if (InputCheck(G_KEY_K) == 1)
+	if (fXchange > 0 && fYchange > 0)
 	{
-		d3dRotation = XMMatrixRotationX(1.0f * m_fMouseRotationSpeed);
+		d3dRotation = XMMatrixRotationX(fXchange * m_fMouseRotationSpeed);
 
 		d3dTmpViewM = XMMatrixMultiply(d3dTmpViewM, d3dRotation);
 		d3d_existingZ = d3dTmpViewM.r[2];
