@@ -220,13 +220,13 @@ XMMATRIX CInputSystem::WalkCamera(XMMATRIX d3dplayerMatrix)
 
 	// up key movement
 
-	if (InputCheck(G_BUTTON_LEFT) == 1) {
+	if (InputCheck(G_KEY_W) == 1) {
 		d3dMovementM = XMMatrixTranslation(0, 0, m_fMouseMovementSpeed);
 		d3dTmpViewM = XMMatrixMultiply(d3dMovementM, d3dTmpViewM);
 
 	}
 	// down key movement
-	if (InputCheck(G_BUTTON_RIGHT) == 1) {
+	if (InputCheck(G_KEY_S) == 1) {
 		d3dMovementM = XMMatrixTranslation(0, 0, -m_fMouseMovementSpeed);
 
 		d3dTmpViewM = XMMatrixMultiply(d3dMovementM, d3dTmpViewM);
@@ -244,7 +244,7 @@ XMMATRIX CInputSystem::WalkCamera(XMMATRIX d3dplayerMatrix)
 		d3dTmpViewM = XMMatrixMultiply(d3dMovementM, d3dTmpViewM);
 
 	}
-	if (InputCheck(G_KEY_W) == 1) {
+	/*if (InputCheck(G_KEY_W) == 1) {
 		d3dMovementM = XMMatrixTranslation(0, m_fMouseMovementSpeed, 0);
 		d3dTmpViewM = XMMatrixMultiply(d3dMovementM, d3dTmpViewM);
 
@@ -252,7 +252,7 @@ XMMATRIX CInputSystem::WalkCamera(XMMATRIX d3dplayerMatrix)
 	if (InputCheck(G_KEY_S) == 1) {
 		d3dMovementM = XMMatrixTranslation(0, -m_fMouseMovementSpeed, 0);
 		d3dTmpViewM = XMMatrixMultiply(d3dMovementM, d3dTmpViewM);
-	}
+	}*/
 
 	//Up && Down Rotation(keybord implemented, soon to be changed in the mouse)
 
@@ -364,10 +364,12 @@ XMMATRIX CInputSystem::AimMode(XMMATRIX d3dplayerMatrix)
 
 	//m_d3dTmpWorldM.r[0].m128_f32[0] = 0;
 
-
+	//stores the player matrix into temp matrix
 	d3dTmpViewM = d3dplayerMatrix;
 
 	XMVECTOR d3d_newX, d3d_newY, d3d_existingZ;
+
+	// Gets the change and pos of XY for the mouse between frames
 	m_pcMyInput->GetMouseDelta(fXchange, fYchange);
 
 	m_pcMyInput->GetMousePosition(fXEnd, fYEnd);
@@ -377,13 +379,13 @@ XMMATRIX CInputSystem::AimMode(XMMATRIX d3dplayerMatrix)
 
 	// up key movement
 
-	if (InputCheck(G_BUTTON_LEFT) == 1) {
+	if (InputCheck(G_KEY_W) == 1) {
 		d3dMovementM = XMMatrixTranslation(0, 0, m_fMouseMovementSpeed);
 		d3dTmpViewM = XMMatrixMultiply(d3dMovementM, d3dTmpViewM);
 
 	}
 	// down key movement
-	if (InputCheck(G_BUTTON_RIGHT) == 1) {
+	if (InputCheck(G_KEY_S) == 1) {
 		d3dMovementM = XMMatrixTranslation(0, 0, -m_fMouseMovementSpeed);
 
 		d3dTmpViewM = XMMatrixMultiply(d3dMovementM, d3dTmpViewM);
@@ -401,7 +403,7 @@ XMMATRIX CInputSystem::AimMode(XMMATRIX d3dplayerMatrix)
 		d3dTmpViewM = XMMatrixMultiply(d3dMovementM, d3dTmpViewM);
 
 	}
-	if (InputCheck(G_KEY_W) == 1) {
+	/*if (InputCheck(G_KEY_W) == 1) {
 		d3dMovementM = XMMatrixTranslation(0, m_fMouseMovementSpeed, 0);
 		d3dTmpViewM = XMMatrixMultiply(d3dMovementM, d3dTmpViewM);
 
@@ -409,11 +411,11 @@ XMMATRIX CInputSystem::AimMode(XMMATRIX d3dplayerMatrix)
 	if (InputCheck(G_KEY_S) == 1) {
 		d3dMovementM = XMMatrixTranslation(0, -m_fMouseMovementSpeed, 0);
 		d3dTmpViewM = XMMatrixMultiply(d3dMovementM, d3dTmpViewM);
-	}
+	}*/
 
-	//Up && Down Rotation(keybord implemented, soon to be changed in the mouse)
+	//Up && Down Rotation
 
-	//Right && Left Rotation(keybord implemented, soon to be changed in the mouse)
+	//Right && Left Rotation
 	if (fXchange < 0 && fYchange < 0)
 	{
 		d3dRotation = XMMatrixRotationY(fXchange * m_fMouseRotationSpeed);
@@ -510,7 +512,6 @@ XMMATRIX CInputSystem::AimMode(XMMATRIX d3dplayerMatrix)
 
 	return d3dTmpViewM;
 }
-
 
 XMMATRIX CInputSystem::WalkLookAt(XMVECTOR U, XMMATRIX viewM) {
 	//XMVECTOR X, Y, Z, X2, Y2, Z2, W;
@@ -624,6 +625,7 @@ XMMATRIX CInputSystem::WalkLookAt(XMVECTOR U, XMMATRIX viewM) {
 
 	//}
 	//Right && Left Rotation(keybord implemented, soon to be changed in the mouse)
+
 
 // Left Rotation
 	if (fXchange < 0 && fYchange < 0)
