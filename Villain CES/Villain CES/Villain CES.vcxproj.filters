@@ -78,6 +78,12 @@
     <ClInclude Include="InputSystem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Projectile_Component.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ProjectileSystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
