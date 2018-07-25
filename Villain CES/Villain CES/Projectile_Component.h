@@ -15,10 +15,12 @@ enum eProjectileComponent
 };
 struct Clips
 {
+	float fShootingCoolDown;
 	list<int> nBulletsAvailables;
 	vector<int> nBulletsFired;
 	vector<int> nDeadBullets;
 	vector<float> fAliveTime;
-	int nSizeofClipl
+	int nSizeofClipl;
+	bool tryToShoot;
 };
 #endif

@@ -23,6 +23,7 @@ struct TWorld
 	TCamera			atCamera[ENTITYCOUNT];
 	TWorldMatrix	atWorldMatrix[ENTITYCOUNT];
 	int				atParentWorldMatrix[ENTITYCOUNT];
+	XMMATRIX		atOffSetMatrix[ENTITYCOUNT];
 
 	//UI
 	TUIMask			atUIMask[ENTITYCOUNT];
@@ -89,4 +90,4 @@ unsigned int createDummyPlayer(TWorld* ptWorld, XMMATRIX playerMatrix);
 unsigned int CreateGround(TWorld* ptWorld);
 unsigned int CreateWall(TWorld* ptWorld);
 unsigned int CreateCelling(TWorld* ptWorld);
-unsigned int CreateGun(TWorld* ptWorld);
+unsigned int CreateGun(TWorld* ptWorld, XMMATRIX BulletSpawnLocation, int parentWorldMatrixIndex);

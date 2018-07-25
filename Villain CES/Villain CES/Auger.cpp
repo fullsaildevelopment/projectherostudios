@@ -60,7 +60,6 @@ void CAuger::InitializeSystems()
 	CreateWall(&tThisWorld);
 	CreateCelling(&tThisWorld);
 	createPlayerBox(&tThisWorld);
-	CreateGun(&tThisWorld);
 
 
 
@@ -81,7 +80,7 @@ void CAuger::InitializeSystems()
 
 	// do not make things that u want to draw after this line of code or shit will  break;
 	//createDebugTransformLines(&tThisWorld);
-	pcGraphicsSystem->CreateBuffers(&tThisWorld);
+	
 	//createEntity(&tThisWorld);
 
 	 m_d3dWorldMatrix = pcGraphicsSystem->SetDefaultWorldPosition();//Call some sort of function from the graphics system to create this matrix
@@ -135,6 +134,8 @@ void CAuger::InitializeSystems()
 			 tThisWorld.atAABB[nCurrentEntity] = pcCollisionSystem->updateAABB(tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, tThisWorld.atAABB[nCurrentEntity]);
 		 }
 	 }
+	 CreateGun(&tThisWorld, m_d3dWorldMatrix, 1);
+	 pcGraphicsSystem->CreateBuffers(&tThisWorld);
 }
 
 void CAuger::Update()
@@ -349,7 +350,17 @@ void CAuger::Update()
 			}
 			// do you have a parent matrix to be mutplied by
 			else if(tThisWorld.atParentWorldMatrix[nCurrentEntity]!=-1) {
-				tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix= XMMatrixMultiply(tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, tThisWorld.atWorldMatrix[tThisWorld.atParentWorldMatrix[nCurrentEntity]].worldMatrix);
+				/*tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix.r[3].m128_f32[0] = tThisWorld.atWorldMatrix[tThisWorld.atParentWorldMatrix[nCurrentEntity]].worldMatrix.r[3].m128_f32[0]+2;
+				tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix.r[3].m128_f32[1] = tThisWorld.atWorldMatrix[tThisWorld.atParentWorldMatrix[nCurrentEntity]].worldMatrix.r[3].m128_f32[1];
+				tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix.r[3].m128_f32[2] = tThisWorld.atWorldMatrix[tThisWorld.atParentWorldMatrix[nCurrentEntity]].worldMatrix.r[3].m128_f32[2];*/
+				//tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = pcGraphicsSystem->SetDefaultWorldPosition();
+				//tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix= XMMatrixMultiply(tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, tThisWorld.atWorldMatrix[tThisWorld.atParentWorldMatrix[nCurrentEntity]].worldMatrix);
+				//tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = XMMatrixMultiply(tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, m_d3dPlayerMatrix);
+		//		tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = XMMatrixMultiply( tThisWorld.atOffSetMatrix[nCurrentEntity], tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix);
+				tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = XMMatrixMultiply(pcGraphicsSystem->SetDefaultWorldPosition(),
+					m_d3dPlayerMatrix);
+				//tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix.r[3].m128_f32[2] += 10;
+				tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = XMMatrixMultiply(tThisWorld.atOffSetMatrix[nCurrentEntity], tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix);
 
 			}
 		
