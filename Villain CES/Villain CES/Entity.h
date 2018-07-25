@@ -10,7 +10,6 @@
 
 struct TWorld
 {
-
 	int				anComponentMask[ENTITYCOUNT];
 	//Graphics
 	TGraphicsMask	atGraphicsMask[ENTITYCOUNT];
@@ -23,6 +22,8 @@ struct TWorld
 	TShaderID		atShaderID[ENTITYCOUNT];
 	TCamera			atCamera[ENTITYCOUNT];
 	TWorldMatrix	atWorldMatrix[ENTITYCOUNT];
+	int				atParentWorldMatrix[ENTITYCOUNT];
+
 	//UI
 	TUIMask			atUIMask[ENTITYCOUNT];
 	TBar			atBar[ENTITYCOUNT];
@@ -88,3 +89,4 @@ unsigned int createDummyPlayer(TWorld* ptWorld, XMMATRIX playerMatrix);
 unsigned int CreateGround(TWorld* ptWorld);
 unsigned int CreateWall(TWorld* ptWorld);
 unsigned int CreateCelling(TWorld* ptWorld);
+unsigned int CreateGun(TWorld* ptWorld);

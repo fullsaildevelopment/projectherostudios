@@ -34,6 +34,10 @@ void CAuger::Start()
 
 void CAuger::InitializeSystems()
 {
+	for (int i = 0; i < ENTITYCOUNT; ++i) {
+		tThisWorld.atParentWorldMatrix[i] = -1;
+	}
+
 	pcGraphicsSystem->InitD3D(cApplicationWindow);
 	//createDebugGrid(&tThisWorld);
 	CreateGround(&tThisWorld);
@@ -56,6 +60,7 @@ void CAuger::InitializeSystems()
 	CreateWall(&tThisWorld);
 	CreateCelling(&tThisWorld);
 	createPlayerBox(&tThisWorld);
+	CreateGun(&tThisWorld);
 
 
 
@@ -68,7 +73,7 @@ void CAuger::InitializeSystems()
 	XMMATRIX  m_dDefaultWorldMa4rix = pcGraphicsSystem->SetDefaultWorldPosition();
 	m_dDefaultWorldMa4rix.r[3].m128_f32[1] += 10;
 	for (int i = 0; i < m_nClipSize; ++i) {
-		nBulletsAvailables.push_back(CreateBullet(&tThisWorld, m_dDefaultWorldMa4rix));	
+		//nBulletsAvailables.push_back(CreateBullet(&tThisWorld, m_dDefaultWorldMa4rix));	
 	}
 
 
@@ -341,6 +346,11 @@ void CAuger::Update()
 				tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix.r[3].m128_f32[2] = pcGraphicsSystem->GetCameraPos().m128_f32[2] + 2;*/
 			//	tThisWorld.atAABB[1] = pcCollisionSystem->updateAABB(tThisWorld.atWorldMatrix[1].worldMatrix, tThisWorld.atAABB[1]);
 			
+			}
+			// do you have a parent matrix to be mutplied by
+			else if(tThisWorld.atParentWorldMatrix[nCurrentEntity]!=-1) {
+				tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix= XMMatrixMultiply(tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, tThisWorld.atWorldMatrix[tThisWorld.atParentWorldMatrix[nCurrentEntity]].worldMatrix);
+
 			}
 		
 			tTempVertexBuffer.m_d3dWorldMatrix = tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix;
