@@ -431,7 +431,7 @@ unsigned int CreateBullet(TWorld * ptWorld,XMMATRIX BulletSpawnLocation)
 * Mod. Initials:          AP
 */
 
-unsigned int AimingLine(TWorld * ptWorld)
+unsigned int AimingLine(TWorld * ptWorld, XMMATRIX BulletSpawnLocation, int parentWorldMatrixIndex, float xoffset, float yoffset, float zoffset)
 {
 	unsigned int nThisEntity = createEntity(ptWorld);
 
@@ -514,7 +514,10 @@ unsigned int AimingLine(TWorld * ptWorld)
 	BulletSpawnLocation.r[2].m128_f32[2] = 0.5;*/
 	//	BulletSpawnLocation.r[3].m128_f32[0] += 0.5;
 	
-	
+	ptWorld->atWorldMatrix[nThisEntity].worldMatrix = BulletSpawnLocation;
+	ptWorld->atParentWorldMatrix[nThisEntity] = parentWorldMatrixIndex;
+	ptWorld->atOffSetMatrix[nThisEntity] = XMMatrixTranslation(xoffset, yoffset, zoffset);
+
 
 	ptWorld->atShaderID[nThisEntity].m_nShaderID = 3;
 

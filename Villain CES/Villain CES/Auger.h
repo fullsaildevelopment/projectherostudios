@@ -41,7 +41,6 @@ private:
     XMMATRIX m_d3d_ResultMatrix;
 
 	XMMATRIX peguins;
-	int nAiminglineIndex;
 	int		m_nIndexToBullets;
 	int		m_nIndexToBullets2;
 

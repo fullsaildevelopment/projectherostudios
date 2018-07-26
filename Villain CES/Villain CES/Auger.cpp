@@ -77,7 +77,8 @@ void CAuger::InitializeSystems()
 	}
 
 
-	nAiminglineIndex = AimingLine(&tThisWorld);
+	AimingLine(&tThisWorld, m_d3dWorldMatrix, 1, -1, 0, 10.5);
+
 
 	// do not make things that u want to draw after this line of code or shit will  break;
 	//createDebugTransformLines(&tThisWorld);
@@ -235,10 +236,7 @@ void CAuger::Update()
 
 		
 	}
-	tThisWorld.atWorldMatrix[nAiminglineIndex] = tThisWorld.atWorldMatrix[1];
-	tThisWorld.atWorldMatrix[nAiminglineIndex].worldMatrix.r[3].m128_f32[2] += 1.5;
-	tThisWorld.atWorldMatrix[nAiminglineIndex].worldMatrix.r[3].m128_f32[0] -= 0.3;
-
+	
 	//for (list<int>::iterator ptr = nBulletsFired.begin(); ptr != nBulletsFired.end(); ++ptr) {
 	//	XMVECTOR localpos;
 	//	localpos.m128_f32[0] = 0;
