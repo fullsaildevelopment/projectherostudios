@@ -274,15 +274,10 @@ void CAuger::Update()
 	m_nIndexToBullets = 0;
 	m_nIndexToBullets2 = 0;
 	if (pcInputSystem->InputCheck(G_KEY_R) == 1) {
-		for (int i = 0; i < nDeadBullets.size(); ++i) {
-			if (nBulletsAvailables.size() < m_nClipSize) {
-				nBulletsAvailables.push_back(nDeadBullets[i]);
-				nDeadBullets.erase(nDeadBullets.begin() + i);
-			}
-			else {
-				break;
-			}
-		}
+
+		pcProjectileSystem->Reload(&tThisWorld.atClip[7]);
+		pcProjectileSystem->Reload(&tThisWorld.atClip[8]);
+
 	}
 	
 	for (int nCurrentEntity = 0; nCurrentEntity < ENTITYCOUNT; nCurrentEntity++)
@@ -302,8 +297,20 @@ void CAuger::Update()
 		}
 		if (tThisWorld.atClip[nCurrentEntity].nBulletsFired.size() != 0) {
 			for (int i = 0; i < tThisWorld.atClip[nCurrentEntity].nBulletsFired.size(); ++i) {
-				pcPhysicsSystem->AddBulletForce(&tThisWorld.atRigidBody[tThisWorld.atClip[nCurrentEntity].nBulletsFired[i]]);
+				if (tThisWorld.atClip[nCurrentEntity].fAliveTime[i] < 100) {
+					pcPhysicsSystem->AddBulletForce(&tThisWorld.atRigidBody[tThisWorld.atClip[nCurrentEntity].nBulletsFired[i]]);
+					tThisWorld.atClip[nCurrentEntity].fAliveTime[i] += 0.1;
+				}
+				else {
+				tThisWorld.atClip[nCurrentEntity].fAliveTime.erase(tThisWorld.atClip[nCurrentEntity].fAliveTime.begin()+i);
+				pcCollisionSystem->RemoveAABBCollider(tThisWorld.atClip[nCurrentEntity].nBulletsFired[i]);
+				//nDeadBullets.push_back(nBulletsFired[m_nIndexToBullets]);
+				destroyEntity(&tThisWorld, tThisWorld.atClip[nCurrentEntity].nBulletsFired[i]);
+				//nBulletsFired.erase(nBulletsFired.begin() + m_nIndexToBullets);
+				tThisWorld.atClip[nCurrentEntity].nBulletsFired.erase(tThisWorld.atClip[nCurrentEntity].nBulletsFired.begin() + i);
+				}
 			}
+			tThisWorld.atClip[nCurrentEntity].fShootingCoolDown -= 0.1;
 		}
 		//if(tThisWorld.atPhysicsMask[nCurrentEntity].m_tnPhysicsMask== (COMPONENT_PHYSICSMASK | COMPONENT_RIGIDBODY)) {
 		//	if (nBulletsFired.size()> m_nIndexToBullets &&nBulletsFired[m_nIndexToBullets] == nCurrentEntity) {
@@ -380,7 +387,7 @@ void CAuger::Update()
 		
 				tThisWorld.atAABB[nCurrentEntity] = pcCollisionSystem->updateAABB(tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, tThisWorld.atAABB[nCurrentEntity]);
 
-			}
+		}
 			
 		// only for nonStaticObjects
 				if ((tThisWorld.atCollisionMask[nCurrentEntity].m_tnCollisionMask == (COMPONENT_COLLISIONMASK | COMPONENT_AABB | COMPONENT_NONSTATIC | COMPONENT_TRIGGER)| tThisWorld.atCollisionMask[nCurrentEntity].m_tnCollisionMask == (COMPONENT_COLLISIONMASK | COMPONENT_NONTRIGGER | COMPONENT_AABB | COMPONENT_NONSTATIC)))

@@ -6,5 +6,8 @@ public:
 	CProjectileSystem();
 	~CProjectileSystem();
 	bool CreateBulletProjectile(int indexofBullet,Clips* Gun);
+	bool Reload( Clips* Gun);
+
+
 };
 

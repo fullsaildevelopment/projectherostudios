@@ -24,6 +24,24 @@ void destroyEntity(TWorld * ptWorld, unsigned int nThisEntity)
 	//Set component list for current entity to none.
 	printf("Entity destroyed: %d\n", nThisEntity);
 	ptWorld->atGraphicsMask[nThisEntity].m_tnGraphicsMask = COMPONENT_NONE;
+	ptWorld->atCollisionMask[nThisEntity].m_tnCollisionMask = COMPONENT_COLLISIONMASK;
+	ptWorld->atAIMask[nThisEntity].m_tnAIMask = COMPONENT_AIMASK;
+	ptWorld->atUIMask[nThisEntity].m_tnUIMask = COMPONENT_UIMASK;
+	ptWorld->atPhysicsMask[nThisEntity].m_tnPhysicsMask = COMPONENT_PHYSICSMASK;
+	ptWorld->atProjectiles[nThisEntity].m_tnProjectileMask = COMPONENT_PROJECTILESMASK;
+	XMVECTOR zeroVector;
+	zeroVector.m128_f32[0] = 0;
+	zeroVector.m128_f32[1] = 0;
+	zeroVector.m128_f32[2] = 0;
+	zeroVector.m128_f32[3] = 0;
+
+	ptWorld->atRigidBody[nThisEntity].totalForce = zeroVector;
+	ptWorld->atRigidBody[nThisEntity].velocity = zeroVector;
+	ptWorld->atRigidBody[nThisEntity].gravity = zeroVector;
+	ptWorld->atRigidBody[nThisEntity].maxVelocity = zeroVector;
+
+
+
 }
 
 unsigned int createDebugTransformLines(TWorld * ptWorld)
@@ -755,8 +773,9 @@ ptWorld->atAIMask[nThisEntity].m_tnAIMask = COMPONENT_AIMASK;
 ptWorld->atUIMask[nThisEntity].m_tnUIMask = COMPONENT_UIMASK;
 ptWorld->atPhysicsMask[nThisEntity].m_tnPhysicsMask = COMPONENT_PHYSICSMASK;
 ptWorld->atProjectiles[nThisEntity].m_tnProjectileMask = COMPONENT_PROJECTILESMASK|COMPONENT_CLIP;
-ptWorld->atClip[nThisEntity].nSizeofClipl = 30;
-ptWorld->atClip[nThisEntity].FValueOfCoolDown = 100;
+ptWorld->atClip[nThisEntity].nSizeofClipl = 3;
+ptWorld->atClip[nThisEntity].FValueOfCoolDown = 50;
+ptWorld->atClip[nThisEntity].fShootingCoolDown = 0;
 for (int i = 0; i < ptWorld->atClip[nThisEntity].nSizeofClipl; ++i) {
 	ptWorld->atClip[nThisEntity].nBulletsAvailables.push_back(false);
 }

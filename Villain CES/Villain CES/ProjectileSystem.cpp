@@ -27,3 +27,14 @@ bool CProjectileSystem::CreateBulletProjectile(int indexofBullet,Clips* Gun)
 	}
 	return false;
 }
+
+bool CProjectileSystem::Reload(Clips * Gun)
+{
+	if (Gun->nBulletsAvailables.size() != Gun->nSizeofClipl) {
+		for (int i = Gun->nBulletsAvailables.size(); i < Gun->nSizeofClipl; ++i) {
+			Gun->nBulletsAvailables.push_back(true);
+		}
+		return true;
+	}
+	return false;
+}

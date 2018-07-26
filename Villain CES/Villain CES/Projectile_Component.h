@@ -22,7 +22,6 @@ struct Clips
 	float fShootingCoolDown;
 	list<bool> nBulletsAvailables;
 	vector<int> nBulletsFired;
-	vector<int> nDeadBullets;
 	vector<float> fAliveTime;
 	int nSizeofClipl;
 	bool tryToShoot;
