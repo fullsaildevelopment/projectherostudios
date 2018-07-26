@@ -209,7 +209,7 @@ XMMATRIX CCollisionSystem::WalkingThrewObjectCheck(XMMATRIX worldPos, TAABB othe
 */
 bool CCollisionSystem::replaceAABB(int nIndex, TAABB m_AABB2)
 {
-	if (nIndex < m_AAbb.size()) {
+
 		for (list<TAABB>::iterator ptr = m_AAbb.begin(); ptr != m_AAbb.end(); ++ptr) {
 			if (nIndex == ptr->m_IndexLocation) {
 				ptr->m_dMaxPoint = m_AABB2.m_dMaxPoint;
@@ -217,7 +217,7 @@ bool CCollisionSystem::replaceAABB(int nIndex, TAABB m_AABB2)
 				return true;
 			}
 		}
-	}
+	
 	return false;
 }
 TAABB CCollisionSystem::updateAABB(XMMATRIX worldMatrix, TAABB aabb)
