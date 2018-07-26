@@ -7,6 +7,7 @@
 #include "Physics_Component.h"
 #include"Collision_System.h"
 #include "Input_Component.h"
+#include"Projectile_Component.h"
 
 struct TWorld
 {
@@ -46,6 +47,8 @@ struct TWorld
 	TClayton		atClayton[ENTITYCOUNT];
 	TSeth			atSeth[ENTITYCOUNT];
 	TCaelis			atCaelis[ENTITYCOUNT];
+	TProjectileMask atProjectiles[ENTITYCOUNT];
+	Clips			atClip[ENTITYCOUNT];
 };
 struct TCameraToggle
 {
@@ -90,4 +93,4 @@ unsigned int createDummyPlayer(TWorld* ptWorld, XMMATRIX playerMatrix);
 unsigned int CreateGround(TWorld* ptWorld);
 unsigned int CreateWall(TWorld* ptWorld);
 unsigned int CreateCelling(TWorld* ptWorld);
-unsigned int CreateGun(TWorld* ptWorld, XMMATRIX BulletSpawnLocation, int parentWorldMatrixIndex);
+unsigned int CreateGun(TWorld* ptWorld, XMMATRIX BulletSpawnLocation, int parentWorldMatrixIndex, float xoffset, float yoffset, float zoffset);

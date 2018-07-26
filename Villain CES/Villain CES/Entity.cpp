@@ -305,11 +305,11 @@ unsigned int CreateBullet(TWorld * ptWorld,XMMATRIX BulletSpawnLocation)
 {
 	unsigned int nThisEntity = createEntity(ptWorld);
 
-	ptWorld->atCollisionMask[nThisEntity].m_tnCollisionMask = COMPONENT_COLLISIONMASK;
-	ptWorld->atGraphicsMask[nThisEntity].m_tnGraphicsMask = COMPONENT_GRAPHICSMASK;
+	ptWorld->atCollisionMask[nThisEntity].m_tnCollisionMask = COMPONENT_COLLISIONMASK |COMPONENT_TRIGGER | COMPONENT_AABB | COMPONENT_NONSTATIC;
+	ptWorld->atGraphicsMask[nThisEntity].m_tnGraphicsMask = COMPONENT_GRAPHICSMASK | COMPONENT_SIMPLEMESH | COMPONENT_SHADERID;
 	ptWorld->atAIMask[nThisEntity].m_tnAIMask = COMPONENT_AIMASK;
 	ptWorld->atUIMask[nThisEntity].m_tnUIMask = COMPONENT_UIMASK;
-	ptWorld->atPhysicsMask[nThisEntity].m_tnPhysicsMask = COMPONENT_PHYSICSMASK;
+	ptWorld->atPhysicsMask[nThisEntity].m_tnPhysicsMask = COMPONENT_PHYSICSMASK | COMPONENT_RIGIDBODY;
 	static TPrimalVert atCubeVertices[]
 	{
 		TPrimalVert{ XMFLOAT3(-0, 0.5f, 0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//0 Top F Left
@@ -383,6 +383,8 @@ unsigned int CreateBullet(TWorld * ptWorld,XMMATRIX BulletSpawnLocation)
 	zerovector.m128_f32[3] = 0;
 	ptWorld->atRigidBody[nThisEntity].gravity = zerovector;
 	ptWorld->atRigidBody[nThisEntity].totalForce = zerovector;
+	ptWorld->atRigidBody[nThisEntity].ground = false;
+
 
 	
 	
@@ -741,7 +743,7 @@ unsigned int CreateCelling(TWorld * ptWorld)
 	return 0;
 }
 
-unsigned int CreateGun(TWorld * ptWorld, XMMATRIX BulletSpawnLocation,int parentWorldMatrixIndex)
+unsigned int CreateGun(TWorld * ptWorld, XMMATRIX BulletSpawnLocation,int parentWorldMatrixIndex,float xoffset,float yoffset,float zoffset)
 {
 unsigned int nThisEntity = createEntity(ptWorld);
 
@@ -752,6 +754,12 @@ ptWorld->atGraphicsMask[nThisEntity].m_tnGraphicsMask = COMPONENT_GRAPHICSMASK |
 ptWorld->atAIMask[nThisEntity].m_tnAIMask = COMPONENT_AIMASK;
 ptWorld->atUIMask[nThisEntity].m_tnUIMask = COMPONENT_UIMASK;
 ptWorld->atPhysicsMask[nThisEntity].m_tnPhysicsMask = COMPONENT_PHYSICSMASK;
+ptWorld->atProjectiles[nThisEntity].m_tnProjectileMask = COMPONENT_PROJECTILESMASK|COMPONENT_CLIP;
+ptWorld->atClip[nThisEntity].nSizeofClipl = 30;
+ptWorld->atClip[nThisEntity].FValueOfCoolDown = 100;
+for (int i = 0; i < ptWorld->atClip[nThisEntity].nSizeofClipl; ++i) {
+	ptWorld->atClip[nThisEntity].nBulletsAvailables.push_back(false);
+}
 static TPrimalVert atCubeVertices[]
 {
 	TPrimalVert{ XMFLOAT3(-0, 0.5f, 0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//0 Top F Left
@@ -822,7 +830,9 @@ ptWorld->atShaderID[nThisEntity].m_nShaderID = 3;
 
 	ptWorld->atWorldMatrix[nThisEntity].worldMatrix = BulletSpawnLocation;
 	ptWorld->atParentWorldMatrix[nThisEntity] = parentWorldMatrixIndex;
-	ptWorld->atOffSetMatrix[nThisEntity]= XMMatrixTranslation(-1, 0, 10.5);
+//	ptWorld->atOffSetMatrix[nThisEntity]= XMMatrixTranslation(-1, 0, 10.5);
+	ptWorld->atOffSetMatrix[nThisEntity] = XMMatrixTranslation(xoffset,yoffset,zoffset);
+
 
 	
 	return nThisEntity;

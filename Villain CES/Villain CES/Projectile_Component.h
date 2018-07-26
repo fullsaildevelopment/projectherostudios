@@ -13,14 +13,19 @@ enum eProjectileComponent
 	COMPONENT_CLIP = 1 << 3
 
 };
+struct TProjectileMask
+{
+	int m_tnProjectileMask = 0;
+};
 struct Clips
 {
 	float fShootingCoolDown;
-	list<int> nBulletsAvailables;
+	list<bool> nBulletsAvailables;
 	vector<int> nBulletsFired;
 	vector<int> nDeadBullets;
 	vector<float> fAliveTime;
 	int nSizeofClipl;
 	bool tryToShoot;
+	float FValueOfCoolDown;
 };
 #endif
