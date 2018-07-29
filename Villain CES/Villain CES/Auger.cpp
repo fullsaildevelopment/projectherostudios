@@ -276,12 +276,16 @@ void CAuger::Update()
 
 		}
 		if (tThisWorld.atAIMask[nCurrentEntity].m_tnAIMask == (COMPONENT_AIMASK | COMPONENT_FOLLOW | COMPONENT_SHOOT)) {
-			XMVECTOR temptpos = tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix.r[3];
+			
 			tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix=XMMatrixLookAtLH(tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix.r[3],
 				tThisWorld.atWorldMatrix[1].worldMatrix.r[3], XMVectorSet(0, 1, 0, 0));
 			tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = XMMatrixInverse(NULL, tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix);
+			XMVECTOR direction = tThisWorld.atWorldMatrix[1].worldMatrix.r[3] - tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix.r[3];
+			direction =XMVector3Normalize(direction);
+			direction *= 0.001f;
+			XMMATRIX localMatrix2 = XMMatrixTranslationFromVector(direction);
+			tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix=XMMatrixMultiply(localMatrix2, tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix);
 		
-			tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix.r[3] = temptpos;
 		}
 		if (tThisWorld.atClip[nCurrentEntity].tryToShoot == true) {
 			int newbullet = CreateBullet(&tThisWorld, tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix);
