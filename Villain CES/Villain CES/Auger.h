@@ -5,6 +5,7 @@
 #include"Physics_System.h"
 #include "Entity.h"
 #include"ProjectileSystem.h"
+#include"AI_System.h"
 class CAuger
 {
 public:
@@ -15,6 +16,8 @@ public:
 	CInputSystem	*pcInputSystem;
 	CPhysicsSystem  *pcPhysicsSystem;
 	CProjectileSystem* pcProjectileSystem;
+	CAISystem		*pcAiSystem;
+	
 	list<int> nBulletsAvailables;
 	vector<int> nBulletsFired;
 	vector<int> nDeadBullets;

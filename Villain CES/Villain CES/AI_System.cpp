@@ -10,3 +10,7 @@ CAISystem::CAISystem()
 CAISystem::~CAISystem()
 {
 }
+
+void CAISystem::FollowAndShoot(XMMATRIX playerMatrix, Clips * AiGun)
+{
+}
