@@ -43,14 +43,11 @@ private:
 	XMMATRIX m_d3dCameraMatrix;
     XMMATRIX m_d3d_ResultMatrix;
 
-	XMMATRIX peguins;
-	int		m_nIndexToBullets;
-	int		m_nIndexToBullets2;
-
-	float	fShootingCoolDown = 0;
-	int		m_nClipSize = 10;
+	
+	int rayindex = -10;
+	float zValue=5;
 
 	TCameraToggle tCameraMode;
-	bool tempt;
+	bool tempt=true;
 };
 

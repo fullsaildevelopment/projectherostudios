@@ -55,6 +55,7 @@ public:
 
 	void InitD3D(HWND cTheWindow);     // sets up and initializes Direct3D
 	void CreateBuffers(TWorld * ptWorld);
+	void CreateEntityBuffer(TWorld * ptWorld, int nEnityIndex);
 	void CreateShaders(ID3D11Device* pd3dDevice);
 	
 	XMMATRIX SetDefaultViewMatrix();
@@ -73,6 +74,7 @@ public:
 	//XMMATRIX SetPlayerViewMatrix(XMMATRIX d3d_ViewM, XMMATRIX d3d_playerM);
 	//Last Frame
 	void CleanD3D(TWorld * ptWorld);         // closes Direct3D and releases memory
+	void CleanD3DObject(TWorld *ptPlanet, int nEntityIndex);
 
 private:
 	ID3D11VertexShader * m_pd3dPrimalVertexShader;

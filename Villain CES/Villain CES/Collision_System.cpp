@@ -226,6 +226,7 @@ TAABB CCollisionSystem::updateAABB(XMMATRIX worldMatrix, TAABB aabb)
 	newWorldMatrix.r[3].m128_f32[0] = worldMatrix.r[3].m128_f32[0];
 	newWorldMatrix.r[3].m128_f32[1] = worldMatrix.r[3].m128_f32[1];
 	newWorldMatrix.r[3].m128_f32[2] = worldMatrix.r[3].m128_f32[2];
+	newWorldMatrix.r[2].m128_f32[2] = worldMatrix.r[2].m128_f32[2];
 
 	XMVECTOR max;
 	max.m128_f32[0] = aabb.m_dMaxPointOrginal.x;

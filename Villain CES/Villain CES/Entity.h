@@ -95,3 +95,8 @@ unsigned int CreateWall(TWorld* ptWorld);
 unsigned int CreateCelling(TWorld* ptWorld);
 unsigned int CreateGun(TWorld* ptWorld, XMMATRIX BulletSpawnLocation, int parentWorldMatrixIndex, float xoffset, float yoffset, float zoffset);
 unsigned int CreateSimpleGunAi(TWorld* ptWorld);
+unsigned int CreateRayBullet(TWorld * ptWorld, XMMATRIX bulletSpawnLocation,float zDistance);
+
+
+ //float zDistance = 0.5f;
+

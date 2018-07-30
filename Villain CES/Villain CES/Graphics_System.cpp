@@ -184,6 +184,22 @@ void CGraphicsSystem::CleanD3D(TWorld *ptPlanet)
 	//m_pcMyInput->DecrementCount();
 }
 
+void CGraphicsSystem::CleanD3DObject(TWorld * ptPlanet, int nEntityIndex)
+{
+	if (ptPlanet->atGraphicsMask[nEntityIndex].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_DEBUGMESH | COMPONENT_SHADERID))
+	{
+		ptPlanet->atDebugMesh[nEntityIndex].m_pd3dVertexBuffer->Release();
+	}
+
+	if (ptPlanet->atGraphicsMask[nEntityIndex].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_SIMPLEMESH | COMPONENT_SHADERID))
+	{
+		ptPlanet->atSimpleMesh[nEntityIndex].m_pd3dVertexBuffer->Release();
+		ptPlanet->atSimpleMesh[nEntityIndex].m_pd3dIndexBuffer->Release();
+
+	}
+	destroyEntity(ptPlanet, nEntityIndex);
+}
+
 void CGraphicsSystem::CreateShaders(ID3D11Device * device)
 {	
 //	#pragma region MyShaders
@@ -283,6 +299,25 @@ void CGraphicsSystem::CreateBuffers(TWorld *ptPlanet)//init first frame
 
 			}
 		}	
+	}
+}
+
+void CGraphicsSystem::CreateEntityBuffer(TWorld * ptWorld, int nEnityIndex)
+{
+	if (ptWorld->atGraphicsMask[nEnityIndex].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_DEBUGMESH | COMPONENT_SHADERID))
+	{
+		if (ptWorld->atDebugMesh[nEnityIndex].m_nVertexCount)
+			m_pd3dDevice->CreateBuffer(&ptWorld->atDebugMesh[nEnityIndex].m_d3dVertexBufferDesc, &ptWorld->atDebugMesh[nEnityIndex].m_d3dVertexData, &ptWorld->atDebugMesh[nEnityIndex].m_pd3dVertexBuffer);
+
+	}
+	if (ptWorld->atGraphicsMask[nEnityIndex].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_SIMPLEMESH | COMPONENT_SHADERID))
+	{
+		if (ptWorld->atSimpleMesh[nEnityIndex].m_nIndexCount && ptWorld->atSimpleMesh[nEnityIndex].m_nVertexCount)
+		{
+			m_pd3dDevice->CreateBuffer(&ptWorld->atSimpleMesh[nEnityIndex].m_d3dVertexBufferDesc, &ptWorld->atSimpleMesh[nEnityIndex].m_d3dVertexData, &ptWorld->atSimpleMesh[nEnityIndex].m_pd3dVertexBuffer);
+			m_pd3dDevice->CreateBuffer(&ptWorld->atSimpleMesh[nEnityIndex].m_d3dIndexBufferDesc, &ptWorld->atSimpleMesh[nEnityIndex].m_d3dIndexData, &ptWorld->atSimpleMesh[nEnityIndex].m_pd3dIndexBuffer);
+
+		}
 	}
 }
 
