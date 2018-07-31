@@ -119,6 +119,9 @@
     <ClCompile Include="InputSystem.cpp">
       <Filter>Header Files\Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="ProjectileSystem.cpp">
+      <Filter>Header Files\Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Villain CES.rc">

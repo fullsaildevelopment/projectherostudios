@@ -7,10 +7,10 @@
 #include "Physics_Component.h"
 #include"Collision_System.h"
 #include "Input_Component.h"
+#include"Projectile_Component.h"
 
 struct TWorld
 {
-
 	int				anComponentMask[ENTITYCOUNT];
 	//Graphics
 	TGraphicsMask	atGraphicsMask[ENTITYCOUNT];
@@ -23,6 +23,9 @@ struct TWorld
 	TShaderID		atShaderID[ENTITYCOUNT];
 	TCamera			atCamera[ENTITYCOUNT];
 	TWorldMatrix	atWorldMatrix[ENTITYCOUNT];
+	int				atParentWorldMatrix[ENTITYCOUNT];
+	XMMATRIX		atOffSetMatrix[ENTITYCOUNT];
+
 	//UI
 	TUIMask			atUIMask[ENTITYCOUNT];
 	TBar			atBar[ENTITYCOUNT];
@@ -44,6 +47,8 @@ struct TWorld
 	TClayton		atClayton[ENTITYCOUNT];
 	TSeth			atSeth[ENTITYCOUNT];
 	TCaelis			atCaelis[ENTITYCOUNT];
+	TProjectileMask atProjectiles[ENTITYCOUNT];
+	Clips			atClip[ENTITYCOUNT];
 };
 struct TCameraToggle
 {
@@ -82,9 +87,10 @@ unsigned int createDebugGrid(TWorld * ptWorld);
 unsigned int createMesh(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMesh tMesh);
 unsigned int createPlayerBox(TWorld * ptWorld);
 unsigned int CreateBullet(TWorld * ptWorld,XMMATRIX bulletSpawnLocation );
-unsigned int AimingLine(TWorld * ptWorld);
+unsigned int AimingLine(TWorld * ptWorld, XMMATRIX BulletSpawnLocation, int parentWorldMatrixIndex, float xoffset, float yoffset, float zoffset);
 
 unsigned int createDummyPlayer(TWorld* ptWorld, XMMATRIX playerMatrix);
 unsigned int CreateGround(TWorld* ptWorld);
 unsigned int CreateWall(TWorld* ptWorld);
 unsigned int CreateCelling(TWorld* ptWorld);
+unsigned int CreateGun(TWorld* ptWorld, XMMATRIX BulletSpawnLocation, int parentWorldMatrixIndex, float xoffset, float yoffset, float zoffset);

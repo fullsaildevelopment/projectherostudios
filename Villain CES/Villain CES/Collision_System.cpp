@@ -209,13 +209,15 @@ XMMATRIX CCollisionSystem::WalkingThrewObjectCheck(XMMATRIX worldPos, TAABB othe
 */
 bool CCollisionSystem::replaceAABB(int nIndex, TAABB m_AABB2)
 {
-	for (list<TAABB>::iterator ptr = m_AAbb.begin(); ptr != m_AAbb.end(); ++ptr) {
-		if (nIndex == ptr->m_IndexLocation) {
-			ptr->m_dMaxPoint = m_AABB2.m_dMaxPoint;
-			ptr->m_dMinPoint = m_AABB2.m_dMinPoint;
-			return true;
+
+		for (list<TAABB>::iterator ptr = m_AAbb.begin(); ptr != m_AAbb.end(); ++ptr) {
+			if (nIndex == ptr->m_IndexLocation) {
+				ptr->m_dMaxPoint = m_AABB2.m_dMaxPoint;
+				ptr->m_dMinPoint = m_AABB2.m_dMinPoint;
+				return true;
+			}
 		}
-	}
+	
 	return false;
 }
 TAABB CCollisionSystem::updateAABB(XMMATRIX worldMatrix, TAABB aabb)
@@ -249,9 +251,12 @@ TAABB CCollisionSystem::updateAABB(XMMATRIX worldMatrix, TAABB aabb)
 	newaabb.m_dMinPoint.z = min.m128_f32[2];
 	newaabb.m_dMinPointOrginal = aabb.m_dMinPointOrginal;
 	newaabb.m_dMaxPointOrginal = aabb.m_dMaxPointOrginal;
-
-	replaceAABB(aabb.m_IndexLocation, newaabb);
+	
+	if(replaceAABB(aabb.m_IndexLocation, newaabb)==true)
 	return newaabb;
+	else {
+		return aabb;
+	}
 }
 TAABB CCollisionSystem::createAABBS(std::vector<XMFLOAT3> verticies)
 {
@@ -372,6 +377,7 @@ bool CCollisionSystem::AABBtoAABBCollisionCheck(TAABB m_AABB2, vector<int>* m_Ot
 		}
 	}
 	if (m_OtherColision->size() != 0) {
+		
 		return true;
 	}
 	
