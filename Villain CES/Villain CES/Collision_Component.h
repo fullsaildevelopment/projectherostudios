@@ -30,6 +30,7 @@ struct TAABB
 	int		 m_IndexLocation;
 	int		 m_MatrtialIndex;
 
+
 };
 
 struct TOBB

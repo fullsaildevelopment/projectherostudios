@@ -10,7 +10,8 @@ enum eProjectileComponent
 	COMPONENT_PROJECTILESMASK = 1 << 0,
 	COMPONENT_WOOD = 1 << 1,
 	COMPONENT_METAL = 1 << 2,
-	COMPONENT_CLIP = 1 << 3
+	COMPONENT_CLIP = 1 << 3,
+	COMPONENT_RAYGUN = 1 << 4
 	
 
 };

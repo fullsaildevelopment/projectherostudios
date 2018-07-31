@@ -28,11 +28,12 @@ public:
 	bool classify_aabb_to_aabb(TAABB aabb1, TAABB aabb2);
 	bool IsLineInBox(XMVECTOR startPoint, XMVECTOR endPoint, XMMATRIX worldMatrix, TAABB boxclide);
 	XMMATRIX WalkingThrewObjectCheck(XMMATRIX worldPos,TAABB otherCollision,TAABB currentCollision);
+	list<TAABB> m_AAbb;
 private:
 	bool ContainAABB(int nIndex);
 	
 	
-	list<TAABB> m_AAbb;
+
 
 
 };
