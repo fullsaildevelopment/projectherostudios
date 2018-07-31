@@ -76,7 +76,7 @@ void CAuger::InitializeSystems()
 
 
 
-	//AimingLine(&tThisWorld, m_d3dWorldMatrix, 1, -1, 0, 10.5);
+	AimingLine(&tThisWorld, m_d3dWorldMatrix, 1, -1, 0, 10.5);
 
 
 	// do not make things that u want to draw after this line of code or shit will  break;
@@ -99,11 +99,11 @@ void CAuger::InitializeSystems()
 				 pcCollisionSystem->AddAABBCollider(MyAbb, nCurrentEntity);
 			 }
 			 else {
-				 TAABB MyAbb = pcCollisionSystem->createAABBS(tThisWorld.atDebugMesh[nCurrentEntity].m_VertexData);
+				/* TAABB MyAbb = pcCollisionSystem->createAABBS(tThisWorld.atDebugMesh[nCurrentEntity].m_VertexData);
 				 MyAbb.m_IndexLocation = nCurrentEntity;
 				 MyAbb.m_dMaxPointOrginal.y += 1;
 				 tThisWorld.atAABB[nCurrentEntity] = MyAbb;
-				 pcCollisionSystem->AddAABBCollider(MyAbb, nCurrentEntity);
+				 pcCollisionSystem->AddAABBCollider(MyAbb, nCurrentEntity);*/
 			 }
 		 }
 	 }
@@ -127,8 +127,9 @@ void CAuger::InitializeSystems()
 
 	 XMVECTOR playerGravity = pcPhysicsSystem->ZeroVector();
 	 playerGravity.m128_f32[1] = -0.000001;
-	 tThisWorld.atRigidBody[1].gravity = playerGravity;
 	 playerGravity.m128_f32[1] = 0;
+	 tThisWorld.atRigidBody[1].gravity = playerGravity;
+
 
 	 tThisWorld.atRigidBody[5].gravity = playerGravity;
 
@@ -264,8 +265,16 @@ void CAuger::Update()
 
 		if (tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_DEBUGMESH | COMPONENT_SHADERID))
 		{
-			tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = m_d3dWorldMatrix;
-			tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = XMMatrixMultiply(XMMatrixScaling(100, 100, 100), tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix);
+			if (pcCollisionSystem->IsLineInBox(XMVector3Transform(tThisWorld.atDebugMesh[nCurrentEntity].m_VertexData[0],tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix)
+			, XMVector3Transform(tThisWorld.atDebugMesh[nCurrentEntity].m_VertexData[1], tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix),
+				tThisWorld.atWorldMatrix[5].worldMatrix,tThisWorld.atAABB[5])==true) {
+				cout << "cat";
+			}
+			else {
+			//	system("CLS");
+			}
+			//tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = m_d3dWorldMatrix;
+		//	tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = XMMatrixMultiply(XMMatrixScaling(100, 100, 100), tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix);
 			pcGraphicsSystem->InitPrimalShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, m_d3dViewMatrix, m_d3dProjectionMatrix, tThisWorld.atDebugMesh[nCurrentEntity], m_d3dCameraMatrix);
 
 			pcGraphicsSystem->ExecutePipeline(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atDebugMesh[nCurrentEntity].m_nVertexCount, tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask, tThisWorld.atShaderID[nCurrentEntity].m_nShaderID);
@@ -291,103 +300,68 @@ void CAuger::Update()
 
 		}
 		if (tThisWorld.atProjectiles[nCurrentEntity].m_tnProjectileMask == (COMPONENT_PROJECTILESMASK | COMPONENT_CLIP)) {
-			if (tThisWorld.atClip[nCurrentEntity].tryToShoot == true && tThisWorld.atClip[nCurrentEntity].nBulletsAvailables.size() != 0 && tThisWorld.atClip[nCurrentEntity].fShootingCoolDown <= 0)
-			{
-				
+			if (tThisWorld.atClip[nCurrentEntity].GunMode == false&& tThisWorld.atClip[nCurrentEntity].tryToShoot == true) {
+			
+					XMMATRIX gun = tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix;
+					gun.r[3].m128_f32[0] += 1;
+					rayindex = CreateRayBullet(&tThisWorld, gun, 10);
+					pcGraphicsSystem->CreateEntityBuffer(&tThisWorld, rayindex);
+					tempt = false;
+					tThisWorld.atAABB[rayindex] = pcCollisionSystem->createAABBS(tThisWorld.atSimpleMesh[rayindex].m_VertexData);
+					tThisWorld.atAABB[rayindex].m_IndexLocation = rayindex;
+					tThisWorld.atWorldMatrix[rayindex].worldMatrix = gun;
+			}
+			else {
+				if (tThisWorld.atClip[nCurrentEntity].tryToShoot == true && tThisWorld.atClip[nCurrentEntity].nBulletsAvailables.size() > 0 && tThisWorld.atClip[nCurrentEntity].fShootingCoolDown <= 0)
+				{
 
-				int newbullet = CreateBullet(&tThisWorld, tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix);
-				//	pcGraphicsSystem->CreateBuffers(&tThisWorld);
+					
+					int newbullet = CreateBullet(&tThisWorld, tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, 
+					tThisWorld.atClip[nCurrentEntity].currentMaterial);
+					//	pcGraphicsSystem->CreateBuffers(&tThisWorld);
 
-				pcProjectileSystem->CreateBulletProjectile(newbullet, &tThisWorld.atClip[nCurrentEntity]);
+					pcProjectileSystem->CreateBulletProjectile(newbullet, &tThisWorld.atClip[nCurrentEntity]);
 					tThisWorld.atAABB[newbullet] = pcCollisionSystem->createAABBS(tThisWorld.atSimpleMesh[newbullet].m_VertexData);
 					tThisWorld.atAABB[newbullet].m_IndexLocation = newbullet;
 
 					pcCollisionSystem->AddAABBCollider(tThisWorld.atAABB[newbullet], newbullet);
 					pcGraphicsSystem->CreateEntityBuffer(&tThisWorld, newbullet);
-			
-				tThisWorld.atClip[nCurrentEntity].tryToShoot = false;
 
-			}
-			if (tThisWorld.atClip[nCurrentEntity].tryToReload == true) {
-				pcProjectileSystem->Reload(&tThisWorld.atClip[nCurrentEntity]);
-			}
-			if (tThisWorld.atClip[nCurrentEntity].nBulletsFired.size() != 0) {
-				for (int i = 0; i < tThisWorld.atClip[nCurrentEntity].nBulletsFired.size(); ++i) {
-					if (tThisWorld.atClip[nCurrentEntity].fAliveTime[i] < 100) {
-						pcPhysicsSystem->AddBulletForce(&tThisWorld.atRigidBody[tThisWorld.atClip[nCurrentEntity].nBulletsFired[i]]);
-						tThisWorld.atClip[nCurrentEntity].fAliveTime[i] += 0.1;
-						//tThisWorld.atWorldMatrix[tThisWorld.atClip[nCurrentEntity].nBulletsFired[i]].worldMatrix.r[2].m128_f32[2] += 1;
-					}
-					else {
-						tThisWorld.atClip[nCurrentEntity].fAliveTime.erase(tThisWorld.atClip[nCurrentEntity].fAliveTime.begin() + i);
-						pcCollisionSystem->RemoveAABBCollider(tThisWorld.atClip[nCurrentEntity].nBulletsFired[i]);
+					tThisWorld.atClip[nCurrentEntity].tryToShoot = false;
 
-						//nDeadBullets.push_back(nBulletsFired[m_nIndexToBullets]);
-						pcGraphicsSystem->CleanD3DObject(&tThisWorld, tThisWorld.atClip[nCurrentEntity].nBulletsFired[i]);
-						//nBulletsFired.erase(nBulletsFired.begin() + m_nIndexToBullets);
-						tThisWorld.atClip[nCurrentEntity].nBulletsFired.erase(tThisWorld.atClip[nCurrentEntity].nBulletsFired.begin() + i);
-					}
 				}
-				tThisWorld.atClip[nCurrentEntity].fShootingCoolDown -= 0.1;
-			}
+				else if (tThisWorld.atClip[nCurrentEntity].tryToShoot == true) {
+					tThisWorld.atClip[nCurrentEntity].tryToShoot = false;
+				}
+				if (tThisWorld.atClip[nCurrentEntity].tryToReload == true) {
+					pcProjectileSystem->Reload(&tThisWorld.atClip[nCurrentEntity]);
+					tThisWorld.atClip[nCurrentEntity].tryToReload = false;
+			
+				}
+				if (tThisWorld.atClip[nCurrentEntity].nBulletsFired.size() != 0) {
+					for (int i = 0; i < tThisWorld.atClip[nCurrentEntity].nBulletsFired.size(); ++i) {
+						if (tThisWorld.atClip[nCurrentEntity].fAliveTime[i] < 100) {
+							pcPhysicsSystem->AddBulletForce(&tThisWorld.atRigidBody[tThisWorld.atClip[nCurrentEntity].nBulletsFired[i]]);
+							tThisWorld.atClip[nCurrentEntity].fAliveTime[i] += 0.1;
+							//tThisWorld.atWorldMatrix[tThisWorld.atClip[nCurrentEntity].nBulletsFired[i]].worldMatrix.r[2].m128_f32[2] += 1;
+						}
+						else {
+							tThisWorld.atClip[nCurrentEntity].fAliveTime.erase(tThisWorld.atClip[nCurrentEntity].fAliveTime.begin() + i);
+							pcCollisionSystem->RemoveAABBCollider(tThisWorld.atClip[nCurrentEntity].nBulletsFired[i]);
 
+							//nDeadBullets.push_back(nBulletsFired[m_nIndexToBullets]);
+							pcGraphicsSystem->CleanD3DObject(&tThisWorld, tThisWorld.atClip[nCurrentEntity].nBulletsFired[i]);
+							//nBulletsFired.erase(nBulletsFired.begin() + m_nIndexToBullets);
+							tThisWorld.atClip[nCurrentEntity].nBulletsFired.erase(tThisWorld.atClip[nCurrentEntity].nBulletsFired.begin() + i);
+						}
+					}
+					tThisWorld.atClip[nCurrentEntity].fShootingCoolDown -= 0.1;
+				}
+			}
 			
 		}
 			tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = pcPhysicsSystem->ResolveForces(&tThisWorld.atRigidBody[nCurrentEntity], tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, true);
-			if (tThisWorld.atProjectiles[nCurrentEntity].m_tnProjectileMask == (COMPONENT_PROJECTILESMASK | COMPONENT_RAYLINE)) {
-				//if()
-				if (tempt == true) {
-					XMMATRIX gun = tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix;
-					gun.r[3].m128_f32[0] += 1;
-					rayindex = CreateRayBullet(&tThisWorld, gun, 10);
-					pcGraphicsSystem->CreateEntityBuffer(&tThisWorld, rayindex);
-					tempt =false;
-					tThisWorld.atAABB[rayindex] = pcCollisionSystem->createAABBS(tThisWorld.atSimpleMesh[rayindex].m_VertexData);
-					tThisWorld.atAABB[rayindex].m_IndexLocation = rayindex;
-				}
-				else {
-					XMMATRIX gun =tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix;
-					gun.r[3].m128_f32[0] += 1;
-					tThisWorld.atWorldMatrix[rayindex].worldMatrix = gun;
-					 TPrimalVert atCubeVertices2[]
-					{
-						TPrimalVert{ XMFLOAT3(-0, 0.5f, zValue),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//0 Top F Left
-						TPrimalVert{ XMFLOAT3(0.5f, 0.5f, zValue),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//1 Top F Right
-						TPrimalVert{ XMFLOAT3(-0, -0, zValue),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//2 Bottom F Left
-						TPrimalVert{ XMFLOAT3(0.5f, -0, zValue),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//3 Bottom F Right
-						TPrimalVert{ XMFLOAT3(-0, 0.5f, 0),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//4 Top B Left
-						TPrimalVert{ XMFLOAT3(0.5f, 0.5f, 0),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//5 Top B Right
-						TPrimalVert{ XMFLOAT3(-0, -0, 0),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//6 Bottom B Left
-						TPrimalVert{ XMFLOAT3(0.5f, -0, 0),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//7 Bottom B Right
-
-						TPrimalVert{ XMFLOAT3(0.5f, 0.5f, zValue),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//8 //Top F Right
-						TPrimalVert{ XMFLOAT3(-0, 0.5f, zValue),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//9 // Top F Left
-						TPrimalVert{ XMFLOAT3(-0, -0, 0),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//2 Bottom B Left
-						TPrimalVert{ XMFLOAT3(0.5f, -0, 0),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//11 Bottom B Right
-						TPrimalVert{ XMFLOAT3(-0, -0, zValue),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//12 Bottom F Left
-						TPrimalVert{ XMFLOAT3(-0, 0.5f, zValue),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//13 Top F Left
-						TPrimalVert{ XMFLOAT3(0.5f, 0.5f, zValue),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//14 Top F Right
-						TPrimalVert{ XMFLOAT3(0.5f, -0, zValue),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) }//15 Bottm F Right
-					};
-					// if (zValue <= 20) {
-					//	 D3D11_MAPPED_SUBRESOURCE d3dMappedBufferResource;
-					//	 pcGraphicsSystem->m_pd3dDeviceContext->Map(tThisWorld.atSimpleMesh[rayindex].m_pd3dVertexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &d3dMappedBufferResource);
-					//	 memcpy(d3dMappedBufferResource.pData, &atCubeVertices2[0], sizeof(atCubeVertices2));
-					//	 pcGraphicsSystem->m_pd3dDeviceContext->Unmap(tThisWorld.atSimpleMesh[rayindex].m_pd3dVertexBuffer, 0);
-					// }
-					 tThisWorld.atSimpleMesh[rayindex].m_VertexData.clear();
-					 for (int i = 0; i < tThisWorld.atSimpleMesh[rayindex].m_nVertexCount; ++i) {
-						 tThisWorld.atSimpleMesh[rayindex].m_VertexData.push_back(atCubeVertices2[i].m_d3dfPosition);
-					 }
-					 pcCollisionSystem->RemoveAABBCollider(rayindex);
-					 tThisWorld.atAABB[rayindex] = pcCollisionSystem->createAABBS(tThisWorld.atSimpleMesh[rayindex].m_VertexData);
-					 tThisWorld.atAABB[rayindex].m_IndexLocation = rayindex;
-
-					 pcCollisionSystem->AddAABBCollider(tThisWorld.atAABB[rayindex], rayindex);
-
-				}
-				
-			}
+		
 		
 		if ((tThisWorld.atCollisionMask[nCurrentEntity].m_tnCollisionMask == (COMPONENT_COLLISIONMASK | COMPONENT_AABB | COMPONENT_NONSTATIC | COMPONENT_TRIGGER) | tThisWorld.atCollisionMask[nCurrentEntity].m_tnCollisionMask == (COMPONENT_COLLISIONMASK | COMPONENT_NONTRIGGER | COMPONENT_AABB | COMPONENT_NONSTATIC)))
 		{
@@ -517,7 +491,7 @@ void CAuger::Update()
 		//nDeadBullets.push_back(nBulletsFired[m_nIndexToBullets]);
 	//	pcGraphicsSystem->CleanD3DObject(&tThisWorld, rayindex);
 		pcGraphicsSystem->m_pd3dSwapchain->Present(0, 0);
-		zValue += 0.01;
+		zValue += 0.001;
 
 		
 	}

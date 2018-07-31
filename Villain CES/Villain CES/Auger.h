@@ -18,10 +18,7 @@ public:
 	CProjectileSystem* pcProjectileSystem;
 	CAISystem		*pcAiSystem;
 	
-	list<int> nBulletsAvailables;
-	vector<int> nBulletsFired;
-	vector<int> nDeadBullets;
-	vector<float> fAliveTime;
+
 
 
 

@@ -73,6 +73,49 @@ bool CCollisionSystem::classify_aabb_to_aabb(TAABB aabb1, TAABB aabb2)
 	(aabb1.m_dMinPoint.y <= aabb2.m_dMaxPoint.y&&aabb1.m_dMaxPoint.y >= aabb2.m_dMinPoint.y) &&
 	(aabb1.m_dMinPoint.z <= aabb2.m_dMaxPoint.z&&aabb1.m_dMaxPoint.z >= aabb2.m_dMinPoint.z);
 }
+bool CCollisionSystem::IsLineInBox(XMVECTOR startPoint, XMVECTOR endPoint,XMMATRIX worldMatrix,TAABB boxclider)
+{
+	// Put line in box space
+	XMMATRIX MInv = XMMatrixInverse(NULL, worldMatrix);
+	XMVECTOR LB1 = XMVector3Transform(startPoint, MInv);
+	XMVECTOR LB2 = XMVector3Transform(endPoint, MInv);
+
+	// Get line midpoint and extent
+	XMVECTOR LMid = (LB1 + LB2) * 0.5f;
+	XMVECTOR L = (LB1 - LMid);
+	XMVECTOR LExt;
+	LExt.m128_f32[0] = fabs(L.m128_f32[0]);
+	LExt.m128_f32[1] = fabs( L.m128_f32[1]);
+	LExt.m128_f32[2] = fabs(L.m128_f32[2]);
+	XMVECTOR CenterofBox2;
+	CenterofBox2.m128_f32[0] = (boxclider.m_dMaxPoint.x + boxclider.m_dMinPoint.x) * 0.5f;
+	CenterofBox2.m128_f32[1] = (boxclider.m_dMaxPoint.y + boxclider.m_dMinPoint.y) * 0.5f;
+	CenterofBox2.m128_f32[2] = (boxclider.m_dMaxPoint.z + boxclider.m_dMinPoint.z) * 0.5f;
+	XMVECTOR CenterofBox;
+	CenterofBox.m128_f32[0] = boxclider.m_dMinPoint.x;
+	CenterofBox.m128_f32[1] = boxclider.m_dMinPoint.y;
+	CenterofBox.m128_f32[2] = boxclider.m_dMinPoint.z;
+	CenterofBox = CenterofBox - CenterofBox2;
+	CenterofBox.m128_f32[0] = fabs(CenterofBox.m128_f32[0]);
+	CenterofBox.m128_f32[1] = fabs(CenterofBox.m128_f32[1]);
+	CenterofBox.m128_f32[2] = fabs(CenterofBox.m128_f32[2]);
+
+
+	// Use Separating Axis Test
+	// Separation vector from box center to line center is LMid, since the line is in box space
+	if (fabs(LMid.m128_f32[0]) > CenterofBox.m128_f32[0] + LExt.m128_f32[0]) return false;
+	if (fabs(LMid.m128_f32[1]) > CenterofBox.m128_f32[1] + LExt.m128_f32[1]) return false;
+	if (fabs(LMid.m128_f32[2]) > CenterofBox.m128_f32[2] + LExt.m128_f32[2]) return false;
+	// Crossproducts of line and each axis
+	//if ( fabs( LMid.y * L.z - LMid.z * L.y)  >  (m_Extent.y * LExt.z + m_Extent.z * LExt.y) ) return false;
+	if (fabs(LMid.m128_f32[1] * L.m128_f32[2] - LMid.m128_f32[2] * L.m128_f32[1])  >  (CenterofBox.m128_f32[1] * LExt.m128_f32[2] + CenterofBox.m128_f32[2] * LExt.m128_f32[1])) return false;
+	//	if ( fabs( LMid.x * L.z - LMid.z * L.x)  >  (m_Extent.x * LExt.z + m_Extent.z * LExt.x) ) return false;
+	if (fabs(LMid.m128_f32[0] * L.m128_f32[2] - LMid.m128_f32[2] * L.m128_f32[0])  >  (CenterofBox.m128_f32[0] * LExt.m128_f32[2] + CenterofBox.m128_f32[2] * LExt.m128_f32[0])) return false;
+	//if ( fabs( LMid.x * L.y - LMid.y * L.x)  >  (m_Extent.x * LExt.y + m_Extent.y * LExt.x) ) return false;
+	if (fabs(LMid.m128_f32[0] * L.m128_f32[1] - LMid.m128_f32[1] * L.m128_f32[0])  >  (CenterofBox.m128_f32[0] * LExt.m128_f32[1] + CenterofBox.m128_f32[1] * LExt.m128_f32[0])) return false;
+	// No separating axis, the line intersects
+	return true;
+}
 XMMATRIX CCollisionSystem::WalkingThrewObjectCheck(XMMATRIX worldPos, TAABB otherCollision, TAABB currentCollision)
 {
 	XMMATRIX D3DMatrix=worldPos;
@@ -220,13 +263,19 @@ bool CCollisionSystem::replaceAABB(int nIndex, TAABB m_AABB2)
 	
 	return false;
 }
+int inline GetIntersection(float fDst1, float fDst2, XMVECTOR P1, XMVECTOR P2, XMVECTOR &Hit) {
+	if ((fDst1 * fDst2) >= 0.0f) return 0;
+	if (fDst1 == fDst2) return 0;
+	Hit = P1 + (P2 - P1) * (-fDst1 / (fDst2 - fDst1));
+	return 1;
+}
 TAABB CCollisionSystem::updateAABB(XMMATRIX worldMatrix, TAABB aabb)
 {
 	XMMATRIX newWorldMatrix = XMMatrixIdentity();
 	newWorldMatrix.r[3].m128_f32[0] = worldMatrix.r[3].m128_f32[0];
 	newWorldMatrix.r[3].m128_f32[1] = worldMatrix.r[3].m128_f32[1];
 	newWorldMatrix.r[3].m128_f32[2] = worldMatrix.r[3].m128_f32[2];
-	newWorldMatrix.r[2].m128_f32[2] = worldMatrix.r[2].m128_f32[2];
+	//newWorldMatrix.r[2].m128_f32[2] = worldMatrix.r[2].m128_f32[2];
 
 	XMVECTOR max;
 	max.m128_f32[0] = aabb.m_dMaxPointOrginal.x;
