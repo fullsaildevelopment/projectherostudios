@@ -39,6 +39,7 @@ void destroyEntity(TWorld * ptWorld, unsigned int nThisEntity)
 	ptWorld->atRigidBody[nThisEntity].velocity = zeroVector;
 	ptWorld->atRigidBody[nThisEntity].gravity = zeroVector;
 	ptWorld->atRigidBody[nThisEntity].maxVelocity = zeroVector;
+	ptWorld->atParentWorldMatrix[nThisEntity] = -1;
 
 
 
@@ -950,7 +951,7 @@ unsigned int CreateSimpleGunAi(TWorld * ptWorld)
 	return 0;
 }
 
-unsigned int CreateRayBullet(TWorld * ptWorld, XMMATRIX bulletSpawnLocation, float zDistance)
+unsigned int CreateRayBullet(TWorld * ptWorld, XMMATRIX bulletSpawnLocation, float zDistance, int parentWorldMatrixIndex, float xoffset, float yoffset, float zoffset)
 {
 	unsigned int nThisEntity = createEntity(ptWorld);
 
@@ -1010,7 +1011,7 @@ unsigned int CreateRayBullet(TWorld * ptWorld, XMMATRIX bulletSpawnLocation, flo
 
 
 
-	ptWorld->atWorldMatrix[nThisEntity].worldMatrix = bulletSpawnLocation;
+	
 
 	ptWorld->atShaderID[nThisEntity].m_nShaderID = 2;
 	for (int i = 0; i < ptWorld->atDebugMesh[nThisEntity].m_nVertexCount; ++i) {
@@ -1021,6 +1022,9 @@ unsigned int CreateRayBullet(TWorld * ptWorld, XMMATRIX bulletSpawnLocation, flo
 
 		ptWorld->atDebugMesh[nThisEntity].m_VertexData.push_back(tempt);
 	}
+	ptWorld->atParentWorldMatrix[nThisEntity] = parentWorldMatrixIndex;
+	//	ptWorld->atOffSetMatrix[nThisEntity]= XMMatrixTranslation(-1, 0, 10.5);
+	ptWorld->atOffSetMatrix[nThisEntity] = XMMatrixTranslation(xoffset, yoffset, zoffset);
 	return nThisEntity;
 }
 

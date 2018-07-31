@@ -205,38 +205,24 @@ void CAuger::Update()
 
 	pcGraphicsSystem->UpdateD3D();
 	
-	if (pcInputSystem->InputCheck(G_KEY_CAPSLOCK)==1) {
+	if (pcInputSystem->InputCheck(G_BUTTON_MIDDLE)) {
+		tThisWorld.atClip[7].GunMode = !tThisWorld.atClip[7].GunMode;
+	}
+	if (pcInputSystem->InputCheck(G_KEY_CAPSLOCK)==1&&tThisWorld.atClip[7].GunMode==true) {
 
 		tThisWorld.atClip[7].tryToShoot = true;
-		//tThisWorld.atClip[8].tryToShoot = true;
-
-
-
-			/*fShootingCoolDown = 100;
-			int indextoBullet = *nBulletsAvailables.begin();
-			nBulletsAvailables.pop_front();
-			nBulletsFired.push_back(indextoBullet);
-			fAliveTime.push_back(0);
-			TAABB MyAbb = pcCollisionSystem->createAABBS(tThisWorld.atSimpleMesh[indextoBullet].m_VertexData);
-			MyAbb.m_IndexLocation = indextoBullet;
-			tThisWorld.atAABB[indextoBullet] = MyAbb;
-			pcCollisionSystem->AddAABBCollider(MyAbb, indextoBullet);
-			tThisWorld.atCollisionMask[indextoBullet].m_tnCollisionMask = COMPONENT_COLLISIONMASK | COMPONENT_AABB | COMPONENT_NONSTATIC| COMPONENT_TRIGGER;
-			tThisWorld.atGraphicsMask[indextoBullet].m_tnGraphicsMask = COMPONENT_GRAPHICSMASK | COMPONENT_SIMPLEMESH | COMPONENT_SHADERID;
-
-			tThisWorld.atPhysicsMask[indextoBullet].m_tnPhysicsMask = COMPONENT_PHYSICSMASK | COMPONENT_RIGIDBODY;
-			XMMATRIX bulletSpawnLocation = m_d3dPlayerMatrix;
-			pcGraphicsSystem->CreateBuffers(&tThisWorld);
-
-
-
-			tThisWorld.atWorldMatrix[indextoBullet].worldMatrix = bulletSpawnLocation;
-			
-			float x = 0;*/
 
 		
 	}
-	
+	else if (pcInputSystem->InputCheck(G_KEY_CAPSLOCK) == 1 && tThisWorld.atClip[7].GunMode == false) {
+		tThisWorld.atClip[7].tryToShoot = true;
+
+	}
+	else if (tThisWorld.atClip[7].GunMode == false)
+	{
+		tThisWorld.atClip[7].tryToShoot = false;
+
+	}
 	//for (list<int>::iterator ptr = nBulletsFired.begin(); ptr != nBulletsFired.end(); ++ptr) {
 	//	XMVECTOR localpos;
 	//	localpos.m128_f32[0] = 0;
@@ -268,7 +254,10 @@ void CAuger::Update()
 			if (pcCollisionSystem->IsLineInBox(XMVector3Transform(tThisWorld.atDebugMesh[nCurrentEntity].m_VertexData[0],tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix)
 			, XMVector3Transform(tThisWorld.atDebugMesh[nCurrentEntity].m_VertexData[1], tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix),
 				tThisWorld.atWorldMatrix[5].worldMatrix,tThisWorld.atAABB[5])==true) {
-				cout << "cat";
+				tThisWorld.atClip[7].currentMaterial = 1;
+				XMFLOAT4 red;
+				red.x = 1;
+				tThisWorld.atClip[7].colorofBullets = red;
 			}
 			else {
 			//	system("CLS");
@@ -302,14 +291,20 @@ void CAuger::Update()
 		if (tThisWorld.atProjectiles[nCurrentEntity].m_tnProjectileMask == (COMPONENT_PROJECTILESMASK | COMPONENT_CLIP)) {
 			if (tThisWorld.atClip[nCurrentEntity].GunMode == false&& tThisWorld.atClip[nCurrentEntity].tryToShoot == true) {
 			
+				if (tThisWorld.atClip[nCurrentEntity].maderay == false) {
 					XMMATRIX gun = tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix;
 					gun.r[3].m128_f32[0] += 1;
-					rayindex = CreateRayBullet(&tThisWorld, gun, 10);
+					rayindex = CreateRayBullet(&tThisWorld, gun, 10,1,1,0,10.5);
 					pcGraphicsSystem->CreateEntityBuffer(&tThisWorld, rayindex);
-					tempt = false;
-					tThisWorld.atAABB[rayindex] = pcCollisionSystem->createAABBS(tThisWorld.atSimpleMesh[rayindex].m_VertexData);
-					tThisWorld.atAABB[rayindex].m_IndexLocation = rayindex;
-					tThisWorld.atWorldMatrix[rayindex].worldMatrix = gun;
+					tThisWorld.atClip[nCurrentEntity].maderay = true;
+				}
+				
+			}
+			else if (tThisWorld.atClip[nCurrentEntity].GunMode==false && tThisWorld.atClip[nCurrentEntity].tryToShoot == false&& tThisWorld.atClip[nCurrentEntity].maderay==true) {
+				pcGraphicsSystem->CleanD3DObject(&tThisWorld, rayindex);
+				rayindex = -1;
+				tThisWorld.atClip[nCurrentEntity].maderay = false;
+
 			}
 			else {
 				if (tThisWorld.atClip[nCurrentEntity].tryToShoot == true && tThisWorld.atClip[nCurrentEntity].nBulletsAvailables.size() > 0 && tThisWorld.atClip[nCurrentEntity].fShootingCoolDown <= 0)
@@ -318,6 +313,7 @@ void CAuger::Update()
 					
 					int newbullet = CreateBullet(&tThisWorld, tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, 
 					tThisWorld.atClip[nCurrentEntity].currentMaterial);
+					tThisWorld.atSimpleMesh[newbullet].m_nColor = tThisWorld.atClip[nCurrentEntity].colorofBullets;
 					//	pcGraphicsSystem->CreateBuffers(&tThisWorld);
 
 					pcProjectileSystem->CreateBulletProjectile(newbullet, &tThisWorld.atClip[nCurrentEntity]);
@@ -422,6 +418,18 @@ void CAuger::Update()
 			tTempPixelBuffer.m_d3dCollisionColor = tThisWorld.atSimpleMesh[nCurrentEntity].m_nColor;
 
 		}
+		if (tThisWorld.atParentWorldMatrix[nCurrentEntity] != -1)
+		{
+			
+			if(nCurrentEntity == 8) {
+				float x = 0;
+			}
+			tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = XMMatrixMultiply(pcGraphicsSystem->SetDefaultWorldPosition(),
+				tThisWorld.atWorldMatrix[tThisWorld.atParentWorldMatrix[nCurrentEntity]].worldMatrix);
+
+			tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = XMMatrixMultiply(tThisWorld.atOffSetMatrix[nCurrentEntity], tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix);
+			//tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix.r[2].m128_f32[2] = 1;
+		}
 		//}
 		if (tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_SIMPLEMESH | COMPONENT_SHADERID))
 		{
@@ -457,14 +465,7 @@ void CAuger::Update()
 			}
 			
 			// do you have a parent matrix to be mutplied by
-			else if(tThisWorld.atParentWorldMatrix[nCurrentEntity]!=-1) {
-
-				tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = XMMatrixMultiply(pcGraphicsSystem->SetDefaultWorldPosition(),
-					tThisWorld.atWorldMatrix[tThisWorld.atParentWorldMatrix[nCurrentEntity]].worldMatrix);
-				
-				tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = XMMatrixMultiply(tThisWorld.atOffSetMatrix[nCurrentEntity], tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix);
-				tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix.r[2].m128_f32[2] = 1;
-			}
+			 
 			
 		
 			tTempVertexBuffer.m_d3dWorldMatrix = tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix;

@@ -20,7 +20,8 @@ struct TProjectileMask
 };
 struct Clips
 {
-	bool GunMode=true;
+	bool maderay;
+	bool GunMode=false;
 	float fShootingCoolDown;
 	list<bool> nBulletsAvailables;
 	vector<int> nBulletsFired;
@@ -30,5 +31,6 @@ struct Clips
 	bool tryToReload;
 	float FValueOfCoolDown;
 	int currentMaterial;
+	XMFLOAT4 colorofBullets;
 };
 #endif
