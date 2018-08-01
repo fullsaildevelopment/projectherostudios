@@ -214,10 +214,10 @@ void CAuger::Update()
 
 		}
 		// ai code would run here
-		if (tThisWorld.atAIMask[nCurrentEntity].m_tnAIMask == (COMPONENT_AIMASK | COMPONENT_FOLLOW | COMPONENT_SHOOT)) {
+		if (tThisWorld.atAIMask[nCurrentEntity].m_tnAIMask == (COMPONENT_AIMASK | COMPONENT_FOLLOW )) {
 		
 			// ai code do not delete
-			tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix=XMMatrixLookAtLH(tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix.r[3],
+		/*	tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix=XMMatrixLookAtLH(tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix.r[3],
 			tThisWorld.atWorldMatrix[PlayerStartIndex].worldMatrix.r[3], XMVectorSet(0, 1, 0, 0));
 			tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = XMMatrixInverse(NULL, tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix);
 			XMVECTOR direction = tThisWorld.atWorldMatrix[PlayerStartIndex].worldMatrix.r[3] - tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix.r[3];
@@ -230,7 +230,8 @@ void CAuger::Update()
 			XMMATRIX localMatrix2 = XMMatrixTranslationFromVector(direction);
 
 			tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix=XMMatrixMultiply(localMatrix2, tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix);
-		
+		*/
+			pcAiSystem->FollowObject(tThisWorld.atWorldMatrix[PlayerStartIndex].worldMatrix, &tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix);
 
 		}
 		if (tThisWorld.atProjectiles[nCurrentEntity].m_tnProjectileMask == (COMPONENT_PROJECTILESMASK | COMPONENT_CLIP)) {

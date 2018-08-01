@@ -6,5 +6,6 @@ public:
 	CAISystem();
 	~CAISystem();
 	void FollowAndShoot(XMMATRIX playerMatrix, Clips* AiGun);
+	void FollowObject(XMMATRIX thingToFollow, XMMATRIX* AIMatrix);
 };
 
