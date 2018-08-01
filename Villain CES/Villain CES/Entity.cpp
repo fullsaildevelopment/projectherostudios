@@ -267,6 +267,12 @@ unsigned int createPlayerBox(TWorld * ptWorld)
 		12,13,4,4,6,12,
 		14,7,5,14,15,7
 	};
+	XMVECTOR playerGravity;
+	playerGravity.m128_f32[1] = -0.000001;
+	playerGravity.m128_f32[0] = 0;
+	playerGravity.m128_f32[2] = 0;
+	playerGravity.m128_f32[3] = 0;
+	ptWorld->atRigidBody[nThisEntity].gravity = playerGravity;
 
 	ptWorld->atSimpleMesh[nThisEntity].m_nIndexCount = 36;
 	ptWorld->atSimpleMesh[nThisEntity].m_nVertexCount = 16;
@@ -535,7 +541,7 @@ unsigned int AimingLine(TWorld * ptWorld, XMMATRIX BulletSpawnLocation, int pare
 	return nThisEntity;
 }
 
-unsigned int CreateGround(TWorld * ptWorld)
+unsigned int CreateGround(TWorld * ptWorld, XMMATRIX SpawnPosition)
 {
 	unsigned int nThisEntity = createEntity(ptWorld);
 	ptWorld->atRigidBody[nThisEntity].ground = true;
@@ -610,12 +616,12 @@ unsigned int CreateGround(TWorld * ptWorld)
 	for (int i = 0; i < ptWorld->atSimpleMesh[nThisEntity].m_nVertexCount; ++i) {
 		ptWorld->atSimpleMesh[nThisEntity].m_VertexData.push_back(atCubeVertices[i].m_d3dfPosition);
 	}
-
+	ptWorld->atWorldMatrix[nThisEntity].worldMatrix = SpawnPosition;
 
 	return 0;
 }
 
-unsigned int CreateWall(TWorld * ptWorld)
+unsigned int CreateWall(TWorld * ptWorld, XMMATRIX SpawnPosition)
 {
 	unsigned int nThisEntity = createEntity(ptWorld);
 	ptWorld->atRigidBody[nThisEntity].wall = true;
@@ -690,12 +696,12 @@ unsigned int CreateWall(TWorld * ptWorld)
 	for (int i = 0; i < ptWorld->atSimpleMesh[nThisEntity].m_nVertexCount; ++i) {
 		ptWorld->atSimpleMesh[nThisEntity].m_VertexData.push_back(atCubeVertices[i].m_d3dfPosition);
 	}
-
+	ptWorld->atWorldMatrix[nThisEntity].worldMatrix = SpawnPosition;
 
 	return 0;
 }
 
-unsigned int CreateCelling(TWorld * ptWorld)
+unsigned int CreateCelling(TWorld * ptWorld, XMMATRIX SpawnPosition)
 {
 	unsigned int nThisEntity = createEntity(ptWorld);
 	ptWorld->atRigidBody[nThisEntity].wall = true;
@@ -771,7 +777,7 @@ unsigned int CreateCelling(TWorld * ptWorld)
 		ptWorld->atSimpleMesh[nThisEntity].m_VertexData.push_back(atCubeVertices[i].m_d3dfPosition);
 	}
 
-
+	ptWorld->atWorldMatrix[nThisEntity].worldMatrix = SpawnPosition;
 	return 0;
 }
 
@@ -871,7 +877,7 @@ ptWorld->atShaderID[nThisEntity].m_nShaderID = 3;
 	return nThisEntity;
 }
 
-unsigned int CreateSimpleGunAi(TWorld * ptWorld)
+unsigned int CreateSimpleGunAi(TWorld * ptWorld, XMMATRIX SpawnPosition)
 {
 	unsigned int nThisEntity = createEntity(ptWorld);
 
@@ -911,6 +917,12 @@ unsigned int CreateSimpleGunAi(TWorld * ptWorld)
 		12,13,4,4,6,12,
 		14,7,5,14,15,7
 	};
+	XMVECTOR AIGravity;
+	AIGravity.m128_f32[1] = -0.000001;
+	AIGravity.m128_f32[0] = 0;
+	AIGravity.m128_f32[2] = 0;
+	AIGravity.m128_f32[3] = 0;
+	ptWorld->atRigidBody[nThisEntity].gravity = AIGravity;
 
 	ptWorld->atSimpleMesh[nThisEntity].m_nIndexCount = 36;
 	ptWorld->atSimpleMesh[nThisEntity].m_nVertexCount = 16;
@@ -947,7 +959,7 @@ unsigned int CreateSimpleGunAi(TWorld * ptWorld)
 		ptWorld->atSimpleMesh[nThisEntity].m_VertexData.push_back(atCubeVertices[i].m_d3dfPosition);
 	}
 
-
+	ptWorld->atWorldMatrix[nThisEntity].worldMatrix = SpawnPosition;
 	return 0;
 }
 

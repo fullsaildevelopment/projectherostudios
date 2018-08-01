@@ -39,94 +39,54 @@ void CAuger::InitializeSystems()
 	for (int i = 0; i < ENTITYCOUNT; ++i) {
 		tThisWorld.atParentWorldMatrix[i] = -1;
 	}
+	m_d3dWorldMatrix = pcGraphicsSystem->SetDefaultWorldPosition();//Call some sort of function from the graphics system to create this matrix
+	m_d3dViewMatrix = pcGraphicsSystem->SetDefaultViewMatrix();//Call some sort of function from the graphics system to create this matrix
+	m_d3dCameraMatrix = pcGraphicsSystem->SetDefaultCameraMatrix();
+	m_d3dProjectionMatrix = pcGraphicsSystem->SetDefaultPerspective();
 
 	pcGraphicsSystem->InitD3D(cApplicationWindow);
-	CreateGround(&tThisWorld);
-
-
+	XMMATRIX groundSpawnPoint;
+	groundSpawnPoint = m_d3dWorldMatrix;
+	groundSpawnPoint.r[3].m128_f32[1] -= 2;
+	CreateGround(&tThisWorld,groundSpawnPoint);
 	tCameraMode.bDebugMode = false;
 	tCameraMode.bAimMode = false;
 	tCameraMode.bWalkMode = true;
-
-
-
 	m_d3dPlayerMatrix = pcGraphicsSystem->SetDefaultWorldPosition();
 
 
 
 	createPlayerBox(&tThisWorld);
-	CreateWall(&tThisWorld);
-	CreateWall(&tThisWorld);
-	CreateCelling(&tThisWorld);
-	CreateSimpleGunAi(&tThisWorld);
+	XMMATRIX wall = m_d3dWorldMatrix;
+	wall.r[3].m128_f32[1] += -1;
+
+	CreateWall(&tThisWorld,wall);
+	wall = m_d3dWorldMatrix;
+	wall.r[3].m128_f32[1] += -1;
+	wall.r[3].m128_f32[0] += -22;
+	CreateWall(&tThisWorld,wall);
+	XMMATRIX celling = m_d3dWorldMatrix;
+	celling.r[3].m128_f32[1] += 10;
+	CreateCelling(&tThisWorld,celling);
+	XMMATRIX AILocation = m_d3dWorldMatrix;
+	AILocation.r[3].m128_f32[2] += -5;
+	AILocation.r[3].m128_f32[0] += -5;
+	CreateSimpleGunAi(&tThisWorld,AILocation);
 
 
 	AimingLine(&tThisWorld, m_d3dWorldMatrix, 1, -1, 0, 10.5);
 
 	CreateGun(&tThisWorld, m_d3dWorldMatrix, 1, -1, 0, 10.5);
-	CreateSimpleGunAi(&tThisWorld);
-	CreateSimpleGunAi(&tThisWorld);
-
-
+	AILocation = m_d3dWorldMatrix;
+	AILocation.r[3].m128_f32[0] += -1;
+	AILocation.r[3].m128_f32[2] += -2;
+	CreateSimpleGunAi(&tThisWorld,AILocation);
+	AILocation = m_d3dWorldMatrix;
+	AILocation.r[3].m128_f32[0] += -3;
+	AILocation.r[3].m128_f32[2] += -5;
+	CreateSimpleGunAi(&tThisWorld,AILocation);
 	
-
 	
-	XMMATRIX  m_dDefaultWorldMa4rix = pcGraphicsSystem->SetDefaultWorldPosition();
-	m_dDefaultWorldMa4rix.r[3].m128_f32[1] += 10;
-
-
-
-
-
-	 m_d3dWorldMatrix = pcGraphicsSystem->SetDefaultWorldPosition();//Call some sort of function from the graphics system to create this matrix
-	 m_d3dViewMatrix = pcGraphicsSystem->SetDefaultViewMatrix();//Call some sort of function from the graphics system to create this matrix
-	 m_d3dCameraMatrix = pcGraphicsSystem->SetDefaultCameraMatrix();
-	 m_d3dProjectionMatrix = pcGraphicsSystem->SetDefaultPerspective();
-	
-	 tThisWorld.atWorldMatrix[0].worldMatrix = m_d3dWorldMatrix;
-	 tThisWorld.atWorldMatrix[0].worldMatrix.r[3].m128_f32[1] -= 2;
-
-	 tThisWorld.atWorldMatrix[2].worldMatrix = m_d3dWorldMatrix;
-	 tThisWorld.atWorldMatrix[3].worldMatrix = m_d3dWorldMatrix;
-	 tThisWorld.atWorldMatrix[4].worldMatrix = m_d3dWorldMatrix;
-	 tThisWorld.atWorldMatrix[5].worldMatrix = m_d3dWorldMatrix;
-	 tThisWorld.atWorldMatrix[2].worldMatrix = m_d3dWorldMatrix;
-	 tThisWorld.atWorldMatrix[8].worldMatrix = m_d3dWorldMatrix;
-	 tThisWorld.atWorldMatrix[9].worldMatrix = m_d3dWorldMatrix;
-
-
-	 tThisWorld.atWorldMatrix[2].worldMatrix.r[3].m128_f32[1] += -1;
-	 tThisWorld.atWorldMatrix[3].worldMatrix.r[3].m128_f32[1] += -1;
-	 tThisWorld.atWorldMatrix[3].worldMatrix.r[3].m128_f32[0] += -22;
-
-	 tThisWorld.atWorldMatrix[4].worldMatrix.r[3].m128_f32[1] += 10;
-	 tThisWorld.atWorldMatrix[5].worldMatrix.r[3].m128_f32[2] += -5;
-	 tThisWorld.atWorldMatrix[5].worldMatrix.r[3].m128_f32[0] += -5;
-
-
-	 tThisWorld.atWorldMatrix[8].worldMatrix.r[3].m128_f32[0] += -1;
-	 tThisWorld.atWorldMatrix[8].worldMatrix.r[3].m128_f32[2] += -2;
-
-	 tThisWorld.atWorldMatrix[9].worldMatrix.r[3].m128_f32[0] +=-3;
-	 tThisWorld.atWorldMatrix[9].worldMatrix.r[3].m128_f32[2] += -5;
-
-
-
-
-
-	
-
-	 
-	 XMVECTOR playerGravity = pcPhysicsSystem->ZeroVector();
-	 playerGravity.m128_f32[1] = -0.000001;
-
-	 tThisWorld.atRigidBody[1].gravity = playerGravity;
-
-
-	 tThisWorld.atRigidBody[5].gravity = playerGravity;
-	 tThisWorld.atRigidBody[8].gravity = playerGravity;
-	 tThisWorld.atRigidBody[9].gravity = playerGravity;
-
 	 XMFLOAT4 blue;
 	 blue.y = 0;
 	 blue.z = 1;

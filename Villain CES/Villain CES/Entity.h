@@ -90,11 +90,11 @@ unsigned int CreateBullet(TWorld * ptWorld,XMMATRIX bulletSpawnLocation, int Mat
 unsigned int AimingLine(TWorld * ptWorld, XMMATRIX BulletSpawnLocation, int parentWorldMatrixIndex, float xoffset, float yoffset, float zoffset);
 
 unsigned int createDummyPlayer(TWorld* ptWorld, XMMATRIX playerMatrix);
-unsigned int CreateGround(TWorld* ptWorld);
-unsigned int CreateWall(TWorld* ptWorld);
-unsigned int CreateCelling(TWorld* ptWorld);
+unsigned int CreateGround(TWorld* ptWorld, XMMATRIX SpawnPosition);
+unsigned int CreateWall(TWorld* ptWorld, XMMATRIX SpawnPosition);
+unsigned int CreateCelling(TWorld* ptWorld, XMMATRIX SpawnPosition);
 unsigned int CreateGun(TWorld* ptWorld, XMMATRIX BulletSpawnLocation, int parentWorldMatrixIndex, float xoffset, float yoffset, float zoffset);
-unsigned int CreateSimpleGunAi(TWorld* ptWorld);
+unsigned int CreateSimpleGunAi(TWorld* ptWorld, XMMATRIX SpawnPosition);
 unsigned int CreateRayBullet(TWorld * ptWorld, XMMATRIX bulletSpawnLocation,float zDistance,  int parentWorldMatrixIndex, float xoffset, float yoffset, float zoffset);
 
 
