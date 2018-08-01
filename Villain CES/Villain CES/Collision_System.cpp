@@ -73,8 +73,12 @@ bool CCollisionSystem::classify_aabb_to_aabb(TAABB aabb1, TAABB aabb2)
 	(aabb1.m_dMinPoint.y <= aabb2.m_dMaxPoint.y&&aabb1.m_dMaxPoint.y >= aabb2.m_dMinPoint.y) &&
 	(aabb1.m_dMinPoint.z <= aabb2.m_dMaxPoint.z&&aabb1.m_dMaxPoint.z >= aabb2.m_dMinPoint.z);
 }
-bool CCollisionSystem::IsLineInBox(XMVECTOR startPoint, XMVECTOR endPoint,XMMATRIX worldMatrix,TAABB boxclider)
+bool CCollisionSystem::IsLineInBox(XMVECTOR startPoint, XMVECTOR endPoint,XMMATRIX worldMatrix,TAABB boxclider, float* distance)
 {
+	
+		
+	
+
 	// Put line in box space
 	XMMATRIX MInv = XMMatrixInverse(NULL, worldMatrix);
 	XMVECTOR LB1 = XMVector3Transform(startPoint, MInv);
@@ -114,6 +118,35 @@ bool CCollisionSystem::IsLineInBox(XMVECTOR startPoint, XMVECTOR endPoint,XMMATR
 	//if ( fabs( LMid.x * L.y - LMid.y * L.x)  >  (m_Extent.x * LExt.y + m_Extent.y * LExt.x) ) return false;
 	if (fabs(LMid.m128_f32[0] * L.m128_f32[1] - LMid.m128_f32[1] * L.m128_f32[0])  >  (CenterofBox.m128_f32[0] * LExt.m128_f32[1] + CenterofBox.m128_f32[1] * LExt.m128_f32[0])) return false;
 	// No separating axis, the line intersects
+	float minDistance;
+	float maxDistance;
+	XMVECTOR min;
+	min.m128_f32[0] = boxclider.m_dMinPoint.x;
+	min.m128_f32[1] = boxclider.m_dMinPoint.y;
+	min.m128_f32[2] = boxclider.m_dMinPoint.z;
+	XMVECTOR max;
+	max.m128_f32[0] = boxclider.m_dMaxPoint.x;
+	max.m128_f32[1] = boxclider.m_dMaxPoint.y;
+	max.m128_f32[2] = boxclider.m_dMaxPoint.z;
+
+
+
+	minDistance = sqrtf(
+		((min.m128_f32[0] - startPoint.m128_f32[0])*(min.m128_f32[0] - startPoint.m128_f32[0])) +
+		((min.m128_f32[1] - startPoint.m128_f32[1])*(min.m128_f32[1] - startPoint.m128_f32[1])) +
+		((min.m128_f32[2] - startPoint.m128_f32[2])*(min.m128_f32[2] - startPoint.m128_f32[2]))
+	);
+	maxDistance = sqrtf(
+		((max.m128_f32[0] - startPoint.m128_f32[0])*(max.m128_f32[0] - startPoint.m128_f32[0])) +
+		((max.m128_f32[1] - startPoint.m128_f32[1])*(max.m128_f32[1] - startPoint.m128_f32[1])) +
+		((max.m128_f32[2] - startPoint.m128_f32[2])*(max.m128_f32[2] - startPoint.m128_f32[2]))
+	);
+	if (minDistance > maxDistance) {
+		*distance = maxDistance;
+	}
+	else {
+		*distance = minDistance;
+	}
 	return true;
 }
 XMMATRIX CCollisionSystem::WalkingThrewObjectCheck(XMMATRIX worldPos, TAABB otherCollision, TAABB currentCollision)
