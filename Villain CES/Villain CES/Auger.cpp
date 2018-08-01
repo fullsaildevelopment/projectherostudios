@@ -53,7 +53,7 @@ void CAuger::InitializeSystems()
 
 
 
-	PlayerStartIndex =createPlayerBox(&tThisWorld);
+	PlayerStartIndex = CreateClayTon(&tThisWorld);
 	XMMATRIX wall = m_d3dWorldMatrix;
 	wall.r[3].m128_f32[1] += -1;
 

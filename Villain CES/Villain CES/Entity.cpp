@@ -226,7 +226,7 @@ unsigned int createPlayerBox(TWorld * ptWorld, CCollisionSystem* pcCollisionSyst
 	return 0;
 }
 
-unsigned int createPlayerBox(TWorld * ptWorld)
+unsigned int CreateClayTon(TWorld * ptWorld)
 
 {
 	unsigned int nThisEntity = createEntity(ptWorld);
