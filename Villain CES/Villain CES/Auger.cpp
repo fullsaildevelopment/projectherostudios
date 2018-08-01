@@ -173,14 +173,14 @@ void CAuger::Update()
 		tThisWorld.atClip[GunIndexForPlayer].GunMode = !tThisWorld.atClip[GunIndexForPlayer].GunMode;
 	}
 	// shoot a bullet
-	if (pcInputSystem->InputCheck(G_KEY_CAPSLOCK)==1&&tThisWorld.atClip[GunIndexForPlayer].GunMode==true) {
+	if (pcInputSystem->InputCheck(G_BUTTON_LEFT)==1&&tThisWorld.atClip[GunIndexForPlayer].GunMode==true) {
 
 		tThisWorld.atClip[GunIndexForPlayer].tryToShoot = true;
 
 		
 	}
 	// shoot a ray
-	else if (pcInputSystem->InputCheck(G_KEY_CAPSLOCK) == 1 && tThisWorld.atClip[GunIndexForPlayer].GunMode == false) {
+	else if (pcInputSystem->InputCheck(G_BUTTON_LEFT) == 1 && tThisWorld.atClip[GunIndexForPlayer].GunMode == false) {
 		tThisWorld.atClip[GunIndexForPlayer].tryToShoot = true;
 
 	}
@@ -217,10 +217,10 @@ void CAuger::Update()
 		if (tThisWorld.atAIMask[nCurrentEntity].m_tnAIMask == (COMPONENT_AIMASK | COMPONENT_FOLLOW | COMPONENT_SHOOT)) {
 		
 			// ai code do not delete
-		/*	tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix=XMMatrixLookAtLH(tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix.r[3],
-			tThisWorld.atWorldMatrix[1].worldMatrix.r[3], XMVectorSet(0, 1, 0, 0));
+			tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix=XMMatrixLookAtLH(tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix.r[3],
+			tThisWorld.atWorldMatrix[PlayerStartIndex].worldMatrix.r[3], XMVectorSet(0, 1, 0, 0));
 			tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = XMMatrixInverse(NULL, tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix);
-			XMVECTOR direction = tThisWorld.atWorldMatrix[1].worldMatrix.r[3] - tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix.r[3];
+			XMVECTOR direction = tThisWorld.atWorldMatrix[PlayerStartIndex].worldMatrix.r[3] - tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix.r[3];
 			direction.m128_f32[0] = 0;
 			direction.m128_f32[1] = 0;
 			direction.m128_f32[2] = 1;
@@ -229,7 +229,7 @@ void CAuger::Update()
 			direction *= 0.001f;
 			XMMATRIX localMatrix2 = XMMatrixTranslationFromVector(direction);
 
-			tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix=XMMatrixMultiply(localMatrix2, tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix);*/
+			tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix=XMMatrixMultiply(localMatrix2, tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix);
 		
 
 		}
