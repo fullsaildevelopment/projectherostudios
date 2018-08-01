@@ -45,10 +45,7 @@ void CAuger::InitializeSystems()
 	m_d3dProjectionMatrix = pcGraphicsSystem->SetDefaultPerspective();
 
 	pcGraphicsSystem->InitD3D(cApplicationWindow);
-	XMMATRIX groundSpawnPoint;
-	groundSpawnPoint = m_d3dWorldMatrix;
-	groundSpawnPoint.r[3].m128_f32[1] -= 2;
-	CreateGround(&tThisWorld,groundSpawnPoint);
+	
 	tCameraMode.bDebugMode = false;
 	tCameraMode.bAimMode = false;
 	tCameraMode.bWalkMode = true;
@@ -85,7 +82,10 @@ void CAuger::InitializeSystems()
 	AILocation.r[3].m128_f32[0] += -3;
 	AILocation.r[3].m128_f32[2] += -5;
 	CreateSimpleGunAi(&tThisWorld,AILocation);
-	
+	XMMATRIX groundSpawnPoint;
+	groundSpawnPoint = m_d3dWorldMatrix;
+	groundSpawnPoint.r[3].m128_f32[1] -= 2;
+	CreateGround(&tThisWorld, groundSpawnPoint);
 	
 	 XMFLOAT4 blue;
 	 blue.y = 0;
@@ -239,7 +239,7 @@ void CAuger::Update()
 				if (tThisWorld.atClip[nCurrentEntity].maderay == false) {
 					XMMATRIX gun = tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix;
 					gun.r[3].m128_f32[0] += 1;
-					rayindex = CreateRayBullet(&tThisWorld, gun, 10,1,-0.6,-0.1,10.7);
+					rayindex = CreateRayBullet(&tThisWorld, gun, 10,PlayerStartIndex,-0.6,-0.1,10.7);
 					pcGraphicsSystem->CreateEntityBuffer(&tThisWorld, rayindex);
 					tThisWorld.atClip[nCurrentEntity].maderay = true;
 				}
@@ -306,9 +306,9 @@ void CAuger::Update()
 						, XMVector3Transform(tThisWorld.atDebugMesh[nCurrentEntity].m_VertexData[1], tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix),
 						tThisWorld.atWorldMatrix[ptr->m_IndexLocation].worldMatrix, *ptr,distanceCalucaltion) == true&&*distanceCalucaltion<CloseEstObject) {
 						CloseEstObject = *distanceCalucaltion;
-						tThisWorld.atClip[7].currentMaterial = ptr->m_MatrtialIndex;
+						tThisWorld.atClip[GunIndexForPlayer].currentMaterial = ptr->m_MatrtialIndex;
 						
-						tThisWorld.atClip[7].colorofBullets = tThisWorld.atSimpleMesh[ptr->m_IndexLocation].m_nColor;
+						tThisWorld.atClip[GunIndexForPlayer].colorofBullets = tThisWorld.atSimpleMesh[ptr->m_IndexLocation].m_nColor;
 					}
 				}
 				delete distanceCalucaltion;
@@ -349,7 +349,7 @@ void CAuger::Update()
 								COMPONENT_NONTRIGGER | COMPONENT_AABB | COMPONENT_NONSTATIC))) {
 						tTempVertexBuffer.m_d3dWorldMatrix = pcCollisionSystem->WalkingThrewObjectCheck(tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, tThisWorld.atAABB[otherCollisionsIndex[i]], tThisWorld.atAABB[nCurrentEntity]);
 						tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = tTempVertexBuffer.m_d3dWorldMatrix;
-						if (nCurrentEntity == 1) {
+						if (tThisWorld.atInputMask[nCurrentEntity].m_tnInputMask==(COMPONENT_CLAYTON| COMPONENT_INPUTMASK)) {
 							m_d3dPlayerMatrix = tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix;
 						}
 
@@ -401,7 +401,7 @@ void CAuger::Update()
 		if (tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_SIMPLEMESH | COMPONENT_SHADERID))
 		{
 			
-			if (nCurrentEntity == 1) 
+			if (tThisWorld.atInputMask[nCurrentEntity].m_tnInputMask == (COMPONENT_CLAYTON | COMPONENT_INPUTMASK))
 			{
 				
 				if (tCameraMode.bWalkMode == true)
