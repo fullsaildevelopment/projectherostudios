@@ -1042,6 +1042,11 @@ unsigned int CreateRayBullet(TWorld * ptWorld, XMMATRIX bulletSpawnLocation, flo
 	return nThisEntity;
 }
 
+unsigned int CreateTemptUIBox(TWorld * ptWorld, XMMATRIX SpawnPosition)
+{
+	return 0;
+}
+
 
 
 

@@ -44,7 +44,7 @@ private:
 	int GunIndexForPlayer = -10;
 	int rayindex = -10;
 	float zValue=5;
-
+	bool GamePaused = false;
 	TCameraToggle tCameraMode;
 	
 };
