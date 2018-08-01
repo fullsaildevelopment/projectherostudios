@@ -310,7 +310,7 @@ unsigned int createPlayerBox(TWorld * ptWorld)
 	}
 
 
-	return 0;
+	return nThisEntity;
 }
 /*
 * CreateBullet():  This function creates a inactivebullet
@@ -781,7 +781,7 @@ unsigned int CreateCelling(TWorld * ptWorld, XMMATRIX SpawnPosition)
 	return 0;
 }
 
-unsigned int CreateGun(TWorld * ptWorld, XMMATRIX BulletSpawnLocation,int parentWorldMatrixIndex,float xoffset,float yoffset,float zoffset)
+unsigned int CreateGunForPlayer(TWorld * ptWorld, XMMATRIX BulletSpawnLocation,int parentWorldMatrixIndex,float xoffset,float yoffset,float zoffset)
 {
 unsigned int nThisEntity = createEntity(ptWorld);
 

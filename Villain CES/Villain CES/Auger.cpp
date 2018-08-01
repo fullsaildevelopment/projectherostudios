@@ -56,7 +56,7 @@ void CAuger::InitializeSystems()
 
 
 
-	createPlayerBox(&tThisWorld);
+	PlayerStartIndex =createPlayerBox(&tThisWorld);
 	XMMATRIX wall = m_d3dWorldMatrix;
 	wall.r[3].m128_f32[1] += -1;
 
@@ -74,9 +74,9 @@ void CAuger::InitializeSystems()
 	CreateSimpleGunAi(&tThisWorld,AILocation);
 
 
-	AimingLine(&tThisWorld, m_d3dWorldMatrix, 1, -1, 0, 10.5);
+	AimingLine(&tThisWorld, m_d3dWorldMatrix, PlayerStartIndex, -1, 0, 10.5);
 
-	CreateGun(&tThisWorld, m_d3dWorldMatrix, 1, -1, 0, 10.5);
+	GunIndexForPlayer =CreateGunForPlayer(&tThisWorld, m_d3dWorldMatrix, PlayerStartIndex, -1, 0, 10.5);
 	AILocation = m_d3dWorldMatrix;
 	AILocation.r[3].m128_f32[0] += -1;
 	AILocation.r[3].m128_f32[2] += -2;
@@ -170,31 +170,31 @@ void CAuger::Update()
 	pcGraphicsSystem->UpdateD3D();
 	// togle the modes that you are in
 	if (pcInputSystem->InputCheck(G_BUTTON_MIDDLE)) {
-		tThisWorld.atClip[7].GunMode = !tThisWorld.atClip[7].GunMode;
+		tThisWorld.atClip[GunIndexForPlayer].GunMode = !tThisWorld.atClip[GunIndexForPlayer].GunMode;
 	}
 	// shoot a bullet
-	if (pcInputSystem->InputCheck(G_KEY_CAPSLOCK)==1&&tThisWorld.atClip[7].GunMode==true) {
+	if (pcInputSystem->InputCheck(G_KEY_CAPSLOCK)==1&&tThisWorld.atClip[GunIndexForPlayer].GunMode==true) {
 
-		tThisWorld.atClip[7].tryToShoot = true;
+		tThisWorld.atClip[GunIndexForPlayer].tryToShoot = true;
 
 		
 	}
 	// shoot a ray
-	else if (pcInputSystem->InputCheck(G_KEY_CAPSLOCK) == 1 && tThisWorld.atClip[7].GunMode == false) {
-		tThisWorld.atClip[7].tryToShoot = true;
+	else if (pcInputSystem->InputCheck(G_KEY_CAPSLOCK) == 1 && tThisWorld.atClip[GunIndexForPlayer].GunMode == false) {
+		tThisWorld.atClip[GunIndexForPlayer].tryToShoot = true;
 
 	}
 	// turn the ray off
-	else if (tThisWorld.atClip[7].GunMode == false)
+	else if (tThisWorld.atClip[GunIndexForPlayer].GunMode == false)
 	{
-		tThisWorld.atClip[7].tryToShoot = false;
+		tThisWorld.atClip[GunIndexForPlayer].tryToShoot = false;
 
 	}
 
 	// reload
 	if (pcInputSystem->InputCheck(G_KEY_R) == 1) {
 
-		tThisWorld.atClip[7].tryToReload = true;
+		tThisWorld.atClip[GunIndexForPlayer].tryToReload = true;
 
 	}
 	
@@ -239,7 +239,7 @@ void CAuger::Update()
 				if (tThisWorld.atClip[nCurrentEntity].maderay == false) {
 					XMMATRIX gun = tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix;
 					gun.r[3].m128_f32[0] += 1;
-					rayindex = CreateRayBullet(&tThisWorld, gun, 10,1,-0.4,0,10.7);
+					rayindex = CreateRayBullet(&tThisWorld, gun, 10,1,-0.6,-0.1,10.7);
 					pcGraphicsSystem->CreateEntityBuffer(&tThisWorld, rayindex);
 					tThisWorld.atClip[nCurrentEntity].maderay = true;
 				}

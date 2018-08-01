@@ -40,11 +40,12 @@ private:
 	XMMATRIX m_d3dCameraMatrix;
     XMMATRIX m_d3d_ResultMatrix;
 
-	
+	int PlayerStartIndex = -10;
+	int GunIndexForPlayer = -10;
 	int rayindex = -10;
 	float zValue=5;
 
 	TCameraToggle tCameraMode;
-	bool tempt=true;
+	
 };
 
