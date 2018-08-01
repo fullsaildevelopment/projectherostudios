@@ -343,8 +343,7 @@ void CAuger::Update()
 						tThisWorld.atWorldMatrix[ptr->m_IndexLocation].worldMatrix, *ptr,distanceCalucaltion) == true&&*distanceCalucaltion<CloseEstObject) {
 						CloseEstObject = *distanceCalucaltion;
 						tThisWorld.atClip[7].currentMaterial = ptr->m_MatrtialIndex;
-						XMFLOAT4 red;
-						red.x = 1;
+						
 						tThisWorld.atClip[7].colorofBullets = tThisWorld.atSimpleMesh[ptr->m_IndexLocation].m_nColor;
 					}
 				}
@@ -467,7 +466,7 @@ void CAuger::Update()
 				}
 			}
 			
-			tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = pcPhysicsSystem->ResolveForces(&tThisWorld.atRigidBody[nCurrentEntity], tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, false);
+		//	tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = pcPhysicsSystem->ResolveForces(&tThisWorld.atRigidBody[nCurrentEntity], tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, false);
 			
 			tTempVertexBuffer.m_d3dWorldMatrix = tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix;
 			tTempVertexBuffer.m_d3dProjectionMatrix = m_d3dProjectionMatrix;
