@@ -285,7 +285,10 @@ XMMATRIX CCollisionSystem::WalkingThrewObjectCheck(XMMATRIX worldPos, TAABB othe
 */
 bool CCollisionSystem::replaceAABB(int nIndex, TAABB m_AABB2)
 {
-
+	if (nIndex == 0) {
+		float x = 0;
+	}
+	
 		for (list<TAABB>::iterator ptr = m_AAbb.begin(); ptr != m_AAbb.end(); ++ptr) {
 			if (nIndex == ptr->m_IndexLocation) {
 				ptr->m_dMaxPoint = m_AABB2.m_dMaxPoint;
@@ -304,6 +307,7 @@ int inline GetIntersection(float fDst1, float fDst2, XMVECTOR P1, XMVECTOR P2, X
 }
 TAABB CCollisionSystem::updateAABB(XMMATRIX worldMatrix, TAABB aabb)
 {
+	
 	XMMATRIX newWorldMatrix = XMMatrixIdentity();
 	newWorldMatrix.r[3].m128_f32[0] = worldMatrix.r[3].m128_f32[0];
 	newWorldMatrix.r[3].m128_f32[1] = worldMatrix.r[3].m128_f32[1];
@@ -451,9 +455,16 @@ bool CCollisionSystem::RemoveAABBCollider(int nIndex)
 
 bool CCollisionSystem::AABBtoAABBCollisionCheck(TAABB m_AABB2, vector<int>* m_OtherColision)
 {
+	if (m_AABB2.m_IndexLocation == 1) {
+		float x = 0;
+	}
+	
 	for (list<TAABB>::iterator ptr = m_AAbb.begin(); ptr != m_AAbb.end(); ++ptr) {
 		if (m_AABB2.m_IndexLocation != ptr->m_IndexLocation) {
 			if (classify_aabb_to_aabb(m_AABB2, *ptr) == true) {
+				if (m_AABB2.m_IndexLocation == 8) {
+					float x = 0;
+				}
 				m_OtherColision->push_back(ptr->m_IndexLocation);
 				
 			}
