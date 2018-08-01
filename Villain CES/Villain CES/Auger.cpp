@@ -58,14 +58,14 @@ void CAuger::InitializeSystems()
 	CreateWall(&tThisWorld);
 	CreateWall(&tThisWorld);
 	CreateCelling(&tThisWorld);
-	createPlayerBox(&tThisWorld);
+	CreateSimpleGunAi(&tThisWorld);
 
 
 	AimingLine(&tThisWorld, m_d3dWorldMatrix, 1, -1, 0, 10.5);
 
 	CreateGun(&tThisWorld, m_d3dWorldMatrix, 1, -1, 0, 10.5);
-	createPlayerBox(&tThisWorld);
-	createPlayerBox(&tThisWorld);
+	CreateSimpleGunAi(&tThisWorld);
+	CreateSimpleGunAi(&tThisWorld);
 
 
 	
@@ -208,27 +208,30 @@ void CAuger::Update()
 	
 
 	pcGraphicsSystem->UpdateD3D();
-	
+	// togle the modes that you are in
 	if (pcInputSystem->InputCheck(G_BUTTON_MIDDLE)) {
 		tThisWorld.atClip[7].GunMode = !tThisWorld.atClip[7].GunMode;
 	}
+	// shoot a bullet
 	if (pcInputSystem->InputCheck(G_KEY_CAPSLOCK)==1&&tThisWorld.atClip[7].GunMode==true) {
 
 		tThisWorld.atClip[7].tryToShoot = true;
 
 		
 	}
+	// shoot a ray
 	else if (pcInputSystem->InputCheck(G_KEY_CAPSLOCK) == 1 && tThisWorld.atClip[7].GunMode == false) {
 		tThisWorld.atClip[7].tryToShoot = true;
 
 	}
+	// turn the ray off
 	else if (tThisWorld.atClip[7].GunMode == false)
 	{
 		tThisWorld.atClip[7].tryToShoot = false;
 
 	}
 
-	
+	// reload
 	if (pcInputSystem->InputCheck(G_KEY_R) == 1) {
 
 		tThisWorld.atClip[7].tryToReload = true;
@@ -250,6 +253,7 @@ void CAuger::Update()
 			pcGraphicsSystem->ExecutePipeline(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atDebugMesh[nCurrentEntity].m_nVertexCount, tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask, tThisWorld.atShaderID[nCurrentEntity].m_nShaderID);
 
 		}
+		// ai code would run here
 		if (tThisWorld.atAIMask[nCurrentEntity].m_tnAIMask == (COMPONENT_AIMASK | COMPONENT_FOLLOW | COMPONENT_SHOOT)) {
 		
 			// ai code do not delete
@@ -349,22 +353,13 @@ void CAuger::Update()
 				}
 				delete distanceCalucaltion;
 			}
-			if(tThisWorld.atCollisionMask[nCurrentEntity].m_tnCollisionMask==(COMPONENT_COLLISIONMASK |
-				COMPONENT_TRIGGER | COMPONENT_AABB | COMPONENT_NONSTATIC)|| tThisWorld.atCollisionMask[nCurrentEntity].m_tnCollisionMask == (COMPONENT_COLLISIONMASK |
-					COMPONENT_NONTRIGGER | COMPONENT_AABB | COMPONENT_NONSTATIC))
-			tThisWorld.atAABB[nCurrentEntity] = pcCollisionSystem->updateAABB(tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, tThisWorld.atAABB[nCurrentEntity]);
+			if (tThisWorld.atCollisionMask[nCurrentEntity].m_tnCollisionMask == (COMPONENT_COLLISIONMASK |
+				COMPONENT_TRIGGER | COMPONENT_AABB | COMPONENT_NONSTATIC) || tThisWorld.atCollisionMask[nCurrentEntity].m_tnCollisionMask == (COMPONENT_COLLISIONMASK |
+					COMPONENT_NONTRIGGER | COMPONENT_AABB | COMPONENT_NONSTATIC)) {
+				tThisWorld.atAABB[nCurrentEntity] = pcCollisionSystem->updateAABB(tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, tThisWorld.atAABB[nCurrentEntity]);
+			}
 		if ((tThisWorld.atCollisionMask[nCurrentEntity].m_tnCollisionMask == (COMPONENT_COLLISIONMASK | COMPONENT_AABB | COMPONENT_NONSTATIC | COMPONENT_TRIGGER) | tThisWorld.atCollisionMask[nCurrentEntity].m_tnCollisionMask == (COMPONENT_COLLISIONMASK | COMPONENT_NONTRIGGER | COMPONENT_AABB | COMPONENT_NONSTATIC)))
 		{
-			if (nCurrentEntity == 8) {
-				float x = 0;
-			}
-			
-		//	tThisWorld.atWorldMatrix[8].worldMatrix = tThisWorld.atWorldMatrix[1].worldMatrix;
-		//	tThisWorld.atWorldMatrix[8].worldMatrix.r[3].m128_f32[0] -= 2;
-		////	tThisWorld.atWorldMatrix[8].worldMatrix.r[3].m128_f32[1] -= 2;
-
-			tThisWorld.atAABB[8] = pcCollisionSystem->updateAABB(tThisWorld.atWorldMatrix[8].worldMatrix, tThisWorld.atAABB[8]);
-
 			vector<int> otherCollisionsIndex;
 			if (pcCollisionSystem->AABBtoAABBCollisionCheck(tThisWorld.atAABB[nCurrentEntity], &otherCollisionsIndex) == true)
 			{
@@ -377,6 +372,7 @@ void CAuger::Update()
 						{
 							float x = 0;
 						}
+
 						tThisWorld.atRigidBody[nCurrentEntity].totalForce = -tThisWorld.atRigidBody[nCurrentEntity].velocity;
 						
 
@@ -465,6 +461,7 @@ void CAuger::Update()
 					m_d3dPlayerMatrix = tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix;
 				}
 			}
+
 			
 		//	tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = pcPhysicsSystem->ResolveForces(&tThisWorld.atRigidBody[nCurrentEntity], tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, false);
 			
