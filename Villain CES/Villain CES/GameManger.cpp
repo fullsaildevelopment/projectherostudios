@@ -41,6 +41,7 @@ void CGameMangerSystem::LoadLevel()
 	tCameraMode.bAimMode = false;
 	tCameraMode.bWalkMode = true;
 	m_d3dPlayerMatrix = pcGraphicsSystem->SetDefaultWorldPosition();
+	m_d3dPlayerMatrix.r[3].m128_f32[1] += 1;
 
 
 
@@ -536,7 +537,7 @@ void CGameMangerSystem::RestartLevel()
 
 int CGameMangerSystem::LoadMainMenu()
 {
-	
+	bool switchlevel = false;
 
 
 	 XMMATRIX m_d3d_ResultMatrix = pcGraphicsSystem->SetDefaultWorldPosition();
@@ -703,9 +704,8 @@ int CGameMangerSystem::LoadMainMenu()
 								COMPONENT_TRIGGER | COMPONENT_AABB | COMPONENT_NONSTATIC))
 					{
 						if (tThisWorld.atAABB[otherCollisionsIndex[i]].m_SceneChange != -30) {
-							pcGraphicsSystem->CleanD3D(&tThisWorld);
-							pcCollisionSystem->m_AAbb.clear();
-							return tThisWorld.atAABB[otherCollisionsIndex[i]].m_SceneChange;
+							switchlevel = true;
+							break;
 						}
 						/*if (tThisWorld.atAIMask[otherCollisionsIndex[i]].m_tnAIMask == COMPONENT_AIMASK | COMPONENT_FOLLOW) {
 							pcCollisionSystem->RemoveAABBCollider(otherCollisionsIndex[i]);
@@ -774,7 +774,7 @@ int CGameMangerSystem::LoadMainMenu()
 	}
 
 	pcGraphicsSystem->m_pd3dSwapchain->Present(0, 0);
-	if (pcInputSystem->InputCheck(G_KEY_ENTER) == 1) {
+	if (pcInputSystem->InputCheck(G_KEY_ENTER) == 1|| switchlevel==true&&pcInputSystem->InputCheck(G_KEY_ENTER)==0) {
 		pcGraphicsSystem->CleanD3DLevel(&tThisWorld);
 		pcCollisionSystem->m_AAbb.clear();
 
