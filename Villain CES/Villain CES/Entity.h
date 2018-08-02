@@ -73,7 +73,7 @@ struct TSmartMesh
 	float m_afJointWeights[4];
 	int m_anJointIndices[4];
 };
-
+unsigned int SpawnLevelChanger(TWorld *ptWorld, XMMATRIX SpawnPosition);
 unsigned int createEntity(TWorld *ptWorld);
 
 void destroyEntity(TWorld *ptWorld, unsigned int nEntity);

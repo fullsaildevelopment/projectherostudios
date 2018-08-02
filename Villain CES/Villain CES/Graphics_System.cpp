@@ -184,6 +184,26 @@ void CGraphicsSystem::CleanD3D(TWorld *ptPlanet)
 	//m_pcMyInput->DecrementCount();
 }
 
+void CGraphicsSystem::CleanD3DLevel(TWorld * ptPlanet)
+{
+	for (int nEntityIndex = 0; nEntityIndex < ENTITYCOUNT; nEntityIndex++)
+	{
+		//Check planet's mask at [i] to see what needs to be released
+		if (ptPlanet->atGraphicsMask[nEntityIndex].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_DEBUGMESH | COMPONENT_SHADERID))
+		{
+			ptPlanet->atDebugMesh[nEntityIndex].m_pd3dVertexBuffer->Release();
+		}
+
+		if (ptPlanet->atGraphicsMask[nEntityIndex].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_SIMPLEMESH | COMPONENT_SHADERID))
+		{
+			ptPlanet->atSimpleMesh[nEntityIndex].m_pd3dVertexBuffer->Release();
+			ptPlanet->atSimpleMesh[nEntityIndex].m_pd3dIndexBuffer->Release();
+
+		}
+		destroyEntity(ptPlanet, nEntityIndex);
+	}
+}
+
 void CGraphicsSystem::CleanD3DObject(TWorld * ptPlanet, int nEntityIndex)
 {
 	if (ptPlanet->atGraphicsMask[nEntityIndex].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_DEBUGMESH | COMPONENT_SHADERID))

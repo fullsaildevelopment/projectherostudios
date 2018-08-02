@@ -345,11 +345,14 @@ TAABB CCollisionSystem::updateAABB(XMMATRIX worldMatrix, TAABB aabb)
 		return aabb;
 	}
 }
-TAABB CCollisionSystem::createAABBS(std::vector<XMFLOAT3> verticies)
+TAABB CCollisionSystem::createAABBS(std::vector<XMFLOAT3> verticies, TAABB AABBDATA)
 {
 	int size = verticies.size();
 	if (size == 0) { return TAABB(); }
 	TAABB aabb;
+	aabb.m_MaterialType = AABBDATA.m_MaterialType;
+	aabb.m_SceneChange = AABBDATA.m_SceneChange;
+
 	aabb.m_dMaxPoint.x = verticies[0].x;
 	aabb.m_dMaxPoint.y = verticies[0].y;
 	aabb.m_dMaxPoint.z = verticies[0].z;

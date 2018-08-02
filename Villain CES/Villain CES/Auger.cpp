@@ -52,6 +52,9 @@ void CAuger::Update()
 	{
 	case -1:
 		pcGameMangerSystem->InitilizeMainMenu();
+		CurrentSpotInGame = 0;
+		break;
+		
 		// main menu
 	case 0:
 		CurrentSpotInGame=pcGameMangerSystem->LoadMainMenu();

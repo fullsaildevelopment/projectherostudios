@@ -74,6 +74,8 @@ public:
 	//XMMATRIX SetPlayerViewMatrix(XMMATRIX d3d_ViewM, XMMATRIX d3d_playerM);
 	//Last Frame
 	void CleanD3D(TWorld * ptWorld);         // closes Direct3D and releases memory
+	void CleanD3DLevel(TWorld * ptWorld);         //  releases memory
+
 	void CleanD3DObject(TWorld *ptPlanet, int nEntityIndex);
 
 private:

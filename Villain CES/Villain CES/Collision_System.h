@@ -24,7 +24,7 @@ public:
 	bool AABBtoAABBCollisionCheck(TAABB m_AABB, vector<int>* m_OtherColision);
 	bool replaceAABB(int nIndex, TAABB m_AABB2);
 	TAABB updateAABB(XMMATRIX worldMatrix, TAABB aabb);
-	TAABB createAABBS(std::vector<XMFLOAT3> verticies);
+	TAABB createAABBS(std::vector<XMFLOAT3> verticies,TAABB AABBDATA);
 	bool classify_aabb_to_aabb(TAABB aabb1, TAABB aabb2);
 	bool IsLineInBox(XMVECTOR startPoint, XMVECTOR endPoint, XMMATRIX worldMatrix, TAABB boxclide,float* distance);
 	XMMATRIX WalkingThrewObjectCheck(XMMATRIX worldPos,TAABB otherCollision,TAABB currentCollision);
