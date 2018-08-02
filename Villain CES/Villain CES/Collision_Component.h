@@ -28,7 +28,8 @@ struct TAABB
 	XMFLOAT3 m_dMinPointOrginal;
 	XMFLOAT3 m_dMaxPointOrginal;
 	int		 m_IndexLocation;
-	int		 m_MatrtialIndex;
+	
+	
 
 
 };

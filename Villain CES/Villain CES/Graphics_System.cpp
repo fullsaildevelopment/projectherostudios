@@ -46,7 +46,7 @@ void CGraphicsSystem::InitD3D(HWND cTheWindow)
 	D3D11CreateDeviceAndSwapChain(NULL,
 		D3D_DRIVER_TYPE_HARDWARE,
 		NULL,
-		NULL,
+		nDeviceAndSwapchainFlag,
 		NULL,
 		NULL,
 		D3D11_SDK_VERSION,

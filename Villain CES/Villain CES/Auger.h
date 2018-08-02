@@ -6,6 +6,7 @@
 #include "Entity.h"
 #include"ProjectileSystem.h"
 #include"AI_System.h"
+#include"GameManger.h"
 class CAuger
 {
 public:
@@ -17,8 +18,8 @@ public:
 	CPhysicsSystem  *pcPhysicsSystem;
 	CProjectileSystem* pcProjectileSystem;
 	CAISystem		*pcAiSystem;
+	CGameMangerSystem* pcGameMangerSystem;
 	
-
 
 
 
@@ -45,6 +46,9 @@ private:
 	int rayindex = -10;
 	float zValue=5;
 	bool GamePaused = false;
+	bool GameStart;
+	bool DrawUI = true;
+	vector<int> UIIndex;
 	TCameraToggle tCameraMode;
 	
 };
