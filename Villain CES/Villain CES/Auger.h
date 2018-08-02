@@ -5,6 +5,7 @@
 #include"Physics_System.h"
 #include "Entity.h"
 #include"ProjectileSystem.h"
+#include"AI_System.h"
 class CAuger
 {
 public:
@@ -15,10 +16,9 @@ public:
 	CInputSystem	*pcInputSystem;
 	CPhysicsSystem  *pcPhysicsSystem;
 	CProjectileSystem* pcProjectileSystem;
-	list<int> nBulletsAvailables;
-	vector<int> nBulletsFired;
-	vector<int> nDeadBullets;
-	vector<float> fAliveTime;
+	CAISystem		*pcAiSystem;
+	
+
 
 
 
@@ -40,14 +40,12 @@ private:
 	XMMATRIX m_d3dCameraMatrix;
     XMMATRIX m_d3d_ResultMatrix;
 
-	XMMATRIX peguins;
-	int		m_nIndexToBullets;
-	int		m_nIndexToBullets2;
-
-	float	fShootingCoolDown = 0;
-	int		m_nClipSize = 10;
+	int PlayerStartIndex = -10;
+	int GunIndexForPlayer = -10;
+	int rayindex = -10;
+	float zValue=5;
 
 	TCameraToggle tCameraMode;
-	bool tempt;
+	
 };
 

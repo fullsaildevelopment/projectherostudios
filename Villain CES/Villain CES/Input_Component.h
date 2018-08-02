@@ -12,7 +12,7 @@ enum eInput_Component
 
 struct TInputMask
 {
-	int m_tnCollisionMask = 0;
+	int m_tnInputMask = 0;
 };
 
 struct TTest

@@ -4,7 +4,8 @@
 enum eAIComponent
 {
 	COMPONENT_AIMASK = 1 << 0,
-	COMPONENT_FOLLOW = 1 << 1
+	COMPONENT_FOLLOW = 1 << 1,
+	COMPONENT_SHOOT =  1 << 2
 };
 
 struct TAIMask

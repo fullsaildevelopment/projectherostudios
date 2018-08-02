@@ -86,11 +86,17 @@ unsigned int createDebugGrid(TWorld * ptWorld);
 
 unsigned int createMesh(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMesh tMesh);
 unsigned int createPlayerBox(TWorld * ptWorld);
-unsigned int CreateBullet(TWorld * ptWorld,XMMATRIX bulletSpawnLocation );
+unsigned int CreateBullet(TWorld * ptWorld,XMMATRIX bulletSpawnLocation, int MaterialID);
 unsigned int AimingLine(TWorld * ptWorld, XMMATRIX BulletSpawnLocation, int parentWorldMatrixIndex, float xoffset, float yoffset, float zoffset);
 
 unsigned int createDummyPlayer(TWorld* ptWorld, XMMATRIX playerMatrix);
-unsigned int CreateGround(TWorld* ptWorld);
-unsigned int CreateWall(TWorld* ptWorld);
-unsigned int CreateCelling(TWorld* ptWorld);
-unsigned int CreateGun(TWorld* ptWorld, XMMATRIX BulletSpawnLocation, int parentWorldMatrixIndex, float xoffset, float yoffset, float zoffset);
+unsigned int CreateGround(TWorld* ptWorld, XMMATRIX SpawnPosition);
+unsigned int CreateWall(TWorld* ptWorld, XMMATRIX SpawnPosition);
+unsigned int CreateCelling(TWorld* ptWorld, XMMATRIX SpawnPosition);
+unsigned int CreateGunForPlayer(TWorld* ptWorld, XMMATRIX BulletSpawnLocation, int parentWorldMatrixIndex, float xoffset, float yoffset, float zoffset);
+unsigned int CreateSimpleGunAi(TWorld* ptWorld, XMMATRIX SpawnPosition);
+unsigned int CreateRayBullet(TWorld * ptWorld, XMMATRIX bulletSpawnLocation,float zDistance,  int parentWorldMatrixIndex, float xoffset, float yoffset, float zoffset);
+
+
+ //float zDistance = 0.5f;
+

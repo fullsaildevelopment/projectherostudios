@@ -58,9 +58,9 @@ struct TDebugMesh
 	UINT					m_nVertexCount = 0;
 	UINT					m_nVertexBufferStride = 0;
 	UINT					m_nVertexBufferOffset = 0;
-	std::vector<XMFLOAT3>		m_VertexData;
+	std::vector<XMVECTOR>		m_VertexData;
 
-};
+};	
 
 struct TSimpleMesh
 {
