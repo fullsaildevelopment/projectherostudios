@@ -34,7 +34,7 @@ void destroyEntity(TWorld * ptWorld, unsigned int nThisEntity)
 	zeroVector.m128_f32[1] = 0;
 	zeroVector.m128_f32[2] = 0;
 	zeroVector.m128_f32[3] = 0;
-
+	ptWorld->atParentWorldMatrix[nThisEntity] = -1;
 	ptWorld->atRigidBody[nThisEntity].totalForce = zeroVector;
 	ptWorld->atRigidBody[nThisEntity].velocity = zeroVector;
 	ptWorld->atRigidBody[nThisEntity].gravity = zeroVector;
