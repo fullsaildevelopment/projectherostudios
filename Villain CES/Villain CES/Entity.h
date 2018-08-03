@@ -8,6 +8,8 @@
 #include"Collision_System.h"
 #include "Input_Component.h"
 #include"Projectile_Component.h"
+#include "DirectXTex-master\WICTextureLoader\WICTextureLoader.h"
+#include "DirectXTex-master\DDSTextureLoader\DDSTextureLoader.h"
 
 struct TWorld
 {
@@ -50,29 +52,13 @@ struct TWorld
 	TProjectileMask atProjectiles[ENTITYCOUNT];
 	Clips			atClip[ENTITYCOUNT];
 };
-struct TCameraToggle
-{
-	bool bDebugMode;
-	bool bWalkMode;
-	bool bAimMode;
-	//bool bDebugMode;
 
-
-};
 struct TPrimalVert
 {
 	XMFLOAT3 m_d3dfPosition;
 	XMFLOAT4 m_d3dfColor;
 };
 
-struct TSmartMesh
-{
-	float m_afPosition[4];
-	float m_afNormals[3];
-	float m_afUVCoordinates[2];
-	float m_afJointWeights[4];
-	int m_anJointIndices[4];
-};
 
 unsigned int createEntity(TWorld *ptWorld);
 
@@ -84,13 +70,12 @@ unsigned int createCube(TWorld * ptWorld);
 
 unsigned int createDebugGrid(TWorld * ptWorld);
 
-unsigned int createMesh(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMesh tMesh);
 unsigned int createPlayerBox(TWorld * ptWorld);
 unsigned int CreateBullet(TWorld * ptWorld,XMMATRIX bulletSpawnLocation );
 unsigned int AimingLine(TWorld * ptWorld, XMMATRIX BulletSpawnLocation, int parentWorldMatrixIndex, float xoffset, float yoffset, float zoffset);
 
-unsigned int createDummyPlayer(TWorld* ptWorld, XMMATRIX playerMatrix);
 unsigned int CreateGround(TWorld* ptWorld);
 unsigned int CreateWall(TWorld* ptWorld);
 unsigned int CreateCelling(TWorld* ptWorld);
 unsigned int CreateGun(TWorld* ptWorld, XMMATRIX BulletSpawnLocation, int parentWorldMatrixIndex, float xoffset, float yoffset, float zoffset);
+unsigned int createMesh(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMeshImport tMesh, TMaterialImport tMaterial);

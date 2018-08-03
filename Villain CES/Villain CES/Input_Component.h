@@ -9,10 +9,17 @@ enum eInput_Component
 	COMPONENT_SETH		= 1 << 3,
 	COMPONENT_CAELIS	= 1 << 4
 };
-
 struct TInputMask
 {
 	int m_tnInputMask = 0;
+};
+
+struct TCameraToggle
+{
+	bool bDebugMode;
+	bool bWalkMode;
+	bool bAimMode;
+	//bool bDebugMode;
 };
 
 struct TTest

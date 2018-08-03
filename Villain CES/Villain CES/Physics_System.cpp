@@ -107,6 +107,6 @@ void CPhysicsSystem::AddBulletForce(TRigidbody * _myRigbody)
 {
 	XMVECTOR bulletForce;
 	bulletForce = ZeroVector();
-	bulletForce.m128_f32[2] = 0.001;
+	bulletForce.m128_f32[2] = 0.001f;
 	_myRigbody->totalForce += bulletForce;
 }

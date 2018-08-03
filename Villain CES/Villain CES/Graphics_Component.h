@@ -1,9 +1,6 @@
-
 #pragma once
 #ifndef CES_GRAPHICS_COMPONENT_H
 #define CES_GRAPHICS_COMPONENT_H
-
-
 enum eGraphicsComponent
 {
 	COMPONENT_NONE			= 0,
@@ -16,24 +13,159 @@ enum eGraphicsComponent
 	COMPONENT_SHADERID		= 1 << 6, // have information on what inputs and outputs go to other shaders as well
 	COMPONENT_CAMERA		= 1 << 7,
 	COMPONENT_SIMPLEMESH	= 1 << 8,
+	COMPONENT_PBRMESH		= 1 << 9
 };
 
 struct TKeyframe 
 { 
 	double dTime = 0; 
-	std::vector<XMMATRIX> m_vd3dJointMatrices; 
+	std::vector<XMMATRIX> m_vd3dJointMatrices = std::vector<XMMATRIX>(); 
 }; 
 
 struct TAnimationClip 
 { 
 	double dDuration = 0;
 	std::vector<TKeyframe> m_vtKeyFrames; 
-	std::vector<int> m_vnParentIndicies; 
+	std::vector<int> m_vnParentIndicies = std::vector<int>(0);
 };
 
 struct TGraphicsMask
 {
 	int m_tnGraphicsMask = 0;
+};
+
+struct TMeshFormat
+{
+	float pos[4] = { 0, 0, 0, 0 };
+	float norm[3] = { 0, 0, 0 };
+	float tang[4] = { 0, 0, 0, 0 };
+	float binorm[4] = { 0, 0, 0, 0 };
+	float uv[2] = { 0, 0 };
+	float weights[4] = { 0, 0, 0, 0 };
+	int joints[4] = { 0, 0, 0, 0 };
+};
+
+struct TMyAmbientColor
+{
+	double r = 0.0;
+	double g = 0.0;
+	double b = 0.0;
+	double& operator[] (int i) { return (&r)[i]; }
+};
+
+struct TMyDiffuseColor
+{
+	double r = 0.0;
+	double g = 0.0;
+	double b = 0.0;
+	double& operator[] (int i) { return (&r)[i]; }
+};
+
+struct TMySpecularColor
+{
+	double r = 0.0;
+	double g = 0.0;
+	double b = 0.0;
+	double& operator[] (int i) { return (&r)[i]; }
+};
+
+struct TMyEmissiveColor
+{
+	double r = 0.0;
+	double g = 0.0;
+	double b = 0.0;
+	double& operator[] (int i) { return (&r)[i]; }
+};
+
+struct TMyFileNames
+{
+	char * fileName1 = nullptr;
+	char * fileName2 = nullptr;
+	char * fileName3 = nullptr;
+	char * fileName4 = nullptr;
+	char * fileName5 = nullptr;
+
+	char *& operator[] (int i) { return (&fileName1)[i]; }
+};
+
+struct TMyFileNameSizes
+{
+	int fileNameSize1 = 0;
+	int fileNameSize2 = 0;
+	int fileNameSize3 = 0;
+	int fileNameSize4 = 0;
+	int fileNameSize5 = 0;
+	int & operator[] (int i) { return (&fileNameSize1)[i]; }
+};
+
+struct TPBRFileNames
+{
+	char * pbrFileName1 = nullptr;
+	char * pbrFileName2 = nullptr;
+	char * pbrFileName3 = nullptr;
+	char * pbrFileName4 = nullptr;
+	char * pbrFileName5 = nullptr;
+	char * pbrFileName6 = nullptr;
+	char * pbrFileName7 = nullptr;
+	char * pbrFileName8 = nullptr;
+	char * pbrFileName9 = nullptr;
+
+	char *& operator[] (int i) { return (&pbrFileName1)[i]; }
+};
+
+struct TPBRFileNameSizes
+{
+	int pbrFileNameSize1 = 0;
+	int pbrFileNameSize2 = 0;
+	int pbrFileNameSize3 = 0;
+	int pbrFileNameSize4 = 0;
+	int pbrFileNameSize5 = 0;
+	int pbrFileNameSize6 = 0;
+	int pbrFileNameSize7 = 0;
+	int pbrFileNameSize8 = 0;
+	int pbrFileNameSize9 = 0;
+	int & operator[] (int i) { return (&pbrFileNameSize1)[i]; }
+};
+
+struct TMeshImport
+{
+	int hasPolygon = 0;
+	int nPolyCount = 0;
+	int nPolygonVertexCount = 0;
+	TMeshFormat* meshArrays;
+	int * indexBuffer = nullptr;
+};
+
+struct TMaterialImport
+{
+	int hasMaterial;
+	int lambert;
+	float fRoughness;
+	float fMetallicness;
+	double dTransparencyOrShininess;
+	TMyAmbientColor		m_tAmbientColor;
+	TMyDiffuseColor		m_tDiffuseColor;
+	TMySpecularColor	m_tSpecularColor;
+	TMyEmissiveColor	m_tEmissiveColor;
+	TPBRFileNameSizes	m_tPBRFileNameSizes;
+	TPBRFileNames		m_tPBRFileNames;
+	TMyFileNameSizes	m_tFileNameSizes;
+	TMyFileNames		m_tFileNames;
+};
+
+struct TAnimationImport
+{
+	int hasPose = 0;
+	TAnimationClip animClip;
+};
+
+
+struct ImporterData
+{
+	int meshCount = 0;
+	TMeshImport* vtMeshes;
+	TMaterialImport* vtMaterials;
+	TAnimationImport* vtAnimations;
 };
 
 struct TMesh
@@ -44,10 +176,11 @@ struct TMesh
 	D3D11_BUFFER_DESC m_d3dIndexBufferDesc;
 	D3D11_SUBRESOURCE_DATA m_d3dVertexData;
 	D3D11_SUBRESOURCE_DATA m_d3dIndexData;
-	int m_nVertexCount = 0;
-	int m_nIndexCount = 0;
-	int m_nVertexBufferStride = 0;
-	int m_nVertexBufferOffset = 0;
+	UINT m_nVertexCount = 0;
+	UINT m_nIndexCount = 0;
+	UINT m_nVertexBufferStride = 0;
+	UINT m_nVertexBufferOffset = 0;
+	ID3D11ShaderResourceView* m_d3dSRVDiffuse;
 };
 
 struct TDebugMesh
@@ -116,7 +249,8 @@ struct TCamera
 		Fill out this structure
 	*/
 };
-struct TWorldMatrix {
-	XMMATRIX worldMatrix;
+struct TWorldMatrix 
+{
+	XMMATRIX worldMatrix = XMMatrixIdentity();
 };
 #endif
