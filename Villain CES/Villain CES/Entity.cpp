@@ -122,9 +122,22 @@ void destroyEntity(TWorld * ptWorld, unsigned int nThisEntity)
 	ptWorld->atRigidBody[nThisEntity].velocity = zeroVector;
 	ptWorld->atRigidBody[nThisEntity].gravity = zeroVector;
 	ptWorld->atRigidBody[nThisEntity].maxVelocity = zeroVector;
-	ptWorld->atParentWorldMatrix[nThisEntity] = -1;
-	ptWorld->atSimpleMesh[nThisEntity].m_VertexData.clear();
 
+	ptWorld->atSimpleMesh[nThisEntity].m_VertexData.clear();
+	ptWorld->atAABB[nThisEntity].m_SceneChange = -30;
+	ptWorld->atAABB[nThisEntity].m_MaterialType = MATERIAL_METAL;
+	ptWorld->atClip[nThisEntity].fAliveTime.clear();
+	ptWorld->atClip[nThisEntity].nBulletsAvailables.clear();
+	ptWorld->atClip[nThisEntity].nBulletsFired.clear();
+	ptWorld->atClip[nThisEntity].tryToShoot = false;
+	ptWorld->atClip[nThisEntity].tryToReload  = false;
+	ptWorld->atClip[nThisEntity].maderay = false;
+
+
+
+
+
+	
 
 
 }
@@ -504,6 +517,9 @@ unsigned int CreateBullet(TWorld * ptWorld,XMMATRIX BulletSpawnLocation,int Mate
 	ptWorld->atRigidBody[nThisEntity].gravity = zerovector;
 	ptWorld->atRigidBody[nThisEntity].totalForce = zerovector;
 	ptWorld->atRigidBody[nThisEntity].ground = false;
+	ptWorld->atRigidBody[nThisEntity].wall = false;
+	
+
 
 	
 	
@@ -866,7 +882,7 @@ unsigned int CreateCelling(TWorld * ptWorld, XMMATRIX SpawnPosition)
 	return 0;
 }
 
-unsigned int CreateGunForPlayer(TWorld * ptWorld, XMMATRIX BulletSpawnLocation,int parentWorldMatrixIndex,float xoffset,float yoffset,float zoffset)
+unsigned int CreateGun(TWorld * ptWorld, XMMATRIX BulletSpawnLocation,int parentWorldMatrixIndex,float xoffset,float yoffset,float zoffset)
 {
 unsigned int nThisEntity = createEntity(ptWorld);
 
@@ -881,6 +897,7 @@ ptWorld->atProjectiles[nThisEntity].m_tnProjectileMask = COMPONENT_PROJECTILESMA
 ptWorld->atClip[nThisEntity].nSizeofClipl = 3;
 ptWorld->atClip[nThisEntity].FValueOfCoolDown = 100;
 ptWorld->atClip[nThisEntity].fShootingCoolDown = 0;
+ptWorld->atClip[nThisEntity].GunMode = true;
 for (int i = 0; i < ptWorld->atClip[nThisEntity].nSizeofClipl; ++i) {
 	ptWorld->atClip[nThisEntity].nBulletsAvailables.push_back(false);
 }

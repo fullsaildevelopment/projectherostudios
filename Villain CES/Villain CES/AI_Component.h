@@ -11,6 +11,7 @@ enum eAIComponent
 struct TAIMask
 {
 	int m_tnAIMask = 0;
+	int GunIndex = -1;
 };
 
 #endif

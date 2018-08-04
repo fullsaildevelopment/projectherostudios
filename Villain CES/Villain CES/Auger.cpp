@@ -46,7 +46,7 @@ void CAuger::InitializeSystems()
 	CurrentSpotInGame = -1;
 }
 
-void CAuger::Update()
+void CAuger::Update(bool* loopgame)
 {
 	switch (CurrentSpotInGame)
 	{
@@ -69,9 +69,13 @@ void CAuger::Update()
 	case 3:
 		if(pcInputSystem->InputCheck(G_KEY_U))
 		CurrentSpotInGame = 2;
+	case 4:
+		*loopgame = false;
 	default:
 		break;
 	}
+	
+	
 	
 	
 	

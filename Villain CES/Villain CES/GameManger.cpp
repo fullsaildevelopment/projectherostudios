@@ -27,9 +27,10 @@ CGameMangerSystem::~CGameMangerSystem()
 
 void CGameMangerSystem::LoadLevel()
 {
-	for (int i = 0; i < ENTITYCOUNT; ++i) {
-		destroyEntity(&tThisWorld, i);
-	}
+	
+		pcGraphicsSystem->CleanD3DLevel(&tThisWorld);
+	
+	pcAiSystem->SetNumberOfAI(1);
 	m_d3dWorldMatrix = pcGraphicsSystem->SetDefaultWorldPosition();//Call some sort of function from the graphics system to create this matrix
 	m_d3dViewMatrix = pcGraphicsSystem->SetDefaultViewMatrix();//Call some sort of function from the graphics system to create this matrix
 	m_d3dCameraMatrix = pcGraphicsSystem->SetDefaultCameraMatrix();
@@ -41,11 +42,12 @@ void CGameMangerSystem::LoadLevel()
 	tCameraMode.bAimMode = false;
 	tCameraMode.bWalkMode = true;
 	m_d3dPlayerMatrix = pcGraphicsSystem->SetDefaultWorldPosition();
-	m_d3dPlayerMatrix.r[3].m128_f32[1] += 1;
+	m_d3dPlayerMatrix.r[3].m128_f32[2] -= 10;
 
 
 
 	PlayerStartIndex = CreateClayTon(&tThisWorld);
+	tThisWorld.atClayton[PlayerStartIndex].heath = 100;
 	XMMATRIX wall = m_d3dWorldMatrix;
 	wall.r[3].m128_f32[1] += -1;
 
@@ -60,20 +62,24 @@ void CGameMangerSystem::LoadLevel()
 	XMMATRIX AILocation = m_d3dWorldMatrix;
 	AILocation.r[3].m128_f32[2] += -5;
 	AILocation.r[3].m128_f32[0] += -5;
-	CreateSimpleGunAi(&tThisWorld, AILocation);
+	//CreateSimpleGunAi(&tThisWorld, AILocation);
 
 
 	AimingLine(&tThisWorld, m_d3dWorldMatrix, PlayerStartIndex, -1, 0, 10.5);
 
-	GunIndexForPlayer = CreateGunForPlayer(&tThisWorld, m_d3dWorldMatrix, PlayerStartIndex, -1, 0, 10.5);
+	GunIndexForPlayer = CreateGun(&tThisWorld, m_d3dWorldMatrix, PlayerStartIndex, -1, 0, 10.5);
 	AILocation = m_d3dWorldMatrix;
 	AILocation.r[3].m128_f32[0] += -1;
 	AILocation.r[3].m128_f32[2] += -2;
 	CreateSimpleGunAi(&tThisWorld, AILocation);
+	tThisWorld.atAIMask[6].GunIndex = 7;
+	CreateGun(&tThisWorld, m_d3dWorldMatrix, 6, -1.1, 0, 11);
+
 	AILocation = m_d3dWorldMatrix;
 	AILocation.r[3].m128_f32[0] += -3;
 	AILocation.r[3].m128_f32[2] += -5;
-	CreateSimpleGunAi(&tThisWorld, AILocation);
+	
+	//CreateSimpleGunAi(&tThisWorld, AILocation);
 	XMMATRIX groundSpawnPoint;
 	groundSpawnPoint = m_d3dWorldMatrix;
 	groundSpawnPoint.r[3].m128_f32[1] -= 2;
@@ -273,24 +279,16 @@ int CGameMangerSystem::InGameUpdate()
 		}
 		// ai code would run here
 		
-			if (tThisWorld.atAIMask[nCurrentEntity].m_tnAIMask == (COMPONENT_AIMASK | COMPONENT_FOLLOW)) {
-
+		if (pcAiSystem->GetNumberOfAI() <= 0) {
+			return -1;
+		}
+			if (tThisWorld.atAIMask[nCurrentEntity].m_tnAIMask == (COMPONENT_AIMASK | COMPONENT_FOLLOW)||tThisWorld.atAIMask[nCurrentEntity].m_tnAIMask==(COMPONENT_SHOOT| COMPONENT_AIMASK | COMPONENT_FOLLOW)) {
+				
 				// ai code do not delete
-				/*	tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix=XMMatrixLookAtLH(tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix.r[3],
-				tThisWorld.atWorldMatrix[PlayerStartIndex].worldMatrix.r[3], XMVectorSet(0, 1, 0, 0));
-				tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = XMMatrixInverse(NULL, tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix);
-				XMVECTOR direction = tThisWorld.atWorldMatrix[PlayerStartIndex].worldMatrix.r[3] - tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix.r[3];
-				direction.m128_f32[0] = 0;
-				direction.m128_f32[1] = 0;
-				direction.m128_f32[2] = 1;
-				direction.m128_f32[3] = 0;
-				direction =XMVector3Normalize(direction);
-				direction *= 0.001f;
-				XMMATRIX localMatrix2 = XMMatrixTranslationFromVector(direction);
 
-				tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix=XMMatrixMultiply(localMatrix2, tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix);
-				*/
+				
 				pcAiSystem->FollowObject(tThisWorld.atWorldMatrix[PlayerStartIndex].worldMatrix, &tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix);
+				pcAiSystem->ShootGun(&tThisWorld.atClip[tThisWorld.atAIMask[nCurrentEntity].GunIndex]);
 
 			}
 			//else if(tThisWorld.atAIMask[nCurrentEntity].m_tnAIMask==())
@@ -401,6 +399,7 @@ int CGameMangerSystem::InGameUpdate()
 		
 			if ((tThisWorld.atCollisionMask[nCurrentEntity].m_tnCollisionMask == (COMPONENT_COLLISIONMASK | COMPONENT_AABB | COMPONENT_NONSTATIC | COMPONENT_TRIGGER) | tThisWorld.atCollisionMask[nCurrentEntity].m_tnCollisionMask == (COMPONENT_COLLISIONMASK | COMPONENT_NONTRIGGER | COMPONENT_AABB | COMPONENT_NONSTATIC)))
 			{
+			
 				vector<int> otherCollisionsIndex;
 				if (pcCollisionSystem->AABBtoAABBCollisionCheck(tThisWorld.atAABB[nCurrentEntity], &otherCollisionsIndex) == true)
 				{
@@ -435,20 +434,26 @@ int CGameMangerSystem::InGameUpdate()
 							}
 
 						}
-						else if (tThisWorld.atRigidBody[nCurrentEntity].ground == false && tThisWorld.atRigidBody[otherCollisionsIndex[i]].ground == false && tThisWorld.atRigidBody[nCurrentEntity].wall == false &&
+						 if (tThisWorld.atRigidBody[nCurrentEntity].ground == false && tThisWorld.atRigidBody[otherCollisionsIndex[i]].ground == false && tThisWorld.atRigidBody[nCurrentEntity].wall == false &&
 							tThisWorld.atCollisionMask[nCurrentEntity].m_tnCollisionMask == (COMPONENT_COLLISIONMASK |
 								COMPONENT_TRIGGER | COMPONENT_AABB | COMPONENT_NONSTATIC)
 							&& (tThisWorld.atCollisionMask[otherCollisionsIndex[i]].m_tnCollisionMask == (COMPONENT_COLLISIONMASK |
 								COMPONENT_NONTRIGGER | COMPONENT_AABB | COMPONENT_STATIC)) | tThisWorld.atCollisionMask[otherCollisionsIndex[i]].m_tnCollisionMask == (COMPONENT_COLLISIONMASK |
 									COMPONENT_NONTRIGGER | COMPONENT_AABB | COMPONENT_NONSTATIC))
 						{
-							if (tThisWorld.atAIMask[otherCollisionsIndex[i]].m_tnAIMask == COMPONENT_AIMASK | COMPONENT_FOLLOW) {
+							if (tThisWorld.atAIMask[otherCollisionsIndex[i]].m_tnAIMask == (COMPONENT_AIMASK | COMPONENT_FOLLOW)) {
+								pcAiSystem->SetNumberOfAI(pcAiSystem->GetNumberOfAI() - 1);
 								pcCollisionSystem->RemoveAABBCollider(otherCollisionsIndex[i]);
 								pcGraphicsSystem->CleanD3DObject(&tThisWorld, otherCollisionsIndex[i]);
 							}
+							if (tThisWorld.atInputMask[otherCollisionsIndex[i]].m_tnInputMask == (COMPONENT_CLAYTON | COMPONENT_INPUTMASK)) {
+								tThisWorld.atClayton[otherCollisionsIndex[i]].heath -= 50;
+							}
 						}
 					}
-
+					if (tThisWorld.atClayton[PlayerStartIndex].heath <= 0) {
+						return -1;
+					}
 					tTempPixelBuffer.m_d3dCollisionColor = XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f);
 
 
@@ -505,6 +510,9 @@ int CGameMangerSystem::InGameUpdate()
 						tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = pcPhysicsSystem->ResolveForces(&tThisWorld.atRigidBody[nCurrentEntity], tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, false);
 						m_d3dPlayerMatrix = tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix;
 					}
+					if (tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix.r[3].m128_f32[1] < -10) {
+						return -1;
+					}
 				}
 			
 
@@ -545,6 +553,9 @@ int CGameMangerSystem::LoadMainMenu()
 	if (pcInputSystem->InputCheck(G_KEY_P)) {
 		return 3;
 
+	}
+	if (pcInputSystem->InputCheck(G_KEY_ESCAPE)) {
+		return 4;
 	}
 	/*if (pcInputSystem->InputCheck(G_KEY_U)) {
 

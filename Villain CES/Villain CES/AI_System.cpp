@@ -11,9 +11,7 @@ CAISystem::~CAISystem()
 {
 }
 
-void CAISystem::FollowAndShoot(XMMATRIX playerMatrix, Clips * AiGun)
-{
-}
+
 
 void CAISystem::FollowObject(XMMATRIX thingToFollow, XMMATRIX * AIMatrix)
 {
@@ -30,4 +28,20 @@ void CAISystem::FollowObject(XMMATRIX thingToFollow, XMMATRIX * AIMatrix)
 	XMMATRIX localMatrix2 = XMMatrixTranslationFromVector(direction);
 
 	*AIMatrix = XMMatrixMultiply(localMatrix2, *AIMatrix);
+}
+
+void CAISystem::ShootGun(Clips* AIGun)
+{
+	AIGun->tryToShoot = true;
+
+}
+
+void CAISystem::SetNumberOfAI(int aiCount)
+{
+	numberofAI = aiCount;
+}
+
+int CAISystem::GetNumberOfAI()
+{
+	return numberofAI;
 }

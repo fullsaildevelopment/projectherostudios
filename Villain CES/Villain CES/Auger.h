@@ -20,7 +20,7 @@ public:
 
 	void Start();
 	void InitializeSystems();
-	void Update();
+	void Update(bool* loopGame);
 	void End();
 private:
 	

@@ -26,6 +26,7 @@ struct TClayton
 	/*
 	Fill out this structure
 	*/
+	float heath = 100;
 	float m_tfMovementSpeed = 1.0;
 	float m_tfLookSensitivity = 0.01f;
 	float m_tfMaterialLoadTime = 0.0f;
