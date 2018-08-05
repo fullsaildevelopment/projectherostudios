@@ -66,11 +66,14 @@ void CAuger::Update(bool* loopgame)
 		break;
 	case 2:
 		CurrentSpotInGame =pcGameMangerSystem->InGameUpdate();
+		break;
 	case 3:
 		if(pcInputSystem->InputCheck(G_KEY_U))
 		CurrentSpotInGame = 2;
+		break;
 	case 4:
 		*loopgame = false;
+		break;
 	default:
 		break;
 	}

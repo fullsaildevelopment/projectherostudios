@@ -68,12 +68,15 @@ void CGameMangerSystem::LoadLevel()
 	AimingLine(&tThisWorld, m_d3dWorldMatrix, PlayerStartIndex, -1, 0, 10.5);
 
 	GunIndexForPlayer = CreateGun(&tThisWorld, m_d3dWorldMatrix, PlayerStartIndex, -1, 0, 10.5);
+	tThisWorld.atClip[GunIndexForPlayer].bulletSpeed = 0.001;
 	AILocation = m_d3dWorldMatrix;
 	AILocation.r[3].m128_f32[0] += -1;
 	AILocation.r[3].m128_f32[2] += -2;
 	CreateSimpleGunAi(&tThisWorld, AILocation);
 	tThisWorld.atAIMask[6].GunIndex = 7;
 	CreateGun(&tThisWorld, m_d3dWorldMatrix, 6, -1.1, 0, 11);
+	tThisWorld.atClip[7].bulletSpeed = 0.0001;
+
 
 	AILocation = m_d3dWorldMatrix;
 	AILocation.r[3].m128_f32[0] += -3;
@@ -351,7 +354,7 @@ int CGameMangerSystem::InGameUpdate()
 					if (tThisWorld.atClip[nCurrentEntity].nBulletsFired.size() != 0) {
 						for (int i = 0; i < tThisWorld.atClip[nCurrentEntity].nBulletsFired.size(); ++i) {
 							if (tThisWorld.atClip[nCurrentEntity].fAliveTime[i] < 100) {
-								pcPhysicsSystem->AddBulletForce(&tThisWorld.atRigidBody[tThisWorld.atClip[nCurrentEntity].nBulletsFired[i]]);
+								pcPhysicsSystem->AddBulletForce(&tThisWorld.atRigidBody[tThisWorld.atClip[nCurrentEntity].nBulletsFired[i]],tThisWorld.atClip[nCurrentEntity].bulletSpeed);
 								tThisWorld.atClip[nCurrentEntity].fAliveTime[i] += 0.1;
 
 							}

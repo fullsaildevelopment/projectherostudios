@@ -103,10 +103,10 @@ XMVECTOR CPhysicsSystem::ZeroVector()
 * Mod. Date:              07/18/2018
 * Mod. Initials:          AP
 */
-void CPhysicsSystem::AddBulletForce(TRigidbody * _myRigbody)
+void CPhysicsSystem::AddBulletForce(TRigidbody * _myRigbody,float zForValue)
 {
 	XMVECTOR bulletForce;
 	bulletForce = ZeroVector();
-	bulletForce.m128_f32[2] = 0.001;
+	bulletForce.m128_f32[2] = zForValue;
 	_myRigbody->totalForce += bulletForce;
 }
