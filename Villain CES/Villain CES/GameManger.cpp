@@ -310,15 +310,15 @@ int CGameMangerSystem::InGameUpdate()
 					tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = pcAiSystem->LookBackLeftToRight(tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix,
 						true);
 				}
-				else {
+				else if(tThisWorld.atAIVision[nCurrentEntity].keepRotatingRight==true) {
 					tThisWorld.atAIVision[nCurrentEntity].keepRotatingRight = false;
 				}
-				 if (tThisWorld.atAIVision[nCurrentEntity].visionRotation > -7&&tThisWorld.atAIVision[nCurrentEntity].keepRotatingRight==false) {
+				else if (tThisWorld.atAIVision[nCurrentEntity].visionRotation > -7&&tThisWorld.atAIVision[nCurrentEntity].keepRotatingRight==false) {
 					tThisWorld.atAIVision[nCurrentEntity].visionRotation -= 0.001;
 					tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = pcAiSystem->LookBackLeftToRight(tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix,
 						false);
 				 }
-				 else {
+				 else if(tThisWorld.atAIVision[nCurrentEntity].keepRotatingRight==false) {
 					 tThisWorld.atAIVision[nCurrentEntity].keepRotatingRight = true;
 				 }
 				float CloseEstObject = 10000000000000000000.0f;
@@ -343,6 +343,17 @@ int CGameMangerSystem::InGameUpdate()
 						}
 						if (tThisWorld.atRigidBody[ptr->m_IndexLocation].wall == true) {
 							cout << "wall" << endl;
+							if(tThisWorld.atAIVision[nCurrentEntity].wallIndex!=ptr->m_IndexLocation)
+							if (tThisWorld.atAIVision[nCurrentEntity].keepRotatingRight==false) {
+								tThisWorld.atAIVision[nCurrentEntity].visionRotation = 7;
+								tThisWorld.atAIVision[nCurrentEntity].wallIndex = ptr->m_IndexLocation;
+							}
+							else if (tThisWorld.atAIVision[nCurrentEntity].keepRotatingRight == true) {
+								tThisWorld.atAIVision[nCurrentEntity].visionRotation = -7;
+								tThisWorld.atAIVision[nCurrentEntity].wallIndex = ptr->m_IndexLocation;
+
+
+							}
 						}
 						
 					}

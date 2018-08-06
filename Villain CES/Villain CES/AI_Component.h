@@ -21,6 +21,7 @@ struct TAIVision {
 	float    visionRotation;
 	bool	 keepRotatingRight=true;
 	XMMATRIX playerLastKnownLocation;
+	int		 wallIndex = -1;
 	
 
 };

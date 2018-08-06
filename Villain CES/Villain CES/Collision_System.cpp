@@ -107,9 +107,9 @@ bool CCollisionSystem::IsLineInBox(XMVECTOR startPoint, XMVECTOR endPoint,XMMATR
 
 	// Use Separating Axis Test
 	// Separation vector from box center to line center is LMid, since the line is in box space
-	if (fabs(LMid.m128_f32[0]) > CenterofBox.m128_f32[0] + LExt.m128_f32[0]) return false;
-	if (fabs(LMid.m128_f32[1]) > CenterofBox.m128_f32[1] + LExt.m128_f32[1]) return false;
-	if (fabs(LMid.m128_f32[2]) > CenterofBox.m128_f32[2] + LExt.m128_f32[2]) return false;
+	if (fabs(LMid.m128_f32[0]) >fabs( CenterofBox.m128_f32[0] + LExt.m128_f32[0])) return false;
+	if (fabs(LMid.m128_f32[1]) > fabs(CenterofBox.m128_f32[1] + LExt.m128_f32[1])) return false;
+	if (fabs(LMid.m128_f32[2]) > fabs(CenterofBox.m128_f32[2] + LExt.m128_f32[2])) return false;
 	// Crossproducts of line and each axis
 	//if ( fabs( LMid.y * L.z - LMid.z * L.y)  >  (m_Extent.y * LExt.z + m_Extent.z * LExt.y) ) return false;
 	if (fabs(LMid.m128_f32[1] * L.m128_f32[2] - LMid.m128_f32[2] * L.m128_f32[1])  >  (CenterofBox.m128_f32[1] * LExt.m128_f32[2] + CenterofBox.m128_f32[2] * LExt.m128_f32[1])) return false;

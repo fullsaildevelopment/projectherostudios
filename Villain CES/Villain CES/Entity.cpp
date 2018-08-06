@@ -1258,7 +1258,7 @@ unsigned int CreateAIVision(TWorld * ptWorld, XMMATRIX VisionSpawnLocation, floa
 	
 	static TPrimalVert atCubeVertices[]
 	{
-		TPrimalVert{ XMFLOAT3(-0, 0.5f, 0),	XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f) },//0 Top F Left
+		TPrimalVert{ XMFLOAT3(-0, 0.5f, -3),	XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f) },//0 Top F Left
 		TPrimalVert{ XMFLOAT3(0, 0.5f, 10),	XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f) },//1 Top F Right
 
 	};
