@@ -136,7 +136,7 @@ int CGameMangerSystem::InGameUpdate()
 	tCameraMode = pcInputSystem->CameraModeListen(tCameraMode);
 
 
-	 XMMATRIX m_d3d_ResultMatrix = pcGraphicsSystem->SetDefaultWorldPosition();
+	 static XMMATRIX m_d3d_ResultMatrix = pcGraphicsSystem->SetDefaultWorldPosition();
 	 XMMATRIX m_d3dOffsetMatrix = pcGraphicsSystem->SetDefaultOffset();
 	if (pcInputSystem->InputCheck(G_KEY_P)) {
 		return 3;
@@ -327,6 +327,7 @@ int CGameMangerSystem::InGameUpdate()
 				float cloasestPlayer= 10000000000000000000.0f;
 				float* distanceCalucaltion = new float();
 				bool spotedplayer = false;
+
 				for (list<TAABB>::iterator ptr = pcCollisionSystem->m_AAbb.begin(); ptr != pcCollisionSystem->m_AAbb.end(); ++ptr) {
 
 					if (pcAiSystem->LookForPlayer(XMVector3Transform(tThisWorld.atAIVision[nCurrentEntity].start,tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix)
