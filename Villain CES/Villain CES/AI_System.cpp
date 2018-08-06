@@ -15,9 +15,15 @@ CAISystem::~CAISystem()
 
 void CAISystem::FollowObject(XMMATRIX thingToFollow, XMMATRIX * AIMatrix)
 {
+	XMMATRIX beforeitChanges = *AIMatrix;
 	*AIMatrix = XMMatrixLookAtLH(AIMatrix->r[3],
 		thingToFollow.r[3], XMVectorSet(0, 1, 0, 0));
 	*AIMatrix = XMMatrixInverse(NULL, *AIMatrix);
+	AIMatrix->r[1].m128_f32[1] = beforeitChanges.r[1].m128_f32[1];
+	AIMatrix->r[1].m128_f32[2] = beforeitChanges.r[1].m128_f32[2];
+	AIMatrix->r[2].m128_f32[1] = beforeitChanges.r[2].m128_f32[1];
+	AIMatrix->r[2].m128_f32[2] = beforeitChanges.r[2].m128_f32[2];
+
 	XMVECTOR direction = thingToFollow.r[3] - AIMatrix->r[3];
 	direction.m128_f32[0] = 0;
 	direction.m128_f32[1] = 0;
@@ -43,14 +49,21 @@ void CAISystem::SetNumberOfAI(int aiCount)
 
 bool CAISystem::LookForPlayer(XMVECTOR start, XMVECTOR end, XMMATRIX boxWorldMaxtrix, TAABB abbcolider, float * distance, CCollisionSystem * pcCollisionPointer)
 {
+	if (abbcolider.m_IndexLocation == 1) {
+		float x = 0;
+	}
 	return pcCollisionPointer->IsLineInBox(start, end, boxWorldMaxtrix, abbcolider, distance);
 }
 
-XMMATRIX CAISystem::LookBackLeftToRight(XMMATRIX AiMatrix)
+XMMATRIX CAISystem::LookBackLeftToRight(XMMATRIX AiMatrix,bool leftorRight)
 {
 	XMMATRIX d3dTmpViewM, d3dMovementM, d3dRotation;
 	float fXchange = 0, fYchange = 0, fXEnd = 0, fYEnd = 0;
+	if(leftorRight==true)
 	d3dRotation = XMMatrixRotationY(0.0001);
+	else  {
+		d3dRotation = XMMatrixRotationY(-0.0001);
+	}
 	d3dTmpViewM = AiMatrix;
 	XMVECTOR d3d_newX, d3d_newY, d3d_existingZ;
 	d3dTmpViewM = XMMatrixMultiply(d3dRotation, d3dTmpViewM);
@@ -67,7 +80,9 @@ XMMATRIX CAISystem::LookBackLeftToRight(XMMATRIX AiMatrix)
 	d3dTmpViewM.r[0] = d3d_newX;
 	d3dTmpViewM.r[1] = d3d_newY;
 	d3dTmpViewM.r[2] = d3d_existingZ;
-	d3dRotation = XMMatrixRotationX(0.01);
+	//d3dRotation = XMMatrixRotationX(0);
+
+//	d3dTmpViewM = XMMatrixMultiply(d3dRotation, d3dTmpViewM);
 
 	//d3dTmpViewM = XMMatrixMultiply(d3dRotation, d3dTmpViewM);
 	return d3dTmpViewM;

@@ -83,6 +83,10 @@ void CGameMangerSystem::LoadLevel()
 	AILocation.r[3].m128_f32[2] += -5;
 	CreateSimpleSearchAi(&tThisWorld, AILocation);
 	CreateAIVision(&tThisWorld, AILocation, 8, 8, -0.6, -0.1, 10.7);
+	pcAiSystem->FollowObject(m_d3dPlayerMatrix, &tThisWorld.atWorldMatrix[8].worldMatrix);
+	tThisWorld.atWorldMatrix[8].worldMatrix = XMMatrixLookAtLH(tThisWorld.atWorldMatrix[8].worldMatrix.r[3],
+		m_d3dPlayerMatrix.r[3], XMVectorSet(0, 1, 0, 0));
+	tThisWorld.atWorldMatrix[8].worldMatrix = XMMatrixInverse(NULL, tThisWorld.atWorldMatrix[8].worldMatrix);
 	//CreateSimpleGunAi(&tThisWorld, AILocation);
 	XMMATRIX groundSpawnPoint;
 	groundSpawnPoint = m_d3dWorldMatrix;
@@ -300,7 +304,23 @@ int CGameMangerSystem::InGameUpdate()
 			}
 			if (tThisWorld.atAIMask[nCurrentEntity].m_tnAIMask == (COMPONENT_AIMASK | COMPONENT_SEARCH)) {
 
-				tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = pcAiSystem->LookBackLeftToRight(tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix);
+			
+				if (tThisWorld.atAIVision[nCurrentEntity].visionRotation < 7 && tThisWorld.atAIVision[nCurrentEntity].keepRotatingRight == true) {
+					tThisWorld.atAIVision[nCurrentEntity].visionRotation += 0.001;
+					tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = pcAiSystem->LookBackLeftToRight(tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix,
+						true);
+				}
+				else {
+					tThisWorld.atAIVision[nCurrentEntity].keepRotatingRight = false;
+				}
+				 if (tThisWorld.atAIVision[nCurrentEntity].visionRotation > -7&&tThisWorld.atAIVision[nCurrentEntity].keepRotatingRight==false) {
+					tThisWorld.atAIVision[nCurrentEntity].visionRotation -= 0.001;
+					tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = pcAiSystem->LookBackLeftToRight(tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix,
+						false);
+				 }
+				 else {
+					 tThisWorld.atAIVision[nCurrentEntity].keepRotatingRight = true;
+				 }
 				float CloseEstObject = 10000000000000000000.0f;
 				float* distanceCalucaltion = new float();
 				bool spotedplayer = false;
@@ -317,7 +337,12 @@ int CGameMangerSystem::InGameUpdate()
 							red.x = 1;
 							tThisWorld.atSimpleMesh[8].m_nColor = red;
 							spotedplayer = true;
+							tThisWorld.atAIMask[nCurrentEntity].m_tnAIMask = COMPONENT_AIMASK | COMPONENT_SPOTEDPLAYER;
+							tThisWorld.atAIVision[nCurrentEntity].playerLastKnownLocation = tThisWorld.atWorldMatrix[ptr->m_IndexLocation].worldMatrix;
 							break;
+						}
+						if (tThisWorld.atRigidBody[ptr->m_IndexLocation].wall == true) {
+							cout << "wall" << endl;
 						}
 						
 					}
@@ -333,6 +358,26 @@ int CGameMangerSystem::InGameUpdate()
 			}
 			//else if(tThisWorld.atAIMask[nCurrentEntity].m_tnAIMask==())
 		
+			else if (tThisWorld.atAIMask[nCurrentEntity].m_tnAIMask == (COMPONENT_AIMASK | COMPONENT_SPOTEDPLAYER)) {
+				XMFLOAT3 aiPos;
+				aiPos.x = tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix.r[3].m128_f32[0];
+				aiPos.y = tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix.r[3].m128_f32[1];
+				aiPos.z = tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix.r[3].m128_f32[2];
+				XMFLOAT3 PlayerLastKnownPosition;
+				PlayerLastKnownPosition.x = tThisWorld.atAIVision[nCurrentEntity].playerLastKnownLocation.r[3].m128_f32[0];
+				PlayerLastKnownPosition.y = tThisWorld.atAIVision[nCurrentEntity].playerLastKnownLocation.r[3].m128_f32[1];
+				PlayerLastKnownPosition.z = tThisWorld.atAIVision[nCurrentEntity].playerLastKnownLocation.r[3].m128_f32[2];
+				float distance=sqrtf(
+					((aiPos.x - PlayerLastKnownPosition.x)*(aiPos.x - PlayerLastKnownPosition.x)) +
+					((aiPos.y - PlayerLastKnownPosition.y)*(aiPos.y - PlayerLastKnownPosition.y)) +
+					((aiPos.z - PlayerLastKnownPosition.z)*(aiPos.z - PlayerLastKnownPosition.z))
+				);
+				if (distance < 2) {
+					tThisWorld.atAIMask[nCurrentEntity].m_tnAIMask = COMPONENT_AIMASK | COMPONENT_SEARCH;
+				}
+
+				pcAiSystem->FollowObject(tThisWorld.atAIVision[nCurrentEntity].playerLastKnownLocation, &tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix);
+			}
 		
 			if (tThisWorld.atProjectiles[nCurrentEntity].m_tnProjectileMask == (COMPONENT_PROJECTILESMASK | COMPONENT_CLIP)) {
 				if (tThisWorld.atClip[nCurrentEntity].GunMode == false && tThisWorld.atClip[nCurrentEntity].tryToShoot == true) {
@@ -408,7 +453,18 @@ int CGameMangerSystem::InGameUpdate()
 
 			}
 		
-		
+			if (tThisWorld.atParentWorldMatrix[nCurrentEntity] != -1)
+			{
+
+				if (nCurrentEntity == 8) {
+					float x = 0;
+				}
+				tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = XMMatrixMultiply(pcGraphicsSystem->SetDefaultWorldPosition(),
+					tThisWorld.atWorldMatrix[tThisWorld.atParentWorldMatrix[nCurrentEntity]].worldMatrix);
+
+				tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = XMMatrixMultiply(tThisWorld.atOffSetMatrix[nCurrentEntity], tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix);
+
+			}
 			tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = pcPhysicsSystem->ResolveForces(&tThisWorld.atRigidBody[nCurrentEntity], tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, true);
 		
 		
@@ -514,18 +570,7 @@ int CGameMangerSystem::InGameUpdate()
 			//tTempPixelBuffer.m_d3dCollisionColor = tThisWorld.atSimpleMesh[nCurrentEntity].m_nColor;
 		
 		
-			if (tThisWorld.atParentWorldMatrix[nCurrentEntity] != -1)
-			{
-
-				if (nCurrentEntity == 8) {
-					float x = 0;
-				}
-				tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = XMMatrixMultiply(pcGraphicsSystem->SetDefaultWorldPosition(),
-					tThisWorld.atWorldMatrix[tThisWorld.atParentWorldMatrix[nCurrentEntity]].worldMatrix);
-
-				tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = XMMatrixMultiply(tThisWorld.atOffSetMatrix[nCurrentEntity], tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix);
-
-			}
+		
 		
 
 		if (tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_SIMPLEMESH | COMPONENT_SHADERID))
