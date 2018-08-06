@@ -675,25 +675,44 @@ XMMATRIX CInputSystem::WalkCameraControls(XMVECTOR U, XMMATRIX viewM) {
 //
 //}
 // Left Rotation
+d3dRotation = XMMatrixRotationY(fXchange * m_fMouseRotationSpeed);
+
+d3dTmpViewM = XMMatrixMultiply(d3dTmpViewM, d3dRotation);
+
+d3d_existingZ = d3dTmpViewM.r[2];
+d3d_newX = XMVector3Cross(XMVectorSet(0, 1, 0, 0), d3d_existingZ);
+d3d_newY = XMVector3Cross(d3d_existingZ, d3d_newX);
+
+d3d_newX = XMVector3Normalize(d3d_newX);
+d3d_newY = XMVector3Normalize(d3d_newY);
+
+d3d_existingZ = XMVector3Normalize(d3d_existingZ);
+
+d3dTmpViewM.r[0] = d3d_newX;
+d3dTmpViewM.r[1] = d3d_newY;
+d3dTmpViewM.r[2] = d3d_existingZ;
+d3dRotation = XMMatrixRotationX(-1*fYchange * m_fMouseRotationSpeed);
+
+d3dTmpViewM = XMMatrixMultiply(d3dTmpViewM, d3dRotation);
+
+
+d3d_existingZ = d3dTmpViewM.r[2];
+d3d_newX = XMVector3Cross(XMVectorSet(0, 1, 0, 0), d3d_existingZ);
+d3d_newY = XMVector3Cross(d3d_existingZ, d3d_newX);
+
+d3d_newX = XMVector3Normalize(d3d_newX);
+d3d_newY = XMVector3Normalize(d3d_newY);
+
+d3d_existingZ = XMVector3Normalize(d3d_existingZ);
+
+d3dTmpViewM.r[0] = d3d_newX;
+d3dTmpViewM.r[1] = d3d_newY;
+d3dTmpViewM.r[2] = d3d_existingZ;
+
+
 	if (fXchange < 0 && fYchange < 0)
 	{
-		d3dRotation = XMMatrixRotationY(fXchange * m_fMouseRotationSpeed);
-
-		d3dTmpViewM = XMMatrixMultiply(d3dTmpViewM, d3dRotation);
-
-		d3d_existingZ = d3dTmpViewM.r[2];
-		d3d_newX = XMVector3Cross(XMVectorSet(0, 1, 0, 0), d3d_existingZ);
-		d3d_newY = XMVector3Cross(d3d_existingZ, d3d_newX);
-
-		d3d_newX = XMVector3Normalize(d3d_newX);
-		d3d_newY = XMVector3Normalize(d3d_newY);
-
-		d3d_existingZ = XMVector3Normalize(d3d_existingZ);
-
-		d3dTmpViewM.r[0] = d3d_newX;
-		d3dTmpViewM.r[1] = d3d_newY;
-		d3dTmpViewM.r[2] = d3d_existingZ;
-
+		
 
 		//newV = XMMatrixMultiply(d3dTmpViewM, d3dRotation);
 
@@ -701,7 +720,7 @@ XMMATRIX CInputSystem::WalkCameraControls(XMVECTOR U, XMMATRIX viewM) {
 	//Right Rotation
 	if (fXchange > 0 && fYchange < 0)
 	{
-		d3dRotation = XMMatrixRotationY(fXchange * m_fMouseRotationSpeed);
+		/*d3dRotation = XMMatrixRotationY(fXchange * m_fMouseRotationSpeed);
 
 		d3dTmpViewM = XMMatrixMultiply(d3dTmpViewM, d3dRotation);
 
@@ -717,7 +736,7 @@ XMMATRIX CInputSystem::WalkCameraControls(XMVECTOR U, XMMATRIX viewM) {
 
 		d3dTmpViewM.r[0] = d3d_newX;
 		d3dTmpViewM.r[1] = d3d_newY;
-		d3dTmpViewM.r[2] = d3d_existingZ;
+		d3dTmpViewM.r[2] = d3d_existingZ;*/
 
 		//newV = XMMatrixMultiply(d3dRotation, d3dTmpViewM);
 
@@ -725,24 +744,7 @@ XMMATRIX CInputSystem::WalkCameraControls(XMVECTOR U, XMMATRIX viewM) {
 	// Up rotation
 	if (fXchange < 0 && fYchange > 0)
 	{
-		d3dRotation = XMMatrixRotationX(fYchange * m_fMouseRotationSpeed);
-
-		d3dTmpViewM = XMMatrixMultiply(d3dTmpViewM, d3dRotation);
-
-
-		d3d_existingZ = d3dTmpViewM.r[2];
-		d3d_newX = XMVector3Cross(XMVectorSet(0, 1, 0, 0), d3d_existingZ);
-		d3d_newY = XMVector3Cross(d3d_existingZ, d3d_newX);
-
-		d3d_newX = XMVector3Normalize(d3d_newX);
-		d3d_newY = XMVector3Normalize(d3d_newY);
-
-		d3d_existingZ = XMVector3Normalize(d3d_existingZ);
-
-		d3dTmpViewM.r[0] = d3d_newX;
-		d3dTmpViewM.r[1] = d3d_newY;
-		d3dTmpViewM.r[2] = d3d_existingZ;
-
+		
 
 		//newV = XMMatrixMultiply(d3dTmpViewM, d3dRotation);
 
@@ -752,7 +754,7 @@ XMMATRIX CInputSystem::WalkCameraControls(XMVECTOR U, XMMATRIX viewM) {
 	// Down rotation
 
 	if (fXchange > 0 && fYchange > 0)
-	{
+	{/*
 		d3dRotation = XMMatrixRotationX(fYchange * m_fMouseRotationSpeed);
 
 		d3dTmpViewM = XMMatrixMultiply(d3dTmpViewM, d3dRotation);
@@ -768,7 +770,7 @@ XMMATRIX CInputSystem::WalkCameraControls(XMVECTOR U, XMMATRIX viewM) {
 		d3dTmpViewM.r[0] = d3d_newX;
 		d3dTmpViewM.r[1] = d3d_newY;
 		d3dTmpViewM.r[2] = d3d_existingZ;
-
+*/
 
 	//	//newV = XMMatrixMultiply(d3dTmpViewM, d3dRotation);
 
