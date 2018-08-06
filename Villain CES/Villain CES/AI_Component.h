@@ -22,6 +22,7 @@ struct TAIVision {
 	bool	 keepRotatingRight=true;
 	XMMATRIX playerLastKnownLocation;
 	int		 wallIndex = -1;
+	bool keepSearching = true;
 	
 
 };
