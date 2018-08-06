@@ -561,7 +561,7 @@ int CGameMangerSystem::LoadMainMenu()
 
 	}
 	if (pcInputSystem->InputCheck(G_KEY_ESCAPE)) {
-		pcCollisionSystem->m_AAbb.clear();
+		//pcCollisionSystem->m_AAbb.clear();
 		pcGraphicsSystem->CleanD3DLevel(&tThisWorld);
 
 	//	pcGraphicsSystem->CleanD3D(&tThisWorld);
