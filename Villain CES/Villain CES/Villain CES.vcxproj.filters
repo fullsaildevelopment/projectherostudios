@@ -78,6 +78,15 @@
     <ClInclude Include="InputSystem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Projectile_Component.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ProjectileSystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GameManger.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="Timer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -120,6 +129,12 @@
       <Filter>Header Files\Source Files</Filter>
     </ClCompile>
     <ClCompile Include="XTime.cpp">
+      <Filter>Header Files\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ProjectileSystem.cpp">
+      <Filter>Header Files\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GameManger.cpp">
       <Filter>Header Files\Source Files</Filter>
     </ClCompile>
   </ItemGroup>

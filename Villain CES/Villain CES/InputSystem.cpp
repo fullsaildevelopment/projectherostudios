@@ -36,7 +36,7 @@ TCameraToggle CInputSystem::CameraModeListen(TCameraToggle tMyCam)
 		tTempCamMode.bAimMode = false;
 
 	}
-	if (InputCheck(G_KEY_7) == 1)
+	if (InputCheck(G_BUTTON_RIGHT) == 1)
 	{
 		tTempCamMode.bAimMode = true;
 		tTempCamMode.bDebugMode = false;
@@ -72,13 +72,13 @@ XMMATRIX CInputSystem::DebugCamera(XMMATRIX d3d_ViewM, XMMATRIX d3d_WorldM)
 
 	// up key movement
 
-	if (InputCheck(G_BUTTON_LEFT) == 1) {
+	if (InputCheck(G_KEY_W) == 1) {
 		d3dMovementM = XMMatrixTranslation(0, 0, m_fMouseMovementSpeed);
 		d3dTmpViewM = XMMatrixMultiply(d3dMovementM, d3dTmpViewM);
 
 	}
 	// down key movement
-	if (InputCheck(G_BUTTON_RIGHT) == 1) {
+	if (InputCheck(G_KEY_S) == 1) {
 		d3dMovementM = XMMatrixTranslation(0, 0, -m_fMouseMovementSpeed);
 
 		d3dTmpViewM = XMMatrixMultiply(d3dMovementM, d3dTmpViewM);
@@ -96,12 +96,12 @@ XMMATRIX CInputSystem::DebugCamera(XMMATRIX d3d_ViewM, XMMATRIX d3d_WorldM)
 		d3dTmpViewM = XMMatrixMultiply(d3dMovementM, d3dTmpViewM);
 
 	}
-	if (InputCheck(G_KEY_W) == 1) {
+	if (InputCheck(G_KEY_SPACE) == 1) {
 		d3dMovementM = XMMatrixTranslation(0, m_fMouseMovementSpeed, 0);
 		d3dTmpViewM = XMMatrixMultiply(d3dMovementM, d3dTmpViewM);
 
 	}
-	if (InputCheck(G_KEY_S) == 1) {
+	if (InputCheck(G_KEY_DOWN) == 1) {
 		d3dMovementM = XMMatrixTranslation(0, -m_fMouseMovementSpeed, 0);
 		d3dTmpViewM = XMMatrixMultiply(d3dMovementM, d3dTmpViewM);
 	}
@@ -408,7 +408,7 @@ XMMATRIX CInputSystem::AimMode(XMMATRIX d3dplayerMatrix)
 		d3dTmpViewM = XMMatrixMultiply(d3dMovementM, d3dTmpViewM);
 
 	}
-	if (InputCheck(G_KEY_S) == 1) {
+	/*if (InputCheck(G_KEY_S) == 1) {
 		d3dMovementM = XMMatrixTranslation(0, -m_fMouseMovementSpeed, 0);
 		d3dTmpViewM = XMMatrixMultiply(d3dMovementM, d3dTmpViewM);
 	}*/
@@ -525,6 +525,9 @@ XMMATRIX CInputSystem::WalkCameraControls(XMVECTOR U, XMMATRIX viewM) {
 
 	d3dTmpViewM = viewM;
 	m_pcMyInput->GetMouseDelta(fXchange, fYchange);
+	if (fXchange == 0) {
+		float x = 0;
+	}
 
 	m_pcMyInput->GetMousePosition(fXEnd, fYEnd);
 	//XMMATRIX newV;
@@ -630,7 +633,47 @@ XMMATRIX CInputSystem::WalkCameraControls(XMVECTOR U, XMMATRIX viewM) {
 	//}
 	//Right && Left Rotation(keybord implemented, soon to be changed in the mouse)
 
-
+//if (fXchange != 2)
+//{
+//	d3dRotation = XMMatrixRotationX(fXchange * m_fMouseRotationSpeed);
+//
+//	d3dTmpViewM = XMMatrixMultiply(d3dRotation, d3dTmpViewM);
+//
+//	//Auto leveling out the Rotation of the player
+//	d3d_existingZ = d3dTmpViewM.r[2];
+//	d3d_newX = XMVector3Cross(XMVectorSet(0, 1, 0, 0), d3d_existingZ);
+//	d3d_newY = XMVector3Cross(d3d_existingZ, d3d_newX);
+//
+//	d3d_newX = XMVector3Normalize(d3d_newX);
+//	d3d_newY = XMVector3Normalize(d3d_newY);
+//
+//	d3d_existingZ = XMVector3Normalize(d3d_existingZ);
+//
+//	d3dTmpViewM.r[0] = d3d_newX;
+//	d3dTmpViewM.r[1] = d3d_newY;
+//	d3dTmpViewM.r[2] = d3d_existingZ;
+//
+//
+//}
+//if (fYchange != 2)
+//{
+//	d3dRotation = XMMatrixRotationY(fYchange * m_fMouseRotationSpeed);
+//
+//	d3dTmpViewM = XMMatrixMultiply(d3dRotation, d3dTmpViewM);
+//
+//	//Auto level out the Rotation of the player 
+//	d3d_existingZ = d3dTmpViewM.r[2];
+//	d3d_newX = XMVector3Cross(XMVectorSet(0, 1, 0, 0), d3d_existingZ);
+//	d3d_newY = XMVector3Cross(d3d_existingZ, d3d_newX);
+//	d3d_newX = XMVector3Normalize(d3d_newX);
+//	d3d_newY = XMVector3Normalize(d3d_newY);
+//	d3d_existingZ = XMVector3Normalize(d3d_existingZ);
+//	d3dTmpViewM.r[0] = d3d_newX;
+//	d3dTmpViewM.r[1] = d3d_newY;
+//	d3dTmpViewM.r[2] = d3d_existingZ;
+//
+//
+//}
 // Left Rotation
 	if (fXchange < 0 && fYchange < 0)
 	{
@@ -682,7 +725,7 @@ XMMATRIX CInputSystem::WalkCameraControls(XMVECTOR U, XMMATRIX viewM) {
 	// Up rotation
 	if (fXchange < 0 && fYchange > 0)
 	{
-		d3dRotation = XMMatrixRotationX(fXchange * m_fMouseRotationSpeed);
+		d3dRotation = XMMatrixRotationX(fYchange * m_fMouseRotationSpeed);
 
 		d3dTmpViewM = XMMatrixMultiply(d3dTmpViewM, d3dRotation);
 
@@ -705,11 +748,12 @@ XMMATRIX CInputSystem::WalkCameraControls(XMVECTOR U, XMMATRIX viewM) {
 
 
 	}
+		 
 	// Down rotation
 
 	if (fXchange > 0 && fYchange > 0)
 	{
-		d3dRotation = XMMatrixRotationX(fXchange * m_fMouseRotationSpeed);
+		d3dRotation = XMMatrixRotationX(fYchange * m_fMouseRotationSpeed);
 
 		d3dTmpViewM = XMMatrixMultiply(d3dTmpViewM, d3dRotation);
 		d3d_existingZ = d3dTmpViewM.r[2];
@@ -851,7 +895,7 @@ TCamera CInputSystem::CameraInit(TCamera camera)
 	//	d3dTmpViewM.r[1] = d3d_newY;
 	//	d3dTmpViewM.r[2] = d3d_existingZ;
 	//}
-	if (fXchange != 0)
+	if (fXchange != 2)
 	{
 		d3dRotation = XMMatrixRotationX(fXchange * m_fMouseRotationSpeed);
 
@@ -873,7 +917,7 @@ TCamera CInputSystem::CameraInit(TCamera camera)
 
 
 	}
-	if (fYchange != 0)
+	if (fYchange != 2)
 	{
 		d3dRotation = XMMatrixRotationY(fYchange * m_fMouseRotationSpeed);
 
@@ -897,24 +941,18 @@ TCamera CInputSystem::CameraInit(TCamera camera)
 	//else if (fXchange > 0 && fYchange < 0)
 	//{
 	//	d3dRotation = XMMatrixRotationY(fXchange * m_fMouseRotationSpeed);
-
 	//	d3dTmpViewM = XMMatrixMultiply(d3dRotation, d3dTmpViewM);
 	//	//Auto leveling out the Rotation of the player
-
 	//	d3d_existingZ = d3dTmpViewM.r[2];
 	//	d3d_newX = XMVector3Cross(XMVectorSet(0, 1, 0, 0), d3d_existingZ);
 	//	d3d_newY = XMVector3Cross(d3d_existingZ, d3d_newX);
-
 	//	d3d_newX = XMVector3Normalize(d3d_newX);
 	//	d3d_newY = XMVector3Normalize(d3d_newY);
-
 	//	d3d_existingZ = XMVector3Normalize(d3d_existingZ);
-
 	//	d3dTmpViewM.r[0] = d3d_newX;
 	//	d3dTmpViewM.r[1] = d3d_newY;
 	//	d3dTmpViewM.r[2] = d3d_existingZ;
 	//	
-
 	//}
 
 	//else if (fXchange < 0 && fYchange > 0)

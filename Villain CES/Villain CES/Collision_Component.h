@@ -10,10 +10,16 @@ enum eCollision_Component
 	COMPONENT_STATIC		= 1 << 4,
 	COMPONENT_NONSTATIC	    = 1 << 6,
 	COMPONENT_TRIGGER		= 1 << 7,
-	COMPONENT_NONTRIGGER	= 1 << 8
+	COMPONENT_NONTRIGGER	= 1 << 8,
+	COMPONENT_LINE			= 1 << 9
 
 
 }; 
+enum eMaterialType {
+	MATERIAL_METAL = 0,
+	MATERIAL_WOOD = 1,
+
+};
 
 struct TCollisionMask
 {
@@ -27,7 +33,11 @@ struct TAABB
 	XMFLOAT3 m_dMinPointOrginal;
 	XMFLOAT3 m_dMaxPointOrginal;
 	int		 m_IndexLocation;
-	int		 m_LocationinList;
+	int		 m_MaterialType= MATERIAL_METAL;
+	int		 m_SceneChange=-30;
+	
+	
+
 
 };
 
