@@ -294,7 +294,7 @@ int CGameMangerSystem::InGameUpdate()
 
 				
 				pcAiSystem->FollowObject(tThisWorld.atWorldMatrix[PlayerStartIndex].worldMatrix, &tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix);
-			//	pcAiSystem->ShootGun(&tThisWorld.atClip[tThisWorld.atAIMask[nCurrentEntity].GunIndex]);
+				pcAiSystem->ShootGun(&tThisWorld.atClip[tThisWorld.atAIMask[nCurrentEntity].GunIndex]);
 
 			}
 			//else if(tThisWorld.atAIMask[nCurrentEntity].m_tnAIMask==())
