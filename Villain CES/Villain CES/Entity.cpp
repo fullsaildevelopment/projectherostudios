@@ -882,7 +882,7 @@ unsigned int CreateCelling(TWorld * ptWorld, XMMATRIX SpawnPosition)
 	return 0;
 }
 
-unsigned int CreateGun(TWorld * ptWorld, XMMATRIX BulletSpawnLocation,int parentWorldMatrixIndex,float xoffset,float yoffset,float zoffset)
+unsigned int CreateGun(TWorld * ptWorld, XMMATRIX BulletSpawnLocation,int parentWorldMatrixIndex,float xoffset,float yoffset,float zoffset,int clipSize,float shootingCOooldown)
 {
 unsigned int nThisEntity = createEntity(ptWorld);
 
@@ -894,8 +894,8 @@ ptWorld->atAIMask[nThisEntity].m_tnAIMask = COMPONENT_AIMASK;
 ptWorld->atUIMask[nThisEntity].m_tnUIMask = COMPONENT_UIMASK;
 ptWorld->atPhysicsMask[nThisEntity].m_tnPhysicsMask = COMPONENT_PHYSICSMASK;
 ptWorld->atProjectiles[nThisEntity].m_tnProjectileMask = COMPONENT_PROJECTILESMASK| COMPONENT_CLIP;
-ptWorld->atClip[nThisEntity].nSizeofClipl = 3;
-ptWorld->atClip[nThisEntity].FValueOfCoolDown = 100;
+ptWorld->atClip[nThisEntity].nSizeofClipl = clipSize;
+ptWorld->atClip[nThisEntity].FValueOfCoolDown = shootingCOooldown;
 ptWorld->atClip[nThisEntity].fShootingCoolDown = 0;
 ptWorld->atClip[nThisEntity].GunMode = true;
 for (int i = 0; i < ptWorld->atClip[nThisEntity].nSizeofClipl; ++i) {

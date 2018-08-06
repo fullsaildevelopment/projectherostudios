@@ -12,10 +12,11 @@ CAuger::CAuger()
 CAuger::CAuger(HWND window)
 {
 	pcInputSystem = new CInputSystem();
+	pcInputSystem->InitializeGInput(window);
 	pcGameMangerSystem = new CGameMangerSystem(window,pcInputSystem);
 
-		pcInputSystem->InitializeGInput(window);
-		pcGraphicsSystem = new CGraphicsSystem();
+		
+		//pcGraphicsSystem = new CGraphicsSystem();
 	/*cApplicationWindow = window;
 	
 	pcGraphicsSystem = new CGraphicsSystem();
@@ -31,7 +32,8 @@ CAuger::CAuger(HWND window)
 
 CAuger::~CAuger()
 {
-	
+	//delete pcInputSystem;
+	delete pcGameMangerSystem;
 }
 
 void CAuger::Start()
@@ -88,7 +90,8 @@ void CAuger::Update(bool* loopgame)
 
 void CAuger::End()
 {
-	delete pcGameMangerSystem;
+	
+	//delete pcInputSystem;
 }
 
 /*

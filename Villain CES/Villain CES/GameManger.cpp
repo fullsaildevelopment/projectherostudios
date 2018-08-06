@@ -67,14 +67,14 @@ void CGameMangerSystem::LoadLevel()
 
 	AimingLine(&tThisWorld, m_d3dWorldMatrix, PlayerStartIndex, -1, 0, 10.5);
 
-	GunIndexForPlayer = CreateGun(&tThisWorld, m_d3dWorldMatrix, PlayerStartIndex, -1, 0, 10.5);
+	GunIndexForPlayer = CreateGun(&tThisWorld, m_d3dWorldMatrix, PlayerStartIndex, -1, 0, 10.5,3,100);
 	tThisWorld.atClip[GunIndexForPlayer].bulletSpeed = 0.001;
 	AILocation = m_d3dWorldMatrix;
 	AILocation.r[3].m128_f32[0] += -1;
 	AILocation.r[3].m128_f32[2] += -2;
 	CreateSimpleGunAi(&tThisWorld, AILocation);
 	tThisWorld.atAIMask[6].GunIndex = 7;
-	CreateGun(&tThisWorld, m_d3dWorldMatrix, 6, -1.1, 0, 11);
+	CreateGun(&tThisWorld, m_d3dWorldMatrix, 6, -1.1, 0, 11,10,100);
 	tThisWorld.atClip[7].bulletSpeed = 0.0001;
 
 
@@ -558,63 +558,67 @@ int CGameMangerSystem::LoadMainMenu()
 
 	}
 	if (pcInputSystem->InputCheck(G_KEY_ESCAPE)) {
+		pcCollisionSystem->m_AAbb.clear();
+		pcGraphicsSystem->CleanD3DLevel(&tThisWorld);
+
+	//	pcGraphicsSystem->CleanD3D(&tThisWorld);
 		return 4;
 	}
 	/*if (pcInputSystem->InputCheck(G_KEY_U)) {
 
 	}*/
 	// ui stuff
-	if (GamePaused == true) {
-		if (DrawUI == true) {
-			XMMATRIX UiPos = tThisWorld.atWorldMatrix[PlayerStartIndex].worldMatrix;
-			//UiPos.r[3].m128_f32[1] -= 1;
-			XMVECTOR foward;
-			foward.m128_f32[0] = 0;
-			foward.m128_f32[1] = 1;
-			foward.m128_f32[2] = 2;
-			//	foward.m128_f32[0] = 1;
+	//if (GamePaused == true) {
+	//	if (DrawUI == true) {
+	//		XMMATRIX UiPos = tThisWorld.atWorldMatrix[PlayerStartIndex].worldMatrix;
+	//		//UiPos.r[3].m128_f32[1] -= 1;
+	//		XMVECTOR foward;
+	//		foward.m128_f32[0] = 0;
+	//		foward.m128_f32[1] = 1;
+	//		foward.m128_f32[2] = 2;
+	//		//	foward.m128_f32[0] = 1;
 
 
-			XMMATRIX localMatrix2 = XMMatrixTranslationFromVector(foward);
+	//		XMMATRIX localMatrix2 = XMMatrixTranslationFromVector(foward);
 
-			UiPos = XMMatrixMultiply(localMatrix2, UiPos);
-			DrawUI = false;
-			UIIndex.push_back(CreateTemptUIBox(&tThisWorld, UiPos));
-			pcGraphicsSystem->CreateEntityBuffer(&tThisWorld, UIIndex.back());
-			UiPos.r[3].m128_f32[1] -= 1;
-			UIIndex.push_back(CreateTemptUIBox(&tThisWorld, UiPos));
-			pcGraphicsSystem->CreateEntityBuffer(&tThisWorld, UIIndex.back());
-			UiPos.r[3].m128_f32[1] += 1;
-			UIIndex.push_back(CreateTemptUIBox(&tThisWorld, UiPos));
-			pcGraphicsSystem->CreateEntityBuffer(&tThisWorld, UIIndex.back());
-			UiPos.r[3].m128_f32[1] += 1;
-			UIIndex.push_back(CreateTemptUIBox(&tThisWorld, UiPos));
-			pcGraphicsSystem->CreateEntityBuffer(&tThisWorld, UIIndex.back());
-			UiPos.r[3].m128_f32[1] += 1;
-			UIIndex.push_back(CreateTemptUIBox(&tThisWorld, UiPos));
-			pcGraphicsSystem->CreateEntityBuffer(&tThisWorld, UIIndex.back());
-			UiPos.r[3].m128_f32[0] += 1;
-			UIIndex.push_back(CreateTemptUIBox(&tThisWorld, UiPos));
-			pcGraphicsSystem->CreateEntityBuffer(&tThisWorld, UIIndex.back());
-			UiPos.r[3].m128_f32[0] += 0.8;
-			UiPos.r[3].m128_f32[1] -= 0.3;
+	//		UiPos = XMMatrixMultiply(localMatrix2, UiPos);
+	//		DrawUI = false;
+	//		UIIndex.push_back(CreateTemptUIBox(&tThisWorld, UiPos));
+	//		pcGraphicsSystem->CreateEntityBuffer(&tThisWorld, UIIndex.back());
+	//		UiPos.r[3].m128_f32[1] -= 1;
+	//		UIIndex.push_back(CreateTemptUIBox(&tThisWorld, UiPos));
+	//		pcGraphicsSystem->CreateEntityBuffer(&tThisWorld, UIIndex.back());
+	//		UiPos.r[3].m128_f32[1] += 1;
+	//		UIIndex.push_back(CreateTemptUIBox(&tThisWorld, UiPos));
+	//		pcGraphicsSystem->CreateEntityBuffer(&tThisWorld, UIIndex.back());
+	//		UiPos.r[3].m128_f32[1] += 1;
+	//		UIIndex.push_back(CreateTemptUIBox(&tThisWorld, UiPos));
+	//		pcGraphicsSystem->CreateEntityBuffer(&tThisWorld, UIIndex.back());
+	//		UiPos.r[3].m128_f32[1] += 1;
+	//		UIIndex.push_back(CreateTemptUIBox(&tThisWorld, UiPos));
+	//		pcGraphicsSystem->CreateEntityBuffer(&tThisWorld, UIIndex.back());
+	//		UiPos.r[3].m128_f32[0] += 1;
+	//		UIIndex.push_back(CreateTemptUIBox(&tThisWorld, UiPos));
+	//		pcGraphicsSystem->CreateEntityBuffer(&tThisWorld, UIIndex.back());
+	//		UiPos.r[3].m128_f32[0] += 0.8;
+	//		UiPos.r[3].m128_f32[1] -= 0.3;
 
-			UIIndex.push_back(CreateTemptUIBox(&tThisWorld, UiPos));
-			pcGraphicsSystem->CreateEntityBuffer(&tThisWorld, UIIndex.back());
-			UiPos.r[3].m128_f32[1] -= 0.7;
+	//		UIIndex.push_back(CreateTemptUIBox(&tThisWorld, UiPos));
+	//		pcGraphicsSystem->CreateEntityBuffer(&tThisWorld, UIIndex.back());
+	//		UiPos.r[3].m128_f32[1] -= 0.7;
 
-			UIIndex.push_back(CreateTemptUIBox(&tThisWorld, UiPos));
-			pcGraphicsSystem->CreateEntityBuffer(&tThisWorld, UIIndex.back());
-			UiPos.r[3].m128_f32[1] -= 0.7;
+	//		UIIndex.push_back(CreateTemptUIBox(&tThisWorld, UiPos));
+	//		pcGraphicsSystem->CreateEntityBuffer(&tThisWorld, UIIndex.back());
+	//		UiPos.r[3].m128_f32[1] -= 0.7;
 
-			UIIndex.push_back(CreateTemptUIBox(&tThisWorld, UiPos));
-			pcGraphicsSystem->CreateEntityBuffer(&tThisWorld, UIIndex.back());
-			UiPos.r[3].m128_f32[0] -= 1;
+	//		UIIndex.push_back(CreateTemptUIBox(&tThisWorld, UiPos));
+	//		pcGraphicsSystem->CreateEntityBuffer(&tThisWorld, UIIndex.back());
+	//		UiPos.r[3].m128_f32[0] -= 1;
 
-			UIIndex.push_back(CreateTemptUIBox(&tThisWorld, UiPos));
-			pcGraphicsSystem->CreateEntityBuffer(&tThisWorld, UIIndex.back());
-		}
-	}
+	//		UIIndex.push_back(CreateTemptUIBox(&tThisWorld, UiPos));
+	//		pcGraphicsSystem->CreateEntityBuffer(&tThisWorld, UIIndex.back());
+	//	}
+	//}
 
 
 	
@@ -745,7 +749,7 @@ int CGameMangerSystem::LoadMainMenu()
 		}
 
 
-		//tTempPixelBuffer.m_d3dCollisionColor = tThisWorld.atSimpleMesh[nCurrentEntity].m_nColor;
+		tTempPixelBuffer.m_d3dCollisionColor = tThisWorld.atSimpleMesh[nCurrentEntity].m_nColor;
 
 
 		
@@ -799,10 +803,8 @@ int CGameMangerSystem::LoadMainMenu()
 
 void CGameMangerSystem::InitilizeMainMenu()
 {
-	for (int i = 0; i < ENTITYCOUNT; ++i) {
-		
-		destroyEntity(&tThisWorld, i);
-	}
+	pcGraphicsSystem->CleanD3DLevel(&tThisWorld);
+
 	m_d3dWorldMatrix = pcGraphicsSystem->SetDefaultWorldPosition();//Call some sort of function from the graphics system to create this matrix
 	m_d3dViewMatrix = pcGraphicsSystem->SetDefaultViewMatrix();//Call some sort of function from the graphics system to create this matrix
 	m_d3dCameraMatrix = pcGraphicsSystem->SetDefaultCameraMatrix();
