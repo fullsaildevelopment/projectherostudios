@@ -81,7 +81,8 @@ void CGameMangerSystem::LoadLevel()
 	AILocation = m_d3dWorldMatrix;
 	AILocation.r[3].m128_f32[0] += -3;
 	AILocation.r[3].m128_f32[2] += -5;
-	
+	CreateSimpleSearchAi(&tThisWorld, AILocation);
+	CreateAIVision(&tThisWorld, AILocation, 8, 8, -0.6, -0.1, 10.7);
 	//CreateSimpleGunAi(&tThisWorld, AILocation);
 	XMMATRIX groundSpawnPoint;
 	groundSpawnPoint = m_d3dWorldMatrix;
@@ -293,9 +294,42 @@ int CGameMangerSystem::InGameUpdate()
 				// ai code do not delete
 
 				
-				pcAiSystem->FollowObject(tThisWorld.atWorldMatrix[PlayerStartIndex].worldMatrix, &tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix);
-				pcAiSystem->ShootGun(&tThisWorld.atClip[tThisWorld.atAIMask[nCurrentEntity].GunIndex]);
+			//	pcAiSystem->FollowObject(tThisWorld.atWorldMatrix[PlayerStartIndex].worldMatrix, &tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix);
+			//	pcAiSystem->ShootGun(&tThisWorld.atClip[tThisWorld.atAIMask[nCurrentEntity].GunIndex]);
 
+			}
+			if (tThisWorld.atAIMask[nCurrentEntity].m_tnAIMask == (COMPONENT_AIMASK | COMPONENT_SEARCH)) {
+
+				tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = pcAiSystem->LookBackLeftToRight(tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix);
+				float CloseEstObject = 10000000000000000000.0f;
+				float* distanceCalucaltion = new float();
+				bool spotedplayer = false;
+				for (list<TAABB>::iterator ptr = pcCollisionSystem->m_AAbb.begin(); ptr != pcCollisionSystem->m_AAbb.end(); ++ptr) {
+
+					if (pcAiSystem->LookForPlayer(XMVector3Transform(tThisWorld.atAIVision[nCurrentEntity].start,tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix)
+						, XMVector3Transform(tThisWorld.atAIVision[nCurrentEntity].end,tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix), tThisWorld.atWorldMatrix[ptr->m_IndexLocation].worldMatrix, *ptr,
+						distanceCalucaltion, pcCollisionSystem) == true ) {
+						if (tThisWorld.atInputMask[ptr->m_IndexLocation].m_tnInputMask == (COMPONENT_CLAYTON | COMPONENT_INPUTMASK)) {
+							XMFLOAT4 red;
+							red.y = 0;
+							red.z = 0;
+							red.w = 1;
+							red.x = 1;
+							tThisWorld.atSimpleMesh[8].m_nColor = red;
+							spotedplayer = true;
+							break;
+						}
+						
+					}
+				}
+				if (spotedplayer == false) {
+					XMFLOAT4 blue;
+					blue.y = 0;
+					blue.z = 1;
+					blue.w = 1;
+					blue.x = 0;
+					tThisWorld.atSimpleMesh[8].m_nColor = blue;
+				}
 			}
 			//else if(tThisWorld.atAIMask[nCurrentEntity].m_tnAIMask==())
 		

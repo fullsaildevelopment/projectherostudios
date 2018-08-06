@@ -36,6 +36,7 @@ struct TWorld
 	TRigidbody		atRigidBody[ENTITYCOUNT];
 	//AI
 	TAIMask			atAIMask[ENTITYCOUNT];
+	TAIVision		atAIVision[ENTITYCOUNT];
 	//Collision
 	TCollisionMask	atCollisionMask[ENTITYCOUNT];
 	TAABB			atAABB[ENTITYCOUNT];
@@ -95,7 +96,10 @@ unsigned int CreateWall(TWorld* ptWorld, XMMATRIX SpawnPosition);
 unsigned int CreateCelling(TWorld* ptWorld, XMMATRIX SpawnPosition);
 unsigned int CreateGun(TWorld* ptWorld, XMMATRIX BulletSpawnLocation, int parentWorldMatrixIndex, float xoffset, float yoffset, float zoffset,int clipSize, float shootingCOooldown);
 unsigned int CreateSimpleGunAi(TWorld* ptWorld, XMMATRIX SpawnPosition);
+unsigned int CreateSimpleSearchAi(TWorld* ptWorld, XMMATRIX SpawnPosition);
+
 unsigned int CreateRayBullet(TWorld * ptWorld, XMMATRIX bulletSpawnLocation,float zDistance,  int parentWorldMatrixIndex, float xoffset, float yoffset, float zoffset);
+unsigned int CreateAIVision(TWorld * ptWorld, XMMATRIX bulletSpawnLocation, float zDistance, int parentWorldMatrixIndex, float xoffset, float yoffset, float zoffset);
 unsigned int CreateTemptUIBox(TWorld * ptWorld, XMMATRIX SpawnPosition);
 
  //float zDistance = 0.5f;

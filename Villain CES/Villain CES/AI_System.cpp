@@ -41,6 +41,38 @@ void CAISystem::SetNumberOfAI(int aiCount)
 	numberofAI = aiCount;
 }
 
+bool CAISystem::LookForPlayer(XMVECTOR start, XMVECTOR end, XMMATRIX boxWorldMaxtrix, TAABB abbcolider, float * distance, CCollisionSystem * pcCollisionPointer)
+{
+	return pcCollisionPointer->IsLineInBox(start, end, boxWorldMaxtrix, abbcolider, distance);
+}
+
+XMMATRIX CAISystem::LookBackLeftToRight(XMMATRIX AiMatrix)
+{
+	XMMATRIX d3dTmpViewM, d3dMovementM, d3dRotation;
+	float fXchange = 0, fYchange = 0, fXEnd = 0, fYEnd = 0;
+	d3dRotation = XMMatrixRotationY(0.0001);
+	d3dTmpViewM = AiMatrix;
+	XMVECTOR d3d_newX, d3d_newY, d3d_existingZ;
+	d3dTmpViewM = XMMatrixMultiply(d3dRotation, d3dTmpViewM);
+
+	d3d_existingZ = d3dTmpViewM.r[2];
+	d3d_newX = XMVector3Cross(AiMatrix.r[1], d3d_existingZ);
+	d3d_newY = XMVector3Cross(d3d_existingZ, d3d_newX);
+
+	d3d_newX = XMVector3Normalize(d3d_newX);
+	d3d_newY = XMVector3Normalize(d3d_newY);
+
+	d3d_existingZ = XMVector3Normalize(d3d_existingZ);
+
+	d3dTmpViewM.r[0] = d3d_newX;
+	d3dTmpViewM.r[1] = d3d_newY;
+	d3dTmpViewM.r[2] = d3d_existingZ;
+	d3dRotation = XMMatrixRotationX(0.01);
+
+	//d3dTmpViewM = XMMatrixMultiply(d3dRotation, d3dTmpViewM);
+	return d3dTmpViewM;
+}
+
 int CAISystem::GetNumberOfAI()
 {
 	return numberofAI;
