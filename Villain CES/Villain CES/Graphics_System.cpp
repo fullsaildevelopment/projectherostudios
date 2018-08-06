@@ -350,12 +350,12 @@ XMMATRIX CGraphicsSystem::SetDefaultViewMatrix()
 //	return DefaultViewMatrix;
 //}
 
-XMMATRIX CGraphicsSystem::SetDefaultPerspective()
+XMMATRIX CGraphicsSystem::SetDefaultPerspective(float fFov)
 {
 
 	XMMATRIX DefaultPerspectiveMatrix;
 	// the 90 is for fov if we want to implement field of view
-	m_fFOV = 90;
+	m_fFOV = fFov;
 
 	DefaultPerspectiveMatrix.r[0].m128_f32[0] = 1 / tan(m_fFOV* 0.5 * 3.15f / 180);
 	DefaultPerspectiveMatrix.r[0].m128_f32[1] = 0;

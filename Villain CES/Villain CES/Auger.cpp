@@ -2,7 +2,6 @@
 #include "Auger.h"
 #include"Collision_Component.h"
 
-
 CAuger::CAuger()
 {
 
@@ -16,6 +15,8 @@ CAuger::CAuger(HWND window)
 	pcCollisionSystem = new CCollisionSystem();
 	pcPhysicsSystem = new CPhysicsSystem();
 	pcInputSystem->InitializeGInput(window);
+	tTimerInfo = new System_Times();
+	tAugerTimers = new Timers();
 }
 
 
@@ -27,12 +28,16 @@ CAuger::~CAuger()
 void CAuger::Start()
 {
 	//Initializes Systems
+	
+	tAugerTimers->tAppTimer.Signal();
 	InitializeSystems();
+	
 }
 
 void CAuger::InitializeSystems()
 {
 	pcGraphicsSystem->InitD3D(cApplicationWindow);
+	tTimerInfo->StartClock(tAugerTimers->tSceneTimer);
 	//createDebugGrid(&tThisWorld);
 	CreateGround(&tThisWorld);
 
@@ -77,10 +82,14 @@ void CAuger::InitializeSystems()
 	pcGraphicsSystem->CreateBuffers(&tThisWorld);
 	//createEntity(&tThisWorld);
 
-	 m_d3dWorldMatrix = pcGraphicsSystem->SetDefaultWorldPosition();//Call some sort of function from the graphics system to create this matrix
-	 m_d3dViewMatrix = pcGraphicsSystem->SetDefaultViewMatrix();//Call some sort of function from the graphics system to create this matrix
+	/* The memember world Matrix, camera's Postion Matrix, and camera Matrix Are set the inited to the same world starting position on purpose*/
+
+	 m_d3dWorldMatrix = pcGraphicsSystem->SetDefaultWorldPosition();
+	 tMyCamera.d3d_Position = pcGraphicsSystem->SetDefaultViewMatrix();
+     //m_d3dViewMatrix = pcGraphicsSystem->SetDefaultViewMatrix();
 	 m_d3dCameraMatrix = pcGraphicsSystem->SetDefaultCameraMatrix();
-	 m_d3dProjectionMatrix = pcGraphicsSystem->SetDefaultPerspective();
+	 m_d3dProjectionMatrix = pcGraphicsSystem->SetDefaultPerspective(90.f);
+
 	// tThisWorld.atWorldMatrix[1].worldMatrix = m_d3dWorldMatrix;
 	 // create the AABB
 	 for (int nCurrentEntity = 0; nCurrentEntity < ENTITYCOUNT; nCurrentEntity++) {
@@ -128,15 +137,19 @@ void CAuger::InitializeSystems()
 			 tThisWorld.atAABB[nCurrentEntity] = pcCollisionSystem->updateAABB(tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, tThisWorld.atAABB[nCurrentEntity]);
 		 }
 	 }
+
+	 
 }
 
 void CAuger::Update()
 {
+	tTimerInfo->applicationTime = tTimerInfo->GetTime(tAugerTimers->tAppTimer, tTimerInfo->applicationTime);
+	tTimerInfo->sceneTime = tTimerInfo->GetTime(tAugerTimers->tSceneTimer, tTimerInfo->sceneTime);
 
 	//Call some sort of function from the graphics system to create this matrix
 	    tCameraMode = pcInputSystem->CameraModeListen(tCameraMode);
-
-	//m_d3dProjectionMatrix = pcGraphicsSystem->SetDefaultPerspective();
+		
+	m_d3dProjectionMatrix = pcGraphicsSystem->SetDefaultPerspective(90.0f);
 	//createDummyPlayer(&tThisWorld, m_d3dPlayerMatrix);
 	//d3d_ResultMatrix = 
 	static XMMATRIX m_d3d_ResultMatrix = pcGraphicsSystem->SetDefaultWorldPosition();
@@ -149,7 +162,7 @@ void CAuger::Update()
 
 		//d3d_ResultMatrix = XMMatrixInverse(NULL, m_d3dViewMatrix);
 
-		m_d3d_ResultMatrix = pcInputSystem->WalkLookAt(XMVectorSet(0, 1.0f, 0, 0), m_d3d_ResultMatrix);
+		m_d3d_ResultMatrix = pcInputSystem->WalkCameraControls(XMVectorSet(0, 1.0f, 0, 0), m_d3d_ResultMatrix);
 
 		m_d3dCameraMatrix = XMMatrixMultiply(m_d3d_ResultMatrix, m_d3dPlayerMatrix);
 
@@ -160,12 +173,13 @@ void CAuger::Update()
 
 	else if (tCameraMode.bAimMode == true)
 	{
+				
 		m_d3dPlayerMatrix = pcInputSystem->AimMode(m_d3dPlayerMatrix);
 
 		 m_d3dCameraMatrix = XMMatrixMultiply(m_d3d_ResultMatrix, m_d3dPlayerMatrix);
 
 		 m_d3dCameraMatrix = XMMatrixMultiply(m_d3dOffsetMatrix, m_d3dCameraMatrix);
-		// m_d3dCameraMatrix = XMMatrixMultiply(m_d3dOffsetMatrix, m_d3dCameraMatrix);
+		
 	}
 	else
 	{
@@ -189,6 +203,8 @@ void CAuger::Update()
 	
 
 	pcGraphicsSystem->UpdateD3D();
+
+#pragma region 
 	fShootingCoolDown -= 0.1;
 	if (pcInputSystem->InputCheck(G_KEY_CAPSLOCK)==1&&fShootingCoolDown<=0) {
 		if(nBulletsAvailables.size() != 0) {
@@ -240,6 +256,7 @@ void CAuger::Update()
 
 		}
 	}
+
 	tThisWorld.atWorldMatrix[nAiminglineIndex] = tThisWorld.atWorldMatrix[1];
 	tThisWorld.atWorldMatrix[nAiminglineIndex].worldMatrix.r[3].m128_f32[2] += 1.5;
 	tThisWorld.atWorldMatrix[nAiminglineIndex].worldMatrix.r[3].m128_f32[0] -= 0.3;
@@ -269,18 +286,18 @@ void CAuger::Update()
 			}
 		}
 	}
-	
+#pragma endregion Arthur Bullet Code
 	for (int nCurrentEntity = 0; nCurrentEntity < ENTITYCOUNT; nCurrentEntity++)
 	{
 		tTempVertexBuffer.m_d3dWorldMatrix = tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix;
+		tTempVertexBuffer.m_d3dViewMatrix = tMyCamera.d3d_Position;
 		tTempVertexBuffer.m_d3dProjectionMatrix = m_d3dProjectionMatrix;
-		tTempVertexBuffer.m_d3dViewMatrix = m_d3dViewMatrix;
 
 		if (tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_DEBUGMESH | COMPONENT_SHADERID))
 		{
 			tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = m_d3dWorldMatrix;
 			tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = XMMatrixMultiply(XMMatrixScaling(100, 100, 100), tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix);
-			pcGraphicsSystem->InitPrimalShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, m_d3dViewMatrix, m_d3dProjectionMatrix, tThisWorld.atDebugMesh[nCurrentEntity], m_d3dCameraMatrix);
+			pcGraphicsSystem->InitPrimalShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, tMyCamera.d3d_Position, m_d3dProjectionMatrix, tThisWorld.atDebugMesh[nCurrentEntity], m_d3dCameraMatrix);
 
 			pcGraphicsSystem->ExecutePipeline(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atDebugMesh[nCurrentEntity].m_nVertexCount, tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask, tThisWorld.atShaderID[nCurrentEntity].m_nShaderID);
 
@@ -317,7 +334,7 @@ void CAuger::Update()
 				// = pcGraphicsSystem->SetDefaultWorldPosition();//Call some sort of function from the graphics system to create this matrix
 				if (tCameraMode.bWalkMode == true)
 				{
-					m_d3dPlayerMatrix = pcInputSystem->WalkCamera(m_d3dPlayerMatrix);
+					m_d3dPlayerMatrix = pcInputSystem->CubeMovement(m_d3dPlayerMatrix);
 
 					tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = m_d3dPlayerMatrix;
 					tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = pcPhysicsSystem->ResolveForces(&tThisWorld.atRigidBody[nCurrentEntity], tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix,false);
@@ -344,7 +361,7 @@ void CAuger::Update()
 		
 			tTempVertexBuffer.m_d3dWorldMatrix = tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix;
 			tTempVertexBuffer.m_d3dProjectionMatrix = m_d3dProjectionMatrix;
-			tTempVertexBuffer.m_d3dViewMatrix = m_d3dViewMatrix;
+			tTempVertexBuffer.m_d3dViewMatrix = tMyCamera.d3d_Position;
 			if (tThisWorld.atCollisionMask[nCurrentEntity].m_tnCollisionMask == (COMPONENT_COLLISIONMASK | COMPONENT_AABB | COMPONENT_NONSTATIC | COMPONENT_TRIGGER)| tThisWorld.atCollisionMask[nCurrentEntity].m_tnCollisionMask==(COMPONENT_COLLISIONMASK | COMPONENT_AABB | COMPONENT_NONSTATIC | COMPONENT_NONTRIGGER))
 				tThisWorld.atAABB[nCurrentEntity] = pcCollisionSystem->updateAABB(tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, tThisWorld.atAABB[nCurrentEntity]);
 			}
@@ -409,6 +426,8 @@ void CAuger::Update()
 			
 		}
 		pcGraphicsSystem->m_pd3dSwapchain->Present(0, 0);
+
+		tTimerInfo->DisplayTimes(tTimerInfo, pcInputSystem);
 
 		
 	}

@@ -169,9 +169,11 @@
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="Graphics_System.h" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="Timer.h" />
     <ClInclude Include="UI_Component.h" />
     <ClInclude Include="UI_System.h" />
     <ClInclude Include="Villain CES.h" />
+    <ClInclude Include="XTime.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AI_System.cpp" />
@@ -190,6 +192,7 @@
     <ClCompile Include="Graphics_System.cpp" />
     <ClCompile Include="UI_System.cpp" />
     <ClCompile Include="Villain CES.cpp" />
+    <ClCompile Include="XTime.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Villain CES.rc" />

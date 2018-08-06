@@ -4,6 +4,8 @@
 #include"Collision_System.h"
 #include"Physics_System.h"
 #include "Entity.h"
+#include"Timer.h"
+
 class CAuger
 {
 public:
@@ -32,7 +34,7 @@ public:
 	void End();
 private:
 	XMMATRIX m_d3dWorldMatrix;
-	XMMATRIX m_d3dViewMatrix;
+	//XMMATRIX m_d3dViewMatrix;
 	XMMATRIX m_d3dProjectionMatrix;
 	XMMATRIX m_d3dPlayerMatrix;
 	XMMATRIX m_d3dCameraMatrix;
@@ -47,6 +49,10 @@ private:
 	int		m_nClipSize = 10;
 
 	TCameraToggle tCameraMode;
+	TCamera tMyCamera;
 	bool tempt;
+	float m_RealTimeFov;
+	Timers * tAugerTimers;
+	System_Times *tTimerInfo;
 };
 

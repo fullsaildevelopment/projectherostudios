@@ -199,7 +199,7 @@ XMMATRIX CInputSystem::DebugCamera(XMMATRIX d3d_ViewM, XMMATRIX d3d_WorldM)
 	return d3dTmpViewM;
 }
 
-XMMATRIX CInputSystem::WalkCamera(XMMATRIX d3dplayerMatrix)
+XMMATRIX CInputSystem::CubeMovement(XMMATRIX d3dplayerMatrix)
 {
 
 	XMMATRIX d3dTmpViewM, d3dMovementM, d3dRotation;
@@ -422,6 +422,7 @@ XMMATRIX CInputSystem::AimMode(XMMATRIX d3dplayerMatrix)
 
 		d3dTmpViewM = XMMatrixMultiply(d3dRotation, d3dTmpViewM);
 
+		//Auto leveling out the Rotation of the player
 		d3d_existingZ = d3dTmpViewM.r[2];
 		d3d_newX = XMVector3Cross(d3dplayerMatrix.r[1], d3d_existingZ);
 		d3d_newY = XMVector3Cross(d3d_existingZ, d3d_newX);
@@ -445,6 +446,7 @@ XMMATRIX CInputSystem::AimMode(XMMATRIX d3dplayerMatrix)
 		d3dRotation = XMMatrixRotationY(fXchange * m_fMouseRotationSpeed);
 
 		d3dTmpViewM = XMMatrixMultiply(d3dRotation, d3dTmpViewM);
+		//Auto leveling out the Rotation of the player
 
 		d3d_existingZ = d3dTmpViewM.r[2];
 		d3d_newX = XMVector3Cross(XMVectorSet(0,1,0,0), d3d_existingZ);
@@ -469,7 +471,7 @@ XMMATRIX CInputSystem::AimMode(XMMATRIX d3dplayerMatrix)
 		d3dRotation = XMMatrixRotationY(fXchange * m_fMouseRotationSpeed);
 
 		d3dTmpViewM = XMMatrixMultiply(d3dRotation, d3dTmpViewM);
-
+		//Auto level out the Rotation of the player 
 		d3d_existingZ = d3dTmpViewM.r[2];
 		d3d_newX = XMVector3Cross(XMVectorSet(0, 1, 0, 0), d3d_existingZ);
 		d3d_newY = XMVector3Cross(d3d_existingZ, d3d_newX);
@@ -492,6 +494,8 @@ XMMATRIX CInputSystem::AimMode(XMMATRIX d3dplayerMatrix)
 		d3dRotation = XMMatrixRotationY(fXchange * m_fMouseRotationSpeed);
 
 		d3dTmpViewM = XMMatrixMultiply(d3dRotation, d3dTmpViewM);
+		//Auto level out the Rotation of the player 
+
 		d3d_existingZ = d3dTmpViewM.r[2];
 		d3d_newX = XMVector3Cross(XMVectorSet(0, 1, 0, 0), d3d_existingZ);
 		d3d_newY = XMVector3Cross(d3d_existingZ, d3d_newX);
@@ -513,7 +517,7 @@ XMMATRIX CInputSystem::AimMode(XMMATRIX d3dplayerMatrix)
 	return d3dTmpViewM;
 }
 
-XMMATRIX CInputSystem::WalkLookAt(XMVECTOR U, XMMATRIX viewM) {
+XMMATRIX CInputSystem::WalkCameraControls(XMVECTOR U, XMMATRIX viewM) {
 	//XMVECTOR X, Y, Z, X2, Y2, Z2, W;
 	XMVECTOR d3d_newX, d3d_newY, d3d_existingZ;
 	XMMATRIX d3dTmpViewM, d3dMovementM,d3dRotation;
@@ -760,4 +764,181 @@ XMMATRIX CInputSystem::WalkLookAt(XMVECTOR U, XMMATRIX viewM) {
 
 	//d3dTmpViewM.r[3] = W;
 	return d3dTmpViewM;
+}
+
+
+
+float CInputSystem::ZoomSight(float fFov)
+{
+	float ftmpFov = fFov;
+
+	if (InputCheck(G_BUTTON_RIGHT) == 1)
+	{
+		if (ftmpFov <= 90.0f && ftmpFov >= 120.0f)
+		{
+			ftmpFov += 0.1f;
+		}
+	}
+	else
+	{
+		if (ftmpFov <= 90.0f && ftmpFov >= 120.0f)
+		{
+			ftmpFov -= 0.1f;
+		}
+		else if (ftmpFov > 120.f)
+		{
+			ftmpFov = 120.0f;
+		}
+		else if (ftmpFov < 90.0f)
+		{
+			ftmpFov = 90.0f;
+		}
+	}
+	return ftmpFov;
+}
+
+TCamera CInputSystem::CameraInit(TCamera camera)
+{
+	TCamera tmpCamera;
+	XMMATRIX d3dTmpViewM, d3dMovementM, d3dRotation;
+
+	d3dTmpViewM = camera.d3d_Position;
+	//XMMATRIX d3dTmpMatrix = XMMatrixIdentity();
+	float fXchange = 0, fYchange = 0, fXEnd = 0, fYEnd = 0;
+
+	/*if (characterDist != 5)
+	{
+		if (characterDist > 5)
+		{
+			d3dMovementM = XMMatrixTranslation(0, 0, -1.0f);
+
+
+		}
+		else
+		{
+			d3dMovementM = XMMatrixTranslation(0, 0, 1.0f);
+
+		}
+	}*/
+	m_pcMyInput->GetMouseDelta(fXchange, fYchange);
+	m_pcMyInput->GetMousePosition(fXEnd, fYEnd);
+
+
+	XMVECTOR d3d_newX, d3d_newY, d3d_existingZ;
+
+	//if (fXchange != 0 && fYchange != 0)
+	//{
+	//	d3dRotation = XMMatrixRotationX(fXchange * m_fMouseRotationSpeed);
+
+	//	d3dTmpViewM = XMMatrixMultiply(d3dRotation, d3dTmpViewM);
+
+	//	d3dRotation = XMMatrixRotationY(fYchange * m_fMouseRotationSpeed);
+
+	//	d3dTmpViewM = XMMatrixMultiply(d3dRotation, d3dTmpViewM);
+
+
+	//	//Auto leveling out the Rotation of the player
+	//	d3d_existingZ = d3dTmpViewM.r[2];
+	//	d3d_newX = XMVector3Cross(XMVectorSet(0, 1, 0, 0), d3d_existingZ);
+	//	d3d_newY = XMVector3Cross(d3d_existingZ, d3d_newX);
+
+	//	d3d_newX = XMVector3Normalize(d3d_newX);
+	//	d3d_newY = XMVector3Normalize(d3d_newY);
+
+	//	d3d_existingZ = XMVector3Normalize(d3d_existingZ);
+
+	//	d3dTmpViewM.r[0] = d3d_newX;
+	//	d3dTmpViewM.r[1] = d3d_newY;
+	//	d3dTmpViewM.r[2] = d3d_existingZ;
+	//}
+	if (fXchange != 0)
+	{
+		d3dRotation = XMMatrixRotationX(fXchange * m_fMouseRotationSpeed);
+
+		d3dTmpViewM = XMMatrixMultiply(d3dRotation, d3dTmpViewM);
+
+		//Auto leveling out the Rotation of the player
+		d3d_existingZ = d3dTmpViewM.r[2];
+		d3d_newX = XMVector3Cross(XMVectorSet(0, 1, 0, 0), d3d_existingZ);
+		d3d_newY = XMVector3Cross(d3d_existingZ, d3d_newX);
+
+		d3d_newX = XMVector3Normalize(d3d_newX);
+		d3d_newY = XMVector3Normalize(d3d_newY);
+
+		d3d_existingZ = XMVector3Normalize(d3d_existingZ);
+
+		d3dTmpViewM.r[0] = d3d_newX;
+		d3dTmpViewM.r[1] = d3d_newY;
+		d3dTmpViewM.r[2] = d3d_existingZ;
+
+
+	}
+	if (fYchange != 0)
+	{
+		d3dRotation = XMMatrixRotationY(fYchange * m_fMouseRotationSpeed);
+
+		d3dTmpViewM = XMMatrixMultiply(d3dRotation, d3dTmpViewM);
+
+		//Auto level out the Rotation of the player 
+		d3d_existingZ = d3dTmpViewM.r[2];
+		d3d_newX = XMVector3Cross(XMVectorSet(0, 1, 0, 0), d3d_existingZ);
+		d3d_newY = XMVector3Cross(d3d_existingZ, d3d_newX);
+		d3d_newX = XMVector3Normalize(d3d_newX);
+		d3d_newY = XMVector3Normalize(d3d_newY);
+		d3d_existingZ = XMVector3Normalize(d3d_existingZ);
+		d3dTmpViewM.r[0] = d3d_newX;
+		d3dTmpViewM.r[1] = d3d_newY;
+		d3dTmpViewM.r[2] = d3d_existingZ;
+
+
+	}
+
+
+	//else if (fXchange > 0 && fYchange < 0)
+	//{
+	//	d3dRotation = XMMatrixRotationY(fXchange * m_fMouseRotationSpeed);
+
+	//	d3dTmpViewM = XMMatrixMultiply(d3dRotation, d3dTmpViewM);
+	//	//Auto leveling out the Rotation of the player
+
+	//	d3d_existingZ = d3dTmpViewM.r[2];
+	//	d3d_newX = XMVector3Cross(XMVectorSet(0, 1, 0, 0), d3d_existingZ);
+	//	d3d_newY = XMVector3Cross(d3d_existingZ, d3d_newX);
+
+	//	d3d_newX = XMVector3Normalize(d3d_newX);
+	//	d3d_newY = XMVector3Normalize(d3d_newY);
+
+	//	d3d_existingZ = XMVector3Normalize(d3d_existingZ);
+
+	//	d3dTmpViewM.r[0] = d3d_newX;
+	//	d3dTmpViewM.r[1] = d3d_newY;
+	//	d3dTmpViewM.r[2] = d3d_existingZ;
+	//	
+
+	//}
+
+	//else if (fXchange < 0 && fYchange > 0)
+	//{
+	//	d3dRotation = XMMatrixRotationY(fXchange * m_fMouseRotationSpeed);
+
+	//	d3dTmpViewM = XMMatrixMultiply(d3dRotation, d3dTmpViewM);
+	//	//Auto level out the Rotation of the player 
+
+	//	d3d_existingZ = d3dTmpViewM.r[2];
+	//	d3d_newX = XMVector3Cross(XMVectorSet(0, 1, 0, 0), d3d_existingZ);
+	//	d3d_newY = XMVector3Cross(d3d_existingZ, d3d_newX);
+	//	d3d_newX = XMVector3Normalize(d3d_newX);
+	//	d3d_newY = XMVector3Normalize(d3d_newY);
+	//	d3d_existingZ = XMVector3Normalize(d3d_existingZ);
+	//	d3dTmpViewM.r[0] = d3d_newX;
+	//	d3dTmpViewM.r[1] = d3d_newY;
+	//	d3dTmpViewM.r[2] = d3d_existingZ;
+	//	
+
+	//}
+
+	tmpCamera.d3d_Position = d3dTmpViewM;
+
+
+	return tmpCamera;
 }

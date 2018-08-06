@@ -112,10 +112,66 @@ struct TShaderID
 
 struct TCamera
 {
-	/*
-		Fill out this structure
-	*/
+public:
+	float f_CharacterDist;
+	float fCameraRotationAngle;
+	XMMATRIX d3d_Position;
+	float fPitch;
+	float fYaw;
+	float fRoll;
+
+	XMMATRIX d3dPlayerObject;
+
+	XMVECTOR getPOS()
+	{
+		return d3d_Position.r[3];
+	}
+
+	float getPitch()
+	{
+		return fPitch;
+	}
+
+	float getYaw()
+	{
+		return fYaw;
+	}
+
+	float getRoll()
+	{
+		return fRoll;
+	}
+
+	float getCharacterDistance()
+	{
+		return f_CharacterDist;
+	}
+
+	float SetCameraDistanceX() {
+		return (float)(f_CharacterDist * cosf(XMConvertToRadians(fPitch)));
+	}
+	float SetCameraDistanceY() {
+		return (float)(f_CharacterDist * sinf(XMConvertToRadians(fPitch)));
+	}
+
+	float SetPitch(float pitch)
+	{
+		fPitch -= pitch;
+		return fPitch;
+	}
+
+	float SetRoll(float roll)
+	{
+		fRoll -= roll;
+		return fRoll;
+	}
+	float findCameraPos(float hDistance, float vDistance)
+	{
+		float theta = d3d_Position.r[1].m128_f32[1] * fCameraRotationAngle;
+		//float offsetX = ;
+	}
 };
+
 struct TWorldMatrix {
 	XMMATRIX worldMatrix;
 };

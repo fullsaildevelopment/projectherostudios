@@ -6,8 +6,11 @@
 #include"Gateware Redistribution R5B/Interface/G_System/GKeyDefines.h"
 using namespace GW;
 using namespace SYSTEM;
+
 class CInputSystem
 {
+
+	
 public:
 	CInputSystem();
 	~CInputSystem();
@@ -47,7 +50,7 @@ public:
 	* Mod. Date:              07/18/2018
 	* Mod. Initials:          ZFB
 	*/
-	XMMATRIX WalkCamera( XMMATRIX d3dplayerMatrix);
+	XMMATRIX CubeMovement( XMMATRIX d3dplayerMatrix);
 	/*
 	* AimMode(): This fuction makes a camera rotation locked to player rotation for combat.
 	*
@@ -63,7 +66,15 @@ public:
 	*/
 	XMMATRIX AimMode(XMMATRIX d3dplayerMatrix);
 
-	XMMATRIX WalkLookAt(XMVECTOR U, XMMATRIX viewM);
+	XMMATRIX WalkCameraControls(XMVECTOR U, XMMATRIX viewM);
+
+	float ZoomSight(float fFov);
+
+
+
+	TCamera CameraInit(TCamera camera);
+	TCamera FreeMoveInit(float height, float characterDist, float pitch);
+	TCamera FreeCamControls(float moveRadius, float upDistance, float downDistance);
 	/*
 		Seth Specific Functions
 	*/

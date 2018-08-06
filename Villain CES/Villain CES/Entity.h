@@ -54,6 +54,7 @@ struct TCameraToggle
 
 
 };
+
 struct TPrimalVert
 {
 	XMFLOAT3 m_d3dfPosition;

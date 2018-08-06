@@ -59,7 +59,7 @@ public:
 	
 	XMMATRIX SetDefaultViewMatrix();
 	XMMATRIX SetDefaultWorldPosition();
-	XMMATRIX SetDefaultPerspective();
+	XMMATRIX SetDefaultPerspective(float fFov);
 	XMMATRIX SetDefaultOffset();
 	//Every Frame
 	void UpdateD3D();
