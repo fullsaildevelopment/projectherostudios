@@ -19,10 +19,7 @@ void CAISystem::FollowObject(XMMATRIX thingToFollow, XMMATRIX * AIMatrix)
 	*AIMatrix = XMMatrixLookAtLH(AIMatrix->r[3],
 		thingToFollow.r[3], XMVectorSet(0, 1, 0, 0));
 	*AIMatrix = XMMatrixInverse(NULL, *AIMatrix);
-	AIMatrix->r[1].m128_f32[1] = beforeitChanges.r[1].m128_f32[1];
-	AIMatrix->r[1].m128_f32[2] = beforeitChanges.r[1].m128_f32[2];
-	AIMatrix->r[2].m128_f32[1] = beforeitChanges.r[2].m128_f32[1];
-	AIMatrix->r[2].m128_f32[2] = beforeitChanges.r[2].m128_f32[2];
+
 
 	XMVECTOR direction = thingToFollow.r[3] - AIMatrix->r[3];
 	direction.m128_f32[0] = 0;
