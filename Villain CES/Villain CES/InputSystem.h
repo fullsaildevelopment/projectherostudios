@@ -73,8 +73,8 @@ public:
 
 
 	TCamera CameraInit(TCamera camera);
-	TCamera FreeMoveInit(float height, float characterDist, float pitch);
-	TCamera FreeCamControls(float moveRadius, float upDistance, float downDistance);
+	XMMATRIX CameraBehaviorLerp(XMMATRIX m1, XMMATRIX m2);
+	XMMATRIX CameraOrientationReset(XMMATRIX m1);
 	/*
 		Seth Specific Functions
 	*/

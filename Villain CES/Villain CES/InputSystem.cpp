@@ -34,6 +34,7 @@ TCameraToggle CInputSystem::CameraModeListen(TCameraToggle tMyCam)
 		tTempCamMode.bWalkMode = true;
 		tTempCamMode.bDebugMode = false;
 		tTempCamMode.bAimMode = false;
+		tTempCamMode.bSwitch = true;
 
 	}
 	if (InputCheck(G_BUTTON_RIGHT) == 1)
@@ -41,6 +42,8 @@ TCameraToggle CInputSystem::CameraModeListen(TCameraToggle tMyCam)
 		tTempCamMode.bAimMode = true;
 		tTempCamMode.bDebugMode = false;
 		tTempCamMode.bWalkMode = false;
+		tTempCamMode.bSwitch = true;
+
 	}
 
 	return tTempCamMode;
@@ -822,8 +825,18 @@ float CInputSystem::ZoomSight(float fFov)
 	{
 		if (ftmpFov <= 90.0f && ftmpFov >= 120.0f)
 		{
+
 			ftmpFov += 0.1f;
+			if (ftmpFov > 120.f)
+			{
+				ftmpFov = 120.0f;
+			}
+			else if (ftmpFov < 90.0f)
+			{
+				ftmpFov = 90.0f;
+			}
 		}
+		
 	}
 	else
 	{
@@ -831,7 +844,7 @@ float CInputSystem::ZoomSight(float fFov)
 		{
 			ftmpFov -= 0.1f;
 		}
-		else if (ftmpFov > 120.f)
+		else if (ftmpFov >= 120.f)
 		{
 			ftmpFov = 120.0f;
 		}
@@ -982,3 +995,26 @@ TCamera CInputSystem::CameraInit(TCamera camera)
 
 	return tmpCamera;
 }
+
+XMMATRIX CInputSystem::CameraBehaviorLerp(XMMATRIX m1, XMMATRIX m2)
+{
+	XMMATRIX lerpedMatrix;
+
+	lerpedMatrix.r[0] = (m2.r[0] - m1.r[0]) * 0.1f + m1.r[0];
+	lerpedMatrix.r[1] = (m2.r[1] - m1.r[1]) * 0.1f + m1.r[1];
+	lerpedMatrix.r[2] = (m2.r[2] - m1.r[2]) * 0.1f + m1.r[2];
+	lerpedMatrix.r[3] = (m2.r[3] - m1.r[3]) * 0.1f + m1.r[3];
+
+
+
+	return lerpedMatrix;
+}
+
+XMMATRIX CInputSystem::CameraOrientationReset(XMMATRIX m1)
+{
+	XMMATRIX tmpMatrix = XMMatrixIdentity();
+
+	tmpMatrix.r[3] = XMVectorSet(1.0f,0,-10.0f, 1.0f);
+	return tmpMatrix;
+}
+

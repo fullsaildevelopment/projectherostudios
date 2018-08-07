@@ -31,12 +31,12 @@ struct System_Times
 			float convertedTime;
 			std::string stTimeDisplay;
 
-			convertedTime = myTimes->applicationTime / 60;
+			convertedTime = myTimes->applicationTime / 60.0f;
 			stTimeDisplay = "AppTime: ";
 			stTimeDisplay += std::to_string(convertedTime);
 			cout << stTimeDisplay <<  endl;
 
-			convertedTime = myTimes->sceneTime / 60;
+			convertedTime = myTimes->sceneTime / 60.0f;
 			stTimeDisplay = "Scene Time: ";
 			stTimeDisplay += std::to_string(convertedTime);
 			cout << stTimeDisplay <<  endl;

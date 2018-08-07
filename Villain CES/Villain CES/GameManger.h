@@ -45,6 +45,13 @@ private:
 	XMMATRIX m_d3dPlayerMatrix;
 	XMMATRIX m_d3dCameraMatrix;
 	XMMATRIX m_d3d_ResultMatrix;
+	//TCamera* CameraSelect[6];
+	TCamera *walkCamera;
+	TCamera *aimCamera;
+	TCamera *debugCamera;
+	TCamera * menuCamera;
 	Timers * tAugerTimers;
 	System_Times *tTimerInfo;
+	float m_RealTimeFov;
+
 };

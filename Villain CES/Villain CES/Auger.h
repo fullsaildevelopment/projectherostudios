@@ -41,7 +41,6 @@ private:
 	TCameraToggle tCameraMode;
 	TCamera tMyCamera;
 	bool tempt;
-	float m_RealTimeFov;
 	
 };
 
