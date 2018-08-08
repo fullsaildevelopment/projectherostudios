@@ -81,7 +81,7 @@ void CGameMangerSystem::LoadLevel()
 	CreateSimpleGunAi(&tThisWorld, AILocation);
 	tThisWorld.atAIMask[6].GunIndex = 7;
 	CreateGun(&tThisWorld, m_d3dWorldMatrix, 6, -1.1, 0, 11,10,100);
-	tThisWorld.atClip[7].bulletSpeed = 0.0001;
+	tThisWorld.atClip[7].bulletSpeed = 0.0001;//Frame Dependent
 
 
 	AILocation = m_d3dWorldMatrix;
@@ -549,10 +549,6 @@ int CGameMangerSystem::InGameUpdate()
 				tTempPixelBuffer.m_d3dCollisionColor = tThisWorld.atSimpleMesh[nCurrentEntity].m_nColor;
 
 			}
-		
-		
-			//tTempPixelBuffer.m_d3dCollisionColor = tThisWorld.atSimpleMesh[nCurrentEntity].m_nColor;
-		
 		
 			if (tThisWorld.atParentWorldMatrix[nCurrentEntity] != -1)
 			{
