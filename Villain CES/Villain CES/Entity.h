@@ -38,6 +38,7 @@ struct TWorld
 	TRigidbody		atRigidBody[ENTITYCOUNT];
 	//AI
 	TAIMask			atAIMask[ENTITYCOUNT];
+	TAIVision		atAIVision[ENTITYCOUNT];
 	//Collision
 	TCollisionMask	atCollisionMask[ENTITYCOUNT];
 	TAABB			atAABB[ENTITYCOUNT];

@@ -78,10 +78,11 @@ void CGameMangerSystem::LoadLevel()
 	AILocation = m_d3dWorldMatrix;
 	AILocation.r[3].m128_f32[0] += -1;
 	AILocation.r[3].m128_f32[2] += -2;
-	CreateSimpleGunAi(&tThisWorld, AILocation);
-	tThisWorld.atAIMask[6].GunIndex = 7;
-	CreateGun(&tThisWorld, m_d3dWorldMatrix, 6, -1.1, 0, 11,10,100);
-	tThisWorld.atClip[7].bulletSpeed = 0.0001;//Frame Dependent
+	int AiIndex=CreateSimpleGunAi(&tThisWorld, AILocation);
+	int GunINdexai=CreateGun(&tThisWorld, m_d3dWorldMatrix, AiIndex, -1.1, 0, 11,10,100);
+	tThisWorld.atAIMask[AiIndex].GunIndex = GunINdexai;
+
+	tThisWorld.atClip[GunINdexai].bulletSpeed = 0.0001;//Frame Dependent
 
 
 	AILocation = m_d3dWorldMatrix;
