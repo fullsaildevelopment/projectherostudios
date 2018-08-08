@@ -5,9 +5,9 @@
 #include "UI_Component.h"
 #include "Collision_Component.h"
 #include "Physics_Component.h"
-#include"Collision_System.h"
+#include "Collision_System.h"
 #include "Input_Component.h"
-#include"Projectile_Component.h"
+#include "Projectile_Component.h"
 #include "DirectXTex-master\WICTextureLoader\WICTextureLoader.h"
 #include "DirectXTex-master\DDSTextureLoader\DDSTextureLoader.h"
 
@@ -59,6 +59,8 @@ struct TPrimalVert
 	XMFLOAT4 m_d3dfColor;
 };
 
+
+
 unsigned int SpawnLevelChanger(TWorld *ptWorld, XMMATRIX SpawnPosition);
 unsigned int createEntity(TWorld *ptWorld);
 
@@ -79,7 +81,9 @@ unsigned int CreateWall(TWorld* ptWorld, XMMATRIX SpawnPosition);
 unsigned int CreateCelling(TWorld* ptWorld, XMMATRIX SpawnPosition);
 unsigned int CreateGun(TWorld* ptWorld, XMMATRIX BulletSpawnLocation, int parentWorldMatrixIndex, float xoffset, float yoffset, float zoffset,int clipSize, float shootingCOooldown);
 unsigned int createMesh(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMeshImport tMesh, TMaterialImport tMaterial);
+unsigned int createClayton(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMeshImport tMesh, TMaterialImport tMaterial);
 unsigned int CreateTemptUIBox(TWorld * ptWorld, XMMATRIX SpawnPosition);
-
+unsigned int CreateSimpleGunAi(TWorld * ptWorld, XMMATRIX SpawnPosition);
+unsigned int CreateRayBullet(TWorld * ptWorld, XMMATRIX bulletSpawnLocation, float zDistance, int parentWorldMatrixIndex, float xoffset, float yoffset, float zoffset);
  //float zDistance = 0.5f;
 

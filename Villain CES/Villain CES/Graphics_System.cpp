@@ -462,7 +462,7 @@ XMMATRIX CGraphicsSystem::SetDefaultPerspective()
 
 XMMATRIX CGraphicsSystem::SetDefaultOffset()
 {
-	return XMMatrixTranslation(0, 1.5f, 5.5f);
+	return XMMatrixTranslation(0, 1.5f, -5.5f);
 }
 
 XMMATRIX CGraphicsSystem::SetDefaultWorldPosition()
@@ -882,8 +882,8 @@ void CGraphicsSystem::InitPrimalShaderData(ID3D11DeviceContext * pd3dDeviceConte
 	TPrimalPixelBufferType	*ptPrimalPixelBufferDataPointer = nullptr;
 
 	unsigned int bufferNumber;
-
-	d3dViewMatrix = XMMatrixInverse(NULL, CameraMatrix);
+	
+	d3dViewMatrix = XMMatrixInverse(nullptr, CameraMatrix);
 
 	XMMATRIX d3dView;
 
@@ -939,18 +939,20 @@ void CGraphicsSystem::InitPrimalShaderData2(ID3D11DeviceContext * pd3dDeviceCont
 	TPrimalVertexBufferType	*ptPrimalVertexBufferDataPointer = nullptr;
 	TPrimalPixelBufferType	*ptPrimalPixelBufferDataPointer = nullptr;
 	
-	d3dVertexBuffer.m_d3dViewMatrix = XMMatrixInverse(NULL, CameraMatrix);
+	d3dVertexBuffer.m_d3dViewMatrix = XMMatrixInverse(nullptr, CameraMatrix);
 	unsigned int bufferNumber;
 	//XMMATRIX d3dTmpViewM;
 
 	//d3dTmpViewM = XMMatrixInverse(NULL, );
-		 m_fCameraXPosition = CameraMatrix.r[3].m128_f32[0];// d3dTmpViewM.r[3].m128_f32[0];
-		m_fCameraYPosition = CameraMatrix.r[3].m128_f32[1];//d3dTmpViewM.r[3].m128_f32[1];
-		m_fCameraZPosition = CameraMatrix.r[3].m128_f32[2];//d3dTmpViewM.r[3].m128_f32[2];
+	m_fCameraXPosition = CameraMatrix.r[3].m128_f32[0];// d3dTmpViewM.r[3].m128_f32[0];
+	m_fCameraYPosition = CameraMatrix.r[3].m128_f32[1];//d3dTmpViewM.r[3].m128_f32[1];
+	m_fCameraZPosition = CameraMatrix.r[3].m128_f32[2];//d3dTmpViewM.r[3].m128_f32[2];
 
 	XMMATRIX d3dView;
-
+	XMMATRIX tempWorld = d3dVertexBuffer.m_d3dWorldMatrix;
+	XMMATRIX tempProj = d3dVertexBuffer.m_d3dProjectionMatrix;
 	d3dView = d3dVertexBuffer.m_d3dViewMatrix;
+
 	#pragma region Map To Vertex Constant Buffer
 	pd3dDeviceContext->Map(m_pd3dPrimalVertexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &d3dPrimalVertexMappedResource);
 
@@ -959,9 +961,9 @@ void CGraphicsSystem::InitPrimalShaderData2(ID3D11DeviceContext * pd3dDeviceCont
 	ptPrimalVertexBufferDataPointer = (TPrimalVertexBufferType*)d3dPrimalVertexMappedResource.pData;
 
 	// Copy the matrices into the constant buffer.
-	ptPrimalVertexBufferDataPointer->m_d3dWorldMatrix = d3dVertexBuffer.m_d3dWorldMatrix;
+	ptPrimalVertexBufferDataPointer->m_d3dWorldMatrix = tempWorld;
 	ptPrimalVertexBufferDataPointer->m_d3dViewMatrix = d3dView;
-	ptPrimalVertexBufferDataPointer->m_d3dProjectionMatrix = d3dVertexBuffer.m_d3dProjectionMatrix;
+	ptPrimalVertexBufferDataPointer->m_d3dProjectionMatrix = tempProj;;
 
 	// Unlock the constant buffer.
 	pd3dDeviceContext->Unmap(m_pd3dPrimalVertexBuffer, 0);
@@ -1002,15 +1004,16 @@ void CGraphicsSystem::InitMyShaderData(ID3D11DeviceContext * pd3dDeviceContext, 
 
 	TMyVertexBufferType	*ptMyVertexBufferDataPointer = nullptr;
 
-	d3dVertexBuffer.m_d3dViewMatrix = XMMatrixInverse(NULL, CameraMatrix);
+	XMMATRIX d3dView;
+	d3dView = d3dVertexBuffer.m_d3dViewMatrix;
+	d3dView = XMMatrixInverse(nullptr, CameraMatrix);
 	unsigned int bufferNumber = 0;
 	m_fCameraXPosition = CameraMatrix.r[3].m128_f32[0];
 	m_fCameraYPosition = CameraMatrix.r[3].m128_f32[1];
 	m_fCameraZPosition = CameraMatrix.r[3].m128_f32[2];
 
-	XMMATRIX d3dView;
-
-	d3dView = d3dVertexBuffer.m_d3dViewMatrix;
+	XMMATRIX tempWorld = d3dVertexBuffer.m_d3dWorldMatrix;
+	XMMATRIX tempProj = d3dVertexBuffer.m_d3dProjectionMatrix;
 
 	#pragma region Map To Vertex Constant Buffer
 	pd3dDeviceContext->Map(m_pd3dMyVertexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &d3dMyVertexMappedResource);
@@ -1020,9 +1023,9 @@ void CGraphicsSystem::InitMyShaderData(ID3D11DeviceContext * pd3dDeviceContext, 
 	ptMyVertexBufferDataPointer = (TMyVertexBufferType*)d3dMyVertexMappedResource.pData;
 
 	// Copy the matrices into the constant buffer.
-	ptMyVertexBufferDataPointer->m_d3dWorldMatrix = d3dVertexBuffer.m_d3dWorldMatrix;
+	ptMyVertexBufferDataPointer->m_d3dWorldMatrix = tempWorld;
 	ptMyVertexBufferDataPointer->m_d3dViewMatrix = d3dView;
-	ptMyVertexBufferDataPointer->m_d3dProjectionMatrix = d3dVertexBuffer.m_d3dProjectionMatrix;
+	ptMyVertexBufferDataPointer->m_d3dProjectionMatrix = tempProj;
 
 	// Unlock the constant buffer.
 	pd3dDeviceContext->Unmap(m_pd3dMyVertexBuffer, 0);

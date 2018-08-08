@@ -69,7 +69,8 @@ public:
 	//First Frame
 	CGraphicsSystem();
 	~CGraphicsSystem();
-
+	void InitD3D(HWND cTheWindow);
+	void CleanD3D(TWorld *ptPlanet);
 	void CreateBuffers(TWorld * ptWorld);
 	void CreateEntityBuffer(TWorld * ptWorld, int nEnityIndex);
 	void CreateShaders(ID3D11Device* pd3dDevice);

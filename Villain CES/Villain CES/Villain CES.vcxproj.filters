@@ -128,14 +128,14 @@
     <ClCompile Include="ProjectileSystem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="DirectXTex-master\WICTextureLoader\WICTextureLoader.cpp">
+    <ClCompile Include="GameManger.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="DirectXTex-master\DDSTextureLoader\DDSTextureLoader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="GameManger.cpp">
-      <Filter>Header Files\Source Files</Filter>
+    <ClCompile Include="DirectXTex-master\WICTextureLoader\WICTextureLoader.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

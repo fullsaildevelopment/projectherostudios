@@ -192,6 +192,8 @@ struct TMesh
 	UINT m_nVertexBufferStride = 0;
 	UINT m_nVertexBufferOffset = 0;
 	ID3D11ShaderResourceView* m_d3dSRVDiffuse = nullptr;
+	std::vector<XMFLOAT3>	m_VertexData;
+
 };
 
 struct TDebugMesh
@@ -202,7 +204,7 @@ struct TDebugMesh
 	UINT					m_nVertexCount = 0;
 	UINT					m_nVertexBufferStride = 0;
 	UINT					m_nVertexBufferOffset = 0;
-	std::vector<XMVECTOR>		m_VertexData;
+	std::vector<XMVECTOR>	m_VertexData;
 
 };	
 
