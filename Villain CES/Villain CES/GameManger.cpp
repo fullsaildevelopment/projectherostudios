@@ -42,7 +42,7 @@ void CGameMangerSystem::LoadLevel()
 	tCameraMode.bAimMode = false;
 	tCameraMode.bWalkMode = true;
 	m_d3dPlayerMatrix = pcGraphicsSystem->SetDefaultWorldPosition();
-	m_d3dPlayerMatrix = XMMatrixMultiply(m_d3dPlayerMatrix, XMMatrixScaling(.01, .01, .01));
+	//m_d3dPlayerMatrix = XMMatrixMultiply(m_d3dPlayerMatrix, XMMatrixScaling(.01, .01, .01));
 
 	//m_d3dPlayerMatrix.r[3].m128_f32[2] -= 10;
 	ImporterData tempImport;
@@ -231,7 +231,7 @@ int CGameMangerSystem::InGameUpdate()
 	{
 		m_d3d_ResultMatrix = pcInputSystem->WalkLookAt(XMVectorSet(0, 1.0f, 0, 0), m_d3d_ResultMatrix);
 
-		m_d3dPlayerMatrix = XMMatrixMultiply(m_d3dPlayerMatrix, XMMatrixScaling(100, 100, 100));
+		//m_d3dPlayerMatrix = XMMatrixMultiply(m_d3dPlayerMatrix, XMMatrixScaling(100, 100, 100));
 
 		m_d3dCameraMatrix = XMMatrixMultiply(m_d3dPlayerMatrix, m_d3d_ResultMatrix);
 
@@ -239,7 +239,7 @@ int CGameMangerSystem::InGameUpdate()
 	}
 	else if (tCameraMode.bAimMode == true)
 	{
-		m_d3dPlayerMatrix = XMMatrixMultiply(m_d3dPlayerMatrix, XMMatrixScaling(100, 100, 100));
+		//m_d3dPlayerMatrix = XMMatrixMultiply(m_d3dPlayerMatrix, XMMatrixScaling(100, 100, 100));
 
 		m_d3dPlayerMatrix = pcInputSystem->AimMode(m_d3dPlayerMatrix);
 
@@ -274,13 +274,13 @@ int CGameMangerSystem::InGameUpdate()
 		// shoot a bullet
 		if (pcInputSystem->InputCheck(G_BUTTON_LEFT) == 1 && tThisWorld.atClip[GunIndexForPlayer].GunMode == true) {
 
-			tThisWorld.atClip[GunIndexForPlayer].tryToShoot = true;
+		//	tThisWorld.atClip[GunIndexForPlayer].tryToShoot = true;
 
 
 		}
 		// shoot a ray
 		else if (pcInputSystem->InputCheck(G_BUTTON_LEFT) == 1 && tThisWorld.atClip[GunIndexForPlayer].GunMode == false) {
-			tThisWorld.atClip[GunIndexForPlayer].tryToShoot = true;
+	//		tThisWorld.atClip[GunIndexForPlayer].tryToShoot = true;
 
 		}
 		// turn the ray off
@@ -313,8 +313,9 @@ int CGameMangerSystem::InGameUpdate()
 				if (tCameraMode.bWalkMode == true)
 				{
 					//m_d3dPlayerMatrix = XMMatrixMultiply(m_d3dPlayerMatrix, XMMatrixScaling(.01, .01, .01));
-					m_d3dPlayerMatrix = XMMatrixMultiply(m_d3dPlayerMatrix, XMMatrixScaling(.01, .01, .01));
 					m_d3dPlayerMatrix = pcInputSystem->WalkCamera(m_d3dPlayerMatrix);
+				//	m_d3dPlayerMatrix = XMMatrixMultiply(m_d3dPlayerMatrix, XMMatrixScaling(.01, .01, .01));
+
 
 					tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = m_d3dPlayerMatrix;
 					tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = pcPhysicsSystem->ResolveForces(&tThisWorld.atRigidBody[nCurrentEntity], tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, false);
@@ -324,7 +325,7 @@ int CGameMangerSystem::InGameUpdate()
 				else if (tCameraMode.bAimMode == true)
 				{
 					//m_d3dPlayerMatrix = XMMatrixMultiply(m_d3dPlayerMatrix, XMMatrixScaling(.01, .01, .01));
-					m_d3dPlayerMatrix = XMMatrixMultiply(m_d3dPlayerMatrix, XMMatrixScaling(.01, .01, .01));
+				//	m_d3dPlayerMatrix = XMMatrixMultiply(m_d3dPlayerMatrix, XMMatrixScaling(.01, .01, .01));
 					tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = m_d3dPlayerMatrix;
 					tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = pcPhysicsSystem->ResolveForces(&tThisWorld.atRigidBody[nCurrentEntity], tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, false);
 					tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = m_d3dPlayerMatrix;
@@ -448,7 +449,7 @@ int CGameMangerSystem::InGameUpdate()
 			}
 		
 		
-			tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = pcPhysicsSystem->ResolveForces(&tThisWorld.atRigidBody[nCurrentEntity], tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, true);
+		//	tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = pcPhysicsSystem->ResolveForces(&tThisWorld.atRigidBody[nCurrentEntity], tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, true);
 		
 		
 			if (tThisWorld.atProjectiles[nCurrentEntity].m_tnProjectileMask == (COMPONENT_PROJECTILESMASK | COMPONENT_RAYGUN)) {

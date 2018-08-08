@@ -1689,6 +1689,7 @@ unsigned int createClayton(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMeshI
 			//}
 			//else
 			tmp.pos[j] = tMesh.meshArrays[i].pos[j];
+			tmp.pos[j] *= 0.04;
 			if (j < 2)
 			{
 				tmp.uv[j] = tMesh.meshArrays[i].uv[j];
