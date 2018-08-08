@@ -9,17 +9,10 @@ enum eInput_Component
 	COMPONENT_SETH		= 1 << 3,
 	COMPONENT_CAELIS	= 1 << 4
 };
+
 struct TInputMask
 {
 	int m_tnInputMask = 0;
-};
-
-struct TCameraToggle
-{
-	bool bDebugMode;
-	bool bWalkMode;
-	bool bAimMode;
-	//bool bDebugMode;
 };
 
 struct TTest
@@ -33,6 +26,7 @@ struct TClayton
 	/*
 	Fill out this structure
 	*/
+	float heath = 100;
 	float m_tfMovementSpeed = 1.0;
 	float m_tfLookSensitivity = 0.01f;
 	float m_tfMaterialLoadTime = 0.0f;

@@ -87,6 +87,9 @@
     <ClInclude Include="ProjectileSystem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="GameManger.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -130,6 +133,9 @@
     </ClCompile>
     <ClCompile Include="DirectXTex-master\DDSTextureLoader\DDSTextureLoader.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GameManger.cpp">
+      <Filter>Header Files\Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -5,7 +5,7 @@ class CProjectileSystem {
 public:
 	CProjectileSystem();
 	~CProjectileSystem();
-	bool CreateBulletProjectile(int indexofBullet,Clips* Gun);
+	void CreateBulletProjectile(int indexofBullet,Clips* Gun);
 	bool Reload( Clips* Gun);
 
 

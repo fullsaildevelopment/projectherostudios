@@ -59,7 +59,7 @@ struct TPrimalVert
 	XMFLOAT4 m_d3dfColor;
 };
 
-
+unsigned int SpawnLevelChanger(TWorld *ptWorld, XMMATRIX SpawnPosition);
 unsigned int createEntity(TWorld *ptWorld);
 
 void destroyEntity(TWorld *ptWorld, unsigned int nEntity);
@@ -70,12 +70,16 @@ unsigned int createCube(TWorld * ptWorld);
 
 unsigned int createDebugGrid(TWorld * ptWorld);
 
-unsigned int createPlayerBox(TWorld * ptWorld);
-unsigned int CreateBullet(TWorld * ptWorld,XMMATRIX bulletSpawnLocation );
+unsigned int CreateClayTon(TWorld * ptWorld);
+unsigned int CreateBullet(TWorld * ptWorld,XMMATRIX bulletSpawnLocation, int MaterialID);
 unsigned int AimingLine(TWorld * ptWorld, XMMATRIX BulletSpawnLocation, int parentWorldMatrixIndex, float xoffset, float yoffset, float zoffset);
 
-unsigned int CreateGround(TWorld* ptWorld);
-unsigned int CreateWall(TWorld* ptWorld);
-unsigned int CreateCelling(TWorld* ptWorld);
-unsigned int CreateGun(TWorld* ptWorld, XMMATRIX BulletSpawnLocation, int parentWorldMatrixIndex, float xoffset, float yoffset, float zoffset);
+unsigned int CreateGround(TWorld* ptWorld, XMMATRIX SpawnPosition);
+unsigned int CreateWall(TWorld* ptWorld, XMMATRIX SpawnPosition);
+unsigned int CreateCelling(TWorld* ptWorld, XMMATRIX SpawnPosition);
+unsigned int CreateGun(TWorld* ptWorld, XMMATRIX BulletSpawnLocation, int parentWorldMatrixIndex, float xoffset, float yoffset, float zoffset,int clipSize, float shootingCOooldown);
 unsigned int createMesh(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMeshImport tMesh, TMaterialImport tMaterial);
+unsigned int CreateTemptUIBox(TWorld * ptWorld, XMMATRIX SpawnPosition);
+
+ //float zDistance = 0.5f;
+
