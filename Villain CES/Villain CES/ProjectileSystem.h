@@ -1,6 +1,6 @@
 #pragma once
 #include"Projectile_Component.h"
-#include"Entity.h"
+//#include"Entity.h"
 class CProjectileSystem {
 public:
 	CProjectileSystem();
