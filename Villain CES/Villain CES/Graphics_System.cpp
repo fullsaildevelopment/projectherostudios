@@ -162,6 +162,12 @@ void CGraphicsSystem::CleanD3D(TWorld *ptPlanet)
 			ptPlanet->atSimpleMesh[nEntityIndex].m_pd3dVertexBuffer->Release();
 			ptPlanet->atSimpleMesh[nEntityIndex].m_pd3dIndexBuffer->Release();
 		}
+		if (ptPlanet->atGraphicsMask[nEntityIndex].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_SHADERID))
+		{
+			ptPlanet->atMesh[nEntityIndex].m_pd3dVertexBuffer->Release();
+			ptPlanet->atMesh[nEntityIndex].m_pd3dIndexBuffer->Release();
+			ptPlanet->atMesh[nEntityIndex].m_d3dSRVDiffuse->Release();
+		}
 		destroyEntity(ptPlanet, nEntityIndex);
 	}
 	m_pd3dSwapchain->Release();
@@ -192,7 +198,12 @@ void CGraphicsSystem::CreateShaders(ID3D11Device * device)
 	D3D11_INPUT_ELEMENT_DESC m_d3dMyLayoutDesc[] =
 	{
 		{ "POSITION", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 }
+		//{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		//{ "TANGENT", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		//{ "BINORMAL", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		//{ "BLENDWEIGHT", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		//{ "BLENDINDICES", 0, DXGI_FORMAT_R32G32B32A32_UINT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 	};
 	//Get a count of the elements in the layout.
 	int	nElements = sizeof(m_d3dMyLayoutDesc) / sizeof(m_d3dMyLayoutDesc[0]);
@@ -432,15 +443,18 @@ ImporterData CGraphicsSystem::ReadMesh(const char * input_file_path)
 	int bufferSize = 0;
 	int materialCount = 0;
 	int bSize = sizeof(int);
-	int * indexBuf = nullptr;
+	unsigned int * indexBuf = nullptr;
 	TMeshFormat * meshArray = nullptr;
 	int polyVertCount = 0;
-	int polyVert = 0;
+	int uniqueVertexCount = 0;
 	int hasPolygon = 0;
 	int animFrameCount = 0;
 	int nodeCount = 0;
 	double duration = 0;
 	int hasPose = 0;
+	double worldTranslation[3];
+	double worldRotation[3];
+	double worldScaling[3];
 	std::vector<int> parent_Indices;
 	std::vector<XMMATRIX> invBindPosesForJoints;
 	TAnimationClip myAnim;
@@ -737,37 +751,45 @@ ImporterData CGraphicsSystem::ReadMesh(const char * input_file_path)
 		{
 			#pragma region ReadMesh
 			matFile.read((char*)&polyVertCount, sizeof(int));
-			matFile.read((char*)&polyVert, sizeof(int));
-
-			int mySize = polyVertCount * sizeof(TMeshFormat);
+			matFile.read((char*)&uniqueVertexCount, sizeof(int));
+			matFile.read((char*)&worldTranslation[0], sizeof(double) * 3);
+			matFile.read((char*)&worldRotation[0], sizeof(double) * 3);
+			matFile.read((char*)&worldScaling[0], sizeof(double) * 3);
+			int mySize = uniqueVertexCount * sizeof(TMeshFormat);
 			char *buffer = new char[mySize];
 			matFile.read(buffer, mySize);
 
-			meshArray = new TMeshFormat[polyVertCount];
-			for (int i = 0; i < polyVertCount; i++)
+			meshArray = new TMeshFormat[uniqueVertexCount];
+			for (int i = 0; i < uniqueVertexCount; i++)
 			{
 				memcpy(&meshArray[i], &buffer[i * sizeof(TMeshFormat)], sizeof(TMeshFormat));
 			}
 
 			delete[] buffer;
 			buffer = nullptr;
-			indexBuf = new int[polyVert];
-			mySize = polyVert * sizeof(int);
+			indexBuf = new unsigned int[polyVertCount];
+			mySize = polyVertCount * sizeof(unsigned int);
 			buffer = new char[mySize];
 			matFile.read(buffer, mySize);
-			for (int i = 0; i < polyVert; i++)
+			for (int i = 0; i < polyVertCount; i++)
 			{
-				memcpy(&indexBuf[i], &buffer[i * sizeof(int)], sizeof(int));
+				memcpy(&indexBuf[i], &buffer[i * sizeof(unsigned int)], sizeof(unsigned int));
 			}
 			delete[] buffer;
 			buffer = nullptr;
 #pragma endregion
 		}
 		tImportMe.vtMeshes[meshIndex].hasPolygon = hasPolygon;
-		tImportMe.vtMeshes[meshIndex].nPolyCount = polyVert;
+		tImportMe.vtMeshes[meshIndex].nUniqueVertexCount = uniqueVertexCount;
 		tImportMe.vtMeshes[meshIndex].nPolygonVertexCount = polyVertCount;
 		tImportMe.vtMeshes[meshIndex].meshArrays = meshArray;
 		tImportMe.vtMeshes[meshIndex].indexBuffer = indexBuf;
+		for (int i = 0; i < 3; i++)
+		{
+			tImportMe.vtMeshes[meshIndex].worldTranslation[i] = worldTranslation[i];
+			tImportMe.vtMeshes[meshIndex].worldRotation[i] = worldRotation[i];
+			tImportMe.vtMeshes[meshIndex].worldScaling[i] = worldScaling[i];
+		}
 	}
 	matFile.close();
 	
@@ -782,8 +804,6 @@ XMVECTOR CGraphicsSystem::GetCameraPos()
 	campos.m128_f32[2] = m_fCameraZPosition;
 	return campos;
 }
-
-
 
 void CGraphicsSystem::InitPrimalShaderData(ID3D11DeviceContext * pd3dDeviceContext, XMMATRIX d3dWorldMatrix, XMMATRIX d3dViewMatrix, XMMATRIX d3dProjectionMatrix, TDebugMesh tDebugMesh, XMMATRIX CameraMatrix)
 {
@@ -942,10 +962,13 @@ void CGraphicsSystem::InitMyShaderData(ID3D11DeviceContext * pd3dDeviceContext, 
 #pragma endregion
 	
 	pd3dDeviceContext->VSSetConstantBuffers(bufferNumber, 1, &m_pd3dMyVertexBuffer);
-	pd3dDeviceContext->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	pd3dDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	pd3dDeviceContext->IASetVertexBuffers(0, 1, &tMesh.m_pd3dVertexBuffer, &tMesh.m_nVertexBufferStride, &tMesh.m_nVertexBufferOffset);
-	pd3dDeviceContext->IASetIndexBuffer(tMesh.m_pd3dIndexBuffer, DXGI_FORMAT_R16_UINT, 0);
-	pd3dDeviceContext->PSSetShaderResources(0, 1, &tMesh.m_d3dSRVDiffuse);
+	pd3dDeviceContext->IASetIndexBuffer(tMesh.m_pd3dIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
+	if (&tMesh.m_d3dSRVDiffuse != NULL)
+	{
+		pd3dDeviceContext->PSSetShaderResources(0, 1, &tMesh.m_d3dSRVDiffuse);
+	}
 }
 
 void CGraphicsSystem::ExecutePipeline(ID3D11DeviceContext *pd3dDeviceContext, int m_nIndexCount, int nGraphicsMask, int nShaderID)

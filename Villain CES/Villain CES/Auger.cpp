@@ -140,13 +140,15 @@ void CAuger::InitializeSystems()
 
 	CreateGun(&tThisWorld, m_d3dWorldMatrix, 1,-1,0,10.5);
 	CreateGun(&tThisWorld, m_d3dWorldMatrix, 5,-1,0,11);
-	ImporterData tTempImport = pcGraphicsSystem->ReadMesh("PBRTestScene.txt");
+	ImporterData tTempImport = pcGraphicsSystem->ReadMesh("meshData.txt");
 	for (int nMeshIndex = 0; nMeshIndex < tTempImport.meshCount; nMeshIndex++)
 	{
 		TMeshImport tTempMesh = tTempImport.vtMeshes[nMeshIndex];
 		TMaterialImport tTempMat = tTempImport.vtMaterials[nMeshIndex];
 		int myMesh = createMesh(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, tTempMesh, tTempMat);
-		tThisWorld.atWorldMatrix[myMesh].worldMatrix = DirectX::XMMatrixMultiply(tThisWorld.atWorldMatrix[myMesh].worldMatrix, DirectX::XMMatrixTranslation(nMeshIndex, 0, myMesh));
+		//tThisWorld.atWorldMatrix[myMesh].worldMatrix = DirectX::XMMatrixMultiply(tThisWorld.atWorldMatrix[myMesh].worldMatrix, DirectX::XMMatrixTranslation(tTempMesh.worldTranslation[0], tTempMesh.worldTranslation[1], tTempMesh.worldTranslation[2]));
+		//tThisWorld.atWorldMatrix[myMesh].worldMatrix = DirectX::XMMatrixMultiply(tThisWorld.atWorldMatrix[myMesh].worldMatrix, DirectX::XMMatrixRotationRollPitchYaw(tTempMesh.worldRotation[0], tTempMesh.worldRotation[1], tTempMesh.worldRotation[2]));
+		//tThisWorld.atWorldMatrix[myMesh].worldMatrix = DirectX::XMMatrixMultiply(tThisWorld.atWorldMatrix[myMesh].worldMatrix, DirectX::XMMatrixScaling(tTempMesh.worldScaling[0], tTempMesh.worldScaling[1], tTempMesh.worldScaling[2]));
 	}
 
 	pcGraphicsSystem->CreateBuffers(&tThisWorld);
@@ -216,6 +218,7 @@ void CAuger::Update()
 	}
 	
 	CGraphicsSystem::TMyVertexBufferType tTempMyVertexBufferType;
+
 	for (int nCurrentEntity = 0; nCurrentEntity < ENTITYCOUNT; nCurrentEntity++)
 	{
 		tTempVertexBuffer.m_d3dWorldMatrix = tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix;
@@ -236,13 +239,13 @@ void CAuger::Update()
 		if (tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_SHADERID))
 		{
 			pcGraphicsSystem->InitMyShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tTempMyVertexBufferType, tThisWorld.atMesh[nCurrentEntity], m_d3dCameraMatrix);			
-			pcGraphicsSystem->ExecutePipeline(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atMesh[nCurrentEntity].m_nVertexCount, tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask, tThisWorld.atShaderID[nCurrentEntity].m_nShaderID);
+			pcGraphicsSystem->ExecutePipeline(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atMesh[nCurrentEntity].m_nIndexCount, tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask, tThisWorld.atShaderID[nCurrentEntity].m_nShaderID);
 		}
 
 		if (tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_DEBUGMESH | COMPONENT_SHADERID))
 		{
 			tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = m_d3dWorldMatrix;
-			tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = DirectX::XMMatrixMultiply(XMMatrixScaling(100, 100, 100), tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix);
+			tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = XMMatrixMultiply(XMMatrixScaling(100, 100, 100), tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix);
 			pcGraphicsSystem->InitPrimalShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, m_d3dViewMatrix, m_d3dProjectionMatrix, tThisWorld.atDebugMesh[nCurrentEntity], m_d3dCameraMatrix);
 
 			pcGraphicsSystem->ExecutePipeline(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atDebugMesh[nCurrentEntity].m_nVertexCount, tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask, tThisWorld.atShaderID[nCurrentEntity].m_nShaderID);
@@ -322,10 +325,10 @@ void CAuger::Update()
 			// do you have a parent matrix to be mutplied by
 			else if(tThisWorld.atParentWorldMatrix[nCurrentEntity]!=-1) {
 
-				tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = DirectX::XMMatrixMultiply(pcGraphicsSystem->SetDefaultWorldPosition(),
+				tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = XMMatrixMultiply(pcGraphicsSystem->SetDefaultWorldPosition(),
 					tThisWorld.atWorldMatrix[tThisWorld.atParentWorldMatrix[nCurrentEntity]].worldMatrix);
 				
-				tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = DirectX::XMMatrixMultiply(tThisWorld.atOffSetMatrix[nCurrentEntity], tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix);
+				tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = XMMatrixMultiply(tThisWorld.atOffSetMatrix[nCurrentEntity], tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix);
 
 			}
 			

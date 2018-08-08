@@ -45,6 +45,14 @@ struct TMeshFormat
 	int joints[4] = { 0, 0, 0, 0 };
 };
 
+struct TPrimitiveMesh
+{
+	float pos[4] = { 0, 0, 0, 0 };
+	float uv[2] = { 0, 0 };
+	float& operator[] (int i) { return (&pos[0])[i]; }
+
+};
+
 struct TMyAmbientColor
 {
 	double r = 0.0;
@@ -129,11 +137,14 @@ struct TPBRFileNameSizes
 
 struct TMeshImport
 {
+	double worldTranslation[3];
+	double worldRotation[3];
+	double worldScaling[3];
 	int hasPolygon = 0;
-	int nPolyCount = 0;
+	int nUniqueVertexCount = 0;
 	int nPolygonVertexCount = 0;
 	TMeshFormat* meshArrays;
-	int * indexBuffer = nullptr;
+	unsigned int * indexBuffer = nullptr;
 };
 
 struct TMaterialImport
@@ -180,7 +191,7 @@ struct TMesh
 	UINT m_nIndexCount = 0;
 	UINT m_nVertexBufferStride = 0;
 	UINT m_nVertexBufferOffset = 0;
-	ID3D11ShaderResourceView* m_d3dSRVDiffuse;
+	ID3D11ShaderResourceView* m_d3dSRVDiffuse = nullptr;
 };
 
 struct TDebugMesh
