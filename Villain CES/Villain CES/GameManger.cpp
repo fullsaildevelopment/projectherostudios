@@ -82,17 +82,17 @@ void CGameMangerSystem::LoadLevel()
 	AILocation = m_d3dWorldMatrix;
 	AILocation.r[3].m128_f32[0] += -3;
 	AILocation.r[3].m128_f32[2] += -5;
-	CreateSimpleGunAi(&tThisWorld, AILocation);
-//	CreateAIVision(&tThisWorld, AILocation, 8, 8, -0.6, -0.1, 10.7);
+	CreateSimpleSearchAi(&tThisWorld, AILocation);
+	CreateAIVision(&tThisWorld, AILocation, 8, 8, -0.6, -0.1, 10.7);
 	CreateGun(&tThisWorld, m_d3dWorldMatrix, 8, -1.1, 0, 11, 10, 200);
-	tThisWorld.atClip[9].bulletSpeed = 0.0001;
+	tThisWorld.atClip[10].bulletSpeed = 0.0001;
 	XMFLOAT4 blue10;
 	blue10.y = 0;
 	blue10.z = 1;
 	blue10.w = 1;
 	blue10.x = 0;
-	tThisWorld.atClip[9].colorofBullets = blue10;
-	tThisWorld.atAIMask[8].GunIndex = 9;
+	tThisWorld.atClip[10].colorofBullets = blue10;
+	tThisWorld.atAIMask[8].GunIndex = 10;
 	pcAiSystem->FollowObject(m_d3dPlayerMatrix, &tThisWorld.atWorldMatrix[8].worldMatrix);
 	tThisWorld.atWorldMatrix[8].worldMatrix = XMMatrixLookAtLH(tThisWorld.atWorldMatrix[8].worldMatrix.r[3],
 		m_d3dPlayerMatrix.r[3], XMVectorSet(0, 1, 0, 0));
@@ -111,7 +111,7 @@ void CGameMangerSystem::LoadLevel()
 	blue.z = 1;
 	blue.w = 1;
 	blue.x = 0;
-	tThisWorld.atSimpleMesh[8].m_nColor = blue;
+	tThisWorld.atSimpleMesh[10].m_nColor = blue;
 	for (int nCurrentEntity = 0; nCurrentEntity < ENTITYCOUNT; nCurrentEntity++) {
 		if (tThisWorld.atCollisionMask[nCurrentEntity].m_tnCollisionMask > 1) {
 			if (tThisWorld.atSimpleMesh[nCurrentEntity].m_nVertexCount > tThisWorld.atDebugMesh[nCurrentEntity].m_nVertexCount) {
@@ -612,7 +612,7 @@ int CGameMangerSystem::InGameUpdate()
 								COMPONENT_NONTRIGGER | COMPONENT_AABB | COMPONENT_STATIC)) | tThisWorld.atCollisionMask[otherCollisionsIndex[i]].m_tnCollisionMask == (COMPONENT_COLLISIONMASK |
 									COMPONENT_NONTRIGGER | COMPONENT_AABB | COMPONENT_NONSTATIC))
 						{
-							if (tThisWorld.atAIMask[otherCollisionsIndex[i]].m_tnAIMask == (COMPONENT_AIMASK | COMPONENT_FOLLOW)) {
+							if (tThisWorld.atAIMask[otherCollisionsIndex[i]].m_tnAIMask == (COMPONENT_AIMASK | COMPONENT_FOLLOW)|| tThisWorld.atAIMask[otherCollisionsIndex[i]].m_tnAIMask==(COMPONENT_AIMASK | COMPONENT_SEARCH)) {
 								if(tThisWorld.atProjectiles[nCurrentEntity].m_tnProjectileMask == (COMPONENT_PROJECTILESMASK | COMPONENT_METAL))
 								pcAiSystem->SetNumberOfAI(pcAiSystem->GetNumberOfAI() - 1);
 								// you need to make it so bullet destory when they hit an object
