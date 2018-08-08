@@ -47,7 +47,7 @@ void CGameMangerSystem::LoadLevel()
 
 
 	PlayerStartIndex = CreateClayTon(&tThisWorld);
-	tThisWorld.atClayton[PlayerStartIndex].heath = 100000000000000;
+	tThisWorld.atClayton[PlayerStartIndex].heath = 100;
 	XMMATRIX wall = m_d3dWorldMatrix;
 	wall.r[3].m128_f32[1] += -1;
 
@@ -76,6 +76,7 @@ void CGameMangerSystem::LoadLevel()
 	tThisWorld.atAIMask[6].GunIndex = 7;
 	CreateGun(&tThisWorld, m_d3dWorldMatrix, 6, -1.1, 0, 11,10,100);
 	tThisWorld.atClip[7].bulletSpeed = 0.0001;
+	tThisWorld.atClip[7].fShootingCoolDown = 100;
 
 
 	AILocation = m_d3dWorldMatrix;
@@ -479,8 +480,9 @@ int CGameMangerSystem::InGameUpdate()
 
 						int newbullet = CreateBullet(&tThisWorld, gunMatrix,
 							tThisWorld.atClip[nCurrentEntity].currentMaterial);
+						tThisWorld.atClip[newbullet].gunIndex = nCurrentEntity;
 						tThisWorld.atSimpleMesh[newbullet].m_nColor = tThisWorld.atClip[nCurrentEntity].colorofBullets;
-						pcProjectileSystem->CreateBulletProjectile(newbullet, &tThisWorld.atClip[nCurrentEntity]);
+						tThisWorld.atClip[newbullet].indexInclip =pcProjectileSystem->CreateBulletProjectile(newbullet, &tThisWorld.atClip[nCurrentEntity]);
 						tThisWorld.atAABB[newbullet] = pcCollisionSystem->createAABBS(tThisWorld.atSimpleMesh[newbullet].m_VertexData,tThisWorld.atAABB[newbullet]);
 						tThisWorld.atAABB[newbullet].m_IndexLocation = newbullet;
 
@@ -510,10 +512,18 @@ int CGameMangerSystem::InGameUpdate()
 								pcCollisionSystem->RemoveAABBCollider(tThisWorld.atClip[nCurrentEntity].nBulletsFired[i]);
 								pcGraphicsSystem->CleanD3DObject(&tThisWorld, tThisWorld.atClip[nCurrentEntity].nBulletsFired[i]);
 								tThisWorld.atClip[nCurrentEntity].nBulletsFired.erase(tThisWorld.atClip[nCurrentEntity].nBulletsFired.begin() + i);
+								for (int i = 0; i < tThisWorld.atClip[nCurrentEntity].fAliveTime.size(); ++i) {
+									if (tThisWorld.atClip[tThisWorld.atClip[nCurrentEntity].nBulletsFired[i]].indexInclip != 0) {
+										tThisWorld.atClip[tThisWorld.atClip[nCurrentEntity].nBulletsFired[i]].indexInclip -= 1;
+									}
+
+								}
 							}
 						}
-						tThisWorld.atClip[nCurrentEntity].fShootingCoolDown -= 0.1;
+						
 					}
+					if(tThisWorld.atClip[nCurrentEntity].fShootingCoolDown>0)
+					tThisWorld.atClip[nCurrentEntity].fShootingCoolDown -= 0.1;
 				}
 
 			}
@@ -605,15 +615,44 @@ int CGameMangerSystem::InGameUpdate()
 							if (tThisWorld.atAIMask[otherCollisionsIndex[i]].m_tnAIMask == (COMPONENT_AIMASK | COMPONENT_FOLLOW)) {
 								if(tThisWorld.atProjectiles[nCurrentEntity].m_tnProjectileMask == (COMPONENT_PROJECTILESMASK | COMPONENT_METAL))
 								pcAiSystem->SetNumberOfAI(pcAiSystem->GetNumberOfAI() - 1);
-								pcGraphicsSystem->CleanD3DObject(&tThisWorld, tThisWorld.atAIMask[otherCollisionsIndex[i]].GunIndex);
+								// you need to make it so bullet destory when they hit an object
+								if (tThisWorld.atClip[nCurrentEntity].gunIndex != -1) {
+									tThisWorld.atClip[tThisWorld.atClip[nCurrentEntity].gunIndex].fAliveTime.erase
+									(tThisWorld.atClip[tThisWorld.atClip[nCurrentEntity].gunIndex].fAliveTime.begin()
+									+tThisWorld.atClip[nCurrentEntity].indexInclip);
+										
+									pcCollisionSystem->RemoveAABBCollider(nCurrentEntity);
+									tThisWorld.atClip[tThisWorld.atClip[nCurrentEntity].gunIndex].nBulletsFired.erase(tThisWorld.atClip[tThisWorld.atClip[nCurrentEntity].gunIndex].nBulletsFired.begin()
+										+ tThisWorld.atClip[nCurrentEntity].indexInclip);
+
+						
+									pcGraphicsSystem->CleanD3DObject(&tThisWorld, nCurrentEntity);
+
+								}
 								pcCollisionSystem->RemoveAABBCollider(otherCollisionsIndex[i]);
-								pcGraphicsSystem->CleanD3DObject(&tThisWorld, otherCollisionsIndex[i]);
+								pcGraphicsSystem->CleanD3DObject(&tThisWorld, otherCollisionsIndex[i]);	
+								pcGraphicsSystem->CleanD3DObject(&tThisWorld, tThisWorld.atAIMask[otherCollisionsIndex[i]].GunIndex);
 
 							}
 							if (tThisWorld.atInputMask[otherCollisionsIndex[i]].m_tnInputMask == (COMPONENT_CLAYTON | COMPONENT_INPUTMASK)) {
-								if(tThisWorld.atProjectiles[nCurrentEntity].m_tnProjectileMask==(COMPONENT_PROJECTILESMASK | COMPONENT_METAL))
+								if (tThisWorld.atProjectiles[nCurrentEntity].m_tnProjectileMask == (COMPONENT_PROJECTILESMASK | COMPONENT_METAL)) {
+									if (tThisWorld.atClip[nCurrentEntity].gunIndex != -1) {
+										tThisWorld.atClip[tThisWorld.atClip[nCurrentEntity].gunIndex].fAliveTime.erase
+										(tThisWorld.atClip[tThisWorld.atClip[nCurrentEntity].gunIndex].fAliveTime.begin()
+											+ tThisWorld.atClip[nCurrentEntity].indexInclip);
+
+										pcCollisionSystem->RemoveAABBCollider(nCurrentEntity);
+										tThisWorld.atClip[tThisWorld.atClip[nCurrentEntity].gunIndex].nBulletsFired.erase(tThisWorld.atClip[tThisWorld.atClip[nCurrentEntity].gunIndex].nBulletsFired.begin()
+											+ tThisWorld.atClip[nCurrentEntity].indexInclip);
+
+										//pcGraphicsSystem->CleanD3DObject(&tThisWorld, tThisWorld.atAIMask[nCurrentEntity].GunIndex);
+										pcGraphicsSystem->CleanD3DObject(&tThisWorld, nCurrentEntity);
+
+									}
+								}
 								tThisWorld.atClayton[otherCollisionsIndex[i]].heath -= 50;
 							}
+							
 						}
 					}
 					if (tThisWorld.atClayton[PlayerStartIndex].heath <= 0) {

@@ -10,7 +10,7 @@ CProjectileSystem::~CProjectileSystem()
 {
 }
 
-void CProjectileSystem::CreateBulletProjectile(int indexofBullet,Clips* Gun)
+int CProjectileSystem::CreateBulletProjectile(int indexofBullet,Clips* Gun)
 {
 	
 
@@ -20,7 +20,7 @@ void CProjectileSystem::CreateBulletProjectile(int indexofBullet,Clips* Gun)
 		Gun->fAliveTime.push_back(0);
 		cout << Gun->nBulletsAvailables.size();
 		
-
+		return Gun->fAliveTime.size() - 1;
 
 
 
