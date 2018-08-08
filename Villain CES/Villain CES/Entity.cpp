@@ -1452,6 +1452,10 @@ unsigned int createMesh(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMeshImpo
 		result = CreateWICTextureFromFile(m_pd3dDevice, L"TestScene_V1.fbm\\Wood01_col.jpg", &diffuseTexture, &srv, NULL);
 	}
 	ptWorld->atGraphicsMask[nThisEntity].m_tnGraphicsMask = COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_SHADERID;
+	//ptWorld->atCollisionMask[nThisEntity].m_tnCollisionMask = COMPONENT_COLLISIONMASK | COMPONENT_AABB | COMPONENT_NONSTATIC | COMPONENT_NONTRIGGER;
+	//ptWorld->atAIMask[nThisEntity].m_tnAIMask = COMPONENT_AIMASK;
+	//ptWorld->atUIMask[nThisEntity].m_tnUIMask = COMPONENT_UIMASK;
+	//ptWorld->atPhysicsMask[nThisEntity].m_tnPhysicsMask = COMPONENT_PHYSICSMASK | COMPONENT_RIGIDBODY;
 	switch (tMaterial.lambert)
 	{
 		case 0:
@@ -1490,6 +1494,8 @@ unsigned int createMesh(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMeshImpo
 			}
 		}
 		pMesh[i] = tmp;
+		ptWorld->atMesh[nThisEntity].m_VertexData.push_back(XMFLOAT3(tmp.pos[0], tmp.pos[1], tmp.pos[2]));
+
 	}
 
 	ptWorld->atMesh[nThisEntity].m_d3dSRVDiffuse = srv;
@@ -1689,15 +1695,22 @@ unsigned int createClayton(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMeshI
 			//}
 			//else
 			tmp.pos[j] = tMesh.meshArrays[i].pos[j];
-			tmp.pos[j] *= 0.04;
+			tmp.pos[j] *= 0.01;
 			if (j < 2)
 			{
 				tmp.uv[j] = tMesh.meshArrays[i].uv[j];
 			}
 		}
 		pMesh[i] = tmp;
-		//ptWorld->atMesh[nThisEntity].m_VertexData.push_back(XMFLOAT3(tmp.pos[0], tmp.pos[1], tmp.pos[2]));
+		ptWorld->atMesh[nThisEntity].m_VertexData.push_back(XMFLOAT3(tmp.pos[0], tmp.pos[1], tmp.pos[2]));
 	}
+
+	XMVECTOR playerGravity;
+	playerGravity.m128_f32[1] = -0.000001;
+	playerGravity.m128_f32[0] = 0;
+	playerGravity.m128_f32[2] = 0;
+	playerGravity.m128_f32[3] = 0;
+	ptWorld->atRigidBody[nThisEntity].gravity = playerGravity;
 
 	ptWorld->atMesh[nThisEntity].m_d3dSRVDiffuse = srv;
 	ptWorld->atMesh[nThisEntity].m_nVertexCount = tMesh.nUniqueVertexCount;

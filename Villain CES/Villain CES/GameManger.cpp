@@ -71,9 +71,9 @@ void CGameMangerSystem::LoadLevel()
 	//CreateSimpleGunAi(&tThisWorld, AILocation);
 
 
-	AimingLine(&tThisWorld, m_d3dWorldMatrix, PlayerStartIndex, -1, 0, 10.5);
+	AimingLine(&tThisWorld, m_d3dWorldMatrix, PlayerStartIndex, -1, 1, 10.5);
 
-	GunIndexForPlayer = CreateGun(&tThisWorld, m_d3dWorldMatrix, PlayerStartIndex, -1, 0, 10.5,3,100);
+	GunIndexForPlayer = CreateGun(&tThisWorld, m_d3dWorldMatrix, PlayerStartIndex, -1, 1, 10.5,3,100);
 	tThisWorld.atClip[GunIndexForPlayer].bulletSpeed = 0.001;
 	AILocation = m_d3dWorldMatrix;
 	AILocation.r[3].m128_f32[0] += -1;
@@ -131,13 +131,13 @@ void CGameMangerSystem::LoadLevel()
 			}
 
 		}			
-		//if (tThisWorld.atMesh[nCurrentEntity].m_nVertexCount > tThisWorld.atDebugMesh[nCurrentEntity].m_nVertexCount) 
-		//{
-		//	TAABB MyAbb = pcCollisionSystem->createAABBS(tThisWorld.atMesh[nCurrentEntity].m_VertexData, tThisWorld.atAABB[nCurrentEntity]);
-		//	MyAbb.m_IndexLocation = nCurrentEntity;
-		//	tThisWorld.atAABB[nCurrentEntity] = MyAbb;
-		//	pcCollisionSystem->AddAABBCollider(MyAbb, nCurrentEntity);
-		//}
+		if (tThisWorld.atMesh[nCurrentEntity].m_nVertexCount > tThisWorld.atDebugMesh[nCurrentEntity].m_nVertexCount) 
+		{
+			TAABB MyAbb = pcCollisionSystem->createAABBS(tThisWorld.atMesh[nCurrentEntity].m_VertexData, tThisWorld.atAABB[nCurrentEntity]);
+			MyAbb.m_IndexLocation = nCurrentEntity;
+			tThisWorld.atAABB[nCurrentEntity] = MyAbb;
+			pcCollisionSystem->AddAABBCollider(MyAbb, nCurrentEntity);
+		}
 	}
 
 
@@ -274,13 +274,13 @@ int CGameMangerSystem::InGameUpdate()
 		// shoot a bullet
 		if (pcInputSystem->InputCheck(G_BUTTON_LEFT) == 1 && tThisWorld.atClip[GunIndexForPlayer].GunMode == true) {
 
-		//	tThisWorld.atClip[GunIndexForPlayer].tryToShoot = true;
+			tThisWorld.atClip[GunIndexForPlayer].tryToShoot = true;
 
 
 		}
 		// shoot a ray
 		else if (pcInputSystem->InputCheck(G_BUTTON_LEFT) == 1 && tThisWorld.atClip[GunIndexForPlayer].GunMode == false) {
-	//		tThisWorld.atClip[GunIndexForPlayer].tryToShoot = true;
+			tThisWorld.atClip[GunIndexForPlayer].tryToShoot = true;
 
 		}
 		// turn the ray off
@@ -363,8 +363,8 @@ int CGameMangerSystem::InGameUpdate()
 				// ai code do not delete
 
 				
-				//pcAiSystem->FollowObject(tThisWorld.atWorldMatrix[PlayerStartIndex].worldMatrix, &tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix);
-				//pcAiSystem->ShootGun(&tThisWorld.atClip[tThisWorld.atAIMask[nCurrentEntity].GunIndex]);
+				pcAiSystem->FollowObject(tThisWorld.atWorldMatrix[PlayerStartIndex].worldMatrix, &tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix);
+				pcAiSystem->ShootGun(&tThisWorld.atClip[tThisWorld.atAIMask[nCurrentEntity].GunIndex]);
 
 			}
 			//else if(tThisWorld.atAIMask[nCurrentEntity].m_tnAIMask==())
@@ -449,7 +449,7 @@ int CGameMangerSystem::InGameUpdate()
 			}
 		
 		
-		//	tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = pcPhysicsSystem->ResolveForces(&tThisWorld.atRigidBody[nCurrentEntity], tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, true);
+			tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = pcPhysicsSystem->ResolveForces(&tThisWorld.atRigidBody[nCurrentEntity], tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, true);
 		
 		
 			if (tThisWorld.atProjectiles[nCurrentEntity].m_tnProjectileMask == (COMPONENT_PROJECTILESMASK | COMPONENT_RAYGUN)) {

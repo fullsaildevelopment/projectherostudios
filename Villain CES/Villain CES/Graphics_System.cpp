@@ -462,7 +462,7 @@ XMMATRIX CGraphicsSystem::SetDefaultPerspective()
 
 XMMATRIX CGraphicsSystem::SetDefaultOffset()
 {
-	return XMMatrixTranslation(0, 1.5f, -5.5f);
+	return XMMatrixTranslation(0, 1.5f, 8.5f);
 }
 
 XMMATRIX CGraphicsSystem::SetDefaultWorldPosition()
