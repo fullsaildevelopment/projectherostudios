@@ -21,7 +21,7 @@ struct TWorld
 	TMaterial		atMaterial[ENTITYCOUNT];
 	TTexture		atTexture[ENTITYCOUNT];
 	TShaderID		atShaderID[ENTITYCOUNT];
-	TCamera			atCamera[ENTITYCOUNT];
+	//TCamera			atCamera[ENTITYCOUNT];
 	TWorldMatrix	atWorldMatrix[ENTITYCOUNT];
 	int				atParentWorldMatrix[ENTITYCOUNT];
 	XMMATRIX		atOffSetMatrix[ENTITYCOUNT];
@@ -90,7 +90,7 @@ unsigned int createMesh(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMesh tMe
 unsigned int CreateClayTon(TWorld * ptWorld);
 unsigned int CreateBullet(TWorld * ptWorld,XMMATRIX bulletSpawnLocation, int MaterialID);
 unsigned int AimingLine(TWorld * ptWorld, XMMATRIX BulletSpawnLocation, int parentWorldMatrixIndex, float xoffset, float yoffset, float zoffset);
-
+unsigned int createDebugCamera(TWorld * ptWorld, XMMATRIX debugCamera);
 unsigned int createDummyPlayer(TWorld* ptWorld, XMMATRIX playerMatrix);
 unsigned int CreateGround(TWorld* ptWorld, XMMATRIX SpawnPosition);
 unsigned int CreateWall(TWorld* ptWorld, XMMATRIX SpawnPosition);

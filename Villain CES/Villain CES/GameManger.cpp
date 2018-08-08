@@ -48,11 +48,11 @@ CGameMangerSystem::~CGameMangerSystem()
 
 void CGameMangerSystem::LoadLevel()
 {
-	
 	tTimerInfo->StartClock(tAugerTimers->tSceneTimer);
 		pcGraphicsSystem->CleanD3DLevel(&tThisWorld);
 	
 	pcAiSystem->SetNumberOfAI(1);
+
 	m_d3dWorldMatrix = pcGraphicsSystem->SetDefaultWorldPosition();//Call some sort of function from the graphics system to create this matrix
 	m_d3dViewMatrix = pcGraphicsSystem->SetDefaultViewMatrix();//Call some sort of function from the graphics system to create this matrix
 	walkCamera->d3d_Position = pcGraphicsSystem->SetDefaultCameraMatrix();
@@ -148,6 +148,8 @@ void CGameMangerSystem::LoadLevel()
 		}
 	}
 	pcGraphicsSystem->CreateBuffers(&tThisWorld);
+	createDebugCamera(&tThisWorld, m_d3dWorldMatrix);
+
 }
 
 int CGameMangerSystem::InGameUpdate()
@@ -222,7 +224,7 @@ int CGameMangerSystem::InGameUpdate()
 			pcGraphicsSystem->CreateEntityBuffer(&tThisWorld, UIIndex.back());
 		}
 	}
-	 XMMATRIX m_d3d_ResultMatrix = pcGraphicsSystem->SetDefaultWorldPosition();
+	static XMMATRIX m_d3d_ResultMatrix = pcGraphicsSystem->SetDefaultWorldPosition();
 	static XMMATRIX m_d3dOffsetMatrix = pcGraphicsSystem->SetDefaultOffset();
 	
 		if (tCameraMode.bWalkMode == true)
@@ -264,12 +266,18 @@ int CGameMangerSystem::InGameUpdate()
 		}
 		else
 		{
-
-			debugCamera->d3d_Position = pcInputSystem->DebugCamera(m_d3d_ResultMatrix, m_d3dWorldMatrix);
+			//m_d3dWorldMatrix = XMMatrixIdentity();
+			//m_d3d_ResultMatrix = XMMatrixIdentity();
+			if (tCameraMode.bSwitch == true)
+			{
+				m_d3d_ResultMatrix = pcInputSystem->CameraOrientationReset(m_d3d_ResultMatrix);
+				tCameraMode.bSwitch = false;
+			}
+			m_d3d_ResultMatrix = pcInputSystem->DebugCamera(m_d3d_ResultMatrix, m_d3dWorldMatrix);
 
 			//m_d3d_ResultMatrix = XMMatrixMultiply(m_d3d_ResultMatrix, m_d3dWorldMatrix);
 
-			debugCamera->d3d_Position = XMMatrixMultiply(debugCamera->d3d_Position, m_d3dWorldMatrix);
+			debugCamera->d3d_Position = XMMatrixMultiply(m_d3d_ResultMatrix, m_d3dWorldMatrix);
 			//m_d3d_ResultMatrix = XMMatrixInverse(NULL, m_d3d_ResultMatrix);
 		}
 	
@@ -322,21 +330,33 @@ int CGameMangerSystem::InGameUpdate()
 	for (int nCurrentEntity = 0; nCurrentEntity < ENTITYCOUNT; nCurrentEntity++)
 	{
 
-		tTempVertexBuffer.m_d3dWorldMatrix = tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix;
-		tTempVertexBuffer.m_d3dViewMatrix = m_d3dViewMatrix;
+		
 		tTempVertexBuffer.m_d3dProjectionMatrix = m_d3dProjectionMatrix;
+		if (tCameraMode.bDebugMode == true)
+		{
+			tTempVertexBuffer.m_d3dWorldMatrix = m_d3dWorldMatrix;
 
+			tTempVertexBuffer.m_d3dViewMatrix = debugCamera->d3d_Position;
+			pcGraphicsSystem->InitPrimalShaderData2(pcGraphicsSystem->m_pd3dDeviceContext, tTempVertexBuffer, tTempPixelBuffer, tThisWorld.atSimpleMesh[nCurrentEntity], debugCamera->d3d_Position);
+
+
+			// ai code would run here
+		}
+		else
+		{
+			tTempVertexBuffer.m_d3dWorldMatrix = tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix;
+
+			tTempVertexBuffer.m_d3dViewMatrix = m_d3dViewMatrix;
+
+		}
 		if (tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_DEBUGMESH | COMPONENT_SHADERID))
 		{
-			//if (tCameraMode.bDebugMode == true)
-			//{
-			pcGraphicsSystem->InitPrimalShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, m_d3dViewMatrix, m_d3dProjectionMatrix, tThisWorld.atDebugMesh[nCurrentEntity], m_d3dCameraMatrix);
-			//}
-
+			
+			pcGraphicsSystem->InitPrimalShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, m_d3dViewMatrix, m_d3dProjectionMatrix, tThisWorld.atDebugMesh[nCurrentEntity],debugCamera->d3d_Position);
 			pcGraphicsSystem->ExecutePipeline(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atDebugMesh[nCurrentEntity].m_nVertexCount, tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask, tThisWorld.atShaderID[nCurrentEntity].m_nShaderID);
 
 		}
-		// ai code would run here
+
 		
 		if (pcAiSystem->GetNumberOfAI() <= 0) {
 			return -1;
@@ -539,8 +559,7 @@ int CGameMangerSystem::InGameUpdate()
 				if (nCurrentEntity == 8) {
 					float x = 0;
 				}
-				tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = XMMatrixMultiply(pcGraphicsSystem->SetDefaultWorldPosition(),
-					tThisWorld.atWorldMatrix[tThisWorld.atParentWorldMatrix[nCurrentEntity]].worldMatrix);
+				tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = XMMatrixMultiply(pcGraphicsSystem->SetDefaultWorldPosition(),tThisWorld.atWorldMatrix[tThisWorld.atParentWorldMatrix[nCurrentEntity]].worldMatrix);
 
 				tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = XMMatrixMultiply(tThisWorld.atOffSetMatrix[nCurrentEntity], tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix);
 
@@ -616,8 +635,8 @@ int CGameMangerSystem::LoadMainMenu()
 	bool switchlevel = false;
 
 
-	static XMMATRIX m_d3d_ResultMatrix = pcGraphicsSystem->SetDefaultWorldPosition();
-	static XMMATRIX m_d3dOffsetMatrix = pcGraphicsSystem->SetDefaultOffset();
+	static XMMATRIX m_d3d_ResultMatrix2 = pcGraphicsSystem->SetDefaultWorldPosition();
+	static XMMATRIX m_d3dOffsetMatrix2 = pcGraphicsSystem->SetDefaultOffset();
 	if (pcInputSystem->InputCheck(G_KEY_P)) {
 		return 3;
 
@@ -691,9 +710,9 @@ int CGameMangerSystem::LoadMainMenu()
 	
 		m_d3dPlayerMatrix = pcInputSystem->AimMode(m_d3dPlayerMatrix);
 
-		menuCamera->d3d_Position = XMMatrixMultiply(m_d3d_ResultMatrix, m_d3dPlayerMatrix);
+		menuCamera->d3d_Position = XMMatrixMultiply(m_d3d_ResultMatrix2, m_d3dPlayerMatrix);
 
-		menuCamera->d3d_Position = XMMatrixMultiply(m_d3dOffsetMatrix, menuCamera->d3d_Position);
+		menuCamera->d3d_Position = XMMatrixMultiply(m_d3dOffsetMatrix2, menuCamera->d3d_Position);
 		// m_d3dCameraMatrix = XMMatrixMultiply(m_d3dOffsetMatrix, m_d3dCameraMatrix);
 
 	CGraphicsSystem::TPrimalVertexBufferType tTempVertexBuffer;
@@ -877,6 +896,7 @@ void CGameMangerSystem::InitilizeMainMenu()
 	tCameraMode.bDebugMode = false;
 	tCameraMode.bAimMode = false;
 	tCameraMode.bWalkMode = true;
+	tCameraMode.bSwitch = false;
 	m_d3dPlayerMatrix = pcGraphicsSystem->SetDefaultWorldPosition();
 
 

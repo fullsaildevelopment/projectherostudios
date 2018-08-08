@@ -642,6 +642,16 @@ unsigned int AimingLine(TWorld * ptWorld, XMMATRIX BulletSpawnLocation, int pare
 	return nThisEntity;
 }
 
+unsigned int createDebugCamera(TWorld * ptWorld, XMMATRIX debugCamera)
+{
+	unsigned int nThisEntity = createEntity(ptWorld);
+	//ptWorld->atCollisionMask[nThisEntity].m_tnCollisionMask = COMPONENT_COLLISIONMASK | COMPONENT_AABB | COMPONENT_STATIC | COMPONENT_NONTRIGGER;
+	ptWorld->atGraphicsMask[nThisEntity].m_tnGraphicsMask = COMPONENT_GRAPHICSMASK;
+	ptWorld->atWorldMatrix[nThisEntity].worldMatrix = debugCamera;
+
+	return 0;
+}
+
 unsigned int CreateGround(TWorld * ptWorld, XMMATRIX SpawnPosition)
 {
 	unsigned int nThisEntity = createEntity(ptWorld);
@@ -652,6 +662,7 @@ unsigned int CreateGround(TWorld * ptWorld, XMMATRIX SpawnPosition)
 	ptWorld->atUIMask[nThisEntity].m_tnUIMask = COMPONENT_UIMASK;
 	ptWorld->atPhysicsMask[nThisEntity].m_tnPhysicsMask = COMPONENT_PHYSICSMASK;
 	ptWorld->atSimpleMesh[nThisEntity].m_nColor = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+
 	static TPrimalVert atCubeVertices[]
 	{
 		TPrimalVert{ XMFLOAT3(-20, 0.5f, 0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//0 Top F Left
