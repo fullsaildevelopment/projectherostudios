@@ -181,6 +181,8 @@
   <ItemGroup>
     <ClCompile Include="AI_System.cpp" />
     <ClCompile Include="Auger.cpp" />
+    <ClCompile Include="DirectXTex-master\DDSTextureLoader\DDSTextureLoader.cpp" />
+    <ClCompile Include="DirectXTex-master\WICTextureLoader\WICTextureLoader.cpp" />
     <ClCompile Include="GameManger.cpp" />
     <ClCompile Include="InputSystem.cpp" />
     <ClCompile Include="Collision_System.cpp" />

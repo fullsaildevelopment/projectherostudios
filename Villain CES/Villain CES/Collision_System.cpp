@@ -107,9 +107,9 @@ bool CCollisionSystem::IsLineInBox(XMVECTOR startPoint, XMVECTOR endPoint,XMMATR
 
 	// Use Separating Axis Test
 	// Separation vector from box center to line center is LMid, since the line is in box space
-	if (fabs(LMid.m128_f32[0]) > CenterofBox.m128_f32[0] + LExt.m128_f32[0]) return false;
-	if (fabs(LMid.m128_f32[1]) > CenterofBox.m128_f32[1] + LExt.m128_f32[1]) return false;
-	if (fabs(LMid.m128_f32[2]) > CenterofBox.m128_f32[2] + LExt.m128_f32[2]) return false;
+	if (fabs(LMid.m128_f32[0]) >( CenterofBox.m128_f32[0] + LExt.m128_f32[0])) return false;
+	if (fabs(LMid.m128_f32[1]) > (CenterofBox.m128_f32[1] + LExt.m128_f32[1])) return false;
+	if (fabs(LMid.m128_f32[2]) > (CenterofBox.m128_f32[2] + LExt.m128_f32[2])) return false;
 	// Crossproducts of line and each axis
 	//if ( fabs( LMid.y * L.z - LMid.z * L.y)  >  (m_Extent.y * LExt.z + m_Extent.z * LExt.y) ) return false;
 	if (fabs(LMid.m128_f32[1] * L.m128_f32[2] - LMid.m128_f32[2] * L.m128_f32[1])  >  (CenterofBox.m128_f32[1] * LExt.m128_f32[2] + CenterofBox.m128_f32[2] * LExt.m128_f32[1])) return false;
@@ -171,7 +171,7 @@ XMMATRIX CCollisionSystem::WalkingThrewObjectCheck(XMMATRIX worldPos, TAABB othe
 			//d3d_ResultMatrix = pcGraphicsSystem->SetDefaultWorldPosition();;
 			XMMATRIX moveback;
 			moveback = D3DMatrix;
-			moveback.r[3].m128_f32[0] += 0.01;
+			moveback.r[3].m128_f32[0] += 0.01f;
 			D3DMatrix = moveback;
 			
 			UpdateCollision = updateAABB(D3DMatrix, UpdateCollision);
@@ -188,7 +188,7 @@ XMMATRIX CCollisionSystem::WalkingThrewObjectCheck(XMMATRIX worldPos, TAABB othe
 			//d3d_ResultMatrix = pcGraphicsSystem->SetDefaultWorldPosition();;
 			XMMATRIX moveback;
 			moveback = D3DMatrix;
-			moveback.r[3].m128_f32[0] -= 0.01;
+			moveback.r[3].m128_f32[0] -= 0.01f;
 			D3DMatrix = moveback;
 			UpdateCollision = updateAABB(D3DMatrix, UpdateCollision);
 			
@@ -205,7 +205,7 @@ XMMATRIX CCollisionSystem::WalkingThrewObjectCheck(XMMATRIX worldPos, TAABB othe
 			//d3d_ResultMatrix = pcGraphicsSystem->SetDefaultWorldPosition();;
 			XMMATRIX moveback;
 			moveback = D3DMatrix;
-			moveback.r[3].m128_f32[1] -= 0.01;
+			moveback.r[3].m128_f32[1] -= 0.01f;
 			D3DMatrix = moveback;
 			UpdateCollision = updateAABB(D3DMatrix, UpdateCollision);
 
@@ -223,7 +223,7 @@ XMMATRIX CCollisionSystem::WalkingThrewObjectCheck(XMMATRIX worldPos, TAABB othe
 			//d3d_ResultMatrix = pcGraphicsSystem->SetDefaultWorldPosition();;
 			XMMATRIX moveback;
 			moveback = D3DMatrix;
-			moveback.r[3].m128_f32[1] += 0.01;
+			moveback.r[3].m128_f32[1] += 0.01f;
 			D3DMatrix = moveback;
 			UpdateCollision = updateAABB(D3DMatrix, UpdateCollision);
 		
@@ -241,7 +241,7 @@ XMMATRIX CCollisionSystem::WalkingThrewObjectCheck(XMMATRIX worldPos, TAABB othe
 			//d3d_ResultMatrix = pcGraphicsSystem->SetDefaultWorldPosition();;
 			XMMATRIX moveback;
 			moveback = D3DMatrix;
-			moveback.r[3].m128_f32[2] += 0.01;
+			moveback.r[3].m128_f32[2] += 0.01f;
 			D3DMatrix = moveback;
 			UpdateCollision = updateAABB(D3DMatrix, UpdateCollision);
 
@@ -258,7 +258,7 @@ XMMATRIX CCollisionSystem::WalkingThrewObjectCheck(XMMATRIX worldPos, TAABB othe
 			//d3d_ResultMatrix = pcGraphicsSystem->SetDefaultWorldPosition();;
 			XMMATRIX moveback;
 			moveback = D3DMatrix;
-			moveback.r[3].m128_f32[2] -= 0.01;
+			moveback.r[3].m128_f32[2] -= 0.01f;
 			D3DMatrix = moveback;
 			UpdateCollision = updateAABB(D3DMatrix, UpdateCollision);
 
@@ -347,7 +347,7 @@ TAABB CCollisionSystem::updateAABB(XMMATRIX worldMatrix, TAABB aabb)
 }
 TAABB CCollisionSystem::createAABBS(std::vector<XMFLOAT3> verticies, TAABB AABBDATA)
 {
-	int size = verticies.size();
+	int size = (int)verticies.size();
 	if (size == 0) { return TAABB(); }
 	TAABB aabb;
 	aabb.m_MaterialType = AABBDATA.m_MaterialType;
@@ -425,9 +425,11 @@ int CCollisionSystem::AddAABBCollider(TAABB m_AABB2, int nIndex)
 	if (ContainAABB(nIndex) == false) {
 		m_AABB2.m_IndexLocation = nIndex;
 		m_AAbb.push_back(m_AABB2);
-		
-		return m_AAbb.size();
+
+		return (int)m_AAbb.size();
 	}
+	else
+		return 0;
 }
 /*
 * RemoveAABBCollider():  Adds an AABB to the list if it is not already in the list

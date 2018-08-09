@@ -403,7 +403,7 @@ unsigned int CreateClayTon(TWorld * ptWorld)
 	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexData.SysMemSlicePitch = 0;
 
 	ptWorld->atShaderID[nThisEntity].m_nShaderID = 3;
-	for (int i = 0; i < ptWorld->atSimpleMesh[nThisEntity].m_nVertexCount; ++i) {
+	for (unsigned int i = 0; i < ptWorld->atSimpleMesh[nThisEntity].m_nVertexCount; ++i) {
 		ptWorld->atSimpleMesh[nThisEntity].m_VertexData.push_back(atCubeVertices[i].m_d3dfPosition);
 	}
 
@@ -463,7 +463,7 @@ unsigned int CreateBullet(TWorld * ptWorld,XMMATRIX BulletSpawnLocation,int Mate
 		TPrimalVert{ XMFLOAT3(0.5f, 0.5f, 0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//14 Top F Right
 		TPrimalVert{ XMFLOAT3(0.5f, -0, 0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) }//15 Bottm F Right
 	};
-	for (int i = 0; i < 16; ++i) {
+	for (unsigned int i = 0; i < 16; ++i) {
 		//atCubeVertices[i].m_d3dfPosition.x *= 1;
 		//atCubeVertices[i].m_d3dfPosition.y *= 1;
 		//atCubeVertices[i].m_d3dfPosition.z *= 1;
@@ -502,10 +502,8 @@ unsigned int CreateBullet(TWorld * ptWorld,XMMATRIX BulletSpawnLocation,int Mate
 
 	ptWorld->atSimpleMesh[nThisEntity].m_d3dVertexData.pSysMem = atCubeVertices;
 	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexData.pSysMem = cubeIndices;
-
 	ptWorld->atSimpleMesh[nThisEntity].m_d3dVertexData.SysMemPitch = 0;
 	ptWorld->atSimpleMesh[nThisEntity].m_d3dVertexData.SysMemSlicePitch = 0;
-
 	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexData.SysMemPitch = 0;
 	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexData.SysMemSlicePitch = 0;
 
@@ -528,7 +526,7 @@ unsigned int CreateBullet(TWorld * ptWorld,XMMATRIX BulletSpawnLocation,int Mate
 	ptWorld->atWorldMatrix[nThisEntity].worldMatrix = BulletSpawnLocation;
 
 	ptWorld->atShaderID[nThisEntity].m_nShaderID = 3;
-	for (int i = 0; i < ptWorld->atSimpleMesh[nThisEntity].m_nVertexCount; ++i) {
+	for (unsigned int i = 0; i < ptWorld->atSimpleMesh[nThisEntity].m_nVertexCount; ++i) {
 		ptWorld->atSimpleMesh[nThisEntity].m_VertexData.push_back(atCubeVertices[i].m_d3dfPosition);
 	}
 	return nThisEntity;
@@ -560,25 +558,25 @@ unsigned int AimingLine(TWorld * ptWorld, XMMATRIX BulletSpawnLocation, int pare
 	ptWorld->atPhysicsMask[nThisEntity].m_tnPhysicsMask = COMPONENT_PHYSICSMASK;
 	static TPrimalVert atCubeVertices[]
 	{
-		TPrimalVert{ XMFLOAT3(0.3f, 0.4f, 5),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//0 Top F Left
-		TPrimalVert{ XMFLOAT3(0.5f, 0.4f, 5),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//1 Top F Right
-		TPrimalVert{ XMFLOAT3(0.3f, 0.3, 5),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//2 Bottom F Left
-		TPrimalVert{ XMFLOAT3(0.5f, 0.3, 5),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//3 Bottom F Right
+		TPrimalVert{ XMFLOAT3(0.3f, 0.4f, 5.0f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//0 Top F Left
+		TPrimalVert{ XMFLOAT3(0.5f, 0.4f, 5.0f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//1 Top F Right
+		TPrimalVert{ XMFLOAT3(0.3f, 0.3f, 5.0f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//2 Bottom F Left
+		TPrimalVert{ XMFLOAT3(0.5f, 0.3f, 5.0f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//3 Bottom F Right
 		TPrimalVert{ XMFLOAT3(0.3f, 0.4f, -0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//4 Top B Left
 		TPrimalVert{ XMFLOAT3(0.5f, 0.4f, -0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//5 Top B Right
-		TPrimalVert{ XMFLOAT3(0.3f, 0.3, -0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//6 Bottom B Left
-		TPrimalVert{ XMFLOAT3(0.5f, 0.3, -0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//7 Bottom B Right
+		TPrimalVert{ XMFLOAT3(0.3f, 0.3f, -0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//6 Bottom B Left
+		TPrimalVert{ XMFLOAT3(0.5f, 0.3f, -0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//7 Bottom B Right
 
-		TPrimalVert{ XMFLOAT3(0.5f, 0.4f, 5),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//8 //Top F Right
-		TPrimalVert{ XMFLOAT3(0.3f, 0.4f, 5),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//9 // Top F Left
-		TPrimalVert{ XMFLOAT3(0.3f, 0.3, -0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//10 Bottom B Left
-		TPrimalVert{ XMFLOAT3(0.5f, 0.3, -0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//11 Bottom B Right
-		TPrimalVert{ XMFLOAT3(0.3f, 0.3, 5),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//12 Bottom F Left
-		TPrimalVert{ XMFLOAT3(0.3f, 0.4f, 5),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//13 Top F Left
-		TPrimalVert{ XMFLOAT3(0.5f, 0.4f, 5),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//14 Top F Right
-		TPrimalVert{ XMFLOAT3(0.5f, 0.3, 5),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) }//15 Bottm F Right
+		TPrimalVert{ XMFLOAT3(0.5f, 0.4f, 5.0f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//8 //Top F Right
+		TPrimalVert{ XMFLOAT3(0.3f, 0.4f, 5.0f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//9 // Top F Left
+		TPrimalVert{ XMFLOAT3(0.3f, 0.3f, -0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//10 Bottom B Left
+		TPrimalVert{ XMFLOAT3(0.5f, 0.3f, -0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//11 Bottom B Right
+		TPrimalVert{ XMFLOAT3(0.3f, 0.3f, 5.0f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//12 Bottom F Left
+		TPrimalVert{ XMFLOAT3(0.3f, 0.4f, 5.0f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//13 Top F Left
+		TPrimalVert{ XMFLOAT3(0.5f, 0.4f, 5.0f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//14 Top F Right
+		TPrimalVert{ XMFLOAT3(0.5f, 0.3f, 5.0f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) }//15 Bottm F Right
 	};
-	for (int i = 0; i < 16; ++i) {
+	for (unsigned int i = 0; i < 16; ++i) {
 		//atCubeVertices[i].m_d3dfPosition.x *= 1;
 		//atCubeVertices[i].m_d3dfPosition.y *= 1;
 		//atCubeVertices[i].m_d3dfPosition.z *= 1;
@@ -725,7 +723,7 @@ unsigned int CreateGround(TWorld * ptWorld, XMMATRIX SpawnPosition)
 	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexData.SysMemSlicePitch = 0;
 
 	ptWorld->atShaderID[nThisEntity].m_nShaderID = 3;
-	for (int i = 0; i < ptWorld->atSimpleMesh[nThisEntity].m_nVertexCount; ++i) {
+	for (unsigned int i = 0; i < ptWorld->atSimpleMesh[nThisEntity].m_nVertexCount; ++i) {
 		ptWorld->atSimpleMesh[nThisEntity].m_VertexData.push_back(atCubeVertices[i].m_d3dfPosition);
 	}
 	ptWorld->atWorldMatrix[nThisEntity].worldMatrix = SpawnPosition;
@@ -805,7 +803,7 @@ unsigned int CreateWall(TWorld * ptWorld, XMMATRIX SpawnPosition)
 	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexData.SysMemSlicePitch = 0;
 
 	ptWorld->atShaderID[nThisEntity].m_nShaderID = 3;
-	for (int i = 0; i < ptWorld->atSimpleMesh[nThisEntity].m_nVertexCount; ++i) {
+	for (unsigned int i = 0; i < ptWorld->atSimpleMesh[nThisEntity].m_nVertexCount; ++i) {
 		ptWorld->atSimpleMesh[nThisEntity].m_VertexData.push_back(atCubeVertices[i].m_d3dfPosition);
 	}
 	ptWorld->atWorldMatrix[nThisEntity].worldMatrix = SpawnPosition;
@@ -885,7 +883,7 @@ unsigned int CreateCelling(TWorld * ptWorld, XMMATRIX SpawnPosition)
 	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexData.SysMemSlicePitch = 0;
 
 	ptWorld->atShaderID[nThisEntity].m_nShaderID = 3;
-	for (int i = 0; i < ptWorld->atSimpleMesh[nThisEntity].m_nVertexCount; ++i) {
+	for (unsigned int i = 0; i < ptWorld->atSimpleMesh[nThisEntity].m_nVertexCount; ++i) {
 		ptWorld->atSimpleMesh[nThisEntity].m_VertexData.push_back(atCubeVertices[i].m_d3dfPosition);
 	}
 
@@ -895,7 +893,7 @@ unsigned int CreateCelling(TWorld * ptWorld, XMMATRIX SpawnPosition)
 
 unsigned int CreateGun(TWorld * ptWorld, XMMATRIX BulletSpawnLocation,int parentWorldMatrixIndex,float xoffset,float yoffset,float zoffset,int clipSize,float shootingCOooldown)
 {
-unsigned int nThisEntity = createEntity(ptWorld);
+	unsigned int nThisEntity = createEntity(ptWorld);
 
 
 
@@ -923,58 +921,58 @@ static TPrimalVert atCubeVertices[]
 	TPrimalVert{ XMFLOAT3(-0, -0, -0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//6 Bottom B Left
 	TPrimalVert{ XMFLOAT3(0.5f, -0, -0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//7 Bottom B Right
 
-	TPrimalVert{ XMFLOAT3(0.5f, 0.5f, 0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//8 //Top F Right
-	TPrimalVert{ XMFLOAT3(-0, 0.5f, 0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//9 // Top F Left
-	TPrimalVert{ XMFLOAT3(-0, -0, -0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//10 Bottom B Left
-	TPrimalVert{ XMFLOAT3(0.5f, -0, -0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//11 Bottom B Right
-	TPrimalVert{ XMFLOAT3(-0, -0, 0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//12 Bottom F Left
-	TPrimalVert{ XMFLOAT3(-0, 0.5f, 0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//13 Top F Left
-	TPrimalVert{ XMFLOAT3(0.5f, 0.5f, 0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//14 Top F Right
-	TPrimalVert{ XMFLOAT3(0.5f, -0, 0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) }//15 Bottm F Right
-};
-ptWorld->atSimpleMesh[nThisEntity].m_nColor = XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f);
+		TPrimalVert{ XMFLOAT3(0.5f, 0.5f, 0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//8 //Top F Right
+		TPrimalVert{ XMFLOAT3(-0, 0.5f, 0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//9 // Top F Left
+		TPrimalVert{ XMFLOAT3(-0, -0, -0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//10 Bottom B Left
+		TPrimalVert{ XMFLOAT3(0.5f, -0, -0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//11 Bottom B Right
+		TPrimalVert{ XMFLOAT3(-0, -0, 0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//12 Bottom F Left
+		TPrimalVert{ XMFLOAT3(-0, 0.5f, 0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//13 Top F Left
+		TPrimalVert{ XMFLOAT3(0.5f, 0.5f, 0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//14 Top F Right
+		TPrimalVert{ XMFLOAT3(0.5f, -0, 0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) }//15 Bottm F Right
+	};
+	ptWorld->atSimpleMesh[nThisEntity].m_nColor = XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f);
 
-static short cubeIndices[]
-{
-	3,1,0,0,2,3,
-	4,5,7,7,6,4,
-	4,8,5,4,9,8,
-	11,3,10,10,3,2,
-	12,13,4,4,6,12,
-	14,7,5,14,15,7
-};
+	static short cubeIndices[]
+	{
+		3,1,0,0,2,3,
+		4,5,7,7,6,4,
+		4,8,5,4,9,8,
+		11,3,10,10,3,2,
+		12,13,4,4,6,12,
+		14,7,5,14,15,7
+	};
 
-ptWorld->atSimpleMesh[nThisEntity].m_nIndexCount = 36;
-ptWorld->atSimpleMesh[nThisEntity].m_nVertexCount = 16;
+	ptWorld->atSimpleMesh[nThisEntity].m_nIndexCount = 36;
+	ptWorld->atSimpleMesh[nThisEntity].m_nVertexCount = 16;
 
-ptWorld->atSimpleMesh[nThisEntity].m_nVertexBufferStride = sizeof(TPrimalVert);
-ptWorld->atSimpleMesh[nThisEntity].m_nVertexBufferOffset = 0;
+	ptWorld->atSimpleMesh[nThisEntity].m_nVertexBufferStride = sizeof(TPrimalVert);
+	ptWorld->atSimpleMesh[nThisEntity].m_nVertexBufferOffset = 0;
 
-ptWorld->atSimpleMesh[nThisEntity].m_d3dVertexBufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
-ptWorld->atSimpleMesh[nThisEntity].m_d3dVertexBufferDesc.ByteWidth = sizeof(TPrimalVert) * ptWorld->atSimpleMesh[nThisEntity].m_nVertexCount;
-ptWorld->atSimpleMesh[nThisEntity].m_d3dVertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-ptWorld->atSimpleMesh[nThisEntity].m_d3dVertexBufferDesc.CPUAccessFlags = 0;
-ptWorld->atSimpleMesh[nThisEntity].m_d3dVertexBufferDesc.MiscFlags = 0;
-ptWorld->atSimpleMesh[nThisEntity].m_d3dVertexBufferDesc.StructureByteStride = 0;
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dVertexBufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dVertexBufferDesc.ByteWidth = sizeof(TPrimalVert) * ptWorld->atSimpleMesh[nThisEntity].m_nVertexCount;
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dVertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dVertexBufferDesc.CPUAccessFlags = 0;
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dVertexBufferDesc.MiscFlags = 0;
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dVertexBufferDesc.StructureByteStride = 0;
 
-ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexBufferDesc.ByteWidth = sizeof(short) * ptWorld->atSimpleMesh[nThisEntity].m_nIndexCount;
-ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
-ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexBufferDesc.CPUAccessFlags = 0;
-ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexBufferDesc.MiscFlags = 0;
-ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexBufferDesc.StructureByteStride = 0;
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexBufferDesc.ByteWidth = sizeof(short) * ptWorld->atSimpleMesh[nThisEntity].m_nIndexCount;
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexBufferDesc.CPUAccessFlags = 0;
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexBufferDesc.MiscFlags = 0;
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexBufferDesc.StructureByteStride = 0;
 
 
-ptWorld->atSimpleMesh[nThisEntity].m_d3dVertexData.pSysMem = atCubeVertices;
-ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexData.pSysMem = cubeIndices;
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dVertexData.pSysMem = atCubeVertices;
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexData.pSysMem = cubeIndices;
 
-ptWorld->atSimpleMesh[nThisEntity].m_d3dVertexData.SysMemPitch = 0;
-ptWorld->atSimpleMesh[nThisEntity].m_d3dVertexData.SysMemSlicePitch = 0;
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dVertexData.SysMemPitch = 0;
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dVertexData.SysMemSlicePitch = 0;
 
-ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexData.SysMemPitch = 0;
-ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexData.SysMemSlicePitch = 0;
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexData.SysMemPitch = 0;
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexData.SysMemSlicePitch = 0;
 
-ptWorld->atShaderID[nThisEntity].m_nShaderID = 3;
+	ptWorld->atShaderID[nThisEntity].m_nShaderID = 3;
 
 
 	
@@ -999,6 +997,108 @@ unsigned int CreateSimpleGunAi(TWorld * ptWorld, XMMATRIX SpawnPosition)
 	ptWorld->atAIMask[nThisEntity].m_tnAIMask = COMPONENT_AIMASK | COMPONENT_FOLLOW;
 	ptWorld->atUIMask[nThisEntity].m_tnUIMask = COMPONENT_UIMASK;
 	ptWorld->atPhysicsMask[nThisEntity].m_tnPhysicsMask = COMPONENT_PHYSICSMASK| COMPONENT_RIGIDBODY;
+	static TPrimalVert atCubeVertices[]
+	{
+		TPrimalVert{ XMFLOAT3(-0.5f, 0.5f, 0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//0 Top F Left
+		TPrimalVert{ XMFLOAT3(0.5f, 0.5f, 0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//1 Top F Right
+		TPrimalVert{ XMFLOAT3(-0.5f, -0.5f, 0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//2 Bottom F Left
+		TPrimalVert{ XMFLOAT3(0.5f, -0.5f, 0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//3 Bottom F Right
+		TPrimalVert{ XMFLOAT3(-0.5f, 0.5f, -0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//4 Top B Left
+		TPrimalVert{ XMFLOAT3(0.5f, 0.5f, -0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//5 Top B Right
+		TPrimalVert{ XMFLOAT3(-0.5f, -0.5f, -0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//6 Bottom B Left
+		TPrimalVert{ XMFLOAT3(0.5f, -0.5f, -0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//7 Bottom B Right
+
+		TPrimalVert{ XMFLOAT3(0.5f, 0.5f, 0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//8 //Top F Right
+		TPrimalVert{ XMFLOAT3(-0.5f, 0.5f, 0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//9 // Top F Left
+		TPrimalVert{ XMFLOAT3(-0.5f, -0.5f, -0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//10 Bottom B Left
+		TPrimalVert{ XMFLOAT3(0.5f, -0.5f, -0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//11 Bottom B Right
+		TPrimalVert{ XMFLOAT3(-0.5f, -0.5f, 0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//12 Bottom F Left
+		TPrimalVert{ XMFLOAT3(-0.5f, 0.5f, 0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//13 Top F Left
+		TPrimalVert{ XMFLOAT3(0.5f, 0.5f, 0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//14 Top F Right
+		TPrimalVert{ XMFLOAT3(0.5f, -0.5f, 0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) }//15 Bottm F Right
+	};
+	ptWorld->atSimpleMesh[nThisEntity].m_nColor = XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f);
+
+	static short cubeIndices[]
+	{
+		3,1,0,0,2,3,
+		4,5,7,7,6,4,
+		4,8,5,4,9,8,
+		11,3,10,10,3,2,
+		12,13,4,4,6,12,
+		14,7,5,14,15,7
+	};
+	XMVECTOR AIGravity;
+	AIGravity.m128_f32[1] = -0.000001;
+	AIGravity.m128_f32[0] = 0;
+	AIGravity.m128_f32[2] = 0;
+	AIGravity.m128_f32[3] = 0;
+	ptWorld->atRigidBody[nThisEntity].gravity = AIGravity;
+
+	ptWorld->atSimpleMesh[nThisEntity].m_nIndexCount = 36;
+	ptWorld->atSimpleMesh[nThisEntity].m_nVertexCount = 16;
+
+	ptWorld->atSimpleMesh[nThisEntity].m_nVertexBufferStride = sizeof(TPrimalVert);
+	ptWorld->atSimpleMesh[nThisEntity].m_nVertexBufferOffset = 0;
+
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dVertexBufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dVertexBufferDesc.ByteWidth = sizeof(TPrimalVert) * ptWorld->atSimpleMesh[nThisEntity].m_nVertexCount;
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dVertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dVertexBufferDesc.CPUAccessFlags = 0;
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dVertexBufferDesc.MiscFlags = 0;
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dVertexBufferDesc.StructureByteStride = 0;
+
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexBufferDesc.ByteWidth = sizeof(short) * ptWorld->atSimpleMesh[nThisEntity].m_nIndexCount;
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexBufferDesc.CPUAccessFlags = 0;
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexBufferDesc.MiscFlags = 0;
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexBufferDesc.StructureByteStride = 0;
+
+
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dVertexData.pSysMem = atCubeVertices;
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexData.pSysMem = cubeIndices;
+
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dVertexData.SysMemPitch = 0;
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dVertexData.SysMemSlicePitch = 0;
+
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexData.SysMemPitch = 0;
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexData.SysMemSlicePitch = 0;
+
+	ptWorld->atShaderID[nThisEntity].m_nShaderID = 3;
+	for (int i = 0; i < ptWorld->atSimpleMesh[nThisEntity].m_nVertexCount; ++i) {
+		ptWorld->atSimpleMesh[nThisEntity].m_VertexData.push_back(atCubeVertices[i].m_d3dfPosition);
+	}
+
+	ptWorld->atWorldMatrix[nThisEntity].worldMatrix = SpawnPosition;
+	return nThisEntity;
+}
+
+unsigned int CreateSimpleSearchAi(TWorld * ptWorld, XMMATRIX SpawnPosition)
+{
+	unsigned int nThisEntity = createEntity(ptWorld);
+
+	ptWorld->atCollisionMask[nThisEntity].m_tnCollisionMask = COMPONENT_COLLISIONMASK | COMPONENT_AABB | COMPONENT_NONSTATIC | COMPONENT_NONTRIGGER;
+	ptWorld->atGraphicsMask[nThisEntity].m_tnGraphicsMask = COMPONENT_GRAPHICSMASK | COMPONENT_SIMPLEMESH | COMPONENT_SHADERID;
+	ptWorld->atAIMask[nThisEntity].m_tnAIMask = COMPONENT_AIMASK | COMPONENT_SEARCH;
+	ptWorld->atUIMask[nThisEntity].m_tnUIMask = COMPONENT_UIMASK;
+	ptWorld->atPhysicsMask[nThisEntity].m_tnPhysicsMask = COMPONENT_PHYSICSMASK | COMPONENT_RIGIDBODY;
+	
+	//TPrimalVert{ XMFLOAT3(-0, 0.5f, 0),
+	//	TPrimalVert{ XMFLOAT3(0, 0.5f, 10),
+	XMVECTOR start;
+	start.m128_f32[0] = 0;
+	start.m128_f32[1] = 0.5;
+	start.m128_f32[2] = 0;
+	XMVECTOR end;
+	end.m128_f32[0] = 0;
+	end.m128_f32[1] = 0.5;
+	end.m128_f32[2] = 10;
+
+
+	ptWorld->atAIVision[nThisEntity].start = start;
+	ptWorld->atAIVision[nThisEntity].end = end;
+
 	static TPrimalVert atCubeVertices[]
 	{
 		TPrimalVert{ XMFLOAT3(-0.5f, 0.5f, 0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//0 Top F Left
@@ -1154,6 +1254,91 @@ unsigned int CreateRayBullet(TWorld * ptWorld, XMMATRIX bulletSpawnLocation, flo
 	return nThisEntity;
 }
 
+unsigned int CreateAIVision(TWorld * ptWorld, XMMATRIX VisionSpawnLocation, float zDistance, int parentWorldMatrixIndex, float xoffset, float yoffset, float zoffset)
+{
+	unsigned int nThisEntity = createEntity(ptWorld);
+
+	ptWorld->atCollisionMask[nThisEntity].m_tnCollisionMask = COMPONENT_COLLISIONMASK;
+	ptWorld->atGraphicsMask[nThisEntity].m_tnGraphicsMask = COMPONENT_GRAPHICSMASK | COMPONENT_DEBUGMESH | COMPONENT_SHADERID;
+	ptWorld->atAIMask[nThisEntity].m_tnAIMask = COMPONENT_AIMASK;
+	ptWorld->atUIMask[nThisEntity].m_tnUIMask = COMPONENT_UIMASK;
+	ptWorld->atPhysicsMask[nThisEntity].m_tnPhysicsMask = COMPONENT_PHYSICSMASK;
+	ptWorld->atProjectiles[nThisEntity].m_tnProjectileMask = COMPONENT_PROJECTILESMASK | COMPONENT_RAYGUN;
+	
+	static TPrimalVert atCubeVertices[]
+	{
+		TPrimalVert{ XMFLOAT3(-0, 0.5f, -3),	XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f) },//0 Top F Left
+		TPrimalVert{ XMFLOAT3(0, 0.5f, 10),	XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f) },//1 Top F Right
+
+	};
+	for (int i = 0; i < 16; ++i) {
+		//atCubeVertices[i].m_d3dfPosition.x *= 1;
+		//atCubeVertices[i].m_d3dfPosition.y *= 1;
+		//atCubeVertices[i].m_d3dfPosition.z *= 1;
+
+	}
+
+
+
+	ptWorld->atDebugMesh[nThisEntity].m_nVertexCount = 2;
+
+	ptWorld->atDebugMesh[nThisEntity].m_nVertexBufferStride = sizeof(TPrimalVert);
+	ptWorld->atDebugMesh[nThisEntity].m_nVertexBufferOffset = 0;
+
+	ptWorld->atDebugMesh[nThisEntity].m_d3dVertexBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+	ptWorld->atDebugMesh[nThisEntity].m_d3dVertexBufferDesc.ByteWidth = sizeof(TPrimalVert) * ptWorld->atDebugMesh[nThisEntity].m_nVertexCount;
+	ptWorld->atDebugMesh[nThisEntity].m_d3dVertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	ptWorld->atDebugMesh[nThisEntity].m_d3dVertexBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	ptWorld->atDebugMesh[nThisEntity].m_d3dVertexBufferDesc.MiscFlags = 0;
+	ptWorld->atDebugMesh[nThisEntity].m_d3dVertexBufferDesc.StructureByteStride = 0;
+
+
+
+
+	ptWorld->atDebugMesh[nThisEntity].m_d3dVertexData.pSysMem = atCubeVertices;
+
+
+	ptWorld->atDebugMesh[nThisEntity].m_d3dVertexData.SysMemPitch = 0;
+	ptWorld->atDebugMesh[nThisEntity].m_d3dVertexData.SysMemSlicePitch = 0;
+
+
+
+	XMVECTOR zerovector;
+	zerovector.m128_f32[0] = 0;
+	zerovector.m128_f32[1] = 0;
+	zerovector.m128_f32[2] = 0;
+	zerovector.m128_f32[3] = 0;
+	ptWorld->atRigidBody[nThisEntity].gravity = zerovector;
+	ptWorld->atRigidBody[nThisEntity].totalForce = zerovector;
+	ptWorld->atRigidBody[nThisEntity].ground = false;
+
+
+
+
+
+
+
+	ptWorld->atShaderID[nThisEntity].m_nShaderID = 2;
+	for (int i = 0; i < ptWorld->atDebugMesh[nThisEntity].m_nVertexCount; ++i) {
+		XMVECTOR tempt;
+		tempt.m128_f32[0] = atCubeVertices[i].m_d3dfPosition.x;
+		tempt.m128_f32[1] = atCubeVertices[i].m_d3dfPosition.y;
+		tempt.m128_f32[2] = atCubeVertices[i].m_d3dfPosition.z;
+		if (i == 0) {
+			ptWorld->atAIVision[nThisEntity].start = tempt;
+		}
+		else {
+			ptWorld->atAIVision[nThisEntity].end = tempt;
+
+		}
+		ptWorld->atDebugMesh[nThisEntity].m_VertexData.push_back(tempt);
+	}
+	ptWorld->atParentWorldMatrix[nThisEntity] = parentWorldMatrixIndex;
+	//	ptWorld->atOffSetMatrix[nThisEntity]= XMMatrixTranslation(-1, 0, 10.5);
+	ptWorld->atOffSetMatrix[nThisEntity] = XMMatrixTranslation(xoffset, yoffset, zoffset);
+	return nThisEntity;
+}
+
 unsigned int CreateTemptUIBox(TWorld * ptWorld, XMMATRIX SpawnPosition)
 {
 	unsigned int nThisEntity = createEntity(ptWorld);
@@ -1239,11 +1424,6 @@ unsigned int CreateTemptUIBox(TWorld * ptWorld, XMMATRIX SpawnPosition)
 	ptWorld->atWorldMatrix[nThisEntity].worldMatrix = SpawnPosition;
 	return nThisEntity;
 }
-
-
-
-
-
 
 unsigned int createDebugGrid(TWorld * ptWorld)
 {
@@ -1334,258 +1514,431 @@ unsigned int createDebugGrid(TWorld * ptWorld)
 	ptWorld->atDebugMesh[nThisEntity].m_d3dVertexData.pSysMem = atDebugGridVertices;
 	ptWorld->atDebugMesh[nThisEntity].m_d3dVertexData.SysMemPitch = 0;
 	ptWorld->atDebugMesh[nThisEntity].m_d3dVertexData.SysMemSlicePitch = 0;
-	/*for (int i = 0; i < ptWorld->atDebugMesh[nThisEntity].m_nVertexCount; ++i) {
-		ptWorld->atDebugMesh[nThisEntity].m_VertexData.push_back(atDebugGridVertices[i].m_d3dfPosition);
-	}*/
+	//for (int i = 0; i < ptWorld->atDebugMesh[nThisEntity].m_nVertexCount; ++i) 
+	//{
+	//	ptWorld->atDebugMesh[nThisEntity].m_VertexData.push_back(atDebugGridVertices[i].m_d3dfPosition);
+	//}
 
 	ptWorld->atShaderID[nThisEntity].m_nShaderID = 2;//Shader that supports TPrimalVert
 
 	return 0;
 }
 
-unsigned int createMesh(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMesh tMesh)
+unsigned int createMesh(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMeshImport tMesh, TMaterialImport tMaterial)
 {
 	unsigned int nThisEntity = createEntity(ptWorld);
 	
-	#pragma region ReadAnimationData	
-	int nAnimationFrameCount = 0;
-	int nNodeCount = 0;
-	double dAnimationDuration = 0;
-	std::vector<int> m_vnParentIndices;
-	std::vector<XMMATRIX> vd3dInvertedBindPoseMatrices;
-	std::ifstream cMeshDataFile("../meshData.txt", std::ios::in | std::ios::binary);
-	cMeshDataFile.read((char*)&dAnimationDuration, sizeof(double));	
-	cMeshDataFile.read((char*)&nNodeCount, sizeof(int));
-	cMeshDataFile.read((char*)&nAnimationFrameCount, sizeof(int));
-	TAnimationClip tAnimationClip;
-	char * pchFileName1, *pchFileName2, *pchFileName3;
+	#pragma region CreateTexturesFromFile
 
-	int nFileReadingCursorIndex = sizeof(double) + sizeof(int) + sizeof(int);
-	for (int nKeyframeIndex = 0; nKeyframeIndex < nAnimationFrameCount; nKeyframeIndex++)
+	wchar_t fnPBR[9][260];
+	wchar_t fnTRAD[5][260];
+	size_t result = 0;
+	mbstate_t d;
+	TMaterialImport tTempMaterial = tMaterial;
+	
+	for (unsigned int i = 0; i < 9; i++)
 	{
-		TKeyframe tCurrentKeyframe;
 
-		//current frame time offset
-		double dCurrentTime = 0;
-		cMeshDataFile.read((char*)&dCurrentTime, sizeof(double));
-		nFileReadingCursorIndex += sizeof(double);
-		XMFLOAT4X4 d3dCurrentJointMatrix;
-		for (int nCurrentNodeIndex = 0; nCurrentNodeIndex < nNodeCount; nCurrentNodeIndex++)
+		if (i < 5 && tTempMaterial.m_tFileNames[i])
 		{
-			for (int nCurrentRowIndex = 0; nCurrentRowIndex < 4; nCurrentRowIndex++)
-			{
-				for (int nCurrentColumnIndex = 0; nCurrentColumnIndex < 4; nCurrentColumnIndex++)
-				{
-					//joint matrix data
-
-					cMeshDataFile.read((char*)&d3dCurrentJointMatrix(nCurrentRowIndex, nCurrentColumnIndex), sizeof(float));
-					nFileReadingCursorIndex += sizeof(float);
-				}
-			}	
-			tCurrentKeyframe.m_vd3dJointMatrices.push_back(XMLoadFloat4x4(&d3dCurrentJointMatrix));
+			tTempMaterial.m_tFileNames[i] = &tMaterial.m_tFileNames[i][1];
+			mbsrtowcs_s(&result, fnTRAD[i], 260, (const char **)(&tTempMaterial.m_tFileNames[i]), tTempMaterial.m_tFileNameSizes[i], &d);
 		}
-		//myKey.joints = XMLoadFloat4x4(&temp);
-		tCurrentKeyframe.dTime = dCurrentTime / 1000;
-		tAnimationClip.m_vtKeyFrames.push_back(tCurrentKeyframe);
-	}
-	for (int nCurrentParentIndex = 0; nCurrentParentIndex < nNodeCount; nCurrentParentIndex++)
-	{
-		int nParentIndexToPush = 0;
-		cMeshDataFile.read((char*)&nParentIndexToPush, sizeof(int));
-		nFileReadingCursorIndex += sizeof(int);
-		m_vnParentIndices.push_back(nParentIndexToPush);
-	}
-	XMFLOAT4X4 d3dCurrentInvertedBindPoseMatrix;
-	for (int nCurrentNodeIndex = 0; nCurrentNodeIndex < nNodeCount; nCurrentNodeIndex++)
-	{
-		for (int nCurrentRowIndex = 0; nCurrentRowIndex < 4; nCurrentRowIndex++)
+		if (tTempMaterial.m_tPBRFileNames[i])
 		{
-			for (int nCurrentColumnIndex = 0; nCurrentColumnIndex < 4; nCurrentColumnIndex++)
-			{
-				//joint matrix data
+			tTempMaterial.m_tPBRFileNames[i] = &tMaterial.m_tPBRFileNames[i][1];
+			mbsrtowcs_s(&result, fnPBR[i], 260,	(const char **)(&tTempMaterial.m_tPBRFileNames[i]), tTempMaterial.m_tPBRFileNameSizes[i], &d);
+		}
+	}
 
-				cMeshDataFile.read((char*)&d3dCurrentInvertedBindPoseMatrix(nCurrentRowIndex,nCurrentColumnIndex), sizeof(float));
-				nFileReadingCursorIndex += sizeof(float);
+	ID3D11Resource * defaultDiffuseTexture;
+
+	
+	ID3D11Resource * ambientTexture;
+	ID3D11Resource * diffuseTexture;										
+	ID3D11Resource * specularTexture;										
+	ID3D11Resource * emissiveTexture;
+	ID3D11Resource * normalTexture;
+	ID3D11Resource * bumpTexture;
+
+	ID3D11Resource * d3dColorMap;
+	ID3D11Resource * d3dNormalMap;
+	ID3D11Resource * d3dEmissiveMap;
+	ID3D11Resource * d3dMetallicMap;
+	ID3D11Resource * d3dRoughnessMap;
+	ID3D11Resource * d3dAmbientOcclusionMap;
+	ID3D11Resource * d3dGlobalDiffuseCubeMap;
+	ID3D11Resource * d3dGlobalSpecularCubeMap;
+	ID3D11Resource * d3dIBLCubeMap;
+
+	ID3D11ShaderResourceView * srv;
+
+	for (unsigned int i = 0; i < 9; i++)
+	{
+		if (tMaterial.m_tPBRFileNames[i])
+		{
+			if (tMaterial.m_tPBRFileNames[i][0] == 'c')
+			{
+				result = CreateWICTextureFromFile(m_pd3dDevice, fnPBR[i], &d3dColorMap, &srv, NULL);
+			}
+			if (tMaterial.m_tPBRFileNames[i][0] == 'n')
+			{
+				result = CreateWICTextureFromFile(m_pd3dDevice, fnPBR[i], &d3dNormalMap, nullptr, NULL);
+			}
+			if (tMaterial.m_tPBRFileNames[i][0] == 'e')
+			{
+				result = CreateWICTextureFromFile(m_pd3dDevice, fnPBR[i], &d3dEmissiveMap, nullptr, NULL);
+			}
+			if (tMaterial.m_tPBRFileNames[i][0] == 'm')
+			{
+				result = CreateWICTextureFromFile(m_pd3dDevice, fnPBR[i], &d3dMetallicMap, nullptr, NULL);
+			}
+			if (tMaterial.m_tPBRFileNames[i][0] == 'r')
+			{
+				result = CreateWICTextureFromFile(m_pd3dDevice, fnPBR[i], &d3dRoughnessMap, nullptr, NULL);
+			}
+			if (tMaterial.m_tPBRFileNames[i][0] == 'a')
+			{
+				result = CreateWICTextureFromFile(m_pd3dDevice, fnPBR[i], &d3dAmbientOcclusionMap, nullptr, NULL);
+			}
+			if (tMaterial.m_tPBRFileNames[i][0] == 'd')
+			{
+				result = CreateDDSTextureFromFile(m_pd3dDevice, fnPBR[i], &d3dGlobalDiffuseCubeMap, nullptr, NULL);
+			}
+			if (tMaterial.m_tPBRFileNames[i][0] == 's')
+			{
+				result = CreateDDSTextureFromFile(m_pd3dDevice, fnPBR[i], &d3dGlobalSpecularCubeMap, nullptr, NULL);
+			}
+			if (tMaterial.m_tPBRFileNames[i][0] == 'l')
+			{
+				result = CreateDDSTextureFromFile(m_pd3dDevice, fnPBR[i], &d3dIBLCubeMap, nullptr, NULL);
 			}
 		}
-		vd3dInvertedBindPoseMatrices.push_back(XMMatrixInverse(NULL, XMLoadFloat4x4(&d3dCurrentInvertedBindPoseMatrix)));
+
+		if (tMaterial.m_tFileNames[i] && i < 5)
+		{
+			if (tMaterial.m_tFileNames[i][0] == 'a')
+			{
+				result = CreateWICTextureFromFile(m_pd3dDevice, fnTRAD[i], &ambientTexture, nullptr, NULL);
+			}
+			if (tMaterial.m_tFileNames[i][0] == 'b')
+			{
+				result = CreateWICTextureFromFile(m_pd3dDevice, fnTRAD[i], &bumpTexture, nullptr, NULL);
+			}
+			if (tMaterial.m_tFileNames[i][0] == 'd')
+			{
+				result = CreateWICTextureFromFile(m_pd3dDevice, fnTRAD[i], &diffuseTexture, &srv, NULL);
+			}
+			if (tMaterial.m_tFileNames[i][0] == 'e')
+			{
+				result = CreateWICTextureFromFile(m_pd3dDevice, fnTRAD[i], &emissiveTexture, nullptr, NULL);
+			}
+			if (tMaterial.m_tFileNames[i][0] == 'n')
+			{
+				result = CreateWICTextureFromFile(m_pd3dDevice, fnTRAD[i], &normalTexture, nullptr, NULL);
+			}
+			if (tMaterial.m_tFileNames[i][0] == 's')
+			{
+				result = CreateWICTextureFromFile(m_pd3dDevice, fnTRAD[i], &specularTexture, nullptr, NULL);
+			}
+
+		}
 	}
-
-	tAnimationClip.dDuration = dAnimationDuration;
-
-	tAnimationClip.m_vnParentIndicies = m_vnParentIndices;
 #pragma endregion
-
-	#pragma region ReadMaterials
-
-	/*
-	Things to write:
-		-MaterialType(sizeof(char))
-			if(phong)
-				-AmbientColor(24 byte double3)
-				-DiffuseColor(24 byte double3)
-				-SpecularColor(24 byte double3)
-				-EmmisiveColor(24 byte double3)
-				-TransparencyFactor(8 byte double)
-				-Shininess(8 byte double)
-				-ReflectionFactor(8 byte double)
-			if(lambert)
-				-AmbientColor(24 byte double3)
-				-DiffuseColor(24 byte double3)
-				-SpecularColor(24 byte double3)
-				-EmmisiveColor(24 byte double3)
-				-TransparencyFactor(8 byte double)
-	*/
-	int nMaterialCount = 0;
-	//matFile.read((char*)&materialCount, sizeof(int));
-	char chLambert = false;
-	double adAmbientColor[3];
-	double adDiffuseColor[3];
-	double adSpecularColor[3];
-	double adEmmissiveColor[3];
-	//double transparencyFactor;
-	double dShininess, dTransparency;
-	//double reflectionFactor;
-	int nMaterialBufferSize = 0;
-	nMaterialBufferSize = sizeof(chLambert) + sizeof(adAmbientColor) + sizeof(adDiffuseColor) + sizeof(adSpecularColor) + sizeof(adEmmissiveColor) + sizeof(dShininess);
-	char *pchMaterialBuffer = new char[nMaterialBufferSize];
-	cMeshDataFile.clear();
-	cMeshDataFile.seekg(nFileReadingCursorIndex);
-	cMeshDataFile.read(pchMaterialBuffer, nMaterialBufferSize);
-	/*
-		-AmbientColor(24 byte double3)
-		- DiffuseColor(24 byte double3)
-		- SpecularColor(24 byte double3)
-		- EmmisiveColor(24 byte double3)
-		- Shininess(8 byte double)
-	*/
-
-	memcpy(&chLambert, &pchMaterialBuffer[0], sizeof(chLambert));
-
-	if (chLambert)
+	if (tMaterial.m_tPBRFileNames[0] == NULL && tMaterial.m_tFileNames[0] == NULL)
 	{
-		nFileReadingCursorIndex += sizeof(chLambert) + sizeof(adAmbientColor) + sizeof(adDiffuseColor) + sizeof(adEmmissiveColor) + sizeof(dTransparency);
-
-		memcpy(&adAmbientColor, &pchMaterialBuffer[sizeof(chLambert)], sizeof(adAmbientColor));
-
-		memcpy(&adDiffuseColor, &pchMaterialBuffer[sizeof(chLambert) + sizeof(adAmbientColor)], sizeof(adDiffuseColor));
-
-		memcpy(&adEmmissiveColor, &pchMaterialBuffer[sizeof(chLambert) + sizeof(adAmbientColor) + sizeof(adDiffuseColor)], sizeof(adEmmissiveColor));
-
-		memcpy(&dTransparency, &pchMaterialBuffer[sizeof(chLambert) + sizeof(adAmbientColor) + sizeof(adDiffuseColor)] + sizeof(adEmmissiveColor), sizeof(double));
+		result = CreateWICTextureFromFile(m_pd3dDevice, L"TestScene_V1.fbm\\Wood01_col.jpg", &diffuseTexture, &srv, NULL);
 	}
-	else
+	ptWorld->atGraphicsMask[nThisEntity].m_tnGraphicsMask = COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_SHADERID;
+	//ptWorld->atCollisionMask[nThisEntity].m_tnCollisionMask = COMPONENT_COLLISIONMASK | COMPONENT_AABB | COMPONENT_NONSTATIC | COMPONENT_NONTRIGGER;
+	//ptWorld->atAIMask[nThisEntity].m_tnAIMask = COMPONENT_AIMASK;
+	//ptWorld->atUIMask[nThisEntity].m_tnUIMask = COMPONENT_UIMASK;
+	//ptWorld->atPhysicsMask[nThisEntity].m_tnPhysicsMask = COMPONENT_PHYSICSMASK | COMPONENT_RIGIDBODY;
+	switch (tMaterial.lambert)
 	{
-		nFileReadingCursorIndex += sizeof(chLambert) + sizeof(adAmbientColor) + sizeof(adDiffuseColor) + sizeof(adSpecularColor) + sizeof(adEmmissiveColor) + sizeof(dShininess);
-
-		memcpy(&adAmbientColor, &pchMaterialBuffer[sizeof(chLambert)], sizeof(adAmbientColor));
-
-		memcpy(&adDiffuseColor, &pchMaterialBuffer[sizeof(chLambert) + sizeof(adAmbientColor)], sizeof(adDiffuseColor));
-
-		memcpy(&adSpecularColor, &pchMaterialBuffer[sizeof(chLambert) + sizeof(adAmbientColor) + sizeof(adDiffuseColor)], sizeof(adSpecularColor));
-
-		memcpy(&adEmmissiveColor, &pchMaterialBuffer[sizeof(chLambert) + sizeof(adAmbientColor) + sizeof(adDiffuseColor) + sizeof(adSpecularColor)], sizeof(adEmmissiveColor));
-
-		memcpy(&dShininess, &pchMaterialBuffer[sizeof(chLambert) + sizeof(adAmbientColor) + sizeof(adDiffuseColor) + sizeof(adSpecularColor) + sizeof(adEmmissiveColor)], sizeof(double));
+		case 0:
+		{
+			ptWorld->atShaderID[nThisEntity].m_nShaderID = 4;
+			break;//Phong
+		}
+		case 1:
+		{
+			ptWorld->atShaderID[nThisEntity].m_nShaderID = 5;
+			break;//Lambert
+		}
+		case 2:
+		{
+			ptWorld->atShaderID[nThisEntity].m_nShaderID = 6;
+			break;//PBR
+		}
+		default:
+			break;
 	}
-
-
-
-#pragma endregion
-
-	#pragma region ReadMesh
-	int nPolygonVertexCount = 0;
-	cMeshDataFile.clear();
-	cMeshDataFile.seekg(nFileReadingCursorIndex);
-	cMeshDataFile.read((char*)&nPolygonVertexCount, sizeof(int));
-	int nMeshBufferSize = nPolygonVertexCount * sizeof(TSimpleMesh);
-	char *pchMeshBuffer = new char[nMeshBufferSize];
-	cMeshDataFile.read(pchMeshBuffer, nMeshBufferSize);
-
-	if (!cMeshDataFile) {
-		// An error occurred!
-		// myFile.gcount() returns the number of bytes read.
-		// calling myFile.clear() will reset the stream state
-		// so it is usable again.
-		cMeshDataFile.clear();
-	}
-
-	TSimpleMesh * ptSimpleMesh = new TSimpleMesh[nPolygonVertexCount];
-	for (int nCurrentSimpleMeshMember = 0; nCurrentSimpleMeshMember < nPolygonVertexCount; nCurrentSimpleMeshMember++)
+	TPrimitiveMesh *pMesh = new TPrimitiveMesh[tMesh.nUniqueVertexCount];
+	for (int i = 0; i < tMesh.nUniqueVertexCount; i++)
 	{
-		memcpy(&ptSimpleMesh[nCurrentSimpleMeshMember], &pchMeshBuffer[nCurrentSimpleMeshMember * sizeof(TSimpleMesh)], sizeof(TSimpleMesh));
+		TPrimitiveMesh tmp;
+		for (int j = 0; j < 4; j++)
+		{
+			//if (j == 1)
+			//{
+			//	tmp.pos[j] = -tMesh.meshArrays[i].pos[j];
+			//}
+			//else
+				tmp.pos[j] = tMesh.meshArrays[i].pos[j];
+			if (j < 2)
+			{
+				tmp.uv[j] = tMesh.meshArrays[i].uv[j];
+			}
+		}
+		pMesh[i] = tmp;
+		ptWorld->atMesh[nThisEntity].m_VertexData.push_back(XMFLOAT3(tmp.pos[0], tmp.pos[1], tmp.pos[2]));
+
 	}
 
-#pragma endregion
-
-	#pragma region ReadTextures
-
-	int anFileSizes[3];
-	char*pchTextureFileBuffer = new char[sizeof(anFileSizes)];
-
-	cMeshDataFile.read(pchTextureFileBuffer, sizeof(anFileSizes));
-	if (!cMeshDataFile) {
-		// An error occurred!
-		// matFile.gcount() returns the number of bytes read.
-		// calling matFile.clear() will reset the stream state
-		// so it is usable again.
-		cMeshDataFile.clear();
-	}
-	int nFileNamesSize = 0;
-	for (int i = 0; i < 3; i++)
-	{
-		memcpy(&anFileSizes[i], &pchTextureFileBuffer[i * sizeof(int)], sizeof(int));
-		nFileNamesSize += anFileSizes[i];
-	}
-
-	char * pchTextureFileNameBuffer = new char[nFileNamesSize];
-	pchFileName1 = new char[anFileSizes[0]];
-	pchFileName2 = new char[anFileSizes[1]];
-	pchFileName3 = new char[anFileSizes[2]];
-	
-	//matFile.seekg(sizeof(fileSize), std::ios_base::cur);
-	cMeshDataFile.read(pchFileName1, anFileSizes[0]);
-	
-	//matFile.seekg(fileSize[0], std::ios_base::cur);
-	cMeshDataFile.read(pchFileName2, anFileSizes[1]);
-	
-	//matFile.seekg(fileSize[1], std::ios_base::cur);
-	cMeshDataFile.read(pchFileName3, anFileSizes[2]);
-
-	cMeshDataFile.close();
-
-#pragma endregion
-
-	#pragma region CreateTexturesFromFile
-	wchar_t acFileName1[260];
-	wchar_t acFileName2[260];
-	wchar_t acFileName3[260];
-	size_t nResult = 0;
-	mbstate_t cMBState;
-
-	mbsrtowcs_s(&nResult, acFileName1, 260, (const char **)(&pchFileName1), anFileSizes[0], &cMBState);
-	mbsrtowcs_s(&nResult, acFileName2, 260, (const char **)(&pchFileName2), anFileSizes[1], &cMBState);
-	mbsrtowcs_s(&nResult, acFileName3, 260, (const char **)(&pchFileName3), anFileSizes[2], &cMBState);
-
-
-#pragma endregion
-
-	ptWorld->atGraphicsMask[nThisEntity].m_tnGraphicsMask = COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_ANIMATION | COMPONENT_TEXTURE | COMPONENT_SHADERID;
-
-	ptWorld->atMesh[nThisEntity].m_nVertexCount = nPolygonVertexCount;
-	ptWorld->atMesh[nThisEntity].m_nVertexBufferStride = sizeof(TSimpleMesh);
+	ptWorld->atMesh[nThisEntity].m_d3dSRVDiffuse = srv;
+	ptWorld->atMesh[nThisEntity].m_nVertexCount = tMesh.nUniqueVertexCount;
+	ptWorld->atMesh[nThisEntity].m_nVertexBufferStride = sizeof(TPrimitiveMesh);
 	ptWorld->atMesh[nThisEntity].m_nVertexBufferOffset = 0;
 	ptWorld->atMesh[nThisEntity].m_d3dVertexBufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
-	ptWorld->atMesh[nThisEntity].m_d3dVertexBufferDesc.ByteWidth = sizeof(TSimpleMesh) * ptWorld->atMesh[nThisEntity].m_nVertexCount;
+	ptWorld->atMesh[nThisEntity].m_d3dVertexBufferDesc.ByteWidth = sizeof(TPrimitiveMesh) * ptWorld->atMesh[nThisEntity].m_nVertexCount;
 	ptWorld->atMesh[nThisEntity].m_d3dVertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	ptWorld->atMesh[nThisEntity].m_d3dVertexBufferDesc.CPUAccessFlags = 0;
 	ptWorld->atMesh[nThisEntity].m_d3dVertexBufferDesc.MiscFlags = 0;
 	ptWorld->atMesh[nThisEntity].m_d3dVertexBufferDesc.StructureByteStride = 0;
 
-	ptWorld->atMesh[nThisEntity].m_d3dVertexData.pSysMem = ptSimpleMesh;
+	ptWorld->atMesh[nThisEntity].m_d3dVertexData.pSysMem = pMesh;
 	ptWorld->atMesh[nThisEntity].m_d3dVertexData.SysMemPitch = 0;
 	ptWorld->atMesh[nThisEntity].m_d3dVertexData.SysMemSlicePitch = 0;
 
-	return 0;
+	ptWorld->atMesh[nThisEntity].m_nIndexCount = tMesh.nPolygonVertexCount;
+	ptWorld->atMesh[nThisEntity].m_d3dIndexBufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
+	ptWorld->atMesh[nThisEntity].m_d3dIndexBufferDesc.ByteWidth = sizeof(unsigned int) * ptWorld->atMesh[nThisEntity].m_nIndexCount;
+	ptWorld->atMesh[nThisEntity].m_d3dIndexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+	ptWorld->atMesh[nThisEntity].m_d3dIndexBufferDesc.CPUAccessFlags = 0;
+	ptWorld->atMesh[nThisEntity].m_d3dIndexBufferDesc.MiscFlags = 0;
+	ptWorld->atMesh[nThisEntity].m_d3dIndexBufferDesc.StructureByteStride = 0;
+
+	ptWorld->atMesh[nThisEntity].m_d3dIndexData.pSysMem = tMesh.indexBuffer;
+	ptWorld->atMesh[nThisEntity].m_d3dIndexData.SysMemPitch = 0;
+	ptWorld->atMesh[nThisEntity].m_d3dIndexData.SysMemSlicePitch = 0;
+
+	ptWorld->atWorldMatrix[nThisEntity].worldMatrix = XMMatrixMultiply(ptWorld->atWorldMatrix[nThisEntity].worldMatrix, XMMatrixTranslation(tMesh.worldTranslation[0], tMesh.worldTranslation[1], tMesh.worldTranslation[2]));
+	ptWorld->atWorldMatrix[nThisEntity].worldMatrix = XMMatrixMultiply(ptWorld->atWorldMatrix[nThisEntity].worldMatrix, XMMatrixRotationRollPitchYaw(tMesh.worldRotation[0], tMesh.worldRotation[1], tMesh.worldRotation[2]));
+	ptWorld->atWorldMatrix[nThisEntity].worldMatrix = XMMatrixMultiply(ptWorld->atWorldMatrix[nThisEntity].worldMatrix, XMMatrixScaling(tMesh.worldScaling[0], tMesh.worldScaling[1], tMesh.worldScaling[2]));
+	return nThisEntity;
 }
 
+unsigned int createClayton(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMeshImport tMesh, TMaterialImport tMaterial)
+{
+	unsigned int nThisEntity = createEntity(ptWorld);
+
+#pragma region CreateTexturesFromFile
+
+	wchar_t fnPBR[9][260];
+	wchar_t fnTRAD[5][260];
+	size_t result = 0;
+	mbstate_t d;
+	TMaterialImport tTempMaterial = tMaterial;
+
+	for (unsigned int i = 0; i < 9; i++)
+	{
+
+		if (i < 5 && tTempMaterial.m_tFileNames[i])
+		{
+			tTempMaterial.m_tFileNames[i] = &tMaterial.m_tFileNames[i][1];
+			mbsrtowcs_s(&result, fnTRAD[i], 260, (const char **)(&tTempMaterial.m_tFileNames[i]), tTempMaterial.m_tFileNameSizes[i], &d);
+		}
+		if (tTempMaterial.m_tPBRFileNames[i])
+		{
+			tTempMaterial.m_tPBRFileNames[i] = &tMaterial.m_tPBRFileNames[i][1];
+			mbsrtowcs_s(&result, fnPBR[i], 260, (const char **)(&tTempMaterial.m_tPBRFileNames[i]), tTempMaterial.m_tPBRFileNameSizes[i], &d);
+		}
+	}
+
+	ID3D11Resource * defaultDiffuseTexture;
+
+
+	ID3D11Resource * ambientTexture;
+	ID3D11Resource * diffuseTexture;
+	ID3D11Resource * specularTexture;
+	ID3D11Resource * emissiveTexture;
+	ID3D11Resource * normalTexture;
+	ID3D11Resource * bumpTexture;
+
+	ID3D11Resource * d3dColorMap;
+	ID3D11Resource * d3dNormalMap;
+	ID3D11Resource * d3dEmissiveMap;
+	ID3D11Resource * d3dMetallicMap;
+	ID3D11Resource * d3dRoughnessMap;
+	ID3D11Resource * d3dAmbientOcclusionMap;
+	ID3D11Resource * d3dGlobalDiffuseCubeMap;
+	ID3D11Resource * d3dGlobalSpecularCubeMap;
+	ID3D11Resource * d3dIBLCubeMap;
+
+	ID3D11ShaderResourceView * srv;
+
+	for (unsigned int i = 0; i < 9; i++)
+	{
+		if (tMaterial.m_tPBRFileNames[i])
+		{
+			if (tMaterial.m_tPBRFileNames[i][0] == 'c')
+			{
+				result = CreateWICTextureFromFile(m_pd3dDevice, fnPBR[i], &d3dColorMap, &srv, NULL);
+			}
+			if (tMaterial.m_tPBRFileNames[i][0] == 'n')
+			{
+				result = CreateWICTextureFromFile(m_pd3dDevice, fnPBR[i], &d3dNormalMap, nullptr, NULL);
+			}
+			if (tMaterial.m_tPBRFileNames[i][0] == 'e')
+			{
+				result = CreateWICTextureFromFile(m_pd3dDevice, fnPBR[i], &d3dEmissiveMap, nullptr, NULL);
+			}
+			if (tMaterial.m_tPBRFileNames[i][0] == 'm')
+			{
+				result = CreateWICTextureFromFile(m_pd3dDevice, fnPBR[i], &d3dMetallicMap, nullptr, NULL);
+			}
+			if (tMaterial.m_tPBRFileNames[i][0] == 'r')
+			{
+				result = CreateWICTextureFromFile(m_pd3dDevice, fnPBR[i], &d3dRoughnessMap, nullptr, NULL);
+			}
+			if (tMaterial.m_tPBRFileNames[i][0] == 'a')
+			{
+				result = CreateWICTextureFromFile(m_pd3dDevice, fnPBR[i], &d3dAmbientOcclusionMap, nullptr, NULL);
+			}
+			if (tMaterial.m_tPBRFileNames[i][0] == 'd')
+			{
+				result = CreateDDSTextureFromFile(m_pd3dDevice, fnPBR[i], &d3dGlobalDiffuseCubeMap, nullptr, NULL);
+			}
+			if (tMaterial.m_tPBRFileNames[i][0] == 's')
+			{
+				result = CreateDDSTextureFromFile(m_pd3dDevice, fnPBR[i], &d3dGlobalSpecularCubeMap, nullptr, NULL);
+			}
+			if (tMaterial.m_tPBRFileNames[i][0] == 'l')
+			{
+				result = CreateDDSTextureFromFile(m_pd3dDevice, fnPBR[i], &d3dIBLCubeMap, nullptr, NULL);
+			}
+		}
+
+		if (tMaterial.m_tFileNames[i] && i < 5)
+		{
+			if (tMaterial.m_tFileNames[i][0] == 'a')
+			{
+				result = CreateWICTextureFromFile(m_pd3dDevice, fnTRAD[i], &ambientTexture, nullptr, NULL);
+			}
+			if (tMaterial.m_tFileNames[i][0] == 'b')
+			{
+				result = CreateWICTextureFromFile(m_pd3dDevice, fnTRAD[i], &bumpTexture, nullptr, NULL);
+			}
+			if (tMaterial.m_tFileNames[i][0] == 'd')
+			{
+				result = CreateWICTextureFromFile(m_pd3dDevice, fnTRAD[i], &diffuseTexture, &srv, NULL);
+			}
+			if (tMaterial.m_tFileNames[i][0] == 'e')
+			{
+				result = CreateWICTextureFromFile(m_pd3dDevice, fnTRAD[i], &emissiveTexture, nullptr, NULL);
+			}
+			if (tMaterial.m_tFileNames[i][0] == 'n')
+			{
+				result = CreateWICTextureFromFile(m_pd3dDevice, fnTRAD[i], &normalTexture, nullptr, NULL);
+			}
+			if (tMaterial.m_tFileNames[i][0] == 's')
+			{
+				result = CreateWICTextureFromFile(m_pd3dDevice, fnTRAD[i], &specularTexture, nullptr, NULL);
+			}
+
+		}
+	}
+#pragma endregion
+	if (tMaterial.m_tPBRFileNames[0] == NULL && tMaterial.m_tFileNames[0] == NULL)
+	{
+		result = CreateWICTextureFromFile(m_pd3dDevice, L"TestScene_V1.fbm\\Wood01_col.jpg", &diffuseTexture, &srv, NULL);
+	}
+	ptWorld->atGraphicsMask[nThisEntity].m_tnGraphicsMask = COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_SHADERID;
+	ptWorld->atCollisionMask[nThisEntity].m_tnCollisionMask = COMPONENT_COLLISIONMASK | COMPONENT_AABB | COMPONENT_NONSTATIC | COMPONENT_NONTRIGGER;
+	ptWorld->atAIMask[nThisEntity].m_tnAIMask = COMPONENT_AIMASK;
+	ptWorld->atUIMask[nThisEntity].m_tnUIMask = COMPONENT_UIMASK;
+	ptWorld->atPhysicsMask[nThisEntity].m_tnPhysicsMask = COMPONENT_PHYSICSMASK | COMPONENT_RIGIDBODY;
+	ptWorld->atInputMask[nThisEntity].m_tnInputMask = COMPONENT_INPUTMASK | COMPONENT_CLAYTON;
+
+	switch (tMaterial.lambert)
+	{
+	case 0:
+	{
+		ptWorld->atShaderID[nThisEntity].m_nShaderID = 4;
+		break;//Phong
+	}
+	case 1:
+	{
+		ptWorld->atShaderID[nThisEntity].m_nShaderID = 5;
+		break;//Lambert
+	}
+	case 2:
+	{
+		ptWorld->atShaderID[nThisEntity].m_nShaderID = 6;
+		break;//PBR
+	}
+	default:
+		break;
+	}
+	TPrimitiveMesh *pMesh = new TPrimitiveMesh[tMesh.nUniqueVertexCount];
+	for (int i = 0; i < tMesh.nUniqueVertexCount; i++)
+	{
+		TPrimitiveMesh tmp;
+		for (int j = 0; j < 4; j++)
+		{
+			//if (j == 1)
+			//{
+			//	tmp.pos[j] = -tMesh.meshArrays[i].pos[j];
+			//}
+			//else
+			tmp.pos[j] = tMesh.meshArrays[i].pos[j];
+			tmp.pos[j] *= 0.01;
+			if (j < 2)
+			{
+				tmp.uv[j] = tMesh.meshArrays[i].uv[j];
+			}
+		}
+		pMesh[i] = tmp;
+		ptWorld->atMesh[nThisEntity].m_VertexData.push_back(XMFLOAT3(tmp.pos[0], tmp.pos[1], tmp.pos[2]));
+	}
+
+	XMVECTOR playerGravity;
+	playerGravity.m128_f32[1] = -0.000001;
+	playerGravity.m128_f32[0] = 0;
+	playerGravity.m128_f32[2] = 0;
+	playerGravity.m128_f32[3] = 0;
+	ptWorld->atRigidBody[nThisEntity].gravity = playerGravity;
+
+	ptWorld->atMesh[nThisEntity].m_d3dSRVDiffuse = srv;
+	ptWorld->atMesh[nThisEntity].m_nVertexCount = tMesh.nUniqueVertexCount;
+	ptWorld->atMesh[nThisEntity].m_nVertexBufferStride = sizeof(TPrimitiveMesh);
+	ptWorld->atMesh[nThisEntity].m_nVertexBufferOffset = 0;
+	ptWorld->atMesh[nThisEntity].m_d3dVertexBufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
+	ptWorld->atMesh[nThisEntity].m_d3dVertexBufferDesc.ByteWidth = sizeof(TPrimitiveMesh) * ptWorld->atMesh[nThisEntity].m_nVertexCount;
+	ptWorld->atMesh[nThisEntity].m_d3dVertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	ptWorld->atMesh[nThisEntity].m_d3dVertexBufferDesc.CPUAccessFlags = 0;
+	ptWorld->atMesh[nThisEntity].m_d3dVertexBufferDesc.MiscFlags = 0;
+	ptWorld->atMesh[nThisEntity].m_d3dVertexBufferDesc.StructureByteStride = 0;
+
+	ptWorld->atMesh[nThisEntity].m_d3dVertexData.pSysMem = pMesh;
+	ptWorld->atMesh[nThisEntity].m_d3dVertexData.SysMemPitch = 0;
+	ptWorld->atMesh[nThisEntity].m_d3dVertexData.SysMemSlicePitch = 0;
+
+	ptWorld->atMesh[nThisEntity].m_nIndexCount = tMesh.nPolygonVertexCount;
+	ptWorld->atMesh[nThisEntity].m_d3dIndexBufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
+	ptWorld->atMesh[nThisEntity].m_d3dIndexBufferDesc.ByteWidth = sizeof(unsigned int) * ptWorld->atMesh[nThisEntity].m_nIndexCount;
+	ptWorld->atMesh[nThisEntity].m_d3dIndexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+	ptWorld->atMesh[nThisEntity].m_d3dIndexBufferDesc.CPUAccessFlags = 0;
+	ptWorld->atMesh[nThisEntity].m_d3dIndexBufferDesc.MiscFlags = 0;
+	ptWorld->atMesh[nThisEntity].m_d3dIndexBufferDesc.StructureByteStride = 0;
+
+	ptWorld->atMesh[nThisEntity].m_d3dIndexData.pSysMem = tMesh.indexBuffer;
+	ptWorld->atMesh[nThisEntity].m_d3dIndexData.SysMemPitch = 0;
+	ptWorld->atMesh[nThisEntity].m_d3dIndexData.SysMemSlicePitch = 0;
+
+	ptWorld->atWorldMatrix[nThisEntity].worldMatrix = XMMatrixMultiply(ptWorld->atWorldMatrix[nThisEntity].worldMatrix, XMMatrixTranslation(0, 0, 0));
+	ptWorld->atWorldMatrix[nThisEntity].worldMatrix = XMMatrixMultiply(ptWorld->atWorldMatrix[nThisEntity].worldMatrix, XMMatrixRotationRollPitchYaw(tMesh.worldRotation[0], tMesh.worldRotation[1], tMesh.worldRotation[2]));
+	ptWorld->atWorldMatrix[nThisEntity].worldMatrix = XMMatrixMultiply(ptWorld->atWorldMatrix[nThisEntity].worldMatrix, XMMatrixScaling(.01, .01, .01));
+	return nThisEntity;
+}

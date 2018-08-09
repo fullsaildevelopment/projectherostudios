@@ -1,7 +1,8 @@
 #pragma once
-#include "Entity.h"
+//#include "Entity.h"
 #include "stdafx.h"
 #include "Input_Component.h"
+#include"Entity.h"
 #include"Gateware Redistribution R5B/Interface/G_System/GInput.h"
 #include"Gateware Redistribution R5B/Interface/G_System/GKeyDefines.h"
 using namespace GW;

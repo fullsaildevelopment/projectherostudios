@@ -44,7 +44,7 @@ private:
 	XMMATRIX m_d3dProjectionMatrix;
 	XMMATRIX m_d3dPlayerMatrix;
 	XMMATRIX m_d3dCameraMatrix;
-	XMMATRIX m_d3d_ResultMatrix;
+	
 	//TCamera* CameraSelect[6];
 	TCamera *walkCamera;
 	TCamera *aimCamera;
