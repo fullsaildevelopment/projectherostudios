@@ -16,8 +16,7 @@ struct TAIMask
 	int GunIndex = -1;
 };
 struct TAIVision {
-	XMVECTOR start;
-	XMVECTOR end;
+	frustum_t eyes0;
 	float    visionRotation;
 	bool	 keepRotatingRight=true;
 	XMMATRIX playerLastKnownLocation;

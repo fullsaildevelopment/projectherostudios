@@ -1075,18 +1075,10 @@ unsigned int CreateSimpleSearchAi(TWorld * ptWorld, XMMATRIX SpawnPosition)
 	
 	//TPrimalVert{ XMFLOAT3(-0, 0.5f, 0),
 	//	TPrimalVert{ XMFLOAT3(0, 0.5f, 10),
-	XMVECTOR start;
-	start.m128_f32[0] = 0;
-	start.m128_f32[1] = 0.5;
-	start.m128_f32[2] = 0;
-	XMVECTOR end;
-	end.m128_f32[0] = 0;
-	end.m128_f32[1] = 0.5;
-	end.m128_f32[2] = 10;
 
 
-	ptWorld->atAIVision[nThisEntity].start = start;
-	ptWorld->atAIVision[nThisEntity].end = end;
+
+
 
 	static TPrimalVert atCubeVertices[]
 	{
@@ -1441,20 +1433,7 @@ unsigned int CreateAIVision(TWorld * ptWorld, XMMATRIX VisionSpawnLocation, floa
 
 
 	ptWorld->atShaderID[nThisEntity].m_nShaderID = 2;
-	for (int i = 0; i < ptWorld->atDebugMesh[nThisEntity].m_nVertexCount; ++i) {
-		XMVECTOR tempt;
-		tempt.m128_f32[0] = atCubeVertices[i].m_d3dfPosition.x;
-		tempt.m128_f32[1] = atCubeVertices[i].m_d3dfPosition.y;
-		tempt.m128_f32[2] = atCubeVertices[i].m_d3dfPosition.z;
-		if (i == 0) {
-			ptWorld->atAIVision[nThisEntity].start = tempt;
-		}
-		else {
-			ptWorld->atAIVision[nThisEntity].end = tempt;
-
-		}
-		ptWorld->atDebugMesh[nThisEntity].m_VertexData.push_back(tempt);
-	}
+	
 	ptWorld->atParentWorldMatrix[nThisEntity] = parentWorldMatrixIndex;
 	//	ptWorld->atOffSetMatrix[nThisEntity]= XMMatrixTranslation(-1, 0, 10.5);
 	ptWorld->atOffSetMatrix[nThisEntity] = XMMatrixTranslation(xoffset, yoffset, zoffset);
