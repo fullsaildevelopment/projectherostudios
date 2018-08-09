@@ -27,7 +27,7 @@ void CAISystem::FollowObject(XMMATRIX thingToFollow, XMMATRIX * AIMatrix)
 	direction.m128_f32[2] = 1;
 	direction.m128_f32[3] = 0;
 	direction = XMVector3Normalize(direction);
-	direction *= 0.001f;
+	direction *= 0.001f;//Frame Dependent
 	XMMATRIX localMatrix2 = XMMatrixTranslationFromVector(direction);
 
 	*AIMatrix = XMMatrixMultiply(localMatrix2, *AIMatrix);

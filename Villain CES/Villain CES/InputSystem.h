@@ -1,5 +1,5 @@
 #pragma once
-#include "Entity.h"
+//#include "Entity.h"
 #include "stdafx.h"
 #include "Input_Component.h"
 #include"Gateware Redistribution R5B/Interface/G_System/GInput.h"

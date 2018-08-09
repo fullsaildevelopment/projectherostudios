@@ -14,12 +14,7 @@ struct TInputMask
 {
 	int m_tnInputMask = 0;
 };
-struct TCameraToggle
-{
-	bool bDebugMode;
-	bool bWalkMode;
-	bool bAimMode;
-};
+
 struct TTest
 {
 	float m_tfMovementSpeed = 1.0;
@@ -31,7 +26,7 @@ struct TClayton
 	/*
 	Fill out this structure
 	*/
-	float heath = 100;
+	float health = 100;
 	float m_tfMovementSpeed = 1.0;
 	float m_tfLookSensitivity = 0.01f;
 	float m_tfMaterialLoadTime = 0.0f;
@@ -60,5 +55,12 @@ struct TCaelis
 	float m_tfSpecialCooldown = 0.0f;
 	float m_tfAttackCooldown = 0.0f;
 	float m_tfFlightSpeed = 0.0f;
+};
+
+struct TCameraToggle
+{
+	bool bDebugMode;
+	bool bWalkMode;
+	bool bAimMode;
 };
 #endif

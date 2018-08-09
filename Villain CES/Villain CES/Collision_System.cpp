@@ -171,7 +171,7 @@ XMMATRIX CCollisionSystem::WalkingThrewObjectCheck(XMMATRIX worldPos, TAABB othe
 			//d3d_ResultMatrix = pcGraphicsSystem->SetDefaultWorldPosition();;
 			XMMATRIX moveback;
 			moveback = D3DMatrix;
-			moveback.r[3].m128_f32[0] += 0.01;
+			moveback.r[3].m128_f32[0] += 0.01f;
 			D3DMatrix = moveback;
 			
 			UpdateCollision = updateAABB(D3DMatrix, UpdateCollision);
@@ -188,7 +188,7 @@ XMMATRIX CCollisionSystem::WalkingThrewObjectCheck(XMMATRIX worldPos, TAABB othe
 			//d3d_ResultMatrix = pcGraphicsSystem->SetDefaultWorldPosition();;
 			XMMATRIX moveback;
 			moveback = D3DMatrix;
-			moveback.r[3].m128_f32[0] -= 0.01;
+			moveback.r[3].m128_f32[0] -= 0.01f;
 			D3DMatrix = moveback;
 			UpdateCollision = updateAABB(D3DMatrix, UpdateCollision);
 			
@@ -205,7 +205,7 @@ XMMATRIX CCollisionSystem::WalkingThrewObjectCheck(XMMATRIX worldPos, TAABB othe
 			//d3d_ResultMatrix = pcGraphicsSystem->SetDefaultWorldPosition();;
 			XMMATRIX moveback;
 			moveback = D3DMatrix;
-			moveback.r[3].m128_f32[1] -= 0.01;
+			moveback.r[3].m128_f32[1] -= 0.01f;
 			D3DMatrix = moveback;
 			UpdateCollision = updateAABB(D3DMatrix, UpdateCollision);
 
@@ -223,7 +223,7 @@ XMMATRIX CCollisionSystem::WalkingThrewObjectCheck(XMMATRIX worldPos, TAABB othe
 			//d3d_ResultMatrix = pcGraphicsSystem->SetDefaultWorldPosition();;
 			XMMATRIX moveback;
 			moveback = D3DMatrix;
-			moveback.r[3].m128_f32[1] += 0.01;
+			moveback.r[3].m128_f32[1] += 0.01f;
 			D3DMatrix = moveback;
 			UpdateCollision = updateAABB(D3DMatrix, UpdateCollision);
 		
@@ -241,7 +241,7 @@ XMMATRIX CCollisionSystem::WalkingThrewObjectCheck(XMMATRIX worldPos, TAABB othe
 			//d3d_ResultMatrix = pcGraphicsSystem->SetDefaultWorldPosition();;
 			XMMATRIX moveback;
 			moveback = D3DMatrix;
-			moveback.r[3].m128_f32[2] += 0.01;
+			moveback.r[3].m128_f32[2] += 0.01f;
 			D3DMatrix = moveback;
 			UpdateCollision = updateAABB(D3DMatrix, UpdateCollision);
 
@@ -258,7 +258,7 @@ XMMATRIX CCollisionSystem::WalkingThrewObjectCheck(XMMATRIX worldPos, TAABB othe
 			//d3d_ResultMatrix = pcGraphicsSystem->SetDefaultWorldPosition();;
 			XMMATRIX moveback;
 			moveback = D3DMatrix;
-			moveback.r[3].m128_f32[2] -= 0.01;
+			moveback.r[3].m128_f32[2] -= 0.01f;
 			D3DMatrix = moveback;
 			UpdateCollision = updateAABB(D3DMatrix, UpdateCollision);
 
@@ -347,7 +347,7 @@ TAABB CCollisionSystem::updateAABB(XMMATRIX worldMatrix, TAABB aabb)
 }
 TAABB CCollisionSystem::createAABBS(std::vector<XMFLOAT3> verticies, TAABB AABBDATA)
 {
-	int size = verticies.size();
+	int size = (int)verticies.size();
 	if (size == 0) { return TAABB(); }
 	TAABB aabb;
 	aabb.m_MaterialType = AABBDATA.m_MaterialType;
@@ -425,9 +425,11 @@ int CCollisionSystem::AddAABBCollider(TAABB m_AABB2, int nIndex)
 	if (ContainAABB(nIndex) == false) {
 		m_AABB2.m_IndexLocation = nIndex;
 		m_AAbb.push_back(m_AABB2);
-		
-		return m_AAbb.size();
+
+		return (int)m_AAbb.size();
 	}
+	else
+		return 0;
 }
 /*
 * RemoveAABBCollider():  Adds an AABB to the list if it is not already in the list

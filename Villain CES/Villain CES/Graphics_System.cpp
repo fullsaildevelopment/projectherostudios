@@ -15,7 +15,7 @@ CGraphicsSystem::~CGraphicsSystem()
 
 void CGraphicsSystem::InitD3D(HWND cTheWindow)
 {
-#pragma region Window Stuff
+	#pragma region Window Stuff
 
 	// create a struct to hold information about the swap chain
 	DXGI_SWAP_CHAIN_DESC d3dSwapchainDescription;
@@ -143,7 +143,7 @@ void CGraphicsSystem::InitD3D(HWND cTheWindow)
 
 	// Create depth stencil state
 	m_pd3dDevice->CreateDepthStencilState(&d3dDepthStencilDescription, &m_pd3dDepthStencilState);
-
+	
 #pragma endregion
 
 }
@@ -166,7 +166,7 @@ void CGraphicsSystem::CleanD3D(TWorld *ptPlanet)
 		//Check planet's mask at [i] to see what needs to be released
 		if (ptPlanet->atGraphicsMask[nEntityIndex].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_DEBUGMESH | COMPONENT_SHADERID))
 		{
-			ptPlanet->atDebugMesh[nEntityIndex].m_pd3dVertexBuffer->Release();
+			ptPlanet->atDebugMesh[nEntityIndex].m_pd3dVertexBuffer->Release();			
 		}
 
 		if (ptPlanet->atGraphicsMask[nEntityIndex].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_SIMPLEMESH | COMPONENT_SHADERID))
@@ -181,7 +181,7 @@ void CGraphicsSystem::CleanD3D(TWorld *ptPlanet)
 			ptPlanet->atMesh[nEntityIndex].m_d3dSRVDiffuse->Release();
 		}
 		destroyEntity(ptPlanet, nEntityIndex);
-		//	HRESULT result = debug->ReportLiveDeviceObjects(D3D11_RLDO_SUMMARY | D3D11_RLDO_DETAIL);
+	//	HRESULT result = debug->ReportLiveDeviceObjects(D3D11_RLDO_SUMMARY | D3D11_RLDO_DETAIL);
 	}
 	m_pd3dSwapchain->Release();
 	m_pd3dDevice->Release();
@@ -190,7 +190,7 @@ void CGraphicsSystem::CleanD3D(TWorld *ptPlanet)
 	m_pd3dDepthStencilState->Release();
 	m_pd3dDepthStencilView->Release();
 	m_pd3dRenderTargetView->Release();
-
+		
 	m_pd3dPrimalVertexShader->Release();
 	m_pd3dPrimalPixelShader->Release();
 	m_pd3dPrimalInputLayout->Release();
@@ -237,8 +237,8 @@ void CGraphicsSystem::CleanD3DObject(TWorld * ptPlanet, int nEntityIndex)
 }
 
 void CGraphicsSystem::CreateShaders(ID3D11Device * device)
-{
-#pragma region MyShaders
+{	
+	#pragma region MyShaders
 	D3D11_BUFFER_DESC d3dMyVertexBufferDesc;
 	device->CreateVertexShader(MyVertexShader, sizeof(MyVertexShader), NULL, &m_pd3dMyVertexShader);
 	device->CreatePixelShader(MyPixelShader, sizeof(MyPixelShader), NULL, &m_pd3dMyPixelShader);
@@ -250,9 +250,9 @@ void CGraphicsSystem::CreateShaders(ID3D11Device * device)
 		//{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 		//{ "TANGENT", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 		//{ "BINORMAL", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-	{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-	//{ "BLENDWEIGHT", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-	//{ "BLENDINDICES", 0, DXGI_FORMAT_R32G32B32A32_UINT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		//{ "BLENDWEIGHT", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		//{ "BLENDINDICES", 0, DXGI_FORMAT_R32G32B32A32_UINT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 	};
 	//Get a count of the elements in the layout.
 	int	nElements = sizeof(m_d3dMyLayoutDesc) / sizeof(m_d3dMyLayoutDesc[0]);
@@ -273,7 +273,7 @@ void CGraphicsSystem::CreateShaders(ID3D11Device * device)
 	device->CreateBuffer(&d3dMyVertexBufferDesc, NULL, &m_pd3dMyVertexBuffer);
 #pragma endregion
 
-#pragma region PrimalShaders
+	#pragma region PrimalShaders
 	D3D11_BUFFER_DESC d3dPrimalMatrixBufferDesc;
 	D3D11_BUFFER_DESC d3dPrimalPixelBufferDesc;
 	device->CreateVertexShader(PrimalVertexShader, sizeof(PrimalVertexShader), NULL, &m_pd3dPrimalVertexShader);
@@ -283,7 +283,7 @@ void CGraphicsSystem::CreateShaders(ID3D11Device * device)
 	D3D11_INPUT_ELEMENT_DESC m_d3dPrimalLayoutDesc[] =
 	{
 		{ "POSITION", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-	{ "POSITION", 1, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "POSITION", 1, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 	};
 	//Get a count of the elements in the layout.
 	int nPrimalElements = sizeof(m_d3dPrimalLayoutDesc) / sizeof(m_d3dPrimalLayoutDesc[0]);
@@ -337,7 +337,7 @@ void CGraphicsSystem::CreateBuffers(TWorld *ptPlanet)//init first frame
 				m_pd3dDevice->CreateBuffer(&ptPlanet->atSimpleMesh[nCurrentEntity].m_d3dIndexBufferDesc, &ptPlanet->atSimpleMesh[nCurrentEntity].m_d3dIndexData, &ptPlanet->atSimpleMesh[nCurrentEntity].m_pd3dIndexBuffer);
 
 			}
-		}
+		}	
 		if (ptPlanet->atGraphicsMask[nCurrentEntity].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_SHADERID))
 		{
 			if (ptPlanet->atMesh[nCurrentEntity].m_nIndexCount && ptPlanet->atMesh[nCurrentEntity].m_nVertexCount)
@@ -369,40 +369,40 @@ void CGraphicsSystem::CreateEntityBuffer(TWorld * ptWorld, int nEnityIndex)
 }
 
 void CGraphicsSystem::UpdateBuffer(TWorld * ptWorld, std::vector<TSimpleMesh> vtVertexVector, int nEntity, int nMask)
-{
+{	
 	bool bIsVertexBufferSet = false;
-	if (bIsVertexBufferSet)
-	{
-		// This is where it copies the new vertices to the buffer.
-		// but it's causing flickering in the entire screen...
-		D3D11_MAPPED_SUBRESOURCE d3dMappedBufferResource;
-		if (nMask == COMPONENT_DEBUGMESH)
+		if (bIsVertexBufferSet)
 		{
-			m_pd3dDeviceContext->Map(ptWorld->atDebugMesh[nEntity].m_pd3dVertexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &d3dMappedBufferResource);
-			memcpy(d3dMappedBufferResource.pData, &vtVertexVector[0], sizeof(vtVertexVector));
-			m_pd3dDeviceContext->Unmap(ptWorld->atDebugMesh[nEntity].m_pd3dVertexBuffer, 0);
+			// This is where it copies the new vertices to the buffer.
+			// but it's causing flickering in the entire screen...
+			D3D11_MAPPED_SUBRESOURCE d3dMappedBufferResource;
+			if (nMask == COMPONENT_DEBUGMESH)
+			{
+				m_pd3dDeviceContext->Map(ptWorld->atDebugMesh[nEntity].m_pd3dVertexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &d3dMappedBufferResource);
+				memcpy(d3dMappedBufferResource.pData, &vtVertexVector[0], sizeof(vtVertexVector));
+				m_pd3dDeviceContext->Unmap(ptWorld->atDebugMesh[nEntity].m_pd3dVertexBuffer, 0);
+			}
 		}
-	}
-	else
-	{
-		UINT nVertexBufferStride = sizeof(TSimpleMesh);
-		UINT nVertexBufferOffset = 0;
+		else
+		{			
+			UINT nVertexBufferStride = sizeof(TSimpleMesh);
+			UINT nVertexBufferOffset = 0;
 
-		D3D11_SUBRESOURCE_DATA d3dBufferResourceData;
-		ZeroMemory(&d3dBufferResourceData, sizeof(d3dBufferResourceData));
-		d3dBufferResourceData.pSysMem = &vtVertexVector[0];
-		if (nMask == COMPONENT_DEBUGMESH)
-		{
-			// This is run in the first frame. But what if new vertices are added to the scene?
-			ptWorld->atDebugMesh[nEntity].m_d3dVertexBufferDesc.ByteWidth = sizeof(TSimpleMesh) * ptWorld->atDebugMesh[nEntity].m_nVertexCount;
+			D3D11_SUBRESOURCE_DATA d3dBufferResourceData;
+			ZeroMemory(&d3dBufferResourceData, sizeof(d3dBufferResourceData));
+			d3dBufferResourceData.pSysMem = &vtVertexVector[0];
+			if (nMask == COMPONENT_DEBUGMESH)
+			{
+				// This is run in the first frame. But what if new vertices are added to the scene?
+				ptWorld->atDebugMesh[nEntity].m_d3dVertexBufferDesc.ByteWidth = sizeof(TSimpleMesh) * ptWorld->atDebugMesh[nEntity].m_nVertexCount;
 
-			if (ptWorld->atDebugMesh[nEntity].m_pd3dVertexBuffer)
-				ptWorld->atDebugMesh[nEntity].m_pd3dVertexBuffer->Release();
-			m_pd3dDevice->CreateBuffer(&ptWorld->atDebugMesh[nEntity].m_d3dVertexBufferDesc, &d3dBufferResourceData, &ptWorld->atDebugMesh[nEntity].m_pd3dVertexBuffer);
-			m_pd3dDeviceContext->IASetVertexBuffers(0, 1, &ptWorld->atDebugMesh[nEntity].m_pd3dVertexBuffer, &nVertexBufferStride, &nVertexBufferOffset);
+				if (ptWorld->atDebugMesh[nEntity].m_pd3dVertexBuffer)
+					ptWorld->atDebugMesh[nEntity].m_pd3dVertexBuffer->Release();
+				m_pd3dDevice->CreateBuffer(&ptWorld->atDebugMesh[nEntity].m_d3dVertexBufferDesc, &d3dBufferResourceData, &ptWorld->atDebugMesh[nEntity].m_pd3dVertexBuffer);
+				m_pd3dDeviceContext->IASetVertexBuffers(0, 1, &ptWorld->atDebugMesh[nEntity].m_pd3dVertexBuffer, &nVertexBufferStride, &nVertexBufferOffset);
+			}
+			bIsVertexBufferSet = true;
 		}
-		bIsVertexBufferSet = true;
-	}
 }
 
 XMMATRIX CGraphicsSystem::SetDefaultCameraMatrix()
@@ -494,15 +494,15 @@ XMMATRIX CGraphicsSystem::SetDefaultWorldPosition()
 
 ImporterData CGraphicsSystem::ReadMesh(const char * input_file_path)
 {
-#pragma region Declarations
+	#pragma region Declarations
 	int * lamberts = nullptr;
 	TMyAmbientColor * ambientColor = nullptr;
 	TMyDiffuseColor * diffuseColor = nullptr;
-	TMySpecularColor* specularColor = nullptr;
+	TMySpecularColor* specularColor= nullptr;
 	TMyEmissiveColor* emmissiveColor = nullptr;
-	TMyFileNameSizes* fileNameSizes = nullptr;
+	TMyFileNameSizes* fileNameSizes= nullptr;
 	TMyFileNames* fileNames = nullptr;
-	TPBRFileNameSizes* pbrfileNameSizes = nullptr;
+	TPBRFileNameSizes* pbrfileNameSizes= nullptr;
 	TPBRFileNames* pbrfileNames = nullptr;
 	double *dTransparencyOrShininess = nullptr;
 	float *fMetallicness = nullptr;
@@ -532,14 +532,14 @@ ImporterData CGraphicsSystem::ReadMesh(const char * input_file_path)
 
 	std::ifstream matFile(input_file_path, std::ios::in | std::ios::binary);
 	matFile.read((char*)&meshCount, sizeof(int));
-
-#pragma region ImportDataMemoryAllocations
+	
+	#pragma region ImportDataMemoryAllocations
 
 	ImporterData tImportMe;
-	tImportMe.vtMeshes = new TMeshImport[meshCount];
-	tImportMe.vtMaterials = new TMaterialImport[meshCount];
-	tImportMe.vtAnimations = new TAnimationImport[meshCount];
-	tImportMe.meshCount = meshCount;
+	tImportMe.vtMeshes		= new TMeshImport[meshCount];
+	tImportMe.vtMaterials	= new TMaterialImport[meshCount];
+	tImportMe.vtAnimations	= new TAnimationImport[meshCount];
+	tImportMe.meshCount		= meshCount;
 #pragma endregion
 
 	for (int meshIndex = 0; meshIndex < meshCount; meshIndex++)
@@ -547,7 +547,7 @@ ImporterData CGraphicsSystem::ReadMesh(const char * input_file_path)
 		matFile.read((char*)&hasPose, sizeof(int));
 		if (hasPose)
 		{
-#pragma region ReadAnimationData	
+			#pragma region ReadAnimationData	
 			bSize += sizeof(int);
 			matFile.read((char*)&duration, sizeof(double));
 			matFile.read((char*)&nodeCount, sizeof(int));
@@ -604,22 +604,22 @@ ImporterData CGraphicsSystem::ReadMesh(const char * input_file_path)
 		if (hasMaterial)
 		{
 			matFile.read((char*)&materialCount, sizeof(int));
-#pragma region Material Initializations
-			lamberts = new int[materialCount];
-			ambientColor = new TMyAmbientColor[materialCount];
-			diffuseColor = new TMyDiffuseColor[materialCount];
-			specularColor = new TMySpecularColor[materialCount];
-			emmissiveColor = new TMyEmissiveColor[materialCount];
-			pbrfileNameSizes = new TPBRFileNameSizes[materialCount];
-			pbrfileNames = new TPBRFileNames[materialCount];
-			fileNameSizes = new TMyFileNameSizes[materialCount];
-			fileNames = new TMyFileNames[materialCount];
-			dTransparencyOrShininess = new double[materialCount];
-			fRoughness = new float[materialCount];
-			fMetallicness = new float[materialCount];
-			dTransparencyOrShininess[0] = 0;
-			fRoughness[0] = 0;
-			fMetallicness[0] = 0;
+			#pragma region Material Initializations
+		lamberts = new int[materialCount];
+		ambientColor	= new TMyAmbientColor[materialCount];
+		diffuseColor	= new TMyDiffuseColor[materialCount];
+		specularColor	= new TMySpecularColor[materialCount];
+		emmissiveColor	= new TMyEmissiveColor[materialCount];
+		pbrfileNameSizes= new TPBRFileNameSizes[materialCount];
+		pbrfileNames	= new TPBRFileNames[materialCount];
+		fileNameSizes	= new TMyFileNameSizes[materialCount];
+		fileNames		= new TMyFileNames[materialCount];
+		dTransparencyOrShininess = new double[materialCount];
+		fRoughness		= new float[materialCount];
+		fMetallicness	= new float[materialCount];
+		dTransparencyOrShininess[0] = 0;
+		fRoughness[0] = 0;
+		fMetallicness[0] = 0;
 #pragma endregion
 		}
 
@@ -627,7 +627,7 @@ ImporterData CGraphicsSystem::ReadMesh(const char * input_file_path)
 		{
 			for (int materialIndex = 0; materialIndex < materialCount; materialIndex++)
 			{
-#pragma region ReadMaterials
+				#pragma region ReadMaterials
 				bSize += sizeof(int);
 				matFile.read((char*)&lamberts[materialIndex], sizeof(int));
 
@@ -817,7 +817,7 @@ ImporterData CGraphicsSystem::ReadMesh(const char * input_file_path)
 		matFile.read((char*)&hasPolygon, sizeof(int));
 		if (hasPolygon)
 		{
-#pragma region ReadMesh
+			#pragma region ReadMesh
 			matFile.read((char*)&polyVertCount, sizeof(int));
 			matFile.read((char*)&uniqueVertexCount, sizeof(int));
 			matFile.read((char*)&worldTranslation[0], sizeof(double) * 3);
@@ -860,7 +860,7 @@ ImporterData CGraphicsSystem::ReadMesh(const char * input_file_path)
 		}
 	}
 	matFile.close();
-
+	
 	return tImportMe;
 }
 
@@ -882,7 +882,7 @@ void CGraphicsSystem::InitPrimalShaderData(ID3D11DeviceContext * pd3dDeviceConte
 	TPrimalPixelBufferType	*ptPrimalPixelBufferDataPointer = nullptr;
 
 	unsigned int bufferNumber;
-
+	
 	d3dViewMatrix = XMMatrixInverse(nullptr, CameraMatrix);
 
 	XMMATRIX d3dView;
@@ -912,7 +912,7 @@ void CGraphicsSystem::InitPrimalShaderData(ID3D11DeviceContext * pd3dDeviceConte
 	ptPrimalPixelBufferDataPointer = (TPrimalPixelBufferType*)d3dPrimalPixelMappedResource.pData;
 
 	// Copy the matrices into the constant buffer.
-	ptPrimalPixelBufferDataPointer->m_d3dCollisionColor = XMFLOAT4(0, 0, 0, 0);
+	ptPrimalPixelBufferDataPointer->m_d3dCollisionColor = XMFLOAT4(0,0,0,0);
 
 	// Unlock the constant buffer.
 	pd3dDeviceContext->Unmap(m_pd3dPrimalPixelBuffer, 0);
@@ -938,7 +938,7 @@ void CGraphicsSystem::InitPrimalShaderData2(ID3D11DeviceContext * pd3dDeviceCont
 
 	TPrimalVertexBufferType	*ptPrimalVertexBufferDataPointer = nullptr;
 	TPrimalPixelBufferType	*ptPrimalPixelBufferDataPointer = nullptr;
-
+	
 	d3dVertexBuffer.m_d3dViewMatrix = XMMatrixInverse(nullptr, CameraMatrix);
 	unsigned int bufferNumber;
 	//XMMATRIX d3dTmpViewM;
@@ -953,7 +953,7 @@ void CGraphicsSystem::InitPrimalShaderData2(ID3D11DeviceContext * pd3dDeviceCont
 	XMMATRIX tempProj = d3dVertexBuffer.m_d3dProjectionMatrix;
 	d3dView = d3dVertexBuffer.m_d3dViewMatrix;
 
-#pragma region Map To Vertex Constant Buffer
+	#pragma region Map To Vertex Constant Buffer
 	pd3dDeviceContext->Map(m_pd3dPrimalVertexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &d3dPrimalVertexMappedResource);
 
 
@@ -971,7 +971,7 @@ void CGraphicsSystem::InitPrimalShaderData2(ID3D11DeviceContext * pd3dDeviceCont
 #pragma endregion
 
 
-#pragma region Map To Pixel Constant Buffer
+	#pragma region Map To Pixel Constant Buffer
 	pd3dDeviceContext->Map(m_pd3dPrimalPixelBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &d3dPrimalPixelMappedResource);
 
 	// Get a pointer to the data in the constant buffer.
@@ -1015,7 +1015,7 @@ void CGraphicsSystem::InitMyShaderData(ID3D11DeviceContext * pd3dDeviceContext, 
 	XMMATRIX tempWorld = d3dVertexBuffer.m_d3dWorldMatrix;
 	XMMATRIX tempProj = d3dVertexBuffer.m_d3dProjectionMatrix;
 
-#pragma region Map To Vertex Constant Buffer
+	#pragma region Map To Vertex Constant Buffer
 	pd3dDeviceContext->Map(m_pd3dMyVertexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &d3dMyVertexMappedResource);
 
 
@@ -1031,7 +1031,7 @@ void CGraphicsSystem::InitMyShaderData(ID3D11DeviceContext * pd3dDeviceContext, 
 	pd3dDeviceContext->Unmap(m_pd3dMyVertexBuffer, 0);
 
 #pragma endregion
-
+	
 	pd3dDeviceContext->VSSetConstantBuffers(bufferNumber, 1, &m_pd3dMyVertexBuffer);
 	pd3dDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	pd3dDeviceContext->IASetVertexBuffers(0, 1, &tMesh.m_pd3dVertexBuffer, &tMesh.m_nVertexBufferStride, &tMesh.m_nVertexBufferOffset);
@@ -1046,90 +1046,90 @@ void CGraphicsSystem::ExecutePipeline(ID3D11DeviceContext *pd3dDeviceContext, in
 {
 	switch (nShaderID)
 	{
-	case 1:
-	{
-		//Set Input_Layout
-		pd3dDeviceContext->IASetInputLayout(m_pd3dMyInputLayout);
-		//Set Shader
-		pd3dDeviceContext->VSSetShader(m_pd3dMyVertexShader, NULL, 0);
-		pd3dDeviceContext->PSSetShader(m_pd3dMyPixelShader, NULL, 0);
-		////Draw
-		if (nGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_SHADERID))
+		case 1:	
 		{
-			pd3dDeviceContext->DrawIndexed(m_nIndexCount, 0, 0);
+			//Set Input_Layout
+			pd3dDeviceContext->IASetInputLayout(m_pd3dMyInputLayout);
+			//Set Shader
+			pd3dDeviceContext->VSSetShader(m_pd3dMyVertexShader, NULL, 0);
+			pd3dDeviceContext->PSSetShader(m_pd3dMyPixelShader, NULL, 0);
+			////Draw
+			if (nGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_SHADERID))
+			{
+				pd3dDeviceContext->DrawIndexed(m_nIndexCount, 0, 0);
+			}
+			break;
 		}
-		break;
-	}
-	case 2:
-	{
-		//Set Input_Layout
-		pd3dDeviceContext->IASetInputLayout(m_pd3dPrimalInputLayout);
-		//Set Shader
-		pd3dDeviceContext->VSSetShader(m_pd3dPrimalVertexShader, NULL, 0);
-		pd3dDeviceContext->PSSetShader(m_pd3dPrimalPixelShader, NULL, 0);
-		//Draw
-		if (nGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_DEBUGMESH | COMPONENT_SHADERID))
+		case 2:
 		{
-			pd3dDeviceContext->Draw(m_nIndexCount, 0);
+			//Set Input_Layout
+			pd3dDeviceContext->IASetInputLayout(m_pd3dPrimalInputLayout);
+			//Set Shader
+			pd3dDeviceContext->VSSetShader(m_pd3dPrimalVertexShader, NULL, 0);
+			pd3dDeviceContext->PSSetShader(m_pd3dPrimalPixelShader, NULL, 0);
+			//Draw
+			if (nGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_DEBUGMESH | COMPONENT_SHADERID))
+			{
+				pd3dDeviceContext->Draw(m_nIndexCount, 0);
+			}
+			break;
 		}
-		break;
-	}
-	case 3:
-	{
-		pd3dDeviceContext->IASetInputLayout(m_pd3dPrimalInputLayout);
-		//Set Shader
-		pd3dDeviceContext->VSSetShader(m_pd3dPrimalVertexShader, NULL, 0);
-		pd3dDeviceContext->PSSetShader(m_pd3dPrimalPixelShader, NULL, 0);
-		//Draw
-		if (nGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_SIMPLEMESH | COMPONENT_SHADERID))
+		case 3:
 		{
-			pd3dDeviceContext->DrawIndexed(m_nIndexCount, 0, 0);
+			pd3dDeviceContext->IASetInputLayout(m_pd3dPrimalInputLayout);
+			//Set Shader
+			pd3dDeviceContext->VSSetShader(m_pd3dPrimalVertexShader, NULL, 0);
+			pd3dDeviceContext->PSSetShader(m_pd3dPrimalPixelShader, NULL, 0);
+			//Draw
+			if (nGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_SIMPLEMESH | COMPONENT_SHADERID))
+			{
+				pd3dDeviceContext->DrawIndexed(m_nIndexCount, 0,0);
+			}
+			break;
 		}
-		break;
-	}
-	case 4:
-	{
-		//Set Input_Layout
-		pd3dDeviceContext->IASetInputLayout(m_pd3dMyInputLayout);
-		//Set Shader
-		pd3dDeviceContext->VSSetShader(m_pd3dMyVertexShader, NULL, 0);
-		pd3dDeviceContext->PSSetShader(m_pd3dMyPixelShader, NULL, 0);
-		////Draw
-		if (nGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_SHADERID))
+		case 4:
 		{
-			pd3dDeviceContext->DrawIndexed(m_nIndexCount, 0, 0);
+			//Set Input_Layout
+			pd3dDeviceContext->IASetInputLayout(m_pd3dMyInputLayout);
+			//Set Shader
+			pd3dDeviceContext->VSSetShader(m_pd3dMyVertexShader, NULL, 0);
+			pd3dDeviceContext->PSSetShader(m_pd3dMyPixelShader, NULL, 0);
+			////Draw
+			if (nGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_SHADERID))
+			{
+				pd3dDeviceContext->DrawIndexed(m_nIndexCount, 0, 0);
+			}
+			break;
 		}
-		break;
-	}
-	case 5:
-	{
-		//Set Input_Layout
-		pd3dDeviceContext->IASetInputLayout(m_pd3dMyInputLayout);
-		//Set Shader
-		pd3dDeviceContext->VSSetShader(m_pd3dMyVertexShader, NULL, 0);
-		pd3dDeviceContext->PSSetShader(m_pd3dMyPixelShader, NULL, 0);
-		////Draw
-		if (nGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_SHADERID))
+		case 5:
 		{
-			pd3dDeviceContext->DrawIndexed(m_nIndexCount, 0, 0);
+			//Set Input_Layout
+			pd3dDeviceContext->IASetInputLayout(m_pd3dMyInputLayout);
+			//Set Shader
+			pd3dDeviceContext->VSSetShader(m_pd3dMyVertexShader, NULL, 0);
+			pd3dDeviceContext->PSSetShader(m_pd3dMyPixelShader, NULL, 0);
+			////Draw
+			if (nGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_SHADERID))
+			{
+				pd3dDeviceContext->DrawIndexed(m_nIndexCount, 0, 0);
+			}
+			break;
 		}
-		break;
-	}
-	case 6:
-	{
-		//Set Input_Layout
-		pd3dDeviceContext->IASetInputLayout(m_pd3dMyInputLayout);
-		//Set Shader
-		pd3dDeviceContext->VSSetShader(m_pd3dMyVertexShader, NULL, 0);
-		pd3dDeviceContext->PSSetShader(m_pd3dMyPixelShader, NULL, 0);
-		////Draw
-		if (nGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_SHADERID))
+		case 6:
 		{
-			pd3dDeviceContext->DrawIndexed(m_nIndexCount, 0, 0);
+			//Set Input_Layout
+			pd3dDeviceContext->IASetInputLayout(m_pd3dMyInputLayout);
+			//Set Shader
+			pd3dDeviceContext->VSSetShader(m_pd3dMyVertexShader, NULL, 0);
+			pd3dDeviceContext->PSSetShader(m_pd3dMyPixelShader, NULL, 0);
+			////Draw
+			if (nGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_SHADERID))
+			{
+				pd3dDeviceContext->DrawIndexed(m_nIndexCount, 0, 0);
+			}
+			break;
 		}
-		break;
-	}
-	default:
-		break;
+		default:
+			break;
 	}
 }

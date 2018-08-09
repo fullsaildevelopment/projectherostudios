@@ -1,6 +1,7 @@
 #pragma once
 #include"ProjectileSystem.h"
 #include"stdafx.h"
+#include"Entity.h"
 class CAISystem
 {
 public:

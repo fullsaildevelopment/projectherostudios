@@ -64,7 +64,7 @@ public:
 		float m_fShininess;
 		int m_nPadding;
 	};
-
+										   
 
 	//First Frame
 	CGraphicsSystem();
@@ -74,7 +74,7 @@ public:
 	void CreateBuffers(TWorld * ptWorld);
 	void CreateEntityBuffer(TWorld * ptWorld, int nEnityIndex);
 	void CreateShaders(ID3D11Device* pd3dDevice);
-
+	
 	XMMATRIX SetDefaultViewMatrix();
 	XMMATRIX SetDefaultWorldPosition();
 	XMMATRIX SetDefaultPerspective();
@@ -119,6 +119,6 @@ private:
 	float				m_fNewX;
 	float				m_fNewY;
 	float				m_fMouseRotationSpeed;
-	float				m_fMouseMovementSpeed;
+	float				m_fMouseMovementSpeed;	
 
 };
