@@ -1562,13 +1562,23 @@ unsigned int createMesh(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMeshImpo
 
 	ID3D11ShaderResourceView * srv;
 
-	for (unsigned int i = 0; i < 9; i++)
+	if (tMaterial.m_tPBRFileNames[0] == NULL && tMaterial.m_tFileNames[0] == NULL)
+	{
+		result = CreateWICTextureFromFile(m_pd3dDevice, L"TestScene_V1.fbm\\Wood01_col.jpg", &diffuseTexture, &srv, NULL);
+		ptWorld->atMesh[nThisEntity].m_d3dSRVDiffuse = srv;
+
+	}
+	else
+	{
+		for (unsigned int i = 0; i < 9; i++)
 	{
 		if (tMaterial.m_tPBRFileNames[i])
 		{
 			if (tMaterial.m_tPBRFileNames[i][0] == 'c')
 			{
 				result = CreateWICTextureFromFile(m_pd3dDevice, fnPBR[i], &d3dColorMap, &srv, NULL);
+				ptWorld->atMesh[nThisEntity].m_d3dSRVDiffuse = srv;
+
 			}
 			if (tMaterial.m_tPBRFileNames[i][0] == 'n')
 			{
@@ -1617,6 +1627,8 @@ unsigned int createMesh(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMeshImpo
 			if (tMaterial.m_tFileNames[i][0] == 'd')
 			{
 				result = CreateWICTextureFromFile(m_pd3dDevice, fnTRAD[i], &diffuseTexture, &srv, NULL);
+				ptWorld->atMesh[nThisEntity].m_d3dSRVDiffuse = srv;
+
 			}
 			if (tMaterial.m_tFileNames[i][0] == 'e')
 			{
@@ -1633,11 +1645,9 @@ unsigned int createMesh(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMeshImpo
 
 		}
 	}
-#pragma endregion
-	if (tMaterial.m_tPBRFileNames[0] == NULL && tMaterial.m_tFileNames[0] == NULL)
-	{
-		result = CreateWICTextureFromFile(m_pd3dDevice, L"TestScene_V1.fbm\\Wood01_col.jpg", &diffuseTexture, &srv, NULL);
+
 	}
+#pragma endregion
 	ptWorld->atGraphicsMask[nThisEntity].m_tnGraphicsMask = COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_SHADERID;
 	//ptWorld->atCollisionMask[nThisEntity].m_tnCollisionMask = COMPONENT_COLLISIONMASK | COMPONENT_AABB | COMPONENT_NONSTATIC | COMPONENT_NONTRIGGER;
 	//ptWorld->atAIMask[nThisEntity].m_tnAIMask = COMPONENT_AIMASK;
@@ -1684,8 +1694,6 @@ unsigned int createMesh(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMeshImpo
 		ptWorld->atMesh[nThisEntity].m_VertexData.push_back(XMFLOAT3(tmp.pos[0], tmp.pos[1], tmp.pos[2]));
 
 	}
-
-	ptWorld->atMesh[nThisEntity].m_d3dSRVDiffuse = srv;
 	ptWorld->atMesh[nThisEntity].m_nVertexCount = tMesh.nUniqueVertexCount;
 	ptWorld->atMesh[nThisEntity].m_nVertexBufferStride = sizeof(TPrimitiveMesh);
 	ptWorld->atMesh[nThisEntity].m_nVertexBufferOffset = 0;
@@ -1767,13 +1775,23 @@ unsigned int createClayton(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMeshI
 
 	ID3D11ShaderResourceView * srv;
 
-	for (unsigned int i = 0; i < 9; i++)
+	if (tMaterial.m_tPBRFileNames[0] == NULL && tMaterial.m_tFileNames[0] == NULL)
+	{
+		result = CreateWICTextureFromFile(m_pd3dDevice, L"TestScene_V1.fbm\\Wood01_col.jpg", &diffuseTexture, &srv, NULL);
+		ptWorld->atMesh[nThisEntity].m_d3dSRVDiffuse = srv;
+
+	}
+	else
+	{
+		for (unsigned int i = 0; i < 9; i++)
 	{
 		if (tMaterial.m_tPBRFileNames[i])
 		{
 			if (tMaterial.m_tPBRFileNames[i][0] == 'c')
 			{
 				result = CreateWICTextureFromFile(m_pd3dDevice, fnPBR[i], &d3dColorMap, &srv, NULL);
+				ptWorld->atMesh[nThisEntity].m_d3dSRVDiffuse = srv;
+
 			}
 			if (tMaterial.m_tPBRFileNames[i][0] == 'n')
 			{
@@ -1822,6 +1840,8 @@ unsigned int createClayton(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMeshI
 			if (tMaterial.m_tFileNames[i][0] == 'd')
 			{
 				result = CreateWICTextureFromFile(m_pd3dDevice, fnTRAD[i], &diffuseTexture, &srv, NULL);
+				ptWorld->atMesh[nThisEntity].m_d3dSRVDiffuse = srv;
+
 			}
 			if (tMaterial.m_tFileNames[i][0] == 'e')
 			{
@@ -1838,11 +1858,8 @@ unsigned int createClayton(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMeshI
 
 		}
 	}
-#pragma endregion
-	if (tMaterial.m_tPBRFileNames[0] == NULL && tMaterial.m_tFileNames[0] == NULL)
-	{
-		result = CreateWICTextureFromFile(m_pd3dDevice, L"TestScene_V1.fbm\\Wood01_col.jpg", &diffuseTexture, &srv, NULL);
 	}
+#pragma endregion
 	ptWorld->atGraphicsMask[nThisEntity].m_tnGraphicsMask = COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_SHADERID;
 	ptWorld->atCollisionMask[nThisEntity].m_tnCollisionMask = COMPONENT_COLLISIONMASK | COMPONENT_AABB | COMPONENT_NONSTATIC | COMPONENT_NONTRIGGER;
 	ptWorld->atAIMask[nThisEntity].m_tnAIMask = COMPONENT_AIMASK;
@@ -1898,8 +1915,7 @@ unsigned int createClayton(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMeshI
 	playerGravity.m128_f32[2] = 0;
 	playerGravity.m128_f32[3] = 0;
 	ptWorld->atRigidBody[nThisEntity].gravity = playerGravity;
-
-	ptWorld->atMesh[nThisEntity].m_d3dSRVDiffuse = srv;
+	
 	ptWorld->atMesh[nThisEntity].m_nVertexCount = tMesh.nUniqueVertexCount;
 	ptWorld->atMesh[nThisEntity].m_nVertexBufferStride = sizeof(TPrimitiveMesh);
 	ptWorld->atMesh[nThisEntity].m_nVertexBufferOffset = 0;

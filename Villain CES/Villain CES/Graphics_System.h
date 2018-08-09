@@ -110,7 +110,7 @@ private:
 	ID3D11Buffer		*m_pd3dMyVertexBuffer;
 
 	ID3D11Buffer		*m_pd3dBlinnPhongBuffer;
-	ID3D11Debug			* debug;
+
 	float				m_fCameraXPosition;
 	float				m_fCameraYPosition;
 	float				m_fCameraZPosition;
