@@ -15,6 +15,11 @@ enum eCollision_Component
 
 
 }; 
+enum eMaterialType {
+	MATERIAL_METAL = 0,
+	MATERIAL_WOOD = 1,
+
+};
 
 struct TCollisionMask
 {
@@ -28,7 +33,10 @@ struct TAABB
 	XMFLOAT3 m_dMinPointOrginal;
 	XMFLOAT3 m_dMaxPointOrginal;
 	int		 m_IndexLocation;
-	int		 m_MatrtialIndex;
+	int		 m_MaterialType= MATERIAL_METAL;
+	int		 m_SceneChange=-30;
+	
+	
 
 
 };

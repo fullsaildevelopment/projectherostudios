@@ -33,5 +33,8 @@ struct Clips
 	float FValueOfCoolDown;
 	int currentMaterial;
 	XMFLOAT4 colorofBullets;
+	float bulletSpeed;
+	int gunIndex;
+	int indexInclip;
 };
 #endif
