@@ -122,6 +122,29 @@ void CGameMangerSystem::LoadLevel()
 	{
 		int myMesh = createMesh(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, tempImport.vtMeshes[meshIndex], tempImport.vtMaterials[meshIndex]);
 	}
+	std::array<plane_t, 6> planes;
+	float4x4 cam;
+	cam.row1.x = m_d3dWorldMatrix.r[0].m128_f32[0];
+	cam.row1.y = m_d3dWorldMatrix.r[0].m128_f32[1];
+	cam.row1.z = m_d3dWorldMatrix.r[0].m128_f32[2];
+	cam.row1.w = m_d3dWorldMatrix.r[0].m128_f32[3];
+
+	cam.row2.x = m_d3dWorldMatrix.r[1].m128_f32[0];
+	cam.row2.y = m_d3dWorldMatrix.r[1].m128_f32[1];
+	cam.row2.z = m_d3dWorldMatrix.r[1].m128_f32[2];
+	cam.row2.w = m_d3dWorldMatrix.r[1].m128_f32[3];
+
+	cam.row3.x = m_d3dWorldMatrix.r[2].m128_f32[0];
+	cam.row3.y = m_d3dWorldMatrix.r[2].m128_f32[1];
+	cam.row3.z = m_d3dWorldMatrix.r[2].m128_f32[2];
+	cam.row3.w = m_d3dWorldMatrix.r[2].m128_f32[3];
+
+	cam.row4.x = m_d3dWorldMatrix.r[3].m128_f32[0];
+	cam.row4.y = m_d3dWorldMatrix.r[3].m128_f32[1];
+	cam.row4.z = m_d3dWorldMatrix.r[3].m128_f32[2];
+	cam.row4.w = m_d3dWorldMatrix.r[3].m128_f32[3];
+
+	tThisWorld.atWorldMatrix[ pcAiSystem->calculate_frustum(&tThisWorld,planes,cam,70,1,0.1,10, PlayerStartIndex,1,1,1)].worldMatrix= m_d3dWorldMatrix;
 	
 
 
@@ -707,6 +730,9 @@ int CGameMangerSystem::InGameUpdate()
 
 				tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = XMMatrixMultiply(tThisWorld.atOffSetMatrix[nCurrentEntity], tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix);
 
+				if (nCurrentEntity == 18) {
+					tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = pcGraphicsSystem->SetDefaultWorldPosition();
+				}
 			}
 		
 

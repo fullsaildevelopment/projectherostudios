@@ -1243,6 +1243,138 @@ unsigned int CreateRayBullet(TWorld * ptWorld, XMMATRIX bulletSpawnLocation, flo
 	return nThisEntity;
 }
 
+unsigned int CreateFrustumLines(TWorld * ptWorld,XMFLOAT3 fartopleft, XMFLOAT3 nearbottomleft, XMFLOAT3 neartopright, XMFLOAT3 nearbottomright, XMFLOAT3 fartopright, XMFLOAT3 farbottomleft, XMFLOAT3 farbottomright, XMFLOAT3 neartopleft, int parentWorldMatrixIndex, float xoffset, float yoffset, float zoffset)
+{
+	unsigned int nThisEntity = createEntity(ptWorld);
+	ptWorld->atCollisionMask[nThisEntity].m_tnCollisionMask = COMPONENT_COLLISIONMASK;
+	ptWorld->atGraphicsMask[nThisEntity].m_tnGraphicsMask = COMPONENT_GRAPHICSMASK | COMPONENT_DEBUGMESH | COMPONENT_SHADERID;
+	ptWorld->atAIMask[nThisEntity].m_tnAIMask = COMPONENT_AIMASK;
+	ptWorld->atUIMask[nThisEntity].m_tnUIMask = COMPONENT_UIMASK;
+	ptWorld->atPhysicsMask[nThisEntity].m_tnPhysicsMask = COMPONENT_PHYSICSMASK ;
+
+	static TPrimalVert atCubeVertices[]{
+		// line 1
+		TPrimalVert{ neartopleft ,XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },
+		TPrimalVert{ fartopleft ,XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },
+		// line 2
+		TPrimalVert{ neartopleft ,XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },
+		TPrimalVert{ nearbottomleft ,XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },
+		// line 3
+		TPrimalVert{ neartopleft ,XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },
+		TPrimalVert{ neartopright ,XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },
+		// line 4
+		TPrimalVert{ neartopright ,XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },
+		TPrimalVert{ nearbottomright ,XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },
+		// line 5
+		TPrimalVert{ neartopright ,XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },
+		TPrimalVert{ fartopright ,XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },
+		// line 6
+		TPrimalVert{ nearbottomleft ,XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },
+		TPrimalVert{ farbottomleft ,XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },
+		// line 7
+		TPrimalVert{ nearbottomleft ,XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },
+		TPrimalVert{ nearbottomright ,XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },
+		// line 8
+		TPrimalVert{ nearbottomleft ,XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },
+		TPrimalVert{ farbottomright ,XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },
+		// line 9
+		TPrimalVert{ farbottomleft ,XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },
+		TPrimalVert{ fartopleft ,XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },
+		// line 10
+		TPrimalVert{ farbottomleft ,XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },
+		TPrimalVert{ farbottomright ,XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },
+		// line 11
+		TPrimalVert{ farbottomright ,XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },
+		TPrimalVert{ fartopright ,XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },
+		// line 12
+		TPrimalVert{ fartopright ,XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },
+		TPrimalVert{ fartopleft ,XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },
+	};
+	ptWorld->atDebugMesh[nThisEntity].m_nVertexCount = 24;
+
+	ptWorld->atDebugMesh[nThisEntity].m_nVertexBufferStride = sizeof(TPrimalVert);
+	ptWorld->atDebugMesh[nThisEntity].m_nVertexBufferOffset = 0;
+
+	ptWorld->atDebugMesh[nThisEntity].m_d3dVertexBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+	ptWorld->atDebugMesh[nThisEntity].m_d3dVertexBufferDesc.ByteWidth = sizeof(TPrimalVert) * ptWorld->atDebugMesh[nThisEntity].m_nVertexCount;
+	ptWorld->atDebugMesh[nThisEntity].m_d3dVertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	ptWorld->atDebugMesh[nThisEntity].m_d3dVertexBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	ptWorld->atDebugMesh[nThisEntity].m_d3dVertexBufferDesc.MiscFlags = 0;
+	ptWorld->atDebugMesh[nThisEntity].m_d3dVertexBufferDesc.StructureByteStride = 0;
+
+
+
+
+	ptWorld->atDebugMesh[nThisEntity].m_d3dVertexData.pSysMem = atCubeVertices;
+
+
+	ptWorld->atDebugMesh[nThisEntity].m_d3dVertexData.SysMemPitch = 0;
+	ptWorld->atDebugMesh[nThisEntity].m_d3dVertexData.SysMemSlicePitch = 0;
+
+
+
+	XMVECTOR zerovector;
+	zerovector.m128_f32[0] = 0;
+	zerovector.m128_f32[1] = 0;
+	zerovector.m128_f32[2] = 0;
+	zerovector.m128_f32[3] = 0;
+	ptWorld->atRigidBody[nThisEntity].gravity = zerovector;
+	ptWorld->atRigidBody[nThisEntity].totalForce = zerovector;
+	ptWorld->atRigidBody[nThisEntity].ground = false;
+
+
+
+
+
+
+
+	ptWorld->atShaderID[nThisEntity].m_nShaderID = 2;
+	//// line 1
+	//render->add_debug_line(neartopleft, fartopleft, black);
+
+	//	// line 2
+
+	//render->add_debug_line(neartopleft, nearbottomleft, black);
+	//	//  line 3
+
+	//render->add_debug_line(neartopleft, neartopright, black);
+	//	// line 4
+
+	//render->add_debug_line(neartopright, nearbottomright, black);
+
+	//	// line 5
+	//render->add_debug_line(neartopright, fartopright, black);
+
+	//	// line 6
+	//render->add_debug_line(nearbottomleft, farbottomleft, black);
+
+	//	// line 7
+	//render->add_debug_line(nearbottomleft, nearbottomright, black);
+
+	//	// line 8
+	//render->add_debug_line(nearbottomright, farbottomright, black);
+
+
+	////// far starting
+	//	// line 9
+	//render->add_debug_line(farbottomleft, fartopleft, black);
+
+	//	// line 10
+	//render->add_debug_line(farbottomleft, farbottomright, black);
+
+	//	//line 11
+	//render->add_debug_line(farbottomright, fartopright, black);
+
+	//	// line 12
+
+	//render->add_debug_line(fartopright, fartopleft, black);
+	ptWorld->atParentWorldMatrix[nThisEntity] = parentWorldMatrixIndex;
+
+	ptWorld->atOffSetMatrix[nThisEntity] = XMMatrixTranslation(xoffset, yoffset, zoffset);
+
+	return nThisEntity;
+}
+
 unsigned int CreateAIVision(TWorld * ptWorld, XMMATRIX VisionSpawnLocation, float zDistance, int parentWorldMatrixIndex, float xoffset, float yoffset, float zoffset)
 {
 	unsigned int nThisEntity = createEntity(ptWorld);
@@ -1253,6 +1385,7 @@ unsigned int CreateAIVision(TWorld * ptWorld, XMMATRIX VisionSpawnLocation, floa
 	ptWorld->atUIMask[nThisEntity].m_tnUIMask = COMPONENT_UIMASK;
 	ptWorld->atPhysicsMask[nThisEntity].m_tnPhysicsMask = COMPONENT_PHYSICSMASK;
 	ptWorld->atProjectiles[nThisEntity].m_tnProjectileMask = COMPONENT_PROJECTILESMASK | COMPONENT_RAYGUN;
+
 	
 	static TPrimalVert atCubeVertices[]
 	{
