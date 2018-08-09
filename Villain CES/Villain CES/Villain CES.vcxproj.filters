@@ -87,6 +87,12 @@
     <ClInclude Include="GameManger.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="DirectXTex-master\WICTextureLoader\WICTextureLoader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectXTex-master\WICTextureLoader\WICTextureLoader12.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -126,6 +132,12 @@
       <Filter>Header Files\Source Files</Filter>
     </ClCompile>
     <ClCompile Include="GameManger.cpp">
+      <Filter>Header Files\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DirectXTex-master\WICTextureLoader\WICTextureLoader.cpp">
+      <Filter>Header Files\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DirectXTex-master\WICTextureLoader\WICTextureLoader12.cpp">
       <Filter>Header Files\Source Files</Filter>
     </ClCompile>
   </ItemGroup>

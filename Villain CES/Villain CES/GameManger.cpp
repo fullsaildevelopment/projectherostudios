@@ -54,7 +54,7 @@ void CGameMangerSystem::LoadLevel()
 		PlayerStartIndex = createClayton(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, tempImport.vtMeshes[meshIndex], tempImport.vtMaterials[meshIndex]);
 	}
 
-	tThisWorld.atClayton[PlayerStartIndex].health = 100;
+	tThisWorld.atClayton[PlayerStartIndex].heath = 100;
 	XMMATRIX wall = m_d3dWorldMatrix;
 	wall.r[3].m128_f32[1] += -1;
 
@@ -676,11 +676,11 @@ int CGameMangerSystem::InGameUpdate()
 
 									}
 								}
-								tThisWorld.atClayton[otherCollisionsIndex[i]].health -= 50;
+								tThisWorld.atClayton[otherCollisionsIndex[i]].heath -= 50;
 							}
 						}
 					}
-					if (tThisWorld.atClayton[PlayerStartIndex].health <= 0) 
+					if (tThisWorld.atClayton[PlayerStartIndex].heath <= 0)
 					{
 						return -1;
 					}

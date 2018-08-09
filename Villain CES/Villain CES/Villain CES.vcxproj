@@ -154,6 +154,8 @@
     <ClInclude Include="AI_Component.h" />
     <ClInclude Include="AI_System.h" />
     <ClInclude Include="Auger.h" />
+    <ClInclude Include="DirectXTex-master\WICTextureLoader\WICTextureLoader.h" />
+    <ClInclude Include="DirectXTex-master\WICTextureLoader\WICTextureLoader12.h" />
     <ClInclude Include="GameManger.h" />
     <ClInclude Include="InputSystem.h" />
     <ClInclude Include="Collision_Component.h" />
@@ -179,6 +181,8 @@
   <ItemGroup>
     <ClCompile Include="AI_System.cpp" />
     <ClCompile Include="Auger.cpp" />
+    <ClCompile Include="DirectXTex-master\WICTextureLoader\WICTextureLoader.cpp" />
+    <ClCompile Include="DirectXTex-master\WICTextureLoader\WICTextureLoader12.cpp" />
     <ClCompile Include="GameManger.cpp" />
     <ClCompile Include="InputSystem.cpp" />
     <ClCompile Include="Collision_System.cpp" />

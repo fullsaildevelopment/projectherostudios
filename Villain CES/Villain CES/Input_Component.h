@@ -14,7 +14,12 @@ struct TInputMask
 {
 	int m_tnInputMask = 0;
 };
-
+struct TCameraToggle
+{
+	bool bDebugMode;
+	bool bWalkMode;
+	bool bAimMode;
+};
 struct TTest
 {
 	float m_tfMovementSpeed = 1.0;
