@@ -16,6 +16,11 @@ enum eGraphicsComponent
 	COMPONENT_PBRMESH		= 1 << 9
 };
 
+struct TGraphicsMask
+{
+	int m_tnGraphicsMask = 0;
+};
+
 struct TKeyframe 
 { 
 	double dTime = 0; 
@@ -27,11 +32,6 @@ struct TAnimationClip
 	double dDuration = 0;
 	std::vector<TKeyframe> m_vtKeyFrames; 
 	std::vector<int> m_vnParentIndicies = std::vector<int>(0);
-};
-
-struct TGraphicsMask
-{
-	int m_tnGraphicsMask = 0;
 };
 
 struct TMeshFormat
@@ -178,7 +178,6 @@ struct TAnimationImport
 	TAnimationClip animClip;
 };
 
-
 struct ImporterData
 {
 	int meshCount = 0;
@@ -237,6 +236,7 @@ struct TSimpleMesh
 
 
 };
+
 struct TAnimation
 {
 	TAnimationClip m_tAnim;

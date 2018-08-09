@@ -132,14 +132,6 @@ void destroyEntity(TWorld * ptWorld, unsigned int nThisEntity)
 	ptWorld->atClip[nThisEntity].tryToShoot = false;
 	ptWorld->atClip[nThisEntity].tryToReload  = false;
 	ptWorld->atClip[nThisEntity].maderay = false;
-
-
-
-
-
-	
-
-
 }
 
 unsigned int createDebugTransformLines(TWorld * ptWorld)
@@ -162,8 +154,6 @@ unsigned int createDebugTransformLines(TWorld * ptWorld)
 		TPrimalVert{ XMFLOAT3(0, 0, 0),    XMFLOAT4(0,0,1,1)},//00	Blue
 		TPrimalVert{ XMFLOAT3(0, 0, 2.0f), XMFLOAT4(0,0,1,1)},//01	Blue	
 	};
-
-	
 
 	ptWorld->atDebugMesh[nThisEntity].m_nVertexBufferStride = sizeof(TPrimalVert);
 	ptWorld->atDebugMesh[nThisEntity].m_nVertexBufferOffset = 0;
@@ -194,7 +184,7 @@ unsigned int createCube(TWorld * ptWorld)
 
 	static TPrimalVert atCubeVertices[]
 	{
-		TPrimalVert{XMFLOAT3(-0.5f, 0.5f, 0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//0 Top F Left
+		TPrimalVert{ XMFLOAT3(-0.5f, 0.5f, 0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//0 Top F Left
 		TPrimalVert{ XMFLOAT3(0.5f, 0.5f, 0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//1 Top F Right
 		TPrimalVert{ XMFLOAT3(-0.5f, -0.5f, 0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//2 Bottom F Left
 		TPrimalVert{ XMFLOAT3(0.5f, -0.5f, 0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//3 Bottom F Right
@@ -256,6 +246,7 @@ unsigned int createCube(TWorld * ptWorld)
 	ptWorld->atShaderID[nThisEntity].m_nShaderID = 3;
 	return 0;
 }
+
 /*
 * createPlayerBox():  creates a simple box
 *
@@ -270,6 +261,7 @@ unsigned int createCube(TWorld * ptWorld)
 * Mod. Date:              07/16/2018
 * Mod. Initials:          AP
 */
+
 /*
 unsigned int createDummyPlayer(TWorld* ptWorld, XMMATRIX playerMatrix)
 {
@@ -324,7 +316,6 @@ unsigned int createPlayerBox(TWorld * ptWorld, CCollisionSystem* pcCollisionSyst
 }
 
 unsigned int CreateClayTon(TWorld * ptWorld)
-
 {
 	unsigned int nThisEntity = createEntity(ptWorld);
 	
@@ -410,6 +401,7 @@ unsigned int CreateClayTon(TWorld * ptWorld)
 
 	return nThisEntity;
 }
+
 /*
 * CreateBullet():  This function creates a inactivebullet
 *
@@ -424,6 +416,7 @@ unsigned int CreateClayTon(TWorld * ptWorld)
 * Mod. Date:              07/16/2018
 * Mod. Initials:          AP
 */
+
 unsigned int CreateBullet(TWorld * ptWorld,XMMATRIX BulletSpawnLocation,int MaterialID)
 {
 	unsigned int nThisEntity = createEntity(ptWorld);
@@ -886,38 +879,39 @@ unsigned int CreateGun(TWorld * ptWorld, XMMATRIX BulletSpawnLocation,int parent
 
 
 
-ptWorld->atCollisionMask[nThisEntity].m_tnCollisionMask = COMPONENT_COLLISIONMASK ;
-ptWorld->atGraphicsMask[nThisEntity].m_tnGraphicsMask = COMPONENT_GRAPHICSMASK | COMPONENT_SIMPLEMESH | COMPONENT_SHADERID;
-ptWorld->atAIMask[nThisEntity].m_tnAIMask = COMPONENT_AIMASK;
-ptWorld->atUIMask[nThisEntity].m_tnUIMask = COMPONENT_UIMASK;
-ptWorld->atPhysicsMask[nThisEntity].m_tnPhysicsMask = COMPONENT_PHYSICSMASK;
-ptWorld->atProjectiles[nThisEntity].m_tnProjectileMask = COMPONENT_PROJECTILESMASK| COMPONENT_CLIP;
-ptWorld->atClip[nThisEntity].nSizeofClipl = clipSize;
-ptWorld->atClip[nThisEntity].FValueOfCoolDown = shootingCOooldown;
-ptWorld->atClip[nThisEntity].fShootingCoolDown = 0;
-ptWorld->atClip[nThisEntity].GunMode = true;
-for (int i = 0; i < ptWorld->atClip[nThisEntity].nSizeofClipl; ++i) {
-	ptWorld->atClip[nThisEntity].nBulletsAvailables.push_back(false);
-}
+	ptWorld->atGraphicsMask[nThisEntity].m_tnGraphicsMask = COMPONENT_GRAPHICSMASK | COMPONENT_SIMPLEMESH | COMPONENT_SHADERID;
+	ptWorld->atCollisionMask[nThisEntity].m_tnCollisionMask = COMPONENT_COLLISIONMASK ;
+	ptWorld->atAIMask[nThisEntity].m_tnAIMask = COMPONENT_AIMASK;
+	ptWorld->atUIMask[nThisEntity].m_tnUIMask = COMPONENT_UIMASK;
+	ptWorld->atPhysicsMask[nThisEntity].m_tnPhysicsMask = COMPONENT_PHYSICSMASK;
+	ptWorld->atProjectiles[nThisEntity].m_tnProjectileMask = COMPONENT_PROJECTILESMASK| COMPONENT_CLIP;
+	ptWorld->atClip[nThisEntity].nSizeofClipl = clipSize;
+	ptWorld->atClip[nThisEntity].FValueOfCoolDown = shootingCOooldown;
+	ptWorld->atClip[nThisEntity].fShootingCoolDown = 0;
+	ptWorld->atClip[nThisEntity].GunMode = true;
+	for (int i = 0; i < ptWorld->atClip[nThisEntity].nSizeofClipl; ++i) 
+	{
+		ptWorld->atClip[nThisEntity].nBulletsAvailables.push_back(false);
+	}
 static TPrimalVert atCubeVertices[]
 {
-	TPrimalVert{ XMFLOAT3(-0, 0.5f, 0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//0 Top F Left
+	TPrimalVert{ XMFLOAT3(-0, 0.5f, 0.5f),		XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//0 Top F Left
 	TPrimalVert{ XMFLOAT3(0.5f, 0.5f, 0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//1 Top F Right
-	TPrimalVert{ XMFLOAT3(-0, -0, 0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//2 Bottom F Left
-	TPrimalVert{ XMFLOAT3(0.5f, -0, 0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//3 Bottom F Right
-	TPrimalVert{ XMFLOAT3(-0, 0.5f, -0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//4 Top B Left
+	TPrimalVert{ XMFLOAT3(-0, -0, 0.5f),		XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//2 Bottom F Left
+	TPrimalVert{ XMFLOAT3(0.5f, -0, 0.5f),		XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//3 Bottom F Right
+	TPrimalVert{ XMFLOAT3(-0, 0.5f, -0.5f),		XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//4 Top B Left
 	TPrimalVert{ XMFLOAT3(0.5f, 0.5f, -0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//5 Top B Right
-	TPrimalVert{ XMFLOAT3(-0, -0, -0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//6 Bottom B Left
-	TPrimalVert{ XMFLOAT3(0.5f, -0, -0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//7 Bottom B Right
+	TPrimalVert{ XMFLOAT3(-0, -0, -0.5f),		XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//6 Bottom B Left
+	TPrimalVert{ XMFLOAT3(0.5f, -0, -0.5f),		XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//7 Bottom B Right
 
-		TPrimalVert{ XMFLOAT3(0.5f, 0.5f, 0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//8 //Top F Right
-		TPrimalVert{ XMFLOAT3(-0, 0.5f, 0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//9 // Top F Left
-		TPrimalVert{ XMFLOAT3(-0, -0, -0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//10 Bottom B Left
-		TPrimalVert{ XMFLOAT3(0.5f, -0, -0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//11 Bottom B Right
-		TPrimalVert{ XMFLOAT3(-0, -0, 0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//12 Bottom F Left
-		TPrimalVert{ XMFLOAT3(-0, 0.5f, 0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//13 Top F Left
-		TPrimalVert{ XMFLOAT3(0.5f, 0.5f, 0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//14 Top F Right
-		TPrimalVert{ XMFLOAT3(0.5f, -0, 0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) }//15 Bottm F Right
+	TPrimalVert{ XMFLOAT3(0.5f, 0.5f, 0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//8 //Top F Right
+	TPrimalVert{ XMFLOAT3(-0, 0.5f, 0.5f),		XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//9 // Top F Left
+	TPrimalVert{ XMFLOAT3(-0, -0, -0.5f),		XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//10 Bottom B Left
+	TPrimalVert{ XMFLOAT3(0.5f, -0, -0.5f),		XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//11 Bottom B Right
+	TPrimalVert{ XMFLOAT3(-0, -0, 0.5f),		XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//12 Bottom F Left
+	TPrimalVert{ XMFLOAT3(-0, 0.5f, 0.5f),		XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//13 Top F Left
+	TPrimalVert{ XMFLOAT3(0.5f, 0.5f, 0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//14 Top F Right
+	TPrimalVert{ XMFLOAT3(0.5f, -0, 0.5f),		XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) }//15 Bottm F Right
 	};
 	ptWorld->atSimpleMesh[nThisEntity].m_nColor = XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f);
 
@@ -951,7 +945,6 @@ static TPrimalVert atCubeVertices[]
 	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexBufferDesc.MiscFlags = 0;
 	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexBufferDesc.StructureByteStride = 0;
 
-
 	ptWorld->atSimpleMesh[nThisEntity].m_d3dVertexData.pSysMem = atCubeVertices;
 	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexData.pSysMem = cubeIndices;
 
@@ -963,17 +956,10 @@ static TPrimalVert atCubeVertices[]
 
 	ptWorld->atShaderID[nThisEntity].m_nShaderID = 3;
 
-
-	
-	
-
 	ptWorld->atWorldMatrix[nThisEntity].worldMatrix = BulletSpawnLocation;
 	ptWorld->atParentWorldMatrix[nThisEntity] = parentWorldMatrixIndex;
-//	ptWorld->atOffSetMatrix[nThisEntity]= XMMatrixTranslation(-1, 0, 10.5);
 	ptWorld->atOffSetMatrix[nThisEntity] = XMMatrixTranslation(xoffset,yoffset,zoffset);
 
-
-	
 	return nThisEntity;
 }
 
@@ -1072,7 +1058,7 @@ unsigned int CreateRayBullet(TWorld * ptWorld, XMMATRIX bulletSpawnLocation, flo
 	ptWorld->atAIMask[nThisEntity].m_tnAIMask = COMPONENT_AIMASK;
 	ptWorld->atUIMask[nThisEntity].m_tnUIMask = COMPONENT_UIMASK;
 	ptWorld->atPhysicsMask[nThisEntity].m_tnPhysicsMask = COMPONENT_PHYSICSMASK;
-	ptWorld->atProjectiles[nThisEntity].m_tnProjectileMask = COMPONENT_PROJECTILESMASK |COMPONENT_RAYGUN;
+	ptWorld->atProjectiles[nThisEntity].m_tnProjectileMask = COMPONENT_PROJECTILESMASK | COMPONENT_RAYGUN;
 	static TPrimalVert atCubeVertices[]
 	{
 		TPrimalVert{ XMFLOAT3(-0, 0.5f, 0),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//0 Top F Left
@@ -1100,11 +1086,7 @@ unsigned int CreateRayBullet(TWorld * ptWorld, XMMATRIX bulletSpawnLocation, flo
 	ptWorld->atDebugMesh[nThisEntity].m_d3dVertexBufferDesc.MiscFlags = 0;
 	ptWorld->atDebugMesh[nThisEntity].m_d3dVertexBufferDesc.StructureByteStride = 0;
 
-
-
-
 	ptWorld->atDebugMesh[nThisEntity].m_d3dVertexData.pSysMem = atCubeVertices;
-
 
 	ptWorld->atDebugMesh[nThisEntity].m_d3dVertexData.SysMemPitch = 0;
 	ptWorld->atDebugMesh[nThisEntity].m_d3dVertexData.SysMemSlicePitch = 0;
@@ -1119,12 +1101,6 @@ unsigned int CreateRayBullet(TWorld * ptWorld, XMMATRIX bulletSpawnLocation, flo
 	ptWorld->atRigidBody[nThisEntity].gravity = zerovector;
 	ptWorld->atRigidBody[nThisEntity].totalForce = zerovector;
 	ptWorld->atRigidBody[nThisEntity].ground = false;
-
-
-
-
-
-	
 
 	ptWorld->atShaderID[nThisEntity].m_nShaderID = 2;
 	for (int i = 0; i < ptWorld->atDebugMesh[nThisEntity].m_nVertexCount; ++i) {
@@ -1863,10 +1839,12 @@ unsigned int createClaytonAnim(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TM
 	}
 #pragma endregion
 
-	if (tMaterial.m_tPBRFileNames[0] == NULL && tMaterial.m_tFileNames[0] == NULL)
+	if ((tMaterial.m_tPBRFileNames[0] == NULL && tMaterial.m_tFileNames[0] == NULL) || 
+		(tMaterial.m_tFileNames[0] == "C" && tMaterial.m_tFileNames[1] == ":"))
 	{
 		result = CreateWICTextureFromFile(m_pd3dDevice, L"TestScene_V1.fbm\\Wood01_col.jpg", &diffuseTexture, &srv, NULL);
 	}
+
 	ptWorld->atGraphicsMask[nThisEntity].m_tnGraphicsMask = COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_ANIMATION | COMPONENT_SHADERID;
 	ptWorld->atCollisionMask[nThisEntity].m_tnCollisionMask = COMPONENT_COLLISIONMASK | COMPONENT_AABB | COMPONENT_NONSTATIC | COMPONENT_NONTRIGGER;
 	ptWorld->atAIMask[nThisEntity].m_tnAIMask = COMPONENT_AIMASK;
@@ -1894,7 +1872,7 @@ unsigned int createClaytonAnim(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TM
 	}
 
 	XMVECTOR playerGravity;
-	playerGravity.m128_f32[1] = -0.000001;
+	playerGravity.m128_f32[1] = -0.00001f;
 	playerGravity.m128_f32[0] = 0;
 	playerGravity.m128_f32[2] = 0;
 	playerGravity.m128_f32[3] = 0;
