@@ -50,7 +50,15 @@ struct TPrimitiveMesh
 	float pos[4] = { 0, 0, 0, 0 };
 	float uv[2] = { 0, 0 };
 	float& operator[] (int i) { return (&pos[0])[i]; }
+};
 
+struct TAnimatedMesh
+{
+	float pos[4] = { 0, 0, 0, 0 };
+	float uv[2] = { 0, 0 };
+	float weights[4] = { 0, 0, 0, 0 };
+	int joints[4] = { 0, 0, 0, 0 };
+	float& operator[] (int i) { return (&pos[0])[i]; }
 };
 
 struct TMyAmbientColor
