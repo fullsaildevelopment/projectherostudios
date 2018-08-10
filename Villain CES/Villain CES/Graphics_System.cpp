@@ -74,17 +74,7 @@ void CGraphicsSystem::InitD3D(HWND cTheWindow)
 
 
 #pragma region RenderTargetView And Viewport
-	if (SUCCEEDED(m_pd3dDevice->QueryInterface(__uuidof(ID3D11Debug), (void**)&debug)))
-	{
-		ID3D11InfoQueue *d3dInfoQueue = nullptr;
-		if (SUCCEEDED(debug->QueryInterface(__uuidof(ID3D11InfoQueue), (void**)&d3dInfoQueue)))
-		{
-#ifdef _DEBUG
-			d3dInfoQueue->SetBreakOnSeverity(D3D11_MESSAGE_SEVERITY_CORRUPTION, true);
-			d3dInfoQueue->SetBreakOnSeverity(D3D11_MESSAGE_SEVERITY_ERROR, true);
-#endif
-		}
-	}
+
 	D3D11_TEXTURE2D_DESC d3dTextureDescription;
 	ZeroMemory(&d3dTextureDescription, sizeof(d3dTextureDescription));
 
