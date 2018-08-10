@@ -72,24 +72,24 @@ void CGameMangerSystem::LoadLevel()
 	AimingLine(&tThisWorld, m_d3dWorldMatrix, PlayerStartIndex, -1, 1, 10.5);
 
 	GunIndexForPlayer = CreateGun(&tThisWorld, m_d3dWorldMatrix, PlayerStartIndex, -1, 1, 10.5, 3, 100);
-	tThisWorld.atClip[GunIndexForPlayer].bulletSpeed = 0.001;
+	tThisWorld.atClip[GunIndexForPlayer].bulletSpeed = 0.001f;
 	AILocation = m_d3dWorldMatrix;
 	AILocation.r[3].m128_f32[0] += -1;
 	AILocation.r[3].m128_f32[2] += -2;
 	int AiIndex = CreateSimpleGunAi(&tThisWorld, AILocation);
-	int GunINdexai = CreateGun(&tThisWorld, m_d3dWorldMatrix, AiIndex, -1.1, 0, 11, 10, 100);
+	int GunINdexai = CreateGun(&tThisWorld, m_d3dWorldMatrix, AiIndex, -1.1f, 0, 11, 10, 100);
 	tThisWorld.atAIMask[AiIndex].GunIndex = GunINdexai;
 
-	tThisWorld.atClip[GunINdexai].bulletSpeed = 0.0001;//Frame Dependent
+	tThisWorld.atClip[GunINdexai].bulletSpeed = 0.0001f;//Frame Dependent
 
 
 	AILocation = m_d3dWorldMatrix;
 	AILocation.r[3].m128_f32[0] += -3;
 	AILocation.r[3].m128_f32[2] += -5;
 	int SimpleAi2 = CreateSimpleSearchAi(&tThisWorld, AILocation);
-	CreateAIVision(&tThisWorld, AILocation, 8, 8, -0.6, -0.1, 10.7);
-	int gun2AI = CreateGun(&tThisWorld, m_d3dWorldMatrix, SimpleAi2, -1.1, 0, 11, 10, 200);
-	tThisWorld.atClip[gun2AI].bulletSpeed = 0.0001;
+	CreateAIVision(&tThisWorld, AILocation, 8, 8, -0.6f, -0.1f, 10.7f);
+	int gun2AI = CreateGun(&tThisWorld, m_d3dWorldMatrix, SimpleAi2, -1.1f, 0, 11, 10, 200);
+	tThisWorld.atClip[gun2AI].bulletSpeed = 0.0001f;
 	XMFLOAT4 blue10;
 	blue10.y = 0;
 	blue10.z = 1;
@@ -221,16 +221,16 @@ int CGameMangerSystem::InGameUpdate()
 			UiPos.r[3].m128_f32[0] += 1;
 			UIIndex.push_back(CreateTemptUIBox(&tThisWorld, UiPos));
 			pcGraphicsSystem->CreateEntityBuffer(&tThisWorld, UIIndex.back());
-			UiPos.r[3].m128_f32[0] += 0.8;
-			UiPos.r[3].m128_f32[1] -= 0.3;
+			UiPos.r[3].m128_f32[0] += 0.8f;
+			UiPos.r[3].m128_f32[1] -= 0.3f;
 
 			UIIndex.push_back(CreateTemptUIBox(&tThisWorld, UiPos));
 			pcGraphicsSystem->CreateEntityBuffer(&tThisWorld, UIIndex.back());
-			UiPos.r[3].m128_f32[1] -= 0.7;
+			UiPos.r[3].m128_f32[1] -= 0.7f;
 
 			UIIndex.push_back(CreateTemptUIBox(&tThisWorld, UiPos));
 			pcGraphicsSystem->CreateEntityBuffer(&tThisWorld, UIIndex.back());
-			UiPos.r[3].m128_f32[1] -= 0.7;
+			UiPos.r[3].m128_f32[1] -= 0.7f;
 
 			UIIndex.push_back(CreateTemptUIBox(&tThisWorld, UiPos));
 			pcGraphicsSystem->CreateEntityBuffer(&tThisWorld, UIIndex.back());
@@ -325,7 +325,7 @@ int CGameMangerSystem::InGameUpdate()
 			{
 				if (tThisWorld.atAIVision[nCurrentEntity].visionRotation < 7 && tThisWorld.atAIVision[nCurrentEntity].keepRotatingRight == true)
 				{
-					tThisWorld.atAIVision[nCurrentEntity].visionRotation += 0.001;
+					tThisWorld.atAIVision[nCurrentEntity].visionRotation += 0.001f;
 					tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = pcAiSystem->LookBackLeftToRight(tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, true);
 				}
 				else if (tThisWorld.atAIVision[nCurrentEntity].keepRotatingRight == true)
@@ -334,7 +334,7 @@ int CGameMangerSystem::InGameUpdate()
 				}
 				else if (tThisWorld.atAIVision[nCurrentEntity].visionRotation > -7 && tThisWorld.atAIVision[nCurrentEntity].keepRotatingRight == false)
 				{
-					tThisWorld.atAIVision[nCurrentEntity].visionRotation -= 0.001;
+					tThisWorld.atAIVision[nCurrentEntity].visionRotation -= 0.001f;
 					tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = pcAiSystem->LookBackLeftToRight(tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, false);
 				}
 				else if (tThisWorld.atAIVision[nCurrentEntity].keepRotatingRight == false)
@@ -437,7 +437,7 @@ int CGameMangerSystem::InGameUpdate()
 				{
 					XMMATRIX gun = tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix;
 					gun.r[3].m128_f32[0] += 1;
-					rayindex = CreateRayBullet(&tThisWorld, gun, 10, PlayerStartIndex, -0.6, -0.1, 10.7);
+					rayindex = CreateRayBullet(&tThisWorld, gun, 10, PlayerStartIndex, -0.6f, -0.1f, 10.7f);
 					pcGraphicsSystem->CreateEntityBuffer(&tThisWorld, rayindex);
 					tThisWorld.atClip[nCurrentEntity].maderay = true;
 				}
@@ -497,7 +497,7 @@ int CGameMangerSystem::InGameUpdate()
 						if (tThisWorld.atClip[nCurrentEntity].fAliveTime[i] < tThisWorld.atClip[nCurrentEntity].FValueOfCoolDown)
 						{
 							pcPhysicsSystem->AddBulletForce(&tThisWorld.atRigidBody[tThisWorld.atClip[nCurrentEntity].nBulletsFired[i]], tThisWorld.atClip[nCurrentEntity].bulletSpeed);
-							tThisWorld.atClip[nCurrentEntity].fAliveTime[i] += 0.1;
+							tThisWorld.atClip[nCurrentEntity].fAliveTime[i] += 0.1f;
 
 						}
 						else
@@ -520,12 +520,12 @@ int CGameMangerSystem::InGameUpdate()
 				}
 				if (tThisWorld.atClip[nCurrentEntity].fShootingCoolDown > 0)
 				{
-					tThisWorld.atClip[nCurrentEntity].fShootingCoolDown -= 0.1;
+					tThisWorld.atClip[nCurrentEntity].fShootingCoolDown -= 0.1f;
 				}
 			}
 		}
 
-		if (tThisWorld.atPhysicsMask[nCurrentEntity].m_tnPhysicsMask == COMPONENT_PHYSICSMASK | COMPONENT_RIGIDBODY)
+		if (tThisWorld.atPhysicsMask[nCurrentEntity].m_tnPhysicsMask == (COMPONENT_PHYSICSMASK | COMPONENT_RIGIDBODY))
 		{
 			tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = pcPhysicsSystem->ResolveForces(&tThisWorld.atRigidBody[nCurrentEntity], tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, true);
 		}
@@ -729,7 +729,7 @@ int CGameMangerSystem::InGameUpdate()
 	}
 
 	pcGraphicsSystem->m_pd3dSwapchain->Present(0, 0);
-	zValue += 0.001;
+	zValue += 0.001f;
 	return 2;
 }
 
