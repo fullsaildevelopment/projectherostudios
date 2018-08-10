@@ -91,7 +91,7 @@ void CGameMangerSystem::LoadLevel()
 	AILocation.r[3].m128_f32[0] += -3;
 	AILocation.r[3].m128_f32[2] += -5;
 	int SimpleAi2 = CreateSimpleSearchAi(&tThisWorld, AILocation);
-	CreateAIVision(&tThisWorld, AILocation, 8, 8, -0.6, -0.1, 10.7);
+//	CreateAIVision(&tThisWorld, AILocation, 8, 8, -0.6, -0.1, 10.7);
 	int gun2AI = CreateGun(&tThisWorld, m_d3dWorldMatrix, SimpleAi2, -1.1, 0, 11, 10, 200);
 	tThisWorld.atClip[gun2AI].bulletSpeed = 0.0001;
 	XMFLOAT4 blue10;
@@ -124,30 +124,57 @@ void CGameMangerSystem::LoadLevel()
 		int myMesh = createMesh(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, tempImport.vtMeshes[meshIndex], tempImport.vtMaterials[meshIndex]);
 	}
 	std::array<plane_t, 6> planes;
-	float4x4 cam;
-	cam.row1.x = m_d3dWorldMatrix.r[0].m128_f32[0];
-	cam.row1.y = m_d3dWorldMatrix.r[0].m128_f32[1];
-	cam.row1.z = m_d3dWorldMatrix.r[0].m128_f32[2];
-	cam.row1.w = m_d3dWorldMatrix.r[0].m128_f32[3];
+	float4x4 secondcamera;
+	secondcamera.row1.x = 1;
+	secondcamera.row1.y = 0;
+	secondcamera.row1.z = 0;
+	secondcamera.row1.w = 0;
+	secondcamera.row2.x = 0;
+	secondcamera.row2.y = cos((-18 * 3.14) / 180.0f);
+	secondcamera.row2.z = -sin((-18 * 3.14) / 180.0f);
+	secondcamera.row2.w = 0;
+	secondcamera.row3.x = 0;
+	secondcamera.row3.y = sin((-18 * 3.14) / 180.0f);
+	secondcamera.row3.z = cos((-18 * 3.14) / 180.0f);
+	secondcamera.row3.w = 0;
+	secondcamera.row4.x = 0;
+	secondcamera.row4.y = 0;
+	secondcamera.row4.z = -5;
+	secondcamera.row4.w = 1;
+	 
+	secondCam.r[0].m128_f32[0] = 1;
+	secondCam.r[0].m128_f32[1] = 0;
+	secondCam.r[0].m128_f32[2] = 0;
+	secondCam.r[0].m128_f32[3] = 0;
 
-	cam.row2.x = m_d3dWorldMatrix.r[1].m128_f32[0];
-	cam.row2.y = m_d3dWorldMatrix.r[1].m128_f32[1];
-	cam.row2.z = m_d3dWorldMatrix.r[1].m128_f32[2];
-	cam.row2.w = m_d3dWorldMatrix.r[1].m128_f32[3];
+	secondCam.r[1].m128_f32[0] = 0;
+	secondCam.r[1].m128_f32[1] = cos((-18 * 3.14) / 180.0f);
+	secondCam.r[1].m128_f32[2] = -sin((-18 * 3.14) / 180.0f);
+	secondCam.r[1].m128_f32[3] = 0;
 
-	cam.row3.x = m_d3dWorldMatrix.r[2].m128_f32[0];
-	cam.row3.y = m_d3dWorldMatrix.r[2].m128_f32[1];
-	cam.row3.z = m_d3dWorldMatrix.r[2].m128_f32[2];
-	cam.row3.w = m_d3dWorldMatrix.r[2].m128_f32[3];
 
-	cam.row4.x = m_d3dWorldMatrix.r[3].m128_f32[0];
-	cam.row4.y = m_d3dWorldMatrix.r[3].m128_f32[1];
-	cam.row4.z = m_d3dWorldMatrix.r[3].m128_f32[2];
-	cam.row4.w = m_d3dWorldMatrix.r[3].m128_f32[3];
+	secondCam.r[2].m128_f32[0] = 0;
+	secondCam.r[2].m128_f32[1] = sin((-18 * 3.14) / 180.0f);
+	secondCam.r[2].m128_f32[2] = cos((-18 * 3.14) / 180.0f);
+	secondCam.r[2].m128_f32[3] = 0;
 
-	tThisWorld.atWorldMatrix[ pcAiSystem->calculate_frustum(&tThisWorld,planes,cam,70,1,0.1,10, SimpleAi2, -2.1, 1.4, 19.6)].worldMatrix= m_d3dWorldMatrix;
+	secondCam.r[3].m128_f32[0] = 0;
+	secondCam.r[3].m128_f32[1] = 0;
+	secondCam.r[3].m128_f32[2] = -5;
+	secondCam.r[3].m128_f32[3] = 1;
+
+
+
+	tThisWorld.atWorldMatrix[ pcAiSystem->calculate_frustum(&tThisWorld,planes, secondcamera,70,1,0.1,20, SimpleAi2, -2.1, 1.4, 19.6)].worldMatrix= secondCam;
 	
 	tThisWorld.atAIVision[SimpleAi2].eyes0 = planes;
+	tThisWorld.atAIVision[SimpleAi2].normalAtBegining[0] = planes[0].normal;
+	tThisWorld.atAIVision[SimpleAi2].normalAtBegining[1] = planes[1].normal;
+	tThisWorld.atAIVision[SimpleAi2].normalAtBegining[2] = planes[2].normal;
+	tThisWorld.atAIVision[SimpleAi2].normalAtBegining[3] = planes[3].normal;
+	tThisWorld.atAIVision[SimpleAi2].normalAtBegining[4] = planes[4].normal;
+	tThisWorld.atAIVision[SimpleAi2].normalAtBegining[5] = planes[5].normal;
+
 
 	if (pcCollisionSystem->m_AAbb.size() !=0 ) {
 		float x = 0;
@@ -160,11 +187,7 @@ void CGameMangerSystem::LoadLevel()
 	tThisWorld.atSimpleMesh[8].m_nColor = blue;
 	for (int nCurrentEntity = 0; nCurrentEntity < ENTITYCOUNT; nCurrentEntity++) 
 	{
-		if (nCurrentEntity == PlayerStartIndex) {
-			TAABB MyAbb = pcCollisionSystem->createAABBS(tThisWorld.atSimpleMesh[nCurrentEntity].m_VertexData, tThisWorld.atAABB[nCurrentEntity]);
-			MyAbb.m_IndexLocation = nCurrentEntity;
-			pcCollisionSystem->AddAiVisioNCheck(MyAbb, nCurrentEntity);
-		}
+		
 		if (tThisWorld.atCollisionMask[nCurrentEntity].m_tnCollisionMask > 1) 
 		{
 			if (tThisWorld.atSimpleMesh[nCurrentEntity].m_nVertexCount > tThisWorld.atDebugMesh[nCurrentEntity].m_nVertexCount) 
@@ -173,6 +196,11 @@ void CGameMangerSystem::LoadLevel()
 				MyAbb.m_IndexLocation = nCurrentEntity;
 				tThisWorld.atAABB[nCurrentEntity] = MyAbb;
 				pcCollisionSystem->AddAABBCollider(MyAbb, nCurrentEntity);
+				if (nCurrentEntity == PlayerStartIndex) {
+					pcCollisionSystem->AddAiVisioNCheck(MyAbb, nCurrentEntity);
+
+				}
+			
 			}
 
 		}			
@@ -400,7 +428,7 @@ int CGameMangerSystem::InGameUpdate()
 
 		}
 		if (tThisWorld.atAIMask[nCurrentEntity].m_tnAIMask == (COMPONENT_AIMASK | COMPONENT_SEARCH) || tThisWorld.atAIMask[nCurrentEntity].m_tnAIMask == (COMPONENT_AIMASK | COMPONENT_SPOTEDPLAYER)) {
-
+			
 
 			if (tThisWorld.atAIVision[nCurrentEntity].keepSearching == true) {
 				if (tThisWorld.atAIVision[nCurrentEntity].visionRotation < 7 && tThisWorld.atAIVision[nCurrentEntity].keepRotatingRight == true) {
@@ -420,10 +448,40 @@ int CGameMangerSystem::InGameUpdate()
 					tThisWorld.atAIVision[nCurrentEntity].keepRotatingRight = true;
 				}
 			}
-			
-		/*	if (pcCollisionSystem->AiVisionCheck(tThisWorld.atAIVision[nCurrentEntity].eyes) == true) {
+			XMVECTOR normal[6];
+			normal[0].m128_f32[0] = tThisWorld.atAIVision[nCurrentEntity].normalAtBegining[0].x;
+			normal[0].m128_f32[1] = tThisWorld.atAIVision[nCurrentEntity].normalAtBegining[0].y;
+			normal[0].m128_f32[2] = tThisWorld.atAIVision[nCurrentEntity].normalAtBegining[0].z;
+
+			normal[1].m128_f32[0] = tThisWorld.atAIVision[nCurrentEntity].normalAtBegining[1].x;
+			normal[1].m128_f32[1] = tThisWorld.atAIVision[nCurrentEntity].normalAtBegining[1].y;
+			normal[1].m128_f32[2] = tThisWorld.atAIVision[nCurrentEntity].normalAtBegining[1].z;
+
+			normal[2].m128_f32[0] = tThisWorld.atAIVision[nCurrentEntity].normalAtBegining[2].x;
+			normal[2].m128_f32[1] = tThisWorld.atAIVision[nCurrentEntity].normalAtBegining[2].y;
+			normal[2].m128_f32[2] = tThisWorld.atAIVision[nCurrentEntity].normalAtBegining[2].z;
+
+			normal[3].m128_f32[0] = tThisWorld.atAIVision[nCurrentEntity].normalAtBegining[3].x;
+			normal[3].m128_f32[1] = tThisWorld.atAIVision[nCurrentEntity].normalAtBegining[3].y;
+			normal[3].m128_f32[2] = tThisWorld.atAIVision[nCurrentEntity].normalAtBegining[3].z;
+
+			normal[4].m128_f32[0] = tThisWorld.atAIVision[nCurrentEntity].normalAtBegining[4].x;
+			normal[4].m128_f32[1] = tThisWorld.atAIVision[nCurrentEntity].normalAtBegining[4].y;
+			normal[4].m128_f32[2] = tThisWorld.atAIVision[nCurrentEntity].normalAtBegining[4].z;
+
+			normal[5].m128_f32[0] = tThisWorld.atAIVision[nCurrentEntity].normalAtBegining[5].x;
+			normal[5].m128_f32[1] = tThisWorld.atAIVision[nCurrentEntity].normalAtBegining[5].y;
+			normal[5].m128_f32[2] = tThisWorld.atAIVision[nCurrentEntity].normalAtBegining[5].z;
+
+
+
+
+		
+
+	
+			if (pcCollisionSystem->AiVisionCheck(tThisWorld.atAIVision[nCurrentEntity].eyes0) == true) {
 				float x = 0;
-			}*/
+			}
 				
 			/*	if (cloasestPlayer < closestWall) {
 			XMFLOAT4 red;
@@ -676,8 +734,8 @@ int CGameMangerSystem::InGameUpdate()
 
 				tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = XMMatrixMultiply(tThisWorld.atOffSetMatrix[nCurrentEntity], tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix);
 
-				if (nCurrentEntity == 18) {
-				//	tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = pcGraphicsSystem->SetDefaultWorldPosition();
+				if (nCurrentEntity == 17) {
+					tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix =  secondCam;
 				}
 			}
 		

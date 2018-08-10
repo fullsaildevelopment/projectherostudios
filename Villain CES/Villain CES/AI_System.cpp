@@ -1,4 +1,4 @@
-#include "stdafx.h"
+
 #include "AI_System.h"
 
 
@@ -96,30 +96,30 @@ int CAISystem::calculate_frustum(TWorld * ptWorld,frustum_t & frustum, float4x4 
 
 //	render->add_debug_line(center, point2, color);
 	frustum[3] = calculate_plane(farbottomleft, nearbottomleft, neartopleft);
-	center = neartopleft + nearbottomleft + fartopleft + farbottomleft;
-	center.x /= 4.0f;
-	center.y /= 4.0f;
-	center.z /= 4.0f;
-	point2;
-	point2 = center + (frustum[3].normal * 2);
+	//center = neartopleft + nearbottomleft + fartopleft + farbottomleft;
+	//center.x /= 4.0f;
+	//center.y /= 4.0f;
+	//center.z /= 4.0f;
+	//point2;
+	//point2 = center + (frustum[3].normal * 2);
 
 	//render->add_debug_line(center, point2, color);
 	frustum[4] = calculate_plane(fartopright, fartopleft, neartopleft);
-	center = fartopleft + fartopright + neartopright + neartopleft;
-	center.x /= 4.0f;
-	center.y /= 4.0f;
-	center.z /= 4.0f;
-	point2;
-	point2 = center + (frustum[4].normal * 2);
+	//center = fartopleft + fartopright + neartopright + neartopleft;
+	//center.x /= 4.0f;
+	//center.y /= 4.0f;
+	//center.z /= 4.0f;
+	//point2;
+	//point2 = center + (frustum[4].normal * 2);
 
 //	render->add_debug_line(center, point2, color);
 	frustum[5] = calculate_plane(nearbottomright, nearbottomleft, farbottomleft);
-	center = nearbottomleft + nearbottomright + farbottomleft + farbottomright;
-	center.x /= 4.0f;
-	center.y /= 4.0f;
-	center.z /= 4.0f;
-	point2;
-	point2 = center + (frustum[5].normal * 2);
+	//center = nearbottomleft + nearbottomright + farbottomleft + farbottomright;
+	//center.x /= 4.0f;
+	//center.y /= 4.0f;
+	//center.z /= 4.0f;
+	//point2;
+	//point2 = center + (frustum[5].normal * 2);
 	//XMFLOAT3 fartopleft, XMFLOAT3 nearbottomleft, XMFLOAT3 neartopright, XMFLOAT3 nearbottomright, XMFLOAT3 fartopright, 
 	//XMFLOAT3 farbottomleft, XMFLOAT3 farbottomright, XMFLOAT3 neartopleft
 	XMFLOAT3 farTopLeft0;
@@ -155,6 +155,15 @@ int CAISystem::calculate_frustum(TWorld * ptWorld,frustum_t & frustum, float4x4 
 	nearTopRIghtLeft0.y = neartopright.y;
 	nearTopRIghtLeft0.z = neartopright.z;
 
+	XMFLOAT3 Center;
+	XMFLOAT3 Point2;
+	Center.x = center.x;
+	Center.y = center.y;
+	Center.z = center.z;
+	Point2.x = point2.x;
+	Point2.y = point2.y;
+	Point2.z = point2.z;
+
 
 
 
@@ -179,7 +188,7 @@ int CAISystem::calculate_frustum(TWorld * ptWorld,frustum_t & frustum, float4x4 
 	//render->add_debug_line(farbottomleft, farbottomright, black);
 	//render->add_debug_line(farbottomright, fartopright, black);
 	//render->add_debug_line(fartopright, fartopleft, black);
-	return CreateFrustumLines(ptWorld, farTopLeft0, nearbottomleft0, neartopRight0, nearbottomRight0, farTopRight0, farBottomLeft0, farbottomright0, nearTopRIghtLeft0, parentWorldMatrixIndex,xoffset,yoffset,zoffset);
+	return CreateFrustumLines(ptWorld, farTopLeft0, nearbottomleft0, neartopRight0, nearbottomRight0, farTopRight0, farBottomLeft0, farbottomright0, nearTopRIghtLeft0, parentWorldMatrixIndex,xoffset,yoffset,zoffset,Center,Point2);
 
 }
 
@@ -213,14 +222,14 @@ void CAISystem::SetNumberOfAI(int aiCount)
 {
 	numberofAI = aiCount;
 }
-
-bool CAISystem::LookForPlayer(XMVECTOR start, XMVECTOR end, XMMATRIX boxWorldMaxtrix, TAABB abbcolider, float * distance, CCollisionSystem * pcCollisionPointer)
-{
-	if (abbcolider.m_IndexLocation == 1) {
-		float x = 0;
-	}
-	return pcCollisionPointer->IsLineInBox(start, end, boxWorldMaxtrix, abbcolider, distance);
-}
+//
+//bool CAISystem::LookForPlayer(XMVECTOR start, XMVECTOR end, XMMATRIX boxWorldMaxtrix, TAABB abbcolider, float * distance, CCollisionSystem * pcCollisionPointer)
+//{
+//	if (abbcolider.m_IndexLocation == 1) {
+//		float x = 0;
+//	}
+//	return pcCollisionPointer->IsLineInBox(start, end, boxWorldMaxtrix, abbcolider, distance);
+//}
 
 XMMATRIX CAISystem::LookBackLeftToRight(XMMATRIX AiMatrix,bool leftorRight)
 {

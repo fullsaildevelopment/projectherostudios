@@ -1235,7 +1235,7 @@ unsigned int CreateRayBullet(TWorld * ptWorld, XMMATRIX bulletSpawnLocation, flo
 	return nThisEntity;
 }
 
-unsigned int CreateFrustumLines(TWorld * ptWorld,XMFLOAT3 fartopleft, XMFLOAT3 nearbottomleft, XMFLOAT3 neartopright, XMFLOAT3 nearbottomright, XMFLOAT3 fartopright, XMFLOAT3 farbottomleft, XMFLOAT3 farbottomright, XMFLOAT3 neartopleft, int parentWorldMatrixIndex, float xoffset, float yoffset, float zoffset)
+unsigned int CreateFrustumLines(TWorld * ptWorld,XMFLOAT3 fartopleft, XMFLOAT3 nearbottomleft, XMFLOAT3 neartopright, XMFLOAT3 nearbottomright, XMFLOAT3 fartopright, XMFLOAT3 farbottomleft, XMFLOAT3 farbottomright, XMFLOAT3 neartopleft, int parentWorldMatrixIndex, float xoffset, float yoffset, float zoffset,  XMFLOAT3 normalLine1, XMFLOAT3 normalLine2)
 {
 	unsigned int nThisEntity = createEntity(ptWorld);
 	ptWorld->atCollisionMask[nThisEntity].m_tnCollisionMask = COMPONENT_COLLISIONMASK;
@@ -1245,6 +1245,8 @@ unsigned int CreateFrustumLines(TWorld * ptWorld,XMFLOAT3 fartopleft, XMFLOAT3 n
 	ptWorld->atPhysicsMask[nThisEntity].m_tnPhysicsMask = COMPONENT_PHYSICSMASK ;
 
 	static TPrimalVert atCubeVertices[]{
+		TPrimalVert{ normalLine1 ,XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },
+		TPrimalVert{ normalLine2 ,XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },
 		// line 1
 		TPrimalVert{ neartopleft ,XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },
 		TPrimalVert{ fartopleft ,XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },
@@ -1282,7 +1284,7 @@ unsigned int CreateFrustumLines(TWorld * ptWorld,XMFLOAT3 fartopleft, XMFLOAT3 n
 		TPrimalVert{ fartopright ,XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },
 		TPrimalVert{ fartopleft ,XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },
 	};
-	ptWorld->atDebugMesh[nThisEntity].m_nVertexCount = 24;
+	ptWorld->atDebugMesh[nThisEntity].m_nVertexCount = 26;
 
 	ptWorld->atDebugMesh[nThisEntity].m_nVertexBufferStride = sizeof(TPrimalVert);
 	ptWorld->atDebugMesh[nThisEntity].m_nVertexBufferOffset = 0;
@@ -2041,5 +2043,6 @@ unsigned int createClayton(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMeshI
 	ptWorld->atWorldMatrix[nThisEntity].worldMatrix = XMMatrixMultiply(ptWorld->atWorldMatrix[nThisEntity].worldMatrix, XMMatrixTranslation(0, 0, 0));
 	ptWorld->atWorldMatrix[nThisEntity].worldMatrix = XMMatrixMultiply(ptWorld->atWorldMatrix[nThisEntity].worldMatrix, XMMatrixRotationRollPitchYaw(tMesh.worldRotation[0], tMesh.worldRotation[1], tMesh.worldRotation[2]));
 	ptWorld->atWorldMatrix[nThisEntity].worldMatrix = XMMatrixMultiply(ptWorld->atWorldMatrix[nThisEntity].worldMatrix, XMMatrixScaling(.01, .01, .01));
+	
 	return nThisEntity;
 }

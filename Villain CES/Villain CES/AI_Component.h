@@ -17,6 +17,8 @@ struct TAIMask
 };
 struct TAIVision {
 	frustum_t eyes0;
+	float3 normalAtBegining[6];
+
 	float    visionRotation;
 	bool	 keepRotatingRight=true;
 	XMMATRIX playerLastKnownLocation;

@@ -11,22 +11,10 @@ CCollisionSystem::~CCollisionSystem()
 {
 }
 
-/*
-* ContainAABB():  Determins if the list of aabbs contains the aabb index being passed in
-*
-* Ins:                  nIndex
-*                    
-*
-* Outs:      
-*
-* Returns:              bool
-*
-* Mod. Date:              07/11/2018
-* Mod. Initials:          AP
-*/
 bool CCollisionSystem::aabb_to_frustum(TAABB & aabb, frustum_t & frustum)
 {
 	for (int i = 0; i < 6; ++i) {
+		
 		if (classify_aabb_to_plane(aabb, frustum[i]) != -1) {
 			continue;
 		}
@@ -36,6 +24,20 @@ bool CCollisionSystem::aabb_to_frustum(TAABB & aabb, frustum_t & frustum)
 	}
 	return true;
 }
+
+/*
+* ContainAABB():  Determins if the list of aabbs contains the aabb index being passed in
+*
+* Ins:                  nIndex
+*
+*
+* Outs:
+*
+* Returns:              bool
+*
+* Mod. Date:              07/11/2018
+* Mod. Initials:          AP
+*/
 bool CCollisionSystem::ContainAABB(int nIndex)
 {
 	for (list<TAABB>::iterator ptr=m_AAbb.begin(); ptr != m_AAbb.end(); ++ptr) {
@@ -45,7 +47,7 @@ bool CCollisionSystem::ContainAABB(int nIndex)
 	}
 	return false;
 }
-int CCollisionSystem::classify_aabb_to_plane(TAABB & aabb, plane_t & plane)
+int CCollisionSystem::classify_aabb_to_plane(TAABB & aabb, plane_t&  plane)
 {
 	aabb_t aabbs;
 	float3 min;
@@ -67,7 +69,7 @@ int CCollisionSystem::classify_aabb_to_plane(TAABB & aabb, plane_t & plane)
 	aabbs.extents.x = max.x - aabbs.center.x;
 	aabbs.extents.y = max.y - aabbs.center.y;
 	aabbs.extents.z = max.z - aabbs.center.z;
-	float r = aabbs.extents.x*abs(plane.normal.x) + aabbs.extents.y*abs(plane.normal.y) + aabbs.extents.z*abs(plane.normal.z);
+	float r = aabbs.extents.x*(plane.normal.x) + aabbs.extents.y*(plane.normal.y) + aabbs.extents.z*(plane.normal.z);
 	sphere_t myspeher;
 	myspeher.center = aabbs.center;
 	myspeher.radius = r;
@@ -107,6 +109,7 @@ int CCollisionSystem::classify_sphere_to_plane(sphere_t & sphere, plane_t & plan
 bool CCollisionSystem::AiVisionCheck(frustum_t eyeSight)
 {
 	for (int i = 0; i < AiFrustumCheck.size(); ++i) {
+	
 		return aabb_to_frustum(AiFrustumCheck[i], eyeSight);
 	}
 }
@@ -519,7 +522,8 @@ int CCollisionSystem::AddAABBCollider(TAABB m_AABB2, int nIndex)
 int CCollisionSystem::AddAiVisioNCheck(TAABB m_AABB2, int nIndex)
 {
 	m_AABB2.m_IndexLocation = nIndex;
-	m_AAbb.push_back(m_AABB2);
+	AiFrustumCheck.push_back(m_AABB2);
+	return 1;
 }
 /*
 * RemoveAABBCollider():  Adds an AABB to the list if it is not already in the list

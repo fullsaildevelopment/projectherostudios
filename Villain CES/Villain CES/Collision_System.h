@@ -1,7 +1,7 @@
 #pragma once
 #include"Collision_Component.h"
 #include <list>
-#include"AI_System.h"
+#include"stdafx.h"
 using namespace std;
 //File header :
 /***
