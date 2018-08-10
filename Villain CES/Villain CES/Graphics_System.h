@@ -87,16 +87,13 @@ public:
 	void ExecutePipeline(ID3D11DeviceContext *pd3dDeviceContext, int m_nIndexCount, int nGraphicsMask, int nShaderID);
 	void UpdateBuffer(TWorld * ptWorld, std::vector<TSimpleMesh> vtVertexVector, int nEntity, int nMask);
 
-
 	ImporterData ReadMesh(const char * input_file_path);
 	XMVECTOR GetCameraPos();
 	XMMATRIX SetDefaultCameraMatrix();
 	//XMMATRIX SetPlayerViewMatrix(XMMATRIX d3d_ViewM, XMMATRIX d3d_playerM);
 	//Last Frame
 	void CleanD3DLevel(TWorld * ptWorld);         //  releases memory
-
 	void CleanD3DObject(TWorld *ptPlanet, int nEntityIndex);
-
 private:
 	ID3D11VertexShader * m_pd3dPrimalVertexShader;
 	ID3D11PixelShader	*m_pd3dPrimalPixelShader;
@@ -110,7 +107,7 @@ private:
 	ID3D11Buffer		*m_pd3dMyVertexBuffer;
 
 	ID3D11Buffer		*m_pd3dBlinnPhongBuffer;
-
+	ID3D11Debug			*debug;
 	float				m_fCameraXPosition;
 	float				m_fCameraYPosition;
 	float				m_fCameraZPosition;

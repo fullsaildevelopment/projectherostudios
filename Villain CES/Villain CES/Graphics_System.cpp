@@ -411,16 +411,6 @@ XMMATRIX CGraphicsSystem::SetDefaultViewMatrix()
 
 	return DefaultViewMatrix;
 }
-
-//XMMATRIX CGraphicsSystem::SetPlayerViewMatrix(XMMATRIX d3d_ViewM, XMMATRIX d3d_playerM)
-//{
-//	XMMATRIX DefaultViewMatrix;
-//
-//	DefaultViewMatrix = XMMatrixLookAtLH(d3d_ViewM.r[3],d3d_playerM.r[3], XMVectorSet(0, 1.0f, 0, 1.0f));
-//
-//	return DefaultViewMatrix;
-//}
-
 XMMATRIX CGraphicsSystem::SetDefaultPerspective()
 {
 
@@ -449,12 +439,10 @@ XMMATRIX CGraphicsSystem::SetDefaultPerspective()
 	DefaultPerspectiveMatrix.r[3].m128_f32[3] = 0;
 	return DefaultPerspectiveMatrix;
 }
-
 XMMATRIX CGraphicsSystem::SetDefaultOffset()
 {
 	return XMMatrixTranslation(0, 1.5f, 8.5f);
 }
-
 XMMATRIX CGraphicsSystem::SetDefaultWorldPosition()
 {
 

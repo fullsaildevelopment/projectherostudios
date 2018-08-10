@@ -153,7 +153,9 @@
   <ItemGroup>
     <ClInclude Include="AI_Component.h" />
     <ClInclude Include="AI_System.h" />
+    <ClInclude Include="Animation_Component.h" />
     <ClInclude Include="Auger.h" />
+    <ClInclude Include="CAnimationSystem.h" />
     <ClInclude Include="GameManger.h" />
     <ClInclude Include="InputSystem.h" />
     <ClInclude Include="Collision_Component.h" />
@@ -179,6 +181,7 @@
   <ItemGroup>
     <ClCompile Include="AI_System.cpp" />
     <ClCompile Include="Auger.cpp" />
+    <ClCompile Include="CAnimationSystem.cpp" />
     <ClCompile Include="DirectXTex-master\DDSTextureLoader\DDSTextureLoader.cpp" />
     <ClCompile Include="DirectXTex-master\WICTextureLoader\WICTextureLoader.cpp" />
     <ClCompile Include="GameManger.cpp" />
