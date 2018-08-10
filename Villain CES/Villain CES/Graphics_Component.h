@@ -270,6 +270,7 @@ struct TCamera
 		Fill out this structure
 	*/
 };
+
 struct TWorldMatrix 
 {
 	XMMATRIX worldMatrix = XMMatrixIdentity();
