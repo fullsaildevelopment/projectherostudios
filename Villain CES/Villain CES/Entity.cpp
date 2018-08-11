@@ -1243,6 +1243,7 @@ unsigned int CreateFrustumLines(TWorld * ptWorld,XMFLOAT3 fartopleft, XMFLOAT3 n
 	ptWorld->atAIMask[nThisEntity].m_tnAIMask = COMPONENT_AIMASK;
 	ptWorld->atUIMask[nThisEntity].m_tnUIMask = COMPONENT_UIMASK;
 	ptWorld->atPhysicsMask[nThisEntity].m_tnPhysicsMask = COMPONENT_PHYSICSMASK ;
+	ptWorld->atAIVision[nThisEntity].indexoffrustum = nThisEntity;
 
 	static TPrimalVert atCubeVertices[]{
 		TPrimalVert{ normalLine1 ,XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },

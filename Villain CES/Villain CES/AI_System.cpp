@@ -192,6 +192,106 @@ int CAISystem::calculate_frustum(TWorld * ptWorld,frustum_t & frustum, float4x4 
 
 }
 
+void CAISystem::UpdateFrustum(frustum_t & frustum, float4x4 camera_transform, float fov, float aspect_ratio, float near_offset, float far_offset)
+{
+	float4 nearcenteTEMPTr = camera_transform.row4 + camera_transform.row3*near_offset;
+	float4 farcenterTEMPT = camera_transform.row4 + camera_transform.row3*far_offset;
+	float3 nearcenter;
+	nearcenter.x = nearcenteTEMPTr.x;
+	nearcenter.y = nearcenteTEMPTr.y;
+	nearcenter.z = nearcenteTEMPTr.z;
+	float3 farcenter;
+	farcenter.x = farcenterTEMPT.x;
+	farcenter.y = farcenterTEMPT.y;
+	farcenter.z = farcenterTEMPT.z;
+	float Hnear = 2 * tan(fov / 2.0f)*near_offset;
+	float Hfar = 2 * tan(fov / 2.0f)*far_offset;
+	float Wnear = Hnear * aspect_ratio;
+	float Wfar = Hfar * aspect_ratio;
+	float3 fartopleft;
+	float3 fartopright;
+	float3 farbottomleft;
+	float3 farbottomright;
+	float3 neartopleft;
+	float3 neartopright;
+	float3 nearbottomleft;
+	float3 nearbottomright;
+	float3 black;
+	black.x = 0;
+	black.y = 0;
+	black.z = 0;
+	float3 camY;
+	camY.x = camera_transform.row2.x;
+	camY.y = camera_transform.row2.y;
+	camY.z = camera_transform.row2.z;
+	float3 camX;
+	camX.x = camera_transform.row1.x;
+	camX.y = camera_transform.row1.y;
+	camX.z = camera_transform.row1.z;
+
+	fartopleft = farcenter + camY * (Hfar*0.5f) - camX * (Wfar*0.5);
+	fartopright = farcenter + camY * (Hfar*0.5f) + camX * (Wfar*0.5);
+	farbottomleft = farcenter - camY * (Hfar*0.5f) - camX * (Wfar*0.5);
+	farbottomright = farcenter - camY * (Hfar*0.5f) + camX * (Wfar*0.5);
+
+
+	neartopleft = nearcenter + camY * (Hnear*0.5f) - camX * (Wnear*0.5);
+	neartopright = nearcenter + camY * (Hnear*0.5f) + camX * (Wnear*0.5);
+	nearbottomleft = nearcenter - camY * (Hnear*0.5f) - camX * (Wnear*0.5);
+	nearbottomright = nearcenter - camY * (Hnear*0.5f) + camX * (Wnear*0.5);
+	frustum[0] = calculate_plane(farbottomright, farbottomleft, fartopleft);
+	float3 center = farbottomright + farbottomleft + fartopright + fartopleft;
+	center.x /= 4.0f;
+	center.y /= 4.0f;
+	center.z /= 4.0f;
+	float3 point2;
+
+	point2 = center + (frustum[0].normal * 5);
+	float3 color;
+	color.x = 1;
+	//render->add_debug_line(center, point2, color);
+
+
+
+	frustum[1] = calculate_plane(nearbottomright, farbottomright, fartopright);
+	center = farbottomright + fartopright + nearbottomright + neartopright;
+	center.x /= 4.0f;
+	center.y /= 4.0f;
+	center.z /= 4.0f;
+	point2;
+	point2 = center + (frustum[1].normal * 5);
+
+	//render->add_debug_line(center, point2, color);
+	frustum[2] = calculate_plane(nearbottomleft, nearbottomright, neartopright);
+	center = nearbottomright + nearbottomleft + neartopleft + neartopright;
+	center.x /= 4.0f;
+	center.y /= 4.0f;
+	center.z /= 4.0f;
+	point2;
+	point2 = center + (frustum[2].normal * 2);
+
+	//	render->add_debug_line(center, point2, color);
+	frustum[3] = calculate_plane(farbottomleft, nearbottomleft, neartopleft);
+	//center = neartopleft + nearbottomleft + fartopleft + farbottomleft;
+	//center.x /= 4.0f;
+	//center.y /= 4.0f;
+	//center.z /= 4.0f;
+	//point2;
+	//point2 = center + (frustum[3].normal * 2);
+
+	//render->add_debug_line(center, point2, color);
+	frustum[4] = calculate_plane(fartopright, fartopleft, neartopleft);
+	//center = fartopleft + fartopright + neartopright + neartopleft;
+	//center.x /= 4.0f;
+	//center.y /= 4.0f;
+	//center.z /= 4.0f;
+	//point2;
+	//point2 = center + (frustum[4].normal * 2);
+
+	//	render->add_debug_line(center, point2, color);
+	frustum[5] = calculate_plane(nearbottomright, nearbottomleft, farbottomleft);
+}
+
 void CAISystem::FollowObject(XMMATRIX thingToFollow, XMMATRIX * AIMatrix)
 {
 	XMMATRIX beforeitChanges = *AIMatrix;

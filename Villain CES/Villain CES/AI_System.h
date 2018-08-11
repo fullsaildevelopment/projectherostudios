@@ -48,6 +48,7 @@ public:
 	}
 public:
 	int calculate_frustum(TWorld * ptWorld,frustum_t& frustum, float4x4 camera_transform, float fov, float aspect_ratio, float near_offset, float far_offset, int parentWorldMatrixIndex, float xoffset, float yoffset, float zoffset);
+	void UpdateFrustum(frustum_t& frustum, float4x4 camera_transform, float fov, float aspect_ratio, float near_offset, float far_offset);
 	//void FollowAndShoot(XMMATRIX playerMatrix, Clips* AiGun);
 	void FollowObject(XMMATRIX thingToFollow, XMMATRIX* AIMatrix);
 	void ShootGun(Clips* AIGun);

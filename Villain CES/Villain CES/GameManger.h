@@ -18,6 +18,7 @@ public:
 	int LoadMainMenu();
 	void InitilizeMainMenu();
 private:
+	
 	XMMATRIX secondCam;
 	CCollisionSystem * pcCollisionSystem;
 	TWorld tThisWorld;

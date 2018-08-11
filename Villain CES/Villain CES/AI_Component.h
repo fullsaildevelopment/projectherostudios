@@ -18,6 +18,7 @@ struct TAIMask
 struct TAIVision {
 	frustum_t eyes0;
 	float3 normalAtBegining[6];
+	int indexoffrustum;
 
 	float    visionRotation;
 	bool	 keepRotatingRight=true;
