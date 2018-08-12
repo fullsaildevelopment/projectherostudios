@@ -3,7 +3,9 @@
 
 
 CAISystem::CAISystem()
+	:open([](PlannerNode* const& c, PlannerNode* const& t) {return c->finalCost > t->finalCost; })
 {
+
 }
 
 
@@ -367,4 +369,88 @@ XMMATRIX CAISystem::LookBackLeftToRight(XMMATRIX AiMatrix,bool leftorRight)
 int CAISystem::GetNumberOfAI()
 {
 	return numberofAI;
+}
+
+void CAISystem::FindBestPath(int start,int end,vector<XMVECTOR>* directions)
+{
+	if (open.size() == 0) {
+		SearchNode* beiningingnode = Nodes[start];
+		PlannerNode* firstplan = new PlannerNode();
+		firstplan->state = beiningingnode;
+		open.push(firstplan);
+	}
+	while (!open.empty()) {
+		PlannerNode* current = open.front();
+		open.pop();
+		if (current->state == Nodes[end]) {
+			MakeDirections(directions, current);
+			return;
+		}
+		for (int i = 0; i < current->state->edges.size(); ++i) {
+			SearchNode* successor = current->state->edges[i];
+			float temptcost = calculateTest(current, successor);
+			if (visited[successor] != nullptr) {
+				PlannerNode* babynode = visited[successor];
+				if (temptcost < babynode->givenCost) {
+					open.remove(babynode);
+					babynode->givenCost = temptcost;
+					babynode->finalCost = GetFinalCost(babynode);
+					babynode->parent = current;
+					open.push(babynode);
+				}
+			}
+			else
+			{
+				PlannerNode* babynode = new PlannerNode();
+				babynode->state = successor;
+				babynode->givenCost = temptcost;
+				babynode->heuristicCost = CalcualteDistance(successor->tile, Nodes[end]->tile);
+				babynode->finalCost = GetFinalCost(babynode);
+				babynode->parent = current;
+				visited[successor] = babynode;
+				open.push(babynode);
+			}
+		}
+	//	time -= 1;
+	}
+}
+
+void CAISystem::AddNodeToPathFinding(int index, XMFLOAT3 pos, float weight)
+{
+	SearchNode* newNode = new SearchNode();
+	newNode->tile = new tiledata();
+	newNode->weight = weight;
+	newNode->tile->pos = pos;
+	Nodes[index] = newNode;
+	
+	//newNode->edges
+}
+
+void CAISystem::AddEdgestoNode(int nodeyouAreChanging, vector<int> edges)
+{
+	for (int i = 0; i < edges.size(); ++i) {
+		Nodes[nodeyouAreChanging]->edges.push_back(Nodes[edges[i]]);
+	}
+}
+
+float CAISystem::CalcualteDistance(tiledata * _search, tiledata * goal)
+{
+	return sqrtf(
+		((_search->pos.x - goal->pos.x)*(_search->pos.x - goal->pos.x)) +
+		((_search->pos.y - goal->pos.y)*(_search->pos.y - goal->pos.y)) +
+		((_search->pos.z - goal->pos.z)*(_search->pos.z - goal->pos.z))
+	);
+}
+
+void CAISystem::MakeDirections(vector<XMVECTOR>* directions, PlannerNode* current)
+{
+	if (current != nullptr) {
+		XMVECTOR pos;
+		pos.m128_f32[0] = current->state->tile->pos.x;
+		pos.m128_f32[1] = current->state->tile->pos.y;
+		pos.m128_f32[2] = current->state->tile->pos.z;
+
+		directions->insert(directions->begin(), pos);
+		MakeDirections(directions, current->parent);
+	}
 }

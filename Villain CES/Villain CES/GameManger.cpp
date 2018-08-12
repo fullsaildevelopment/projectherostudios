@@ -195,6 +195,45 @@ void CGameMangerSystem::LoadLevel()
 	tThisWorld.atAIVision[SimpleAi2].normalAtBegining[3] = planes[3].normal;
 	tThisWorld.atAIVision[SimpleAi2].normalAtBegining[4] = planes[4].normal;
 	tThisWorld.atAIVision[SimpleAi2].normalAtBegining[5] = planes[5].normal;
+	AILocation.r[3].m128_f32[0] -= 7;
+	int nodeLocation = CreateNodePoint(&tThisWorld, AILocation);
+	XMFLOAT3 nodePosition;
+	nodePosition.x = AILocation.r[3].m128_f32[0];
+	nodePosition.y = AILocation.r[3].m128_f32[1];
+	nodePosition.z = AILocation.r[3].m128_f32[2];
+
+	pcAiSystem->AddNodeToPathFinding(nodeLocation, nodePosition,1);
+	AILocation.r[3].m128_f32[0] += 4;
+	AILocation.r[3].m128_f32[2] += -4;
+
+	int nodeLocation2 = CreateNodePoint(&tThisWorld, AILocation);
+
+	nodePosition.x = AILocation.r[3].m128_f32[0];
+	nodePosition.y = AILocation.r[3].m128_f32[1];
+	nodePosition.z = AILocation.r[3].m128_f32[2];
+
+	pcAiSystem->AddNodeToPathFinding(nodeLocation2, nodePosition, 0);
+	XMMATRIX pathfindAI = AILocation;
+	pathfindAI.r[3].m128_f32[0] += 3;
+	nodePosition.x = pathfindAI.r[3].m128_f32[0];
+	nodePosition.y = pathfindAI.r[3].m128_f32[1];
+	nodePosition.z = pathfindAI.r[3].m128_f32[2];
+	CreateTestAIPathFinding(&tThisWorld, pathfindAI);
+	int nodelocation3  = CreateNodePoint(&tThisWorld, pathfindAI);
+	pcAiSystem->AddNodeToPathFinding(nodelocation3, nodePosition, 1);
+	vector<int> edges;
+	edges.push_back(nodeLocation2);
+	edges.push_back(nodelocation3);
+	pcAiSystem->AddEdgestoNode(nodeLocation, edges);
+	edges.clear();
+	edges.push_back(nodeLocation);
+	edges.push_back(nodelocation3);
+	pcAiSystem->AddEdgestoNode(nodeLocation2, edges);
+	edges.clear();
+//	edges.push_back(nodeLocation);
+	edges.push_back(nodeLocation2);
+	pcAiSystem->AddEdgestoNode(nodelocation3, edges);
+
 
 
 	if (pcCollisionSystem->m_AAbb.size() !=0 ) {
@@ -521,7 +560,32 @@ int CGameMangerSystem::InGameUpdate()
 		}
 			//else if(tThisWorld.atAIMask[nCurrentEntity].m_tnAIMask==())
 		
-		
+		if (tThisWorld.atAIMask[nCurrentEntity].m_tnAIMask == (COMPONENT_AIMASK | COMPONENT_PATHFINDTEST)) {
+			if (testingPathFinding == false) {
+				
+				pcAiSystem->FindBestPath(21, 18, &directions);
+				testingPathFinding = true;
+
+			}
+			else {
+				if (index < directions.size()) {
+					XMVECTOR direction = directions[index] - tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix.r[3];
+					direction = XMVector3Normalize(direction);
+					direction *= 0.001f;//Frame Dependent
+					XMMATRIX localMatrix2 = XMMatrixTranslationFromVector(direction);
+
+					tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = XMMatrixMultiply(localMatrix2, tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix);
+					if (sqrtf(
+						((directions[index].m128_f32[0] - tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix.r[3].m128_f32[0])*(directions[index].m128_f32[0] - tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix.r[3].m128_f32[0])) +
+						((directions[index].m128_f32[1] - tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix.r[3].m128_f32[1])*(directions[index].m128_f32[1] - tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix.r[3].m128_f32[1])) +
+						((directions[index].m128_f32[2] - tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix.r[3].m128_f32[2])*(directions[index].m128_f32[2] - tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix.r[3].m128_f32[2]))
+					) < 1) {
+						index++;
+					}
+				}
+			}
+			
+		}
 		if (tThisWorld.atProjectiles[nCurrentEntity].m_tnProjectileMask == (COMPONENT_PROJECTILESMASK | COMPONENT_CLIP)) 
 		{
 			if (tThisWorld.atClip[nCurrentEntity].GunMode == false && tThisWorld.atClip[nCurrentEntity].tryToShoot == true) 

@@ -3,7 +3,10 @@
 
 #include"Entity.h"
 #include"stdafx.h"
-
+#include"PriorityQueue.h"
+#include<map>
+#include "platform.h"
+using namespace fullsail_ai;
 
 class CAISystem
 {
@@ -57,7 +60,43 @@ public:
 	XMMATRIX LookBackLeftToRight(XMMATRIX worldMatrix,bool leftorRight);
 	
 	int GetNumberOfAI();
+	void FindBestPath(int start, int end, vector<XMVECTOR>* directions);
+	void AddNodeToPathFinding(int index, XMFLOAT3 pos, float weight);
+	void AddEdgestoNode(int nodeyouAreChanging, vector<int> edges);
 private:
+	
 	int numberofAI;
+	struct tiledata {
+		XMFLOAT3 pos;
+	};
+	struct SearchNode
+	{
+		float weight;
+		tiledata* tile;
+		vector<SearchNode*> edges;
+	};
+
+	struct PlannerNode
+	{
+
+		SearchNode* state = nullptr;
+		PlannerNode *parent = nullptr;
+		float heuristicCost;
+		float givenCost;
+		float finalCost;
+
+
+	};
+	map<int, SearchNode*>Nodes;
+	float CalcualteDistance(tiledata* _search, tiledata * goal);
+	map<SearchNode*, PlannerNode*> visited;
+	PriorityQueue<PlannerNode*> open;
+	float GetFinalCost(PlannerNode* finalCOst) {
+		return finalCOst->givenCost + finalCOst->heuristicCost*finalCOst->state->weight;
+	}
+	float calculateTest(PlannerNode* _givencost, SearchNode* _weight) {
+		return _givencost->givenCost + _weight->weight;
+	}
+	void MakeDirections(vector<XMVECTOR> *directions, PlannerNode* current);
 };
 

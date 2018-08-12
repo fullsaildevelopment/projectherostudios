@@ -37,6 +37,9 @@ private:
 	bool GamePaused = false;
 	bool GameStart;
 	bool DrawUI = true;
+	bool testingPathFinding;
+	vector<XMVECTOR> directions;
+	int index = 1;
 	XMMATRIX m_d3dWorldMatrix;
 	XMMATRIX m_d3dViewMatrix;
 	XMMATRIX m_d3dProjectionMatrix;
