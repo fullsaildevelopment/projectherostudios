@@ -450,6 +450,13 @@ void CAISystem::PathPlaningMovement(TAIPathFinding* path, XMMATRIX* worldMatrix)
 			path->index++;
 		}
 	}
+	else {
+		path->directions.clear();
+		path->testingPathFinding = true;
+		path->startingNode = path->Goal;
+		path->Goal = 15;
+		path->index = 0;
+	}
 }
 
 float CAISystem::CalcualteDistance(tiledata * _search, tiledata * goal)

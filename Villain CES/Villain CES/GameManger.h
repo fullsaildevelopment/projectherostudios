@@ -19,6 +19,8 @@ public:
 	void InitilizeMainMenu();
 	void LoadPathFindingTest();
 	int PathFindingExample();
+	void FirstSkeltonAiTestLoad();
+	int SpacePirateGamePlay();
 private:
 	
 	XMMATRIX secondCam;

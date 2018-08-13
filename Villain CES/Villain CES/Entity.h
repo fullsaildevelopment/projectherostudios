@@ -40,6 +40,7 @@ struct TWorld
 	TAIMask			atAIMask[ENTITYCOUNT];
 	TAIVision		atAIVision[ENTITYCOUNT];
 	TAIPathFinding	atPathPlanining[ENTITYCOUNT];
+	TAIActive		atActiveAI[ENTITYCOUNT];
 	//Collision
 	TCollisionMask	atCollisionMask[ENTITYCOUNT];
 	TAABB			atAABB[ENTITYCOUNT];
@@ -62,7 +63,7 @@ struct TPrimalVert
 };
 
 
-
+unsigned int CreateDoorWay(TWorld* ptWorld, XMMATRIX SpawnPosition);
 unsigned int SpawnLevelChanger(TWorld *ptWorld, XMMATRIX SpawnPosition);
 unsigned int createEntity(TWorld *ptWorld);
 
@@ -95,5 +96,5 @@ unsigned int CreateRayBullet(TWorld * ptWorld, XMMATRIX bulletSpawnLocation, flo
 unsigned int CreateFrustumLines(TWorld * ptWorld,XMFLOAT3 fartopleft, XMFLOAT3 nearbottomleft, XMFLOAT3 neartopright, XMFLOAT3 nearbottomright, XMFLOAT3 fartopright, XMFLOAT3 farbottomleft, XMFLOAT3 farbottomright, XMFLOAT3 neartopleft, int parentWorldMatrixIndex, float xoffset, float yoffset, float zoffset,XMFLOAT3 normalLine1, XMFLOAT3 normalLine2);
 unsigned int CreateNodePoint(TWorld * ptWorld, XMMATRIX SpawnPosition);
 unsigned int CreateTestAIPathFinding(TWorld * ptWorld, XMMATRIX SpawnPosition);
-
+unsigned int CreateSpacePirate(TWorld * ptWorld, XMMATRIX SpawnPosition);
 

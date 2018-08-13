@@ -74,7 +74,19 @@ void CAuger::Update(bool* loopgame)
 		*loopgame = false;
 		break;
 	case 5 :
-
+		pcGameMangerSystem->LoadPathFindingTest();
+		CurrentSpotInGame = 6;
+		break;
+	case 6 :
+		CurrentSpotInGame=pcGameMangerSystem->PathFindingExample();
+		break;
+	case 7 :
+		  pcGameMangerSystem->FirstSkeltonAiTestLoad();
+		  CurrentSpotInGame = 8;
+		  break;
+	case 8 :
+		CurrentSpotInGame = pcGameMangerSystem->SpacePirateGamePlay();
+		break;
 	default:
 		break;
 	}
