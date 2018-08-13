@@ -1,5 +1,5 @@
 #include "GameManger.h"
-
+#define AI_ON false
 CGameMangerSystem::CGameMangerSystem(HWND window,CInputSystem* _pcInputSystem)
 {
 	cApplicationWindow = window;
@@ -481,15 +481,14 @@ int CGameMangerSystem::InGameUpdate()
 		{
 			return -1;
 		}
-		if (tThisWorld.atAIMask[nCurrentEntity].m_tnAIMask == (COMPONENT_AIMASK | COMPONENT_FOLLOW)||tThisWorld.atAIMask[nCurrentEntity].m_tnAIMask==(COMPONENT_SHOOT| COMPONENT_AIMASK | COMPONENT_FOLLOW)) {
-				
-				// ai code do not delete
-
-				
-		//		pcAiSystem->FollowObject(tThisWorld.atWorldMatrix[PlayerStartIndex].worldMatrix, &tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix);
-		//		pcAiSystem->ShootGun(&tThisWorld.atClip[tThisWorld.atAIMask[nCurrentEntity].GunIndex]);
-
+		if (tThisWorld.atAIMask[nCurrentEntity].m_tnAIMask == (COMPONENT_AIMASK | COMPONENT_FOLLOW) || tThisWorld.atAIMask[nCurrentEntity].m_tnAIMask == (COMPONENT_SHOOT | COMPONENT_AIMASK | COMPONENT_FOLLOW))
+		{
+#if AI_ON				
+			pcAiSystem->FollowObject(tThisWorld.atWorldMatrix[PlayerStartIndex].worldMatrix, &tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix);
+			pcAiSystem->ShootGun(&tThisWorld.atClip[tThisWorld.atAIMask[nCurrentEntity].GunIndex]);
+#endif // AI_ON
 		}
+
 		if (tThisWorld.atAIMask[nCurrentEntity].m_tnAIMask == (COMPONENT_AIMASK | COMPONENT_SEARCH) || tThisWorld.atAIMask[nCurrentEntity].m_tnAIMask == (COMPONENT_AIMASK | COMPONENT_SPOTEDPLAYER)) {
 			
 
@@ -535,7 +534,7 @@ int CGameMangerSystem::InGameUpdate()
 //	 pcAiSystem->calculate_frustum(&tThisWorld,tThisWorld.atAIVision[nCurrentEntity].eyes0, secondcamera,70,1,0.1,20, nCurrentEntity, -2.1, 1.4, 19.6);
 			if (pcCollisionSystem->AiVisionCheck(tThisWorld.atAIVision[nCurrentEntity].eyes0) == true) {
 				float x = 0;
-			cout << "see u" << '/n';
+			
 			tThisWorld.atSimpleMesh[nCurrentEntity].m_nColor= XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f);
 			}
 			else {
