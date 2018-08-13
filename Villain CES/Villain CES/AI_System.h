@@ -63,6 +63,7 @@ public:
 	void FindBestPath(int start, int end, vector<XMVECTOR>* directions);
 	void AddNodeToPathFinding(int index, XMFLOAT3 pos, float weight);
 	void AddEdgestoNode(int nodeyouAreChanging, vector<int> edges);
+	void PathPlaningMovement(TAIPathFinding* path, XMMATRIX* worldMatrix);
 private:
 	
 	int numberofAI;

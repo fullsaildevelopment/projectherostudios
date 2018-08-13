@@ -433,6 +433,25 @@ void CAISystem::AddEdgestoNode(int nodeyouAreChanging, vector<int> edges)
 	}
 }
 
+void CAISystem::PathPlaningMovement(TAIPathFinding* path, XMMATRIX* worldMatrix)
+{
+	if (path->index <path->directions.size()) {
+		XMVECTOR direction =path->directions[path->index] - worldMatrix->r[3];
+		direction = XMVector3Normalize(direction);
+		direction *= 0.001f;//Frame Dependent
+		XMMATRIX localMatrix2 = XMMatrixTranslationFromVector(direction);
+
+		*worldMatrix = XMMatrixMultiply(localMatrix2, *worldMatrix);
+		if (sqrtf(
+			((path->directions[path->index].m128_f32[0] - worldMatrix->r[3].m128_f32[0])*(path->directions[path->index].m128_f32[0] - worldMatrix->r[3].m128_f32[0])) +
+			((path->directions[path->index].m128_f32[1] - worldMatrix->r[3].m128_f32[1])*(path->directions[path->index].m128_f32[1] - worldMatrix->r[3].m128_f32[1])) +
+			((path->directions[path->index].m128_f32[2] - worldMatrix->r[3].m128_f32[2])*(path->directions[path->index].m128_f32[2] - worldMatrix->r[3].m128_f32[2]))
+		) < 1) {
+			path->index++;
+		}
+	}
+}
+
 float CAISystem::CalcualteDistance(tiledata * _search, tiledata * goal)
 {
 	return sqrtf(

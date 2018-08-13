@@ -76,6 +76,8 @@ void CAuger::Update(bool* loopgame)
 	case 4:
 		*loopgame = false;
 		break;
+	case 5 :
+
 	default:
 		break;
 	}

@@ -93,6 +93,9 @@ unsigned int createEntity(TWorld * ptWorld)
 		if (ptWorld->atGraphicsMask[nCurrentEntity].m_tnGraphicsMask == COMPONENT_NONE)
 		{
 			printf("Entity created: %d\n", nCurrentEntity);
+			if (nCurrentEntity == 16) {
+				float x = 0;
+			}
 			return(nCurrentEntity);
 		}
 	}
@@ -1953,7 +1956,7 @@ unsigned int createMesh(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMeshImpo
 			}
 		}
 		pMesh[i] = tmp;
-		ptWorld->atMesh[nThisEntity].m_VertexData.push_back(XMFLOAT3(tmp.pos[0], tmp.pos[1], tmp.pos[2]));
+	//	ptWorld->atMesh[nThisEntity].m_VertexData.push_back(XMFLOAT3(tmp.pos[0], tmp.pos[1], tmp.pos[2]));
 
 	}
 

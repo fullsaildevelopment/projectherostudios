@@ -1,6 +1,8 @@
 #pragma once
+#include"stdafx.h"
 #ifndef CES_AI_COMPONENT_H
 #define CES_AI_COMPONENT_H
+
 enum eAIComponent
 {
 	COMPONENT_AIMASK = 1 << 0,
@@ -27,6 +29,15 @@ struct TAIVision {
 	int		 wallIndex = -1;
 	bool keepSearching = true;
 	
+
+};
+
+struct TAIPathFinding {
+	vector<XMVECTOR> directions;
+	int index = 0;
+	int startingNode;
+	int Goal;
+	bool testingPathFinding = true;
 
 };
 

@@ -39,6 +39,7 @@ struct TWorld
 	//AI
 	TAIMask			atAIMask[ENTITYCOUNT];
 	TAIVision		atAIVision[ENTITYCOUNT];
+	TAIPathFinding	atPathPlanining[ENTITYCOUNT];
 	//Collision
 	TCollisionMask	atCollisionMask[ENTITYCOUNT];
 	TAABB			atAABB[ENTITYCOUNT];
