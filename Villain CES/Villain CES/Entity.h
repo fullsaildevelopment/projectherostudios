@@ -23,7 +23,7 @@ struct TWorld
 	TMaterial		atMaterial[ENTITYCOUNT];
 	TTexture		atTexture[ENTITYCOUNT];
 	TShaderID		atShaderID[ENTITYCOUNT];
-	TCamera			atCamera[ENTITYCOUNT];
+	//TCamera			atCamera[ENTITYCOUNT];
 	TWorldMatrix	atWorldMatrix[ENTITYCOUNT];
 	int				atParentWorldMatrix[ENTITYCOUNT];
 	XMMATRIX		atOffSetMatrix[ENTITYCOUNT];
@@ -59,6 +59,7 @@ struct TPrimalVert
 	XMFLOAT3 m_d3dfPosition;
 	XMFLOAT4 m_d3dfColor;
 };
+
 
 
 
