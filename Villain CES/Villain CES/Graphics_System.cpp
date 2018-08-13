@@ -188,7 +188,7 @@ void CGraphicsSystem::CleanD3D(TWorld *ptPlanet)
 		}
 		destroyEntity(ptPlanet, nEntityIndex);
 #ifdef _DEBUG
-		HRESULT result = debug->ReportLiveDeviceObjects(D3D11_RLDO_SUMMARY | D3D11_RLDO_DETAIL);
+	//	HRESULT result = debug->ReportLiveDeviceObjects(D3D11_RLDO_SUMMARY | D3D11_RLDO_DETAIL);
 
 #endif // !_DEBUG
 
