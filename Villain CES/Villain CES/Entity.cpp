@@ -11,6 +11,7 @@ unsigned int SpawnLevelChanger(TWorld * ptWorld, XMMATRIX SpawnPosition)
 	ptWorld->atUIMask[nThisEntity].m_tnUIMask = COMPONENT_UIMASK;
 	ptWorld->atPhysicsMask[nThisEntity].m_tnPhysicsMask = COMPONENT_PHYSICSMASK;
 	ptWorld->atAABB[nThisEntity].m_SceneChange = 1;
+
 	static TPrimalVert atCubeVertices[]
 	{
 		TPrimalVert{ XMFLOAT3(-0.5f, 0.5f, 0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//0 Top F Left
@@ -952,8 +953,6 @@ unsigned int CreateGun(TWorld * ptWorld, XMMATRIX BulletSpawnLocation, int paren
 {
 	unsigned int nThisEntity = createEntity(ptWorld);
 
-
-
 	ptWorld->atGraphicsMask[nThisEntity].m_tnGraphicsMask = COMPONENT_GRAPHICSMASK | COMPONENT_SIMPLEMESH | COMPONENT_SHADERID;
 	ptWorld->atCollisionMask[nThisEntity].m_tnCollisionMask = COMPONENT_COLLISIONMASK;
 	ptWorld->atAIMask[nThisEntity].m_tnAIMask = COMPONENT_AIMASK;
@@ -1776,7 +1775,7 @@ unsigned int createClayton(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMeshI
 {
 	unsigned int nThisEntity = createEntity(ptWorld);
 
-#pragma region CreateTexturesFromFile
+	#pragma region CreateTexturesFromFile
 
 	wchar_t fnPBR[9][260];
 	wchar_t fnTRAD[5][260];

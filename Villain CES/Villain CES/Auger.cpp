@@ -3,7 +3,6 @@
 #include"Collision_Component.h"
 #include <stdint.h>
 
-
 CAuger::CAuger()
 {
 
@@ -28,7 +27,6 @@ CAuger::CAuger(HWND window)
 	pcAiSystem = new CAISystem();
 	srand(time(NULL));*/
 }
-
 
 CAuger::~CAuger()
 {

@@ -856,6 +856,7 @@ ImporterData CGraphicsSystem::ReadMesh(const char * input_file_path)
 		tImportMe.vtMeshes[meshIndex].nPolygonVertexCount = polyVertCount;
 		tImportMe.vtMeshes[meshIndex].meshArrays = meshArray;
 		tImportMe.vtMeshes[meshIndex].indexBuffer = indexBuf;
+		tImportMe.vtAnimations[meshIndex].invBindPosesForJoints = invBindPosesForJoints;
 		for (int i = 0; i < 3; i++)
 		{
 			tImportMe.vtMeshes[meshIndex].worldTranslation[i] = worldTranslation[i];
