@@ -1,6 +1,7 @@
 #pragma once
-#include "Animation_Component.h"
 #include "stdafx.h"
+#include "Animation_Component.h"
+#include "Graphics_Component.h"
 #include <chrono>
 class CAnimationSystem
 {
@@ -15,7 +16,8 @@ public:
 		joint data
 		forward or back
 	*/
-	XMFLOAT4X4* PlayAnimation(bool Forward);
+	XMFLOAT4X4* PlayAnimation(TClaytonAnim claytonsAnimation, TAnimation theAnimation, std::vector<XMMATRIX> inverseBindPoseJointMatrices, float realTime);
+	
 	/*
 		int frameCount = myAnim.frames.size();
 		double animLength = myAnim.duration / 1000;	

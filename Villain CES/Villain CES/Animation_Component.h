@@ -4,8 +4,9 @@
 enum eAIComponent
 {
 	COMPONENT_ANIMATIONMASK = 1 << 0,
-	COMPONENT_1 = 1 << 1,
-	COMPONENT_2 = 1 << 2
+	COMPONENT_CLAYTONANIM = 1 << 1,
+	COMPONENT_HPIRATEANIM = 1 << 2,
+	COMPONENT_SPIRATEANIM = 1 << 3,
 };
 
 struct TAnimationMask
@@ -13,9 +14,12 @@ struct TAnimationMask
 	int m_tnAIMask = 0;
 };
 
-//struct MyStruct
-//{
-//
-//};
+struct TClaytonAnim
+{
+	bool forward;
+	int animType;//Idling, Walking, Running, Shooting, etc.
+	int currentFrame;
+	int nextFrame;
+};
 
 #endif

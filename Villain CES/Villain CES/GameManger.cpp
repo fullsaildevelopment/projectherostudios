@@ -7,7 +7,6 @@ CGameMangerSystem::CGameMangerSystem(HWND window,CInputSystem* _pcInputSystem)
 	pcInputSystem = _pcInputSystem;
 	pcCollisionSystem = new CCollisionSystem();
 	pcPhysicsSystem = new CPhysicsSystem();
-	//pcInputSystem->InitializeGInput(window);
 	pcProjectileSystem = new CProjectileSystem();
 	pcAiSystem = new CAISystem();
 	pcGraphicsSystem->InitD3D(cApplicationWindow);
