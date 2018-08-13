@@ -48,5 +48,5 @@ private:
 	XMMATRIX m_d3dPlayerMatrix;
 	XMMATRIX m_d3dCameraMatrix;
 	XMMATRIX m_d3d_ResultMatrix;
-
+	TMeshImport bulletMesh;
 };

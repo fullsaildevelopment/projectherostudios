@@ -16,6 +16,11 @@ enum eGraphicsComponent
 	COMPONENT_PBRMESH		= 1 << 9
 };
 
+struct TGraphicsMask
+{
+	int m_tnGraphicsMask = 0;
+};
+
 struct TKeyframe 
 { 
 	double dTime = 0; 
@@ -27,11 +32,6 @@ struct TAnimationClip
 	double dDuration = 0;
 	std::vector<TKeyframe> m_vtKeyFrames; 
 	std::vector<int> m_vnParentIndicies = std::vector<int>(0);
-};
-
-struct TGraphicsMask
-{
-	int m_tnGraphicsMask = 0;
 };
 
 struct TMeshFormat
@@ -50,7 +50,15 @@ struct TPrimitiveMesh
 	float pos[4] = { 0, 0, 0, 0 };
 	float uv[2] = { 0, 0 };
 	float& operator[] (int i) { return (&pos[0])[i]; }
+};
 
+struct TAnimatedMesh
+{
+	float pos[4] = { 0, 0, 0, 0 };
+	float uv[2] = { 0, 0 };
+	float weights[4] = { 0, 0, 0, 0 };
+	int joints[4] = { 0, 0, 0, 0 };
+	float& operator[] (int i) { return (&pos[0])[i]; }
 };
 
 struct TMyAmbientColor
@@ -170,7 +178,6 @@ struct TAnimationImport
 	TAnimationClip animClip;
 };
 
-
 struct ImporterData
 {
 	int meshCount = 0;
@@ -229,6 +236,7 @@ struct TSimpleMesh
 
 
 };
+
 struct TAnimation
 {
 	TAnimationClip m_tAnim;
@@ -262,6 +270,7 @@ struct TCamera
 		Fill out this structure
 	*/
 };
+
 struct TWorldMatrix 
 {
 	XMMATRIX worldMatrix = XMMatrixIdentity();
