@@ -867,7 +867,7 @@ unsigned int CreateGround(TWorld * ptWorld, XMMATRIX SpawnPosition)
 	}
 	ptWorld->atWorldMatrix[nThisEntity].worldMatrix = SpawnPosition;
 
-	return 0;
+	return nThisEntity;
 }
 
 unsigned int CreateWall(TWorld * ptWorld, XMMATRIX SpawnPosition)
@@ -947,7 +947,7 @@ unsigned int CreateWall(TWorld * ptWorld, XMMATRIX SpawnPosition)
 	}
 	ptWorld->atWorldMatrix[nThisEntity].worldMatrix = SpawnPosition;
 
-	return 0;
+	return nThisEntity;
 }
 
 unsigned int CreateCelling(TWorld * ptWorld, XMMATRIX SpawnPosition)
@@ -1027,7 +1027,7 @@ unsigned int CreateCelling(TWorld * ptWorld, XMMATRIX SpawnPosition)
 	}
 
 	ptWorld->atWorldMatrix[nThisEntity].worldMatrix = SpawnPosition;
-	return 0;
+	return nThisEntity;
 }
 
 unsigned int CreateGun(TWorld * ptWorld, XMMATRIX BulletSpawnLocation, int parentWorldMatrixIndex, float xoffset, float yoffset, float zoffset, int clipSize, float shootingCOooldown)

@@ -531,7 +531,8 @@ int CGameMangerSystem::InGameUpdate()
 			secondcamera.row4.w = tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix.r[3].m128_f32[3];
 			pcAiSystem->UpdateFrustum(tThisWorld.atAIVision[nCurrentEntity].eyes0, secondcamera, 70, 1, 0.1, 20);
 //	 pcAiSystem->calculate_frustum(&tThisWorld,tThisWorld.atAIVision[nCurrentEntity].eyes0, secondcamera,70,1,0.1,20, nCurrentEntity, -2.1, 1.4, 19.6);
-			if (pcCollisionSystem->AiVisionCheck(tThisWorld.atAIVision[nCurrentEntity].eyes0) == true) {
+			vector<int> indexes;
+			if (pcCollisionSystem->AiVisionCheck(tThisWorld.atAIVision[nCurrentEntity].eyes0,&indexes) == true) {
 				float x = 0;
 			
 			tThisWorld.atSimpleMesh[nCurrentEntity].m_nColor= XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f);
@@ -1747,9 +1748,9 @@ void CGameMangerSystem::FirstSkeltonAiTestLoad()
 	wall.r[3].m128_f32[1] -= 1;
 	wall.r[3].m128_f32[2] -= 1;
 
-	CreateDoorWay(&tThisWorld, wall);
+	int door1Index = CreateDoorWay(&tThisWorld, wall);
 	wall.r[3].m128_f32[0] -= 22;
-	CreateDoorWay(&tThisWorld, wall);
+	int door2Index = CreateDoorWay(&tThisWorld, wall);
 
 	wall = m_d3dWorldMatrix;
 	wall.r[3].m128_f32[1] += -1;
@@ -1766,12 +1767,12 @@ void CGameMangerSystem::FirstSkeltonAiTestLoad()
 
 
 	AILocation = m_d3dWorldMatrix;
-	AILocation.r[3].m128_f32[0] += -10;
-	AILocation.r[3].m128_f32[2] -= -17;
+	AILocation.r[3].m128_f32[0] += -13;
+	AILocation.r[3].m128_f32[2] -= -15;
 	AILocation = XMMatrixLookAtLH(AILocation.r[3],
 		m_d3dPlayerMatrix.r[3], XMVectorSet(0, 1, 0, 0));
 	AILocation = XMMatrixInverse(NULL, AILocation);
-	int spacePirate=CreateSpacePirate(&tThisWorld, AILocation);
+	int spacePirate = CreateSpacePirate(&tThisWorld, AILocation);
 	int GunINdexai = CreateGun(&tThisWorld, m_d3dWorldMatrix, spacePirate, -1.1, 0, 11, 10, 100);
 	tThisWorld.atAIMask[spacePirate].GunIndex = GunINdexai;
 
@@ -1909,34 +1910,36 @@ void CGameMangerSystem::FirstSkeltonAiTestLoad()
 				MyAbb.m_IndexLocation = nCurrentEntity;
 				tThisWorld.atAABB[nCurrentEntity] = MyAbb;
 				pcCollisionSystem->AddAABBCollider(MyAbb, nCurrentEntity);
+				if (nCurrentEntity == door1Index || nCurrentEntity == door2Index) {
+					pcCollisionSystem->AddAiVisioNCheck(MyAbb, nCurrentEntity);
+				}
+
+			}
+			if (tThisWorld.atMesh[nCurrentEntity].m_nVertexCount > tThisWorld.atDebugMesh[nCurrentEntity].m_nVertexCount)
+			{
+				TAABB MyAbb = pcCollisionSystem->createAABBS(tThisWorld.atMesh[nCurrentEntity].m_VertexData, tThisWorld.atAABB[nCurrentEntity]);
+				MyAbb.m_IndexLocation = nCurrentEntity;
+				tThisWorld.atAABB[nCurrentEntity] = MyAbb;
+				pcCollisionSystem->AddAABBCollider(MyAbb, nCurrentEntity);
 				if (nCurrentEntity == PlayerStartIndex) {
 					pcCollisionSystem->AddAiVisioNCheck(MyAbb, nCurrentEntity);
 
 				}
-
 			}
-
 		}
-		if (tThisWorld.atMesh[nCurrentEntity].m_nVertexCount > tThisWorld.atDebugMesh[nCurrentEntity].m_nVertexCount)
+
+
+		for (int nCurrentEntity = 0; nCurrentEntity < ENTITYCOUNT; nCurrentEntity++)
 		{
-			TAABB MyAbb = pcCollisionSystem->createAABBS(tThisWorld.atMesh[nCurrentEntity].m_VertexData, tThisWorld.atAABB[nCurrentEntity]);
-			MyAbb.m_IndexLocation = nCurrentEntity;
-			tThisWorld.atAABB[nCurrentEntity] = MyAbb;
-			pcCollisionSystem->AddAABBCollider(MyAbb, nCurrentEntity);
+			if (tThisWorld.atCollisionMask[nCurrentEntity].m_tnCollisionMask > 1)
+			{
+				tThisWorld.atAABB[nCurrentEntity] = pcCollisionSystem->updateAABB(tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, tThisWorld.atAABB[nCurrentEntity]);
+			}
 		}
+
+
+		pcGraphicsSystem->CreateBuffers(&tThisWorld);
 	}
-
-
-	for (int nCurrentEntity = 0; nCurrentEntity < ENTITYCOUNT; nCurrentEntity++)
-	{
-		if (tThisWorld.atCollisionMask[nCurrentEntity].m_tnCollisionMask > 1)
-		{
-			tThisWorld.atAABB[nCurrentEntity] = pcCollisionSystem->updateAABB(tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, tThisWorld.atAABB[nCurrentEntity]);
-		}
-	}
-
-
-	pcGraphicsSystem->CreateBuffers(&tThisWorld);
 }
 
 int CGameMangerSystem::SpacePirateGamePlay()
@@ -2143,7 +2146,7 @@ int CGameMangerSystem::SpacePirateGamePlay()
 
 		if (tThisWorld.atAIMask[nCurrentEntity].m_tnAIMask == (COMPONENT_AIMASK | COMPONENT_SEARCH) || tThisWorld.atAIMask[nCurrentEntity].m_tnAIMask == (COMPONENT_AIMASK | COMPONENT_SPOTEDPLAYER)) {
 
-			if (tThisWorld.atActiveAI[nCurrentEntity].active == true) {
+			
 				if (tThisWorld.atAIVision[nCurrentEntity].keepSearching == true) {
 					if (tThisWorld.atAIVision[nCurrentEntity].visionRotation < 7 && tThisWorld.atAIVision[nCurrentEntity].keepRotatingRight == true) {
 						tThisWorld.atAIVision[nCurrentEntity].visionRotation += 0.001;
@@ -2185,16 +2188,21 @@ int CGameMangerSystem::SpacePirateGamePlay()
 				secondcamera.row4.w = tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix.r[3].m128_f32[3];
 				pcAiSystem->UpdateFrustum(tThisWorld.atAIVision[nCurrentEntity].eyes0, secondcamera, 70, 1, 0.1, 20);
 				//	 pcAiSystem->calculate_frustum(&tThisWorld,tThisWorld.atAIVision[nCurrentEntity].eyes0, secondcamera,70,1,0.1,20, nCurrentEntity, -2.1, 1.4, 19.6);
-				if (pcCollisionSystem->AiVisionCheck(tThisWorld.atAIVision[nCurrentEntity].eyes0) == true) {
+				vector<int> indicies;
+				if (pcCollisionSystem->AiVisionCheck(tThisWorld.atAIVision[nCurrentEntity].eyes0,&indicies) == true) {
 					float x = 0;
-
-					tThisWorld.atSimpleMesh[nCurrentEntity].m_nColor = XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f);
-				}
-				else {
+					for (int i = 0; i < indicies.size(); ++i) {
+						if (PlayerStartIndex == indicies[i]) {
+							tThisWorld.atSimpleMesh[nCurrentEntity].m_nColor = XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f);
+							break;
+						}
+						else {	
 					tThisWorld.atSimpleMesh[nCurrentEntity].m_nColor = XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f);
-
+						}
+					}
 				}
-			}
+			
+			
 
 			/*	if (cloasestPlayer < closestWall) {
 			XMFLOAT4 red;

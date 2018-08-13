@@ -33,7 +33,7 @@ public:
 	list<TAABB> m_AAbb;
 	vector<TAABB> AiFrustumCheck;
 	bool aabb_to_frustum(TAABB& aabb, frustum_t& frustum);
-	bool AiVisionCheck(frustum_t eyeSight);
+	bool AiVisionCheck(frustum_t eyeSight, vector<int>* index);
 
 private:
 	bool ContainAABB(int nIndex);

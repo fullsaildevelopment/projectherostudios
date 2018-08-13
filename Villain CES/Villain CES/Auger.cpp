@@ -43,7 +43,7 @@ void CAuger::Start()
 void CAuger::InitializeSystems()
 {
 	//pcGameMangerSystem->LoadLevel();
-	CurrentSpotInGame = -1;
+	CurrentSpotInGame = 7;
 }
 
 void CAuger::Update(bool* loopgame)
