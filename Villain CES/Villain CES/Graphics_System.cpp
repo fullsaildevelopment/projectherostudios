@@ -41,8 +41,6 @@ void CGraphicsSystem::InitD3D(HWND cTheWindow)
 	m_fAspectRatio = (float)(cRectangle.bottom - cRectangle.top / cRectangle.right - cRectangle.left);
 #ifdef _DEBUG
 	unsigned int nDeviceAndSwapchainFlag = D3D11_CREATE_DEVICE_DEBUG;
-#endif // DEBUG
-	// create a device, device context and swap chain using the information in the scd struct
 	D3D11CreateDeviceAndSwapChain(NULL,
 		D3D_DRIVER_TYPE_HARDWARE,
 		NULL,
@@ -55,20 +53,28 @@ void CGraphicsSystem::InitD3D(HWND cTheWindow)
 		&m_pd3dDevice,
 		NULL,
 		&m_pd3dDeviceContext);
+#endif // DEBUG
+#ifndef _DEBUG
+	// create a device, device context and swap chain using the information in the scd struct
+	D3D11CreateDeviceAndSwapChain(NULL,
+		D3D_DRIVER_TYPE_HARDWARE,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		D3D11_SDK_VERSION,
+		&d3dSwapchainDescription,
+		&m_pd3dSwapchain,
+		&m_pd3dDevice,
+		NULL,
+		&m_pd3dDeviceContext);
+
+#endif // !_DEBUG
+
 
 
 #pragma region RenderTargetView And Viewport
-	if (SUCCEEDED(m_pd3dDevice->QueryInterface(__uuidof(ID3D11Debug), (void**)&debug)))
-	{
-		ID3D11InfoQueue *d3dInfoQueue = nullptr;
-		if (SUCCEEDED(debug->QueryInterface(__uuidof(ID3D11InfoQueue), (void**)&d3dInfoQueue)))
-		{
-#ifdef _DEBUG
-			d3dInfoQueue->SetBreakOnSeverity(D3D11_MESSAGE_SEVERITY_CORRUPTION, true);
-			d3dInfoQueue->SetBreakOnSeverity(D3D11_MESSAGE_SEVERITY_ERROR, true);
-#endif
-		}
-	}
+
 	D3D11_TEXTURE2D_DESC d3dTextureDescription;
 	ZeroMemory(&d3dTextureDescription, sizeof(d3dTextureDescription));
 
@@ -181,7 +187,11 @@ void CGraphicsSystem::CleanD3D(TWorld *ptPlanet)
 			ptPlanet->atMesh[nEntityIndex].m_d3dSRVDiffuse->Release();
 		}
 		destroyEntity(ptPlanet, nEntityIndex);
-	//	HRESULT result = debug->ReportLiveDeviceObjects(D3D11_RLDO_SUMMARY | D3D11_RLDO_DETAIL);
+#ifdef _DEBUG
+		HRESULT result = debug->ReportLiveDeviceObjects(D3D11_RLDO_SUMMARY | D3D11_RLDO_DETAIL);
+
+#endif // !_DEBUG
+
 	}
 	m_pd3dSwapchain->Release();
 	m_pd3dDevice->Release();
@@ -196,7 +206,10 @@ void CGraphicsSystem::CleanD3D(TWorld *ptPlanet)
 	m_pd3dPrimalInputLayout->Release();
 	m_pd3dPrimalVertexBuffer->Release();
 	m_pd3dPrimalPixelBuffer->Release();
-	HRESULT result = debug->ReportLiveDeviceObjects(D3D11_RLDO_SUMMARY | D3D11_RLDO_DETAIL);
+	if (debug != nullptr)
+	{
+		HRESULT result = debug->ReportLiveDeviceObjects(D3D11_RLDO_SUMMARY | D3D11_RLDO_DETAIL);
+	}
 	//m_pcMyInput->DecrementCount();
 }
 
@@ -363,7 +376,6 @@ void CGraphicsSystem::CreateEntityBuffer(TWorld * ptWorld, int nEnityIndex)
 		{
 			m_pd3dDevice->CreateBuffer(&ptWorld->atSimpleMesh[nEnityIndex].m_d3dVertexBufferDesc, &ptWorld->atSimpleMesh[nEnityIndex].m_d3dVertexData, &ptWorld->atSimpleMesh[nEnityIndex].m_pd3dVertexBuffer);
 			m_pd3dDevice->CreateBuffer(&ptWorld->atSimpleMesh[nEnityIndex].m_d3dIndexBufferDesc, &ptWorld->atSimpleMesh[nEnityIndex].m_d3dIndexData, &ptWorld->atSimpleMesh[nEnityIndex].m_pd3dIndexBuffer);
-
 		}
 	}
 }
@@ -413,6 +425,7 @@ XMMATRIX CGraphicsSystem::SetDefaultCameraMatrix()
 	return DefaultCameraMatrix;
 
 }
+
 XMMATRIX CGraphicsSystem::SetDefaultViewMatrix()
 {
 	XMMATRIX DefaultViewMatrix;
@@ -422,21 +435,12 @@ XMMATRIX CGraphicsSystem::SetDefaultViewMatrix()
 	return DefaultViewMatrix;
 }
 
-//XMMATRIX CGraphicsSystem::SetPlayerViewMatrix(XMMATRIX d3d_ViewM, XMMATRIX d3d_playerM)
-//{
-//	XMMATRIX DefaultViewMatrix;
-//
-//	DefaultViewMatrix = XMMatrixLookAtLH(d3d_ViewM.r[3],d3d_playerM.r[3], XMVectorSet(0, 1.0f, 0, 1.0f));
-//
-//	return DefaultViewMatrix;
-//}
-
-XMMATRIX CGraphicsSystem::SetDefaultPerspective(float fFov)
+XMMATRIX CGraphicsSystem::SetDefaultPerspective()
 {
 
 	XMMATRIX DefaultPerspectiveMatrix;
 	// the 90 is for fov if we want to implement field of view
-	m_fFOV = fFov;
+	m_fFOV = 90.0f;
 
 	DefaultPerspectiveMatrix.r[0].m128_f32[0] = 1 / tan(m_fFOV* 0.5f * 3.15f / 180);
 	DefaultPerspectiveMatrix.r[0].m128_f32[1] = 0;
@@ -1035,7 +1039,7 @@ void CGraphicsSystem::InitMyShaderData(ID3D11DeviceContext * pd3dDeviceContext, 
 	pd3dDeviceContext->VSSetConstantBuffers(bufferNumber, 1, &m_pd3dMyVertexBuffer);
 	pd3dDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	pd3dDeviceContext->IASetVertexBuffers(0, 1, &tMesh.m_pd3dVertexBuffer, &tMesh.m_nVertexBufferStride, &tMesh.m_nVertexBufferOffset);
-	pd3dDeviceContext->IASetIndexBuffer(tMesh.m_pd3dIndexBuffer, DXGI_FORMAT_R16_UINT, 0);
+	pd3dDeviceContext->IASetIndexBuffer(tMesh.m_pd3dIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
 	if (&tMesh.m_d3dSRVDiffuse != NULL)
 	{
 		pd3dDeviceContext->PSSetShaderResources(0, 1, &tMesh.m_d3dSRVDiffuse);

@@ -38,8 +38,7 @@ private:
 	float	fShootingCoolDown = 0;
 	int		m_nClipSize = 10;
 
-	TCameraToggle tCameraMode;
-	TCamera tMyCamera;
+	
 	bool tempt;
 	
 };

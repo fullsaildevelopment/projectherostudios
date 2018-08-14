@@ -11,8 +11,6 @@ CAISystem::~CAISystem()
 {
 }
 
-
-
 void CAISystem::FollowObject(XMMATRIX thingToFollow, XMMATRIX * AIMatrix)
 {
 	XMMATRIX beforeitChanges = *AIMatrix;
