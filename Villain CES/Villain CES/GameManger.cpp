@@ -1776,6 +1776,18 @@ void CGameMangerSystem::FirstSkeltonAiTestLoad()
 
 	CoverLocation.r[3].m128_f32[2] += -1;
 	CreateCover(&tThisWorld, CoverLocation);
+	CoverLocation.r[3].m128_f32[0] += 5;
+	CreateCover(&tThisWorld, CoverLocation);
+	XMMATRIX nodeLocation = CoverLocation;
+	nodeLocation.r[3].m128_f32[0] -= 1;
+	//pcAiSystem->AddNodeToPathFinding(nodeLocation, nodePosition, 1);
+	int nodeindex = CreateNodePoint(&tThisWorld, nodeLocation);
+	XMFLOAT3 nodePosition;
+	nodePosition.x = nodeLocation.r[3].m128_f32[0];
+	nodePosition.y = nodeLocation.r[3].m128_f32[1];
+	nodePosition.z = nodeLocation.r[3].m128_f32[2];
+	pcAiSystem->AddNodeToPathFinding(nodeindex, nodePosition, 1);
+
 	int spacePirate = CreateSpacePirate(&tThisWorld, AILocation);
 	int GunINdexai = CreateGun(&tThisWorld, m_d3dWorldMatrix, spacePirate, -1.1, 0.5, 11.5, 10, 70);
 	tThisWorld.atAIMask[spacePirate].GunIndex = GunINdexai;
