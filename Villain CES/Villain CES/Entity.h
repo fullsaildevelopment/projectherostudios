@@ -10,7 +10,7 @@
 #include "Projectile_Component.h"
 #include "DirectXTex-master\WICTextureLoader\WICTextureLoader.h"
 #include "DirectXTex-master\DDSTextureLoader\DDSTextureLoader.h"
-
+//
 struct TWorld
 {
 	int				anComponentMask[ENTITYCOUNT];
