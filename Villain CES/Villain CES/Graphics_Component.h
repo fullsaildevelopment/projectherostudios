@@ -176,6 +176,7 @@ struct TAnimationImport
 {
 	int hasPose = 0;
 	TAnimationClip animClip;
+	std::vector<XMMATRIX> invBindPosesForJoints;
 };
 
 struct ImporterData

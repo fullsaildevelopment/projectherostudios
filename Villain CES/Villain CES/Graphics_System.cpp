@@ -188,7 +188,7 @@ void CGraphicsSystem::CleanD3D(TWorld *ptPlanet)
 		}
 		destroyEntity(ptPlanet, nEntityIndex);
 #ifdef _DEBUG
-		HRESULT result = debug->ReportLiveDeviceObjects(D3D11_RLDO_SUMMARY | D3D11_RLDO_DETAIL);
+	//	HRESULT result = debug->ReportLiveDeviceObjects(D3D11_RLDO_SUMMARY | D3D11_RLDO_DETAIL);
 
 #endif // !_DEBUG
 
@@ -856,6 +856,7 @@ ImporterData CGraphicsSystem::ReadMesh(const char * input_file_path)
 		tImportMe.vtMeshes[meshIndex].nPolygonVertexCount = polyVertCount;
 		tImportMe.vtMeshes[meshIndex].meshArrays = meshArray;
 		tImportMe.vtMeshes[meshIndex].indexBuffer = indexBuf;
+		tImportMe.vtAnimations[meshIndex].invBindPosesForJoints = invBindPosesForJoints;
 		for (int i = 0; i < 3; i++)
 		{
 			tImportMe.vtMeshes[meshIndex].worldTranslation[i] = worldTranslation[i];

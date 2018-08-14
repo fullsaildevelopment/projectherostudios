@@ -173,6 +173,8 @@
     <ClInclude Include="Input_Component.h" />
     <ClInclude Include="Physics_Component.h" />
     <ClInclude Include="Physics_System.h" />
+    <ClInclude Include="platform.h" />
+    <ClInclude Include="PriorityQueue.h" />
     <ClInclude Include="ProjectileSystem.h" />
     <ClInclude Include="Projectile_Component.h" />
     <ClInclude Include="resource.h" />
