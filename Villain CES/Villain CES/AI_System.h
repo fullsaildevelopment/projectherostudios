@@ -64,6 +64,8 @@ public:
 	void AddNodeToPathFinding(int index, XMFLOAT3 pos, float weight);
 	void AddEdgestoNode(int nodeyouAreChanging, vector<int> edges);
 	void PathPlaningMovement(TAIPathFinding* path, XMMATRIX* worldMatrix);
+	void LookAtObject(XMMATRIX thingToLookAt, XMMATRIX* AIMatrix);
+	void Strafe(XMMATRIX* AiMatrix);
 private:
 	
 	int numberofAI;

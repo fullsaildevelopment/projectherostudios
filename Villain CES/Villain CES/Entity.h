@@ -41,6 +41,7 @@ struct TWorld
 	TAIVision		atAIVision[ENTITYCOUNT];
 	TAIPathFinding	atPathPlanining[ENTITYCOUNT];
 	TAIActive		atActiveAI[ENTITYCOUNT];
+	TAIMovement		atAIMovement[ENTITYCOUNT];
 	//Collision
 	TCollisionMask	atCollisionMask[ENTITYCOUNT];
 	TAABB			atAABB[ENTITYCOUNT];
@@ -98,3 +99,4 @@ unsigned int CreateNodePoint(TWorld * ptWorld, XMMATRIX SpawnPosition);
 unsigned int CreateTestAIPathFinding(TWorld * ptWorld, XMMATRIX SpawnPosition);
 unsigned int CreateSpacePirate(TWorld * ptWorld, XMMATRIX SpawnPosition);
 
+unsigned int CreateCover(TWorld * ptWorld, XMMATRIX SpawnPosition);

@@ -34,6 +34,10 @@ struct TAIVision {
 	
 
 };
+struct TAIMovement {
+	float strafeCoolDown = 0;
+	float StrafeCoolDownValue = 100;
+};
 
 struct TAIPathFinding {
 	vector<XMVECTOR> directions;
