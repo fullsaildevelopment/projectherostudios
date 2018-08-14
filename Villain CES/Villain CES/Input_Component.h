@@ -57,55 +57,10 @@ struct TCaelis
 	float m_tfFlightSpeed = 0.0f;
 };
 
-struct TCamera
-{
-public:
-
-	XMMATRIX d3d_Position;
-	float fPitch;
-	float fYaw;
-	float fRoll;
-
-	XMVECTOR getCameraPOS()
-	{
-		return d3d_Position.r[3];
-	}
-
-	float getPitch()
-	{
-		return fPitch;
-	}
-
-	float getYaw()
-	{
-		return fYaw;
-	}
-
-	float getRoll()
-	{
-		return fRoll;
-	}
-
-
-	float SetPitch(float pitch)
-	{
-		fPitch = pitch;
-		return fPitch;
-	}
-
-	float SetRoll(float roll)
-	{
-		fRoll = roll;
-		return fRoll;
-	}
-
-};
 struct TCameraToggle
 {
 	bool bDebugMode;
 	bool bWalkMode;
 	bool bAimMode;
-	bool bSwitch;
-	//bool bDebugMode;
 };
 #endif

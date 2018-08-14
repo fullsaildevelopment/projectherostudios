@@ -90,25 +90,10 @@
     <ClInclude Include="GameManger.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="PriorityQueue.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="platform.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="CAnimationSystem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Animation_Component.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Timer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="XTime.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="AudioSystem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -159,9 +144,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="CAnimationSystem.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="XTime.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

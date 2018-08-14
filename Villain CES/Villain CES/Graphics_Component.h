@@ -260,7 +260,12 @@ struct TShaderID
 	int m_nShaderID = 0;
 };
 
-
+struct TCamera
+{
+	/*
+		Fill out this structure
+	*/
+};
 
 struct TWorldMatrix
 {
