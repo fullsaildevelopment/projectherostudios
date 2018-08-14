@@ -41,8 +41,9 @@ private:
 	XMMATRIX m_d3dViewMatrix;
 	XMMATRIX m_d3dProjectionMatrix;
 	XMMATRIX m_d3dPlayerMatrix;
+	
 //	XMMATRIX m_d3dCameraMatrix;
-
+	TMeshImport bulletMesh;
 	//TCamera* CameraSelect[6];
 	TCamera *walkCamera;
 	TCamera *aimCamera;

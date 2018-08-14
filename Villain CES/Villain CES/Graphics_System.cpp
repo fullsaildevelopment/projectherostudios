@@ -41,8 +41,6 @@ void CGraphicsSystem::InitD3D(HWND cTheWindow)
 	m_fAspectRatio = (float)(cRectangle.bottom - cRectangle.top / cRectangle.right - cRectangle.left);
 #ifdef _DEBUG
 	unsigned int nDeviceAndSwapchainFlag = D3D11_CREATE_DEVICE_DEBUG;
-#endif // DEBUG
-	// create a device, device context and swap chain using the information in the scd struct
 	D3D11CreateDeviceAndSwapChain(NULL,
 		D3D_DRIVER_TYPE_HARDWARE,
 		NULL,
@@ -55,20 +53,28 @@ void CGraphicsSystem::InitD3D(HWND cTheWindow)
 		&m_pd3dDevice,
 		NULL,
 		&m_pd3dDeviceContext);
+#endif // DEBUG
+#ifndef _DEBUG
+	// create a device, device context and swap chain using the information in the scd struct
+	D3D11CreateDeviceAndSwapChain(NULL,
+		D3D_DRIVER_TYPE_HARDWARE,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		D3D11_SDK_VERSION,
+		&d3dSwapchainDescription,
+		&m_pd3dSwapchain,
+		&m_pd3dDevice,
+		NULL,
+		&m_pd3dDeviceContext);
+
+#endif // !_DEBUG
+
 
 
 #pragma region RenderTargetView And Viewport
-	if (SUCCEEDED(m_pd3dDevice->QueryInterface(__uuidof(ID3D11Debug), (void**)&debug)))
-	{
-		ID3D11InfoQueue *d3dInfoQueue = nullptr;
-		if (SUCCEEDED(debug->QueryInterface(__uuidof(ID3D11InfoQueue), (void**)&d3dInfoQueue)))
-		{
-#ifdef _DEBUG
-			d3dInfoQueue->SetBreakOnSeverity(D3D11_MESSAGE_SEVERITY_CORRUPTION, true);
-			d3dInfoQueue->SetBreakOnSeverity(D3D11_MESSAGE_SEVERITY_ERROR, true);
-#endif
-		}
-	}
+
 	D3D11_TEXTURE2D_DESC d3dTextureDescription;
 	ZeroMemory(&d3dTextureDescription, sizeof(d3dTextureDescription));
 
@@ -181,7 +187,11 @@ void CGraphicsSystem::CleanD3D(TWorld *ptPlanet)
 			ptPlanet->atMesh[nEntityIndex].m_d3dSRVDiffuse->Release();
 		}
 		destroyEntity(ptPlanet, nEntityIndex);
-	//	HRESULT result = debug->ReportLiveDeviceObjects(D3D11_RLDO_SUMMARY | D3D11_RLDO_DETAIL);
+#ifdef _DEBUG
+		HRESULT result = debug->ReportLiveDeviceObjects(D3D11_RLDO_SUMMARY | D3D11_RLDO_DETAIL);
+
+#endif // !_DEBUG
+
 	}
 	m_pd3dSwapchain->Release();
 	m_pd3dDevice->Release();
@@ -196,7 +206,10 @@ void CGraphicsSystem::CleanD3D(TWorld *ptPlanet)
 	m_pd3dPrimalInputLayout->Release();
 	m_pd3dPrimalVertexBuffer->Release();
 	m_pd3dPrimalPixelBuffer->Release();
-	HRESULT result = debug->ReportLiveDeviceObjects(D3D11_RLDO_SUMMARY | D3D11_RLDO_DETAIL);
+	if (debug != nullptr)
+	{
+		HRESULT result = debug->ReportLiveDeviceObjects(D3D11_RLDO_SUMMARY | D3D11_RLDO_DETAIL);
+	}
 	//m_pcMyInput->DecrementCount();
 }
 
@@ -363,7 +376,6 @@ void CGraphicsSystem::CreateEntityBuffer(TWorld * ptWorld, int nEnityIndex)
 		{
 			m_pd3dDevice->CreateBuffer(&ptWorld->atSimpleMesh[nEnityIndex].m_d3dVertexBufferDesc, &ptWorld->atSimpleMesh[nEnityIndex].m_d3dVertexData, &ptWorld->atSimpleMesh[nEnityIndex].m_pd3dVertexBuffer);
 			m_pd3dDevice->CreateBuffer(&ptWorld->atSimpleMesh[nEnityIndex].m_d3dIndexBufferDesc, &ptWorld->atSimpleMesh[nEnityIndex].m_d3dIndexData, &ptWorld->atSimpleMesh[nEnityIndex].m_pd3dIndexBuffer);
-
 		}
 	}
 }
@@ -413,6 +425,7 @@ XMMATRIX CGraphicsSystem::SetDefaultCameraMatrix()
 	return DefaultCameraMatrix;
 
 }
+
 XMMATRIX CGraphicsSystem::SetDefaultViewMatrix()
 {
 	XMMATRIX DefaultViewMatrix;
@@ -421,6 +434,7 @@ XMMATRIX CGraphicsSystem::SetDefaultViewMatrix()
 
 	return DefaultViewMatrix;
 }
+
 XMMATRIX CGraphicsSystem::SetDefaultPerspective()
 {
 
@@ -449,10 +463,12 @@ XMMATRIX CGraphicsSystem::SetDefaultPerspective()
 	DefaultPerspectiveMatrix.r[3].m128_f32[3] = 0;
 	return DefaultPerspectiveMatrix;
 }
+
 XMMATRIX CGraphicsSystem::SetDefaultOffset()
 {
 	return XMMatrixTranslation(0, 1.5f, 8.5f);
 }
+
 XMMATRIX CGraphicsSystem::SetDefaultWorldPosition()
 {
 

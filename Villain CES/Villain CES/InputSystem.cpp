@@ -430,8 +430,6 @@ float CInputSystem::ZoomSight(float fFov)
 	{
 		if (ftmpFov <= 90.0f && ftmpFov >= 120.0f)
 		{
-
-			ftmpFov += 0.1f;
 			if (ftmpFov > 120.f)
 			{
 				ftmpFov = 120.0f;
@@ -440,6 +438,11 @@ float CInputSystem::ZoomSight(float fFov)
 			{
 				ftmpFov = 90.0f;
 			}
+			else {
+			ftmpFov += 0.1f;
+			}
+
+			
 		}
 
 	}

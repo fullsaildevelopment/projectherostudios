@@ -1,0 +1,12 @@
+#pragma once
+#include"AK/Comm/AkCommunication.h"
+#include"AK/IBytes.h"
+#include"AK/SoundEngine/Common/AkSoundEngine.h"
+#include"AK/Tools/Common/AkVectors.h"
+#include"AK/Wwise/AudioPlugin.h"
+#include"AK/Wwise/Utilities.h"
+#include"AK/SoundEngine/Common/AkCommonDefs.h"
+#include"AK/SpatialAudio/Common/AkSpatialAudio.h"
+#include"AK/AkPlatforms.h"
+#include"AK/SoundFrame/SF.h"
+#include"AK/SoundFrame/SFObjects.h"

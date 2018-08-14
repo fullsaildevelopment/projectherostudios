@@ -264,6 +264,8 @@ struct TShaderID
 	int m_nShaderID = 0;
 };
 
+
+
 struct TWorldMatrix 
 {
 	XMMATRIX worldMatrix = XMMatrixIdentity();
