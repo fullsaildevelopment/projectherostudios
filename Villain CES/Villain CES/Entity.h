@@ -23,7 +23,7 @@ struct TWorld
 	TMaterial		atMaterial[ENTITYCOUNT];
 	TTexture		atTexture[ENTITYCOUNT];
 	TShaderID		atShaderID[ENTITYCOUNT];
-	//TCamera			atCamera[ENTITYCOUNT];
+	TCamera			atCamera[ENTITYCOUNT];
 	TWorldMatrix	atWorldMatrix[ENTITYCOUNT];
 	int				atParentWorldMatrix[ENTITYCOUNT];
 	XMMATRIX		atOffSetMatrix[ENTITYCOUNT];
@@ -39,7 +39,6 @@ struct TWorld
 	//AI
 	TAIMask			atAIMask[ENTITYCOUNT];
 	TAIVision		atAIVision[ENTITYCOUNT];
-	TAIPathFinding	atPathPlanining[ENTITYCOUNT];
 	//Collision
 	TCollisionMask	atCollisionMask[ENTITYCOUNT];
 	TAABB			atAABB[ENTITYCOUNT];
@@ -55,19 +54,12 @@ struct TWorld
 	Clips			atClip[ENTITYCOUNT];
 };
 
-
 struct TPrimalVert
 {
 	XMFLOAT3 m_d3dfPosition;
 	XMFLOAT4 m_d3dfColor;
 };
 
-<<<<<<< HEAD
-=======
-
-
-
->>>>>>> master
 unsigned int SpawnLevelChanger(TWorld *ptWorld, XMMATRIX SpawnPosition);
 unsigned int createEntity(TWorld *ptWorld);
 
@@ -82,7 +74,7 @@ unsigned int createDebugGrid(TWorld * ptWorld);
 unsigned int CreateClayTon(TWorld * ptWorld);
 unsigned int CreateBullet(TWorld * ptWorld, XMMATRIX bulletSpawnLocation, int MaterialID);
 unsigned int AimingLine(TWorld * ptWorld, XMMATRIX BulletSpawnLocation, int parentWorldMatrixIndex, float xoffset, float yoffset, float zoffset);
-unsigned int createDebugCamera(TWorld * ptWorld, XMMATRIX debugCamera);
+
 unsigned int CreateGround(TWorld* ptWorld, XMMATRIX SpawnPosition);
 unsigned int CreateWall(TWorld* ptWorld, XMMATRIX SpawnPosition);
 unsigned int CreateCelling(TWorld* ptWorld, XMMATRIX SpawnPosition);
@@ -95,14 +87,4 @@ unsigned int CreateSimpleGunAi(TWorld * ptWorld, XMMATRIX SpawnPosition);
 unsigned int CreateSimpleSearchAi(TWorld* ptWorld, XMMATRIX SpawnPosition);
 unsigned int CreateAIVision(TWorld * ptWorld, XMMATRIX bulletSpawnLocation, float zDistance, int parentWorldMatrixIndex, float xoffset, float yoffset, float zoffset);
 unsigned int CreateRayBullet(TWorld * ptWorld, XMMATRIX bulletSpawnLocation, float zDistance, int parentWorldMatrixIndex, float xoffset, float yoffset, float zoffset);
-<<<<<<< HEAD
 //float zDistance = 0.5f;
-=======
- //float zDistance = 0.5f;
-//	fartopleft, nearbottomleft, neartopright, nearbottomright, fartopright, farbottomleft, farbottomright, neartopleft;
-unsigned int CreateFrustumLines(TWorld * ptWorld,XMFLOAT3 fartopleft, XMFLOAT3 nearbottomleft, XMFLOAT3 neartopright, XMFLOAT3 nearbottomright, XMFLOAT3 fartopright, XMFLOAT3 farbottomleft, XMFLOAT3 farbottomright, XMFLOAT3 neartopleft, int parentWorldMatrixIndex, float xoffset, float yoffset, float zoffset,XMFLOAT3 normalLine1, XMFLOAT3 normalLine2);
-unsigned int CreateNodePoint(TWorld * ptWorld, XMMATRIX SpawnPosition);
-unsigned int CreateTestAIPathFinding(TWorld * ptWorld, XMMATRIX SpawnPosition);
-
-
->>>>>>> master

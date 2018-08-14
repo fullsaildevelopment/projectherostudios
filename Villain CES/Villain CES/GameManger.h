@@ -17,11 +17,7 @@ public:
 	void RestartLevel();
 	int LoadMainMenu();
 	void InitilizeMainMenu();
-	void LoadPathFindingTest();
-	int PathFindingExample();
 private:
-	
-	XMMATRIX secondCam;
 	CCollisionSystem * pcCollisionSystem;
 	TWorld tThisWorld;
 	CGraphicsSystem	*pcGraphicsSystem;
@@ -35,13 +31,10 @@ private:
 	int PlayerStartIndex = -10;
 	int GunIndexForPlayer = -10;
 	int rayindex = -10;
-	int frustumIndex;
 	float zValue = 5;
 	bool GamePaused = false;
 	bool GameStart;
 	bool DrawUI = true;
-
-	
 	XMMATRIX m_d3dWorldMatrix;
 	XMMATRIX m_d3dViewMatrix;
 	XMMATRIX m_d3dProjectionMatrix;
