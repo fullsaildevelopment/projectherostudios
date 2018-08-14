@@ -1,6 +1,7 @@
 #pragma once
 #include"Collision_Component.h"
 #include <list>
+#include"stdafx.h"
 using namespace std;
 //File header :
 /***
@@ -18,7 +19,12 @@ public:
 
 	CCollisionSystem();
 	~CCollisionSystem();
+<<<<<<< HEAD
 	int AddAABBCollider(TAABB m_AABB, int nIndex);
+=======
+	int AddAABBCollider(TAABB m_AABB,int nIndex);
+	int AddAiVisioNCheck(TAABB m_AABB, int nIndex);
+>>>>>>> master
 	bool RemoveAABBCollider(int nIndex);
 	bool AABBtoAABBCollisionCheck(TAABB m_AABB, vector<int>* m_OtherColision);
 	bool replaceAABB(int nIndex, TAABB m_AABB2);
@@ -28,6 +34,19 @@ public:
 	bool IsLineInBox(XMVECTOR startPoint, XMVECTOR endPoint, XMMATRIX worldMatrix, TAABB boxclide, float* distance);
 	XMMATRIX WalkingThrewObjectCheck(XMMATRIX worldPos, TAABB otherCollision, TAABB currentCollision);
 	list<TAABB> m_AAbb;
+	vector<TAABB> AiFrustumCheck;
+	bool aabb_to_frustum(TAABB& aabb, frustum_t& frustum);
+	bool AiVisionCheck(frustum_t eyeSight);
+
 private:
 	bool ContainAABB(int nIndex);
+<<<<<<< HEAD
+=======
+	int classify_aabb_to_plane(TAABB& aabb, plane_t& plane);
+	bool spehreCollison(sphere_t a, sphere_t b);
+	int classify_sphere_to_plane(sphere_t& sphere, plane_t& plane);
+	
+
+
+>>>>>>> master
 };

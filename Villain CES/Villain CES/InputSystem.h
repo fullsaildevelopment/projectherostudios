@@ -34,6 +34,8 @@ public:
 
 	XMMATRIX DebugCamera(XMMATRIX d3d_ViewM, XMMATRIX d3d_WorldM);
 
+	XMMATRIX CharacterMovement(XMMATRIX d3dplayerMatrix);
+
 	/*
 	* WalkCamera(): This fuction makes a camera follow an in-game object.
 	*
@@ -47,7 +49,11 @@ public:
 	* Mod. Date:              07/18/2018
 	* Mod. Initials:          ZFB
 	*/
+<<<<<<< HEAD
 	XMMATRIX WalkCamera(XMMATRIX d3dplayerMatrix);
+=======
+	
+>>>>>>> master
 	/*
 	* AimMode(): This fuction makes a camera rotation locked to player rotation for combat.
 	*
@@ -63,7 +69,10 @@ public:
 	*/
 	XMMATRIX AimMode(XMMATRIX d3dplayerMatrix);
 
-	XMMATRIX WalkLookAt(XMVECTOR U, XMMATRIX viewM);
+	XMMATRIX WalkCameraControls(XMVECTOR U, XMMATRIX viewM);
+	XMMATRIX CameraBehaviorLerp(XMMATRIX m1, XMMATRIX m2);
+	XMMATRIX CameraOrientationReset(XMMATRIX m1);
+	float ZoomSight(float fFov);
 	/*
 		Seth Specific Functions
 	*/

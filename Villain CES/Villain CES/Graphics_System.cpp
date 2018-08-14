@@ -183,7 +183,11 @@ void CGraphicsSystem::CleanD3D(TWorld *ptPlanet)
 		}
 		destroyEntity(ptPlanet, nEntityIndex);
 #ifdef _DEBUG
+<<<<<<< HEAD
 		//HRESULT result = debug->ReportLiveDeviceObjects(D3D11_RLDO_SUMMARY | D3D11_RLDO_DETAIL);
+=======
+	//	HRESULT result = debug->ReportLiveDeviceObjects(D3D11_RLDO_SUMMARY | D3D11_RLDO_DETAIL);
+>>>>>>> master
 
 #endif // !_DEBUG
 	}
@@ -426,7 +430,7 @@ XMMATRIX CGraphicsSystem::SetDefaultPerspective()
 {
 	XMMATRIX DefaultPerspectiveMatrix;
 	// the 90 is for fov if we want to implement field of view
-	m_fFOV = 90;
+	m_fFOV = 90.0f;
 
 	DefaultPerspectiveMatrix.r[0].m128_f32[0] = 1 / tan(m_fFOV* 0.5f * 3.15f / 180);
 	DefaultPerspectiveMatrix.r[0].m128_f32[1] = 0;
