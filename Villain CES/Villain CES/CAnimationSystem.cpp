@@ -4,7 +4,6 @@ CAnimationSystem::CAnimationSystem()
 {
 }
 
-
 CAnimationSystem::~CAnimationSystem()
 {
 }
@@ -31,9 +30,9 @@ XMFLOAT4X4 * CAnimationSystem::PlayAnimation(TClaytonAnim claytonsAnimation, TAn
 			thisFramesTweenJointMatrix.clear();
 			for (int i = 0; i < theAnimation.m_vnParentIndices.size(); i++)
 			{
-				//Cur Frame and Nxt Frame Position Vectors
+				//Cur Frame and next Frame Position Vectors
 				XMVECTOR x, y;
-				//Cur Frame and Nxt Frame Joint Matrices in 3x3 format
+				//Cur Frame and next Frame Joint Matrices in 3x3 format
 				XMFLOAT3X3 format;
 				XMStoreFloat3x3(&format, theAnimation.m_tAnim.m_vtKeyFrames[claytonsAnimation.currentFrame].m_vd3dJointMatrices[i]);
 				XMMATRIX qOne = XMLoadFloat3x3(&format);
@@ -83,9 +82,9 @@ XMFLOAT4X4 * CAnimationSystem::PlayAnimation(TClaytonAnim claytonsAnimation, TAn
 			thisFramesTweenJointMatrix.clear();
 			for (int i = 0; i < theAnimation.m_vnParentIndices.size(); i++)
 			{
-				//Cur Frame and Nxt Frame Position Vectors
+				//Cur Frame and next Frame Position Vectors
 				XMVECTOR x, y;
-				//Cur Frame and Nxt Frame Joint Matrices in 3x3 format
+				//Cur Frame and next Frame Joint Matrices in 3x3 format
 				XMFLOAT3X3 format;
 				XMStoreFloat3x3(&format, theAnimation.m_tAnim.m_vtKeyFrames[claytonsAnimation.currentFrame].m_vd3dJointMatrices[i]);
 				XMMATRIX qOne = XMLoadFloat3x3(&format);
@@ -126,3 +125,9 @@ XMFLOAT4X4 * CAnimationSystem::PlayAnimation(TClaytonAnim claytonsAnimation, TAn
 
 	return jointsForVS;
 }
+
+void CAnimationSystem::CalculateFrameCount(TClaytonAnim claytonsAnimation, float realTime)
+{
+
+}
+

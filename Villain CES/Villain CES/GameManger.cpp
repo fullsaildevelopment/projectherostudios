@@ -41,9 +41,9 @@ void CGameMangerSystem::LoadLevel()
 	m_d3dPlayerMatrix = pcGraphicsSystem->SetDefaultWorldPosition();
 	//m_d3dPlayerMatrix = XMMatrixMultiply(m_d3dPlayerMatrix, XMMatrixScaling(.01, .01, .01));
 	m_d3dPlayerMatrix.r[3].m128_f32[2] -= 10;
-	
+
 	ImporterData tempImport;
-	
+
 	tempImport = pcGraphicsSystem->ReadMesh("meshData_Pirate.txt");
 	for (int meshIndex = 0; meshIndex < tempImport.meshCount; meshIndex++)
 	{
@@ -67,7 +67,6 @@ void CGameMangerSystem::LoadLevel()
 	AILocation.r[3].m128_f32[0] += -5;
 	//CreateSimpleGunAi(&tThisWorld, AILocation);
 
-
 	AimingLine(&tThisWorld, m_d3dWorldMatrix, PlayerStartIndex, -1, 1, 10.5);
 
 	GunIndexForPlayer = CreateGun(&tThisWorld, m_d3dWorldMatrix, PlayerStartIndex, -1, 1, 10.5, 3, 100);
@@ -80,7 +79,6 @@ void CGameMangerSystem::LoadLevel()
 	tThisWorld.atAIMask[AiIndex].GunIndex = GunINdexai;
 
 	tThisWorld.atClip[GunINdexai].bulletSpeed = 0.0001f;//Frame Dependent
-
 
 	AILocation = m_d3dWorldMatrix;
 	AILocation.r[3].m128_f32[0] += -3;
@@ -112,24 +110,24 @@ void CGameMangerSystem::LoadLevel()
 		int myMesh = createMesh(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, tempImport.vtMeshes[meshIndex], tempImport.vtMaterials[meshIndex]);
 	}
 
-	tempImport = pcGraphicsSystem->ReadMesh("meshData_ScifiRoom.txt");
+	tempImport = pcGraphicsSystem->ReadMesh("meshData_Demo.txt");
 	for (int meshIndex = 0; meshIndex < tempImport.meshCount; meshIndex++)
 	{
 		int myMesh = createMesh(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, tempImport.vtMeshes[meshIndex], tempImport.vtMaterials[meshIndex]);
 	}
 
-	if (pcCollisionSystem->m_AAbb.size() != 0) 
+	if (pcCollisionSystem->m_AAbb.size() != 0)
 	{
 		float x = 0;
 	}
-	
+
 	XMFLOAT4 blue;
 	blue.x = 0;
 	blue.y = 0;
 	blue.z = 1;
 	blue.w = 1;
 	tThisWorld.atSimpleMesh[8].m_nColor = blue;
-	
+
 	for (int nCurrentEntity = 0; nCurrentEntity < ENTITYCOUNT; nCurrentEntity++)
 	{
 		if (tThisWorld.atCollisionMask[nCurrentEntity].m_tnCollisionMask > 1)
@@ -141,7 +139,6 @@ void CGameMangerSystem::LoadLevel()
 				tThisWorld.atAABB[nCurrentEntity] = MyAbb;
 				pcCollisionSystem->AddAABBCollider(MyAbb, nCurrentEntity);
 			}
-
 		}
 		if (tThisWorld.atMesh[nCurrentEntity].m_nVertexCount > tThisWorld.atDebugMesh[nCurrentEntity].m_nVertexCount)
 		{
@@ -152,7 +149,6 @@ void CGameMangerSystem::LoadLevel()
 		}
 	}
 
-
 	for (int nCurrentEntity = 0; nCurrentEntity < ENTITYCOUNT; nCurrentEntity++)
 	{
 		if (tThisWorld.atCollisionMask[nCurrentEntity].m_tnCollisionMask > 1)
@@ -160,7 +156,6 @@ void CGameMangerSystem::LoadLevel()
 			tThisWorld.atAABB[nCurrentEntity] = pcCollisionSystem->updateAABB(tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, tThisWorld.atAABB[nCurrentEntity]);
 		}
 	}
-
 
 	pcGraphicsSystem->CreateBuffers(&tThisWorld);
 }
@@ -180,10 +175,8 @@ int CGameMangerSystem::InGameUpdate()
 	if (pcInputSystem->InputCheck(G_KEY_P))
 	{
 		return 3;
-
 	}
 	/*if (pcInputSystem->InputCheck(G_KEY_U)) {
-
 	}*/
 	// ui stuff
 	if (GamePaused == true)
@@ -197,7 +190,6 @@ int CGameMangerSystem::InGameUpdate()
 			foward.m128_f32[1] = 1;
 			foward.m128_f32[2] = 2;
 			//	foward.m128_f32[0] = 1;
-
 
 			XMMATRIX localMatrix2 = XMMatrixTranslationFromVector(foward);
 
@@ -265,39 +257,32 @@ int CGameMangerSystem::InGameUpdate()
 
 	pcGraphicsSystem->UpdateD3D();
 
-	#pragma region Input Garbage
-	// togle the modes that you are in
+#pragma region Input Garbage
+	// toggle the modes that you are in
 	if (pcInputSystem->InputCheck(G_BUTTON_MIDDLE)) {
 		tThisWorld.atClip[GunIndexForPlayer].GunMode = !tThisWorld.atClip[GunIndexForPlayer].GunMode;
 	}
 	// shoot a bullet
 	if (pcInputSystem->InputCheck(G_BUTTON_LEFT) == 1 && tThisWorld.atClip[GunIndexForPlayer].GunMode == true) {
-
 		tThisWorld.atClip[GunIndexForPlayer].tryToShoot = true;
-
-
 	}
 	// shoot a ray
 	else if (pcInputSystem->InputCheck(G_BUTTON_LEFT) == 1 && tThisWorld.atClip[GunIndexForPlayer].GunMode == false) {
 		tThisWorld.atClip[GunIndexForPlayer].tryToShoot = true;
-
 	}
 	// turn the ray off
 	else if (tThisWorld.atClip[GunIndexForPlayer].GunMode == false)
 	{
 		tThisWorld.atClip[GunIndexForPlayer].tryToShoot = false;
-
 	}
 
 	// reload
 	if (pcInputSystem->InputCheck(G_KEY_R) == 1) {
-
 		tThisWorld.atClip[GunIndexForPlayer].tryToReload = true;
-
 	}
 
 #pragma endregion
-	
+
 	for (int nCurrentEntity = 0; nCurrentEntity < ENTITYCOUNT; nCurrentEntity++)
 	{
 		// Win Condition
@@ -310,15 +295,21 @@ int CGameMangerSystem::InGameUpdate()
 		tTempVertexBuffer.m_d3dProjectionMatrix = m_d3dProjectionMatrix;
 		tTempVertexBuffer.m_d3dViewMatrix = m_d3dViewMatrix;
 
-		if (tThisWorld.atAIMask[nCurrentEntity].m_tnAIMask == (COMPONENT_AIMASK | COMPONENT_FOLLOW) || tThisWorld.atAIMask[nCurrentEntity].m_tnAIMask == (COMPONENT_SHOOT | COMPONENT_AIMASK | COMPONENT_FOLLOW))
+		if (tThisWorld.atAIMask[nCurrentEntity].m_tnAIMask ==
+			(COMPONENT_AIMASK | COMPONENT_FOLLOW)
+			|| tThisWorld.atAIMask[nCurrentEntity].m_tnAIMask ==
+			(COMPONENT_SHOOT | COMPONENT_AIMASK | COMPONENT_FOLLOW))
 		{
-#if AI_ON				
+#if AI_ON
 			pcAiSystem->FollowObject(tThisWorld.atWorldMatrix[PlayerStartIndex].worldMatrix, &tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix);
 			pcAiSystem->ShootGun(&tThisWorld.atClip[tThisWorld.atAIMask[nCurrentEntity].GunIndex]);
 #endif // AI_ON
-		}
+	}
 
-		if (tThisWorld.atAIMask[nCurrentEntity].m_tnAIMask == (COMPONENT_AIMASK | COMPONENT_SEARCH) || tThisWorld.atAIMask[nCurrentEntity].m_tnAIMask == (COMPONENT_AIMASK | COMPONENT_SPOTEDPLAYER))
+		if (tThisWorld.atAIMask[nCurrentEntity].m_tnAIMask ==
+			(COMPONENT_AIMASK | COMPONENT_SEARCH)
+			|| tThisWorld.atAIMask[nCurrentEntity].m_tnAIMask ==
+			(COMPONENT_AIMASK | COMPONENT_SPOTEDPLAYER))
 		{
 			if (tThisWorld.atAIVision[nCurrentEntity].keepSearching == true)
 			{
@@ -383,7 +374,6 @@ int CGameMangerSystem::InGameUpdate()
 					WallPosition.y = tThisWorld.atWorldMatrix[ptr->m_IndexLocation].worldMatrix.r[3].m128_f32[1];
 					WallPosition.z = tThisWorld.atWorldMatrix[ptr->m_IndexLocation].worldMatrix.r[3].m128_f32[2];
 
-
 					if (tThisWorld.atAIVision[nCurrentEntity].keepRotatingRight == false) {
 					tThisWorld.atAIVision[nCurrentEntity].visionRotation = 7;
 					tThisWorld.atAIVision[nCurrentEntity].wallIndex = ptr->m_IndexLocation;
@@ -391,13 +381,9 @@ int CGameMangerSystem::InGameUpdate()
 					else if (tThisWorld.atAIVision[nCurrentEntity].keepRotatingRight == true) {
 					tThisWorld.atAIVision[nCurrentEntity].visionRotation = -7;
 					tThisWorld.atAIVision[nCurrentEntity].wallIndex = ptr->m_IndexLocation;
-
-
-					}
-
 					}
 					}
-
+					}
 					}*/
 				}
 			}
@@ -440,14 +426,12 @@ int CGameMangerSystem::InGameUpdate()
 					pcGraphicsSystem->CreateEntityBuffer(&tThisWorld, rayindex);
 					tThisWorld.atClip[nCurrentEntity].maderay = true;
 				}
-
 			}
 			else if (tThisWorld.atClip[nCurrentEntity].GunMode == false && tThisWorld.atClip[nCurrentEntity].tryToShoot == false && tThisWorld.atClip[nCurrentEntity].maderay == true)
 			{
 				pcGraphicsSystem->CleanD3DObject(&tThisWorld, rayindex);
 				rayindex = -1;
 				tThisWorld.atClip[nCurrentEntity].maderay = false;
-
 			}
 			else
 			{
@@ -477,7 +461,6 @@ int CGameMangerSystem::InGameUpdate()
 					pcGraphicsSystem->CreateEntityBuffer(&tThisWorld, newbullet);
 
 					tThisWorld.atClip[nCurrentEntity].tryToShoot = false;
-
 				}
 				else if (tThisWorld.atClip[nCurrentEntity].tryToShoot == true)
 				{
@@ -487,7 +470,6 @@ int CGameMangerSystem::InGameUpdate()
 				{
 					pcProjectileSystem->Reload(&tThisWorld.atClip[nCurrentEntity]);
 					tThisWorld.atClip[nCurrentEntity].tryToReload = false;
-
 				}
 				if (tThisWorld.atClip[nCurrentEntity].nBulletsFired.size() != 0)
 				{
@@ -497,7 +479,6 @@ int CGameMangerSystem::InGameUpdate()
 						{
 							pcPhysicsSystem->AddBulletForce(&tThisWorld.atRigidBody[tThisWorld.atClip[nCurrentEntity].nBulletsFired[i]], tThisWorld.atClip[nCurrentEntity].bulletSpeed);
 							tThisWorld.atClip[nCurrentEntity].fAliveTime[i] += 0.1f;
-
 						}
 						else
 						{
@@ -511,11 +492,9 @@ int CGameMangerSystem::InGameUpdate()
 								{
 									tThisWorld.atClip[tThisWorld.atClip[nCurrentEntity].nBulletsFired[i]].indexInclip -= 1;
 								}
-
 							}
 						}
 					}
-
 				}
 				if (tThisWorld.atClip[nCurrentEntity].fShootingCoolDown > 0)
 				{
@@ -535,7 +514,6 @@ int CGameMangerSystem::InGameUpdate()
 			float* distanceCalucaltion = new float();
 			for (list<TAABB>::iterator ptr = pcCollisionSystem->m_AAbb.begin(); ptr != pcCollisionSystem->m_AAbb.end(); ++ptr)
 			{
-
 				if (pcCollisionSystem->IsLineInBox(XMVector3Transform(tThisWorld.atDebugMesh[nCurrentEntity].m_VertexData[0], tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix)
 					, XMVector3Transform(tThisWorld.atDebugMesh[nCurrentEntity].m_VertexData[1], tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix),
 					tThisWorld.atWorldMatrix[ptr->m_IndexLocation].worldMatrix, *ptr, distanceCalucaltion) == true && *distanceCalucaltion < CloseEstObject)
@@ -549,16 +527,18 @@ int CGameMangerSystem::InGameUpdate()
 			delete distanceCalucaltion;
 		}
 
-		if (tThisWorld.atCollisionMask[nCurrentEntity].m_tnCollisionMask == (COMPONENT_COLLISIONMASK |
-			COMPONENT_TRIGGER | COMPONENT_AABB | COMPONENT_NONSTATIC) || tThisWorld.atCollisionMask[nCurrentEntity].m_tnCollisionMask == (COMPONENT_COLLISIONMASK |
-				COMPONENT_NONTRIGGER | COMPONENT_AABB | COMPONENT_NONSTATIC))
+		if (tThisWorld.atCollisionMask[nCurrentEntity].m_tnCollisionMask ==
+			(COMPONENT_COLLISIONMASK | COMPONENT_TRIGGER | COMPONENT_AABB | COMPONENT_NONSTATIC)
+			|| tThisWorld.atCollisionMask[nCurrentEntity].m_tnCollisionMask ==
+			(COMPONENT_COLLISIONMASK | COMPONENT_NONTRIGGER | COMPONENT_AABB | COMPONENT_NONSTATIC))
 		{
 			tThisWorld.atAABB[nCurrentEntity] = pcCollisionSystem->updateAABB(tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, tThisWorld.atAABB[nCurrentEntity]);
 		}
 
-
-		if ((tThisWorld.atCollisionMask[nCurrentEntity].m_tnCollisionMask == (COMPONENT_COLLISIONMASK | COMPONENT_AABB | COMPONENT_NONSTATIC | COMPONENT_TRIGGER)
-			|| tThisWorld.atCollisionMask[nCurrentEntity].m_tnCollisionMask == (COMPONENT_COLLISIONMASK | COMPONENT_NONTRIGGER | COMPONENT_AABB | COMPONENT_NONSTATIC)))
+		if ((tThisWorld.atCollisionMask[nCurrentEntity].m_tnCollisionMask ==
+			(COMPONENT_COLLISIONMASK | COMPONENT_AABB | COMPONENT_NONSTATIC | COMPONENT_TRIGGER)
+			|| tThisWorld.atCollisionMask[nCurrentEntity].m_tnCollisionMask ==
+			(COMPONENT_COLLISIONMASK | COMPONENT_NONTRIGGER | COMPONENT_AABB | COMPONENT_NONSTATIC)))
 		{
 			vector<int> otherCollisionsIndex;
 			if (pcCollisionSystem->AABBtoAABBCollisionCheck(tThisWorld.atAABB[nCurrentEntity], &otherCollisionsIndex) == true)
@@ -591,6 +571,7 @@ int CGameMangerSystem::InGameUpdate()
 							m_d3dPlayerMatrix = tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix;
 						}
 					}
+
 					if (tThisWorld.atRigidBody[nCurrentEntity].ground == false
 						&& tThisWorld.atRigidBody[otherCollisionsIndex[i]].ground == false
 						&& tThisWorld.atRigidBody[nCurrentEntity].wall == false
@@ -609,7 +590,7 @@ int CGameMangerSystem::InGameUpdate()
 						}
 						if (tThisWorld.atInputMask[otherCollisionsIndex[i]].m_tnInputMask == (COMPONENT_INPUTMASK | COMPONENT_CLAYTON))
 						{
-							if (tThisWorld.atAIMask[otherCollisionsIndex[i]].m_tnAIMask == (COMPONENT_AIMASK | COMPONENT_FOLLOW)) 
+							if (tThisWorld.atAIMask[otherCollisionsIndex[i]].m_tnAIMask == (COMPONENT_AIMASK | COMPONENT_FOLLOW))
 							{
 								pcAiSystem->SetNumberOfAI(pcAiSystem->GetNumberOfAI() - 1);
 								if (tThisWorld.atClip[nCurrentEntity].gunIndex != -1)
@@ -643,7 +624,6 @@ int CGameMangerSystem::InGameUpdate()
 
 										//pcGraphicsSystem->CleanD3DObject(&tThisWorld, tThisWorld.atAIMask[nCurrentEntity].GunIndex);
 										pcGraphicsSystem->CleanD3DObject(&tThisWorld, nCurrentEntity);
-
 									}
 								}
 								tThisWorld.atClayton[otherCollisionsIndex[i]].health -= 50;
@@ -676,7 +656,7 @@ int CGameMangerSystem::InGameUpdate()
 			tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = XMMatrixMultiply(tThisWorld.atOffSetMatrix[nCurrentEntity], tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix);
 		}
 
-		#pragma region Graphics Checks
+#pragma region Graphics Checks
 		if (tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_SHADERID))
 		{
 			if (tThisWorld.atInputMask[nCurrentEntity].m_tnInputMask == (COMPONENT_INPUTMASK | COMPONENT_CLAYTON))
@@ -724,8 +704,7 @@ int CGameMangerSystem::InGameUpdate()
 		}
 
 #pragma endregion
-	
-	}
+}
 
 	pcGraphicsSystem->m_pd3dSwapchain->Present(0, 0);
 	zValue += 0.001f;
@@ -752,7 +731,6 @@ int CGameMangerSystem::LoadMainMenu()
 	}
 
 	bool switchlevel = false;
-
 
 	XMMATRIX m_d3d_ResultMatrix = pcGraphicsSystem->SetDefaultWorldPosition();
 
@@ -786,17 +764,17 @@ int CGameMangerSystem::LoadMainMenu()
 
 		tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = pcPhysicsSystem->ResolveForces(&tThisWorld.atRigidBody[nCurrentEntity], tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, true);
 
-		if (tThisWorld.atCollisionMask[nCurrentEntity].m_tnCollisionMask == 
-			(COMPONENT_COLLISIONMASK | COMPONENT_TRIGGER | COMPONENT_AABB | COMPONENT_NONSTATIC) 
-			|| tThisWorld.atCollisionMask[nCurrentEntity].m_tnCollisionMask == 
-			(COMPONENT_COLLISIONMASK | COMPONENT_NONTRIGGER | COMPONENT_AABB | COMPONENT_NONSTATIC)) 
+		if (tThisWorld.atCollisionMask[nCurrentEntity].m_tnCollisionMask ==
+			(COMPONENT_COLLISIONMASK | COMPONENT_TRIGGER | COMPONENT_AABB | COMPONENT_NONSTATIC)
+			|| tThisWorld.atCollisionMask[nCurrentEntity].m_tnCollisionMask ==
+			(COMPONENT_COLLISIONMASK | COMPONENT_NONTRIGGER | COMPONENT_AABB | COMPONENT_NONSTATIC))
 		{
 			tThisWorld.atAABB[nCurrentEntity] = pcCollisionSystem->updateAABB(tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, tThisWorld.atAABB[nCurrentEntity]);
 		}
 
-		if ((tThisWorld.atCollisionMask[nCurrentEntity].m_tnCollisionMask == 
-			(COMPONENT_COLLISIONMASK | COMPONENT_AABB | COMPONENT_NONSTATIC | COMPONENT_TRIGGER) 
-			|| tThisWorld.atCollisionMask[nCurrentEntity].m_tnCollisionMask == 
+		if ((tThisWorld.atCollisionMask[nCurrentEntity].m_tnCollisionMask ==
+			(COMPONENT_COLLISIONMASK | COMPONENT_AABB | COMPONENT_NONSTATIC | COMPONENT_TRIGGER)
+			|| tThisWorld.atCollisionMask[nCurrentEntity].m_tnCollisionMask ==
 			(COMPONENT_COLLISIONMASK | COMPONENT_NONTRIGGER | COMPONENT_AABB | COMPONENT_NONSTATIC)))
 		{
 			vector<int> otherCollisionsIndex;
@@ -805,25 +783,24 @@ int CGameMangerSystem::LoadMainMenu()
 				for (int i = 0; i < otherCollisionsIndex.size(); ++i) {
 					if (tThisWorld.atRigidBody[otherCollisionsIndex[i]].ground == true && tThisWorld.atCollisionMask[nCurrentEntity].m_tnCollisionMask !=
 						(COMPONENT_COLLISIONMASK |
-							COMPONENT_TRIGGER | COMPONENT_AABB | COMPONENT_NONSTATIC)) 
+							COMPONENT_TRIGGER | COMPONENT_AABB | COMPONENT_NONSTATIC))
 					{
 						tThisWorld.atRigidBody[nCurrentEntity].totalForce = -tThisWorld.atRigidBody[nCurrentEntity].velocity;
 
 						tTempVertexBuffer.m_d3dWorldMatrix = pcPhysicsSystem->ResolveForces(&tThisWorld.atRigidBody[nCurrentEntity], tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, false);
 						tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = pcCollisionSystem->WalkingThrewObjectCheck(tTempVertexBuffer.m_d3dWorldMatrix, tThisWorld.atAABB[otherCollisionsIndex[i]], tThisWorld.atAABB[nCurrentEntity]);
 						tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = tTempVertexBuffer.m_d3dWorldMatrix;
-
 					}
 					if (tThisWorld.atRigidBody[nCurrentEntity].ground == false && tThisWorld.atRigidBody[nCurrentEntity].wall == false &&
 						tThisWorld.atCollisionMask[nCurrentEntity].m_tnCollisionMask == (COMPONENT_COLLISIONMASK |
 							COMPONENT_NONTRIGGER | COMPONENT_AABB | COMPONENT_NONSTATIC)
 						&& (tThisWorld.atCollisionMask[otherCollisionsIndex[i]].m_tnCollisionMask == (COMPONENT_COLLISIONMASK |
 							COMPONENT_NONTRIGGER | COMPONENT_AABB | COMPONENT_STATIC) || tThisWorld.atCollisionMask[otherCollisionsIndex[i]].m_tnCollisionMask == (COMPONENT_COLLISIONMASK |
-								COMPONENT_NONTRIGGER | COMPONENT_AABB | COMPONENT_NONSTATIC))) 
+								COMPONENT_NONTRIGGER | COMPONENT_AABB | COMPONENT_NONSTATIC)))
 					{
 						tTempVertexBuffer.m_d3dWorldMatrix = pcCollisionSystem->WalkingThrewObjectCheck(tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, tThisWorld.atAABB[otherCollisionsIndex[i]], tThisWorld.atAABB[nCurrentEntity]);
 						tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = tTempVertexBuffer.m_d3dWorldMatrix;
-						if (tThisWorld.atInputMask[nCurrentEntity].m_tnInputMask == (COMPONENT_INPUTMASK | COMPONENT_CLAYTON)) 
+						if (tThisWorld.atInputMask[nCurrentEntity].m_tnInputMask == (COMPONENT_INPUTMASK | COMPONENT_CLAYTON))
 						{
 							m_d3dPlayerMatrix = tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix;
 						}
@@ -835,7 +812,7 @@ int CGameMangerSystem::LoadMainMenu()
 							COMPONENT_TRIGGER | COMPONENT_AABB | COMPONENT_STATIC)) || tThisWorld.atCollisionMask[otherCollisionsIndex[i]].m_tnCollisionMask == (COMPONENT_COLLISIONMASK |
 								COMPONENT_TRIGGER | COMPONENT_AABB | COMPONENT_NONSTATIC))
 					{
-						if (tThisWorld.atAABB[otherCollisionsIndex[i]].m_SceneChange != -30) 
+						if (tThisWorld.atAABB[otherCollisionsIndex[i]].m_SceneChange != -30)
 						{
 							switchlevel = true;
 							break;
@@ -845,19 +822,18 @@ int CGameMangerSystem::LoadMainMenu()
 
 				tTempPixelBuffer.m_d3dCollisionColor = XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f);
 			}
-			else 
+			else
 			{
 				tTempPixelBuffer.m_d3dCollisionColor = tThisWorld.atSimpleMesh[nCurrentEntity].m_nColor;
 			}
 		}
-		else 
+		else
 		{
 			tTempPixelBuffer.m_d3dCollisionColor = tThisWorld.atSimpleMesh[nCurrentEntity].m_nColor;
 		}
 
 		if (tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_SIMPLEMESH | COMPONENT_SHADERID))
 		{
-
 			if (tThisWorld.atInputMask[nCurrentEntity].m_tnInputMask == (COMPONENT_INPUTMASK | COMPONENT_CLAYTON))
 			{
 				m_d3dPlayerMatrix = pcInputSystem->WalkCamera(m_d3dPlayerMatrix);
@@ -878,18 +854,18 @@ int CGameMangerSystem::LoadMainMenu()
 
 	pcGraphicsSystem->m_pd3dSwapchain->Present(0, 0);
 
-	if (pcInputSystem->InputCheck(G_KEY_ENTER) == 1 
-		|| switchlevel == true 
-		&& pcInputSystem->InputCheck(G_KEY_ENTER) == 0) 
+	if (pcInputSystem->InputCheck(G_KEY_ENTER) == 1
+		|| switchlevel == true
+		&& pcInputSystem->InputCheck(G_KEY_ENTER) == 0)
 	{
 		pcGraphicsSystem->CleanD3DLevel(&tThisWorld);
 		pcCollisionSystem->m_AAbb.clear();
 
 		return 1;
 	}
-	else 
-	{ 
-		return 0; 
+	else
+	{
+		return 0;
 	}
 }
 
@@ -905,8 +881,6 @@ void CGameMangerSystem::InitilizeMainMenu()
 	tCameraMode.bAimMode = false;
 	tCameraMode.bWalkMode = true;
 	m_d3dPlayerMatrix = pcGraphicsSystem->SetDefaultWorldPosition();
-
-
 
 	PlayerStartIndex = CreateClayTon(&tThisWorld);
 	XMMATRIX AILocation = m_d3dWorldMatrix;

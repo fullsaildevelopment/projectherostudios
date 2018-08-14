@@ -4,8 +4,8 @@
 enum ePhysicsComponent
 {
 	//COMPONENT_NONE = 0,
-	COMPONENT_PHYSICSMASK	= 1 << 0,
-	COMPONENT_RIGIDBODY		= 1 << 1,//Velocity, mass
+	COMPONENT_PHYSICSMASK = 1 << 0,
+	COMPONENT_RIGIDBODY = 1 << 1,//Velocity, mass
 };
 
 struct TPhysicsMask
@@ -26,9 +26,5 @@ struct TRigidbody
 	XMVECTOR CollissionForce;
 	bool ground;
 	bool wall;
-
-
-
-
 };
 #endif

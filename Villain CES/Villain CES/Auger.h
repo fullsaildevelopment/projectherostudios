@@ -7,11 +7,9 @@ class CAuger
 {
 public:
 
-	CGameMangerSystem* pcGameMangerSystem;
+	CGameMangerSystem * pcGameMangerSystem;
 	CInputSystem	*pcInputSystem;
 	CGraphicsSystem	*pcGraphicsSystem;
-
-
 
 	CAuger();
 	CAuger(HWND cTheWindow);
@@ -23,9 +21,6 @@ public:
 	void Update(bool* loopGame);
 	void End();
 private:
-	
-	int CurrentSpotInGame;
-	
-	
-};
 
+	int CurrentSpotInGame;
+};

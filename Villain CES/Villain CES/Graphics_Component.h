@@ -3,17 +3,17 @@
 #define CES_GRAPHICS_COMPONENT_H
 enum eGraphicsComponent
 {
-	COMPONENT_NONE			= 0,
-	COMPONENT_GRAPHICSMASK	= 1 << 0,
-	COMPONENT_MESH			= 1 << 1,
-	COMPONENT_DEBUGMESH		= 1 << 2,
-	COMPONENT_ANIMATION		= 1 << 3,
-	COMPONENT_MATERIAL		= 1 << 4,
-	COMPONENT_TEXTURE		= 1 << 5,
-	COMPONENT_SHADERID		= 1 << 6, // have information on what inputs and outputs go to other shaders as well
-	COMPONENT_CAMERA		= 1 << 7,
-	COMPONENT_SIMPLEMESH	= 1 << 8,
-	COMPONENT_PBRMESH		= 1 << 9
+	COMPONENT_NONE = 0,
+	COMPONENT_GRAPHICSMASK = 1 << 0,
+	COMPONENT_MESH = 1 << 1,
+	COMPONENT_DEBUGMESH = 1 << 2,
+	COMPONENT_ANIMATION = 1 << 3,
+	COMPONENT_MATERIAL = 1 << 4,
+	COMPONENT_TEXTURE = 1 << 5,
+	COMPONENT_SHADERID = 1 << 6, // have information on what inputs and outputs go to other shaders as well
+	COMPONENT_CAMERA = 1 << 7,
+	COMPONENT_SIMPLEMESH = 1 << 8,
+	COMPONENT_PBRMESH = 1 << 9
 };
 
 struct TGraphicsMask
@@ -21,16 +21,16 @@ struct TGraphicsMask
 	int m_tnGraphicsMask = 0;
 };
 
-struct TKeyframe 
-{ 
-	double dTime = 0; 
-	std::vector<XMMATRIX> m_vd3dJointMatrices = std::vector<XMMATRIX>(); 
-}; 
+struct TKeyframe
+{
+	double dTime = 0;
+	std::vector<XMMATRIX> m_vd3dJointMatrices = std::vector<XMMATRIX>();
+};
 
-struct TAnimationClip 
-{ 
+struct TAnimationClip
+{
 	double dDuration = 0;
-	std::vector<TKeyframe> m_vtKeyFrames; 
+	std::vector<TKeyframe> m_vtKeyFrames;
 	std::vector<int> m_vnParentIndicies = std::vector<int>(0);
 };
 
@@ -201,7 +201,6 @@ struct TMesh
 	UINT m_nVertexBufferOffset = 0;
 	ID3D11ShaderResourceView* m_d3dSRVDiffuse = nullptr;
 	std::vector<XMFLOAT3>	m_VertexData;
-
 };
 
 struct TDebugMesh
@@ -213,8 +212,7 @@ struct TDebugMesh
 	UINT					m_nVertexBufferStride = 0;
 	UINT					m_nVertexBufferOffset = 0;
 	std::vector<XMVECTOR>	m_VertexData;
-
-};	
+};
 
 struct TSimpleMesh
 {
@@ -226,7 +224,6 @@ struct TSimpleMesh
 	D3D11_SUBRESOURCE_DATA	m_d3dVertexData;
 	D3D11_SUBRESOURCE_DATA	m_d3dIndexData;
 
-
 	UINT					m_nVertexCount = 0;
 	UINT					m_nIndexCount = 0;
 	UINT					m_nVertexBufferStride = 0;
@@ -234,8 +231,6 @@ struct TSimpleMesh
 
 	std::vector<XMFLOAT3>		m_VertexData;
 	XMFLOAT4                m_nColor;
-
-
 };
 
 struct TAnimation
@@ -260,7 +255,7 @@ struct TTexture
 	*/
 };
 
-struct TShaderID	
+struct TShaderID
 {
 	int m_nShaderID = 0;
 };
@@ -272,7 +267,7 @@ struct TCamera
 	*/
 };
 
-struct TWorldMatrix 
+struct TWorldMatrix
 {
 	XMMATRIX worldMatrix = XMMatrixIdentity();
 };

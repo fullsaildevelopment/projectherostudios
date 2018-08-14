@@ -5,27 +5,25 @@
 
 CAuger::CAuger()
 {
-
 }
 
 CAuger::CAuger(HWND window)
 {
 	pcInputSystem = new CInputSystem();
 	pcInputSystem->InitializeGInput(window);
-	pcGameMangerSystem = new CGameMangerSystem(window,pcInputSystem);
+	pcGameMangerSystem = new CGameMangerSystem(window, pcInputSystem);
 
-		
-		//pcGraphicsSystem = new CGraphicsSystem();
-	/*cApplicationWindow = window;
-	
-	pcGraphicsSystem = new CGraphicsSystem();
-	pcInputSystem = new CInputSystem();
-	pcCollisionSystem = new CCollisionSystem();
-	pcPhysicsSystem = new CPhysicsSystem();
-	pcInputSystem->InitializeGInput(window);
-	pcProjectileSystem = new CProjectileSystem();
-	pcAiSystem = new CAISystem();
-	srand(time(NULL));*/
+	//pcGraphicsSystem = new CGraphicsSystem();
+/*cApplicationWindow = window;
+
+pcGraphicsSystem = new CGraphicsSystem();
+pcInputSystem = new CInputSystem();
+pcCollisionSystem = new CCollisionSystem();
+pcPhysicsSystem = new CPhysicsSystem();
+pcInputSystem->InitializeGInput(window);
+pcProjectileSystem = new CProjectileSystem();
+pcAiSystem = new CAISystem();
+srand(time(NULL));*/
 }
 
 CAuger::~CAuger()
@@ -54,7 +52,7 @@ void CAuger::Update(bool* loopgame)
 		pcGameMangerSystem->InitilizeMainMenu();
 		CurrentSpotInGame = 0;
 		break;
-		
+
 		// main menu
 	case 0:
 		CurrentSpotInGame = (int)(pcGameMangerSystem->LoadMainMenu());
@@ -64,11 +62,11 @@ void CAuger::Update(bool* loopgame)
 		CurrentSpotInGame = 2;
 		break;
 	case 2:
-		CurrentSpotInGame =pcGameMangerSystem->InGameUpdate();
+		CurrentSpotInGame = pcGameMangerSystem->InGameUpdate();
 		break;
 	case 3:
-		if(pcInputSystem->InputCheck(G_KEY_U))
-		CurrentSpotInGame = 2;
+		if (pcInputSystem->InputCheck(G_KEY_U))
+			CurrentSpotInGame = 2;
 		break;
 	case 4:
 		*loopgame = false;
@@ -76,18 +74,10 @@ void CAuger::Update(bool* loopgame)
 	default:
 		break;
 	}
-	
-	
-	
-	
-	
-	
 }
-
 
 void CAuger::End()
 {
-	
 	//delete pcInputSystem;
 }
 

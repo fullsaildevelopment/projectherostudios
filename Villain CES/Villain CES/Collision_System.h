@@ -10,31 +10,24 @@ using namespace std;
 * Mod. Initials:    AP
 * Author:            Arthur E. Parker
 * Purpose:           Controls Collision in Game
-*            
+*
 **/
 class CCollisionSystem
 {
-	
 public:
 
 	CCollisionSystem();
 	~CCollisionSystem();
-	int AddAABBCollider(TAABB m_AABB,int nIndex);
+	int AddAABBCollider(TAABB m_AABB, int nIndex);
 	bool RemoveAABBCollider(int nIndex);
 	bool AABBtoAABBCollisionCheck(TAABB m_AABB, vector<int>* m_OtherColision);
 	bool replaceAABB(int nIndex, TAABB m_AABB2);
 	TAABB updateAABB(XMMATRIX worldMatrix, TAABB aabb);
-	TAABB createAABBS(std::vector<XMFLOAT3> verticies,TAABB AABBDATA);
+	TAABB createAABBS(std::vector<XMFLOAT3> verticies, TAABB AABBDATA);
 	bool classify_aabb_to_aabb(TAABB aabb1, TAABB aabb2);
-	bool IsLineInBox(XMVECTOR startPoint, XMVECTOR endPoint, XMMATRIX worldMatrix, TAABB boxclide,float* distance);
-	XMMATRIX WalkingThrewObjectCheck(XMMATRIX worldPos,TAABB otherCollision,TAABB currentCollision);
+	bool IsLineInBox(XMVECTOR startPoint, XMVECTOR endPoint, XMMATRIX worldMatrix, TAABB boxclide, float* distance);
+	XMMATRIX WalkingThrewObjectCheck(XMMATRIX worldPos, TAABB otherCollision, TAABB currentCollision);
 	list<TAABB> m_AAbb;
 private:
 	bool ContainAABB(int nIndex);
-	
-	
-
-
-
 };
-

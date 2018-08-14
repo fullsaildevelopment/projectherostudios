@@ -44,7 +44,6 @@ unsigned int SpawnLevelChanger(TWorld * ptWorld, XMMATRIX SpawnPosition)
 		14,7,5,14,15,7
 	};
 
-
 	ptWorld->atSimpleMesh[nThisEntity].m_nIndexCount = 36;
 	ptWorld->atSimpleMesh[nThisEntity].m_nVertexCount = 16;
 
@@ -64,7 +63,6 @@ unsigned int SpawnLevelChanger(TWorld * ptWorld, XMMATRIX SpawnPosition)
 	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexBufferDesc.CPUAccessFlags = 0;
 	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexBufferDesc.MiscFlags = 0;
 	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexBufferDesc.StructureByteStride = 0;
-
 
 	ptWorld->atSimpleMesh[nThisEntity].m_d3dVertexData.pSysMem = atCubeVertices;
 	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexData.pSysMem = cubeIndices;
@@ -87,7 +85,7 @@ unsigned int SpawnLevelChanger(TWorld * ptWorld, XMMATRIX SpawnPosition)
 unsigned int createEntity(TWorld * ptWorld)
 {
 	unsigned int nCurrentEntity;
-	//Mark entity for Creation by finding the first index in the entity list that has no components. 
+	//Mark entity for Creation by finding the first index in the entity list that has no components.
 	//Return the index of this marked entity
 	for (nCurrentEntity = 0; nCurrentEntity < ENTITYCOUNT; ++nCurrentEntity)
 	{
@@ -153,7 +151,7 @@ unsigned int createDebugTransformLines(TWorld * ptWorld)
 		TPrimalVert{ XMFLOAT3(0, 0, 0),    XMFLOAT4(0,1,0,1)},//00	Red
 		TPrimalVert{ XMFLOAT3(2.0f, 0, 0), XMFLOAT4(0,1,0,1)},//01	Red
 		TPrimalVert{ XMFLOAT3(0, 0, 0),    XMFLOAT4(0,0,1,1)},//00	Blue
-		TPrimalVert{ XMFLOAT3(0, 0, 2.0f), XMFLOAT4(0,0,1,1)},//01	Blue	
+		TPrimalVert{ XMFLOAT3(0, 0, 2.0f), XMFLOAT4(0,0,1,1)},//01	Blue
 	};
 
 	ptWorld->atDebugMesh[nThisEntity].m_nVertexBufferStride = sizeof(TPrimalVert);
@@ -181,7 +179,6 @@ unsigned int createCube(TWorld * ptWorld)
 	ptWorld->atCollisionMask[nThisEntity].m_tnCollisionMask = COMPONENT_COLLISIONMASK;
 	ptWorld->atUIMask[nThisEntity].m_tnUIMask = COMPONENT_UIMASK;
 	ptWorld->atPhysicsMask[nThisEntity].m_tnPhysicsMask = COMPONENT_PHYSICSMASK;
-
 
 	static TPrimalVert atCubeVertices[]
 	{
@@ -233,7 +230,6 @@ unsigned int createCube(TWorld * ptWorld)
 	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexBufferDesc.CPUAccessFlags = 0;
 	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexBufferDesc.MiscFlags = 0;
 	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexBufferDesc.StructureByteStride = 0;
-
 
 	ptWorld->atSimpleMesh[nThisEntity].m_d3dVertexData.pSysMem = atCubeVertices;
 	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexData.pSysMem = cubeIndices;
@@ -289,8 +285,6 @@ unsigned int createDummyPlayer(TWorld* ptWorld, XMMATRIX playerMatrix)
 		TPrimalVert{ XMFLOAT3(0, 0, 0),    XMFLOAT4(0,0,1,1) },//00	Blue
 		TPrimalVert{ XMFLOAT3(0, 0, playerPos.z), XMFLOAT4(0,0,1,1) },//01	Blue
 	};
-
-
 
 	ptWorld->atDebugMesh[nThisEntity].m_nVertexBufferStride = sizeof(TPrimalVert);
 	ptWorld->atDebugMesh[nThisEntity].m_nVertexBufferOffset = 0;
@@ -383,7 +377,6 @@ unsigned int CreateClayTon(TWorld * ptWorld)
 	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexBufferDesc.MiscFlags = 0;
 	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexBufferDesc.StructureByteStride = 0;
 
-
 	ptWorld->atSimpleMesh[nThisEntity].m_d3dVertexData.pSysMem = atCubeVertices;
 	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexData.pSysMem = cubeIndices;
 
@@ -397,7 +390,6 @@ unsigned int CreateClayTon(TWorld * ptWorld)
 	for (unsigned int i = 0; i < ptWorld->atSimpleMesh[nThisEntity].m_nVertexCount; ++i) {
 		ptWorld->atSimpleMesh[nThisEntity].m_VertexData.push_back(atCubeVertices[i].m_d3dfPosition);
 	}
-
 
 	return nThisEntity;
 }
@@ -413,23 +405,22 @@ unsigned int CreateBullet(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMeshIm
 
 	switch (MaterialID)
 	{
-		case 0:
-		{
-
-			ptWorld->atProjectiles[nThisEntity].m_tnProjectileMask = COMPONENT_PROJECTILESMASK | COMPONENT_METAL;
-			result = CreateWICTextureFromFile(m_pd3dDevice, L"PBRTestScene.fbm\\PaintedMetal04_met.jpg", nullptr, &srv, NULL);
-			ptWorld->atMesh[nThisEntity].m_d3dSRVDiffuse = srv;
-			break;
-		}
-		case 1:
-		{
-			ptWorld->atProjectiles[nThisEntity].m_tnProjectileMask = COMPONENT_PROJECTILESMASK | COMPONENT_WOOD;
-			result = CreateWICTextureFromFile(m_pd3dDevice, L"TestScene_V1.fbm\\Wood01_col.jpg", nullptr ,&srv, NULL);
-			ptWorld->atMesh[nThisEntity].m_d3dSRVDiffuse = srv;
-			break;
-		}
-		default:
-			break;
+	case 0:
+	{
+		ptWorld->atProjectiles[nThisEntity].m_tnProjectileMask = COMPONENT_PROJECTILESMASK | COMPONENT_METAL;
+		result = CreateWICTextureFromFile(m_pd3dDevice, L"PBRTestScene.fbm\\PaintedMetal04_met.jpg", nullptr, &srv, NULL);
+		ptWorld->atMesh[nThisEntity].m_d3dSRVDiffuse = srv;
+		break;
+	}
+	case 1:
+	{
+		ptWorld->atProjectiles[nThisEntity].m_tnProjectileMask = COMPONENT_PROJECTILESMASK | COMPONENT_WOOD;
+		result = CreateWICTextureFromFile(m_pd3dDevice, L"TestScene_V1.fbm\\Wood01_col.jpg", nullptr, &srv, NULL);
+		ptWorld->atMesh[nThisEntity].m_d3dSRVDiffuse = srv;
+		break;
+	}
+	default:
+		break;
 	}
 	ptWorld->atCollisionMask[nThisEntity].m_tnCollisionMask = COMPONENT_COLLISIONMASK | COMPONENT_TRIGGER | COMPONENT_AABB | COMPONENT_NONSTATIC;
 	ptWorld->atGraphicsMask[nThisEntity].m_tnGraphicsMask = (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_SHADERID);
@@ -536,7 +527,6 @@ unsigned int CreateBullet(TWorld * ptWorld, XMMATRIX BulletSpawnLocation, int Ma
 		//atCubeVertices[i].m_d3dfPosition.x *= 1;
 		//atCubeVertices[i].m_d3dfPosition.y *= 1;
 		//atCubeVertices[i].m_d3dfPosition.z *= 1;
-
 	}
 	static short cubeIndices[]
 	{
@@ -568,7 +558,6 @@ unsigned int CreateBullet(TWorld * ptWorld, XMMATRIX BulletSpawnLocation, int Ma
 	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexBufferDesc.MiscFlags = 0;
 	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexBufferDesc.StructureByteStride = 0;
 
-
 	ptWorld->atSimpleMesh[nThisEntity].m_d3dVertexData.pSysMem = atCubeVertices;
 	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexData.pSysMem = cubeIndices;
 	ptWorld->atSimpleMesh[nThisEntity].m_d3dVertexData.SysMemPitch = 0;
@@ -585,12 +574,6 @@ unsigned int CreateBullet(TWorld * ptWorld, XMMATRIX BulletSpawnLocation, int Ma
 	ptWorld->atRigidBody[nThisEntity].totalForce = zerovector;
 	ptWorld->atRigidBody[nThisEntity].ground = false;
 	ptWorld->atRigidBody[nThisEntity].wall = false;
-
-
-
-
-
-
 
 	ptWorld->atWorldMatrix[nThisEntity].worldMatrix = BulletSpawnLocation;
 
@@ -649,7 +632,6 @@ unsigned int AimingLine(TWorld * ptWorld, XMMATRIX BulletSpawnLocation, int pare
 		//atCubeVertices[i].m_d3dfPosition.x *= 1;
 		//atCubeVertices[i].m_d3dfPosition.y *= 1;
 		//atCubeVertices[i].m_d3dfPosition.z *= 1;
-
 	}
 	static short cubeIndices[]
 	{
@@ -681,7 +663,6 @@ unsigned int AimingLine(TWorld * ptWorld, XMMATRIX BulletSpawnLocation, int pare
 	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexBufferDesc.MiscFlags = 0;
 	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexBufferDesc.StructureByteStride = 0;
 
-
 	ptWorld->atSimpleMesh[nThisEntity].m_d3dVertexData.pSysMem = atCubeVertices;
 	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexData.pSysMem = cubeIndices;
 
@@ -690,8 +671,6 @@ unsigned int AimingLine(TWorld * ptWorld, XMMATRIX BulletSpawnLocation, int pare
 
 	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexData.SysMemPitch = 0;
 	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexData.SysMemSlicePitch = 0;
-
-
 
 	// the 90 is for fov if we want to implament field of view
 	/*BulletSpawnLocation.r[0].m128_f32[0] = 0.5;
@@ -702,7 +681,6 @@ unsigned int AimingLine(TWorld * ptWorld, XMMATRIX BulletSpawnLocation, int pare
 	ptWorld->atWorldMatrix[nThisEntity].worldMatrix = BulletSpawnLocation;
 	ptWorld->atParentWorldMatrix[nThisEntity] = parentWorldMatrixIndex;
 	ptWorld->atOffSetMatrix[nThisEntity] = XMMatrixTranslation(xoffset, yoffset, zoffset);
-
 
 	ptWorld->atShaderID[nThisEntity].m_nShaderID = 3;
 
@@ -769,7 +747,6 @@ unsigned int CreateGround(TWorld * ptWorld, XMMATRIX SpawnPosition)
 	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexBufferDesc.CPUAccessFlags = 0;
 	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexBufferDesc.MiscFlags = 0;
 	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexBufferDesc.StructureByteStride = 0;
-
 
 	ptWorld->atSimpleMesh[nThisEntity].m_d3dVertexData.pSysMem = atCubeVertices;
 	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexData.pSysMem = cubeIndices;
@@ -850,7 +827,6 @@ unsigned int CreateWall(TWorld * ptWorld, XMMATRIX SpawnPosition)
 	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexBufferDesc.MiscFlags = 0;
 	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexBufferDesc.StructureByteStride = 0;
 
-
 	ptWorld->atSimpleMesh[nThisEntity].m_d3dVertexData.pSysMem = atCubeVertices;
 	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexData.pSysMem = cubeIndices;
 
@@ -929,7 +905,6 @@ unsigned int CreateCelling(TWorld * ptWorld, XMMATRIX SpawnPosition)
 	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexBufferDesc.CPUAccessFlags = 0;
 	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexBufferDesc.MiscFlags = 0;
 	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexBufferDesc.StructureByteStride = 0;
-
 
 	ptWorld->atSimpleMesh[nThisEntity].m_d3dVertexData.pSysMem = atCubeVertices;
 	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexData.pSysMem = cubeIndices;
@@ -1104,7 +1079,6 @@ unsigned int CreateSimpleGunAi(TWorld * ptWorld, XMMATRIX SpawnPosition)
 	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexBufferDesc.MiscFlags = 0;
 	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexBufferDesc.StructureByteStride = 0;
 
-
 	ptWorld->atSimpleMesh[nThisEntity].m_d3dVertexData.pSysMem = atCubeVertices;
 	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexData.pSysMem = cubeIndices;
 
@@ -1143,7 +1117,6 @@ unsigned int CreateSimpleSearchAi(TWorld * ptWorld, XMMATRIX SpawnPosition)
 	end.m128_f32[0] = 0;
 	end.m128_f32[1] = 0.5;
 	end.m128_f32[2] = 10;
-
 
 	ptWorld->atAIVision[nThisEntity].start = start;
 	ptWorld->atAIVision[nThisEntity].end = end;
@@ -1206,7 +1179,6 @@ unsigned int CreateSimpleSearchAi(TWorld * ptWorld, XMMATRIX SpawnPosition)
 	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexBufferDesc.MiscFlags = 0;
 	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexBufferDesc.StructureByteStride = 0;
 
-
 	ptWorld->atSimpleMesh[nThisEntity].m_d3dVertexData.pSysMem = atCubeVertices;
 	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexData.pSysMem = cubeIndices;
 
@@ -1239,16 +1211,12 @@ unsigned int CreateRayBullet(TWorld * ptWorld, XMMATRIX bulletSpawnLocation, flo
 	{
 		TPrimalVert{ XMFLOAT3(-0, 0.5f, 0),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//0 Top F Left
 		TPrimalVert{ XMFLOAT3(0, 0.5f, 10),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//1 Top F Right
-
 	};
 	for (int i = 0; i < 16; ++i) {
 		//atCubeVertices[i].m_d3dfPosition.x *= 1;
 		//atCubeVertices[i].m_d3dfPosition.y *= 1;
 		//atCubeVertices[i].m_d3dfPosition.z *= 1;
-
 	}
-
-
 
 	ptWorld->atDebugMesh[nThisEntity].m_nVertexCount = 2;
 
@@ -1266,8 +1234,6 @@ unsigned int CreateRayBullet(TWorld * ptWorld, XMMATRIX bulletSpawnLocation, flo
 
 	ptWorld->atDebugMesh[nThisEntity].m_d3dVertexData.SysMemPitch = 0;
 	ptWorld->atDebugMesh[nThisEntity].m_d3dVertexData.SysMemSlicePitch = 0;
-
-
 
 	XMVECTOR zerovector;
 	zerovector.m128_f32[0] = 0;
@@ -1308,16 +1274,12 @@ unsigned int CreateAIVision(TWorld * ptWorld, XMMATRIX VisionSpawnLocation, floa
 	{
 		TPrimalVert{ XMFLOAT3(-0, 0.5f, -3),	XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f) },//0 Top F Left
 		TPrimalVert{ XMFLOAT3(0, 0.5f, 10),	XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f) },//1 Top F Right
-
 	};
 	for (int i = 0; i < 16; ++i) {
 		//atCubeVertices[i].m_d3dfPosition.x *= 1;
 		//atCubeVertices[i].m_d3dfPosition.y *= 1;
 		//atCubeVertices[i].m_d3dfPosition.z *= 1;
-
 	}
-
-
 
 	ptWorld->atDebugMesh[nThisEntity].m_nVertexCount = 2;
 
@@ -1331,16 +1293,10 @@ unsigned int CreateAIVision(TWorld * ptWorld, XMMATRIX VisionSpawnLocation, floa
 	ptWorld->atDebugMesh[nThisEntity].m_d3dVertexBufferDesc.MiscFlags = 0;
 	ptWorld->atDebugMesh[nThisEntity].m_d3dVertexBufferDesc.StructureByteStride = 0;
 
-
-
-
 	ptWorld->atDebugMesh[nThisEntity].m_d3dVertexData.pSysMem = atCubeVertices;
-
 
 	ptWorld->atDebugMesh[nThisEntity].m_d3dVertexData.SysMemPitch = 0;
 	ptWorld->atDebugMesh[nThisEntity].m_d3dVertexData.SysMemSlicePitch = 0;
-
-
 
 	XMVECTOR zerovector;
 	zerovector.m128_f32[0] = 0;
@@ -1350,12 +1306,6 @@ unsigned int CreateAIVision(TWorld * ptWorld, XMMATRIX VisionSpawnLocation, floa
 	ptWorld->atRigidBody[nThisEntity].gravity = zerovector;
 	ptWorld->atRigidBody[nThisEntity].totalForce = zerovector;
 	ptWorld->atRigidBody[nThisEntity].ground = false;
-
-
-
-
-
-
 
 	ptWorld->atShaderID[nThisEntity].m_nShaderID = 2;
 	for (int i = 0; i < ptWorld->atDebugMesh[nThisEntity].m_nVertexCount; ++i) {
@@ -1368,7 +1318,6 @@ unsigned int CreateAIVision(TWorld * ptWorld, XMMATRIX VisionSpawnLocation, floa
 		}
 		else {
 			ptWorld->atAIVision[nThisEntity].end = tempt;
-
 		}
 		ptWorld->atDebugMesh[nThisEntity].m_VertexData.push_back(tempt);
 	}
@@ -1445,7 +1394,6 @@ unsigned int CreateTemptUIBox(TWorld * ptWorld, XMMATRIX SpawnPosition)
 	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexBufferDesc.MiscFlags = 0;
 	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexBufferDesc.StructureByteStride = 0;
 
-
 	ptWorld->atSimpleMesh[nThisEntity].m_d3dVertexData.pSysMem = atCubeVertices;
 	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexData.pSysMem = cubeIndices;
 
@@ -1499,22 +1447,22 @@ unsigned int createDebugGrid(TWorld * ptWorld)
 		TPrimalVert{ XMFLOAT3(-.4f, 0,  .5f),		XMFLOAT4(1.0f, 1.0f,	1.0f, 1.0f) },//02	Red
 		TPrimalVert{ XMFLOAT3(-.4f, 0, -.5f),		XMFLOAT4(1.0f, 1.0f,	1.0f, 1.0f) },//03	Red
 		TPrimalVert{ XMFLOAT3(-.3f, 0,  .5f),		XMFLOAT4(1.0f, 1.0f,	1.0f, 1.0f) },//04	Blue
-		TPrimalVert{ XMFLOAT3(-.3f, 0, -.5f),		XMFLOAT4(1.0f, 1.0f,	1.0f, 1.0f) },//05	Blue	
+		TPrimalVert{ XMFLOAT3(-.3f, 0, -.5f),		XMFLOAT4(1.0f, 1.0f,	1.0f, 1.0f) },//05	Blue
 		TPrimalVert{ XMFLOAT3(-.2f, 0,  .5f),		XMFLOAT4(1.0f, 1.0f,	1.0f, 1.0f) },//06	Blue
 		TPrimalVert{ XMFLOAT3(-.2f, 0, -.5f),		XMFLOAT4(1.0f, 1.0f,	1.0f, 1.0f) },//07	Red
 		TPrimalVert{ XMFLOAT3(-.1f, 0,  .5f),		XMFLOAT4(1.0f, 1.0f,	1.0f, 1.0f) },//08	Red
 		TPrimalVert{ XMFLOAT3(-.1f, 0, -.5f),		XMFLOAT4(1.0f, 1.0f,	1.0f, 1.0f) },//09	Green
-		TPrimalVert{ XMFLOAT3(.0f, 0,  .5f),		XMFLOAT4(1.0f, 1.0f,	1.0f, 1.0f) },//10	Green							 		   
+		TPrimalVert{ XMFLOAT3(.0f, 0,  .5f),		XMFLOAT4(1.0f, 1.0f,	1.0f, 1.0f) },//10	Green
 		TPrimalVert{ XMFLOAT3(.0f, 0, -.5f),		XMFLOAT4(1.0f, 1.0f,	1.0f, 1.0f) },//11	Green
-		TPrimalVert{ XMFLOAT3(.1f, 0,  .5f),		XMFLOAT4(1.0f, 1.0f,	1.0f, 1.0f) },//12	Green	
+		TPrimalVert{ XMFLOAT3(.1f, 0,  .5f),		XMFLOAT4(1.0f, 1.0f,	1.0f, 1.0f) },//12	Green
 		TPrimalVert{ XMFLOAT3(.1f, 0, -.5f),		XMFLOAT4(1.0f, 1.0f,	1.0f, 1.0f) },//13	Green
-		TPrimalVert{ XMFLOAT3(.2f, 0,  .5f),		XMFLOAT4(1.0f, 1.0f,	1.0f, 1.0f) },//14	Green	
+		TPrimalVert{ XMFLOAT3(.2f, 0,  .5f),		XMFLOAT4(1.0f, 1.0f,	1.0f, 1.0f) },//14	Green
 		TPrimalVert{ XMFLOAT3(.2f, 0, -.5f),		XMFLOAT4(1.0f, 1.0f,	1.0f, 1.0f) },//15	Green
-		TPrimalVert{ XMFLOAT3(.3f, 0,  .5f),		XMFLOAT4(1.0f, 1.0f,	1.0f, 1.0f) },//16	Green								  
+		TPrimalVert{ XMFLOAT3(.3f, 0,  .5f),		XMFLOAT4(1.0f, 1.0f,	1.0f, 1.0f) },//16	Green
 		TPrimalVert{ XMFLOAT3(.3f, 0, -.5f),		XMFLOAT4(1.0f, 1.0f,	1.0f, 1.0f) },//17	Green
-		TPrimalVert{ XMFLOAT3(.4f, 0,  .5f),		XMFLOAT4(1.0f, 1.0f,	1.0f, 1.0f) },//18	Green	
+		TPrimalVert{ XMFLOAT3(.4f, 0,  .5f),		XMFLOAT4(1.0f, 1.0f,	1.0f, 1.0f) },//18	Green
 		TPrimalVert{ XMFLOAT3(.4f, 0, -.5f),		XMFLOAT4(1.0f, 1.0f,	1.0f, 1.0f) },//19	Green
-		TPrimalVert{ XMFLOAT3(.5f, 0,  .5f),		XMFLOAT4(1.0f, 1.0f,	1.0f, 1.0f) },//20	Green	
+		TPrimalVert{ XMFLOAT3(.5f, 0,  .5f),		XMFLOAT4(1.0f, 1.0f,	1.0f, 1.0f) },//20	Green
 		TPrimalVert{ XMFLOAT3(.5f, 0, -.5f),		XMFLOAT4(1.0f, 1.0f,	1.0f, 1.0f) },//21	Green
 
 		TPrimalVert{ XMFLOAT3(.5f, 0, -.5f),		XMFLOAT4(1.0f, 1.0f,	1.0f, 1.0f) },//00	Green
@@ -1522,22 +1470,22 @@ unsigned int createDebugGrid(TWorld * ptWorld)
 		TPrimalVert{ XMFLOAT3(.5f, 0, -.4f),		XMFLOAT4(1.0f, 1.0f,	1.0f, 1.0f) },//02	Red
 		TPrimalVert{ XMFLOAT3(-.5f, 0, -.4f),		XMFLOAT4(1.0f, 1.0f,	1.0f, 1.0f) },//03	Red
 		TPrimalVert{ XMFLOAT3(.5f, 0, -.3f),		XMFLOAT4(1.0f, 1.0f,	1.0f, 1.0f) },//04	Blue
-		TPrimalVert{ XMFLOAT3(-.5f, 0, -.3f),		XMFLOAT4(1.0f, 1.0f,	1.0f, 1.0f) },//05	Blue	
+		TPrimalVert{ XMFLOAT3(-.5f, 0, -.3f),		XMFLOAT4(1.0f, 1.0f,	1.0f, 1.0f) },//05	Blue
 		TPrimalVert{ XMFLOAT3(.5f, 0, -.2f),		XMFLOAT4(1.0f, 1.0f,	1.0f, 1.0f) },//06	Blue
 		TPrimalVert{ XMFLOAT3(-.5f, 0, -.2f),		XMFLOAT4(1.0f, 1.0f,	1.0f, 1.0f) },//07	Red
 		TPrimalVert{ XMFLOAT3(.5f, 0, -.1f),		XMFLOAT4(1.0f, 1.0f,	1.0f, 1.0f) },//08	Red
 		TPrimalVert{ XMFLOAT3(-.5f, 0, -.1f),		XMFLOAT4(1.0f, 1.0f,	1.0f, 1.0f) },//09	Green
-		TPrimalVert{ XMFLOAT3(.5f, 0,  .0f),		XMFLOAT4(1.0f, 1.0f,	1.0f, 1.0f) },//10	Green							 		   
+		TPrimalVert{ XMFLOAT3(.5f, 0,  .0f),		XMFLOAT4(1.0f, 1.0f,	1.0f, 1.0f) },//10	Green
 		TPrimalVert{ XMFLOAT3(-.5f, 0,  .0f),		XMFLOAT4(1.0f, 1.0f,	1.0f, 1.0f) },//11	Green
-		TPrimalVert{ XMFLOAT3(.5f, 0,  .1f),		XMFLOAT4(1.0f, 1.0f,	1.0f, 1.0f) },//12	Green	
+		TPrimalVert{ XMFLOAT3(.5f, 0,  .1f),		XMFLOAT4(1.0f, 1.0f,	1.0f, 1.0f) },//12	Green
 		TPrimalVert{ XMFLOAT3(-.5f, 0,  .1f),		XMFLOAT4(1.0f, 1.0f,	1.0f, 1.0f) },//13	Green
-		TPrimalVert{ XMFLOAT3(.5f, 0,  .2f),		XMFLOAT4(1.0f, 1.0f,	1.0f, 1.0f) },//14	Green	
+		TPrimalVert{ XMFLOAT3(.5f, 0,  .2f),		XMFLOAT4(1.0f, 1.0f,	1.0f, 1.0f) },//14	Green
 		TPrimalVert{ XMFLOAT3(-.5f, 0,  .2f),		XMFLOAT4(1.0f, 1.0f,	1.0f, 1.0f) },//15	Green
-		TPrimalVert{ XMFLOAT3(.5f, 0,  .3f),		XMFLOAT4(1.0f, 1.0f,	1.0f, 1.0f) },//16	Green								  
+		TPrimalVert{ XMFLOAT3(.5f, 0,  .3f),		XMFLOAT4(1.0f, 1.0f,	1.0f, 1.0f) },//16	Green
 		TPrimalVert{ XMFLOAT3(-.5f, 0,  .3f),		XMFLOAT4(1.0f, 1.0f,	1.0f, 1.0f) },//17	Green
-		TPrimalVert{ XMFLOAT3(.5f, 0,  .4f),		XMFLOAT4(1.0f, 1.0f,	1.0f, 1.0f) },//18	Green	
+		TPrimalVert{ XMFLOAT3(.5f, 0,  .4f),		XMFLOAT4(1.0f, 1.0f,	1.0f, 1.0f) },//18	Green
 		TPrimalVert{ XMFLOAT3(-.5f, 0,  .4f),		XMFLOAT4(1.0f, 1.0f,	1.0f, 1.0f) },//19	Green
-		TPrimalVert{ XMFLOAT3(.5f, 0,  .5f),		XMFLOAT4(1.0f, 1.0f,	1.0f, 1.0f) },//20	Green	
+		TPrimalVert{ XMFLOAT3(.5f, 0,  .5f),		XMFLOAT4(1.0f, 1.0f,	1.0f, 1.0f) },//20	Green
 		TPrimalVert{ XMFLOAT3(-.5f, 0,  .5f),		XMFLOAT4(1.0f, 1.0f,	1.0f, 1.0f) },//21	Green
 	};
 
@@ -1553,7 +1501,7 @@ unsigned int createDebugGrid(TWorld * ptWorld)
 	ptWorld->atDebugMesh[nThisEntity].m_d3dVertexData.pSysMem = atDebugGridVertices;
 	ptWorld->atDebugMesh[nThisEntity].m_d3dVertexData.SysMemPitch = 0;
 	ptWorld->atDebugMesh[nThisEntity].m_d3dVertexData.SysMemSlicePitch = 0;
-	//for (int i = 0; i < ptWorld->atDebugMesh[nThisEntity].m_nVertexCount; ++i) 
+	//for (int i = 0; i < ptWorld->atDebugMesh[nThisEntity].m_nVertexCount; ++i)
 	//{
 	//	ptWorld->atDebugMesh[nThisEntity].m_VertexData.push_back(atDebugGridVertices[i].m_d3dfPosition);
 	//}
@@ -1567,7 +1515,7 @@ unsigned int createMesh(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMeshImpo
 {
 	unsigned int nThisEntity = createEntity(ptWorld);
 
-	#pragma region CreateTexturesFromFile
+#pragma region CreateTexturesFromFile
 
 	wchar_t fnPBR[9][260];
 	wchar_t fnTRAD[5][260];
@@ -1577,7 +1525,6 @@ unsigned int createMesh(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMeshImpo
 
 	for (unsigned int i = 0; i < 9; i++)
 	{
-
 		if (i < 5 && tTempMaterial.m_tFileNames[i])
 		{
 			tTempMaterial.m_tFileNames[i] = &tMaterial.m_tFileNames[i][1];
@@ -1591,7 +1538,6 @@ unsigned int createMesh(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMeshImpo
 	}
 
 	ID3D11Resource * defaultDiffuseTexture;
-
 
 	ID3D11Resource * ambientTexture;
 	ID3D11Resource * diffuseTexture;
@@ -1619,70 +1565,69 @@ unsigned int createMesh(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMeshImpo
 			if (tMaterial.m_tPBRFileNames[i][0] == 'c')
 			{
 				result = CreateWICTextureFromFile(m_pd3dDevice, fnPBR[i], &d3dColorMap, &srv, NULL);
-				ptWorld->atMesh[nThisEntity].m_d3dSRVDiffuse = srv;
+				break;
 			}
-			if (tMaterial.m_tPBRFileNames[i][0] == 'n')
-			{
-				result = CreateWICTextureFromFile(m_pd3dDevice, fnPBR[i], &d3dNormalMap, nullptr, NULL);
-			}
-			if (tMaterial.m_tPBRFileNames[i][0] == 'e')
-			{
-				result = CreateWICTextureFromFile(m_pd3dDevice, fnPBR[i], &d3dEmissiveMap, nullptr, NULL);
-			}
-			if (tMaterial.m_tPBRFileNames[i][0] == 'm')
-			{
-				result = CreateWICTextureFromFile(m_pd3dDevice, fnPBR[i], &d3dMetallicMap, nullptr, NULL);
-			}
-			if (tMaterial.m_tPBRFileNames[i][0] == 'r')
-			{
-				result = CreateWICTextureFromFile(m_pd3dDevice, fnPBR[i], &d3dRoughnessMap, nullptr, NULL);
-			}
-			if (tMaterial.m_tPBRFileNames[i][0] == 'a')
-			{
-				result = CreateWICTextureFromFile(m_pd3dDevice, fnPBR[i], &d3dAmbientOcclusionMap, nullptr, NULL);
-			}
-			if (tMaterial.m_tPBRFileNames[i][0] == 'd')
-			{
-				result = CreateDDSTextureFromFile(m_pd3dDevice, fnPBR[i], &d3dGlobalDiffuseCubeMap, nullptr, NULL);
-			}
-			if (tMaterial.m_tPBRFileNames[i][0] == 's')
-			{
-				result = CreateDDSTextureFromFile(m_pd3dDevice, fnPBR[i], &d3dGlobalSpecularCubeMap, nullptr, NULL);
-			}
-			if (tMaterial.m_tPBRFileNames[i][0] == 'l')
-			{
-				result = CreateDDSTextureFromFile(m_pd3dDevice, fnPBR[i], &d3dIBLCubeMap, nullptr, NULL);
-			}
+			//if (tMaterial.m_tPBRFileNames[i][0] == 'n')
+			//{
+			//	result = CreateWICTextureFromFile(m_pd3dDevice, fnPBR[i], &d3dNormalMap, nullptr, NULL);
+			//}
+			//if (tMaterial.m_tPBRFileNames[i][0] == 'e')
+			//{
+			//	result = CreateWICTextureFromFile(m_pd3dDevice, fnPBR[i], &d3dEmissiveMap, nullptr, NULL);
+			//}
+			//if (tMaterial.m_tPBRFileNames[i][0] == 'm')
+			//{
+			//	result = CreateWICTextureFromFile(m_pd3dDevice, fnPBR[i], &d3dMetallicMap, nullptr, NULL);
+			//}
+			//if (tMaterial.m_tPBRFileNames[i][0] == 'r')
+			//{
+			//	result = CreateWICTextureFromFile(m_pd3dDevice, fnPBR[i], &d3dRoughnessMap, nullptr, NULL);
+			//}
+			//if (tMaterial.m_tPBRFileNames[i][0] == 'a')
+			//{
+			//	result = CreateWICTextureFromFile(m_pd3dDevice, fnPBR[i], &d3dAmbientOcclusionMap, nullptr, NULL);
+			//}
+			//if (tMaterial.m_tPBRFileNames[i][0] == 'd')
+			//{
+			//	result = CreateDDSTextureFromFile(m_pd3dDevice, fnPBR[i], &d3dGlobalDiffuseCubeMap, nullptr, NULL);
+			//}
+			//if (tMaterial.m_tPBRFileNames[i][0] == 's')
+			//{
+			//	result = CreateDDSTextureFromFile(m_pd3dDevice, fnPBR[i], &d3dGlobalSpecularCubeMap, nullptr, NULL);
+			//}
+			//if (tMaterial.m_tPBRFileNames[i][0] == 'l')
+			//{
+			//	result = CreateDDSTextureFromFile(m_pd3dDevice, fnPBR[i], &d3dIBLCubeMap, nullptr, NULL);
+			//}
 		}
 
 		if (tMaterial.m_tFileNames[i] && i < 5)
 		{
-			if (tMaterial.m_tFileNames[i][0] == 'a')
-			{
-				result = CreateWICTextureFromFile(m_pd3dDevice, fnTRAD[i], &ambientTexture, nullptr, NULL);
-			}
-			if (tMaterial.m_tFileNames[i][0] == 'b')
-			{
-				result = CreateWICTextureFromFile(m_pd3dDevice, fnTRAD[i], &bumpTexture, nullptr, NULL);
-			}
+			//if (tMaterial.m_tFileNames[i][0] == 'a')
+			//{
+			//	result = CreateWICTextureFromFile(m_pd3dDevice, fnTRAD[i], &ambientTexture, nullptr, NULL);
+			//}
+			//if (tMaterial.m_tFileNames[i][0] == 'b')
+			//{
+			//	result = CreateWICTextureFromFile(m_pd3dDevice, fnTRAD[i], &bumpTexture, nullptr, NULL);
+			//}
 			if (tMaterial.m_tFileNames[i][0] == 'd')
 			{
 				result = CreateWICTextureFromFile(m_pd3dDevice, fnTRAD[i], &diffuseTexture, &srv, NULL);
-				ptWorld->atMesh[nThisEntity].m_d3dSRVDiffuse = srv;
+				break;
 			}
-			if (tMaterial.m_tFileNames[i][0] == 'e')
-			{
-				result = CreateWICTextureFromFile(m_pd3dDevice, fnTRAD[i], &emissiveTexture, nullptr, NULL);
-			}
-			if (tMaterial.m_tFileNames[i][0] == 'n')
-			{
-				result = CreateWICTextureFromFile(m_pd3dDevice, fnTRAD[i], &normalTexture, nullptr, NULL);
-			}
-			if (tMaterial.m_tFileNames[i][0] == 's')
-			{
-				result = CreateWICTextureFromFile(m_pd3dDevice, fnTRAD[i], &specularTexture, nullptr, NULL);
-			}
-
+			//if (tMaterial.m_tFileNames[i][0] == 'e')
+			//{
+			//	result = CreateWICTextureFromFile(m_pd3dDevice, fnTRAD[i], &emissiveTexture, nullptr, NULL);
+			//}
+			//if (tMaterial.m_tFileNames[i][0] == 'n')
+			//{
+			//	result = CreateWICTextureFromFile(m_pd3dDevice, fnTRAD[i], &normalTexture, nullptr, NULL);
+			//}
+			//if (tMaterial.m_tFileNames[i][0] == 's')
+			//{
+			//	result = CreateWICTextureFromFile(m_pd3dDevice, fnTRAD[i], &specularTexture, nullptr, NULL);
+			//}
 		}
 	}
 #pragma endregion
@@ -1691,7 +1636,6 @@ unsigned int createMesh(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMeshImpo
 	{
 		result = CreateWICTextureFromFile(m_pd3dDevice, L"TestScene_V1.fbm\\Wood01_col.jpg", &diffuseTexture, &srv, NULL);
 		ptWorld->atMesh[nThisEntity].m_d3dSRVDiffuse = srv;
-
 	}
 	ptWorld->atGraphicsMask[nThisEntity].m_tnGraphicsMask = COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_SHADERID;
 	//ptWorld->atCollisionMask[nThisEntity].m_tnCollisionMask = COMPONENT_COLLISIONMASK | COMPONENT_AABB | COMPONENT_NONSTATIC | COMPONENT_NONTRIGGER;
@@ -1775,7 +1719,7 @@ unsigned int createClayton(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMeshI
 {
 	unsigned int nThisEntity = createEntity(ptWorld);
 
-	#pragma region CreateTexturesFromFile
+#pragma region CreateTexturesFromFile
 
 	wchar_t fnPBR[9][260];
 	wchar_t fnTRAD[5][260];
@@ -1785,7 +1729,6 @@ unsigned int createClayton(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMeshI
 
 	for (unsigned int i = 0; i < 9; i++)
 	{
-
 		if (i < 5 && tTempMaterial.m_tFileNames[i])
 		{
 			tTempMaterial.m_tFileNames[i] = &tMaterial.m_tFileNames[i][1];
@@ -1799,7 +1742,6 @@ unsigned int createClayton(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMeshI
 	}
 
 	ID3D11Resource * defaultDiffuseTexture;
-
 
 	ID3D11Resource * ambientTexture;
 	ID3D11Resource * diffuseTexture;
@@ -1890,7 +1832,6 @@ unsigned int createClayton(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMeshI
 			{
 				result = CreateWICTextureFromFile(m_pd3dDevice, fnTRAD[i], &specularTexture, nullptr, NULL);
 			}
-
 		}
 	}
 #pragma endregion
@@ -1997,7 +1938,6 @@ unsigned int createClaytonAnim(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TM
 
 	for (unsigned int i = 0; i < 9; i++)
 	{
-
 		if (i < 5 && tTempMaterial.m_tFileNames[i])
 		{
 			tTempMaterial.m_tFileNames[i] = &tMaterial.m_tFileNames[i][1];
@@ -2011,7 +1951,6 @@ unsigned int createClaytonAnim(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TM
 	}
 
 	ID3D11Resource * defaultDiffuseTexture;
-
 
 	ID3D11Resource * ambientTexture;
 	ID3D11Resource * diffuseTexture;
@@ -2039,73 +1978,74 @@ unsigned int createClaytonAnim(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TM
 			if (tMaterial.m_tPBRFileNames[i][0] == 'c')
 			{
 				result = CreateWICTextureFromFile(m_pd3dDevice, fnPBR[i], &d3dColorMap, &srv, NULL);
+				break;
 			}
-			if (tMaterial.m_tPBRFileNames[i][0] == 'n')
-			{
-				result = CreateWICTextureFromFile(m_pd3dDevice, fnPBR[i], &d3dNormalMap, nullptr, NULL);
-			}
-			if (tMaterial.m_tPBRFileNames[i][0] == 'e')
-			{
-				result = CreateWICTextureFromFile(m_pd3dDevice, fnPBR[i], &d3dEmissiveMap, nullptr, NULL);
-			}
-			if (tMaterial.m_tPBRFileNames[i][0] == 'm')
-			{
-				result = CreateWICTextureFromFile(m_pd3dDevice, fnPBR[i], &d3dMetallicMap, nullptr, NULL);
-			}
-			if (tMaterial.m_tPBRFileNames[i][0] == 'r')
-			{
-				result = CreateWICTextureFromFile(m_pd3dDevice, fnPBR[i], &d3dRoughnessMap, nullptr, NULL);
-			}
-			if (tMaterial.m_tPBRFileNames[i][0] == 'a')
-			{
-				result = CreateWICTextureFromFile(m_pd3dDevice, fnPBR[i], &d3dAmbientOcclusionMap, nullptr, NULL);
-			}
-			if (tMaterial.m_tPBRFileNames[i][0] == 'd')
-			{
-				result = CreateDDSTextureFromFile(m_pd3dDevice, fnPBR[i], &d3dGlobalDiffuseCubeMap, nullptr, NULL);
-			}
-			if (tMaterial.m_tPBRFileNames[i][0] == 's')
-			{
-				result = CreateDDSTextureFromFile(m_pd3dDevice, fnPBR[i], &d3dGlobalSpecularCubeMap, nullptr, NULL);
-			}
-			if (tMaterial.m_tPBRFileNames[i][0] == 'l')
-			{
-				result = CreateDDSTextureFromFile(m_pd3dDevice, fnPBR[i], &d3dIBLCubeMap, nullptr, NULL);
-			}
+			//if (tMaterial.m_tPBRFileNames[i][0] == 'n')
+			//{
+			//	result = CreateWICTextureFromFile(m_pd3dDevice, fnPBR[i], &d3dNormalMap, nullptr, NULL);
+			//}
+			//if (tMaterial.m_tPBRFileNames[i][0] == 'e')
+			//{
+			//	result = CreateWICTextureFromFile(m_pd3dDevice, fnPBR[i], &d3dEmissiveMap, nullptr, NULL);
+			//}
+			//if (tMaterial.m_tPBRFileNames[i][0] == 'm')
+			//{
+			//	result = CreateWICTextureFromFile(m_pd3dDevice, fnPBR[i], &d3dMetallicMap, nullptr, NULL);
+			//}
+			//if (tMaterial.m_tPBRFileNames[i][0] == 'r')
+			//{
+			//	result = CreateWICTextureFromFile(m_pd3dDevice, fnPBR[i], &d3dRoughnessMap, nullptr, NULL);
+			//}
+			//if (tMaterial.m_tPBRFileNames[i][0] == 'a')
+			//{
+			//	result = CreateWICTextureFromFile(m_pd3dDevice, fnPBR[i], &d3dAmbientOcclusionMap, nullptr, NULL);
+			//}
+			//if (tMaterial.m_tPBRFileNames[i][0] == 'd')
+			//{
+			//	result = CreateDDSTextureFromFile(m_pd3dDevice, fnPBR[i], &d3dGlobalDiffuseCubeMap, nullptr, NULL);
+			//}
+			//if (tMaterial.m_tPBRFileNames[i][0] == 's')
+			//{
+			//	result = CreateDDSTextureFromFile(m_pd3dDevice, fnPBR[i], &d3dGlobalSpecularCubeMap, nullptr, NULL);
+			//}
+			//if (tMaterial.m_tPBRFileNames[i][0] == 'l')
+			//{
+			//	result = CreateDDSTextureFromFile(m_pd3dDevice, fnPBR[i], &d3dIBLCubeMap, nullptr, NULL);
+			//}
 		}
 
 		if (tMaterial.m_tFileNames[i] && i < 5)
 		{
-			if (tMaterial.m_tFileNames[i][0] == 'a')
-			{
-				result = CreateWICTextureFromFile(m_pd3dDevice, fnTRAD[i], &ambientTexture, nullptr, NULL);
-			}
-			if (tMaterial.m_tFileNames[i][0] == 'b')
-			{
-				result = CreateWICTextureFromFile(m_pd3dDevice, fnTRAD[i], &bumpTexture, nullptr, NULL);
-			}
+			//if (tMaterial.m_tFileNames[i][0] == 'a')
+			//{
+			//	result = CreateWICTextureFromFile(m_pd3dDevice, fnTRAD[i], &ambientTexture, nullptr, NULL);
+			//}
+			//if (tMaterial.m_tFileNames[i][0] == 'b')
+			//{
+			//	result = CreateWICTextureFromFile(m_pd3dDevice, fnTRAD[i], &bumpTexture, nullptr, NULL);
+			//}
 			if (tMaterial.m_tFileNames[i][0] == 'd')
 			{
 				result = CreateWICTextureFromFile(m_pd3dDevice, fnTRAD[i], &diffuseTexture, &srv, NULL);
+				break;
 			}
-			if (tMaterial.m_tFileNames[i][0] == 'e')
-			{
-				result = CreateWICTextureFromFile(m_pd3dDevice, fnTRAD[i], &emissiveTexture, nullptr, NULL);
-			}
-			if (tMaterial.m_tFileNames[i][0] == 'n')
-			{
-				result = CreateWICTextureFromFile(m_pd3dDevice, fnTRAD[i], &normalTexture, nullptr, NULL);
-			}
-			if (tMaterial.m_tFileNames[i][0] == 's')
-			{
-				result = CreateWICTextureFromFile(m_pd3dDevice, fnTRAD[i], &specularTexture, nullptr, NULL);
-			}
-
+			//if (tMaterial.m_tFileNames[i][0] == 'e')
+			//{
+			//	result = CreateWICTextureFromFile(m_pd3dDevice, fnTRAD[i], &emissiveTexture, nullptr, NULL);
+			//}
+			//if (tMaterial.m_tFileNames[i][0] == 'n')
+			//{
+			//	result = CreateWICTextureFromFile(m_pd3dDevice, fnTRAD[i], &normalTexture, nullptr, NULL);
+			//}
+			//if (tMaterial.m_tFileNames[i][0] == 's')
+			//{
+			//	result = CreateWICTextureFromFile(m_pd3dDevice, fnTRAD[i], &specularTexture, nullptr, NULL);
+			//}
 		}
 	}
 #pragma endregion
 
-	if ((tMaterial.m_tPBRFileNames[0] == NULL && tMaterial.m_tFileNames[0] == NULL) 
+	if ((tMaterial.m_tPBRFileNames[0] == NULL && tMaterial.m_tFileNames[0] == NULL)
 		|| (tMaterial.m_tFileNames[0] == "C" && tMaterial.m_tFileNames[1] == ":"))
 	{
 		result = CreateWICTextureFromFile(m_pd3dDevice, L"TestScene_V1.fbm\\Wood01_col.jpg", &diffuseTexture, &srv, NULL);
@@ -2136,7 +2076,7 @@ unsigned int createClaytonAnim(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TM
 		pMesh[i] = tmp;
 		ptWorld->atMesh[nThisEntity].m_VertexData.push_back(XMFLOAT3(tmp.pos[0], tmp.pos[1], tmp.pos[2]));
 	}
-	
+
 	XMVECTOR playerGravity;
 	playerGravity.m128_f32[1] = -0.00001f;
 	playerGravity.m128_f32[0] = 0;

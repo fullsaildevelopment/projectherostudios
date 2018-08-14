@@ -39,7 +39,7 @@ public:
 	*
 	* Ins:
 	*                 XMMATRIX playerMatrix
-					   
+
 	* Outs:
 	*
 	* Returns:          XMMATRIX
@@ -47,7 +47,7 @@ public:
 	* Mod. Date:              07/18/2018
 	* Mod. Initials:          ZFB
 	*/
-	XMMATRIX WalkCamera( XMMATRIX d3dplayerMatrix);
+	XMMATRIX WalkCamera(XMMATRIX d3dplayerMatrix);
 	/*
 	* AimMode(): This fuction makes a camera rotation locked to player rotation for combat.
 	*
@@ -91,4 +91,3 @@ private:
 	float				m_fMouseMovementSpeed;
 	float				m_fDistance;
 };
-

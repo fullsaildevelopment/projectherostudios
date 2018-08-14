@@ -1,11 +1,9 @@
 #include "stdafx.h"
 #include "AI_System.h"
 
-
 CAISystem::CAISystem()
 {
 }
-
 
 CAISystem::~CAISystem()
 {
@@ -17,7 +15,6 @@ void CAISystem::FollowObject(XMMATRIX thingToFollow, XMMATRIX * AIMatrix)
 	*AIMatrix = XMMatrixLookAtLH(AIMatrix->r[3],
 		thingToFollow.r[3], XMVectorSet(0, 1, 0, 0));
 	*AIMatrix = XMMatrixInverse(NULL, *AIMatrix);
-
 
 	XMVECTOR direction = thingToFollow.r[3] - AIMatrix->r[3];
 	direction.m128_f32[0] = 0;
@@ -34,7 +31,6 @@ void CAISystem::FollowObject(XMMATRIX thingToFollow, XMMATRIX * AIMatrix)
 void CAISystem::ShootGun(Clips* AIGun)
 {
 	AIGun->tryToShoot = true;
-
 }
 
 void CAISystem::SetNumberOfAI(int aiCount)
@@ -50,13 +46,13 @@ bool CAISystem::LookForPlayer(XMVECTOR start, XMVECTOR end, XMMATRIX boxWorldMax
 	return pcCollisionPointer->IsLineInBox(start, end, boxWorldMaxtrix, abbcolider, distance);
 }
 
-XMMATRIX CAISystem::LookBackLeftToRight(XMMATRIX AiMatrix,bool leftorRight)
+XMMATRIX CAISystem::LookBackLeftToRight(XMMATRIX AiMatrix, bool leftorRight)
 {
 	XMMATRIX d3dTmpViewM, d3dMovementM, d3dRotation;
 	float fXchange = 0, fYchange = 0, fXEnd = 0, fYEnd = 0;
-	if(leftorRight==true)
-	d3dRotation = XMMatrixRotationY(0.0001);
-	else  {
+	if (leftorRight == true)
+		d3dRotation = XMMatrixRotationY(0.0001);
+	else {
 		d3dRotation = XMMatrixRotationY(-0.0001);
 	}
 	d3dTmpViewM = AiMatrix;

@@ -26,14 +26,13 @@ struct PixelInputType
 	float2 tex : TEXCOORD;
 };
 
-
 ////////////////////////////////////////////////////////////////////////////////
 // Vertex Shader
 ////////////////////////////////////////////////////////////////////////////////
 PixelInputType AnimatedVertexShader(VertexInputType input)
 {
 	PixelInputType output;
-	
+
 	float4 skinned_pos = float4(0.0f, 0.0f, 0.0f, 0.0f);
 	for (int i = 0; i < 4; ++i)
 	{

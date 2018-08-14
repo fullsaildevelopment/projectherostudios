@@ -1,11 +1,9 @@
 #include "stdafx.h"
 #include "Physics_System.h"
 
-
 CPhysicsSystem::CPhysicsSystem()
 {
 }
-
 
 CPhysicsSystem::~CPhysicsSystem()
 {
@@ -24,7 +22,7 @@ CPhysicsSystem::~CPhysicsSystem()
 * Mod. Date:              07/18/2018
 * Mod. Initials:          AP
 */
-XMMATRIX CPhysicsSystem::ResolveForces(TRigidbody* _myRigbody, XMMATRIX worldMatrix,bool RotationWithForce)
+XMMATRIX CPhysicsSystem::ResolveForces(TRigidbody* _myRigbody, XMMATRIX worldMatrix, bool RotationWithForce)
 {
 	XMMATRIX newWorldMatrix = XMMatrixIdentity();
 	if (RotationWithForce == false) {
@@ -37,7 +35,7 @@ XMMATRIX CPhysicsSystem::ResolveForces(TRigidbody* _myRigbody, XMMATRIX worldMat
 		newWorldMatrix = worldMatrix;
 	}
 
-//	tThisWorld.atWorldMatrix[*ptr].worldMatrix = XMMatrixMultiply(localMatrix, tThisWorld.atWorldMatrix[*ptr].worldMatrix);
+	//	tThisWorld.atWorldMatrix[*ptr].worldMatrix = XMMatrixMultiply(localMatrix, tThisWorld.atWorldMatrix[*ptr].worldMatrix);
 	_myRigbody->totalForce += _myRigbody->gravity + _myRigbody->velocity;
 	_myRigbody->velocity = _myRigbody->totalForce * 1.01f;
 	XMMATRIX localMatrix2 = XMMatrixTranslationFromVector(_myRigbody->totalForce);
@@ -61,19 +59,17 @@ XMMATRIX CPhysicsSystem::ResolveForces(TRigidbody* _myRigbody, XMMATRIX worldMat
 		FinalMatrix.r[2].m128_f32[3] = worldMatrix.r[2].m128_f32[3];
 	}
 
-
 	_myRigbody->totalForce = ZeroVector();
 	return FinalMatrix;
-
 }
 /*
 * ZeroVector():			Retruns a zero out vector
 *
-* Ins:                 
-*						
+* Ins:
 *
 *
-* Outs:					
+*
+* Outs:
 *
 * Returns:              vector that is zeroed out
 *
@@ -98,12 +94,12 @@ XMVECTOR CPhysicsSystem::ZeroVector()
 *
 * Outs:                      Rigbody Pointer
 *
-* Returns:              
+* Returns:
 *
 * Mod. Date:              07/18/2018
 * Mod. Initials:          AP
 */
-void CPhysicsSystem::AddBulletForce(TRigidbody * _myRigbody,float zForValue)
+void CPhysicsSystem::AddBulletForce(TRigidbody * _myRigbody, float zForValue)
 {
 	XMVECTOR bulletForce;
 	bulletForce = ZeroVector();

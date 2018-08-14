@@ -3,10 +3,10 @@
 #define CES_UI_COMPONENT_H
 enum eUIComponent
 {
-	COMPONENT_UIMASK	= 1 << 0,
-	COMPONENT_BAR		= 1 << 1,
-	COMPONENT_TEXT		= 1 << 2,
-	COMPONENT_LABEL		= 1 << 3
+	COMPONENT_UIMASK = 1 << 0,
+	COMPONENT_BAR = 1 << 1,
+	COMPONENT_TEXT = 1 << 2,
+	COMPONENT_LABEL = 1 << 3
 };
 
 struct TUIMask
@@ -16,10 +16,10 @@ struct TUIMask
 
 struct TBar
 {
-	 /*
-	 TODO:
-		 Fill out Bar Struct
-	 */
+	/*
+	TODO:
+		Fill out Bar Struct
+	*/
 };
 
 struct TText
