@@ -1,13 +1,16 @@
 #pragma once
+#include"stdafx.h"
 #ifndef CES_AI_COMPONENT_H
 #define CES_AI_COMPONENT_H
+
 enum eAIComponent
 {
 	COMPONENT_AIMASK = 1 << 0,
 	COMPONENT_FOLLOW = 1 << 1,
 	COMPONENT_SHOOT = 1 << 2,
 	COMPONENT_SEARCH = 1 << 3,
-	COMPONENT_SPOTEDPLAYER = 1 << 4
+	COMPONENT_SPOTEDPLAYER = 1 << 4,
+	COMPONENT_PATHFINDTEST  = 1<< 5
 };
 
 struct TAIMask
@@ -16,13 +19,24 @@ struct TAIMask
 	int GunIndex = -1;
 };
 struct TAIVision {
-	XMVECTOR start;
-	XMVECTOR end;
+	frustum_t eyes0;
+	float3 normalAtBegining[6];
+	int indexoffrustum;
+
 	float    visionRotation;
 	bool	 keepRotatingRight = true;
 	XMMATRIX playerLastKnownLocation;
 	int		 wallIndex = -1;
 	bool keepSearching = true;
+};
+
+struct TAIPathFinding {
+	vector<XMVECTOR> directions;
+	int index = 0;
+	int startingNode;
+	int Goal;
+	bool testingPathFinding = true;
+
 };
 
 #endif

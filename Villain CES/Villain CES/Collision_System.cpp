@@ -9,6 +9,20 @@ CCollisionSystem::~CCollisionSystem()
 {
 }
 
+bool CCollisionSystem::aabb_to_frustum(TAABB & aabb, frustum_t & frustum)
+{
+	for (int i = 0; i < 6; ++i) {
+		
+		if (classify_aabb_to_plane(aabb, frustum[i]) != -1) {
+			continue;
+		}
+		else {
+			return false;
+		}
+	}
+	return true;
+}
+
 /*
 * ContainAABB():  Determins if the list of aabbs contains the aabb index being passed in
 *
@@ -31,6 +45,73 @@ bool CCollisionSystem::ContainAABB(int nIndex)
 	}
 	return false;
 }
+int CCollisionSystem::classify_aabb_to_plane(TAABB & aabb, plane_t&  plane)
+{
+	aabb_t aabbs;
+	float3 min;
+	float3 max;
+
+	float3 aabbmin;
+	aabbmin.x = aabb.m_dMinPoint.x;
+	aabbmin.y = aabb.m_dMinPoint.y;
+	aabbmin.z = aabb.m_dMinPoint.z;
+
+	float3 aabbmax;
+	aabbmax.x = aabb.m_dMaxPoint.x;
+	aabbmax.y = aabb.m_dMaxPoint.y;
+	aabbmax.z = aabb.m_dMaxPoint.z;
+
+	min = aabbmin;
+	max = aabbmax;
+	aabbs.center = (min + max)*0.5;
+	aabbs.extents.x = max.x - aabbs.center.x;
+	aabbs.extents.y = max.y - aabbs.center.y;
+	aabbs.extents.z = max.z - aabbs.center.z;
+	float r = aabbs.extents.x*(plane.normal.x) + aabbs.extents.y*(plane.normal.y) + aabbs.extents.z*(plane.normal.z);
+	sphere_t myspeher;
+	myspeher.center = aabbs.center;
+	myspeher.radius = r;
+	return classify_sphere_to_plane(myspeher, plane);
+}
+
+bool CCollisionSystem::spehreCollison(sphere_t a, sphere_t b)
+{
+	float distance = sqrt((a.center.x - b.center.x) * (a.center.x - b.center.x) +
+		(a.center.y - b.center.y) * (a.center.y - b.center.y) +
+		(a.center.z - b.center.z) * (a.center.z - b.center.z));
+	if (distance < (a.radius + b.radius)) {
+		return true;
+	}
+	// A and B are touching
+
+
+	else {
+		return false;
+	}
+}
+
+int CCollisionSystem::classify_sphere_to_plane(sphere_t & sphere, plane_t & plane)
+{
+	if ((sphere.center.x*plane.normal.x + sphere.center.y*plane.normal.y + sphere.center.z*plane.normal.z) - plane.offset > sphere.radius) {
+		return 1;
+	}
+	else if ((sphere.center.x*plane.normal.x + sphere.center.y*plane.normal.y + sphere.center.z*plane.normal.z) - plane.offset < -sphere.radius) {
+		return -1;
+	}
+	else
+	{
+		return 0;
+	}
+}
+
+bool CCollisionSystem::AiVisionCheck(frustum_t eyeSight)
+{
+	for (int i = 0; i < AiFrustumCheck.size(); ++i) {
+	
+		return aabb_to_frustum(AiFrustumCheck[i], eyeSight);
+	}
+}
+
 /*
 * classify_aabb_to_aabb():  Determines if the two AABB are coliding or not
 *
@@ -264,15 +345,30 @@ bool CCollisionSystem::replaceAABB(int nIndex, TAABB m_AABB2)
 	if (nIndex == 0) {
 		float x = 0;
 	}
+	for (list<TAABB>::iterator ptr = m_AAbb.begin(); ptr != m_AAbb.end(); ++ptr) 
+	{
+			if (nIndex == ptr->m_IndexLocation) 
+			{
+		for (int i = 0; i < AiFrustumCheck.size(); ++i) 
+		{
+			if (nIndex == AiFrustumCheck[i].m_IndexLocation) 
+			{
+				AiFrustumCheck[i].m_dMaxPoint = m_AABB2.m_dMaxPoint;
+				AiFrustumCheck[i].m_dMinPoint = m_AABB2.m_dMinPoint;
 
-	for (list<TAABB>::iterator ptr = m_AAbb.begin(); ptr != m_AAbb.end(); ++ptr) {
-		if (nIndex == ptr->m_IndexLocation) {
-			ptr->m_dMaxPoint = m_AABB2.m_dMaxPoint;
-			ptr->m_dMinPoint = m_AABB2.m_dMinPoint;
-			return true;
+			}
+		}
+		for (list<TAABB>::iterator ptr = m_AAbb.begin(); ptr != m_AAbb.end(); ++ptr) 
+		{
+			if (nIndex == ptr->m_IndexLocation) {
+				ptr->m_dMaxPoint = m_AABB2.m_dMaxPoint;
+				ptr->m_dMinPoint = m_AABB2.m_dMinPoint;
+				return true;
+			}
 		}
 	}
 
+	
 	return false;
 }
 int inline GetIntersection(float fDst1, float fDst2, XMVECTOR P1, XMVECTOR P2, XMVECTOR &Hit) {
@@ -342,12 +438,15 @@ TAABB CCollisionSystem::createAABBS(std::vector<XMFLOAT3> verticies, TAABB AABBD
 	aabb.m_dMinPoint.y = verticies[0].y;
 	aabb.m_dMinPoint.z = verticies[0].z;
 
-	for (int i = 1; i < size; ++i) {
-		if (verticies[i].x > aabb.m_dMaxPoint.x) {
+	for (int i = 1; i < size; ++i) 
+	{
+		if (verticies[i].x > aabb.m_dMaxPoint.x) 
+		{
 			aabb.m_dMaxPoint.x = verticies[i].x;
 			aabb.m_dMaxPointOrginal.x = aabb.m_dMaxPoint.x;
 		}
-		if (verticies[i].x < aabb.m_dMinPoint.x) {
+		if (verticies[i].x < aabb.m_dMinPoint.x) 
+		{
 			aabb.m_dMinPoint.x = verticies[i].x;
 			aabb.m_dMinPointOrginal.x = aabb.m_dMinPoint.x;
 		}
@@ -356,16 +455,19 @@ TAABB CCollisionSystem::createAABBS(std::vector<XMFLOAT3> verticies, TAABB AABBD
 			aabb.m_dMaxPoint.y = verticies[i].y;
 			aabb.m_dMaxPointOrginal.y = aabb.m_dMaxPoint.y;
 		}
-		if (verticies[i].y < aabb.m_dMinPoint.y) {
+		if (verticies[i].y < aabb.m_dMinPoint.y) 
+		{
 			aabb.m_dMinPoint.y = verticies[i].y;
 			aabb.m_dMinPointOrginal.y = aabb.m_dMinPoint.y;
 		}
 
-		if (verticies[i].z > aabb.m_dMaxPoint.z) {
+		if (verticies[i].z > aabb.m_dMaxPoint.z) 
+		{
 			aabb.m_dMaxPoint.z = verticies[i].z;
 			aabb.m_dMaxPointOrginal.z = aabb.m_dMaxPoint.z;
 		}
-		if (verticies[i].z < aabb.m_dMinPoint.z) {
+		if (verticies[i].z < aabb.m_dMinPoint.z) 
+		{
 			aabb.m_dMinPoint.z = verticies[i].z;
 			aabb.m_dMinPointOrginal.z = aabb.m_dMinPoint.z;
 		}
@@ -389,14 +491,23 @@ TAABB CCollisionSystem::createAABBS(std::vector<XMFLOAT3> verticies, TAABB AABBD
 */
 int CCollisionSystem::AddAABBCollider(TAABB m_AABB2, int nIndex)
 {
-	if (ContainAABB(nIndex) == false) {
+	if (ContainAABB(nIndex) == false) 
+	{
 		m_AABB2.m_IndexLocation = nIndex;
 		m_AAbb.push_back(m_AABB2);
 
 		return (int)m_AAbb.size();
 	}
 	else
+	{
 		return 0;
+	}
+}
+int CCollisionSystem::AddAiVisioNCheck(TAABB m_AABB2, int nIndex)
+{
+	m_AABB2.m_IndexLocation = nIndex;
+	AiFrustumCheck.push_back(m_AABB2);
+	return 1;
 }
 /*
 * RemoveAABBCollider():  Adds an AABB to the list if it is not already in the list
@@ -414,33 +525,40 @@ int CCollisionSystem::AddAABBCollider(TAABB m_AABB2, int nIndex)
 */
 bool CCollisionSystem::RemoveAABBCollider(int nIndex)
 {
-	for (list<TAABB>::iterator ptr = m_AAbb.begin(); ptr != m_AAbb.end(); ++ptr) {
-		if (ptr->m_IndexLocation == nIndex) {
+	for (list<TAABB>::iterator ptr = m_AAbb.begin(); ptr != m_AAbb.end(); ++ptr) 
+	{
+		if (ptr->m_IndexLocation == nIndex) 
+		{
 			m_AAbb.erase(ptr);
 			return true;
 		}
 	}
-
 	return false;
 }
 
 bool CCollisionSystem::AABBtoAABBCollisionCheck(TAABB m_AABB2, vector<int>* m_OtherColision)
 {
-	if (m_AABB2.m_IndexLocation == 1) {
+	if (m_AABB2.m_IndexLocation == 1) 
+	{
 		float x = 0;
 	}
 
-	for (list<TAABB>::iterator ptr = m_AAbb.begin(); ptr != m_AAbb.end(); ++ptr) {
-		if (m_AABB2.m_IndexLocation != ptr->m_IndexLocation) {
-			if (classify_aabb_to_aabb(m_AABB2, *ptr) == true) {
-				if (m_AABB2.m_IndexLocation == 8) {
+	for (list<TAABB>::iterator ptr = m_AAbb.begin(); ptr != m_AAbb.end(); ++ptr) 
+	{
+		if (m_AABB2.m_IndexLocation != ptr->m_IndexLocation) 
+		{
+			if (classify_aabb_to_aabb(m_AABB2, *ptr) == true) 
+			{
+				if (m_AABB2.m_IndexLocation == 8) 
+				{
 					float x = 0;
 				}
 				m_OtherColision->push_back(ptr->m_IndexLocation);
 			}
 		}
 	}
-	if (m_OtherColision->size() != 0) {
+	if (m_OtherColision->size() != 0) 
+	{
 		return true;
 	}
 

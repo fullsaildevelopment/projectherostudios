@@ -35,19 +35,58 @@ CAuger::~CAuger()
 void CAuger::Start()
 {
 	//Initializes Systems
+	
+	
 	InitializeSystems();
+	
 }
 
 void CAuger::InitializeSystems()
 {
 	//pcGameMangerSystem->LoadLevel();
 	CurrentSpotInGame = -1;
+	//pcGraphicsSystem->InitD3D(cApplicationWindow);
+	
+	//createDebugGrid(&tThisWorld);
+	
+
+	
+
+	// do not make things that u want to draw after this line of code or shit will  break;
+	//createDebugTransformLines(&tThisWorld);
+	
+	//createEntity(&tThisWorld);
+
+	/* The memember world Matrix, camera's Postion Matrix, and camera Matrix Are set the inited to the same world starting position on purpose*/
+
+	 //m_d3dWorldMatrix = pcGraphicsSystem->SetDefaultWorldPosition();
+	 //tMyCamera.d3d_Position = pcGraphicsSystem->SetDefaultViewMatrix();
+  //   //m_d3dViewMatrix = pcGraphicsSystem->SetDefaultViewMatrix();
+	 //m_d3dCameraMatrix = pcGraphicsSystem->SetDefaultCameraMatrix();
+	 //m_d3dProjectionMatrix = pcGraphicsSystem->SetDefaultPerspective(90.f);
+
+	// tThisWorld.atWorldMatrix[1].worldMatrix = m_d3dWorldMatrix;
+	 // create the AABB
+	
+	
+	
+
+	 
 }
 
 void CAuger::Update(bool* loopgame)
 {
+	
+
+	//Call some sort of function from the graphics system to create this matrix
+	 //   tCameraMode = pcInputSystem->CameraModeListen(tCameraMode);
+		
+	
+	//createDummyPlayer(&tThisWorld, m_d3dPlayerMatrix);
+	//d3d_ResultMatrix = 
+	
 	switch (CurrentSpotInGame)
-	{
+	{ 
 	case -1:
 		pcGameMangerSystem->InitilizeMainMenu();
 		CurrentSpotInGame = 0;
@@ -71,10 +110,13 @@ void CAuger::Update(bool* loopgame)
 	case 4:
 		*loopgame = false;
 		break;
+	case 5 :
+
 	default:
 		break;
 	}
 }
+
 
 void CAuger::End()
 {

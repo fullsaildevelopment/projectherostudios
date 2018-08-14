@@ -426,7 +426,7 @@ XMMATRIX CGraphicsSystem::SetDefaultPerspective()
 {
 	XMMATRIX DefaultPerspectiveMatrix;
 	// the 90 is for fov if we want to implement field of view
-	m_fFOV = 90;
+	m_fFOV = 90.0f;
 
 	DefaultPerspectiveMatrix.r[0].m128_f32[0] = 1 / tan(m_fFOV* 0.5f * 3.15f / 180);
 	DefaultPerspectiveMatrix.r[0].m128_f32[1] = 0;
@@ -536,7 +536,7 @@ ImporterData CGraphicsSystem::ReadMesh(const char * input_file_path)
 		matFile.read((char*)&hasPose, sizeof(int));
 		if (hasPose)
 		{
-#pragma region ReadAnimationData
+
 			bSize += sizeof(int);
 			matFile.read((char*)&duration, sizeof(double));
 			matFile.read((char*)&nodeCount, sizeof(int));
