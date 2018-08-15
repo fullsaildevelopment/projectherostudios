@@ -350,6 +350,7 @@ XMMATRIX CInputSystem::AimMode(XMMATRIX d3dplayerMatrix)
 
 
 XMMATRIX CInputSystem::WalkCameraControls(XMVECTOR U, XMMATRIX viewM) {
+	//Orbit Camera 
 	//XMVECTOR X, Y, Z, X2, Y2, Z2, W;
 	XMVECTOR d3d_newX, d3d_newY, d3d_existingZ;
 	XMMATRIX d3dTmpViewM, d3dRotation;
@@ -380,7 +381,7 @@ XMMATRIX CInputSystem::WalkCameraControls(XMVECTOR U, XMMATRIX viewM) {
 	d3dTmpViewM.r[0] = d3d_newX;
 	d3dTmpViewM.r[1] = d3d_newY;
 	d3dTmpViewM.r[2] = d3d_existingZ;
-	d3dRotation = XMMatrixRotationX(-1 * fYchange * m_fMouseRotationSpeed);
+	d3dRotation = XMMatrixRotationX(fYchange * m_fMouseRotationSpeed);
 
 	d3dTmpViewM = XMMatrixMultiply(d3dTmpViewM, d3dRotation);
 

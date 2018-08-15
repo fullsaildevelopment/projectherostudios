@@ -391,7 +391,7 @@ int CGameMangerSystem::InGameUpdate()
 
 		m_d3d_ResultMatrix = pcInputSystem->WalkCameraControls(XMVectorSet(0, 1.0f, 0, 0), m_d3d_ResultMatrix);
 		walkCamera->d3d_Position = XMMatrixMultiply(m_d3dPlayerMatrix, m_d3d_ResultMatrix);
-		walkCamera->d3d_Position = XMMatrixMultiply(m_d3dOffsetMatrix, m_d3d_ResultMatrix);
+		walkCamera->d3d_Position = XMMatrixMultiply(m_d3dOffsetMatrix, walkCamera->d3d_Position);
 
 	}
 	else if (tCameraMode.bAimMode == true)
@@ -497,12 +497,16 @@ int CGameMangerSystem::InGameUpdate()
 				else if (tCameraMode.bDebugMode == true)
 				{
 					tTempVertexBuffer.m_d3dWorldMatrix = m_d3dWorldMatrix;
-
 					tTempVertexBuffer.m_d3dViewMatrix = debugCamera->d3d_Position;
 					tMyVertexBufferTemp.m_d3dViewMatrix = debugCamera->d3d_Position;
 
 				}
-
+				else {
+						tTempVertexBuffer.m_d3dWorldMatrix = tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix;
+						tTempVertexBuffer.m_d3dViewMatrix = m_d3dViewMatrix;
+						tMyVertexBufferTemp.m_d3dViewMatrix = m_d3dViewMatrix;
+					}
+				
 				if (tThisWorld.atInputMask[nCurrentEntity].m_tnInputMask == (COMPONENT_CLAYTON | COMPONENT_INPUTMASK))
 				{
 					if (tCameraMode.bWalkMode == true)
@@ -526,7 +530,6 @@ int CGameMangerSystem::InGameUpdate()
 				else if (tCameraMode.bAimMode == true)
 				{
 					pcGraphicsSystem->InitMyShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tMyVertexBufferTemp, tThisWorld.atMesh[nCurrentEntity], aimCamera->d3d_Position);
-
 				}
 				else
 				{
