@@ -1549,6 +1549,12 @@ int CGameMangerSystem::PathFindingExample()
 			else {
 				pcAiSystem->PathPlaningMovement(&tThisWorld.atPathPlanining[nCurrentEntity], &tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix);
 			}
+			if (tThisWorld.atPathPlanining[nCurrentEntity].foundDestination == true) {
+				tThisWorld.atPathPlanining[nCurrentEntity].startingNode = tThisWorld.atPathPlanining[nCurrentEntity].Goal;
+				tThisWorld.atPathPlanining[nCurrentEntity].Goal = 15;
+				tThisWorld.atPathPlanining[nCurrentEntity].foundDestination = false;
+				tThisWorld.atPathPlanining[nCurrentEntity].testingPathFinding = true;
+			}
 
 		}
 	
@@ -1709,7 +1715,7 @@ void CGameMangerSystem::FirstSkeltonAiTestLoad()
 {
 	pcGraphicsSystem->CleanD3DLevel(&tThisWorld);
 
-	pcAiSystem->SetNumberOfAI(2);
+	pcAiSystem->SetNumberOfAI(1);
 	m_d3dWorldMatrix = pcGraphicsSystem->SetDefaultWorldPosition();//Call some sort of function from the graphics system to create this matrix
 	m_d3dViewMatrix = pcGraphicsSystem->SetDefaultViewMatrix();//Call some sort of function from the graphics system to create this matrix
 	m_d3dCameraMatrix = pcGraphicsSystem->SetDefaultCameraMatrix();
@@ -1739,7 +1745,7 @@ void CGameMangerSystem::FirstSkeltonAiTestLoad()
 	tThisWorld.atClip[GunIndexForPlayer].bulletSpeed = 0.001;
 	//tThisWorld.atClip[GunIndexForPlayer].
 
-	tThisWorld.atClayton[PlayerStartIndex].health = 100;
+	tThisWorld.atClayton[PlayerStartIndex].health = 100000;
 	XMMATRIX wall = m_d3dWorldMatrix;
 	wall.r[3].m128_f32[1] += -1;
 
@@ -1780,6 +1786,9 @@ void CGameMangerSystem::FirstSkeltonAiTestLoad()
 	CreateCover(&tThisWorld, CoverLocation);
 	XMMATRIX nodeLocation = CoverLocation;
 	nodeLocation.r[3].m128_f32[0] -= 1;
+	nodeLocation.r[3].m128_f32[1] -= 1;
+	nodeLocation.r[3].m128_f32[2] += 1;
+
 	//pcAiSystem->AddNodeToPathFinding(nodeLocation, nodePosition, 1);
 	int nodeindex = CreateNodePoint(&tThisWorld, nodeLocation);
 	XMFLOAT3 nodePosition;
@@ -1787,8 +1796,22 @@ void CGameMangerSystem::FirstSkeltonAiTestLoad()
 	nodePosition.y = nodeLocation.r[3].m128_f32[1];
 	nodePosition.z = nodeLocation.r[3].m128_f32[2];
 	pcAiSystem->AddNodeToPathFinding(nodeindex, nodePosition, 1);
+	int nodeindex2 = CreateNodePoint(&tThisWorld, AILocation);
+	nodePosition.x = AILocation.r[3].m128_f32[0];
+	nodePosition.y = AILocation.r[3].m128_f32[1];
+	nodePosition.z = AILocation.r[3].m128_f32[2];
+	pcAiSystem->AddNodeToPathFinding(nodeindex2, nodePosition, 1);
+	vector<int> edges;
+	edges.push_back(nodeindex);
+	pcAiSystem->AddEdgestoNode(nodeindex2, edges);
+	edges.clear();
+	edges.push_back(nodeindex2);
+	pcAiSystem->AddEdgestoNode(nodeindex, edges);
 
 	int spacePirate = CreateSpacePirate(&tThisWorld, AILocation);
+	tThisWorld.atPathPlanining[spacePirate].Goal = nodeindex;
+	tThisWorld.atPathPlanining[spacePirate].startingNode = nodeindex2;
+
 	int GunINdexai = CreateGun(&tThisWorld, m_d3dWorldMatrix, spacePirate, -1.1, 0.5, 11.5, 10, 70);
 	tThisWorld.atAIMask[spacePirate].GunIndex = GunINdexai;
 
@@ -2160,7 +2183,7 @@ int CGameMangerSystem::SpacePirateGamePlay()
 #endif // AI_ON
 		}
 
-		if (tThisWorld.atAIMask[nCurrentEntity].m_tnAIMask == (COMPONENT_AIMASK | COMPONENT_SEARCH) || tThisWorld.atAIMask[nCurrentEntity].m_tnAIMask == (COMPONENT_AIMASK | COMPONENT_SPOTEDPLAYER)) {
+		if (tThisWorld.atAIMask[nCurrentEntity].m_tnAIMask == (COMPONENT_AIMASK | COMPONENT_SEARCH) || tThisWorld.atAIMask[nCurrentEntity].m_tnAIMask == (COMPONENT_AIMASK | COMPONENT_SPOTEDPLAYER)||(COMPONENT_AIMASK | COMPONENT_SEARCH | COMPONENT_PATHFINDTEST) == tThisWorld.atAIMask[nCurrentEntity].m_tnAIMask) {
 
 			
 				if (tThisWorld.atAIVision[nCurrentEntity].keepSearching == true) {
@@ -2216,7 +2239,21 @@ int CGameMangerSystem::SpacePirateGamePlay()
 							tThisWorld.atSimpleMesh[nCurrentEntity].m_nColor = XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f);
 							tThisWorld.atAIVision[nCurrentEntity].keepSearching = false;
 							danger = true;
+							if (tThisWorld.atClip[tThisWorld.atAIMask[nCurrentEntity].GunIndex].nBulletsAvailables.size() <= 0) {
+								tThisWorld.atClip[tThisWorld.atAIMask[nCurrentEntity].GunIndex].tryToReload = true;
+
+							}
 							tThisWorld.atClip[tThisWorld.atAIMask[nCurrentEntity].GunIndex].tryToShoot = true;
+							tThisWorld.atAIMask[nCurrentEntity].m_tnAIMask = COMPONENT_AIMASK | COMPONENT_SEARCH | COMPONENT_PATHFINDTEST;
+							if (tThisWorld.atPathPlanining[nCurrentEntity].foundDestination == true) {
+								int previousgoal = tThisWorld.atPathPlanining[nCurrentEntity].Goal;
+								int previousStartPosition = tThisWorld.atPathPlanining[nCurrentEntity].startingNode;
+								tThisWorld.atPathPlanining[nCurrentEntity].Goal = previousStartPosition;
+								tThisWorld.atPathPlanining[nCurrentEntity].startingNode = previousgoal;
+								tThisWorld.atPathPlanining[nCurrentEntity].foundDestination = false;
+								tThisWorld.atPathPlanining[nCurrentEntity].testingPathFinding = true;
+
+							}
 							
 						}
 						else if (tThisWorld.atProjectiles[indicies[i]].m_tnProjectileMask == (COMPONENT_PROJECTILESMASK | COMPONENT_METAL)) {
@@ -2252,7 +2289,7 @@ int CGameMangerSystem::SpacePirateGamePlay()
 		}
 		//else if(tThisWorld.atAIMask[nCurrentEntity].m_tnAIMask==())
 
-		if (tThisWorld.atAIMask[nCurrentEntity].m_tnAIMask == (COMPONENT_AIMASK | COMPONENT_PATHFINDTEST)) {
+		if (tThisWorld.atAIMask[nCurrentEntity].m_tnAIMask == (COMPONENT_AIMASK | COMPONENT_PATHFINDTEST)||(COMPONENT_AIMASK | COMPONENT_SEARCH| COMPONENT_PATHFINDTEST)== tThisWorld.atAIMask[nCurrentEntity].m_tnAIMask) {
 			if (tThisWorld.atActiveAI[nCurrentEntity].active == true) {
 				if (tThisWorld.atPathPlanining[nCurrentEntity].testingPathFinding == true) {
 

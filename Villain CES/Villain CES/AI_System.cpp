@@ -435,13 +435,20 @@ void CAISystem::AddEdgestoNode(int nodeyouAreChanging, vector<int> edges)
 
 void CAISystem::PathPlaningMovement(TAIPathFinding* path, XMMATRIX* worldMatrix)
 {
+	XMMATRIX beforeMutplcation = *worldMatrix;
 	if (path->index <path->directions.size()) {
 		XMVECTOR direction =path->directions[path->index] - worldMatrix->r[3];
+	//	direction = XMVector3Transform(direction, *worldMatrix);
 		direction = XMVector3Normalize(direction);
 		direction *= 0.001f;//Frame Dependent
+		
 		XMMATRIX localMatrix2 = XMMatrixTranslationFromVector(direction);
-
-		*worldMatrix = XMMatrixMultiply(localMatrix2, *worldMatrix);
+		XMMATRIX idenity = XMMatrixIdentity();
+		idenity.r[3].m128_f32[0] = beforeMutplcation.r[3].m128_f32[0];
+		idenity.r[3].m128_f32[1] = beforeMutplcation.r[3].m128_f32[1];
+		idenity.r[3].m128_f32[2] = beforeMutplcation.r[3].m128_f32[2];
+		idenity.r[3].m128_f32[3] = beforeMutplcation.r[3].m128_f32[3];
+		*worldMatrix = XMMatrixMultiply(localMatrix2, idenity);
 		if (sqrtf(
 			((path->directions[path->index].m128_f32[0] - worldMatrix->r[3].m128_f32[0])*(path->directions[path->index].m128_f32[0] - worldMatrix->r[3].m128_f32[0])) +
 			((path->directions[path->index].m128_f32[1] - worldMatrix->r[3].m128_f32[1])*(path->directions[path->index].m128_f32[1] - worldMatrix->r[3].m128_f32[1])) +
@@ -451,12 +458,30 @@ void CAISystem::PathPlaningMovement(TAIPathFinding* path, XMMATRIX* worldMatrix)
 		}
 	}
 	else {
-		path->directions.clear();
-		path->testingPathFinding = true;
-		path->startingNode = path->Goal;
-		path->Goal = 15;
 		path->index = 0;
+		path->directions.clear();
+		path->foundDestination = true;
+		visited.clear();
 	}
+	worldMatrix->r[0].m128_f32[0] = beforeMutplcation.r[0].m128_f32[0];
+	worldMatrix->r[0].m128_f32[1] = beforeMutplcation.r[0].m128_f32[1];
+	worldMatrix->r[0].m128_f32[2] = beforeMutplcation.r[0].m128_f32[2];
+	worldMatrix->r[0].m128_f32[3] = beforeMutplcation.r[0].m128_f32[3];
+
+	worldMatrix->r[1].m128_f32[0] =beforeMutplcation.r[1].m128_f32[0];
+	worldMatrix->r[1].m128_f32[1] =beforeMutplcation.r[1].m128_f32[1];
+	worldMatrix->r[1].m128_f32[2] =beforeMutplcation.r[1].m128_f32[2];
+	worldMatrix->r[1].m128_f32[3] =beforeMutplcation.r[1].m128_f32[3];
+
+	worldMatrix->r[2].m128_f32[0] = beforeMutplcation.r[2].m128_f32[0];
+	worldMatrix->r[2].m128_f32[1] = beforeMutplcation.r[2].m128_f32[1];
+	worldMatrix->r[2].m128_f32[2] = beforeMutplcation.r[2].m128_f32[2];
+	worldMatrix->r[2].m128_f32[3] = beforeMutplcation.r[2].m128_f32[3];
+
+	//worldMatrix->r[3].m128_f32[0] = beforeMutplcation.r[3].m128_f32[0];
+	//worldMatrix->r[3].m128_f32[1] = beforeMutplcation.r[3].m128_f32[1];
+	//worldMatrix->r[3].m128_f32[2] = beforeMutplcation.r[3].m128_f32[2];
+	//worldMatrix->r[3].m128_f32[3] = beforeMutplcation.r[3].m128_f32[3];
 }
 
 void CAISystem::LookAtObject(XMMATRIX thingToLookAt, XMMATRIX * AIMatrix)

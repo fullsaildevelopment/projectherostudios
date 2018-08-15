@@ -45,6 +45,7 @@ struct TAIPathFinding {
 	int startingNode;
 	int Goal;
 	bool testingPathFinding = true;
+	bool foundDestination = false;
 
 };
 
