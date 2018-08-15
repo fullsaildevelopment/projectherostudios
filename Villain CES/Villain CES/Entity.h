@@ -23,7 +23,7 @@ struct TWorld
 	TMaterial		atMaterial[ENTITYCOUNT];
 	TTexture		atTexture[ENTITYCOUNT];
 	TShaderID		atShaderID[ENTITYCOUNT];
-	TCamera			atCamera[ENTITYCOUNT];
+	//TCamera			atCamera[ENTITYCOUNT];
 	TWorldMatrix	atWorldMatrix[ENTITYCOUNT];
 	int				atParentWorldMatrix[ENTITYCOUNT];
 	XMMATRIX		atOffSetMatrix[ENTITYCOUNT];
@@ -57,6 +57,7 @@ struct TWorld
 	Clips			atClip[ENTITYCOUNT];
 };
 
+
 struct TPrimalVert
 {
 	XMFLOAT3 m_d3dfPosition;
@@ -65,6 +66,7 @@ struct TPrimalVert
 
 
 unsigned int CreateDoorWay(TWorld* ptWorld, XMMATRIX SpawnPosition);
+
 unsigned int SpawnLevelChanger(TWorld *ptWorld, XMMATRIX SpawnPosition);
 unsigned int createEntity(TWorld *ptWorld);
 
@@ -79,7 +81,7 @@ unsigned int createDebugGrid(TWorld * ptWorld);
 unsigned int CreateClayTon(TWorld * ptWorld);
 unsigned int CreateBullet(TWorld * ptWorld,XMMATRIX bulletSpawnLocation, int MaterialID);
 unsigned int AimingLine(TWorld * ptWorld, XMMATRIX BulletSpawnLocation, int parentWorldMatrixIndex, float xoffset, float yoffset, float zoffset);
-
+unsigned int createDebugCamera(TWorld * ptWorld, XMMATRIX debugCamera);
 unsigned int CreateGround(TWorld* ptWorld, XMMATRIX SpawnPosition);
 unsigned int CreateWall(TWorld* ptWorld, XMMATRIX SpawnPosition);
 unsigned int CreateCelling(TWorld* ptWorld, XMMATRIX SpawnPosition);
