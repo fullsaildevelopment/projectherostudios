@@ -422,35 +422,6 @@ int CGameMangerSystem::InGameUpdate()
 			}
 			pcGraphicsSystem->ExecutePipeline(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atMesh[nCurrentEntity].m_nIndexCount, tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask, tThisWorld.atShaderID[nCurrentEntity].m_nShaderID);
 		}
-
-		if (tThisWorld.atAIMask[nCurrentEntity].m_tnAIMask == (COMPONENT_AIMASK | COMPONENT_SEARCH) || tThisWorld.atAIMask[nCurrentEntity].m_tnAIMask == (COMPONENT_AIMASK | COMPONENT_SPOTEDPLAYER))
-		{
-			if (tThisWorld.atAIVision[nCurrentEntity].keepSearching == true)
-			{
-				if (tThisWorld.atAIVision[nCurrentEntity].visionRotation < 7 && tThisWorld.atAIVision[nCurrentEntity].keepRotatingRight == true)
-				{
-					
-					//tThisWorld.atAIVision[nCurrentEntity].visionRotation += 0.001f;
-				//tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = pcAiSystem->LookBackLeftToRight(tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, true);
-				}
-				else if (tThisWorld.atAIVision[nCurrentEntity].keepRotatingRight == true)
-				{
-					//tThisWorld.atAIVision[nCurrentEntity].keepRotatingRight = false;
-				}
-				else if (tThisWorld.atAIVision[nCurrentEntity].visionRotation > -7 && tThisWorld.atAIVision[nCurrentEntity].keepRotatingRight == false)
-				{
-					//tThisWorld.atAIVision[nCurrentEntity].visionRotation -= 0.001f;
-					//tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = pcAiSystem->LookBackLeftToRight(tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, false);
-				}
-			}
-			
-
-			/*tMyVertexBufferTemp.m_d3dWorldMatrix = tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix;
-			tMyVertexBufferTemp.m_d3dProjectionMatrix = m_d3dProjectionMatrix;*/
-			
-
-		}
-
 		if (tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_DEBUGMESH | COMPONENT_SHADERID))
 		{
 
