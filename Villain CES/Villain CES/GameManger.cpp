@@ -878,6 +878,9 @@ int CGameMangerSystem::LoadMainMenu()
 
 	 XMMATRIX m_d3d_ResultMatrix = pcGraphicsSystem->SetDefaultWorldPosition();
 	 XMMATRIX m_d3dOffsetMatrix = pcGraphicsSystem->SetDefaultOffset();
+	 if (pcInputSystem->InputCheck(G_KEY_0)) {
+		 return 5;
+	 }
 	if (pcInputSystem->InputCheck(G_KEY_P)) {
 		return 3;
 
@@ -1121,7 +1124,7 @@ int CGameMangerSystem::LoadMainMenu()
 		pcGraphicsSystem->CleanD3DLevel(&tThisWorld);
 		pcCollisionSystem->m_AAbb.clear();
 
-		return 1;
+		return 7;
 	}
 	else return 0;
 }
@@ -1275,7 +1278,7 @@ void CGameMangerSystem::LoadPathFindingTest()
 
 	AILocation.r[3].m128_f32[0] -= 7;
 	int nodeLocation = CreateNodePoint(&tThisWorld, AILocation);
-	tThisWorld.atSimpleMesh[nodeLocation].m_nColor= XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f);
+//	tThisWorld.atSimpleMesh[nodeLocation].m_nColor= XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f);
 	XMFLOAT3 nodePosition;
 	nodePosition.x = AILocation.r[3].m128_f32[0];
 	nodePosition.y = AILocation.r[3].m128_f32[1];
@@ -1284,6 +1287,14 @@ void CGameMangerSystem::LoadPathFindingTest()
 	pcAiSystem->AddNodeToPathFinding(nodeLocation, nodePosition, 1);
 	XMMATRIX part2ofNodeMovement = AILocation;
 	part2ofNodeMovement.r[3].m128_f32[2] -= -10;
+	int nodelocation5 = CreateNodePoint(&tThisWorld, part2ofNodeMovement);
+	nodePosition.x = part2ofNodeMovement.r[3].m128_f32[0];
+	nodePosition.y = part2ofNodeMovement.r[3].m128_f32[1];
+	nodePosition.z = part2ofNodeMovement.r[3].m128_f32[2];
+
+	pcAiSystem->AddNodeToPathFinding(nodelocation5, nodePosition, 1);
+	part2ofNodeMovement.r[3].m128_f32[0] -= 6;
+
 	int nodelocation4 = CreateNodePoint(&tThisWorld, part2ofNodeMovement);
 	nodePosition.x = part2ofNodeMovement.r[3].m128_f32[0];
 	nodePosition.y = part2ofNodeMovement.r[3].m128_f32[1];
@@ -1306,16 +1317,18 @@ void CGameMangerSystem::LoadPathFindingTest()
 	nodePosition.y = pathfindAI.r[3].m128_f32[1];
 	nodePosition.z = pathfindAI.r[3].m128_f32[2];
 	int aiPathIndex = CreateTestAIPathFinding(&tThisWorld, pathfindAI);
-	tThisWorld.atSimpleMesh[aiPathIndex].m_nColor= XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f);
+//	tThisWorld.atSimpleMesh[aiPathIndex].m_nColor= XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f);
 
 	int nodelocation3 = CreateNodePoint(&tThisWorld, pathfindAI);
 	tThisWorld.atPathPlanining[aiPathIndex].startingNode = nodelocation3;
 	tThisWorld.atPathPlanining[aiPathIndex].Goal = nodeLocation;
 	pcAiSystem->AddNodeToPathFinding(nodelocation3, nodePosition, 1);
 	vector<int> edges;
-	edges.push_back(nodelocation4);
+//	edges.push_back(nodelocation4);
 	edges.push_back(nodeLocation2);
 	edges.push_back(nodelocation3);
+	edges.push_back(nodelocation5);
+
 	pcAiSystem->AddEdgestoNode(nodeLocation, edges);
 	edges.clear();
 	edges.push_back(nodeLocation);
@@ -1325,6 +1338,10 @@ void CGameMangerSystem::LoadPathFindingTest()
 	//	edges.push_back(nodeLocation);
 	edges.push_back(nodeLocation2);
 	pcAiSystem->AddEdgestoNode(nodelocation3, edges);
+	edges.clear();
+	edges.push_back(nodelocation4);
+	pcAiSystem->AddEdgestoNode(nodelocation5, edges);
+
 
 
 
@@ -1336,7 +1353,7 @@ void CGameMangerSystem::LoadPathFindingTest()
 	blue.z = 1;
 	blue.w = 1;
 	blue.x = 0;
-	tThisWorld.atSimpleMesh[8].m_nColor = blue;
+	tThisWorld.atSimpleMesh[nodelocation4].m_nColor = blue;
 	for (int nCurrentEntity = 0; nCurrentEntity < ENTITYCOUNT; nCurrentEntity++)
 	{
 
@@ -1432,6 +1449,9 @@ int CGameMangerSystem::PathFindingExample()
 
 
 	pcGraphicsSystem->UpdateD3D();
+	if (pcInputSystem->InputCheck(G_KEY_0)) {
+		return -1;
+	}
 #pragma region Input Garbage
 	// togle the modes that you are in
 	if (pcInputSystem->InputCheck(G_BUTTON_MIDDLE)) {
@@ -1551,7 +1571,7 @@ int CGameMangerSystem::PathFindingExample()
 			}
 			if (tThisWorld.atPathPlanining[nCurrentEntity].foundDestination == true) {
 				tThisWorld.atPathPlanining[nCurrentEntity].startingNode = tThisWorld.atPathPlanining[nCurrentEntity].Goal;
-				tThisWorld.atPathPlanining[nCurrentEntity].Goal = 15;
+				tThisWorld.atPathPlanining[nCurrentEntity].Goal = 16;
 				tThisWorld.atPathPlanining[nCurrentEntity].foundDestination = false;
 				tThisWorld.atPathPlanining[nCurrentEntity].testingPathFinding = true;
 			}

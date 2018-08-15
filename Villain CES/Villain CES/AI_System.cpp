@@ -461,6 +461,7 @@ void CAISystem::PathPlaningMovement(TAIPathFinding* path, XMMATRIX* worldMatrix)
 		path->index = 0;
 		path->directions.clear();
 		path->foundDestination = true;
+		open.clear();
 		visited.clear();
 	}
 	worldMatrix->r[0].m128_f32[0] = beforeMutplcation.r[0].m128_f32[0];
