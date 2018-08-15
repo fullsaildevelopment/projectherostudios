@@ -1817,6 +1817,7 @@ void CGameMangerSystem::FirstSkeltonAiTestLoad()
 	nodePosition.z = nodeLocation.r[3].m128_f32[2];
 	pcAiSystem->AddNodeToPathFinding(nodeindex, nodePosition, 1);
 	int nodeindex2 = CreateNodePoint(&tThisWorld, AILocation);
+	AILocation.r[3].m128_f32[1] -= 1;
 	nodePosition.x = AILocation.r[3].m128_f32[0];
 	nodePosition.y = AILocation.r[3].m128_f32[1];
 	nodePosition.z = AILocation.r[3].m128_f32[2];
