@@ -198,7 +198,6 @@ int CGameMangerSystem::InGameUpdate()
 
 	m_d3dWorldMatrix = pcGraphicsSystem->SetDefaultWorldPosition();//Call some sort of function from the graphics system to create this matrix
 	m_d3dViewMatrix = pcGraphicsSystem->SetDefaultViewMatrix();//Call some sort of function from the graphics system to create this matrix
-	//m_d3dCameraMatrix = pcGraphicsSystem->SetDefaultCameraMatrix();
 	m_d3dProjectionMatrix = pcGraphicsSystem->SetDefaultPerspective();
 
 	static XMMATRIX m_d3d_ResultMatrix = pcGraphicsSystem->SetDefaultWorldPosition();
@@ -208,9 +207,6 @@ int CGameMangerSystem::InGameUpdate()
 		return 3;
 
 	}
-	/*if (pcInputSystem->InputCheck(G_KEY_U)) {
-
-	}*/
 	// ui stuff
 	if (GamePaused == true)
 	{
@@ -291,17 +287,16 @@ int CGameMangerSystem::InGameUpdate()
 			tCameraMode.bSwitch = false;
 		}
 
-		//pcInputSystem->CameraBehaviorLerp(aimCamera->d3d_Position, m_d3dPlayerMatrix);
+		
 
 		m_d3dPlayerMatrix = pcInputSystem->AimMode(m_d3dPlayerMatrix);
 		aimCamera->d3d_Position = XMMatrixMultiply(m_d3d_ResultMatrix, m_d3dPlayerMatrix);
 		aimCamera->d3d_Position = XMMatrixMultiply(m_d3dOffsetMatrix, aimCamera->d3d_Position);
-		//m_d3dCameraMatrix = XMMatrixMultiply(m_d3dOffsetMatrix, m_d3dCameraMatrix);
+		
 	}
 	else
 	{
-		//m_d3dWorldMatrix = XMMatrixIdentity();
-		//m_d3d_ResultMatrix = XMMatrixIdentity();
+	
 		if (tCameraMode.bSwitch == true)
 		{
 			m_d3d_ResultMatrix = pcInputSystem->CameraOrientationReset(m_d3d_ResultMatrix);
@@ -309,8 +304,6 @@ int CGameMangerSystem::InGameUpdate()
 		}
 		m_d3d_ResultMatrix = pcInputSystem->DebugCamera(m_d3d_ResultMatrix, m_d3dWorldMatrix);
 		
-		//m_d3d_ResultMatrix = XMMatrixMultiply(m_d3d_ResultMatrix, m_d3dWorldMatrix);
-
 		debugCamera->d3d_Position = XMMatrixMultiply(m_d3d_ResultMatrix, m_d3dWorldMatrix);
 	
 	}
@@ -438,7 +431,7 @@ int CGameMangerSystem::InGameUpdate()
 				{
 					
 					//tThisWorld.atAIVision[nCurrentEntity].visionRotation += 0.001f;
-					//tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = pcAiSystem->LookBackLeftToRight(tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, true);
+				//tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = pcAiSystem->LookBackLeftToRight(tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, true);
 				}
 				else if (tThisWorld.atAIVision[nCurrentEntity].keepRotatingRight == true)
 				{
@@ -446,8 +439,8 @@ int CGameMangerSystem::InGameUpdate()
 				}
 				else if (tThisWorld.atAIVision[nCurrentEntity].visionRotation > -7 && tThisWorld.atAIVision[nCurrentEntity].keepRotatingRight == false)
 				{
-					/*tThisWorld.atAIVision[nCurrentEntity].visionRotation -= 0.001f;
-					tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = pcAiSystem->LookBackLeftToRight(tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, false);*/
+					//tThisWorld.atAIVision[nCurrentEntity].visionRotation -= 0.001f;
+					//tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = pcAiSystem->LookBackLeftToRight(tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, false);
 				}
 			}
 			
