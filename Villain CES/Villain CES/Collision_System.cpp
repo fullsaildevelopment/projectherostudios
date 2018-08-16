@@ -104,12 +104,23 @@ int CCollisionSystem::classify_sphere_to_plane(sphere_t & sphere, plane_t & plan
 	}
 }
 
-bool CCollisionSystem::AiVisionCheck(frustum_t eyeSight)
+bool CCollisionSystem::AiVisionCheck(frustum_t eyeSight,vector<int>* index)
 {
+	bool seesomething=false;
 	for (int i = 0; i < AiFrustumCheck.size(); ++i) {
 	
-		return aabb_to_frustum(AiFrustumCheck[i], eyeSight);
+		if (seesomething == false) {
+			seesomething = aabb_to_frustum(AiFrustumCheck[i], eyeSight);
+			if(seesomething==true)
+			index->push_back(AiFrustumCheck[i].m_IndexLocation);
+
+		}
+		else if (aabb_to_frustum(AiFrustumCheck[i], eyeSight) == true) {
+			index->push_back(AiFrustumCheck[i].m_IndexLocation);
+		}
+
 	}
+	return seesomething;
 }
 
 /*

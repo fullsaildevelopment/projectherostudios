@@ -446,6 +446,24 @@ void CAISystem::PathPlaningMovement(TAIPathFinding* path, XMMATRIX* worldMatrix)
 			path->index++;
 		}
 	}
+	else {
+		path->directions.clear();
+		path->testingPathFinding = true;
+		path->startingNode = path->Goal;
+		path->Goal = 15;
+		path->index = 0;
+	}
+}
+
+void CAISystem::LookAtObject(XMMATRIX thingToLookAt, XMMATRIX * AIMatrix)
+{
+	*AIMatrix = XMMatrixLookAtLH(AIMatrix->r[3],
+		thingToLookAt.r[3], XMVectorSet(0, 1, 0, 0));
+	*AIMatrix = XMMatrixInverse(NULL, *AIMatrix);
+}
+
+void CAISystem::Strafe(XMMATRIX * AiMatrix)
+{
 }
 
 float CAISystem::CalcualteDistance(tiledata * _search, tiledata * goal)

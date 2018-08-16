@@ -18,6 +18,9 @@ struct TAIMask
 	int m_tnAIMask = 0;
 	int GunIndex = -1;
 };
+struct TAIActive {
+	bool active=false;
+};
 struct TAIVision {
 	frustum_t eyes0;
 	float3 normalAtBegining[6];
@@ -28,6 +31,10 @@ struct TAIVision {
 	XMMATRIX playerLastKnownLocation;
 	int		 wallIndex = -1;
 	bool keepSearching = true;
+};
+struct TAIMovement {
+	float strafeCoolDown = 0;
+	float StrafeCoolDownValue = 100;
 };
 
 struct TAIPathFinding {
