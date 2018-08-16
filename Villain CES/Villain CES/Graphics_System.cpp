@@ -188,7 +188,7 @@ void CGraphicsSystem::CleanD3D(TWorld *ptPlanet)
 		}
 		destroyEntity(ptPlanet, nEntityIndex);
 #ifdef _DEBUG
-		HRESULT result = debug->ReportLiveDeviceObjects(D3D11_RLDO_SUMMARY | D3D11_RLDO_DETAIL);
+	//	HRESULT result = debug->ReportLiveDeviceObjects(D3D11_RLDO_SUMMARY | D3D11_RLDO_DETAIL);
 
 #endif // !_DEBUG
 
@@ -441,6 +441,34 @@ XMMATRIX CGraphicsSystem::SetDefaultPerspective()
 	XMMATRIX DefaultPerspectiveMatrix;
 	// the 90 is for fov if we want to implement field of view
 	m_fFOV = 90.0f;
+
+	DefaultPerspectiveMatrix.r[0].m128_f32[0] = 1 / tan(m_fFOV* 0.5f * 3.15f / 180);
+	DefaultPerspectiveMatrix.r[0].m128_f32[1] = 0;
+	DefaultPerspectiveMatrix.r[0].m128_f32[2] = 0;
+	DefaultPerspectiveMatrix.r[0].m128_f32[3] = 0;
+
+	DefaultPerspectiveMatrix.r[1].m128_f32[0] = 0;
+	DefaultPerspectiveMatrix.r[1].m128_f32[1] = 1 / tan(m_fFOV * 0.5f * 3.15f / 180);
+	DefaultPerspectiveMatrix.r[1].m128_f32[2] = 0;
+	DefaultPerspectiveMatrix.r[1].m128_f32[3] = 0;
+
+	DefaultPerspectiveMatrix.r[2].m128_f32[0] = 0;
+	DefaultPerspectiveMatrix.r[2].m128_f32[1] = 0;
+	DefaultPerspectiveMatrix.r[2].m128_f32[2] = 100 / (100 - 0.1f);
+	DefaultPerspectiveMatrix.r[2].m128_f32[3] = 1;
+
+	DefaultPerspectiveMatrix.r[3].m128_f32[0] = 0;
+	DefaultPerspectiveMatrix.r[3].m128_f32[1] = 0;
+	DefaultPerspectiveMatrix.r[3].m128_f32[2] = -(100 * 0.1f) / (100 - 0.1f);
+	DefaultPerspectiveMatrix.r[3].m128_f32[3] = 0;
+	return DefaultPerspectiveMatrix;
+}
+
+XMMATRIX CGraphicsSystem::SetDefaultPerspective(float FOV)
+{
+	XMMATRIX DefaultPerspectiveMatrix;
+	// the 90 is for fov if we want to implement field of view
+	m_fFOV = FOV;
 
 	DefaultPerspectiveMatrix.r[0].m128_f32[0] = 1 / tan(m_fFOV* 0.5f * 3.15f / 180);
 	DefaultPerspectiveMatrix.r[0].m128_f32[1] = 0;
@@ -856,6 +884,7 @@ ImporterData CGraphicsSystem::ReadMesh(const char * input_file_path)
 		tImportMe.vtMeshes[meshIndex].nPolygonVertexCount = polyVertCount;
 		tImportMe.vtMeshes[meshIndex].meshArrays = meshArray;
 		tImportMe.vtMeshes[meshIndex].indexBuffer = indexBuf;
+		tImportMe.vtAnimations[meshIndex].invBindPosesForJoints = invBindPosesForJoints;
 		for (int i = 0; i < 3; i++)
 		{
 			tImportMe.vtMeshes[meshIndex].worldTranslation[i] = worldTranslation[i];

@@ -69,7 +69,8 @@ public:
 	XMMATRIX CameraBehaviorLerp(XMMATRIX m1, XMMATRIX m2);
 	XMMATRIX CameraOrientationReset(XMMATRIX m1);
 	float ZoomSight(float fFov);
-	/*
+	void MouseBoundryCheck(float _x, float _y, float &_outX,float &_outY);
+			/*
 		Seth Specific Functions
 	*/
 

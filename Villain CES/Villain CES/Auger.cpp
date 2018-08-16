@@ -29,7 +29,6 @@ CAuger::CAuger(HWND window)
 	srand(time(NULL));*/
 }
 
-
 CAuger::~CAuger()
 {
 	//delete pcInputSystem;
@@ -113,6 +112,20 @@ void CAuger::Update(bool* loopgame)
 		break;
 	case 4:
 		*loopgame = false;
+		break;
+	case 5 :
+		pcGameMangerSystem->LoadPathFindingTest();
+		CurrentSpotInGame = 6;
+		break;
+	case 6 :
+		CurrentSpotInGame=pcGameMangerSystem->PathFindingExample();
+		break;
+	case 7 :
+		  pcGameMangerSystem->FirstSkeltonAiTestLoad();
+		  CurrentSpotInGame = 8;
+		  break;
+	case 8 :
+		CurrentSpotInGame = pcGameMangerSystem->SpacePirateGamePlay();
 		break;
 	default:
 		break;

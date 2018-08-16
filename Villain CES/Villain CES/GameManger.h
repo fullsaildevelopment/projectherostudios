@@ -3,8 +3,8 @@
 #include "InputSystem.h"
 #include"Collision_System.h"
 #include"Physics_System.h"
-#include "Entity.h"
 #include"Timer.h"
+#include "Entity.h"
 #include"ProjectileSystem.h"
 #include"AI_System.h"
 
@@ -18,7 +18,13 @@ public:
 	void RestartLevel();
 	int LoadMainMenu();
 	void InitilizeMainMenu();
+	void LoadPathFindingTest();
+	int PathFindingExample();
+	void FirstSkeltonAiTestLoad();
+	int SpacePirateGamePlay();
 private:
+	
+	XMMATRIX secondCam;
 	CCollisionSystem * pcCollisionSystem;
 	TWorld tThisWorld;
 	CGraphicsSystem	*pcGraphicsSystem;
@@ -28,22 +34,25 @@ private:
 	CAISystem		*pcAiSystem;
 	HWND cApplicationWindow;
 	vector<int> UIIndex;
-	
 	int PlayerStartIndex = -10;
 	int GunIndexForPlayer = -10;
 	int rayindex = -10;
+	int frustumIndex;
 	float zValue = 5;
 	bool GamePaused = false;
 	bool GameStart;
 	bool DrawUI = true;
+	TMeshImport bulletMesh;
+
+	
+	//ZB Variables
 	TCameraToggle tCameraMode;
 	XMMATRIX m_d3dWorldMatrix;
 	XMMATRIX m_d3dViewMatrix;
 	XMMATRIX m_d3dProjectionMatrix;
 	XMMATRIX m_d3dPlayerMatrix;
 	
-//	XMMATRIX m_d3dCameraMatrix;
-	TMeshImport bulletMesh;
+
 	//TCamera* CameraSelect[6];
 	TCamera *walkCamera;
 	TCamera *aimCamera;
@@ -52,5 +61,4 @@ private:
 	Timers * tAugerTimers;
 	System_Times *tTimerInfo;
 	float m_RealTimeFov;
-
 };
