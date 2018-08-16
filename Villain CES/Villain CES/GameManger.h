@@ -22,6 +22,8 @@ public:
 	int PathFindingExample();
 	void FirstSkeltonAiTestLoad();
 	int SpacePirateGamePlay();
+	void LoadMikesGraphicsSandbox();
+	int MikesGraphicsSandbox();
 private:
 	
 	XMMATRIX secondCam;

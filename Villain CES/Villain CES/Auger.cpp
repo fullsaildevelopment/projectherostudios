@@ -121,6 +121,13 @@ void CAuger::Update(bool* loopgame)
 	case 8 :
 		CurrentSpotInGame = pcGameManagerSystem->SpacePirateGamePlay();
 		break;
+	case 9:
+		pcGameManagerSystem->LoadMikesGraphicsSandbox();
+		CurrentSpotInGame = 10;
+		break;
+	case 10:
+		CurrentSpotInGame = pcGameManagerSystem->MikesGraphicsSandbox();
+		break;
 	default:
 		break;
 	}
