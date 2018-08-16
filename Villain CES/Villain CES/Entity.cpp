@@ -1866,14 +1866,17 @@ unsigned int CreateAIVision(TWorld * ptWorld, XMMATRIX VisionSpawnLocation, floa
 	ptWorld->atRigidBody[nThisEntity].ground = false;
 
 	ptWorld->atShaderID[nThisEntity].m_nShaderID = 2;
-	for (int i = 0; i < ptWorld->atDebugMesh[nThisEntity].m_nVertexCount; ++i) 
+	for (int i = 0; i < ptWorld->atDebugMesh[nThisEntity].m_nVertexCount; ++i)
 	{
-		if (i == 0) 
-		{
-		else 
-		{
-			ptWorld->atAIVision[nThisEntity].end = tempt;
-	
+		//if (i == 0)
+		//{
+		//	//Nothing
+		//}
+		//else
+		//{
+		//	//ptWorld->atAIVision[nThisEntity].keepSearching = tempt;
+		//}
+	}
 	ptWorld->atParentWorldMatrix[nThisEntity] = parentWorldMatrixIndex;
 	//	ptWorld->atOffSetMatrix[nThisEntity]= XMMatrixTranslation(-1, 0, 10.5);
 	ptWorld->atOffSetMatrix[nThisEntity] = XMMatrixTranslation(xoffset, yoffset, zoffset);
@@ -2118,6 +2121,8 @@ unsigned int createMesh(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMeshImpo
 			if (tMaterial.m_tPBRFileNames[i][0] == 'c')
 			{
 				result = CreateWICTextureFromFile(m_pd3dDevice, fnPBR[i], &d3dColorMap, &srv, NULL);
+				ptWorld->atMesh[nThisEntity].m_d3dSRVDiffuse = srv;
+
 				break;
 			}
 
@@ -2166,9 +2171,12 @@ unsigned int createMesh(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMeshImpo
 			//{
 			//	result = CreateWICTextureFromFile(m_pd3dDevice, fnTRAD[i], &bumpTexture, nullptr, NULL);
 			//}
+
 			if (tMaterial.m_tFileNames[i][0] == 'd')
 			{
 				result = CreateWICTextureFromFile(m_pd3dDevice, fnTRAD[i], &diffuseTexture, &srv, NULL);
+				ptWorld->atMesh[nThisEntity].m_d3dSRVDiffuse = srv;
+
 				break;
 			}
 
@@ -2485,7 +2493,7 @@ unsigned int createClaytonAnim(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TM
 {
 	unsigned int nThisEntity = createEntity(ptWorld);
 
-	#pragma region CreateTexturesFromFile
+#pragma region CreateTexturesFromFile
 
 	wchar_t fnPBR[9][260];
 	wchar_t fnTRAD[5][260];
@@ -2606,7 +2614,7 @@ unsigned int createClaytonAnim(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TM
 #pragma endregion
 
 
-		|| (tMaterial.m_tFileNames[0] == "C" && tMaterial.m_tFileNames[1] == ":"))
+	if ((tMaterial.m_tPBRFileNames[0] == "C" && tMaterial.m_tPBRFileNames[1] == ":") || (tMaterial.m_tFileNames[0] == "C" && tMaterial.m_tFileNames[1] == ":"))
 	{
 		result = CreateWICTextureFromFile(m_pd3dDevice, L"TestScene_V1.fbm\\Wood01_col.jpg", &diffuseTexture, &srv, NULL);
 	}
@@ -2675,3 +2683,4 @@ unsigned int createClaytonAnim(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TM
 	ptWorld->atWorldMatrix[nThisEntity].worldMatrix = XMMatrixMultiply(ptWorld->atWorldMatrix[nThisEntity].worldMatrix, XMMatrixRotationRollPitchYaw(tMesh.worldRotation[0], tMesh.worldRotation[1], tMesh.worldRotation[2]));
 	ptWorld->atWorldMatrix[nThisEntity].worldMatrix = XMMatrixMultiply(ptWorld->atWorldMatrix[nThisEntity].worldMatrix, XMMatrixScaling(.01, .01, .01));
 	return nThisEntity;
+}

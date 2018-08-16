@@ -1,7 +1,4 @@
-#include "stdafx.h"
 #include "Auger.h"
-#include"Collision_Component.h"
-#include <stdint.h>
 
 CAuger::CAuger()
 {
@@ -11,7 +8,7 @@ CAuger::CAuger(HWND window)
 {
 	pcInputSystem = new CInputSystem();
 	pcInputSystem->InitializeGInput(window);
-	pcGameMangerSystem = new CGameMangerSystem(window, pcInputSystem);
+	pcGameManagerSystem = new CGameMangerSystem(window, pcInputSystem);
 
 	//pcGraphicsSystem = new CGraphicsSystem();
 /*cApplicationWindow = window;
@@ -29,7 +26,7 @@ srand(time(NULL));*/
 CAuger::~CAuger()
 {
 	//delete pcInputSystem;
-	delete pcGameMangerSystem;
+	delete pcGameManagerSystem;
 }
 
 void CAuger::Start()
@@ -88,20 +85,20 @@ void CAuger::Update(bool* loopgame)
 	switch (CurrentSpotInGame)
 	{ 
 	case -1:
-		pcGameMangerSystem->InitilizeMainMenu();
+		pcGameManagerSystem->InitilizeMainMenu();
 		CurrentSpotInGame = 0;
 		break;
 
 		// main menu
 	case 0:
-		CurrentSpotInGame = (int)(pcGameMangerSystem->LoadMainMenu());
+		CurrentSpotInGame = (int)(pcGameManagerSystem->LoadMainMenu());
 		break;
 	case 1:
-		pcGameMangerSystem->LoadLevel();
+		pcGameManagerSystem->LoadLevel();
 		CurrentSpotInGame = 2;
 		break;
 	case 2:
-		CurrentSpotInGame = pcGameMangerSystem->InGameUpdate();
+		CurrentSpotInGame = pcGameManagerSystem->InGameUpdate();
 		break;
 	case 3:
 		if (pcInputSystem->InputCheck(G_KEY_U))
@@ -111,18 +108,18 @@ void CAuger::Update(bool* loopgame)
 		*loopgame = false;
 		break;
 	case 5 :
-		pcGameMangerSystem->LoadPathFindingTest();
+		pcGameManagerSystem->LoadPathFindingTest();
 		CurrentSpotInGame = 6;
 		break;
 	case 6 :
-		CurrentSpotInGame=pcGameMangerSystem->PathFindingExample();
+		CurrentSpotInGame=pcGameManagerSystem->PathFindingExample();
 		break;
 	case 7 :
-		  pcGameMangerSystem->FirstSkeltonAiTestLoad();
+		  pcGameManagerSystem->FirstSkeltonAiTestLoad();
 		  CurrentSpotInGame = 8;
 		  break;
 	case 8 :
-		CurrentSpotInGame = pcGameMangerSystem->SpacePirateGamePlay();
+		CurrentSpotInGame = pcGameManagerSystem->SpacePirateGamePlay();
 		break;
 	default:
 		break;

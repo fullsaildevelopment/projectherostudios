@@ -34,12 +34,13 @@ public:
 	bool aabb_to_frustum(TAABB& aabb, frustum_t& frustum);
 	bool AiVisionCheck(frustum_t eyeSight, vector<int>* index);
 
+	bool IsLineInBox(XMVECTOR startPoint, XMVECTOR endPoint, XMMATRIX worldMatrix, TAABB boxclider, float* distance);
+	XMMATRIX WalkingThrewObjectCheck(XMMATRIX worldPos, TAABB otherCollision, TAABB currentCollision);
+
 private:
 	bool ContainAABB(int nIndex);
 	int classify_aabb_to_plane(TAABB& aabb, plane_t& plane);
 	bool spehreCollison(sphere_t a, sphere_t b);
 	int classify_sphere_to_plane(sphere_t& sphere, plane_t& plane);
-	
-
 
 };

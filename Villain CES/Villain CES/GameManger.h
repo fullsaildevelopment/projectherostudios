@@ -1,12 +1,12 @@
 #pragma once
 #include "Graphics_System.h"
 #include "InputSystem.h"
-#include"Collision_System.h"
-#include"Physics_System.h"
-#include"Timer.h"
+#include "Collision_System.h"
+#include "Physics_System.h"
+#include "Timer.h"
 #include "Entity.h"
-#include"ProjectileSystem.h"
-#include"AI_System.h"
+#include "ProjectileSystem.h"
+#include "AI_System.h"
 
 class CGameMangerSystem {
 public:

@@ -334,8 +334,11 @@ XMMATRIX CAISystem::LookBackLeftToRight(XMMATRIX AiMatrix, bool leftorRight)
 	XMMATRIX d3dTmpViewM, d3dMovementM, d3dRotation;
 	float fXchange = 0, fYchange = 0, fXEnd = 0, fYEnd = 0;
 	if (leftorRight == true)
+	{
 		d3dRotation = XMMatrixRotationY(0.0001);
-	else {
+	}
+	else 
+	{
 		d3dRotation = XMMatrixRotationY(-0.0001);
 	}
 	d3dTmpViewM = AiMatrix;
@@ -365,9 +368,9 @@ XMMATRIX CAISystem::LookBackLeftToRight(XMMATRIX AiMatrix, bool leftorRight)
 int CAISystem::GetNumberOfAI()
 {
 	return numberofAI;
+}
 
-
-void CAISystem::FindBestPath(int start,int end,vector<XMVECTOR>* directions)
+void CAISystem::FindBestPath(int start, int end, vector<XMVECTOR>* directions)
 {
 	if (open.size() == 0) {
 		SearchNode* beiningingnode = Nodes[start];
@@ -424,14 +427,16 @@ void CAISystem::AddNodeToPathFinding(int index, XMFLOAT3 pos, float weight)
 
 void CAISystem::AddEdgestoNode(int nodeyouAreChanging, vector<int> edges)
 {
-	for (int i = 0; i < edges.size(); ++i) {
+	for (int i = 0; i < edges.size(); ++i) 
+	{
 		Nodes[nodeyouAreChanging]->edges.push_back(Nodes[edges[i]]);
 	}
 }
 
 void CAISystem::PathPlaningMovement(TAIPathFinding* path, XMMATRIX* worldMatrix)
 {
-	if (path->index <path->directions.size()) {
+	if (path->index <path->directions.size()) 
+	{
 		XMVECTOR direction =path->directions[path->index] - worldMatrix->r[3];
 		direction = XMVector3Normalize(direction);
 		direction *= 0.001f;//Frame Dependent
@@ -442,11 +447,13 @@ void CAISystem::PathPlaningMovement(TAIPathFinding* path, XMMATRIX* worldMatrix)
 			((path->directions[path->index].m128_f32[0] - worldMatrix->r[3].m128_f32[0])*(path->directions[path->index].m128_f32[0] - worldMatrix->r[3].m128_f32[0])) +
 			((path->directions[path->index].m128_f32[1] - worldMatrix->r[3].m128_f32[1])*(path->directions[path->index].m128_f32[1] - worldMatrix->r[3].m128_f32[1])) +
 			((path->directions[path->index].m128_f32[2] - worldMatrix->r[3].m128_f32[2])*(path->directions[path->index].m128_f32[2] - worldMatrix->r[3].m128_f32[2]))
-		) < 1) {
+		) < 1) 
+		{
 			path->index++;
 		}
 	}
-	else {
+	else 
+	{
 		path->directions.clear();
 		path->testingPathFinding = true;
 		path->startingNode = path->Goal;

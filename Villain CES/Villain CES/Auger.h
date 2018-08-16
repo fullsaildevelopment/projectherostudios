@@ -1,14 +1,12 @@
 #pragma once
-
-#include "InputSystem.h"
-#include"Entity.h"
-#include"GameManger.h"
+#include "GameManger.h"
+#include <stdint.h>
 
 class CAuger
 {
 public:
 
-
+	CGameMangerSystem *pcGameManagerSystem;
 	CInputSystem	*pcInputSystem;
 	CGraphicsSystem	*pcGraphicsSystem;
 
@@ -37,6 +35,6 @@ private:
 	int		m_nClipSize = 10;
 
 	
-	bool tempt;
+	bool tempt = true;
 	
 };

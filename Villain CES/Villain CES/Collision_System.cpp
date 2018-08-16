@@ -353,38 +353,43 @@ XMMATRIX CCollisionSystem::WalkingThrewObjectCheck(XMMATRIX worldPos, TAABB othe
 */
 bool CCollisionSystem::replaceAABB(int nIndex, TAABB m_AABB2)
 {
-	if (nIndex == 0) {
+	if (nIndex == 0) 
+	{
 		float x = 0;
 	}
 	for (list<TAABB>::iterator ptr = m_AAbb.begin(); ptr != m_AAbb.end(); ++ptr) 
 	{
-			if (nIndex == ptr->m_IndexLocation) 
-			{
-		for (int i = 0; i < AiFrustumCheck.size(); ++i) 
+		if (nIndex == ptr->m_IndexLocation)
 		{
-			if (nIndex == AiFrustumCheck[i].m_IndexLocation) 
+			for (int i = 0; i < AiFrustumCheck.size(); ++i)
 			{
-				AiFrustumCheck[i].m_dMaxPoint = m_AABB2.m_dMaxPoint;
-				AiFrustumCheck[i].m_dMinPoint = m_AABB2.m_dMinPoint;
+				if (nIndex == AiFrustumCheck[i].m_IndexLocation)
+				{
+					AiFrustumCheck[i].m_dMaxPoint = m_AABB2.m_dMaxPoint;
+					AiFrustumCheck[i].m_dMinPoint = m_AABB2.m_dMinPoint;
 
+				}
 			}
-		}
-		for (list<TAABB>::iterator ptr = m_AAbb.begin(); ptr != m_AAbb.end(); ++ptr) 
-		{
-			if (nIndex == ptr->m_IndexLocation) {
-				ptr->m_dMaxPoint = m_AABB2.m_dMaxPoint;
-				ptr->m_dMinPoint = m_AABB2.m_dMinPoint;
-				return true;
+			for (list<TAABB>::iterator ptr = m_AAbb.begin(); ptr != m_AAbb.end(); ++ptr)
+			{
+				if (nIndex == ptr->m_IndexLocation) 
+				{
+					ptr->m_dMaxPoint = m_AABB2.m_dMaxPoint;
+					ptr->m_dMinPoint = m_AABB2.m_dMinPoint;
+					return true;
+				}
 			}
 		}
 	}
 
-	
 	return false;
 }
-int inline GetIntersection(float fDst1, float fDst2, XMVECTOR P1, XMVECTOR P2, XMVECTOR &Hit) {
-	if ((fDst1 * fDst2) >= 0.0f) return 0;
-	if (fDst1 == fDst2) return 0;
+int inline GetIntersection(float fDst1, float fDst2, XMVECTOR P1, XMVECTOR P2, XMVECTOR &Hit) 
+{
+	if ((fDst1 * fDst2) >= 0.0f) 
+		return 0;
+	if (fDst1 == fDst2) 
+		return 0;
 	Hit = P1 + (P2 - P1) * (-fDst1 / (fDst2 - fDst1));
 	return 1;
 }
