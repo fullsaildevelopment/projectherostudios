@@ -6,6 +6,8 @@
 #include "Entity.h"
 #include"ProjectileSystem.h"
 #include"AI_System.h"
+#include "UI_System.h"
+#include <array>
 
 class CGameMangerSystem {
 public:
@@ -17,6 +19,9 @@ public:
 	void RestartLevel();
 	int LoadMainMenu();
 	void InitilizeMainMenu();
+	int LoadTitleScreen();
+	void InitializeTitleScreen();
+
 private:
 	CCollisionSystem * pcCollisionSystem;
 	TWorld tThisWorld;
@@ -25,6 +30,7 @@ private:
 	CPhysicsSystem  *pcPhysicsSystem;
 	CProjectileSystem* pcProjectileSystem;
 	CAISystem		*pcAiSystem;
+	CUISystem		*pcUISystem;
 	HWND cApplicationWindow;
 	vector<int> UIIndex;
 	TCameraToggle tCameraMode;
@@ -41,5 +47,5 @@ private:
 	XMMATRIX m_d3dPlayerMatrix;
 	XMMATRIX m_d3dCameraMatrix;
 	XMMATRIX m_d3d_ResultMatrix;
-
+	std::vector<TUIVertices*> atUIVertices;
 };

@@ -10,6 +10,7 @@ CGameMangerSystem::CGameMangerSystem(HWND window,CInputSystem* _pcInputSystem)
 	//pcInputSystem->InitializeGInput(window);
 	pcProjectileSystem = new CProjectileSystem();
 	pcAiSystem = new CAISystem();
+	pcUISystem = new CUISystem();
 	pcGraphicsSystem->InitD3D(cApplicationWindow);
 	srand(time(NULL));
 }
@@ -736,315 +737,197 @@ void CGameMangerSystem::RestartLevel()
 
 int CGameMangerSystem::LoadMainMenu()
 {
-	bool switchlevel = false;
-
+	//////////
+	m_d3dWorldMatrix = pcGraphicsSystem->SetDefaultWorldPosition();
+	m_d3dViewMatrix = pcGraphicsSystem->SetDefaultViewMatrix();
+	m_d3dProjectionMatrix = pcGraphicsSystem->SetDefaultPerspective();
+	//////////
 
 	 XMMATRIX m_d3d_ResultMatrix = pcGraphicsSystem->SetDefaultWorldPosition();
-	 XMMATRIX m_d3dOffsetMatrix = pcGraphicsSystem->SetDefaultOffset();
-	if (pcInputSystem->InputCheck(G_KEY_P)) {
-		return 3;
-
-	}
-	if (pcInputSystem->InputCheck(G_KEY_ESCAPE)) {
-		//pcCollisionSystem->m_AAbb.clear();
-		pcGraphicsSystem->CleanD3DLevel(&tThisWorld);
-
-	//	pcGraphicsSystem->CleanD3D(&tThisWorld);
-		return 4;
-	}
-	/*if (pcInputSystem->InputCheck(G_KEY_U)) {
-
-	}*/
-	// ui stuff
-	//if (GamePaused == true) {
-	//	if (DrawUI == true) {
-	//		XMMATRIX UiPos = tThisWorld.atWorldMatrix[PlayerStartIndex].worldMatrix;
-	//		//UiPos.r[3].m128_f32[1] -= 1;
-	//		XMVECTOR foward;
-	//		foward.m128_f32[0] = 0;
-	//		foward.m128_f32[1] = 1;
-	//		foward.m128_f32[2] = 2;
-	//		//	foward.m128_f32[0] = 1;
-
-
-	//		XMMATRIX localMatrix2 = XMMatrixTranslationFromVector(foward);
-
-	//		UiPos = XMMatrixMultiply(localMatrix2, UiPos);
-	//		DrawUI = false;
-	//		UIIndex.push_back(CreateTemptUIBox(&tThisWorld, UiPos));
-	//		pcGraphicsSystem->CreateEntityBuffer(&tThisWorld, UIIndex.back());
-	//		UiPos.r[3].m128_f32[1] -= 1;
-	//		UIIndex.push_back(CreateTemptUIBox(&tThisWorld, UiPos));
-	//		pcGraphicsSystem->CreateEntityBuffer(&tThisWorld, UIIndex.back());
-	//		UiPos.r[3].m128_f32[1] += 1;
-	//		UIIndex.push_back(CreateTemptUIBox(&tThisWorld, UiPos));
-	//		pcGraphicsSystem->CreateEntityBuffer(&tThisWorld, UIIndex.back());
-	//		UiPos.r[3].m128_f32[1] += 1;
-	//		UIIndex.push_back(CreateTemptUIBox(&tThisWorld, UiPos));
-	//		pcGraphicsSystem->CreateEntityBuffer(&tThisWorld, UIIndex.back());
-	//		UiPos.r[3].m128_f32[1] += 1;
-	//		UIIndex.push_back(CreateTemptUIBox(&tThisWorld, UiPos));
-	//		pcGraphicsSystem->CreateEntityBuffer(&tThisWorld, UIIndex.back());
-	//		UiPos.r[3].m128_f32[0] += 1;
-	//		UIIndex.push_back(CreateTemptUIBox(&tThisWorld, UiPos));
-	//		pcGraphicsSystem->CreateEntityBuffer(&tThisWorld, UIIndex.back());
-	//		UiPos.r[3].m128_f32[0] += 0.8;
-	//		UiPos.r[3].m128_f32[1] -= 0.3;
-
-	//		UIIndex.push_back(CreateTemptUIBox(&tThisWorld, UiPos));
-	//		pcGraphicsSystem->CreateEntityBuffer(&tThisWorld, UIIndex.back());
-	//		UiPos.r[3].m128_f32[1] -= 0.7;
-
-	//		UIIndex.push_back(CreateTemptUIBox(&tThisWorld, UiPos));
-	//		pcGraphicsSystem->CreateEntityBuffer(&tThisWorld, UIIndex.back());
-	//		UiPos.r[3].m128_f32[1] -= 0.7;
-
-	//		UIIndex.push_back(CreateTemptUIBox(&tThisWorld, UiPos));
-	//		pcGraphicsSystem->CreateEntityBuffer(&tThisWorld, UIIndex.back());
-	//		UiPos.r[3].m128_f32[0] -= 1;
-
-	//		UIIndex.push_back(CreateTemptUIBox(&tThisWorld, UiPos));
-	//		pcGraphicsSystem->CreateEntityBuffer(&tThisWorld, UIIndex.back());
-	//	}
-	//}
-
-
 	
+	m_d3dCameraMatrix = XMMatrixMultiply(m_d3d_ResultMatrix, m_d3dWorldMatrix);
 
-	
-		m_d3dPlayerMatrix = pcInputSystem->AimMode(m_d3dPlayerMatrix);
+	CGraphicsSystem::TUIVertexBufferType tTempVertexBuffer;
+	CGraphicsSystem::TUIPixelBufferType tTempPixelBuffer;
 
-		m_d3dCameraMatrix = XMMatrixMultiply(m_d3d_ResultMatrix, m_d3dPlayerMatrix);
+	POINT hoverPoint;
+	GetCursorPos(&hoverPoint);
+	ScreenToClient(cApplicationWindow, &hoverPoint);
 
-		m_d3dCameraMatrix = XMMatrixMultiply(m_d3dOffsetMatrix, m_d3dCameraMatrix);
-		// m_d3dCameraMatrix = XMMatrixMultiply(m_d3dOffsetMatrix, m_d3dCameraMatrix);
-
-	CGraphicsSystem::TPrimalVertexBufferType tTempVertexBuffer;
-	CGraphicsSystem::TPrimalPixelBufferType tTempPixelBuffer;
-	tTempPixelBuffer.m_d3dCollisionColor = XMFLOAT4(1.0f, 0.0f, 0.0f, 0.0f);
-
-
+	POINT clickPoint = { -1, -1 };
+	if (pcInputSystem->InputCheck(G_BUTTON_LEFT) == 1)
+	{
+		GetCursorPos(&clickPoint);
+		ScreenToClient(cApplicationWindow, &clickPoint);
+		int x = 0;
+	}
 
 	pcGraphicsSystem->UpdateD3D();
 
-	// togle the modes that you are in
-
-
-
-
 	for (int nCurrentEntity = 0; nCurrentEntity < ENTITYCOUNT; nCurrentEntity++)
 	{
-
-		tTempVertexBuffer.m_d3dWorldMatrix = tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix;
-		tTempVertexBuffer.m_d3dProjectionMatrix = m_d3dProjectionMatrix;
-		tTempVertexBuffer.m_d3dViewMatrix = m_d3dViewMatrix;
-
-		if (tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_DEBUGMESH | COMPONENT_SHADERID))
+		if (tThisWorld.atUIMask[nCurrentEntity].m_tnUIMask == COMPONENT_UIMASK | COMPONENT_LABEL | COMPONENT_BUTTON)
 		{
-
-			pcGraphicsSystem->InitPrimalShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, m_d3dViewMatrix, m_d3dProjectionMatrix, tThisWorld.atDebugMesh[nCurrentEntity], m_d3dCameraMatrix);
-
-			pcGraphicsSystem->ExecutePipeline(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atDebugMesh[nCurrentEntity].m_nVertexCount, tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask, tThisWorld.atShaderID[nCurrentEntity].m_nShaderID);
-
-		}
-		// ai code would run here
-
-	
-		//else if(tThisWorld.atAIMask[nCurrentEntity].m_tnAIMask==())
-
-
-		
-
-
-		tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = pcPhysicsSystem->ResolveForces(&tThisWorld.atRigidBody[nCurrentEntity], tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, true);
-
-
-	
-
-
-		if (tThisWorld.atCollisionMask[nCurrentEntity].m_tnCollisionMask == (COMPONENT_COLLISIONMASK |
-			COMPONENT_TRIGGER | COMPONENT_AABB | COMPONENT_NONSTATIC) || tThisWorld.atCollisionMask[nCurrentEntity].m_tnCollisionMask == (COMPONENT_COLLISIONMASK |
-				COMPONENT_NONTRIGGER | COMPONENT_AABB | COMPONENT_NONSTATIC)) {
-			tThisWorld.atAABB[nCurrentEntity] = pcCollisionSystem->updateAABB(tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, tThisWorld.atAABB[nCurrentEntity]);
-		}
-
-
-		if ((tThisWorld.atCollisionMask[nCurrentEntity].m_tnCollisionMask == (COMPONENT_COLLISIONMASK | COMPONENT_AABB | COMPONENT_NONSTATIC | COMPONENT_TRIGGER) | tThisWorld.atCollisionMask[nCurrentEntity].m_tnCollisionMask == (COMPONENT_COLLISIONMASK | COMPONENT_NONTRIGGER | COMPONENT_AABB | COMPONENT_NONSTATIC)))
-		{
-			vector<int> otherCollisionsIndex;
-			if (pcCollisionSystem->AABBtoAABBCollisionCheck(tThisWorld.atAABB[nCurrentEntity], &otherCollisionsIndex) == true)
+			if (PtInRect(&tThisWorld.atButton[nCurrentEntity].boundingBox, clickPoint))
 			{
-
-				for (int i = 0; i < otherCollisionsIndex.size(); ++i) {
-					if (tThisWorld.atRigidBody[otherCollisionsIndex[i]].ground == true && tThisWorld.atCollisionMask[nCurrentEntity].m_tnCollisionMask !=
-						(COMPONENT_COLLISIONMASK |
-							COMPONENT_TRIGGER | COMPONENT_AABB | COMPONENT_NONSTATIC)) {
-					
-
-						tThisWorld.atRigidBody[nCurrentEntity].totalForce = -tThisWorld.atRigidBody[nCurrentEntity].velocity;
-
-
-						tTempVertexBuffer.m_d3dWorldMatrix = pcPhysicsSystem->ResolveForces(&tThisWorld.atRigidBody[nCurrentEntity], tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, false);
-						tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = pcCollisionSystem->WalkingThrewObjectCheck(tTempVertexBuffer.m_d3dWorldMatrix, tThisWorld.atAABB[otherCollisionsIndex[i]], tThisWorld.atAABB[nCurrentEntity]);
-						tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = tTempVertexBuffer.m_d3dWorldMatrix;
-
-					}
-					if (tThisWorld.atRigidBody[nCurrentEntity].ground == false && tThisWorld.atRigidBody[nCurrentEntity].wall == false &&
-						tThisWorld.atCollisionMask[nCurrentEntity].m_tnCollisionMask == (COMPONENT_COLLISIONMASK |
-							COMPONENT_NONTRIGGER | COMPONENT_AABB | COMPONENT_NONSTATIC)
-						&& (tThisWorld.atCollisionMask[otherCollisionsIndex[i]].m_tnCollisionMask == (COMPONENT_COLLISIONMASK |
-							COMPONENT_NONTRIGGER | COMPONENT_AABB | COMPONENT_STATIC) || tThisWorld.atCollisionMask[otherCollisionsIndex[i]].m_tnCollisionMask == (COMPONENT_COLLISIONMASK |
-								COMPONENT_NONTRIGGER | COMPONENT_AABB | COMPONENT_NONSTATIC))) {
-						tTempVertexBuffer.m_d3dWorldMatrix = pcCollisionSystem->WalkingThrewObjectCheck(tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, tThisWorld.atAABB[otherCollisionsIndex[i]], tThisWorld.atAABB[nCurrentEntity]);
-						tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = tTempVertexBuffer.m_d3dWorldMatrix;
-						if (tThisWorld.atInputMask[nCurrentEntity].m_tnInputMask == (COMPONENT_CLAYTON | COMPONENT_INPUTMASK)) {
-							m_d3dPlayerMatrix = tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix;
-						}
-
-					}
-					else if (tThisWorld.atRigidBody[nCurrentEntity].ground == false && tThisWorld.atRigidBody[otherCollisionsIndex[i]].ground == false && tThisWorld.atRigidBody[nCurrentEntity].wall == false &&
-						tThisWorld.atCollisionMask[nCurrentEntity].m_tnCollisionMask == (COMPONENT_COLLISIONMASK |
-							COMPONENT_NONTRIGGER | COMPONENT_AABB | COMPONENT_NONSTATIC)
-						&& (tThisWorld.atCollisionMask[otherCollisionsIndex[i]].m_tnCollisionMask == (COMPONENT_COLLISIONMASK |
-							COMPONENT_TRIGGER | COMPONENT_AABB | COMPONENT_STATIC)) || tThisWorld.atCollisionMask[otherCollisionsIndex[i]].m_tnCollisionMask == (COMPONENT_COLLISIONMASK |
-								COMPONENT_TRIGGER | COMPONENT_AABB | COMPONENT_NONSTATIC))
-					{
-						if (tThisWorld.atAABB[otherCollisionsIndex[i]].m_SceneChange != -30) {
-							switchlevel = true;
-							break;
-						}
-						/*if (tThisWorld.atAIMask[otherCollisionsIndex[i]].m_tnAIMask == COMPONENT_AIMASK | COMPONENT_FOLLOW) {
-							pcCollisionSystem->RemoveAABBCollider(otherCollisionsIndex[i]);
-							pcGraphicsSystem->CleanD3DObject(&tThisWorld, otherCollisionsIndex[i]);
-						}*/
-					}
-				}
-
-				tTempPixelBuffer.m_d3dCollisionColor = XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f);
-
-
+				return tThisWorld.atButton[nCurrentEntity].sceneIndex;
 			}
-			else {
-
-				tTempPixelBuffer.m_d3dCollisionColor = tThisWorld.atSimpleMesh[nCurrentEntity].m_nColor;
-
-			}
-		}
-		else {
-
-			tTempPixelBuffer.m_d3dCollisionColor = tThisWorld.atSimpleMesh[nCurrentEntity].m_nColor;
-
-		}
-
-
-		tTempPixelBuffer.m_d3dCollisionColor = tThisWorld.atSimpleMesh[nCurrentEntity].m_nColor;
-
-
-		
-
-		if (tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_SIMPLEMESH | COMPONENT_SHADERID))
-		{
-
-			if (tThisWorld.atInputMask[nCurrentEntity].m_tnInputMask == (COMPONENT_CLAYTON | COMPONENT_INPUTMASK))
+			else if (PtInRect(&tThisWorld.atButton[nCurrentEntity].boundingBox, hoverPoint))
 			{
-
-				
-					m_d3dPlayerMatrix = pcInputSystem->WalkCamera(m_d3dPlayerMatrix);
-
-					tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = m_d3dPlayerMatrix;
-					tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = pcPhysicsSystem->ResolveForces(&tThisWorld.atRigidBody[nCurrentEntity], tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, false);
-					m_d3dPlayerMatrix = tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix;
-
-				
-
-			
+				tTempPixelBuffer.hoverColor = XMFLOAT4(.65, .65, .65, 1);
 			}
-
-
-			//	tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = pcPhysicsSystem->ResolveForces(&tThisWorld.atRigidBody[nCurrentEntity], tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, false);
+			else
+			{
+				tTempPixelBuffer.hoverColor = XMFLOAT4(0, 0, 0, 1);
+			}
 
 			tTempVertexBuffer.m_d3dWorldMatrix = tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix;
-			tTempVertexBuffer.m_d3dProjectionMatrix = m_d3dProjectionMatrix;
 			tTempVertexBuffer.m_d3dViewMatrix = m_d3dViewMatrix;
+			tTempVertexBuffer.m_d3dProjectionMatrix = m_d3dProjectionMatrix;
 
-			pcGraphicsSystem->InitPrimalShaderData2(pcGraphicsSystem->m_pd3dDeviceContext, tTempVertexBuffer, tTempPixelBuffer, tThisWorld.atSimpleMesh[nCurrentEntity], m_d3dCameraMatrix);
-			pcGraphicsSystem->ExecutePipeline(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atSimpleMesh[nCurrentEntity].m_nIndexCount, tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask, tThisWorld.atShaderID[nCurrentEntity].m_nShaderID);
-
+			pcGraphicsSystem->InitUIShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tTempVertexBuffer, tTempPixelBuffer, tThisWorld.atMesh[nCurrentEntity], m_d3dCameraMatrix);
+			pcGraphicsSystem->ExecutePipeline(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atMesh[nCurrentEntity].m_nIndexCount, tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask, tThisWorld.atShaderID[nCurrentEntity].m_nShaderID);
 		}
-
-
-
-
-
-
 	}
 
 	pcGraphicsSystem->m_pd3dSwapchain->Present(0, 0);
-	if (pcInputSystem->InputCheck(G_KEY_ENTER) == 1|| switchlevel==true&&pcInputSystem->InputCheck(G_KEY_ENTER)==0) {
-		pcGraphicsSystem->CleanD3DLevel(&tThisWorld);
-		pcCollisionSystem->m_AAbb.clear();
 
-		return 1;
-	}
-	else return 0;
+	if (pcInputSystem->InputCheck(G_KEY_ESCAPE) == 1)
+		return 4;
+
+	return 0;
 }
 
 void CGameMangerSystem::InitilizeMainMenu()
 {
 	pcGraphicsSystem->CleanD3DLevel(&tThisWorld);
+	atUIVertices.clear();
 
-	m_d3dWorldMatrix = pcGraphicsSystem->SetDefaultWorldPosition();//Call some sort of function from the graphics system to create this matrix
-	m_d3dViewMatrix = pcGraphicsSystem->SetDefaultViewMatrix();//Call some sort of function from the graphics system to create this matrix
 	m_d3dCameraMatrix = pcGraphicsSystem->SetDefaultCameraMatrix();
+
+	int nThisEntity;
+	{
+		wchar_t wideChar[] =
+		{ L"UI_Textures.fbm/play.png" };
+
+		nThisEntity = CreateUILabel(&tThisWorld, m_d3dCameraMatrix, 2, 1, .5, 0, atUIVertices);
+		pcUISystem->AddTextureToUI(&tThisWorld, nThisEntity, pcGraphicsSystem->m_pd3dDevice, wideChar);
+		pcUISystem->AddButtonToUI(&tThisWorld, nThisEntity, 1, cApplicationWindow);
+	}
+	{
+		wchar_t wideChar[] =
+		{ L"UI_Textures.fbm/options.png" };
+
+		nThisEntity = CreateUILabel(&tThisWorld, m_d3dCameraMatrix, 2, 1, .5, -2.4, atUIVertices);
+		pcUISystem->AddTextureToUI(&tThisWorld, nThisEntity, pcGraphicsSystem->m_pd3dDevice, wideChar);
+		pcUISystem->AddButtonToUI(&tThisWorld, nThisEntity, 4, cApplicationWindow);
+	}
+	{
+		wchar_t wideChar[] =
+		{ L"UI_Textures.fbm/credits.png" }; 
+	
+		nThisEntity = CreateUILabel(&tThisWorld, m_d3dCameraMatrix, 2, 1, .5, -3.6, atUIVertices);
+		pcUISystem->AddTextureToUI(&tThisWorld, nThisEntity, pcGraphicsSystem->m_pd3dDevice, wideChar);
+		pcUISystem->AddButtonToUI(&tThisWorld, nThisEntity, 4, cApplicationWindow);
+	}
+	{
+		wchar_t wideChar[] =
+		{ L"UI_Textures.fbm/Auger_MainMenu.png" };
+
+		nThisEntity = CreateUILabel(&tThisWorld, m_d3dCameraMatrix, 20, 20, 0, 0, atUIVertices);
+		pcUISystem->AddTextureToUI(&tThisWorld, nThisEntity, pcGraphicsSystem->m_pd3dDevice, wideChar);
+		//pcUISystem->AddButtonToUI(&tThisWorld, nThisEntity, 0, cApplicationWindow);
+	}
+	
+	pcGraphicsSystem->CreateBuffers(&tThisWorld);
+}
+
+int CGameMangerSystem::LoadTitleScreen()
+{
+	//////////
+	m_d3dWorldMatrix = pcGraphicsSystem->SetDefaultWorldPosition();
+	m_d3dViewMatrix = pcGraphicsSystem->SetDefaultViewMatrix();
 	m_d3dProjectionMatrix = pcGraphicsSystem->SetDefaultPerspective();
-	tCameraMode.bDebugMode = false;
-	tCameraMode.bAimMode = false;
-	tCameraMode.bWalkMode = true;
-	m_d3dPlayerMatrix = pcGraphicsSystem->SetDefaultWorldPosition();
+	//////////
 
+	XMMATRIX m_d3d_ResultMatrix = pcGraphicsSystem->SetDefaultWorldPosition();
 
+	m_d3dCameraMatrix = XMMatrixMultiply(m_d3d_ResultMatrix, m_d3dWorldMatrix);
 
-	PlayerStartIndex = CreateClayTon(&tThisWorld);
-	XMMATRIX AILocation = m_d3dWorldMatrix;
-	AILocation.r[3].m128_f32[2] += -5;
-	AILocation.r[3].m128_f32[0] += -5;
-	SpawnLevelChanger(&tThisWorld, AILocation);
-	XMMATRIX wall = m_d3dWorldMatrix;
-	wall.r[3].m128_f32[1] += -1;
-	CreateWall(&tThisWorld, wall);
-	wall = m_d3dWorldMatrix;
-	wall.r[3].m128_f32[1] += -1;
-	wall.r[3].m128_f32[0] += -22;
-	CreateWall(&tThisWorld, wall);
-	XMMATRIX celling = m_d3dWorldMatrix;
-	celling.r[3].m128_f32[1] += 10;
-	CreateCelling(&tThisWorld, celling);
-	XMMATRIX groundSpawnPoint;
-	groundSpawnPoint = m_d3dWorldMatrix;
-	groundSpawnPoint.r[3].m128_f32[1] -= 2;
-	CreateGround(&tThisWorld, groundSpawnPoint);
-	for (int nCurrentEntity = 0; nCurrentEntity < ENTITYCOUNT; nCurrentEntity++) {
-		if (tThisWorld.atCollisionMask[nCurrentEntity].m_tnCollisionMask > 1) {
-			if (tThisWorld.atSimpleMesh[nCurrentEntity].m_nVertexCount > tThisWorld.atDebugMesh[nCurrentEntity].m_nVertexCount) {
-				TAABB MyAbb = pcCollisionSystem->createAABBS(tThisWorld.atSimpleMesh[nCurrentEntity].m_VertexData,tThisWorld.atAABB[nCurrentEntity]);
-				MyAbb.m_IndexLocation = nCurrentEntity;
-				tThisWorld.atAABB[nCurrentEntity] = MyAbb;
-				pcCollisionSystem->AddAABBCollider(MyAbb, nCurrentEntity);
+	CGraphicsSystem::TUIVertexBufferType tTempVertexBuffer;
+	CGraphicsSystem::TUIPixelBufferType tTempPixelBuffer;
+
+	POINT hoverPoint;
+	GetCursorPos(&hoverPoint);
+	ScreenToClient(cApplicationWindow, &hoverPoint);
+
+	POINT clickPoint = { -1, -1 };
+	if (pcInputSystem->InputCheck(G_BUTTON_LEFT) == 1)
+	{
+		GetCursorPos(&clickPoint);
+		ScreenToClient(cApplicationWindow, &clickPoint);
+	}
+
+	pcGraphicsSystem->UpdateD3D();
+
+	for (int nCurrentEntity = 0; nCurrentEntity < ENTITYCOUNT; nCurrentEntity++)
+	{
+		if (tThisWorld.atUIMask[nCurrentEntity].m_tnUIMask == COMPONENT_UIMASK | COMPONENT_LABEL | COMPONENT_BUTTON)
+		{
+			if (PtInRect(&tThisWorld.atButton[nCurrentEntity].boundingBox, clickPoint))
+			{
+				return tThisWorld.atButton[nCurrentEntity].sceneIndex;
 			}
-			else {
-				/* TAABB MyAbb = pcCollisionSystem->createAABBS(tThisWorld.atDebugMesh[nCurrentEntity].m_VertexData);
-				MyAbb.m_IndexLocation = nCurrentEntity;
-				MyAbb.m_dMaxPointOrginal.y += 1;
-				tThisWorld.atAABB[nCurrentEntity] = MyAbb;
-				pcCollisionSystem->AddAABBCollider(MyAbb, nCurrentEntity);*/
+			else if (PtInRect(&tThisWorld.atButton[nCurrentEntity].boundingBox, hoverPoint))
+			{
+				tTempPixelBuffer.hoverColor = XMFLOAT4(0, 0, 0, 1);
 			}
+			else
+			{
+				tTempPixelBuffer.hoverColor = XMFLOAT4(0, 0, 0, 1);
+			}
+
+			tTempVertexBuffer.m_d3dWorldMatrix = tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix;
+			tTempVertexBuffer.m_d3dViewMatrix = m_d3dViewMatrix;
+			tTempVertexBuffer.m_d3dProjectionMatrix = m_d3dProjectionMatrix;
+
+			pcGraphicsSystem->InitUIShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tTempVertexBuffer, tTempPixelBuffer, tThisWorld.atMesh[nCurrentEntity], m_d3dCameraMatrix);
+			pcGraphicsSystem->ExecutePipeline(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atMesh[nCurrentEntity].m_nIndexCount, tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask, tThisWorld.atShaderID[nCurrentEntity].m_nShaderID);
 		}
 	}
 
-	for (int nCurrentEntity = 0; nCurrentEntity < ENTITYCOUNT; nCurrentEntity++) {
-		if (tThisWorld.atCollisionMask[nCurrentEntity].m_tnCollisionMask > 1) {
-			tThisWorld.atAABB[nCurrentEntity] = pcCollisionSystem->updateAABB(tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, tThisWorld.atAABB[nCurrentEntity]);
+	pcGraphicsSystem->m_pd3dSwapchain->Present(0, 0);
+
+	for (auto i = G_KEY_UNKNOWN; i <= G_KEY_9; ++i)
+	{
+		if (pcInputSystem->InputCheck(i) == 1)
+		{
+			if (i == G_KEY_ESCAPE)
+				return 4;
+
+			return -3;
 		}
 	}
+
+	if (pcInputSystem->InputCheck(G_BUTTON_LEFT))
+		return -3;
+
+	return -2;
+}
+
+void CGameMangerSystem::InitializeTitleScreen()
+{
+	pcGraphicsSystem->CleanD3DLevel(&tThisWorld);
+	
+	m_d3dCameraMatrix = pcGraphicsSystem->SetDefaultCameraMatrix();
+	
+	wchar_t wideChar[] =
+	{ L"UI_Textures.fbm/Auger_TitleScreen.png" };
+	
+	unsigned int nThisEntity = CreateUILabel(&tThisWorld, m_d3dCameraMatrix, 20, 20, 0, 0, atUIVertices);
+
+	pcUISystem->AddTextureToUI(&tThisWorld, nThisEntity, pcGraphicsSystem->m_pd3dDevice, wideChar);
+	//pcUISystem->AddButtonToUI(&tThisWorld, nThisEntity, -3, cApplicationWindow);
+
 	pcGraphicsSystem->CreateBuffers(&tThisWorld);
 }

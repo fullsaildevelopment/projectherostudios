@@ -10,6 +10,7 @@
 #include "Projectile_Component.h"
 #include "DirectXTex-master\WICTextureLoader\WICTextureLoader.h"
 #include "DirectXTex-master\DDSTextureLoader\DDSTextureLoader.h"
+#include <array>
 
 struct TWorld
 {
@@ -33,6 +34,7 @@ struct TWorld
 	TBar			atBar[ENTITYCOUNT];
 	TText			atText[ENTITYCOUNT];
 	TLabel			atLabel[ENTITYCOUNT];
+	TButton			atButton[ENTITYCOUNT];
 	//Physics
 	TPhysicsMask	atPhysicsMask[ENTITYCOUNT];
 	TRigidbody		atRigidBody[ENTITYCOUNT];
@@ -60,7 +62,16 @@ struct TPrimalVert
 	XMFLOAT4 m_d3dfColor;
 };
 
+struct TUIVert
+{
+	XMFLOAT3 m_d3dfPosition;
+	XMFLOAT2 m_d3dfUVs;
+};
 
+struct /*alignas(64)*/ TUIVertices
+{
+	TUIVert m_d3dfPositions[4];
+};
 
 unsigned int SpawnLevelChanger(TWorld *ptWorld, XMMATRIX SpawnPosition);
 unsigned int createEntity(TWorld *ptWorld);
@@ -88,5 +99,6 @@ unsigned int CreateSimpleGunAi(TWorld * ptWorld, XMMATRIX SpawnPosition);
 unsigned int CreateSimpleSearchAi(TWorld* ptWorld, XMMATRIX SpawnPosition);
 unsigned int CreateAIVision(TWorld * ptWorld, XMMATRIX bulletSpawnLocation, float zDistance, int parentWorldMatrixIndex, float xoffset, float yoffset, float zoffset);
 unsigned int CreateRayBullet(TWorld * ptWorld, XMMATRIX bulletSpawnLocation, float zDistance, int parentWorldMatrixIndex, float xoffset, float yoffset, float zoffset);
+unsigned int CreateUILabel(TWorld * ptWorld, XMMATRIX SpawnPosition, float width, float height, float offsetX, float offsetY, std::vector<TUIVertices*>& atUIVertices);
  //float zDistance = 0.5f;
 
