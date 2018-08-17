@@ -19,7 +19,7 @@ CGameMangerSystem::CGameMangerSystem(HWND window,CInputSystem* _pcInputSystem)
 	menuCamera = new TCamera();
 	//srand(time(NULL));
 
-	m_RealTimeFov = 90.0f;
+	
 }
 
 CGameMangerSystem::~CGameMangerSystem()
@@ -53,12 +53,14 @@ void CGameMangerSystem::LoadLevel()
 	walkCamera->d3d_Position = pcGraphicsSystem->SetDefaultCameraMatrix();
 	aimCamera->d3d_Position = pcGraphicsSystem->SetDefaultCameraMatrix();
 	debugCamera->d3d_Position = pcGraphicsSystem->SetDefaultCameraMatrix();
-	m_d3dProjectionMatrix = pcGraphicsSystem->SetDefaultPerspective();
+	m_d3dProjectionMatrix = pcGraphicsSystem->SetDefaultPerspective(m_RealTimeFov);
 	m_d3dPlayerMatrix = pcGraphicsSystem->SetDefaultWorldPosition();
 	tCameraMode.bDebugMode = false;
 	tCameraMode.bAimMode = false;
 	tCameraMode.bWalkMode = true;
 	tCameraMode.bSwitch = false;
+	bMoving = false;
+	m_RealTimeFov = 90.0f;
 	//m_d3dPlayerMatrix = XMMatrixMultiply(m_d3dPlayerMatrix, XMMatrixScaling(.01, .01, .01));
 
 	m_d3dPlayerMatrix.r[3].m128_f32[2] -= 10;
@@ -311,7 +313,7 @@ int CGameMangerSystem::InGameUpdate()
 	
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 	_CrtSetBreakAlloc(-1); //Important!
-	m_d3dProjectionMatrix = pcGraphicsSystem->SetDefaultPerspective();
+	m_d3dProjectionMatrix = pcGraphicsSystem->SetDefaultPerspective(m_RealTimeFov);
 
 	tTimerInfo->applicationTime = tTimerInfo->GetTime(tAugerTimers->tAppTimer, tTimerInfo->applicationTime);
 	tTimerInfo->sceneTime = tTimerInfo->GetTime(tAugerTimers->tSceneTimer, tTimerInfo->sceneTime);
@@ -325,9 +327,6 @@ int CGameMangerSystem::InGameUpdate()
 	{
 		return 3;
 	}
-	/*if (pcInputSystem->InputCheck(G_KEY_U)) {
-	
-	}*/
 	// ui stuff
 	if (GamePaused == true) {
 		if (DrawUI == true) {
@@ -388,40 +387,46 @@ int CGameMangerSystem::InGameUpdate()
 			m_d3d_ResultMatrix = pcInputSystem->CameraOrientationReset(m_d3d_ResultMatrix);
 			tCameraMode.bSwitch = false;
 		}
-		//pcInputSystem->CameraBehaviorLerp(walkCamera->d3d_Position, m_d3dPlayerMatrix);
-
-		m_d3d_ResultMatrix = pcInputSystem->WalkCameraControls(XMVectorSet(0, 1.0f, 0, 0), m_d3d_ResultMatrix);
+			m_d3d_ResultMatrix = pcInputSystem->WalkCameraControls(XMVectorSet(0, 1.0f, 0, 0), m_d3d_ResultMatrix, bMoving);
+		
 		walkCamera->d3d_Position = XMMatrixMultiply(m_d3d_ResultMatrix,m_d3dPlayerMatrix) ;
 		walkCamera->d3d_Position = XMMatrixMultiply(m_d3dOffsetMatrix, walkCamera->d3d_Position);
+		
+		
+
+		
+	
 
 	}
 	else if (tCameraMode.bAimMode == true)
 	{
-		//m_RealTimeFov = pcInputSystem->ZoomSight(m_RealTimeFov);
+		m_RealTimeFov = pcInputSystem->ZoomSight(m_RealTimeFov);
 		if (tCameraMode.bSwitch == true)
 		{
 			m_d3d_ResultMatrix = pcInputSystem->CameraOrientationReset(m_d3d_ResultMatrix);
+			m_d3d_ResultMatrix = pcInputSystem->CameraBehaviorLerp(m_d3d_ResultMatrix, m_d3dPlayerMatrix);
 			tCameraMode.bSwitch = false;
 		}
 
-		//pcInputSystem->CameraBehaviorLerp(aimCamera->d3d_Position, m_d3dPlayerMatrix);
+		
 
 		m_d3dPlayerMatrix = pcInputSystem->AimMode(m_d3dPlayerMatrix);
 
 		aimCamera->d3d_Position = XMMatrixMultiply(m_d3d_ResultMatrix, m_d3dPlayerMatrix);
 
 		aimCamera->d3d_Position = XMMatrixMultiply(m_d3dOffsetMatrix, aimCamera->d3d_Position);
-
+		
 	}
 	else
 	{
+	
 		if (tCameraMode.bSwitch == true)
 		{
 			m_d3d_ResultMatrix = pcInputSystem->CameraOrientationReset(m_d3d_ResultMatrix);
 			tCameraMode.bSwitch = false;
 		}
 		m_d3d_ResultMatrix = pcInputSystem->DebugCamera(m_d3d_ResultMatrix, m_d3dWorldMatrix);
-
+		
 		debugCamera->d3d_Position = XMMatrixMultiply(m_d3d_ResultMatrix, m_d3dWorldMatrix);
 	}
 
@@ -948,6 +953,8 @@ int CGameMangerSystem::LoadMainMenu()
 	m_d3dViewMatrix = pcGraphicsSystem->SetDefaultViewMatrix();
 	m_d3dProjectionMatrix = pcGraphicsSystem->SetDefaultPerspective();
 	//////////
+	m_RealTimeFov = pcInputSystem->ZoomSight(m_RealTimeFov);
+	m_d3dProjectionMatrix = pcGraphicsSystem->SetDefaultPerspective(m_RealTimeFov);
 
 	CGraphicsSystem::TUIVertexBufferType tTempVertexBuffer;
 	CGraphicsSystem::TUIPixelBufferType tTempPixelBuffer;
@@ -1121,6 +1128,7 @@ void CGameMangerSystem::InitializeTitleScreen()
 	{ L"UI_Textures.fbm/Auger_TitleScreen.png" };
 	
 	unsigned int nThisEntity = CreateUILabel(&tThisWorld, menuCamera->d3d_Position, 20, 20, 0, 0, atUIVertices);
+	m_RealTimeFov = 90.0f;
 
 	pcUISystem->AddTextureToUI(&tThisWorld, nThisEntity, pcGraphicsSystem->m_pd3dDevice, wideChar);
 	//pcUISystem->AddButtonToUI(&tThisWorld, nThisEntity, -3, cApplicationWindow);
@@ -1146,6 +1154,7 @@ void CGameMangerSystem::LoadPathFindingTest()
 	tCameraMode.bAimMode = false;
 	tCameraMode.bWalkMode = true;
 	tCameraMode.bSwitch = false;
+	bMoving = false;
 	m_d3dPlayerMatrix = pcGraphicsSystem->SetDefaultWorldPosition();
 
 	//m_d3dPlayerMatrix = XMMatrixMultiply(m_d3dPlayerMatrix, XMMatrixScaling(.01, .01, .01));
@@ -1352,10 +1361,10 @@ int CGameMangerSystem::PathFindingExample()
 		}
 		//pcInputSystem->CameraBehaviorLerp(walkCamera->d3d_Position, m_d3dPlayerMatrix);
 
-		d3d_ResultMatrix = pcInputSystem->WalkCameraControls(XMVectorSet(0, 1.0f, 0, 0), d3d_ResultMatrix);
-		d3d_ResultMatrix = XMMatrixMultiply(m_d3dPlayerMatrix, d3d_ResultMatrix);
+		d3d_ResultMatrix = pcInputSystem->WalkCameraControls(XMVectorSet(0, 1.0f, 0, 0), d3d_ResultMatrix, bMoving);
+		walkCamera->d3d_Position = XMMatrixMultiply(d3d_ResultMatrix, m_d3dPlayerMatrix);
 
-		walkCamera->d3d_Position = XMMatrixMultiply(d3d_OffsetMatrix, d3d_ResultMatrix);
+		walkCamera->d3d_Position = XMMatrixMultiply(d3d_OffsetMatrix, walkCamera->d3d_Position);
 	}
 	else if (tCameraMode.bAimMode == true)
 	{
@@ -1735,6 +1744,7 @@ void CGameMangerSystem::FirstSkeltonAiTestLoad()
 	tCameraMode.bAimMode = false;
 	tCameraMode.bWalkMode = true;
 	tCameraMode.bSwitch = false;
+	bMoving = false;
 	//m_d3dPlayerMatrix = XMMatrixMultiply(m_d3dPlayerMatrix, XMMatrixScaling(.01, .01, .01));
 
 	m_d3dPlayerMatrix.r[3].m128_f32[2] -= 10;
@@ -2044,7 +2054,7 @@ int CGameMangerSystem::SpacePirateGamePlay()
 
 	if (tCameraMode.bWalkMode == true)
 	{
-		d3d_ResultMatrix5 = pcInputSystem->WalkCameraControls(XMVectorSet(0, 1.0f, 0, 0), d3d_ResultMatrix5);
+		d3d_ResultMatrix5 = pcInputSystem->WalkCameraControls(XMVectorSet(0, 1.0f, 0, 0), d3d_ResultMatrix5, bMoving);
 
 		walkCamera->d3d_Position = XMMatrixMultiply(d3d_ResultMatrix5, m_d3dPlayerMatrix);
 

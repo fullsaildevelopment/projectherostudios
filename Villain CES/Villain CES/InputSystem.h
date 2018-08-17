@@ -65,11 +65,14 @@ public:
 	*/
 	XMMATRIX AimMode(XMMATRIX d3dplayerMatrix);
 
-	XMMATRIX WalkCameraControls(XMVECTOR U, XMMATRIX viewM);
+	XMMATRIX WalkCameraControls(XMVECTOR U, XMMATRIX viewM, bool &_movement);
 	XMMATRIX CameraBehaviorLerp(XMMATRIX m1, XMMATRIX m2);
 	XMMATRIX CameraOrientationReset(XMMATRIX m1);
+	XMMATRIX MyTurnTo(XMMATRIX M, XMVECTOR T, float s, XMMATRIX world);
 	float ZoomSight(float fFov);
-	/*
+	void MouseBoundryCheck(float _x, float _y, float &_outX,float &_outY);
+
+			/*
 		Seth Specific Functions
 	*/
 
