@@ -68,9 +68,9 @@ XMMATRIX CInputSystem::DebugCamera(XMMATRIX d3d_ViewM, XMMATRIX d3d_WorldM)
 	d3dTmpViewM = d3d_ViewM;
 
 	XMVECTOR d3d_newX, d3d_newY, d3d_existingZ;
-	m_pcMyInput->GetMouseDelta(fXchange, fYchange);
-
 	m_pcMyInput->GetMousePosition(fXEnd, fYEnd);
+
+	MouseBoundryCheck(fXEnd, fYEnd, fXchange, fYchange);
 
 
 	//Forward && Back Movement
@@ -111,39 +111,50 @@ XMMATRIX CInputSystem::DebugCamera(XMMATRIX d3d_ViewM, XMMATRIX d3d_WorldM)
 		d3dTmpViewM = XMMatrixMultiply(d3dMovementM, d3dTmpViewM);
 	}
 
-	d3dRotation = XMMatrixRotationY(fXchange * m_fMouseRotationSpeed);
+	if (fXEnd > 2.0f && fXEnd < 1410.0f && fYEnd > 2.0f && fYEnd < 700.0f)
+	{
+		m_pcMyInput->GetMouseDelta(fXchange, fYchange);
+	}
+	if (fXchange > 1.0f || fYchange > 1.0f || fXchange < -1.0f || fYchange < -1.0f)
+	{
+		d3dRotation = XMMatrixRotationY(fXchange * m_fMouseRotationSpeed);
 
-	d3dTmpViewM = XMMatrixMultiply(d3dRotation, d3dTmpViewM);
+		d3dTmpViewM = XMMatrixMultiply(d3dRotation, d3dTmpViewM);
 
-	d3d_existingZ = d3dTmpViewM.r[2];
-	d3d_newX = XMVector3Cross(XMVectorSet(0, 1, 0, 0), d3d_existingZ);
-	d3d_newY = XMVector3Cross(d3d_existingZ, d3d_newX);
+		d3d_existingZ = d3dTmpViewM.r[2];
+		d3d_newX = XMVector3Cross(XMVectorSet(0, 1, 0, 0), d3d_existingZ);
+		d3d_newY = XMVector3Cross(d3d_existingZ, d3d_newX);
 
-	d3d_newX = XMVector3Normalize(d3d_newX);
-	d3d_newY = XMVector3Normalize(d3d_newY);
+		d3d_newX = XMVector3Normalize(d3d_newX);
+		d3d_newY = XMVector3Normalize(d3d_newY);
 
-	d3d_existingZ = XMVector3Normalize(d3d_existingZ);
+		d3d_existingZ = XMVector3Normalize(d3d_existingZ);
 
-	d3dTmpViewM.r[0] = d3d_newX;
-	d3dTmpViewM.r[1] = d3d_newY;
-	d3dTmpViewM.r[2] = d3d_existingZ;
-	d3dRotation = XMMatrixRotationX(fYchange * m_fMouseRotationSpeed);
+		d3dTmpViewM.r[0] = d3d_newX;
+		d3dTmpViewM.r[1] = d3d_newY;
+		d3dTmpViewM.r[2] = d3d_existingZ;
+		d3dRotation = XMMatrixRotationX(fYchange * m_fMouseRotationSpeed);
 
-	d3dTmpViewM = XMMatrixMultiply(d3dRotation, d3dTmpViewM);
+		d3dTmpViewM = XMMatrixMultiply(d3dRotation, d3dTmpViewM);
 
 
-	d3d_existingZ = d3dTmpViewM.r[2];
-	d3d_newX = XMVector3Cross(XMVectorSet(0, 1, 0, 0), d3d_existingZ);
-	d3d_newY = XMVector3Cross(d3d_existingZ, d3d_newX);
+		d3d_existingZ = d3dTmpViewM.r[2];
+		d3d_newX = XMVector3Cross(XMVectorSet(0, 1, 0, 0), d3d_existingZ);
+		d3d_newY = XMVector3Cross(d3d_existingZ, d3d_newX);
 
-	d3d_newX = XMVector3Normalize(d3d_newX);
-	d3d_newY = XMVector3Normalize(d3d_newY);
+		d3d_newX = XMVector3Normalize(d3d_newX);
+		d3d_newY = XMVector3Normalize(d3d_newY);
 
-	d3d_existingZ = XMVector3Normalize(d3d_existingZ);
+		d3d_existingZ = XMVector3Normalize(d3d_existingZ);
 
-	d3dTmpViewM.r[0] = d3d_newX;
-	d3dTmpViewM.r[1] = d3d_newY;
-	d3dTmpViewM.r[2] = d3d_existingZ;
+		d3dTmpViewM.r[0] = d3d_newX;
+		d3dTmpViewM.r[1] = d3d_newY;
+		d3dTmpViewM.r[2] = d3d_existingZ;
+
+		
+	}
+	
+	
 
 	return d3dTmpViewM;
 }
