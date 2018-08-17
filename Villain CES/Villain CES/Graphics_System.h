@@ -5,6 +5,7 @@
 #include "MyPixelShader.csh"
 #include "PrimalVertexShader.csh"
 #include "PrimalPixelShader.csh"
+#include "QuadGeometryShader.csh"
 #include <vector>
 class CGraphicsSystem
 {
@@ -92,11 +93,19 @@ public:
 	void CleanD3DLevel(TWorld * ptWorld);         //  releases memory
 	void CleanD3DObject(TWorld *ptPlanet, int nEntityIndex);
 private:
-	ID3D11VertexShader * m_pd3dPrimalVertexShader;
+	ID3D11VertexShader  *m_pd3dPrimalVertexShader;
 	ID3D11PixelShader	*m_pd3dPrimalPixelShader;
 	ID3D11InputLayout	*m_pd3dPrimalInputLayout;
 	ID3D11Buffer		*m_pd3dPrimalVertexBuffer;
 	ID3D11Buffer		*m_pd3dPrimalPixelBuffer;
+
+	ID3D11VertexShader  *m_pd3dQuadVertexShader;
+	ID3D11PixelShader	*m_pd3dQuadPixelShader;
+	ID3D11GeometryShader*m_pd3dQuadGeometryShader;
+	ID3D11InputLayout	*m_pd3dQuadInputLayout;
+	ID3D11Buffer		*m_pd3dQuadVertexBuffer;
+	ID3D11Buffer		*m_pd3dQuadGeometryBuffer;
+	ID3D11Buffer		*m_pd3dQuadPixelBuffer;
 
 	ID3D11VertexShader	*m_pd3dMyVertexShader;
 	ID3D11PixelShader	*m_pd3dMyPixelShader;

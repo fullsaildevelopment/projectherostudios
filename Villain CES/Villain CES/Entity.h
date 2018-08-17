@@ -65,12 +65,13 @@ struct TPrimalVert
 };
 
 
-unsigned int CreateDoorWay(TWorld* ptWorld, XMMATRIX SpawnPosition);
-
-unsigned int SpawnLevelChanger(TWorld *ptWorld, XMMATRIX SpawnPosition);
 unsigned int createEntity(TWorld *ptWorld);
 
 void destroyEntity(TWorld *ptWorld, unsigned int nEntity);
+
+unsigned int CreateDoorWay(TWorld* ptWorld, XMMATRIX SpawnPosition);
+
+unsigned int SpawnLevelChanger(TWorld *ptWorld, XMMATRIX SpawnPosition);
 
 unsigned int createDebugTransformLines(TWorld *ptWorld);
 
@@ -79,7 +80,7 @@ unsigned int createCube(TWorld * ptWorld);
 unsigned int createDebugGrid(TWorld * ptWorld);
 
 unsigned int CreateClayTon(TWorld * ptWorld);
-unsigned int CreateBullet(TWorld * ptWorld,XMMATRIX bulletSpawnLocation, int MaterialID);
+unsigned int CreateBullet(TWorld * ptWorld, XMMATRIX bulletSpawnLocation, int MaterialID);
 unsigned int AimingLine(TWorld * ptWorld, XMMATRIX BulletSpawnLocation, int parentWorldMatrixIndex, float xoffset, float yoffset, float zoffset);
 unsigned int createDebugCamera(TWorld * ptWorld, XMMATRIX debugCamera);
 unsigned int CreateGround(TWorld* ptWorld, XMMATRIX SpawnPosition);
@@ -102,3 +103,5 @@ unsigned int CreateTestAIPathFinding(TWorld * ptWorld, XMMATRIX SpawnPosition);
 unsigned int CreateSpacePirate(TWorld * ptWorld, XMMATRIX SpawnPosition);
 
 unsigned int CreateCover(TWorld * ptWorld, XMMATRIX SpawnPosition);
+
+unsigned int createGSQuad(TWorld * ptWorld);

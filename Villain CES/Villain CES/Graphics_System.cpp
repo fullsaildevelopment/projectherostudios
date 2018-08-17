@@ -1105,6 +1105,21 @@ void CGraphicsSystem::ExecutePipeline(ID3D11DeviceContext *pd3dDeviceContext, in
 		}
 		break;
 	}
+	case 7:
+	{
+		//Set Input_Layout
+		pd3dDeviceContext->IASetInputLayout(m_pd3dPrimalInputLayout);
+		//Set Shader
+		pd3dDeviceContext->VSSetShader(m_pd3dQuadVertexShader, NULL, 0);
+		pd3dDeviceContext->GSSetShader(m_pd3dQuadGeometryShader, NULL, 0);
+		pd3dDeviceContext->PSSetShader(m_pd3dQuadPixelShader, NULL, 0);
+		//Draw
+		if (nGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_DEBUGMESH | COMPONENT_SHADERID))
+		{
+			pd3dDeviceContext->Draw(m_nIndexCount, 0);
+		}
+		break;
+	}
 	default:
 		break;
 	}
