@@ -949,10 +949,6 @@ int CGameMangerSystem::LoadMainMenu()
 	m_d3dProjectionMatrix = pcGraphicsSystem->SetDefaultPerspective();
 	//////////
 
-	 XMMATRIX m_d3d_ResultMatrix = pcGraphicsSystem->SetDefaultWorldPosition();
-	
-	m_d3dCameraMatrix = XMMatrixMultiply(m_d3d_ResultMatrix, m_d3dWorldMatrix);
-
 	CGraphicsSystem::TUIVertexBufferType tTempVertexBuffer;
 	CGraphicsSystem::TUIPixelBufferType tTempPixelBuffer;
 
@@ -991,7 +987,7 @@ int CGameMangerSystem::LoadMainMenu()
 			tTempVertexBuffer.m_d3dViewMatrix = m_d3dViewMatrix;
 			tTempVertexBuffer.m_d3dProjectionMatrix = m_d3dProjectionMatrix;
 
-			pcGraphicsSystem->InitUIShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tTempVertexBuffer, tTempPixelBuffer, tThisWorld.atMesh[nCurrentEntity], m_d3dCameraMatrix);
+			pcGraphicsSystem->InitUIShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tTempVertexBuffer, tTempPixelBuffer, tThisWorld.atMesh[nCurrentEntity], menuCamera->d3d_Position);
 			pcGraphicsSystem->ExecutePipeline(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atMesh[nCurrentEntity].m_nIndexCount, tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask, tThisWorld.atShaderID[nCurrentEntity].m_nShaderID);
 		}
 	}
@@ -1009,14 +1005,12 @@ void CGameMangerSystem::InitilizeMainMenu()
 	pcGraphicsSystem->CleanD3DLevel(&tThisWorld);
 	atUIVertices.clear();
 
-	m_d3dCameraMatrix = pcGraphicsSystem->SetDefaultCameraMatrix();
-
 	int nThisEntity;
 	{
 		wchar_t wideChar[] =
 		{ L"UI_Textures.fbm/play.png" };
 
-		nThisEntity = CreateUILabel(&tThisWorld, m_d3dCameraMatrix, 2, 1, .5, 0, atUIVertices);
+		nThisEntity = CreateUILabel(&tThisWorld, menuCamera->d3d_Position, 2, 1, .5, 0, atUIVertices);
 		pcUISystem->AddTextureToUI(&tThisWorld, nThisEntity, pcGraphicsSystem->m_pd3dDevice, wideChar);
 		pcUISystem->AddButtonToUI(&tThisWorld, nThisEntity, 1, cApplicationWindow);
 	}
@@ -1024,7 +1018,7 @@ void CGameMangerSystem::InitilizeMainMenu()
 		wchar_t wideChar[] =
 		{ L"UI_Textures.fbm/options.png" };
 
-		nThisEntity = CreateUILabel(&tThisWorld, m_d3dCameraMatrix, 2, 1, .5, -2.4, atUIVertices);
+		nThisEntity = CreateUILabel(&tThisWorld, menuCamera->d3d_Position, 2, 1, .5, -2.4, atUIVertices);
 		pcUISystem->AddTextureToUI(&tThisWorld, nThisEntity, pcGraphicsSystem->m_pd3dDevice, wideChar);
 		pcUISystem->AddButtonToUI(&tThisWorld, nThisEntity, 4, cApplicationWindow);
 	}
@@ -1032,7 +1026,7 @@ void CGameMangerSystem::InitilizeMainMenu()
 		wchar_t wideChar[] =
 		{ L"UI_Textures.fbm/credits.png" }; 
 	
-		nThisEntity = CreateUILabel(&tThisWorld, m_d3dCameraMatrix, 2, 1, .5, -3.6, atUIVertices);
+		nThisEntity = CreateUILabel(&tThisWorld, menuCamera->d3d_Position, 2, 1, .5, -3.6, atUIVertices);
 		pcUISystem->AddTextureToUI(&tThisWorld, nThisEntity, pcGraphicsSystem->m_pd3dDevice, wideChar);
 		pcUISystem->AddButtonToUI(&tThisWorld, nThisEntity, 4, cApplicationWindow);
 	}
@@ -1040,7 +1034,7 @@ void CGameMangerSystem::InitilizeMainMenu()
 		wchar_t wideChar[] =
 		{ L"UI_Textures.fbm/Auger_MainMenu.png" };
 
-		nThisEntity = CreateUILabel(&tThisWorld, m_d3dCameraMatrix, 20, 20, 0, 0, atUIVertices);
+		nThisEntity = CreateUILabel(&tThisWorld, menuCamera->d3d_Position, 20, 20, 0, 0, atUIVertices);
 		pcUISystem->AddTextureToUI(&tThisWorld, nThisEntity, pcGraphicsSystem->m_pd3dDevice, wideChar);
 		//pcUISystem->AddButtonToUI(&tThisWorld, nThisEntity, 0, cApplicationWindow);
 	}
@@ -1055,10 +1049,6 @@ int CGameMangerSystem::LoadTitleScreen()
 	m_d3dViewMatrix = pcGraphicsSystem->SetDefaultViewMatrix();
 	m_d3dProjectionMatrix = pcGraphicsSystem->SetDefaultPerspective();
 	//////////
-
-	XMMATRIX m_d3d_ResultMatrix = pcGraphicsSystem->SetDefaultWorldPosition();
-
-	m_d3dCameraMatrix = XMMatrixMultiply(m_d3d_ResultMatrix, m_d3dWorldMatrix);
 
 	CGraphicsSystem::TUIVertexBufferType tTempVertexBuffer;
 	CGraphicsSystem::TUIPixelBufferType tTempPixelBuffer;
@@ -1097,7 +1087,7 @@ int CGameMangerSystem::LoadTitleScreen()
 			tTempVertexBuffer.m_d3dViewMatrix = m_d3dViewMatrix;
 			tTempVertexBuffer.m_d3dProjectionMatrix = m_d3dProjectionMatrix;
 
-			pcGraphicsSystem->InitUIShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tTempVertexBuffer, tTempPixelBuffer, tThisWorld.atMesh[nCurrentEntity], m_d3dCameraMatrix);
+			pcGraphicsSystem->InitUIShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tTempVertexBuffer, tTempPixelBuffer, tThisWorld.atMesh[nCurrentEntity], menuCamera->d3d_Position);
 			pcGraphicsSystem->ExecutePipeline(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atMesh[nCurrentEntity].m_nIndexCount, tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask, tThisWorld.atShaderID[nCurrentEntity].m_nShaderID);
 		}
 	}
@@ -1130,7 +1120,7 @@ void CGameMangerSystem::InitializeTitleScreen()
 	wchar_t wideChar[] =
 	{ L"UI_Textures.fbm/Auger_TitleScreen.png" };
 	
-	unsigned int nThisEntity = CreateUILabel(&tThisWorld, m_d3dCameraMatrix, 20, 20, 0, 0, atUIVertices);
+	unsigned int nThisEntity = CreateUILabel(&tThisWorld, menuCamera->d3d_Position, 20, 20, 0, 0, atUIVertices);
 
 	pcUISystem->AddTextureToUI(&tThisWorld, nThisEntity, pcGraphicsSystem->m_pd3dDevice, wideChar);
 	//pcUISystem->AddButtonToUI(&tThisWorld, nThisEntity, -3, cApplicationWindow);
