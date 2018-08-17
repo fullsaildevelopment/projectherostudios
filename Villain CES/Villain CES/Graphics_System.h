@@ -5,6 +5,8 @@
 #include "MyPixelShader.csh"
 #include "PrimalVertexShader.csh"
 #include "PrimalPixelShader.csh"
+#include "UIVertexShader.csh"
+#include "UIPixelShader.csh"
 #include <vector>
 class CGraphicsSystem
 {
@@ -57,6 +59,21 @@ public:
 		XMFLOAT4 m_d3dCollisionColor;
 	};
 
+	struct TUIVertexBufferType
+	{
+		XMMATRIX m_d3dWorldMatrix;
+		XMMATRIX m_d3dViewMatrix;
+		XMMATRIX m_d3dProjectionMatrix;
+
+		//XMFLOAT2 rcpDim;
+		//XMFLOAT2 rcpDim2;
+	};
+
+	struct TUIPixelBufferType
+	{
+		XMFLOAT4 hoverColor;
+	};
+
 	struct TBlinnPhongType
 	{
 		XMFLOAT3 m_d3dLightPosition;
@@ -84,6 +101,7 @@ public:
 	void InitPrimalShaderData(ID3D11DeviceContext * pd3dDeviceContext, XMMATRIX d3dWorldMatrix, XMMATRIX d3dViewMatrix, XMMATRIX d3dProjectionMatrix, TDebugMesh tDebugMesh, XMMATRIX CameraMatrix);
 	void InitPrimalShaderData2(ID3D11DeviceContext * pd3dDeviceContext, TPrimalVertexBufferType d3dVertexBuffer, TPrimalPixelBufferType d3dPixelBuffer, TSimpleMesh tSimpleMesh, XMMATRIX CameraMatrix);
 	void InitMyShaderData(ID3D11DeviceContext * pd3dDeviceContext, TMyVertexBufferType d3dVertexBuffer, TMesh tSimpleMesh, XMMATRIX CameraMatrix);
+	void InitUIShaderData(ID3D11DeviceContext * pd3dDeviceContext, TUIVertexBufferType d3dVertexBuffer, TUIPixelBufferType d3dPixelBuffer, TMesh tMesh, XMMATRIX CameraMatrix);
 	void ExecutePipeline(ID3D11DeviceContext *pd3dDeviceContext, int m_nIndexCount, int nGraphicsMask, int nShaderID);
 	void UpdateBuffer(TWorld * ptWorld, std::vector<TSimpleMesh> vtVertexVector, int nEntity, int nMask);
 
@@ -105,6 +123,12 @@ private:
 	ID3D11PixelShader	*m_pd3dMyPixelShader;
 	ID3D11InputLayout	*m_pd3dMyInputLayout;
 	ID3D11Buffer		*m_pd3dMyVertexBuffer;
+
+	ID3D11VertexShader	*m_pd3dUIVertexShader;
+	ID3D11PixelShader	*m_pd3dUIPixelShader;
+	ID3D11InputLayout	*m_pd3dUIInputLayout;
+	ID3D11Buffer		*m_pd3dUIVertexBuffer;
+	ID3D11Buffer		*m_pd3dUIPixelBuffer;
 
 	ID3D11Buffer		*m_pd3dBlinnPhongBuffer;
 	ID3D11Debug			*debug;

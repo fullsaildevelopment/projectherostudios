@@ -194,6 +194,12 @@
     <FxCompile Include="MyVertexShader.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
+    <FxCompile Include="..\..\..\..\..\..\Jonah%27s pc\Documents\GitHub\projectherostudios\Villain CES\Villain CES\UIVertexShader.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="..\..\..\..\..\..\Jonah%27s pc\Documents\GitHub\projectherostudios\Villain CES\Villain CES\UIPixelShader.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
     <FxCompile Include="AnimatedPixelShader.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
