@@ -14,7 +14,7 @@ CGraphicsSystem::~CGraphicsSystem()
 
 void CGraphicsSystem::InitD3D(HWND cTheWindow)
 {
-#pragma region Window Stuff
+	#pragma region Window Stuff
 
 	// create a struct to hold information about the swap chain
 	DXGI_SWAP_CHAIN_DESC d3dSwapchainDescription;
@@ -243,7 +243,7 @@ void CGraphicsSystem::CleanD3DObject(TWorld * ptPlanet, int nEntityIndex)
 
 void CGraphicsSystem::CreateShaders(ID3D11Device * device)
 {
-#pragma region MyShaders
+	#pragma region MyShaders
 	D3D11_BUFFER_DESC d3dMyVertexBufferDesc;
 	device->CreateVertexShader(MyVertexShader, sizeof(MyVertexShader), NULL, &m_pd3dMyVertexShader);
 	device->CreatePixelShader(MyPixelShader, sizeof(MyPixelShader), NULL, &m_pd3dMyPixelShader);
@@ -278,7 +278,7 @@ void CGraphicsSystem::CreateShaders(ID3D11Device * device)
 	device->CreateBuffer(&d3dMyVertexBufferDesc, NULL, &m_pd3dMyVertexBuffer);
 #pragma endregion
 
-#pragma region PrimalShaders
+	#pragma region PrimalShaders
 	D3D11_BUFFER_DESC d3dPrimalMatrixBufferDesc;
 	D3D11_BUFFER_DESC d3dPrimalPixelBufferDesc;
 	device->CreateVertexShader(PrimalVertexShader, sizeof(PrimalVertexShader), NULL, &m_pd3dPrimalVertexShader);
@@ -319,6 +319,49 @@ void CGraphicsSystem::CreateShaders(ID3D11Device * device)
 	//Create the constant buffer pointer so we can access the vertex shader constant buffer from within this class.
 	device->CreateBuffer(&d3dPrimalPixelBufferDesc, NULL, &m_pd3dPrimalPixelBuffer);
 #pragma endregion
+
+#pragma region QuadGeometryShaders
+	D3D11_BUFFER_DESC d3dQuadMatrixBufferDesc;
+	D3D11_BUFFER_DESC d3dQuadPixelBufferDesc;
+	device->CreateVertexShader(QuadVertexShader, sizeof(QuadVertexShader), NULL, &m_pd3dQuadVertexShader);
+	device->CreatePixelShader(QuadPixelShader, sizeof(QuadPixelShader), NULL, &m_pd3dQuadPixelShader);
+	//Input Layout Setup
+	//Now setup the layout of the data that goes into the shader.
+	D3D11_INPUT_ELEMENT_DESC m_d3dQuadLayoutDesc[] =
+	{
+		{ "POSITION", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "POSITION", 1, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+	};
+	//Get a count of the elements in the layout.
+	int nQuadElements = sizeof(m_d3dQuadLayoutDesc) / sizeof(m_d3dQuadLayoutDesc[0]);
+
+	//Create the vertex input layout.
+	device->CreateInputLayout(m_d3dQuadLayoutDesc, nQuadElements, QuadVertexShader,
+		sizeof(QuadVertexShader), &m_pd3dQuadInputLayout);
+
+	//Setup the description of the dynamic matrix constant buffer that is in the vertex shader.
+	d3dQuadMatrixBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+	d3dQuadMatrixBufferDesc.ByteWidth = sizeof(TQuadVertexBufferType);
+	d3dQuadMatrixBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	d3dQuadMatrixBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	d3dQuadMatrixBufferDesc.MiscFlags = 0;
+	d3dQuadMatrixBufferDesc.StructureByteStride = 0;
+
+	//Create the constant buffer pointer so we can access the vertex shader constant buffer from within this class.
+	device->CreateBuffer(&d3dQuadMatrixBufferDesc, NULL, &m_pd3dQuadVertexBuffer);
+
+	//Setup the description of the dynamic matrix constant buffer that is in the vertex shader.
+	d3dQuadPixelBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+	d3dQuadPixelBufferDesc.ByteWidth = sizeof(TQuadPixelBufferType);
+	d3dQuadPixelBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	d3dQuadPixelBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	d3dQuadPixelBufferDesc.MiscFlags = 0;
+	d3dQuadPixelBufferDesc.StructureByteStride = 0;
+
+	//Create the constant buffer pointer so we can access the vertex shader constant buffer from within this class.
+	device->CreateBuffer(&d3dQuadPixelBufferDesc, NULL, &m_pd3dQuadPixelBuffer);
+#pragma endregion
+
 }
 
 void CGraphicsSystem::CreateBuffers(TWorld *ptPlanet)//init first frame
