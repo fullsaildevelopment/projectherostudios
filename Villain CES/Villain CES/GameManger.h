@@ -52,8 +52,6 @@ private:
 	XMMATRIX m_d3dProjectionMatrix;
 	XMMATRIX m_d3dPlayerMatrix;
 	
-
-	//TCamera* CameraSelect[6];
 	TCamera *walkCamera;
 	TCamera *aimCamera;
 	TCamera *debugCamera;
@@ -61,4 +59,5 @@ private:
 	Timers * tAugerTimers;
 	System_Times *tTimerInfo;
 	float m_RealTimeFov;
+	bool bMoving;
 };
