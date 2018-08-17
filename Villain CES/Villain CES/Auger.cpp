@@ -47,7 +47,7 @@ void CAuger::Start()
 void CAuger::InitializeSystems()
 {
 	//pcGameMangerSystem->LoadLevel();
-	CurrentSpotInGame = -1;
+	CurrentSpotInGame = 7;
 	//pcGraphicsSystem->InitD3D(cApplicationWindow);
 	
 	//createDebugGrid(&tThisWorld);

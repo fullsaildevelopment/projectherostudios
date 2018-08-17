@@ -517,3 +517,15 @@ void CAISystem::MakeDirections(vector<XMVECTOR>* directions, PlannerNode* curren
 		MakeDirections(directions, current->parent);
 	}
 }
+
+
+
+void CAISystem::MoveAiToCoverLocation(TCoverTrigger Cover,TWorld * ptWorld)
+{
+	int index=0;
+	for (int i = 0; i < AIInCombat.size(); ++i) {
+		ptWorld->atAIMask[AIInCombat[i]].m_tnAIMask = COMPONENT_AIMASK | COMPONENT_SEARCH | COMPONENT_PATHFINDTEST;
+		ptWorld->atPathPlanining[AIInCombat[i]].Goal = Cover.coverAiCanGoTo[0].CoverPositions[index];
+		ptWorld->atPathPlanining[AIInCombat[i]].testingPathFinding = true;
+	}
+}

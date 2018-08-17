@@ -1801,9 +1801,19 @@ void CGameMangerSystem::FirstSkeltonAiTestLoad()
 	AILocation = XMMatrixInverse(NULL, AILocation);
 
 	CoverLocation.r[3].m128_f32[2] += -1;
-	CreateCover(&tThisWorld, CoverLocation);
+	vector<int> coverPosition;
+	int cover1=	CreateCover(&tThisWorld, CoverLocation, coverPosition);
 	CoverLocation.r[3].m128_f32[0] += 5;
-	CreateCover(&tThisWorld, CoverLocation);
+	int cover2=CreateCover(&tThisWorld, CoverLocation, coverPosition);
+	XMMATRIX coverTriggerMatrix = CoverLocation;
+	coverTriggerMatrix.r[3].m128_f32[2] -= 4;
+	coverTriggerMatrix.r[3].m128_f32[1] -= 1;
+
+	vector<int> coverIndexs;
+	coverIndexs.push_back(cover1);
+	coverIndexs.push_back(cover2);
+
+	int aabbindex=CreateCoverTriggerZone(&tThisWorld, coverTriggerMatrix, coverIndexs);
 	XMMATRIX nodeLocation = CoverLocation;
 	nodeLocation.r[3].m128_f32[0] -= 1;
 	nodeLocation.r[3].m128_f32[1] -= 1;
@@ -1961,11 +1971,17 @@ void CGameMangerSystem::FirstSkeltonAiTestLoad()
 	tThisWorld.atSimpleMesh[8].m_nColor = blue;
 	for (int nCurrentEntity = 0; nCurrentEntity < ENTITYCOUNT; nCurrentEntity++)
 	{
-
+		if (nCurrentEntity == aabbindex) {
+			float x = 0;
+		}
 		if (tThisWorld.atCollisionMask[nCurrentEntity].m_tnCollisionMask > 1)
 		{
+			if (nCurrentEntity == aabbindex) {
+				float x = 0;
+			}
 			if (tThisWorld.atSimpleMesh[nCurrentEntity].m_nVertexCount > tThisWorld.atDebugMesh[nCurrentEntity].m_nVertexCount)
 			{
+
 				TAABB MyAbb = pcCollisionSystem->createAABBS(tThisWorld.atSimpleMesh[nCurrentEntity].m_VertexData, tThisWorld.atAABB[nCurrentEntity]);
 				MyAbb.m_IndexLocation = nCurrentEntity;
 				tThisWorld.atAABB[nCurrentEntity] = MyAbb;
@@ -1987,19 +2003,22 @@ void CGameMangerSystem::FirstSkeltonAiTestLoad()
 				}
 			}
 		}
-
+	}
 
 		for (int nCurrentEntity = 0; nCurrentEntity < ENTITYCOUNT; nCurrentEntity++)
 		{
 			if (tThisWorld.atCollisionMask[nCurrentEntity].m_tnCollisionMask > 1)
 			{
+				if (nCurrentEntity == aabbindex) {
+					float x = 0;
+				}
 				tThisWorld.atAABB[nCurrentEntity] = pcCollisionSystem->updateAABB(tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, tThisWorld.atAABB[nCurrentEntity]);
 			}
 		}
 
 
 		pcGraphicsSystem->CreateBuffers(&tThisWorld);
-	}
+	
 }
 
 int CGameMangerSystem::SpacePirateGamePlay()
@@ -2265,8 +2284,8 @@ int CGameMangerSystem::SpacePirateGamePlay()
 
 							}
 							tThisWorld.atClip[tThisWorld.atAIMask[nCurrentEntity].GunIndex].tryToShoot = true;
-							tThisWorld.atAIMask[nCurrentEntity].m_tnAIMask = COMPONENT_AIMASK | COMPONENT_SEARCH | COMPONENT_PATHFINDTEST;
-							if (tThisWorld.atPathPlanining[nCurrentEntity].foundDestination == true) {
+					//		tThisWorld.atAIMask[nCurrentEntity].m_tnAIMask = COMPONENT_AIMASK | COMPONENT_SEARCH | COMPONENT_PATHFINDTEST;
+						/*	if (tThisWorld.atPathPlanining[nCurrentEntity].foundDestination == true) {
 								int previousgoal = tThisWorld.atPathPlanining[nCurrentEntity].Goal;
 								int previousStartPosition = tThisWorld.atPathPlanining[nCurrentEntity].startingNode;
 								tThisWorld.atPathPlanining[nCurrentEntity].Goal = previousStartPosition;
@@ -2274,7 +2293,7 @@ int CGameMangerSystem::SpacePirateGamePlay()
 								tThisWorld.atPathPlanining[nCurrentEntity].foundDestination = false;
 								tThisWorld.atPathPlanining[nCurrentEntity].testingPathFinding = true;
 
-							}
+							}*/
 							
 						}
 						else if (tThisWorld.atProjectiles[indicies[i]].m_tnProjectileMask == (COMPONENT_PROJECTILESMASK | COMPONENT_METAL)) {
@@ -2532,8 +2551,10 @@ int CGameMangerSystem::SpacePirateGamePlay()
 									pcGraphicsSystem->CleanD3DObject(&tThisWorld, nCurrentEntity);
 
 								}
+								tThisWorld.atClayton[otherCollisionsIndex[i]].health -= 50;
 							}
-							tThisWorld.atClayton[otherCollisionsIndex[i]].health -= 50;
+							
+							
 						}
 						if (tThisWorld.atProjectiles[nCurrentEntity].m_tnProjectileMask == (COMPONENT_PROJECTILESMASK | COMPONENT_METAL)) {
 							if (tThisWorld.atClip[nCurrentEntity].gunIndex != -1) {
@@ -2550,6 +2571,10 @@ int CGameMangerSystem::SpacePirateGamePlay()
 
 							}
 						}
+						
+					}
+					if (tThisWorld.atInputMask[nCurrentEntity].m_tnInputMask == (COMPONENT_CLAYTON | COMPONENT_INPUTMASK) && tThisWorld.atAIMask[otherCollisionsIndex[i]].m_tnAIMask == (COMPONENT_AIMASK | COMPONENT_COVERTRIGGER)) {
+						float x = 0;
 					}
 				}
 				if (tThisWorld.atClayton[PlayerStartIndex].health <= 0)
