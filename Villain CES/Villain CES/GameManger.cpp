@@ -1810,7 +1810,6 @@ void CGameMangerSystem::FirstSkeltonAiTestLoad()
 	coverTriggerMatrix.r[3].m128_f32[1] -= 1;
 
 	vector<int> coverIndexs;
-	coverIndexs.push_back(cover1);
 	coverIndexs.push_back(cover2);
 
 	int aabbindex=CreateCoverTriggerZone(&tThisWorld, coverTriggerMatrix, coverIndexs);
@@ -1827,6 +1826,7 @@ void CGameMangerSystem::FirstSkeltonAiTestLoad()
 	nodePosition.z = nodeLocation.r[3].m128_f32[2];
 	pcAiSystem->AddNodeToPathFinding(nodeindex, nodePosition, 1);
 	int nodeindex2 = CreateNodePoint(&tThisWorld, AILocation);
+	tThisWorld.atCover[cover2].CoverPositions.push_back(nodeindex);
 	AILocation.r[3].m128_f32[1] -= 1;
 	nodePosition.x = AILocation.r[3].m128_f32[0];
 	nodePosition.y = AILocation.r[3].m128_f32[1];
@@ -2574,7 +2574,7 @@ int CGameMangerSystem::SpacePirateGamePlay()
 						
 					}
 					if (tThisWorld.atInputMask[nCurrentEntity].m_tnInputMask == (COMPONENT_CLAYTON | COMPONENT_INPUTMASK) && tThisWorld.atAIMask[otherCollisionsIndex[i]].m_tnAIMask == (COMPONENT_AIMASK | COMPONENT_COVERTRIGGER)) {
-						float x = 0;
+						pcAiSystem->MoveAiToCoverLocation(tThisWorld.atCoverTrigger[otherCollisionsIndex[i]], &tThisWorld);
 					}
 				}
 				if (tThisWorld.atClayton[PlayerStartIndex].health <= 0)

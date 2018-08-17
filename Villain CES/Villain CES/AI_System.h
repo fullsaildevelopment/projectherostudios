@@ -68,7 +68,7 @@ public:
 	void PathPlaningMovement(TAIPathFinding* path, XMMATRIX* worldMatrix);
 	void LookAtObject(XMMATRIX thingToLookAt, XMMATRIX* AIMatrix);
 	void Strafe(XMMATRIX* AiMatrix);
-
+	void MoveAiToCoverLocation(TCoverTrigger Cover, TWorld * ptWorld);
 private:
 	
 	int numberofAI;
@@ -106,6 +106,6 @@ private:
 	void MakeDirections(vector<XMVECTOR> *directions, PlannerNode* current);
 	vector<int> AIInCombat;
 	
-	void MoveAiToCoverLocation(TCoverTrigger Cover, TWorld * ptWorld);
+	
 };
 
