@@ -2178,13 +2178,9 @@ int CGameMangerSystem::SpacePirateGamePlay()
 	}
 	float xPos;
 	float yPos;
-	pcInputSystem->m_pcMyInput->GetMousePosition(xPos, yPos);
-	cout << xPos<<'\n';
 	
-			RECT rect = { 0 };
-		
-			GetWindowRect(cApplicationWindow, &rect);
-			SetCursorPos((rect.right/2.0f)+20 ,(rect.bottom/2.0f)+64);
+	
+			
 		
 #pragma endregion
 
