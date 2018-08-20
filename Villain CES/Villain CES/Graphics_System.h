@@ -6,6 +6,8 @@
 #include "PrimalVertexShader.csh"
 #include "PrimalPixelShader.csh"
 #include "QuadGeometryShader.csh"
+#include "QuadVertexShader.csh"
+#include "QuadPixelShader.csh"
 #include <vector>
 class CGraphicsSystem
 {
@@ -20,17 +22,18 @@ public:
 	ID3D11Texture2D* m_pd3dDepthStencil;
 	D3D11_VIEWPORT m_d3dViewport;
 
-	//struct TPBRVertexBufferType
-	//{
-	//	XMMATRIX m_d3dWorldMatrix;
-	//	XMMATRIX m_d3dViewMatrix;
-	//	XMMATRIX m_d3dProjectionMatrix;
 
-	//};
+	struct TQuadVertexBufferType
+	{
+		XMMATRIX m_d3dWorldMatrix;
+		XMMATRIX m_d3dViewMatrix;
+		XMMATRIX m_d3dProjectionMatrix;
+	};
 
-	//struct TPBRPixelBufferType
-	//{
-	//};
+	struct TQuadPixelBufferType
+	{
+		/*Nothing*/
+	};
 
 	struct TMyVertexBufferType
 	{

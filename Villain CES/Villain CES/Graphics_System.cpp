@@ -350,16 +350,6 @@ void CGraphicsSystem::CreateShaders(ID3D11Device * device)
 	//Create the constant buffer pointer so we can access the vertex shader constant buffer from within this class.
 	device->CreateBuffer(&d3dQuadMatrixBufferDesc, NULL, &m_pd3dQuadVertexBuffer);
 
-	//Setup the description of the dynamic matrix constant buffer that is in the vertex shader.
-	d3dQuadPixelBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
-	d3dQuadPixelBufferDesc.ByteWidth = sizeof(TQuadPixelBufferType);
-	d3dQuadPixelBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-	d3dQuadPixelBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-	d3dQuadPixelBufferDesc.MiscFlags = 0;
-	d3dQuadPixelBufferDesc.StructureByteStride = 0;
-
-	//Create the constant buffer pointer so we can access the vertex shader constant buffer from within this class.
-	device->CreateBuffer(&d3dQuadPixelBufferDesc, NULL, &m_pd3dQuadPixelBuffer);
 #pragma endregion
 
 }
