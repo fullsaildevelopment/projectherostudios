@@ -1,5 +1,6 @@
 #include "GameManger.h"
 #define AI_ON false
+#define MIKES_SANDBOX_ON true
 CGameMangerSystem::CGameMangerSystem(HWND window,CInputSystem* _pcInputSystem)
 {
 	cApplicationWindow = window;
@@ -1012,7 +1013,9 @@ int CGameMangerSystem::LoadMainMenu()
 
 	if (pcInputSystem->InputCheck(G_KEY_ESCAPE) == 1)
 		return 4;
-
+#if MIKES_SANDBOX_ON
+	return 9;
+#endif
 	return 0;
 }
 
