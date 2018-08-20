@@ -2686,11 +2686,10 @@ void CGameMangerSystem::LoadMikesGraphicsSandbox()
 		int myMesh = createMesh(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, tempImport.vtMeshes[meshIndex], tempImport.vtMaterials[meshIndex]);
 	}
 
-	createGSQuad(&tThisWorld);
+	createGSQuad(&tThisWorld, XMFLOAT4(1, 0, 0, 1));
+	createGSQuad(&tThisWorld, XMFLOAT4(1, 1, 1, 1));
 
 	pcGraphicsSystem->CreateBuffers(&tThisWorld);
-
-
 }
 
 int CGameMangerSystem::MikesGraphicsSandbox()
@@ -2730,8 +2729,7 @@ int CGameMangerSystem::MikesGraphicsSandbox()
 			tTempVertexBuffer.m_d3dWorldMatrix = m_d3dWorldMatrix;
 			tTempVertexBuffer.m_d3dViewMatrix = debugCamera->d3d_Position;
 			tMyVertexBufferTemp.m_d3dViewMatrix = debugCamera->d3d_Position;
-			pcGraphicsSystem->InitQuadShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, m_d3dViewMatrix, m_d3dProjectionMatrix, tThisWorld.atDebugMesh[nCurrentEntity], debugCamera->d3d_Position);
-
+			pcGraphicsSystem->InitQuadShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, m_d3dViewMatrix, m_d3dProjectionMatrix, tThisWorld.atDebugMesh[nCurrentEntity], debugCamera->d3d_Position, tThisWorld.atBar[nCurrentEntity].backgroundColor);
 			pcGraphicsSystem->ExecutePipeline(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atDebugMesh[nCurrentEntity].m_nVertexCount, tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask, tThisWorld.atShaderID[nCurrentEntity].m_nShaderID);
 		}
 
@@ -2742,7 +2740,6 @@ int CGameMangerSystem::MikesGraphicsSandbox()
 			tMyVertexBufferTemp.m_d3dViewMatrix = debugCamera->d3d_Position;
 
 			pcGraphicsSystem->InitMyShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tMyVertexBufferTemp, tThisWorld.atMesh[nCurrentEntity], debugCamera->d3d_Position);
-
 			pcGraphicsSystem->ExecutePipeline(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atMesh[nCurrentEntity].m_nIndexCount, tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask, tThisWorld.atShaderID[nCurrentEntity].m_nShaderID);
 		}
 

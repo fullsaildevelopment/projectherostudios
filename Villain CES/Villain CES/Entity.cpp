@@ -1826,14 +1826,14 @@ unsigned int CreateCover(TWorld * ptWorld, XMMATRIX SpawnPosition)
 	return nThisEntity;
 }
 
-unsigned int createGSQuad(TWorld * ptWorld)
+unsigned int createGSQuad(TWorld * ptWorld, XMFLOAT4 backgroundColor)
 {
 	unsigned int nThisEntity = createEntity(ptWorld);
 
 	ptWorld->atGraphicsMask[nThisEntity].m_tnGraphicsMask = COMPONENT_GRAPHICSMASK | COMPONENT_DEBUGMESH | COMPONENT_SHADERID;
 	ptWorld->atCollisionMask[nThisEntity].m_tnCollisionMask = COMPONENT_COLLISIONMASK;
 	ptWorld->atAIMask[nThisEntity].m_tnAIMask = COMPONENT_AIMASK;
-	ptWorld->atUIMask[nThisEntity].m_tnUIMask = COMPONENT_UIMASK;
+	ptWorld->atUIMask[nThisEntity].m_tnUIMask = COMPONENT_UIMASK | COMPONENT_BAR;
 	ptWorld->atPhysicsMask[nThisEntity].m_tnPhysicsMask = COMPONENT_PHYSICSMASK;
 	ptWorld->atProjectiles[nThisEntity].m_tnProjectileMask = COMPONENT_PROJECTILESMASK;
 
@@ -1858,7 +1858,7 @@ unsigned int createGSQuad(TWorld * ptWorld)
 
 	ptWorld->atDebugMesh[nThisEntity].m_d3dVertexData.SysMemPitch = 0;
 	ptWorld->atDebugMesh[nThisEntity].m_d3dVertexData.SysMemSlicePitch = 0;
-
+	ptWorld->atBar[nThisEntity].backgroundColor = backgroundColor;
 
 	ptWorld->atShaderID[nThisEntity].m_nShaderID = 8;//Geometry Shader
 

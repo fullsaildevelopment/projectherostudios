@@ -117,4 +117,4 @@ unsigned int CreateSpacePirate(TWorld * ptWorld, XMMATRIX SpawnPosition);
 
 unsigned int CreateCover(TWorld * ptWorld, XMMATRIX SpawnPosition);
 
-unsigned int createGSQuad(TWorld * ptWorld);
+unsigned int createGSQuad(TWorld * ptWorld, XMFLOAT4 BackgroundColor);
