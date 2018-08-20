@@ -41,10 +41,12 @@ TCameraToggle CInputSystem::CameraModeListen(TCameraToggle tMyCam)
 	}
 	if (InputCheck(G_BUTTON_RIGHT) == 1)
 	{
-		tTempCamMode.bAimMode = true;
-		tTempCamMode.bDebugMode = false;
-		tTempCamMode.bWalkMode = false;
-		tTempCamMode.bSwitch = true;
+		if (tTempCamMode.bAimMode == false) {
+			tTempCamMode.bAimMode = true;
+			tTempCamMode.bDebugMode = false;
+			tTempCamMode.bWalkMode = false;
+			tTempCamMode.bSwitch = true;
+		}
 
 	}
 
