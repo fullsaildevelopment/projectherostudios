@@ -109,8 +109,7 @@ void CAuger::Update(bool* loopgame)
 		CurrentSpotInGame=pcGameMangerSystem->LoadMainMenu();
 	
 
-		GetWindowRect(window2, &rect);
-		SetCursorPos((rect.right / 2.0f) + 20, (rect.bottom / 2.0f) + 64);
+	
 		break;
 
 	case 1:
