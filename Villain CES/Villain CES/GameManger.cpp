@@ -1019,7 +1019,8 @@ void CGameMangerSystem::InitilizeMainMenu()
 
 		nThisEntity = CreateUILabel(&tThisWorld, menuCamera->d3d_Position, 2, 1, .5, 0, atUIVertices);
 		pcUISystem->AddTextureToUI(&tThisWorld, nThisEntity, pcGraphicsSystem->m_pd3dDevice, wideChar);
-		pcUISystem->AddButtonToUI(&tThisWorld, nThisEntity, 7, cApplicationWindow);
+		//                                                  modify this to switch testing levels in Augur.cpp
+		pcUISystem->AddButtonToUI(&tThisWorld, nThisEntity, 1, cApplicationWindow);
 	}
 	{
 		wchar_t wideChar[] =
@@ -1767,6 +1768,7 @@ void CGameMangerSystem::FirstSkeltonAiTestLoad()
 	tCameraMode.bWalkMode = true;
 	tCameraMode.bSwitch = false;
 	bMoving = false;
+	m_d3dPlayerMatrix = pcGraphicsSystem->SetDefaultWorldPosition();
 	//m_d3dPlayerMatrix = XMMatrixMultiply(m_d3dPlayerMatrix, XMMatrixScaling(.01, .01, .01));
 	m_d3dPlayerMatrix = m_d3dWorldMatrix;
 	m_d3dPlayerMatrix.r[3].m128_f32[2] -= 10;

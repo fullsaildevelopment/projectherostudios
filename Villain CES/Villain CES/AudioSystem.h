@@ -19,6 +19,7 @@ public:
 	GameSound();
 	~GameSound();
 	void IntiializeSystem();
+	void PlaySoundInBank(GameSound* mysound);
 private:
 
 };
@@ -99,7 +100,12 @@ inline void GameSound::IntiializeSystem()
 	}
 #endif // !AK_OPTIMIZED
 
-#pragma endregion Communication Between Wwise & C++ Project
+#pragma endregion Communication Between Wwise App & C++ Project
+}
+
+inline void GameSound::PlaySoundInBank(GameSound* mysound)
+{
+	AK::SoundEngine::RenderAudio();
 }
 
 

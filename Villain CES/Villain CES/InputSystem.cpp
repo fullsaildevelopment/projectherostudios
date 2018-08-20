@@ -574,14 +574,14 @@ void CInputSystem::MouseBoundryCheck(float _x, float _y, float &_outX, float &_o
 	if (restrictedX >= 1410.0f || restrictedX <= 6.0f)
 	{
 		restrictedX -= 712.0f;
-		_outX = restrictedX;
+		_outX = restrictedX * m_fMouseRotationSpeed ;
 	}
 	
 	//Max & Min Y window check
 	if (restrictedY >= 700.0f || restrictedY <= 5.0f)
 	{
 		restrictedY -= 360;
-		_outY = restrictedY;
+		_outY = restrictedY * m_fMouseRotationSpeed;
 	}
 	
 	
