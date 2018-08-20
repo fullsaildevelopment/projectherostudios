@@ -59,6 +59,7 @@ struct TWorld
 };
 
 
+
 struct TPrimalVert
 {
 	XMFLOAT3 m_d3dfPosition;

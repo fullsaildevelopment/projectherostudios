@@ -159,6 +159,7 @@ void CGraphicsSystem::UpdateD3D()
 	m_pd3dDeviceContext->RSSetViewports(1, &m_d3dViewport);
 }
 
+
 void CGraphicsSystem::CleanD3D(TWorld *ptPlanet)
 {
 	// close and release all existing COM objects
@@ -369,12 +370,13 @@ void CGraphicsSystem::CreateShaders(ID3D11Device * device)
 	D3D11_BUFFER_DESC d3dQuadPixelBufferDesc;
 	device->CreateVertexShader(QuadVertexShader, sizeof(QuadVertexShader), NULL, &m_pd3dQuadVertexShader);
 	device->CreatePixelShader(QuadPixelShader, sizeof(QuadPixelShader), NULL, &m_pd3dQuadPixelShader);
+	device->CreateGeometryShader(QuadGeometryShader, sizeof(QuadGeometryShader), NULL, &m_pd3dQuadGeometryShader);
 	//Input Layout Setup
 	//Now setup the layout of the data that goes into the shader.
 	D3D11_INPUT_ELEMENT_DESC m_d3dQuadLayoutDesc[] =
 	{
 		{ "POSITION", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		{ "POSITION", 1, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "POSITION", 1, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 	};
 	//Get a count of the elements in the layout.
 	int nQuadElements = sizeof(m_d3dQuadLayoutDesc) / sizeof(m_d3dQuadLayoutDesc[0]);
@@ -385,14 +387,14 @@ void CGraphicsSystem::CreateShaders(ID3D11Device * device)
 
 	//Setup the description of the dynamic matrix constant buffer that is in the vertex shader.
 	d3dQuadMatrixBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
-	d3dQuadMatrixBufferDesc.ByteWidth = sizeof(TQuadVertexBufferType);
+	d3dQuadMatrixBufferDesc.ByteWidth = sizeof(TQuadGeometryBufferType);
 	d3dQuadMatrixBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
 	d3dQuadMatrixBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 	d3dQuadMatrixBufferDesc.MiscFlags = 0;
 	d3dQuadMatrixBufferDesc.StructureByteStride = 0;
 
 	//Create the constant buffer pointer so we can access the vertex shader constant buffer from within this class.
-	device->CreateBuffer(&d3dQuadMatrixBufferDesc, NULL, &m_pd3dQuadVertexBuffer);
+	device->CreateBuffer(&d3dQuadMatrixBufferDesc, NULL, &m_pd3dQuadGeometryBuffer);
 
 #pragma endregion
 
@@ -963,6 +965,39 @@ XMVECTOR CGraphicsSystem::GetCameraPos()
 	return campos;
 }
 
+void CGraphicsSystem::InitQuadShaderData(ID3D11DeviceContext * pd3dDeviceContext, XMMATRIX d3dWorldMatrix, XMMATRIX d3dViewMatrix, XMMATRIX d3dProjectionMatrix, TDebugMesh tDebugMesh, XMMATRIX CameraMatrix)
+{
+	D3D11_MAPPED_SUBRESOURCE d3dQuadMappedResource;
+
+	TQuadGeometryBufferType* ptQuadMatrixBufferDataPointer = nullptr;
+
+	unsigned int bufferNumber;
+
+	d3dViewMatrix = XMMatrixInverse(nullptr, CameraMatrix);
+
+	XMMATRIX d3dView;
+
+	d3dView = d3dViewMatrix;
+
+	pd3dDeviceContext->Map(m_pd3dQuadGeometryBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &d3dQuadMappedResource);
+
+	// Get a pointer to the data in the constant buffer.
+	ptQuadMatrixBufferDataPointer = (TQuadGeometryBufferType*)d3dQuadMappedResource.pData;
+
+	// Copy the matrices into the constant buffer.
+	ptQuadMatrixBufferDataPointer->m_d3dWorldMatrix = d3dWorldMatrix;
+	ptQuadMatrixBufferDataPointer->m_d3dViewMatrix = d3dView;
+	ptQuadMatrixBufferDataPointer->m_d3dProjectionMatrix = d3dProjectionMatrix;
+
+	// Unlock the constant buffer.
+	pd3dDeviceContext->Unmap(m_pd3dQuadGeometryBuffer, 0);
+
+	// Set the constant buffer in the vertex shader with the updated values.
+	pd3dDeviceContext->GSSetConstantBuffers(0, 1, &m_pd3dQuadGeometryBuffer);
+	pd3dDeviceContext->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_POINTLIST);
+	pd3dDeviceContext->IASetVertexBuffers(0, 1, &tDebugMesh.m_pd3dVertexBuffer, &tDebugMesh.m_nVertexBufferStride, &tDebugMesh.m_nVertexBufferOffset);
+}
+
 void CGraphicsSystem::InitPrimalShaderData(ID3D11DeviceContext * pd3dDeviceContext, XMMATRIX d3dWorldMatrix, XMMATRIX d3dViewMatrix, XMMATRIX d3dProjectionMatrix, TDebugMesh tDebugMesh, XMMATRIX CameraMatrix)
 {
 	D3D11_MAPPED_SUBRESOURCE d3dPrimalMappedResource;
@@ -1228,6 +1263,7 @@ void CGraphicsSystem::ExecutePipeline(ID3D11DeviceContext *pd3dDeviceContext, in
 		pd3dDeviceContext->IASetInputLayout(m_pd3dPrimalInputLayout);
 		//Set Shader
 		pd3dDeviceContext->VSSetShader(m_pd3dPrimalVertexShader, NULL, 0);
+		pd3dDeviceContext->GSSetShader(nullptr, NULL, 0);
 		pd3dDeviceContext->PSSetShader(m_pd3dPrimalPixelShader, NULL, 0);
 		//Draw
 		if (nGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_SIMPLEMESH | COMPONENT_SHADERID))
@@ -1242,6 +1278,7 @@ void CGraphicsSystem::ExecutePipeline(ID3D11DeviceContext *pd3dDeviceContext, in
 		pd3dDeviceContext->IASetInputLayout(m_pd3dMyInputLayout);
 		//Set Shader
 		pd3dDeviceContext->VSSetShader(m_pd3dMyVertexShader, NULL, 0);
+		pd3dDeviceContext->GSSetShader(nullptr, NULL, 0);
 		pd3dDeviceContext->PSSetShader(m_pd3dMyPixelShader, NULL, 0);
 		////Draw
 		if (nGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_SHADERID))
@@ -1256,6 +1293,7 @@ void CGraphicsSystem::ExecutePipeline(ID3D11DeviceContext *pd3dDeviceContext, in
 		pd3dDeviceContext->IASetInputLayout(m_pd3dMyInputLayout);
 		//Set Shader
 		pd3dDeviceContext->VSSetShader(m_pd3dMyVertexShader, NULL, 0);
+		pd3dDeviceContext->GSSetShader(nullptr, NULL, 0);
 		pd3dDeviceContext->PSSetShader(m_pd3dMyPixelShader, NULL, 0);
 		////Draw
 		if (nGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_SHADERID))
@@ -1276,22 +1314,38 @@ void CGraphicsSystem::ExecutePipeline(ID3D11DeviceContext *pd3dDeviceContext, in
 		{
 			pd3dDeviceContext->DrawIndexed(m_nIndexCount, 0, 0);
 		}
+		break;
 	}	
-		case 7:
+	case 7:
+	{
+		//Set Input_Layout
+		pd3dDeviceContext->IASetInputLayout(m_pd3dUIInputLayout);
+		//Set Shader
+		pd3dDeviceContext->VSSetShader(m_pd3dUIVertexShader, NULL, 0);
+		pd3dDeviceContext->PSSetShader(m_pd3dUIPixelShader, NULL, 0);
+		////Draw
+		if (nGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_SHADERID))
 		{
-			//Set Input_Layout
-			pd3dDeviceContext->IASetInputLayout(m_pd3dUIInputLayout);
-			//Set Shader
-			pd3dDeviceContext->VSSetShader(m_pd3dUIVertexShader, NULL, 0);
-			pd3dDeviceContext->PSSetShader(m_pd3dUIPixelShader, NULL, 0);
-			////Draw
-			if (nGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_SHADERID))
-			{
-				pd3dDeviceContext->DrawIndexed(m_nIndexCount, 0, 0);
-			}
-			break;
+			pd3dDeviceContext->DrawIndexed(m_nIndexCount, 0, 0);
 		}
-		default:
-			break;
+		break;
+	}
+	case 8:
+	{
+		//Set Input_Layout
+		pd3dDeviceContext->IASetInputLayout(m_pd3dQuadInputLayout);
+		//Set Shader
+		pd3dDeviceContext->VSSetShader(m_pd3dQuadVertexShader, NULL, 0);
+		pd3dDeviceContext->GSSetShader(m_pd3dQuadGeometryShader, NULL, 0);
+		pd3dDeviceContext->PSSetShader(m_pd3dQuadPixelShader, NULL, 0);
+		//Draw
+		if (nGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_DEBUGMESH | COMPONENT_SHADERID))
+		{
+			pd3dDeviceContext->Draw(m_nIndexCount, 0);
+		}
+		break;
+	}
+	default:
+		break;
 	}
 }

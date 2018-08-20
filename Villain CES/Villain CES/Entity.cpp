@@ -1839,7 +1839,7 @@ unsigned int createGSQuad(TWorld * ptWorld)
 
 	static TPrimalVert atPointVertex[]
 	{
-		TPrimalVert{ XMFLOAT3(0.0f, 0.0f, 0.0f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) }
+		TPrimalVert{ XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) }
 	};
 
 	ptWorld->atDebugMesh[nThisEntity].m_nVertexCount = 1;
@@ -1860,7 +1860,7 @@ unsigned int createGSQuad(TWorld * ptWorld)
 	ptWorld->atDebugMesh[nThisEntity].m_d3dVertexData.SysMemSlicePitch = 0;
 
 
-	ptWorld->atShaderID[nThisEntity].m_nShaderID = 7;//Geometry Shader
+	ptWorld->atShaderID[nThisEntity].m_nShaderID = 8;//Geometry Shader
 
 	return nThisEntity;
 }

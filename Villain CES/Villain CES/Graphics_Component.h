@@ -21,6 +21,7 @@ struct TGraphicsMask
 	int m_tnGraphicsMask = 0;
 };
 
+#pragma region Helper Structs
 struct TKeyframe
 {
 	double dTime = 0;
@@ -187,6 +188,8 @@ struct ImporterData
 	TAnimationImport* vtAnimations;
 };
 
+#pragma endregion
+
 struct TMesh
 {
 	ID3D11Buffer *m_pd3dVertexBuffer;
@@ -259,8 +262,6 @@ struct TShaderID
 {
 	int m_nShaderID = 0;
 };
-
-
 
 struct TWorldMatrix
 {
