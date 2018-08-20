@@ -3,9 +3,12 @@
 #include "InputSystem.h"
 #include"Collision_System.h"
 #include"Physics_System.h"
+#include"Timer.h"
 #include "Entity.h"
 #include"ProjectileSystem.h"
 #include"AI_System.h"
+#include "UI_System.h"
+#include <array>
 
 class CGameMangerSystem {
 public:
@@ -17,6 +20,9 @@ public:
 	void RestartLevel();
 	int LoadMainMenu();
 	void InitilizeMainMenu();
+	int LoadTitleScreen();
+	void InitializeTitleScreen();
+
 	void LoadPathFindingTest();
 	int PathFindingExample();
 	void FirstSkeltonAiTestLoad();
@@ -31,9 +37,9 @@ private:
 	CPhysicsSystem  *pcPhysicsSystem;
 	CProjectileSystem* pcProjectileSystem;
 	CAISystem		*pcAiSystem;
+	CUISystem		*pcUISystem;
 	HWND cApplicationWindow;
 	vector<int> UIIndex;
-	TCameraToggle tCameraMode;
 	int PlayerStartIndex = -10;
 	int GunIndexForPlayer = -10;
 	int rayindex = -10;
@@ -44,14 +50,26 @@ private:
 	bool DrawUI = true;
 	float*xPos = new float();
 	float*yPos = new float();
+	TMeshImport bulletMesh;
 
 
 	
+	//ZB Variables
+	TCameraToggle tCameraMode;
 	XMMATRIX m_d3dWorldMatrix;
 	XMMATRIX m_d3dViewMatrix;
 	XMMATRIX m_d3dProjectionMatrix;
 	XMMATRIX m_d3dPlayerMatrix;
-	XMMATRIX m_d3dCameraMatrix;
-	XMMATRIX m_d3d_ResultMatrix;
-	TMeshImport bulletMesh;
+	
+	
+	std::vector<TUIVertices*> atUIVertices;
+	
+	TCamera *walkCamera;
+	TCamera *aimCamera;
+	TCamera *debugCamera;
+	TCamera * menuCamera;
+	Timers * tAugerTimers;
+	System_Times *tTimerInfo;
+	float m_RealTimeFov;
+	bool bMoving;
 };

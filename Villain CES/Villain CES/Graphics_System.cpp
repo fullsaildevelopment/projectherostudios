@@ -328,6 +328,50 @@ void CGraphicsSystem::CreateShaders(ID3D11Device * device)
 	device->CreateBuffer(&d3dPrimalPixelBufferDesc, NULL, &m_pd3dPrimalPixelBuffer);
 #pragma endregion
 
+	#pragma region UIShaders
+	D3D11_BUFFER_DESC d3dUIMatrixBufferDesc;
+	D3D11_BUFFER_DESC d3dUIPixelBufferDesc;
+	device->CreateVertexShader(UIVertexShader, sizeof(UIVertexShader), NULL, &m_pd3dUIVertexShader);
+	device->CreatePixelShader(UIPixelShader, sizeof(UIPixelShader), NULL, &m_pd3dUIPixelShader);
+
+	//Input Layout Setup
+	//Now setup the layout of the data that goes into the shader.
+	D3D11_INPUT_ELEMENT_DESC m_d3dUILayoutDesc[] =
+	{
+		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+	};
+
+	//Get a count of the elements in the layout.
+	int nUIElements = sizeof(m_d3dUILayoutDesc) / sizeof(m_d3dUILayoutDesc[0]);
+
+	//Create the vertex input layout.
+	device->CreateInputLayout(m_d3dUILayoutDesc, nUIElements, UIVertexShader,
+		sizeof(UIVertexShader), &m_pd3dUIInputLayout);
+
+	//Setup the description of the dynamic matrix constant buffer that is in the vertex shader.
+	d3dUIMatrixBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+	d3dUIMatrixBufferDesc.ByteWidth = sizeof(TUIVertexBufferType);
+	d3dUIMatrixBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	d3dUIMatrixBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	d3dUIMatrixBufferDesc.MiscFlags = 0;
+	d3dUIMatrixBufferDesc.StructureByteStride = 0;
+
+	//Create the constant buffer pointer so we can access the vertex shader constant buffer from within this class.
+	device->CreateBuffer(&d3dUIMatrixBufferDesc, NULL, &m_pd3dUIVertexBuffer);
+
+	//Setup the description of the dynamic matrix constant buffer that is in the vertex shader.
+	d3dUIPixelBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+	d3dUIPixelBufferDesc.ByteWidth = sizeof(TUIPixelBufferType);
+	d3dUIPixelBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	d3dUIPixelBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	d3dUIPixelBufferDesc.MiscFlags = 0;
+	d3dUIPixelBufferDesc.StructureByteStride = 0;
+
+	//Create the constant buffer pointer so we can access the vertex shader constant buffer from within this class.
+	device->CreateBuffer(&d3dUIPixelBufferDesc, NULL, &m_pd3dUIPixelBuffer);
+#pragma endregion
+
 }
 
 void CGraphicsSystem::CreateBuffers(TWorld *ptPlanet)//init first frame
@@ -441,6 +485,34 @@ XMMATRIX CGraphicsSystem::SetDefaultPerspective()
 	XMMATRIX DefaultPerspectiveMatrix;
 	// the 90 is for fov if we want to implement field of view
 	m_fFOV = 90.0f;
+
+	DefaultPerspectiveMatrix.r[0].m128_f32[0] = 1 / tan(m_fFOV* 0.5f * 3.15f / 180);
+	DefaultPerspectiveMatrix.r[0].m128_f32[1] = 0;
+	DefaultPerspectiveMatrix.r[0].m128_f32[2] = 0;
+	DefaultPerspectiveMatrix.r[0].m128_f32[3] = 0;
+
+	DefaultPerspectiveMatrix.r[1].m128_f32[0] = 0;
+	DefaultPerspectiveMatrix.r[1].m128_f32[1] = 1 / tan(m_fFOV * 0.5f * 3.15f / 180);
+	DefaultPerspectiveMatrix.r[1].m128_f32[2] = 0;
+	DefaultPerspectiveMatrix.r[1].m128_f32[3] = 0;
+
+	DefaultPerspectiveMatrix.r[2].m128_f32[0] = 0;
+	DefaultPerspectiveMatrix.r[2].m128_f32[1] = 0;
+	DefaultPerspectiveMatrix.r[2].m128_f32[2] = 100 / (100 - 0.1f);
+	DefaultPerspectiveMatrix.r[2].m128_f32[3] = 1;
+
+	DefaultPerspectiveMatrix.r[3].m128_f32[0] = 0;
+	DefaultPerspectiveMatrix.r[3].m128_f32[1] = 0;
+	DefaultPerspectiveMatrix.r[3].m128_f32[2] = -(100 * 0.1f) / (100 - 0.1f);
+	DefaultPerspectiveMatrix.r[3].m128_f32[3] = 0;
+	return DefaultPerspectiveMatrix;
+}
+
+XMMATRIX CGraphicsSystem::SetDefaultPerspective(float FOV)
+{
+	XMMATRIX DefaultPerspectiveMatrix;
+	// the 90 is for fov if we want to implement field of view
+	m_fFOV = FOV;
 
 	DefaultPerspectiveMatrix.r[0].m128_f32[0] = 1 / tan(m_fFOV* 0.5f * 3.15f / 180);
 	DefaultPerspectiveMatrix.r[0].m128_f32[1] = 0;
@@ -1047,6 +1119,74 @@ void CGraphicsSystem::InitMyShaderData(ID3D11DeviceContext * pd3dDeviceContext, 
 	}
 }
 
+void CGraphicsSystem::InitUIShaderData(ID3D11DeviceContext * pd3dDeviceContext, TUIVertexBufferType d3dVertexBuffer, TUIPixelBufferType d3dPixelBuffer, TMesh tMesh, XMMATRIX CameraMatrix)
+{
+	D3D11_MAPPED_SUBRESOURCE d3dUIVertexMappedResource;
+	D3D11_MAPPED_SUBRESOURCE d3dUIPixelMappedResource;
+
+	TUIVertexBufferType	*ptUIVertexBufferDataPointer = nullptr;
+	TUIPixelBufferType	*ptUIPixelBufferDataPointer = nullptr;
+
+	XMMATRIX d3dView;
+	d3dView = d3dVertexBuffer.m_d3dViewMatrix;
+	d3dView = XMMatrixInverse(nullptr, CameraMatrix);
+
+	unsigned int vBufferNumber = 0;
+	unsigned int pBufferNumber = 0;
+	
+	XMMATRIX tempWorld = d3dVertexBuffer.m_d3dWorldMatrix;
+	XMMATRIX tempProj = d3dVertexBuffer.m_d3dProjectionMatrix;
+
+#pragma region Map To Vertex Constant Buffer
+	pd3dDeviceContext->Map(m_pd3dUIVertexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &d3dUIVertexMappedResource);
+
+
+	// Get a pointer to the data in the constant buffer.
+	ptUIVertexBufferDataPointer = (TUIVertexBufferType*)d3dUIVertexMappedResource.pData;
+
+	// Copy the matrices into the constant buffer.
+	ptUIVertexBufferDataPointer->m_d3dWorldMatrix = tempWorld;
+	ptUIVertexBufferDataPointer->m_d3dViewMatrix = d3dView;
+	ptUIVertexBufferDataPointer->m_d3dProjectionMatrix = tempProj;
+
+	//ptUIVertexBufferDataPointer->rcpDim = d3dVertexBuffer.rcpDim;
+	//ptUIVertexBufferDataPointer->rcpDim2 = d3dVertexBuffer.rcpDim2;
+
+	// Unlock the constant buffer.
+	pd3dDeviceContext->Unmap(m_pd3dUIVertexBuffer, 0);
+
+#pragma endregion
+
+#pragma region Map To Pixel Constant Buffer
+	pd3dDeviceContext->Map(m_pd3dUIPixelBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &d3dUIPixelMappedResource);
+
+
+	// Get a pointer to the data in the constant buffer.
+	ptUIPixelBufferDataPointer = (TUIPixelBufferType*)d3dUIPixelMappedResource.pData;
+
+	// Copy the matrices into the constant buffer.
+	ptUIPixelBufferDataPointer->hoverColor = d3dPixelBuffer.hoverColor;
+
+	//ptUIVertexBufferDataPointer->rcpDim = d3dVertexBuffer.rcpDim;
+	//ptUIVertexBufferDataPointer->rcpDim2 = d3dVertexBuffer.rcpDim2;
+
+	// Unlock the constant buffer.
+	pd3dDeviceContext->Unmap(m_pd3dUIPixelBuffer, 0);
+
+#pragma endregion
+
+	pd3dDeviceContext->VSSetConstantBuffers(vBufferNumber, 1, &m_pd3dUIVertexBuffer);
+	pd3dDeviceContext->PSSetConstantBuffers(pBufferNumber, 1, &m_pd3dUIPixelBuffer);
+	pd3dDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	pd3dDeviceContext->IASetVertexBuffers(0, 1, &tMesh.m_pd3dVertexBuffer, &tMesh.m_nVertexBufferStride, &tMesh.m_nVertexBufferOffset);
+	pd3dDeviceContext->IASetIndexBuffer(tMesh.m_pd3dIndexBuffer, DXGI_FORMAT_R16_UINT, 0);
+
+	if (&tMesh.m_d3dSRVDiffuse != NULL)
+	{
+		pd3dDeviceContext->PSSetShaderResources(0, 1, &tMesh.m_d3dSRVDiffuse);
+	}
+}
+
 void CGraphicsSystem::ExecutePipeline(ID3D11DeviceContext *pd3dDeviceContext, int m_nIndexCount, int nGraphicsMask, int nShaderID)
 {
 	switch (nShaderID)
@@ -1134,6 +1274,20 @@ void CGraphicsSystem::ExecutePipeline(ID3D11DeviceContext *pd3dDeviceContext, in
 			}
 			break;
 		}
+		case 7:
+		{
+			//Set Input_Layout
+			pd3dDeviceContext->IASetInputLayout(m_pd3dUIInputLayout);
+			//Set Shader
+			pd3dDeviceContext->VSSetShader(m_pd3dUIVertexShader, NULL, 0);
+			pd3dDeviceContext->PSSetShader(m_pd3dUIPixelShader, NULL, 0);
+			////Draw
+			if (nGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_SHADERID))
+			{
+				pd3dDeviceContext->DrawIndexed(m_nIndexCount, 0, 0);
+			}
+		}
+			break;
 		default:
 			break;
 	}
