@@ -69,8 +69,10 @@ public:
 	void LookAtObject(XMMATRIX thingToLookAt, XMMATRIX* AIMatrix);
 	void Strafe(XMMATRIX* AiMatrix);
 	void MoveAiToCoverLocation(TCoverTrigger Cover, TWorld * ptWorld);
+	void AddAiInCombat(int aiEnitity);
 private:
-	
+	vector<int> AIInCombat;
+
 	int numberofAI;
 	struct tiledata {
 		XMFLOAT3 pos;
@@ -104,7 +106,6 @@ private:
 		return _givencost->givenCost + _weight->weight;
 	}
 	void MakeDirections(vector<XMVECTOR> *directions, PlannerNode* current);
-	vector<int> AIInCombat;
 	
 	
 };

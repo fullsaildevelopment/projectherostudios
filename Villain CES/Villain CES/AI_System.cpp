@@ -440,7 +440,7 @@ void CAISystem::PathPlaningMovement(TAIPathFinding* path, XMMATRIX* worldMatrix)
 		XMVECTOR direction =path->directions[path->index] - worldMatrix->r[3];
 	//	direction = XMVector3Transform(direction, *worldMatrix);
 		direction = XMVector3Normalize(direction);
-		direction *= 0.001f;//Frame Dependent
+		direction *= 0.01f;//Frame Dependent
 		
 		XMMATRIX localMatrix2 = XMMatrixTranslationFromVector(direction);
 		XMMATRIX idenity = XMMatrixIdentity();
@@ -524,8 +524,21 @@ void CAISystem::MoveAiToCoverLocation(TCoverTrigger Cover,TWorld * ptWorld)
 {
 	int index=0;
 	for (int i = 0; i < AIInCombat.size(); ++i) {
-		ptWorld->atAIMask[AIInCombat[i]].m_tnAIMask = COMPONENT_AIMASK | COMPONENT_SEARCH | COMPONENT_PATHFINDTEST;
-		ptWorld->atPathPlanining[AIInCombat[i]].Goal = Cover.coverAiCanGoTo[0].CoverPositions[index];
-		ptWorld->atPathPlanining[AIInCombat[i]].testingPathFinding = true;
+		if (ptWorld->atPathPlanining[AIInCombat[i]].Goal != Cover.coverAiCanGoTo[0].CoverPositions[index]) {
+			ptWorld->atAIMask[AIInCombat[i]].m_tnAIMask = COMPONENT_AIMASK | COMPONENT_SEARCH | COMPONENT_PATHFINDTEST;
+			ptWorld->atPathPlanining[AIInCombat[i]].Goal = Cover.coverAiCanGoTo[0].CoverPositions[index];
+			ptWorld->atPathPlanining[AIInCombat[i]].testingPathFinding = true;
+		}
 	}
+}
+
+void CAISystem::AddAiInCombat(int aiEnitity)
+{
+	
+	for (int i = 0; AIInCombat.size(); ++i) {
+		if (AIInCombat[i] == aiEnitity) {
+			return;
+		}
+	}
+	AIInCombat.push_back(aiEnitity);
 }

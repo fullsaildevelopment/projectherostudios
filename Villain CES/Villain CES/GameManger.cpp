@@ -1803,18 +1803,19 @@ void CGameMangerSystem::FirstSkeltonAiTestLoad()
 	CoverLocation.r[3].m128_f32[2] += -1;
 	vector<int> coverPosition;
 	int cover1=	CreateCover(&tThisWorld, CoverLocation, coverPosition);
-	CoverLocation.r[3].m128_f32[0] += 5;
+	CoverLocation.r[3].m128_f32[0] += 10;
 	int cover2=CreateCover(&tThisWorld, CoverLocation, coverPosition);
 	XMMATRIX coverTriggerMatrix = CoverLocation;
 	coverTriggerMatrix.r[3].m128_f32[2] -= 4;
 	coverTriggerMatrix.r[3].m128_f32[1] -= 1;
+	coverTriggerMatrix.r[3].m128_f32[0] -= 9;
 
 	vector<int> coverIndexs;
 	coverIndexs.push_back(cover2);
 
-	int aabbindex=CreateCoverTriggerZone(&tThisWorld, coverTriggerMatrix, coverIndexs);
+	int aabbindex=CreateCoverTriggerZone(&tThisWorld, coverTriggerMatrix);
 	XMMATRIX nodeLocation = CoverLocation;
-	nodeLocation.r[3].m128_f32[0] -= 1;
+	nodeLocation.r[3].m128_f32[0] += 3;
 	nodeLocation.r[3].m128_f32[1] -= 1;
 	nodeLocation.r[3].m128_f32[2] += 1;
 
@@ -1827,20 +1828,35 @@ void CGameMangerSystem::FirstSkeltonAiTestLoad()
 	pcAiSystem->AddNodeToPathFinding(nodeindex, nodePosition, 1);
 	int nodeindex2 = CreateNodePoint(&tThisWorld, AILocation);
 	tThisWorld.atCover[cover2].CoverPositions.push_back(nodeindex);
+	tThisWorld.atCoverTrigger[aabbindex].coverAiCanGoTo.push_back(tThisWorld.atCover[cover2]);
 	AILocation.r[3].m128_f32[1] -= 1;
 	nodePosition.x = AILocation.r[3].m128_f32[0];
 	nodePosition.y = AILocation.r[3].m128_f32[1];
 	nodePosition.z = AILocation.r[3].m128_f32[2];
 	pcAiSystem->AddNodeToPathFinding(nodeindex2, nodePosition, 1);
+	AILocation.r[3].m128_f32[2] -= 4;
+	AILocation.r[3].m128_f32[0] -= 3;
+	nodePosition.x = AILocation.r[3].m128_f32[0];
+	nodePosition.y = AILocation.r[3].m128_f32[1];
+	nodePosition.z = AILocation.r[3].m128_f32[2];
+	int nodeindex3 = CreateNodePoint(&tThisWorld, AILocation);
+	pcAiSystem->AddNodeToPathFinding(nodeindex3, nodePosition, 1);
+
 	vector<int> edges;
 	edges.push_back(nodeindex);
 	pcAiSystem->AddEdgestoNode(nodeindex2, edges);
 	edges.clear();
 	edges.push_back(nodeindex2);
 	pcAiSystem->AddEdgestoNode(nodeindex, edges);
+	edges.clear();
+	edges.push_back(nodeindex2);
+	pcAiSystem->AddEdgestoNode(nodeindex3, edges);
+
+
 
 	int spacePirate = CreateSpacePirate(&tThisWorld, AILocation);
-	tThisWorld.atPathPlanining[spacePirate].Goal = nodeindex;
+	
+	//tThisWorld.atPathPlanining[spacePirate].Goal = nodeindex;
 	tThisWorld.atPathPlanining[spacePirate].startingNode = nodeindex2;
 
 	int GunINdexai = CreateGun(&tThisWorld, m_d3dWorldMatrix, spacePirate, -1.1, 0.5, 11.5, 10, 70);
@@ -2033,6 +2049,8 @@ int CGameMangerSystem::SpacePirateGamePlay()
 
 	XMMATRIX m_d3d_ResultMatrix = pcGraphicsSystem->SetDefaultWorldPosition();
 	XMMATRIX m_d3dOffsetMatrix = pcGraphicsSystem->SetDefaultOffset();
+	pcInputSystem->m_pcMyInput->GetMousePosition(*xPos, *yPos);
+
 	if (pcInputSystem->InputCheck(G_KEY_P))
 	{
 		return 3;
@@ -2158,7 +2176,16 @@ int CGameMangerSystem::SpacePirateGamePlay()
 		tThisWorld.atClip[GunIndexForPlayer].tryToReload = true;
 
 	}
-
+	float xPos;
+	float yPos;
+	pcInputSystem->m_pcMyInput->GetMousePosition(xPos, yPos);
+	cout << xPos<<'\n';
+	
+			RECT rect = { 0 };
+		
+			GetWindowRect(cApplicationWindow, &rect);
+			SetCursorPos((rect.right/2.0f)+20 ,(rect.bottom/2.0f)+64);
+		
 #pragma endregion
 
 	for (int nCurrentEntity = 0; nCurrentEntity < ENTITYCOUNT; nCurrentEntity++)
@@ -2284,6 +2311,8 @@ int CGameMangerSystem::SpacePirateGamePlay()
 
 							}
 							tThisWorld.atClip[tThisWorld.atAIMask[nCurrentEntity].GunIndex].tryToShoot = true;
+							
+							pcAiSystem->AddAiInCombat(nCurrentEntity);
 					//		tThisWorld.atAIMask[nCurrentEntity].m_tnAIMask = COMPONENT_AIMASK | COMPONENT_SEARCH | COMPONENT_PATHFINDTEST;
 						/*	if (tThisWorld.atPathPlanining[nCurrentEntity].foundDestination == true) {
 								int previousgoal = tThisWorld.atPathPlanining[nCurrentEntity].Goal;

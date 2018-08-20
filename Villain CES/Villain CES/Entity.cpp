@@ -1850,7 +1850,7 @@ unsigned int CreateCover(TWorld * ptWorld, XMMATRIX SpawnPosition,vector<int> co
 	return nThisEntity;
 }
 
-unsigned int CreateCoverTriggerZone(TWorld * ptWorld, XMMATRIX SpawnPosition, vector<int> CoverIndex)
+unsigned int CreateCoverTriggerZone(TWorld * ptWorld, XMMATRIX SpawnPosition)
 {
 	unsigned int nThisEntity = createEntity(ptWorld);
 
@@ -1863,9 +1863,9 @@ unsigned int CreateCoverTriggerZone(TWorld * ptWorld, XMMATRIX SpawnPosition, ve
 	//TPrimalVert{ XMFLOAT3(-0, 0.5f, 0),
 	//	TPrimalVert{ XMFLOAT3(0, 0.5f, 10),
 
-	for (int i = 0; i < CoverIndex.size(); ++i) {
-		ptWorld->atCoverTrigger[nThisEntity].coverAiCanGoTo.push_back(ptWorld->atCover[CoverIndex[i]]);
-	}
+	//for (int i = 0; i < CoverIndex.size(); ++i) {
+	//	//ptWorld->atCoverTrigger[nThisEntity].coverAiCanGoTo.push_back(ptWorld->atCover[CoverIndex[i]]);
+	//}
 
 
 
@@ -1875,15 +1875,15 @@ unsigned int CreateCoverTriggerZone(TWorld * ptWorld, XMMATRIX SpawnPosition, ve
 		TPrimalVert{ XMFLOAT3(3, 0.8f, 0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//1 Top F Right
 		TPrimalVert{ XMFLOAT3(-0.5f, 0, 0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//2 Bottom F Left
 		TPrimalVert{ XMFLOAT3(3, 0, 0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//3 Bottom F Right
-		TPrimalVert{ XMFLOAT3(-0.5f, 0.8f, -0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//4 Top B Left
-		TPrimalVert{ XMFLOAT3(3, 0.8f, -0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//5 Top B Right
-		TPrimalVert{ XMFLOAT3(-0.5f, 0, -0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//6 Bottom B Left
-		TPrimalVert{ XMFLOAT3(3, 0, -0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//7 Bottom B Right
+		TPrimalVert{ XMFLOAT3(-0.5f, 0.8f, -6),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//4 Top B Left
+		TPrimalVert{ XMFLOAT3(3, 0.8f, -6),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//5 Top B Right
+		TPrimalVert{ XMFLOAT3(-0.5f, 0, -6),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//6 Bottom B Left
+		TPrimalVert{ XMFLOAT3(3, 0, -6),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//7 Bottom B Right
 
 		TPrimalVert{ XMFLOAT3(3, 0.8f, 0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//8 //Top F Right
 		TPrimalVert{ XMFLOAT3(-0.5f, 0.8f, 0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//9 // Top F Left
-		TPrimalVert{ XMFLOAT3(-0.5f, 0, -0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//10 Bottom B Left
-		TPrimalVert{ XMFLOAT3(3, 0, -0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//11 Bottom B Right
+		TPrimalVert{ XMFLOAT3(-0.5f, 0, -6),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//10 Bottom B Left
+		TPrimalVert{ XMFLOAT3(3, 0, -6),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//11 Bottom B Right
 		TPrimalVert{ XMFLOAT3(-0.5f, 0, 0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//12 Bottom F Left
 		TPrimalVert{ XMFLOAT3(-0.5f, 0.8f, 0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//13 Top F Left
 		TPrimalVert{ XMFLOAT3(3, 0.8f, 0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//14 Top F Right

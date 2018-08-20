@@ -42,6 +42,9 @@ private:
 	bool GamePaused = false;
 	bool GameStart;
 	bool DrawUI = true;
+	float*xPos = new float();
+	float*yPos = new float();
+
 
 	
 	XMMATRIX m_d3dWorldMatrix;

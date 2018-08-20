@@ -104,4 +104,4 @@ unsigned int CreateTestAIPathFinding(TWorld * ptWorld, XMMATRIX SpawnPosition);
 unsigned int CreateSpacePirate(TWorld * ptWorld, XMMATRIX SpawnPosition);
 
 unsigned int CreateCover(TWorld * ptWorld, XMMATRIX SpawnPosition, vector<int> coverNodes);
-unsigned int CreateCoverTriggerZone(TWorld * ptWorld, XMMATRIX SpawnPosition,vector<int> CoverIndex);
+unsigned int CreateCoverTriggerZone(TWorld * ptWorld, XMMATRIX SpawnPosition);
