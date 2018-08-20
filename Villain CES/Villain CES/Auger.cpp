@@ -8,7 +8,7 @@ CAuger::CAuger(HWND window)
 {
 	pcInputSystem = new CInputSystem();
 	pcInputSystem->InitializeGInput(window);
-	pcGameManagerSystem = new CGameMangerSystem(window, pcInputSystem);
+	pcGameMangerSystem = new CGameMangerSystem(window, pcInputSystem);
 
 	//pcGraphicsSystem = new CGraphicsSystem();
 /*cApplicationWindow = window;
@@ -26,7 +26,7 @@ srand(time(NULL));*/
 CAuger::~CAuger()
 {
 	//delete pcInputSystem;
-	delete pcGameManagerSystem;
+	delete pcGameMangerSystem;
 }
 
 void CAuger::Start()
@@ -85,7 +85,7 @@ void CAuger::Update(bool* loopgame)
 	switch (CurrentSpotInGame)
 	{ 
 	case -3:
-		pcGameManagerSystem->InitilizeMainMenu();
+		pcGameMangerSystem->InitilizeMainMenu();
 		CurrentSpotInGame = 0;
 		break;
 
@@ -104,11 +104,11 @@ void CAuger::Update(bool* loopgame)
 		break;
 
 	case 1:
-		pcGameManagerSystem->LoadLevel();
+		pcGameMangerSystem->LoadLevel();
 		CurrentSpotInGame = 2;
 		break;
 	case 2:
-		CurrentSpotInGame = pcGameManagerSystem->InGameUpdate();
+		CurrentSpotInGame = pcGameMangerSystem->InGameUpdate();
 		break;
 	case 3:
 		if (pcInputSystem->InputCheck(G_KEY_U))
@@ -118,25 +118,25 @@ void CAuger::Update(bool* loopgame)
 		*loopgame = false;
 		break;
 	case 5 :
-		pcGameManagerSystem->LoadPathFindingTest();
+		pcGameMangerSystem->LoadPathFindingTest();
 		CurrentSpotInGame = 6;
 		break;
 	case 6 :
-		CurrentSpotInGame=pcGameManagerSystem->PathFindingExample();
+		CurrentSpotInGame=pcGameMangerSystem->PathFindingExample();
 		break;
 	case 7 :
-		  pcGameManagerSystem->FirstSkeltonAiTestLoad();
+		  pcGameMangerSystem->FirstSkeltonAiTestLoad();
 		  CurrentSpotInGame = 8;
 		  break;
 	case 8 :
-		CurrentSpotInGame = pcGameManagerSystem->SpacePirateGamePlay();
+		CurrentSpotInGame = pcGameMangerSystem->SpacePirateGamePlay();
 		break;
 	case 9:
-		pcGameManagerSystem->LoadMikesGraphicsSandbox();
+		pcGameMangerSystem->LoadMikesGraphicsSandbox();
 		CurrentSpotInGame = 10;
 		break;
 	case 10:
-		CurrentSpotInGame = pcGameManagerSystem->MikesGraphicsSandbox();
+		CurrentSpotInGame = pcGameMangerSystem->MikesGraphicsSandbox();
 		break;
 	default:
 		break;

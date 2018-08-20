@@ -76,6 +76,11 @@ struct /*alignas(64)*/ TUIVertices
 {
 	TUIVert m_d3dfPositions[4];
 };
+
+unsigned int createEntity(TWorld *ptWorld);
+
+void destroyEntity(TWorld *ptWorld, unsigned int nEntity);
+
 unsigned int CreateDoorWay(TWorld* ptWorld, XMMATRIX SpawnPosition);
 
 unsigned int SpawnLevelChanger(TWorld *ptWorld, XMMATRIX SpawnPosition);

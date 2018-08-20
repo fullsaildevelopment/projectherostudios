@@ -5,8 +5,7 @@
 class CAuger
 {
 public:
-
-	CGameMangerSystem *pcGameManagerSystem;
+	CGameMangerSystem * pcGameMangerSystem;
 	CInputSystem	*pcInputSystem;
 	CGraphicsSystem	*pcGraphicsSystem;
 

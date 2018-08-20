@@ -87,6 +87,7 @@ public:
 	//First Frame
 	CGraphicsSystem();
 	~CGraphicsSystem();
+
 	void InitD3D(HWND cTheWindow);
 	void CleanD3D(TWorld *ptPlanet);
 	void CreateBuffers(TWorld * ptWorld);

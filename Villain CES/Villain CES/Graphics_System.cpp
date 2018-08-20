@@ -320,7 +320,6 @@ void CGraphicsSystem::CreateShaders(ID3D11Device * device)
 	device->CreateBuffer(&d3dPrimalPixelBufferDesc, NULL, &m_pd3dPrimalPixelBuffer);
 #pragma endregion
 
-
 	#pragma region UIShaders
 	D3D11_BUFFER_DESC d3dUIMatrixBufferDesc;
 	D3D11_BUFFER_DESC d3dUIPixelBufferDesc;
@@ -365,8 +364,7 @@ void CGraphicsSystem::CreateShaders(ID3D11Device * device)
 	device->CreateBuffer(&d3dUIPixelBufferDesc, NULL, &m_pd3dUIPixelBuffer);
 #pragma endregion
 
-
-#pragma region QuadGeometryShaders
+	#pragma region QuadGeometryShaders
 	D3D11_BUFFER_DESC d3dQuadMatrixBufferDesc;
 	D3D11_BUFFER_DESC d3dQuadPixelBufferDesc;
 	device->CreateVertexShader(QuadVertexShader, sizeof(QuadVertexShader), NULL, &m_pd3dQuadVertexShader);
