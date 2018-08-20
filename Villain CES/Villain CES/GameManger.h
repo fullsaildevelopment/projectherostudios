@@ -7,6 +7,8 @@
 #include "Entity.h"
 #include "ProjectileSystem.h"
 #include "AI_System.h"
+#include "UI_System.h"
+#include <array>
 
 class CGameMangerSystem {
 public:
@@ -18,6 +20,9 @@ public:
 	void RestartLevel();
 	int LoadMainMenu();
 	void InitilizeMainMenu();
+	int LoadTitleScreen();
+	void InitializeTitleScreen();
+
 	void LoadPathFindingTest();
 	int PathFindingExample();
 	void FirstSkeltonAiTestLoad();
@@ -34,6 +39,7 @@ private:
 	CPhysicsSystem  *pcPhysicsSystem;
 	CProjectileSystem* pcProjectileSystem;
 	CAISystem		*pcAiSystem;
+	CUISystem		*pcUISystem;
 	HWND cApplicationWindow;
 	vector<int> UIIndex;
 	int PlayerStartIndex = -10;
@@ -54,8 +60,9 @@ private:
 	XMMATRIX m_d3dProjectionMatrix;
 	XMMATRIX m_d3dPlayerMatrix;
 	
-
-	//TCamera* CameraSelect[6];
+	
+	std::vector<TUIVertices*> atUIVertices;
+	
 	TCamera *walkCamera;
 	TCamera *aimCamera;
 	TCamera *debugCamera;
@@ -63,4 +70,5 @@ private:
 	Timers * tAugerTimers;
 	System_Times *tTimerInfo;
 	float m_RealTimeFov;
+	bool bMoving;
 };

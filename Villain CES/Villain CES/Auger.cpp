@@ -84,15 +84,25 @@ void CAuger::Update(bool* loopgame)
 	
 	switch (CurrentSpotInGame)
 	{ 
-	case -1:
+	case -3:
 		pcGameManagerSystem->InitilizeMainMenu();
 		CurrentSpotInGame = 0;
 		break;
 
+	case -2:
+		CurrentSpotInGame = pcGameMangerSystem->LoadTitleScreen();
+		break;
+
+	case -1:
+		pcGameMangerSystem->InitializeTitleScreen();
+		CurrentSpotInGame = -2;
+		break;
+		
 		// main menu
 	case 0:
-		CurrentSpotInGame = (int)(pcGameManagerSystem->LoadMainMenu());
+		CurrentSpotInGame=pcGameMangerSystem->LoadMainMenu();
 		break;
+
 	case 1:
 		pcGameManagerSystem->LoadLevel();
 		CurrentSpotInGame = 2;

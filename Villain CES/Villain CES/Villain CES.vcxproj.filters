@@ -200,13 +200,10 @@
     <FxCompile Include="AnimatedVertexShader.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
-    <FxCompile Include="QuadGeometryShader.hlsl">
+    <FxCompile Include="UIVertexShader.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
-    <FxCompile Include="QuadVertexShader.hlsl">
-      <Filter>Shaders</Filter>
-    </FxCompile>
-    <FxCompile Include="QuadPixelShader.hlsl">
+    <FxCompile Include="UIPixelShader.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
   </ItemGroup>

@@ -284,12 +284,23 @@ unsigned int createCube(TWorld * ptWorld)
 
 	static short cubeIndices[]
 	{
-		3,1,0,0,2,3,
-		4,5,7,7,6,4,
-		4,8,5,4,9,8,
-		11,3,10,10,3,2,
-		12,13,4,4,6,12,
-		14,7,5,14,15,7
+		3,1,0,
+		0,2,3,
+
+		4,5,7,
+		7,6,4,
+		
+		4,8,5,
+		4,9,8,
+		
+		11,3,10,
+		10,3,2,
+		
+		12,13,4,
+		4,6,12,
+		
+		14,7,5,
+		14,15,7
 	};
 
 	ptWorld->atSimpleMesh[nThisEntity].m_nIndexCount = 36;
@@ -2721,5 +2732,86 @@ unsigned int createClaytonAnim(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TM
 	ptWorld->atWorldMatrix[nThisEntity].worldMatrix = XMMatrixMultiply(ptWorld->atWorldMatrix[nThisEntity].worldMatrix, XMMatrixTranslation(0, 0, 0));
 	ptWorld->atWorldMatrix[nThisEntity].worldMatrix = XMMatrixMultiply(ptWorld->atWorldMatrix[nThisEntity].worldMatrix, XMMatrixRotationRollPitchYaw(tMesh.worldRotation[0], tMesh.worldRotation[1], tMesh.worldRotation[2]));
 	ptWorld->atWorldMatrix[nThisEntity].worldMatrix = XMMatrixMultiply(ptWorld->atWorldMatrix[nThisEntity].worldMatrix, XMMatrixScaling(.01, .01, .01));
+	return nThisEntity;
+}
+
+//unsigned int CreateUIButton(TWorld * ptWorld, XMMATRIX SpawnPosition, float width, float height, float offsetX, float offsetY, LPRECT window, std::vector<TUIVertices*> & atRectVertices)
+
+unsigned int CreateUILabel(TWorld * ptWorld, XMMATRIX SpawnPosition, float width, float height, float offsetX, float offsetY, std::vector<TUIVertices*>& atUIVertices)
+{
+	unsigned int nThisEntity = createEntity(ptWorld);
+
+	//if (window != nullptr)
+	//	uiMask = uiMask | COMPONENT_BUTTON;
+
+	ptWorld->atCollisionMask[nThisEntity].m_tnCollisionMask = COMPONENT_COLLISIONMASK;
+	ptWorld->atGraphicsMask[nThisEntity].m_tnGraphicsMask = COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_SHADERID;
+	ptWorld->atAIMask[nThisEntity].m_tnAIMask = COMPONENT_AIMASK;
+	ptWorld->atUIMask[nThisEntity].m_tnUIMask = COMPONENT_UIMASK | COMPONENT_LABEL;
+	ptWorld->atPhysicsMask[nThisEntity].m_tnPhysicsMask = COMPONENT_PHYSICSMASK;
+
+	TUIVertices* rectVerts = new TUIVertices
+	{
+		TUIVert{ XMFLOAT3((offsetX - (width / 2)) * .1, (offsetY + (height / 2)) * .1, 0), XMFLOAT2(0, 0) },	//0 Top Left
+		TUIVert{ XMFLOAT3((offsetX + (width / 2)) * .1, (offsetY + (height / 2)) * .1, 0), XMFLOAT2(1, 0) },	//1 Top Right
+		TUIVert{ XMFLOAT3((offsetX - (width / 2)) * .1, (offsetY - (height / 2)) * .1, 0), XMFLOAT2(0, 1) },	//2 Bottom Left
+		TUIVert{ XMFLOAT3((offsetX + (width / 2)) * .1, (offsetY - (height / 2)) * .1, 0), XMFLOAT2(1, 1) }		//3 Bottom Right
+	};
+
+	atUIVertices.push_back(rectVerts);
+	int index = atUIVertices.size() - 1;
+
+	ptWorld->atLabel[nThisEntity].width = width;
+	ptWorld->atLabel[nThisEntity].height = height;
+	ptWorld->atLabel[nThisEntity].x = offsetX;
+	ptWorld->atLabel[nThisEntity].y = offsetY;
+
+	XMMATRIX spawnMatrix = /*XMMatrixMultiply(*/SpawnPosition/*, XMMatrixScaling(width, height, 0))*/;
+
+	static short rectIndices[]
+	{
+		0, 1, 3,	//tl->tr->br
+		3, 2, 0		//br->bl->tl
+	};
+
+	ptWorld->atMesh[nThisEntity].m_nIndexCount = 6;
+	ptWorld->atMesh[nThisEntity].m_nVertexCount = 4;
+
+	ptWorld->atMesh[nThisEntity].m_nVertexBufferStride = sizeof(TUIVert);
+	ptWorld->atMesh[nThisEntity].m_nVertexBufferOffset = 0;
+
+	ptWorld->atMesh[nThisEntity].m_d3dVertexBufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
+	ptWorld->atMesh[nThisEntity].m_d3dVertexBufferDesc.ByteWidth = sizeof(TUIVert) * ptWorld->atMesh[nThisEntity].m_nVertexCount;
+	ptWorld->atMesh[nThisEntity].m_d3dVertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	ptWorld->atMesh[nThisEntity].m_d3dVertexBufferDesc.CPUAccessFlags = 0;
+	ptWorld->atMesh[nThisEntity].m_d3dVertexBufferDesc.MiscFlags = 0;
+	ptWorld->atMesh[nThisEntity].m_d3dVertexBufferDesc.StructureByteStride = 0;
+
+	ptWorld->atMesh[nThisEntity].m_d3dIndexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
+	ptWorld->atMesh[nThisEntity].m_d3dIndexBufferDesc.ByteWidth = sizeof(short) * ptWorld->atMesh[nThisEntity].m_nIndexCount;
+	ptWorld->atMesh[nThisEntity].m_d3dIndexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+	ptWorld->atMesh[nThisEntity].m_d3dIndexBufferDesc.CPUAccessFlags = 0;
+	ptWorld->atMesh[nThisEntity].m_d3dIndexBufferDesc.MiscFlags = 0;
+	ptWorld->atMesh[nThisEntity].m_d3dIndexBufferDesc.StructureByteStride = 0;
+
+
+	ptWorld->atMesh[nThisEntity].m_d3dVertexData.pSysMem = &atUIVertices[index]->m_d3dfPositions;
+	ptWorld->atMesh[nThisEntity].m_d3dIndexData.pSysMem = rectIndices;
+
+	ptWorld->atMesh[nThisEntity].m_d3dVertexData.SysMemPitch = 0;
+	ptWorld->atMesh[nThisEntity].m_d3dVertexData.SysMemSlicePitch = 0;
+
+	ptWorld->atMesh[nThisEntity].m_d3dIndexData.SysMemPitch = 0;
+	ptWorld->atMesh[nThisEntity].m_d3dIndexData.SysMemSlicePitch = 0;
+
+	ptWorld->atShaderID[nThisEntity].m_nShaderID = 7;	//Shader that supports UIShaders
+
+	for (int i = 0; i < ptWorld->atMesh[nThisEntity].m_nVertexCount; ++i) 
+	{
+		ptWorld->atMesh[nThisEntity].m_VertexData.push_back(atUIVertices[index]->m_d3dfPositions[i].m_d3dfPosition);
+	}
+
+	ptWorld->atWorldMatrix[nThisEntity].worldMatrix = spawnMatrix;
+
 	return nThisEntity;
 }
