@@ -2543,7 +2543,7 @@ unsigned int createClaytonAnim(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TM
 {
 	unsigned int nThisEntity = createEntity(ptWorld);
 
-#pragma region CreateTexturesFromFile
+	#pragma region CreateTexturesFromFile
 
 	wchar_t fnPBR[9][260];
 	wchar_t fnTRAD[5][260];
@@ -2662,7 +2662,6 @@ unsigned int createClaytonAnim(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TM
 		}
 	}
 #pragma endregion
-
 
 	if ((tMaterial.m_tPBRFileNames[0] == "C" && tMaterial.m_tPBRFileNames[1] == ":") || (tMaterial.m_tFileNames[0] == "C" && tMaterial.m_tFileNames[1] == ":"))
 	{

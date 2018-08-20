@@ -33,7 +33,7 @@ void QuadGeometryShader(point TQuadGeoInputType gIn[1],
 	//The quad faces down the +z axis in local space.
 	//
 	float halfWidth = 1.5f ;//* input[0].sizeW.x;
-	float halfHeight = .5f ;//* gIn[0].sizeW.y;
+	float halfHeight = 1.0f ;//* gIn[0].sizeW.y;
 
 	float4 v[4];
 	v[0] = float4(-halfWidth, -halfHeight, 0.0f, 1.0f);
@@ -41,14 +41,14 @@ void QuadGeometryShader(point TQuadGeoInputType gIn[1],
 	v[2] = float4(+halfWidth, -halfHeight, 0.0f, 1.0f);
 	v[3] = float4(+halfWidth, +halfHeight, 0.0f, 1.0f);
 	
-
+	float4 center = gIn[0].d3dPosition;
+	center = mul(center, d3dWorldMatrix);
+	center = mul(center, d3dViewMatrix);
 	for (uint i = 0; i < 4; i++)
 	{
 		TQuadPixelInputType element;
-		float4 p = v[i];
-		p = mul(p, d3dWorldMatrix);
-		p = mul(p, d3dViewMatrix);
-		p = mul(p, d3dProjectionMatrix);
+		float4 p;
+		p = mul(center + v[i], d3dProjectionMatrix);
 		element.pos = p;
 		element.d3dColor = gIn[0].d3dColor;
 		element.PrimID = primID;
