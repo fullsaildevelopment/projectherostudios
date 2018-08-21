@@ -404,7 +404,7 @@ int CGameMangerSystem::InGameUpdate()
 		if (tCameraMode.bSwitch == true)
 		{
 			m_d3d_ResultMatrix = pcInputSystem->CameraOrientationReset(m_d3d_ResultMatrix);
-			m_d3d_ResultMatrix = pcInputSystem->CameraBehaviorLerp(m_d3d_ResultMatrix, m_d3dPlayerMatrix);
+			m_d3d_ResultMatrix = pcInputSystem->CameraBehaviorLerp(m_d3d_ResultMatrix, m_d3dPlayerMatrix,scale);
 			tCameraMode.bSwitch = false;
 		}
 
@@ -1020,7 +1020,7 @@ void CGameMangerSystem::InitilizeMainMenu()
 		nThisEntity = CreateUILabel(&tThisWorld, menuCamera->d3d_Position, 2, 1, .5, 0, atUIVertices);
 		pcUISystem->AddTextureToUI(&tThisWorld, nThisEntity, pcGraphicsSystem->m_pd3dDevice, wideChar);
 		//                                                  modify this to switch testing levels in Augur.cpp
-		pcUISystem->AddButtonToUI(&tThisWorld, nThisEntity, 1, cApplicationWindow);
+		pcUISystem->AddButtonToUI(&tThisWorld, nThisEntity,7, cApplicationWindow);
 	}
 	{
 		wchar_t wideChar[] =
@@ -2150,21 +2150,36 @@ int CGameMangerSystem::SpacePirateGamePlay()
 	}
 	else if (tCameraMode.bAimMode == true)
 	{
-		m_RealTimeFov = pcInputSystem->ZoomSight(m_RealTimeFov);
 		if (tCameraMode.bSwitch == true)
 		{
 			m_d3d_ResultMatrix = pcInputSystem->CameraOrientationReset(m_d3d_ResultMatrix);
-			m_d3d_ResultMatrix = pcInputSystem->CameraBehaviorLerp(m_d3d_ResultMatrix, m_d3dPlayerMatrix);
-			tCameraMode.bSwitch = false;
+			//CameraNewPosition = pcInputSystem->CameraBehaviorLerp(m_d3d_ResultMatrix, m_d3dPlayerMatrix);
+			m_d3dPlayerMatrix = pcInputSystem->AimMode(m_d3dPlayerMatrix);
+
+			CameraNewPosition = XMMatrixMultiply(m_d3d_ResultMatrix, m_d3dPlayerMatrix);
+
+			CameraNewPosition = XMMatrixMultiply(m_d3dOffsetMatrix, CameraNewPosition);
+			aimCamera->d3d_Position = pcInputSystem->CameraBehaviorLerp(walkCamera->d3d_Position, CameraNewPosition,scale);
+			scale += 0.001;
+			if (scale > 1) {
+				tCameraMode.bSwitch = false;
+				scale = 0;
+
+			}
+		
 		}
+		else {
+			m_RealTimeFov = pcInputSystem->ZoomSight(m_RealTimeFov);
 
 
 
-		m_d3dPlayerMatrix = pcInputSystem->AimMode(m_d3dPlayerMatrix);
 
-		aimCamera->d3d_Position = XMMatrixMultiply(m_d3d_ResultMatrix, m_d3dPlayerMatrix);
+			m_d3dPlayerMatrix = pcInputSystem->AimMode(m_d3dPlayerMatrix);
 
-		aimCamera->d3d_Position = XMMatrixMultiply(m_d3dOffsetMatrix, aimCamera->d3d_Position);
+			aimCamera->d3d_Position = XMMatrixMultiply(m_d3d_ResultMatrix, m_d3dPlayerMatrix);
+
+			aimCamera->d3d_Position = XMMatrixMultiply(m_d3dOffsetMatrix, aimCamera->d3d_Position);
+		}
 
 	}
 	else

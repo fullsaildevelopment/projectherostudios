@@ -481,17 +481,21 @@ XMMATRIX CInputSystem::WalkCameraControls(XMVECTOR U, XMMATRIX viewM, bool &_mov
 	
 }
 
-XMMATRIX CInputSystem::CameraBehaviorLerp(XMMATRIX m1, XMMATRIX m2)
+XMMATRIX CInputSystem::CameraBehaviorLerp(XMMATRIX m1, XMMATRIX m2,float scale)
 {
 	XMMATRIX lerpedMatrix;
+	XMVECTOR q1=XMQuaternionRotationMatrix(m1);
+	XMVECTOR q2 = XMQuaternionRotationMatrix(m2);
+	XMVECTOR lerpQuaternion=XMQuaternionSlerp(q1, q2, scale);
+	lerpedMatrix =XMMatrixRotationQuaternion(lerpQuaternion);
 
-	lerpedMatrix.r[0] = (m2.r[0] - m1.r[0]) * 0.1f + m1.r[0];
-	lerpedMatrix.r[1] = (m2.r[1] - m1.r[1]) * 0.1f + m1.r[1];
-	lerpedMatrix.r[2] = (m2.r[2] - m1.r[2]) * 0.1f + m1.r[2];
-	lerpedMatrix.r[3] = (m2.r[3] - m1.r[3]) * 0.1f + m1.r[3];
+	//lerpedMatrix.r[0] = m2.r[0];
+	//lerpedMatrix.r[1] = m2.r[1];
+	lerpedMatrix.r[3] = m2.r[3];
 
-
-
+	
+	
+	
 	return lerpedMatrix;
 }
 XMMATRIX CInputSystem::CameraOrientationReset(XMMATRIX m1)

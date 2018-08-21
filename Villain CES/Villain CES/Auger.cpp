@@ -147,9 +147,10 @@ void CAuger::Update(bool* loopgame)
 	case 8 :
 		CurrentSpotInGame = pcGameMangerSystem->SpacePirateGamePlay();
 	
-
-		GetWindowRect(window2, &rect);
-		SetCursorPos((rect.right / 2.0) + 20, (rect.bottom / 2.0) + 65);
+		if (pcInputSystem->InputCheck(G_KEY_U)) {
+			GetWindowRect(window2, &rect);
+			SetCursorPos((rect.right / 2.0) + 20, (rect.bottom / 2.0) + 65);
+		}
 		break;
 	default:
 		break;

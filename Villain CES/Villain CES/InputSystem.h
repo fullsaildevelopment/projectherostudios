@@ -66,7 +66,7 @@ public:
 	XMMATRIX AimMode(XMMATRIX d3dplayerMatrix);
 
 	XMMATRIX WalkCameraControls(XMVECTOR U, XMMATRIX viewM, bool &_movement);
-	XMMATRIX CameraBehaviorLerp(XMMATRIX m1, XMMATRIX m2);
+	XMMATRIX CameraBehaviorLerp(XMMATRIX m1, XMMATRIX m2, float scale);
 	XMMATRIX CameraOrientationReset(XMMATRIX m1);
 	XMMATRIX MyTurnTo(XMMATRIX M, XMVECTOR T, float s, XMMATRIX world);
 	float ZoomSight(float fFov);
@@ -98,5 +98,23 @@ private:
 	float				m_fMouseRotationSpeed;
 	float				m_fMouseMovementSpeed;
 	float				m_fDistance;
+	float lerp(float v0, float v1, float t) {
+		return (1 - t) * v0 + t * v1;
+	}
+	float mapValue(float mainValue, float inValueMin, float inValueMax, float outValueMin, float outValueMax)
+	{
+		return (mainValue - inValueMin) * (outValueMax - outValueMin) / (inValueMax - inValueMin) + outValueMin;
+	}
+	float CalcualteDistance(XMVECTOR  x, XMVECTOR y)
+	{
+		return sqrtf(
+			((x.m128_f32[0] - y.m128_f32[0])*(x.m128_f32[0] - y.m128_f32[0])) +
+			((x.m128_f32[1] - y.m128_f32[1])*(x.m128_f32[1] - y.m128_f32[1])) +
+			((x.m128_f32[2] - y.m128_f32[2])*(x.m128_f32[2] - y.m128_f32[2]))
+		);
+	}
+	 XMVECTOR lerp(const XMVECTOR A, const XMVECTOR B, float t) {
+		return A * t + B * (1.f - t);
+	}
 };
 

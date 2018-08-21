@@ -27,8 +27,10 @@ public:
 	int PathFindingExample();
 	void FirstSkeltonAiTestLoad();
 	int SpacePirateGamePlay();
-private:
 	
+private:
+	float scale = 0;
+	XMMATRIX CameraNewPosition;
 	XMMATRIX secondCam;
 	CCollisionSystem * pcCollisionSystem;
 	TWorld tThisWorld;
