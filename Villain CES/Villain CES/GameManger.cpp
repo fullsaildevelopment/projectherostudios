@@ -2690,11 +2690,20 @@ void CGameMangerSystem::LoadMikesGraphicsSandbox()
 	TMaterialOptimized matOpt =  pcGraphicsSystem->CreateTexturesFromFile(tempImport.vtMaterials, tempImport.meshCount);
 	for (int meshIndex = 0; meshIndex < tempImport.meshCount; meshIndex++)
 	{
-		int myMesh = createMesh(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, tempImport.vtMeshes[meshIndex], matOpt);
+		int myMesh = createMesh(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, tempImport.vtMeshes[meshIndex], matOpt, meshIndex);
 	}
 
-	//createGSQuad(&tThisWorld, XMFLOAT4(1, 0, 0, 1));
-	//createGSQuad(&tThisWorld, XMFLOAT4(1, 1, 1, 1));
+	//tempImport = pcGraphicsSystem->ReadMesh("meshData_Pirate.txt");
+	//matOpt = pcGraphicsSystem->CreateTexturesFromFile(tempImport.vtMaterials, tempImport.meshCount);
+
+	//for (int meshIndex = 0; meshIndex < tempImport.meshCount; meshIndex++)
+	//{
+	//	int myMesh = createMesh(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, tempImport.vtMeshes[meshIndex], matOpt, meshIndex);		
+	//}
+
+
+	createGSQuad(&tThisWorld, XMFLOAT4(1, 0, 0, 1));
+	createGSQuad(&tThisWorld, XMFLOAT4(1, 1, 1, 1));
 
 	pcGraphicsSystem->CreateBuffers(&tThisWorld);
 }

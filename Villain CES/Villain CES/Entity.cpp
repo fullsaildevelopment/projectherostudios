@@ -2117,7 +2117,7 @@ unsigned int createDebugGrid(TWorld * ptWorld)
 	return 0;
 }
 
-unsigned int createMesh(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMeshImport tMesh, TMaterialOptimized tMaterial)
+unsigned int createMesh(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMeshImport tMesh, TMaterialOptimized tMaterial, int meshIndex)
 {
 	unsigned int nThisEntity = createEntity(ptWorld);
 	TMaterialOptimized temp = tMaterial;
@@ -2127,7 +2127,7 @@ unsigned int createMesh(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMeshImpo
 	size_t result = 0;
 	mbstate_t d;
 	//TMaterialImport tTempMaterial = tMaterial;
-	int entityMatIndex = temp.materialIndex[nThisEntity];
+	int entityMatIndex = temp.materialIndex[meshIndex];
 	int srvIndex = 1;
 	for (int i = 0; i < temp.numberOfMaterials; i++)
 	{
@@ -2136,6 +2136,7 @@ unsigned int createMesh(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMeshImpo
 			srvIndex = i;
 		}
 	}
+
 	ptWorld->atMesh[nThisEntity].m_d3dSRVDiffuse = temp.SRVArrayOfMaterials[srvIndex];
 
 #if TEXTURELOADING

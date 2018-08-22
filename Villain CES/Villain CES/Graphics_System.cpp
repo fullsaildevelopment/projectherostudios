@@ -464,7 +464,7 @@ TMaterialOptimized CGraphicsSystem::CreateTexturesFromFile(TMaterialImport * arr
 				}
 			}
 		}
-		else
+		else if(arrayOfMaterials[0].m_tFileNames[0] != NULL)
 		{
 			x = arrayOfMaterials[0].m_tFileNames[0];
 			Map_EntityIndex_FileName.insert(pair<int, string>(0, x));
@@ -510,7 +510,23 @@ TMaterialOptimized CGraphicsSystem::CreateTexturesFromFile(TMaterialImport * arr
 				}
 			}
 		}
-
+		else//Apply a wood texture to the mesh
+		{
+			ID3D11ShaderResourceView **SRVArrayOfMaterials = new ID3D11ShaderResourceView * [1];
+			int* Map_SRVIndex_EntityIndexArray = new int[1];
+			Map_SRVIndex_EntityIndexArray[0] = 0;
+			for (int i = 0; i < numberOfEntities; i++)
+			{
+				materialIndex.push_back(0);
+			}
+			CreateWICTextureFromFile(m_pd3dDevice, L"TestScene_V1.fbm\\Wood01_col.jpg", NULL, &SRVArrayOfMaterials[0], NULL);
+			TMaterialOptimized answer;
+			answer.Map_SRVIndex_EntityIndex = Map_SRVIndex_EntityIndexArray;
+			answer.materialIndex = materialIndex;
+			answer.SRVArrayOfMaterials = SRVArrayOfMaterials;
+			answer.numberOfMaterials = 1;
+			return answer;
+		}
 		std::map<int, string>::iterator mapItr;
 		wchar_t fnPBR[260];
 		size_t result = 0;
@@ -1530,6 +1546,7 @@ void CGraphicsSystem::ExecutePipeline(ID3D11DeviceContext *pd3dDeviceContext, in
 		{
 			pd3dDeviceContext->Draw(m_nIndexCount, 0);
 		}
+		pd3dDeviceContext->GSSetShader(NULL, NULL, 0);
 		break;
 	}
 	default:
