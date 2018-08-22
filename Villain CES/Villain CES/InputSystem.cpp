@@ -2,8 +2,8 @@
 #include<string>
 CInputSystem::CInputSystem()
 {
-	m_fMouseRotationSpeed = .0003f;//Frame Dependent
-	m_fMouseMovementSpeed = .01f;//Frame Dependent
+	m_fMouseRotationSpeed = .003f;//Frame Dependent
+	m_fMouseMovementSpeed = .1f;//Frame Dependent
 }
 
 

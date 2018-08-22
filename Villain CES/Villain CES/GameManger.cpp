@@ -2686,7 +2686,7 @@ void CGameMangerSystem::LoadMikesGraphicsSandbox()
 	//	int myMesh = createMesh(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, tempImport.vtMeshes[meshIndex], tempImport.vtMaterials[meshIndex]);
 	//}
 
-	tempImport = pcGraphicsSystem->ReadMesh("meshData_NoBrewery3.txt");
+	tempImport = pcGraphicsSystem->ReadMesh("meshData_NoBrewery7.txt");
 	TMaterialOptimized matOpt =  pcGraphicsSystem->CreateTexturesFromFile(tempImport.vtMaterials, tempImport.meshCount);
 	for (int meshIndex = 0; meshIndex < tempImport.meshCount; meshIndex++)
 	{
@@ -2704,6 +2704,11 @@ int CGameMangerSystem::MikesGraphicsSandbox()
 	static XMMATRIX m_d3d_ResultMatrix = pcGraphicsSystem->SetDefaultWorldPosition();
 	static XMMATRIX m_d3dOffsetMatrix = pcGraphicsSystem->SetDefaultOffset();
 	tCameraMode = pcInputSystem->CameraModeListen(tCameraMode);
+
+	if (pcInputSystem->InputCheck(G_KEY_P))
+	{
+		return 3;
+	}
 
 	if (tCameraMode.bSwitch == true)
 	{
