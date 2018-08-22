@@ -135,14 +135,14 @@ void CGameMangerSystem::LoadLevel()
 
 	for (int meshIndex = 1; meshIndex < tempImport.meshCount; meshIndex++)
 	{
-		int myMesh = createMesh(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, tempImport.vtMeshes[meshIndex], tempImport.vtMaterials[meshIndex]);
+		//int myMesh = createMesh(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, tempImport.vtMeshes[meshIndex], tempImport.vtMaterials[meshIndex]);
 	}
 
 	tempImport = pcGraphicsSystem->ReadMesh("meshData_ScifiRoom.txt");
 
 	for (int meshIndex = 0; meshIndex < tempImport.meshCount; meshIndex++)
 	{
-		int myMesh = createMesh(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, tempImport.vtMeshes[meshIndex], tempImport.vtMaterials[meshIndex]);
+		//int myMesh = createMesh(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, tempImport.vtMeshes[meshIndex], tempImport.vtMaterials[meshIndex]);
 	}
 
 	#pragma region Second Camera Init
@@ -1230,14 +1230,14 @@ void CGameMangerSystem::LoadPathFindingTest()
 
 	for (int meshIndex = 1; meshIndex < tempImport.meshCount; meshIndex++)
 	{
-		int myMesh = createMesh(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, tempImport.vtMeshes[meshIndex], tempImport.vtMaterials[meshIndex]);
+		//int myMesh = createMesh(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, tempImport.vtMeshes[meshIndex], tempImport.vtMaterials[meshIndex]);
 	}
 
 	tempImport = pcGraphicsSystem->ReadMesh("meshData_ScifiRoom.txt");
 
 	for (int meshIndex = 0; meshIndex < tempImport.meshCount; meshIndex++)
 	{
-		int myMesh = createMesh(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, tempImport.vtMeshes[meshIndex], tempImport.vtMaterials[meshIndex]);
+		//int myMesh = createMesh(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, tempImport.vtMeshes[meshIndex], tempImport.vtMaterials[meshIndex]);
 	}
 
 #pragma region 
@@ -1878,14 +1878,14 @@ void CGameMangerSystem::FirstSkeltonAiTestLoad()
 
 	for (int meshIndex = 1; meshIndex < tempImport.meshCount; meshIndex++)
 	{
-		int myMesh = createMesh(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, tempImport.vtMeshes[meshIndex], tempImport.vtMaterials[meshIndex]);
+		//int myMesh = createMesh(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, tempImport.vtMeshes[meshIndex], tempImport.vtMaterials[meshIndex]);
 	}
 
 	tempImport = pcGraphicsSystem->ReadMesh("meshData_ScifiRoom.txt");
 
 	for (int meshIndex = 0; meshIndex < tempImport.meshCount; meshIndex++)
 	{
-		int myMesh = createMesh(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, tempImport.vtMeshes[meshIndex], tempImport.vtMaterials[meshIndex]);
+		//int myMesh = createMesh(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, tempImport.vtMeshes[meshIndex], tempImport.vtMaterials[meshIndex]);
 	}
 	//AILocation.r[3].m128_f32[0] -= 7;
 	//int nodeLocation = CreateNodePoint(&tThisWorld, AILocation);
@@ -2679,15 +2679,22 @@ void CGameMangerSystem::LoadMikesGraphicsSandbox()
 
 	ImporterData tempImport;
 
-	tempImport = pcGraphicsSystem->ReadMesh("meshData_ScifiRoom.txt");
+	//tempImport = pcGraphicsSystem->ReadMesh("meshData_ScifiRoom.txt");
 
+	//for (int meshIndex = 0; meshIndex < tempImport.meshCount; meshIndex++)
+	//{
+	//	int myMesh = createMesh(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, tempImport.vtMeshes[meshIndex], tempImport.vtMaterials[meshIndex]);
+	//}
+
+	tempImport = pcGraphicsSystem->ReadMesh("meshData_NoBrewery3.txt");
+	TMaterialOptimized matOpt =  pcGraphicsSystem->CreateTexturesFromFile(tempImport.vtMaterials, tempImport.meshCount);
 	for (int meshIndex = 0; meshIndex < tempImport.meshCount; meshIndex++)
 	{
-		int myMesh = createMesh(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, tempImport.vtMeshes[meshIndex], tempImport.vtMaterials[meshIndex]);
+		int myMesh = createMesh(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, tempImport.vtMeshes[meshIndex], matOpt);
 	}
 
-	createGSQuad(&tThisWorld, XMFLOAT4(1, 0, 0, 1));
-	createGSQuad(&tThisWorld, XMFLOAT4(1, 1, 1, 1));
+	//createGSQuad(&tThisWorld, XMFLOAT4(1, 0, 0, 1));
+	//createGSQuad(&tThisWorld, XMFLOAT4(1, 1, 1, 1));
 
 	pcGraphicsSystem->CreateBuffers(&tThisWorld);
 }
@@ -2717,7 +2724,7 @@ int CGameMangerSystem::MikesGraphicsSandbox()
 
 	pcGraphicsSystem->UpdateD3D();
 
-	for (int nCurrentEntity = 0; nCurrentEntity < ENTITYCOUNT_MIKESGRAPHICSSANDBOX; nCurrentEntity++)
+	for (int nCurrentEntity = 0; nCurrentEntity < ENTITYCOUNT; nCurrentEntity++)
 	{
 		tMyVertexBufferTemp.m_d3dWorldMatrix = tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix;
 		tMyVertexBufferTemp.m_d3dProjectionMatrix = m_d3dProjectionMatrix;

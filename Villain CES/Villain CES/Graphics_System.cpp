@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "Graphics_System.h"
-
+#include <map>
 CGraphicsSystem::CGraphicsSystem()
 {
 	m_fCameraXPosition = 0;
@@ -409,6 +409,156 @@ void CGraphicsSystem::CreateShaders(ID3D11Device * device)
 	device->CreateBuffer(&d3dQuadPixelBufferDesc, NULL, &m_pd3dQuadPixelBuffer);
 #pragma endregion
 
+}
+
+TMaterialOptimized CGraphicsSystem::CreateTexturesFromFile(TMaterialImport * arrayOfMaterials, int numberOfEntities)
+{
+		//Maps texture filenames to entity indices
+		map<int, string> Map_EntityIndex_FileName;
+		string x;
+		std::vector<int> materialIndex;
+		bool insertFlag = true;
+		if (arrayOfMaterials[0].m_tPBRFileNames[0] != NULL)
+		{
+			x = arrayOfMaterials[0].m_tPBRFileNames[0];
+			Map_EntityIndex_FileName.insert(pair<int, string>(0, x));
+			//Vector of indices, one index for each entity that correspond to texture file names
+			materialIndex.push_back(0);
+			//loop number of entity times
+			for (int i = 1; i < numberOfEntities; i++)
+			{
+				//reset flag to true that we should insert filename into map
+				insertFlag = true;
+				//store filename in char*
+				char* x = arrayOfMaterials[i].m_tPBRFileNames[0];
+				//loop number of elements in map times
+				string strEntity;
+				string strMap;
+				if (x != nullptr)
+				{
+					strEntity = x;
+					for (int mapIndex = 0; mapIndex < Map_EntityIndex_FileName.size(); mapIndex++)
+					{
+						if (!Map_EntityIndex_FileName[mapIndex].empty())
+						{
+							strMap = Map_EntityIndex_FileName[mapIndex];
+							//if this current filename in the map is equal to the one of this entity
+							if (strMap == strEntity)
+							{
+								//set insert flag to false so we don't insert this texture to the map
+								insertFlag = false;
+								materialIndex.push_back(mapIndex);
+								break;
+							}
+						}
+					}
+					if (insertFlag && *x != NULL)
+					{
+						Map_EntityIndex_FileName.insert(pair<int, string>(i, x));
+						materialIndex.push_back(i);
+					}
+				}
+				else
+				{
+					materialIndex.push_back(-1);
+				}
+			}
+		}
+		else
+		{
+			x = arrayOfMaterials[0].m_tFileNames[0];
+			Map_EntityIndex_FileName.insert(pair<int, string>(0, x));
+			//Vector of indices, one index for each entity that correspond to texture file names
+			materialIndex.push_back(0);
+			//loop number of entity times
+			for (int i = 1; i < numberOfEntities; i++)
+			{
+				//reset flag to true that we should insert filename into map
+				insertFlag = true;
+				//store filename in char*
+				char* x = arrayOfMaterials[i].m_tFileNames[0];
+				//loop number of elements in map times
+				string strEntity;
+				string strMap;
+				if (x != nullptr)
+				{
+					strEntity = x;
+					for (int mapIndex = 0; mapIndex < Map_EntityIndex_FileName.size(); mapIndex++)
+					{
+						if (!Map_EntityIndex_FileName[mapIndex].empty())
+						{
+							strMap = Map_EntityIndex_FileName[mapIndex];
+							//if this current filename in the map is equal to the one of this entity
+							if (strMap == strEntity)
+							{
+								//set insert flag to false so we don't insert this texture to the map
+								insertFlag = false;
+								materialIndex.push_back(mapIndex);
+								break;
+							}
+						}
+					}
+					if (insertFlag && *x != NULL)
+					{
+						Map_EntityIndex_FileName.insert(pair<int, string>(i, x));
+						materialIndex.push_back(i);
+					}
+				}
+				else
+				{
+					materialIndex.push_back(-1);
+				}
+			}
+		}
+
+		std::map<int, string>::iterator mapItr;
+		wchar_t fnPBR[260];
+		size_t result = 0;
+		mbstate_t d;
+		int count = 0;
+		for (mapItr = Map_EntityIndex_FileName.begin(); mapItr != Map_EntityIndex_FileName.end(); mapItr++)
+		{
+			if (mapItr->second.size())
+			{
+				count++;
+			}
+		}
+
+		ID3D11ShaderResourceView **SRVArrayOfMaterials = new ID3D11ShaderResourceView*[count];
+		count = 0;
+		//Key - Count
+		//Value - Entity Index
+		std::map<int, int> Map_SRVIndex_EntityIndex;
+		for (mapItr = Map_EntityIndex_FileName.begin(); mapItr != Map_EntityIndex_FileName.end(); mapItr++)
+		{
+			if (mapItr->second.size())
+			{
+				const char * name = mapItr->second.c_str();
+				int size = mapItr->second.size();
+				mbsrtowcs_s(&result, fnPBR, 260, (const char **)(&name), size, &d);
+				CreateWICTextureFromFile(m_pd3dDevice, &fnPBR[1], NULL, &SRVArrayOfMaterials[count], NULL);
+				Map_SRVIndex_EntityIndex.insert(pair<int, int>(count, mapItr->first));
+				count++;
+				int test = 0;
+			}
+		}
+		int* Map_SRVIndex_EntityIndexArray = new int[count];
+		int intArrayIndex = 0;
+		for (mapItr = Map_EntityIndex_FileName.begin(); mapItr != Map_EntityIndex_FileName.end(); mapItr++)
+		{
+			if (mapItr->second.size())
+			{
+				Map_SRVIndex_EntityIndexArray[intArrayIndex] = mapItr->first;
+				intArrayIndex++;
+				int test = 0;
+			}
+		}
+		TMaterialOptimized answer;
+		answer.Map_SRVIndex_EntityIndex = Map_SRVIndex_EntityIndexArray;
+		answer.materialIndex = materialIndex;
+		answer.SRVArrayOfMaterials = SRVArrayOfMaterials;
+		answer.numberOfMaterials = Map_SRVIndex_EntityIndex.size();
+		return answer;
 }
 
 void CGraphicsSystem::CreateBuffers(TWorld *ptPlanet)//init first frame

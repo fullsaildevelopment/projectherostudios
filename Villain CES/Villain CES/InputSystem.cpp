@@ -106,7 +106,7 @@ XMMATRIX CInputSystem::DebugCamera(XMMATRIX d3d_ViewM, XMMATRIX d3d_WorldM)
 		d3dTmpViewM = XMMatrixMultiply(d3dMovementM, d3dTmpViewM);
 
 	}
-	if (InputCheck(G_KEY_DOWN) == 1) {
+	if (InputCheck(G_KEY_LEFTSHIFT) == 1) {
 		d3dMovementM = XMMatrixTranslation(0, -m_fMouseMovementSpeed, 0);
 		d3dTmpViewM = XMMatrixMultiply(d3dMovementM, d3dTmpViewM);
 	}

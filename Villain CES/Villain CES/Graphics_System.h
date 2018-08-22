@@ -11,6 +11,7 @@
 #include "QuadVertexShader.csh"
 #include "QuadPixelShader.csh"
 #include <vector>
+#include <string.h>
 class CGraphicsSystem
 {
 public:
@@ -85,12 +86,23 @@ public:
 		int m_nPadding;
 	};
 
+
+
 	//First Frame
 	CGraphicsSystem();
 	~CGraphicsSystem();
 
 	void InitD3D(HWND cTheWindow);
 	void CleanD3D(TWorld *ptPlanet);
+	/*
+		Call create WIC textures from file on all textures with the associated file.
+		Get file name
+		Get number of files there
+		loop number of file times
+			CreateWicTextureFromFile on current filename index			
+	*/
+	//TTextureOptimization CreateTexturesFromFile(TMaterialImport* arrayOfMaterials, int numberOfEntities);
+	TMaterialOptimized CreateTexturesFromFile(TMaterialImport* arrayOfMaterials, int numberOfEntities);
 	void CreateBuffers(TWorld * ptWorld);
 	void CreateEntityBuffer(TWorld * ptWorld, int nEnityIndex);
 	void CreateShaders(ID3D11Device* pd3dDevice);

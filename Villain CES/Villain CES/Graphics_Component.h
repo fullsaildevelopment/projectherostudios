@@ -22,6 +22,15 @@ struct TGraphicsMask
 };
 
 #pragma region Helper Structs
+
+struct TMaterialOptimized
+{
+	int* Map_SRVIndex_EntityIndex;
+	std::vector<int> materialIndex = std::vector<int>();
+	ID3D11ShaderResourceView **SRVArrayOfMaterials;
+	int numberOfMaterials = 0;
+};
+
 struct TKeyframe
 {
 	double dTime = 0;

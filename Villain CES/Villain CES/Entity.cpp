@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "Entity.h"
-
+#define TEXTURELOADING false
 unsigned int createEntity(TWorld * ptWorld)
 {
 	unsigned int nCurrentEntity;
@@ -2117,18 +2117,28 @@ unsigned int createDebugGrid(TWorld * ptWorld)
 	return 0;
 }
 
-unsigned int createMesh(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMeshImport tMesh, TMaterialImport tMaterial)
+unsigned int createMesh(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMeshImport tMesh, TMaterialOptimized tMaterial)
 {
 	unsigned int nThisEntity = createEntity(ptWorld);
-
-
+	TMaterialOptimized temp = tMaterial;
 
 	wchar_t fnPBR[9][260];
 	wchar_t fnTRAD[5][260];
 	size_t result = 0;
 	mbstate_t d;
-	TMaterialImport tTempMaterial = tMaterial;
+	//TMaterialImport tTempMaterial = tMaterial;
+	int entityMatIndex = temp.materialIndex[nThisEntity];
+	int srvIndex = 1;
+	for (int i = 0; i < temp.numberOfMaterials; i++)
+	{
+		if (temp.Map_SRVIndex_EntityIndex[i] == entityMatIndex)
+		{
+			srvIndex = i;
+		}
+	}
+	ptWorld->atMesh[nThisEntity].m_d3dSRVDiffuse = temp.SRVArrayOfMaterials[srvIndex];
 
+#if TEXTURELOADING
 	for (unsigned int i = 0; i < 9; i++)
 	{
 		if (i < 5 && tTempMaterial.m_tFileNames[i])
@@ -2145,22 +2155,22 @@ unsigned int createMesh(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMeshImpo
 
 	ID3D11Resource * defaultDiffuseTexture;
 
-	ID3D11Resource * ambientTexture;
-	ID3D11Resource * diffuseTexture;
-	ID3D11Resource * specularTexture;
-	ID3D11Resource * emissiveTexture;
-	ID3D11Resource * normalTexture;
-	ID3D11Resource * bumpTexture;
+	//ID3D11Resource * ambientTexture;
+	//ID3D11Resource * diffuseTexture;
+	//ID3D11Resource * specularTexture;
+	//ID3D11Resource * emissiveTexture;
+	//ID3D11Resource * normalTexture;
+	//ID3D11Resource * bumpTexture;
 
-	ID3D11Resource * d3dColorMap;
-	ID3D11Resource * d3dNormalMap;
-	ID3D11Resource * d3dEmissiveMap;
-	ID3D11Resource * d3dMetallicMap;
-	ID3D11Resource * d3dRoughnessMap;
-	ID3D11Resource * d3dAmbientOcclusionMap;
-	ID3D11Resource * d3dGlobalDiffuseCubeMap;
-	ID3D11Resource * d3dGlobalSpecularCubeMap;
-	ID3D11Resource * d3dIBLCubeMap;
+	//ID3D11Resource * d3dColorMap;
+	//ID3D11Resource * d3dNormalMap;
+	//ID3D11Resource * d3dEmissiveMap;
+	//ID3D11Resource * d3dMetallicMap;
+	//ID3D11Resource * d3dRoughnessMap;
+	//ID3D11Resource * d3dAmbientOcclusionMap;
+	//ID3D11Resource * d3dGlobalDiffuseCubeMap;
+	//ID3D11Resource * d3dGlobalSpecularCubeMap;
+	//ID3D11Resource * d3dIBLCubeMap;
 
 	ID3D11ShaderResourceView * srv;
 
@@ -2170,7 +2180,7 @@ unsigned int createMesh(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMeshImpo
 		{
 			if (tMaterial.m_tPBRFileNames[i][0] == 'c')
 			{
-				result = CreateWICTextureFromFile(m_pd3dDevice, fnPBR[i], &d3dColorMap, &srv, NULL);
+				result = CreateWICTextureFromFile(m_pd3dDevice, fnPBR[i], NULL, &srv, NULL);
 				ptWorld->atMesh[nThisEntity].m_d3dSRVDiffuse = srv;
 
 				break;
@@ -2224,7 +2234,7 @@ unsigned int createMesh(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMeshImpo
 
 			if (tMaterial.m_tFileNames[i][0] == 'd')
 			{
-				result = CreateWICTextureFromFile(m_pd3dDevice, fnTRAD[i], &diffuseTexture, &srv, NULL);
+				result = CreateWICTextureFromFile(m_pd3dDevice, fnTRAD[i], NULL, &srv, NULL);
 				ptWorld->atMesh[nThisEntity].m_d3dSRVDiffuse = srv;
 
 				break;
@@ -2244,38 +2254,43 @@ unsigned int createMesh(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMeshImpo
 			//}
 		}
 	}
-#pragma endregion
-
 	if (tMaterial.m_tPBRFileNames[0] == NULL && tMaterial.m_tFileNames[0] == NULL)
 	{
-		result = CreateWICTextureFromFile(m_pd3dDevice, L"TestScene_V1.fbm\\Wood01_col.jpg", &diffuseTexture, &srv, NULL);
+		result = CreateWICTextureFromFile(m_pd3dDevice, L"TestScene_V1.fbm\\Wood01_col.jpg", NULL, &srv, NULL);
 		ptWorld->atMesh[nThisEntity].m_d3dSRVDiffuse = srv;
 	}
+#pragma endregion
+#endif
+
 	ptWorld->atGraphicsMask[nThisEntity].m_tnGraphicsMask = COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_SHADERID;
 	//ptWorld->atCollisionMask[nThisEntity].m_tnCollisionMask = COMPONENT_COLLISIONMASK | COMPONENT_AABB | COMPONENT_NONSTATIC | COMPONENT_NONTRIGGER;
 	//ptWorld->atAIMask[nThisEntity].m_tnAIMask = COMPONENT_AIMASK;
 	//ptWorld->atUIMask[nThisEntity].m_tnUIMask = COMPONENT_UIMASK;
 	//ptWorld->atPhysicsMask[nThisEntity].m_tnPhysicsMask = COMPONENT_PHYSICSMASK | COMPONENT_RIGIDBODY;
-	switch (tMaterial.lambert)
-	{
-	case 0:
-	{
-		ptWorld->atShaderID[nThisEntity].m_nShaderID = 4;
-		break;//Phong
-	}
-	case 1:
-	{
-		ptWorld->atShaderID[nThisEntity].m_nShaderID = 5;
-		break;//Lambert
-	}
-	case 2:
-	{
-		ptWorld->atShaderID[nThisEntity].m_nShaderID = 6;
-		break;//PBR
-	}
-	default:
-		break;
-	}
+	
+	//switch (tMaterial.lambert)
+	//{
+	//case 0:
+	//{
+	//	ptWorld->atShaderID[nThisEntity].m_nShaderID = 4;
+	//	break;//Phong
+	//}
+	//case 1:
+	//{
+	//	ptWorld->atShaderID[nThisEntity].m_nShaderID = 5;
+	//	break;//Lambert
+	//}
+	//case 2:
+	//{
+	//	ptWorld->atShaderID[nThisEntity].m_nShaderID = 6;
+	//	break;//PBR
+	//}
+	//default:
+	//	break;
+	//}
+
+	ptWorld->atShaderID[nThisEntity].m_nShaderID = 6;
+
 	TPrimitiveMesh *pMesh = new TPrimitiveMesh[tMesh.nUniqueVertexCount];
 	for (int i = 0; i < tMesh.nUniqueVertexCount; i++)
 	{
