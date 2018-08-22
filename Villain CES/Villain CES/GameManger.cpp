@@ -1764,8 +1764,8 @@ void CGameMangerSystem::FirstSkeltonAiTestLoad()
 	m_d3dProjectionMatrix = pcGraphicsSystem->SetDefaultPerspective();
 
 	tCameraMode.bDebugMode = false;
-	tCameraMode.bAimMode = false;
-	tCameraMode.bWalkMode = true;
+	tCameraMode.bAimMode = true;
+	tCameraMode.bWalkMode = false;
 	tCameraMode.bSwitch = false;
 	bMoving = false;
 	m_d3dPlayerMatrix = pcGraphicsSystem->SetDefaultWorldPosition();

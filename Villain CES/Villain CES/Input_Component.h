@@ -104,7 +104,7 @@ struct TCameraToggle
 {
 	bool bDebugMode;
 	bool bWalkMode;
-	bool bAimMode;
+	bool bAimMode=true;
 	bool bSwitch;
 	//bool bDebugMode;
 };
