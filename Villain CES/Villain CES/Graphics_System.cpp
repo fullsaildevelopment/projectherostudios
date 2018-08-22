@@ -229,6 +229,12 @@ void CGraphicsSystem::CleanD3DLevel(TWorld * ptPlanet)
 			ptPlanet->atSimpleMesh[nEntityIndex].m_pd3dIndexBuffer->Release();
 
 		}
+
+		if (ptPlanet->atGraphicsMask[nEntityIndex].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_SHADERID))
+		{
+			ptPlanet->atMesh[nEntityIndex].m_pd3dVertexBuffer->Release();
+			ptPlanet->atMesh[nEntityIndex].m_pd3dIndexBuffer->Release();
+		}
 		destroyEntity(ptPlanet, nEntityIndex);
 	}
 }
@@ -420,6 +426,15 @@ void CGraphicsSystem::CreateEntityBuffer(TWorld * ptWorld, int nEnityIndex)
 		{
 			m_pd3dDevice->CreateBuffer(&ptWorld->atSimpleMesh[nEnityIndex].m_d3dVertexBufferDesc, &ptWorld->atSimpleMesh[nEnityIndex].m_d3dVertexData, &ptWorld->atSimpleMesh[nEnityIndex].m_pd3dVertexBuffer);
 			m_pd3dDevice->CreateBuffer(&ptWorld->atSimpleMesh[nEnityIndex].m_d3dIndexBufferDesc, &ptWorld->atSimpleMesh[nEnityIndex].m_d3dIndexData, &ptWorld->atSimpleMesh[nEnityIndex].m_pd3dIndexBuffer);
+		}
+	}
+
+	if (ptWorld->atGraphicsMask[nEnityIndex].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_SHADERID))
+	{
+		if (ptWorld->atMesh[nEnityIndex].m_nIndexCount && ptWorld->atMesh[nEnityIndex].m_nVertexCount)
+		{
+			m_pd3dDevice->CreateBuffer(&ptWorld->atMesh[nEnityIndex].m_d3dVertexBufferDesc, &ptWorld->atMesh[nEnityIndex].m_d3dVertexData, &ptWorld->atMesh[nEnityIndex].m_pd3dVertexBuffer);
+			m_pd3dDevice->CreateBuffer(&ptWorld->atMesh[nEnityIndex].m_d3dIndexBufferDesc, &ptWorld->atMesh[nEnityIndex].m_d3dIndexData, &ptWorld->atMesh[nEnityIndex].m_pd3dIndexBuffer);
 		}
 	}
 }

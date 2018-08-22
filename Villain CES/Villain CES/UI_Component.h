@@ -25,8 +25,10 @@ struct TBar
 
 struct TText
 {
-	char * textBuffer = nullptr;
-
+	wchar_t * textBuffer = nullptr;
+	unsigned int textSize = 0;
+	RECT textBoundingBox;
+	int textColor[3] = { 0, 0, 0 };
 	/*
 	TODO:
 		Fill out Text Struct

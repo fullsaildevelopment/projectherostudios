@@ -47,5 +47,28 @@ void CUISystem::AddButtonToUI(TWorld* tThisWorld, unsigned int nThisEntity, int 
 
 	tThisWorld->atButton[nThisEntity].sceneIndex = sceneIndex;
 
-	tThisWorld->atUIMask->m_tnUIMask = tThisWorld->atUIMask->m_tnUIMask | COMPONENT_BUTTON;
+	tThisWorld->atUIMask[nThisEntity].m_tnUIMask = tThisWorld->atUIMask[nThisEntity].m_tnUIMask | COMPONENT_BUTTON;
+}
+
+void CUISystem::AddTextToUI(TWorld* tThisWorld, unsigned int nThisEntity, HWND cApplicationWindow, wchar_t* text, unsigned int textSize, int* textColor)
+{
+	POINT tempPoint = { tThisWorld->atButton[nThisEntity].boundingBox.left, tThisWorld->atButton[nThisEntity].boundingBox.top };
+	POINT tempPoint2 = { tThisWorld->atButton[nThisEntity].boundingBox.right, tThisWorld->atButton[nThisEntity].boundingBox.bottom };
+
+	bool worked = ClientToScreen(cApplicationWindow, &tempPoint);
+	worked = ClientToScreen(cApplicationWindow, &tempPoint2);
+
+	tThisWorld->atText[nThisEntity].textBoundingBox.left = tempPoint.x;
+	tThisWorld->atText[nThisEntity].textBoundingBox.top = tempPoint.y;
+	tThisWorld->atText[nThisEntity].textBoundingBox.right = tempPoint2.x;
+	tThisWorld->atText[nThisEntity].textBoundingBox.bottom = tempPoint2.y;
+
+	tThisWorld->atText[nThisEntity].textBuffer = text;
+	tThisWorld->atText[nThisEntity].textSize = textSize;
+
+	tThisWorld->atText[nThisEntity].textColor[0] = textColor[0];
+	tThisWorld->atText[nThisEntity].textColor[1] = textColor[1];
+	tThisWorld->atText[nThisEntity].textColor[2] = textColor[2];
+
+	tThisWorld->atUIMask[nThisEntity].m_tnUIMask = tThisWorld->atUIMask[nThisEntity].m_tnUIMask | COMPONENT_TEXT;
 }

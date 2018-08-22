@@ -117,6 +117,7 @@ void CAuger::Update(bool* loopgame)
 		CurrentSpotInGame = pcGameMangerSystem->InGameUpdate();
 		break;
 	case 3:
+		CurrentSpotInGame = pcGameMangerSystem->LoadPauseScreen();
 		if(pcInputSystem->InputCheck(G_KEY_U))
 		CurrentSpotInGame = 2;
 		break;

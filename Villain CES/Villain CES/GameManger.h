@@ -22,6 +22,8 @@ public:
 	void InitilizeMainMenu();
 	int LoadTitleScreen();
 	void InitializeTitleScreen();
+	int LoadPauseScreen();
+	void InitializePauseScreen();
 
 	void LoadPathFindingTest();
 	int PathFindingExample();
