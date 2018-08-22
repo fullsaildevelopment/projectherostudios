@@ -1026,7 +1026,7 @@ void CGameMangerSystem::InitilizeMainMenu()
 
 		nThisEntity = CreateUILabel(&tThisWorld, menuCamera->d3d_Position, 2, 1, .5, -2.4, atUIVertices);
 		pcUISystem->AddTextureToUI(&tThisWorld, nThisEntity, pcGraphicsSystem->m_pd3dDevice, wideChar);
-		pcUISystem->AddButtonToUI(&tThisWorld, nThisEntity, 4, cApplicationWindow);
+		pcUISystem->AddButtonToUI(&tThisWorld, nThisEntity, 3, cApplicationWindow);
 	}
 	{
 		wchar_t wideChar[] =
@@ -1195,6 +1195,7 @@ int CGameMangerSystem::LoadPauseScreen()
 				tThisWorld.atText[nCurrentEntity].textColor[0] = 166;
 				tThisWorld.atText[nCurrentEntity].textColor[1] = 166;
 				tThisWorld.atText[nCurrentEntity].textColor[2] = 166;
+
 			}
 			else
 			{
@@ -1202,15 +1203,19 @@ int CGameMangerSystem::LoadPauseScreen()
 				tThisWorld.atText[nCurrentEntity].textColor[0] = 255;
 				tThisWorld.atText[nCurrentEntity].textColor[1] = 255;
 				tThisWorld.atText[nCurrentEntity].textColor[2] = 255;
+				SetBkColor(tempHDC, RGB(0, 0, 0));
 			}
-
 			SetTextColor(tempHDC, RGB(tThisWorld.atText[nCurrentEntity].textColor[0], tThisWorld.atText[nCurrentEntity].textColor[1], tThisWorld.atText[nCurrentEntity].textColor[2]));
-			SetBkMode(tempHDC, TRANSPARENT);
-
+			SetBkMode(tempHDC, OPAQUE);
+			//if (drawtext) {
+			//	drawtext = false;
+			//	DrawText(tempHDC, tThisWorld.atText[nCurrentEntity].textBuffer, tThisWorld.atText[nCurrentEntity].textSize, &tThisWorld.atText[nCurrentEntity].textBoundingBox, DT_NOCLIP | DT_WORD_ELLIPSIS);
+			//}
+			
 			//int success = InvalidateRect(cApplicationWindow, &tThisWorld.atButton[nCurrentEntity].boundingBox, true);
 
-			DrawTextEx(tempHDC, tThisWorld.atText[nCurrentEntity].textBuffer, tThisWorld.atText[nCurrentEntity].textSize, &tThisWorld.atText[nCurrentEntity].textBoundingBox, DT_VCENTER, NULL);
-			//TextOut(tempHDC, tThisWorld.atText[nCurrentEntity].textBoundingBox.left, tThisWorld.atText[nCurrentEntity].textBoundingBox.top, tThisWorld.atText[nCurrentEntity].textBuffer, tThisWorld.atText[nCurrentEntity].textSize);
+			//DrawText(tempHDC, tThisWorld.atText[nCurrentEntity].textBuffer, tThisWorld.atText[nCurrentEntity].textSize, &tThisWorld.atText[nCurrentEntity].textBoundingBox, DT_NOCLIP | DT_WORD_ELLIPSIS);
+			TextOut(tempHDC, tThisWorld.atText[nCurrentEntity].textBoundingBox.left, tThisWorld.atText[nCurrentEntity].textBoundingBox.top, tThisWorld.atText[nCurrentEntity].textBuffer, tThisWorld.atText[nCurrentEntity].textSize);
 
 			SelectObject(tempHDC, oldFont);
 		}
@@ -1230,8 +1235,8 @@ void CGameMangerSystem::InitializePauseScreen()
 	unsigned int nThisEntity;
 	
 	{
-		wchar_t wideChar[] =
-		{ L"UI_Textures.fbm/play.png" };
+		//wchar_t wideChar[] =
+		//{ L"UI_Textures.fbm/play.png" };
 
 		wchar_t text[] =
 		{ L"START" };
@@ -1279,7 +1284,7 @@ void CGameMangerSystem::InitializePauseScreen()
 	tThisWorld.atText[nThisEntity].textBoundingBox.bottom = tempPoint2.y;*/
 	
 	if (pcUISystem->myFont == nullptr)
-		pcUISystem->myFont = CreateFontA(36, 21, 0, 0, FW_BOLD, false, false, false, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, 0, DEFAULT_QUALITY, FF_DONTCARE, NULL);
+		pcUISystem->myFont = CreateFontA(36, 21, 0, 0, FW_BOLD, false, false, false, 0, 0, 0, 0, 0, 0);
 
 	//SelectObject(tempHDC, (HGDIOBJ)pcUISystem->myFont);
 

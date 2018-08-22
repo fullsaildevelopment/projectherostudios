@@ -30,7 +30,7 @@ public:
 	void FirstSkeltonAiTestLoad();
 	int SpacePirateGamePlay();
 private:
-	
+	bool drawtext = true;
 	XMMATRIX secondCam;
 	CCollisionSystem * pcCollisionSystem;
 	TWorld tThisWorld;

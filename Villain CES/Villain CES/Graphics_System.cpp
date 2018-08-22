@@ -217,6 +217,8 @@ void CGraphicsSystem::CleanD3DLevel(TWorld * ptPlanet)
 {
 	for (int nEntityIndex = 0; nEntityIndex < ENTITYCOUNT; nEntityIndex++)
 	{
+		if (ptPlanet->atUIMask[nEntityIndex].m_tnUIMask == (COMPONENT_LABEL | COMPONENT_TEXT | COMPONENT_UIMASK | COMPONENT_BUTTON))
+			continue;
 		//Check planet's mask at [i] to see what needs to be released
 		if (ptPlanet->atGraphicsMask[nEntityIndex].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_DEBUGMESH | COMPONENT_SHADERID))
 		{

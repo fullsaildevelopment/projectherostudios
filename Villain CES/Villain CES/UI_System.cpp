@@ -58,13 +58,15 @@ void CUISystem::AddTextToUI(TWorld* tThisWorld, unsigned int nThisEntity, HWND c
 	bool worked = ClientToScreen(cApplicationWindow, &tempPoint);
 	worked = ClientToScreen(cApplicationWindow, &tempPoint2);
 
+	
+
 	tThisWorld->atText[nThisEntity].textBoundingBox.left = tempPoint.x;
 	tThisWorld->atText[nThisEntity].textBoundingBox.top = tempPoint.y;
 	tThisWorld->atText[nThisEntity].textBoundingBox.right = tempPoint2.x;
 	tThisWorld->atText[nThisEntity].textBoundingBox.bottom = tempPoint2.y;
 
 	tThisWorld->atText[nThisEntity].textBuffer = text;
-	tThisWorld->atText[nThisEntity].textSize = textSize;
+	tThisWorld->atText[nThisEntity].textSize = textSize - 1;
 
 	tThisWorld->atText[nThisEntity].textColor[0] = textColor[0];
 	tThisWorld->atText[nThisEntity].textColor[1] = textColor[1];
