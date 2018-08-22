@@ -47,6 +47,7 @@ struct TAIPathFinding {
 	int Goal;
 	bool testingPathFinding = true;
 	bool foundDestination = false;
+	int DelayMovement = 0;
 
 };
 struct Tcover {

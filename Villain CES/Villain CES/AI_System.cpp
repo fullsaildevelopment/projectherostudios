@@ -5,7 +5,7 @@
 CAISystem::CAISystem()
 	:open([](PlannerNode* const& c, PlannerNode* const& t) {return c->finalCost > t->finalCost; })
 {
-
+	srand(time(NULL));
 }
 
 
@@ -523,12 +523,14 @@ void CAISystem::MakeDirections(vector<XMVECTOR>* directions, PlannerNode* curren
 
 void CAISystem::MoveAiToCoverLocation(TCoverTrigger Cover,TWorld * ptWorld)
 {
+	
 	int index=0;
 	for (int i = 0; i < AIInCombat.size(); ++i) {
 		if (ptWorld->atPathPlanining[AIInCombat[i]].Goal != Cover.coverAiCanGoTo[0].CoverPositions[index]) {
 			ptWorld->atAIMask[AIInCombat[i]].m_tnAIMask = COMPONENT_AIMASK | COMPONENT_SEARCH | COMPONENT_PATHFINDTEST;
 			ptWorld->atPathPlanining[AIInCombat[i]].Goal = Cover.coverAiCanGoTo[0].CoverPositions[index];
 			ptWorld->atPathPlanining[AIInCombat[i]].testingPathFinding = true;
+			ptWorld->atPathPlanining[AIInCombat[i]].DelayMovement = rand() % 1000 + 50;
 		}
 	}
 }
