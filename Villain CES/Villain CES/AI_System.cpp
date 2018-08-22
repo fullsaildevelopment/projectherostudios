@@ -317,7 +317,9 @@ void CAISystem::FollowObject(XMMATRIX thingToFollow, XMMATRIX * AIMatrix)
 void CAISystem::ShootGun(Clips* AIGun)
 {
 	AIGun->tryToShoot = true;
-
+	if (AIGun->nBulletsAvailables.size() <= 0) {
+		AIGun->tryToReload = true;
+	}
 }
 
 void CAISystem::SetNumberOfAI(int aiCount)

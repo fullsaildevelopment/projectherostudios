@@ -84,7 +84,7 @@ void CAuger::Update(bool* loopgame)
 	//Call some sort of function from the graphics system to create this matrix
 	 //   tCameraMode = pcInputSystem->CameraModeListen(tCameraMode);
 		
-	
+//	UpdateWindow(window2);
 	//createDummyPlayer(&tThisWorld, m_d3dPlayerMatrix);
 	//d3d_ResultMatrix = 
 	RECT rect = { 0 };
@@ -149,7 +149,7 @@ void CAuger::Update(bool* loopgame)
 	
 		
 			GetWindowRect(window2, &rect);
-			SetCursorPos((rect.right / 2.0) + 20, (rect.bottom / 2.0) + 65);
+			SetCursorPos((rect.right / 2.0)+rect.left, (rect.bottom / 2.0) + rect.top);
 		
 		break;
 	default:
