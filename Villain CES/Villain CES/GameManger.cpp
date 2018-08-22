@@ -1846,13 +1846,18 @@ void CGameMangerSystem::FirstSkeltonAiTestLoad()
 	coverIndexs.push_back(cover2);
 
 	int coverTrigerIndex=CreateCoverTriggerZone(&tThisWorld, coverTriggerMatrix);
+	coverTriggerMatrix.r[3].m128_f32[2] += 10;
+	int coverTrigerIndex2 = CreateCoverTriggerZone(&tThisWorld, coverTriggerMatrix);
+
 	tThisWorld.atSimpleMesh[coverTrigerIndex].m_nColor = XMFLOAT4(0, 0, 1, 1);
+	tThisWorld.atSimpleMesh[coverTrigerIndex2].m_nColor = XMFLOAT4(0, 0, 1, 1);
+
 
 
 	XMMATRIX nodeLocation = CoverLocation;
 	nodeLocation.r[3].m128_f32[0] += 3;
 	nodeLocation.r[3].m128_f32[1] -= 1;
-	nodeLocation.r[3].m128_f32[2] += 1;
+	nodeLocation.r[3].m128_f32[2] += 2;
 
 	//pcAiSystem->AddNodeToPathFinding(nodeLocation, nodePosition, 1);
 	int nodeindex = CreateNodePoint(&tThisWorld, nodeLocation);
@@ -1861,13 +1866,17 @@ void CGameMangerSystem::FirstSkeltonAiTestLoad()
 	nodePosition.y = nodeLocation.r[3].m128_f32[1];
 	nodePosition.z = nodeLocation.r[3].m128_f32[2];
 	pcAiSystem->AddNodeToPathFinding(nodeindex, nodePosition, 1);
+	nodeLocation = AILocation;
+	nodeLocation.r[3].m128_f32[2] += 2;
 	int nodeindex2 = CreateNodePoint(&tThisWorld, AILocation);
+	tThisWorld.atCover[cover1].CoverPositions.push_back(nodeindex);
 	tThisWorld.atCover[cover2].CoverPositions.push_back(nodeindex2);
+	tThisWorld.atCoverTrigger[coverTrigerIndex2].coverAiCanGoTo.push_back(tThisWorld.atCover[cover1]);
 	tThisWorld.atCoverTrigger[coverTrigerIndex].coverAiCanGoTo.push_back(tThisWorld.atCover[cover2]);
 	AILocation.r[3].m128_f32[1] -= 1;
-	nodePosition.x = AILocation.r[3].m128_f32[0];
-	nodePosition.y = AILocation.r[3].m128_f32[1];
-	nodePosition.z = AILocation.r[3].m128_f32[2];
+	nodePosition.x = nodeLocation.r[3].m128_f32[0];
+	nodePosition.y = nodeLocation.r[3].m128_f32[1];
+	nodePosition.z = nodeLocation.r[3].m128_f32[2];
 	pcAiSystem->AddNodeToPathFinding(nodeindex2, nodePosition, 1);
 	AILocation.r[3].m128_f32[2] -= 4;
 	AILocation.r[3].m128_f32[0] -= 3;
@@ -1876,10 +1885,14 @@ void CGameMangerSystem::FirstSkeltonAiTestLoad()
 	nodePosition.z = AILocation.r[3].m128_f32[2];
 	int nodeindex3 = CreateNodePoint(&tThisWorld, AILocation);
 	pcAiSystem->AddNodeToPathFinding(nodeindex3, nodePosition, 1);
+	tThisWorld.atCoverTrigger[coverTrigerIndex2].coverAiCanGoTo.push_back(tThisWorld.atCover[cover1]);
+	tThisWorld.atCoverTrigger[coverTrigerIndex].coverAiCanGoTo.push_back(tThisWorld.atCover[cover2]);
 
 	vector<int> edges;
 	edges.push_back(nodeindex);
 	pcAiSystem->AddEdgestoNode(nodeindex2, edges);
+	pcAiSystem->AddEdgestoNode(nodeindex3, edges);
+
 	edges.clear();
 	edges.push_back(nodeindex2);
 	pcAiSystem->AddEdgestoNode(nodeindex, edges);
@@ -1892,7 +1905,7 @@ void CGameMangerSystem::FirstSkeltonAiTestLoad()
 	int spacePirate = CreateSpacePirate(&tThisWorld, AILocation);
 	
 	//tThisWorld.atPathPlanining[spacePirate].Goal = nodeindex;
-	tThisWorld.atPathPlanining[spacePirate].startingNode = nodeindex2;
+	tThisWorld.atPathPlanining[spacePirate].startingNode = nodeindex3;
 
 	int GunINdexai = CreateGun(&tThisWorld, m_d3dWorldMatrix, spacePirate, -1.1, 0.5, 11.5, 10, 70);
 	tThisWorld.atAIMask[spacePirate].GunIndex = GunINdexai;

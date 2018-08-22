@@ -461,6 +461,7 @@ void CAISystem::PathPlaningMovement(TAIPathFinding* path, XMMATRIX* worldMatrix)
 		path->index = 0;
 		path->directions.clear();
 		path->foundDestination = true;
+		path->startingNode = path->Goal;
 		open.clear();
 		visited.clear();
 	}
