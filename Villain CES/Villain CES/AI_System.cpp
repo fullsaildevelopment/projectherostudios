@@ -464,6 +464,7 @@ void CAISystem::PathPlaningMovement(TAIPathFinding* path, XMMATRIX* worldMatrix)
 		path->startingNode = path->Goal;
 		open.clear();
 		visited.clear();
+		path->InterRuptPathPlanning = true;
 	}
 	worldMatrix->r[0].m128_f32[0] = beforeMutplcation.r[0].m128_f32[0];
 	worldMatrix->r[0].m128_f32[1] = beforeMutplcation.r[0].m128_f32[1];
@@ -526,11 +527,14 @@ void CAISystem::MoveAiToCoverLocation(TCoverTrigger Cover,TWorld * ptWorld)
 	
 	int index=0;
 	for (int i = 0; i < AIInCombat.size(); ++i) {
-		if (ptWorld->atPathPlanining[AIInCombat[i]].Goal != Cover.coverAiCanGoTo[0].CoverPositions[index]) {
-			ptWorld->atAIMask[AIInCombat[i]].m_tnAIMask = COMPONENT_AIMASK | COMPONENT_SEARCH | COMPONENT_PATHFINDTEST;
-			ptWorld->atPathPlanining[AIInCombat[i]].Goal = Cover.coverAiCanGoTo[0].CoverPositions[index];
-			ptWorld->atPathPlanining[AIInCombat[i]].testingPathFinding = true;
-			ptWorld->atPathPlanining[AIInCombat[i]].DelayMovement = rand() % 1000 + 50;
+		if (ptWorld->atPathPlanining[AIInCombat[i]].InterRuptPathPlanning == true) {
+			if (ptWorld->atPathPlanining[AIInCombat[i]].Goal != Cover.coverAiCanGoTo[0].CoverPositions[index]) {
+				ptWorld->atAIMask[AIInCombat[i]].m_tnAIMask = COMPONENT_AIMASK | COMPONENT_SEARCH | COMPONENT_PATHFINDTEST;
+				ptWorld->atPathPlanining[AIInCombat[i]].Goal = Cover.coverAiCanGoTo[0].CoverPositions[index];
+				ptWorld->atPathPlanining[AIInCombat[i]].testingPathFinding = true;
+				ptWorld->atPathPlanining[AIInCombat[i]].DelayMovement = rand() % 1000 + 50;
+				ptWorld->atPathPlanining[AIInCombat[i]].InterRuptPathPlanning = false;
+			}
 		}
 	}
 }

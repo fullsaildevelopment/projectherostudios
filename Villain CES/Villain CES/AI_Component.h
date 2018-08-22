@@ -39,6 +39,9 @@ struct TAIMovement {
 	float strafeCoolDown = 0;
 	float StrafeCoolDownValue = 100;
 };
+struct TAIHeath {
+	float heath = 100;
+};
 
 struct TAIPathFinding {
 	vector<XMVECTOR> directions;
@@ -48,6 +51,7 @@ struct TAIPathFinding {
 	bool testingPathFinding = true;
 	bool foundDestination = false;
 	int DelayMovement = 0;
+	bool InterRuptPathPlanning=true;
 
 };
 struct Tcover {

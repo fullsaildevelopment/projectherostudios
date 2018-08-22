@@ -46,6 +46,7 @@ struct TWorld
 	TAIMovement		atAIMovement[ENTITYCOUNT];
 	Tcover			atCover[ENTITYCOUNT];
 	TCoverTrigger	atCoverTrigger[ENTITYCOUNT];
+	TAIHeath		atAiHeath[ENTITYCOUNT];
 	//Collision
 	TCollisionMask	atCollisionMask[ENTITYCOUNT];
 	TAABB			atAABB[ENTITYCOUNT];

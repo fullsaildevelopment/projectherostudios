@@ -1915,6 +1915,7 @@ void CGameMangerSystem::FirstSkeltonAiTestLoad()
 
 
 	int spacePirate = CreateSpacePirate(&tThisWorld, AILocation);
+	tThisWorld.atAiHeath[spacePirate].heath = 100;
 	
 	//tThisWorld.atPathPlanining[spacePirate].Goal = nodeindex;
 	tThisWorld.atPathPlanining[spacePirate].startingNode = nodeindex3;
@@ -2340,7 +2341,7 @@ int CGameMangerSystem::SpacePirateGamePlay()
 
 			pcGraphicsSystem->ExecutePipeline(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atMesh[nCurrentEntity].m_nIndexCount, tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask, tThisWorld.atShaderID[nCurrentEntity].m_nShaderID);
 		}
-
+		
 		if (pcAiSystem->GetNumberOfAI() <= 0)
 		{
 		return -1;
@@ -2653,8 +2654,26 @@ int CGameMangerSystem::SpacePirateGamePlay()
 					
 					if (tThisWorld.atAIMask[otherCollisionsIndex[i]].m_tnAIMask >1) {
 						if (tThisWorld.atProjectiles[nCurrentEntity].m_tnProjectileMask == (COMPONENT_PROJECTILESMASK | COMPONENT_METAL)) {
-							pcAiSystem->SetNumberOfAI(pcAiSystem->GetNumberOfAI() - 1);
-							if (tThisWorld.atClip[nCurrentEntity].gunIndex != -1) {
+							if (tThisWorld.atAiHeath[otherCollisionsIndex[i]].heath <= 0) {
+								pcAiSystem->SetNumberOfAI(pcAiSystem->GetNumberOfAI() - 1);
+								if (tThisWorld.atClip[nCurrentEntity].gunIndex != -1) {
+									tThisWorld.atClip[tThisWorld.atClip[nCurrentEntity].gunIndex].fAliveTime.erase
+									(tThisWorld.atClip[tThisWorld.atClip[nCurrentEntity].gunIndex].fAliveTime.begin()
+										+ tThisWorld.atClip[nCurrentEntity].indexInclip);
+
+									pcCollisionSystem->RemoveAABBCollider(nCurrentEntity);
+									tThisWorld.atClip[tThisWorld.atClip[nCurrentEntity].gunIndex].nBulletsFired.erase(tThisWorld.atClip[tThisWorld.atClip[nCurrentEntity].gunIndex].nBulletsFired.begin()
+										+ tThisWorld.atClip[nCurrentEntity].indexInclip);
+
+
+									pcGraphicsSystem->CleanD3DObject(&tThisWorld, nCurrentEntity);
+
+								}
+								pcCollisionSystem->RemoveAABBCollider(otherCollisionsIndex[i]);
+								pcGraphicsSystem->CleanD3DObject(&tThisWorld, otherCollisionsIndex[i]);
+								pcGraphicsSystem->CleanD3DObject(&tThisWorld, tThisWorld.atAIMask[otherCollisionsIndex[i]].GunIndex);
+							}
+							else {
 								tThisWorld.atClip[tThisWorld.atClip[nCurrentEntity].gunIndex].fAliveTime.erase
 								(tThisWorld.atClip[tThisWorld.atClip[nCurrentEntity].gunIndex].fAliveTime.begin()
 									+ tThisWorld.atClip[nCurrentEntity].indexInclip);
@@ -2665,11 +2684,14 @@ int CGameMangerSystem::SpacePirateGamePlay()
 
 
 								pcGraphicsSystem->CleanD3DObject(&tThisWorld, nCurrentEntity);
-
+								tThisWorld.atAiHeath[otherCollisionsIndex[i]].heath -= 50;
+								if (tThisWorld.atAiHeath[otherCollisionsIndex[i]].heath <= 0) {
+									pcAiSystem->SetNumberOfAI(pcAiSystem->GetNumberOfAI() - 1);
+									pcCollisionSystem->RemoveAABBCollider(otherCollisionsIndex[i]);
+									pcGraphicsSystem->CleanD3DObject(&tThisWorld, otherCollisionsIndex[i]);
+									pcGraphicsSystem->CleanD3DObject(&tThisWorld, tThisWorld.atAIMask[otherCollisionsIndex[i]].GunIndex);
+								}
 							}
-							pcCollisionSystem->RemoveAABBCollider(otherCollisionsIndex[i]);
-							pcGraphicsSystem->CleanD3DObject(&tThisWorld, otherCollisionsIndex[i]);
-							pcGraphicsSystem->CleanD3DObject(&tThisWorld, tThisWorld.atAIMask[otherCollisionsIndex[i]].GunIndex);
 						}
 					}
 					else if (tThisWorld.atInputMask[otherCollisionsIndex[i]].m_tnInputMask == (COMPONENT_CLAYTON | COMPONENT_INPUTMASK)) {
@@ -2710,6 +2732,7 @@ int CGameMangerSystem::SpacePirateGamePlay()
 					
 				}
 				if (tThisWorld.atInputMask[nCurrentEntity].m_tnInputMask == (COMPONENT_CLAYTON | COMPONENT_INPUTMASK) && tThisWorld.atAIMask[otherCollisionsIndex[i]].m_tnAIMask == (COMPONENT_AIMASK | COMPONENT_COVERTRIGGER)) {
+					
 					pcAiSystem->MoveAiToCoverLocation(tThisWorld.atCoverTrigger[otherCollisionsIndex[i]], &tThisWorld);
 				}
 			}
