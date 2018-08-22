@@ -1847,10 +1847,18 @@ void CGameMangerSystem::FirstSkeltonAiTestLoad()
 
 	int coverTrigerIndex=CreateCoverTriggerZone(&tThisWorld, coverTriggerMatrix);
 	coverTriggerMatrix.r[3].m128_f32[2] += 10;
+	coverTriggerMatrix.r[3].m128_f32[0] += -3;
+
 	int coverTrigerIndex2 = CreateCoverTriggerZone(&tThisWorld, coverTriggerMatrix);
+	coverTriggerMatrix.r[3].m128_f32[0] += 10;
+
+	int coverTrigerIndex3 = CreateCoverTriggerZone(&tThisWorld, coverTriggerMatrix);
+
 
 	tThisWorld.atSimpleMesh[coverTrigerIndex].m_nColor = XMFLOAT4(0, 0, 1, 1);
 	tThisWorld.atSimpleMesh[coverTrigerIndex2].m_nColor = XMFLOAT4(0, 0, 1, 1);
+	tThisWorld.atSimpleMesh[coverTrigerIndex3].m_nColor = XMFLOAT4(0, 0, 1, 1);
+
 
 
 
@@ -1871,8 +1879,10 @@ void CGameMangerSystem::FirstSkeltonAiTestLoad()
 	int nodeindex2 = CreateNodePoint(&tThisWorld, AILocation);
 	tThisWorld.atCover[cover1].CoverPositions.push_back(nodeindex);
 	tThisWorld.atCover[cover2].CoverPositions.push_back(nodeindex2);
-	tThisWorld.atCoverTrigger[coverTrigerIndex2].coverAiCanGoTo.push_back(tThisWorld.atCover[cover1]);
+	/*tThisWorld.atCoverTrigger[coverTrigerIndex2].coverAiCanGoTo.push_back(tThisWorld.atCover[cover1]);
 	tThisWorld.atCoverTrigger[coverTrigerIndex].coverAiCanGoTo.push_back(tThisWorld.atCover[cover2]);
+	tThisWorld.atCoverTrigger[coverTrigerIndex3].coverAiCanGoTo.push_back(tThisWorld.atCover[cover2]);
+*/
 	AILocation.r[3].m128_f32[1] -= 1;
 	nodePosition.x = nodeLocation.r[3].m128_f32[0];
 	nodePosition.y = nodeLocation.r[3].m128_f32[1];
@@ -1887,6 +1897,8 @@ void CGameMangerSystem::FirstSkeltonAiTestLoad()
 	pcAiSystem->AddNodeToPathFinding(nodeindex3, nodePosition, 1);
 	tThisWorld.atCoverTrigger[coverTrigerIndex2].coverAiCanGoTo.push_back(tThisWorld.atCover[cover1]);
 	tThisWorld.atCoverTrigger[coverTrigerIndex].coverAiCanGoTo.push_back(tThisWorld.atCover[cover2]);
+	tThisWorld.atCoverTrigger[coverTrigerIndex3].coverAiCanGoTo.push_back(tThisWorld.atCover[cover2]);
+
 
 	vector<int> edges;
 	edges.push_back(nodeindex);
