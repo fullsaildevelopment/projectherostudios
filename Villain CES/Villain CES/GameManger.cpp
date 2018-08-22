@@ -1791,19 +1791,26 @@ void CGameMangerSystem::FirstSkeltonAiTestLoad()
 	XMMATRIX wall = m_d3dWorldMatrix;
 	wall.r[3].m128_f32[1] += -1;
 
-	CreateWall(&tThisWorld, wall);
+	int wallidex=CreateWall(&tThisWorld, wall);
 	wall.r[3].m128_f32[0] -= 10;
 	wall.r[3].m128_f32[1] -= 1;
 	wall.r[3].m128_f32[2] -= 1;
+	tThisWorld.atSimpleMesh[wallidex].m_nColor = XMFLOAT4(1, 0, 0, 1);
 
 	int door1Index = CreateDoorWay(&tThisWorld, wall);
+	tThisWorld.atSimpleMesh[door1Index].m_nColor = XMFLOAT4(1, 0, 0, 1);
+
 	wall.r[3].m128_f32[0] -= 22;
 	int door2Index = CreateDoorWay(&tThisWorld, wall);
+	tThisWorld.atSimpleMesh[door2Index].m_nColor = XMFLOAT4(1, 0, 0, 1);
+
 
 	wall = m_d3dWorldMatrix;
 	wall.r[3].m128_f32[1] += -1;
 	wall.r[3].m128_f32[0] += -22;
-	CreateWall(&tThisWorld, wall);
+	int wall2index=CreateWall(&tThisWorld, wall);
+	tThisWorld.atSimpleMesh[wall2index].m_nColor = XMFLOAT4(0, 1, 0, 1);
+
 	XMMATRIX celling = m_d3dWorldMatrix;
 	celling.r[3].m128_f32[1] += 10;
 	CreateCelling(&tThisWorld, celling);
@@ -1827,6 +1834,9 @@ void CGameMangerSystem::FirstSkeltonAiTestLoad()
 	int cover1=	CreateCover(&tThisWorld, CoverLocation, coverPosition);
 	CoverLocation.r[3].m128_f32[0] += 10;
 	int cover2=CreateCover(&tThisWorld, CoverLocation, coverPosition);
+	tThisWorld.atSimpleMesh[cover1].m_nColor = XMFLOAT4(0, 0, 1, 1);
+	tThisWorld.atSimpleMesh[cover2].m_nColor = XMFLOAT4(0, 0, 1, 1);
+
 	XMMATRIX coverTriggerMatrix = CoverLocation;
 	coverTriggerMatrix.r[3].m128_f32[2] -= 14;
 	coverTriggerMatrix.r[3].m128_f32[1] -= 1;
@@ -1835,7 +1845,10 @@ void CGameMangerSystem::FirstSkeltonAiTestLoad()
 	vector<int> coverIndexs;
 	coverIndexs.push_back(cover2);
 
-	int aabbindex=CreateCoverTriggerZone(&tThisWorld, coverTriggerMatrix);
+	int coverTrigerIndex=CreateCoverTriggerZone(&tThisWorld, coverTriggerMatrix);
+	tThisWorld.atSimpleMesh[coverTrigerIndex].m_nColor = XMFLOAT4(0, 0, 1, 1);
+
+
 	XMMATRIX nodeLocation = CoverLocation;
 	nodeLocation.r[3].m128_f32[0] += 3;
 	nodeLocation.r[3].m128_f32[1] -= 1;
@@ -1850,7 +1863,7 @@ void CGameMangerSystem::FirstSkeltonAiTestLoad()
 	pcAiSystem->AddNodeToPathFinding(nodeindex, nodePosition, 1);
 	int nodeindex2 = CreateNodePoint(&tThisWorld, AILocation);
 	tThisWorld.atCover[cover2].CoverPositions.push_back(nodeindex2);
-	tThisWorld.atCoverTrigger[aabbindex].coverAiCanGoTo.push_back(tThisWorld.atCover[cover2]);
+	tThisWorld.atCoverTrigger[coverTrigerIndex].coverAiCanGoTo.push_back(tThisWorld.atCover[cover2]);
 	AILocation.r[3].m128_f32[1] -= 1;
 	nodePosition.x = AILocation.r[3].m128_f32[0];
 	nodePosition.y = AILocation.r[3].m128_f32[1];
@@ -1926,9 +1939,12 @@ void CGameMangerSystem::FirstSkeltonAiTestLoad()
 	XMMATRIX groundSpawnPoint;
 	groundSpawnPoint = m_d3dWorldMatrix;
 	groundSpawnPoint.r[3].m128_f32[1] -= 2;
-	CreateGround(&tThisWorld, groundSpawnPoint);
+	int groundindex=CreateGround(&tThisWorld, groundSpawnPoint);
 	groundSpawnPoint.r[3].m128_f32[2] -= -20;
-	CreateGround(&tThisWorld, groundSpawnPoint);
+	int groundindex2=	CreateGround(&tThisWorld, groundSpawnPoint);
+	tThisWorld.atSimpleMesh[groundindex].m_nColor= XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f);
+	tThisWorld.atSimpleMesh[groundindex2].m_nColor = XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f);
+
 
 	tempImport = pcGraphicsSystem->ReadMesh("meshData_Example_Objects.txt");
 
@@ -2001,22 +2017,13 @@ void CGameMangerSystem::FirstSkeltonAiTestLoad()
 	if (pcCollisionSystem->m_AAbb.size() != 0) {
 		float x = 0;
 	}
-	XMFLOAT4 blue;
-	blue.y = 0;
-	blue.z = 1;
-	blue.w = 1;
-	blue.x = 0;
-	tThisWorld.atSimpleMesh[8].m_nColor = blue;
+
 	for (int nCurrentEntity = 0; nCurrentEntity < ENTITYCOUNT; nCurrentEntity++)
 	{
-		if (nCurrentEntity == aabbindex) {
-			float x = 0;
-		}
+		
 		if (tThisWorld.atCollisionMask[nCurrentEntity].m_tnCollisionMask > 1)
 		{
-			if (nCurrentEntity == aabbindex) {
-				float x = 0;
-			}
+			
 			if (tThisWorld.atSimpleMesh[nCurrentEntity].m_nVertexCount > tThisWorld.atDebugMesh[nCurrentEntity].m_nVertexCount)
 			{
 
@@ -2047,9 +2054,7 @@ void CGameMangerSystem::FirstSkeltonAiTestLoad()
 		{
 			if (tThisWorld.atCollisionMask[nCurrentEntity].m_tnCollisionMask > 1)
 			{
-				if (nCurrentEntity == aabbindex) {
-					float x = 0;
-				}
+			
 				tThisWorld.atAABB[nCurrentEntity] = pcCollisionSystem->updateAABB(tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, tThisWorld.atAABB[nCurrentEntity]);
 			}
 		}
