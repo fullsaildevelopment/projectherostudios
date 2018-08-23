@@ -10,7 +10,8 @@ enum eAIComponent
 	COMPONENT_SHOOT =  1 << 2,
 	COMPONENT_SEARCH = 1 << 3,
 	COMPONENT_SPOTEDPLAYER = 1 << 4,
-	COMPONENT_PATHFINDTEST  = 1<< 5
+	COMPONENT_PATHFINDTEST  = 1<< 5,
+	COMPONENT_COVERTRIGGER	= 1 << 6
 };
 
 struct TAIMask
@@ -45,7 +46,16 @@ struct TAIPathFinding {
 	int startingNode;
 	int Goal;
 	bool testingPathFinding = true;
+	bool foundDestination = false;
 
+};
+struct Tcover {
+	vector<int> CoverPositions;
+	int availableCovers = 0;
+};
+struct TCoverTrigger {
+	vector<Tcover> coverAiCanGoTo;
+	bool inCover;
 };
 
 #endif

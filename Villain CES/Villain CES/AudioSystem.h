@@ -19,6 +19,7 @@ public:
 	GameSound();
 	~GameSound();
 	void IntiializeSystem();
+	void PlaySoundInBank(GameSound* mysound);
 private:
 
 };
@@ -55,7 +56,12 @@ inline void GameSound::IntiializeSystem()
 
 	AkDeviceSettings myDevice;
 	AK::StreamMgr::GetDefaultDeviceSettings(myDevice);
+	//Schedule type Blocking
+	myDevice.uSchedulerTypeFlags = AK_SCHEDULER_BLOCKING;
+	AK::StreamMgr::SetFileLocationResolver();
 	// AkFilePackageLowLevelIOBlocking.h find this file 
+	
+	
 
 #pragma endregion Stream Manager & Device Init
 
@@ -68,6 +74,9 @@ inline void GameSound::IntiializeSystem()
 	{
 		test = -3;
 	}
+
+
+	
 #pragma endregion Sound System & Platform Init
 
 #pragma region
@@ -91,7 +100,12 @@ inline void GameSound::IntiializeSystem()
 	}
 #endif // !AK_OPTIMIZED
 
-#pragma endregion Communication Between Wwise & C++ Project
+#pragma endregion Communication Between Wwise App & C++ Project
+}
+
+inline void GameSound::PlaySoundInBank(GameSound* mysound)
+{
+	AK::SoundEngine::RenderAudio();
 }
 
 

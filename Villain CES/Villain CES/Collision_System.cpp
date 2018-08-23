@@ -258,7 +258,8 @@ XMMATRIX CCollisionSystem::WalkingThrewObjectCheck(XMMATRIX worldPos, TAABB othe
 		xRight<zFar
 		&&xRight<zClose
 		) {
-		while (classify_aabb_to_aabb(otherCollision, UpdateCollision))
+		int numberofLoops = 0;
+		while (classify_aabb_to_aabb(otherCollision, UpdateCollision) && numberofLoops<2000)
 		{
 			//d3d_ResultMatrix = pcGraphicsSystem->SetDefaultWorldPosition();;
 			XMMATRIX moveback;
@@ -267,6 +268,8 @@ XMMATRIX CCollisionSystem::WalkingThrewObjectCheck(XMMATRIX worldPos, TAABB othe
 			D3DMatrix = moveback;
 			
 			UpdateCollision = updateAABB(D3DMatrix, UpdateCollision);
+			numberofLoops += 1;
+
 		}
 		
 	}
@@ -275,7 +278,8 @@ XMMATRIX CCollisionSystem::WalkingThrewObjectCheck(XMMATRIX worldPos, TAABB othe
 		&&xLeft<yBottom
 		&&xLeft<zFar
 		&&xLeft<zClose){
-		while (classify_aabb_to_aabb(otherCollision, UpdateCollision))
+		int numberofLoops = 0;
+		while (classify_aabb_to_aabb(otherCollision, UpdateCollision) && numberofLoops<2000)
 		{
 			//d3d_ResultMatrix = pcGraphicsSystem->SetDefaultWorldPosition();;
 			XMMATRIX moveback;
@@ -283,7 +287,8 @@ XMMATRIX CCollisionSystem::WalkingThrewObjectCheck(XMMATRIX worldPos, TAABB othe
 			moveback.r[3].m128_f32[0] -= 0.01f;
 			D3DMatrix = moveback;
 			UpdateCollision = updateAABB(D3DMatrix, UpdateCollision);
-			
+			numberofLoops += 1;
+
 		}
 		
 	}
@@ -292,7 +297,8 @@ XMMATRIX CCollisionSystem::WalkingThrewObjectCheck(XMMATRIX worldPos, TAABB othe
 		yTop<yBottom
 		&&yTop<zFar
 		&&yTop<zClose) {
-		while (classify_aabb_to_aabb(otherCollision, UpdateCollision))
+		int numberofLoops = 0;
+		while (classify_aabb_to_aabb(otherCollision, UpdateCollision) && numberofLoops<2000)
 		{
 			//d3d_ResultMatrix = pcGraphicsSystem->SetDefaultWorldPosition();;
 			XMMATRIX moveback;
@@ -300,6 +306,7 @@ XMMATRIX CCollisionSystem::WalkingThrewObjectCheck(XMMATRIX worldPos, TAABB othe
 			moveback.r[3].m128_f32[1] -= 0.01f;
 			D3DMatrix = moveback;
 			UpdateCollision = updateAABB(D3DMatrix, UpdateCollision);
+			numberofLoops += 1;
 
 		
 		}
@@ -310,7 +317,8 @@ XMMATRIX CCollisionSystem::WalkingThrewObjectCheck(XMMATRIX worldPos, TAABB othe
 		&&yBottom < yTop
 		&&yBottom<zClose
 		&&yBottom<zFar) {
-		while (classify_aabb_to_aabb(otherCollision, UpdateCollision))
+		int numberofLoops = 0;
+		while (classify_aabb_to_aabb(otherCollision, UpdateCollision) && numberofLoops<2000)
 		{
 			//d3d_ResultMatrix = pcGraphicsSystem->SetDefaultWorldPosition();;
 			XMMATRIX moveback;
@@ -318,7 +326,8 @@ XMMATRIX CCollisionSystem::WalkingThrewObjectCheck(XMMATRIX worldPos, TAABB othe
 			moveback.r[3].m128_f32[1] += 0.01f;
 			D3DMatrix = moveback;
 			UpdateCollision = updateAABB(D3DMatrix, UpdateCollision);
-		
+			numberofLoops += 1;
+
 		}
 	
 	}
@@ -328,7 +337,8 @@ XMMATRIX CCollisionSystem::WalkingThrewObjectCheck(XMMATRIX worldPos, TAABB othe
 		&&zFar < yBottom
 		&&zFar < yTop)
 	{
-		while (classify_aabb_to_aabb(otherCollision, UpdateCollision))
+		int numberofLoops = 0;
+		while (classify_aabb_to_aabb(otherCollision, UpdateCollision) && numberofLoops<2000)
 		{
 			//d3d_ResultMatrix = pcGraphicsSystem->SetDefaultWorldPosition();;
 			XMMATRIX moveback;
@@ -336,6 +346,7 @@ XMMATRIX CCollisionSystem::WalkingThrewObjectCheck(XMMATRIX worldPos, TAABB othe
 			moveback.r[3].m128_f32[2] += 0.01f;
 			D3DMatrix = moveback;
 			UpdateCollision = updateAABB(D3DMatrix, UpdateCollision);
+			numberofLoops += 1;
 
 		}
 		
@@ -345,7 +356,8 @@ XMMATRIX CCollisionSystem::WalkingThrewObjectCheck(XMMATRIX worldPos, TAABB othe
 		&&zClose < xRight
 		&&zClose < yBottom
 		&&zClose < yTop) {
-		while (classify_aabb_to_aabb(otherCollision, UpdateCollision))
+		int numberofLoops = 0;
+		while (classify_aabb_to_aabb(otherCollision, UpdateCollision)&&numberofLoops<2000)
 		{
 			//d3d_ResultMatrix = pcGraphicsSystem->SetDefaultWorldPosition();;
 			XMMATRIX moveback;
@@ -353,6 +365,7 @@ XMMATRIX CCollisionSystem::WalkingThrewObjectCheck(XMMATRIX worldPos, TAABB othe
 			moveback.r[3].m128_f32[2] -= 0.01f;
 			D3DMatrix = moveback;
 			UpdateCollision = updateAABB(D3DMatrix, UpdateCollision);
+			numberofLoops += 1;
 
 		}
 		

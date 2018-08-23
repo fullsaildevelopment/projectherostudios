@@ -46,7 +46,6 @@ struct System_Times
 
 struct Timers 
 {
-	
 	XTime tAppTimer;
 	XTime tSceneTimer;
 };

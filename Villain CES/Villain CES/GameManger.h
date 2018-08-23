@@ -50,7 +50,10 @@ private:
 	bool GamePaused = false;
 	bool GameStart;
 	bool DrawUI = true;
+	float*xPos = new float();
+	float*yPos = new float();
 	TMeshImport bulletMesh;
+
 
 	
 	//ZB Variables
@@ -60,8 +63,9 @@ private:
 	XMMATRIX m_d3dProjectionMatrix;
 	XMMATRIX m_d3dPlayerMatrix;
 	
+	
 	std::vector<TUIVertices*> atUIVertices;
-	//TCamera* CameraSelect[6];
+	
 	TCamera *walkCamera;
 	TCamera *aimCamera;
 	TCamera *debugCamera;
@@ -69,4 +73,5 @@ private:
 	Timers * tAugerTimers;
 	System_Times *tTimerInfo;
 	float m_RealTimeFov;
+	bool bMoving;
 };
