@@ -194,6 +194,9 @@
     <ClCompile Include="Common\AkFilePackageLUT.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="AudioSystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Villain CES.rc">

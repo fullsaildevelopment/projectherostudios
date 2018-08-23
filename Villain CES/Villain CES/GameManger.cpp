@@ -17,6 +17,7 @@ CGameMangerSystem::CGameMangerSystem(HWND window,CInputSystem* _pcInputSystem)
 	walkCamera = new TCamera();
 	debugCamera = new TCamera();
 	menuCamera = new TCamera();
+	pcAudioSystem = new CAudioSystem();
 	//srand(time(NULL));
 
 	
@@ -37,6 +38,7 @@ CGameMangerSystem::~CGameMangerSystem()
 	delete debugCamera;
 	delete walkCamera;
 	delete menuCamera;
+	delete pcAudioSystem;
 }
 
 void CGameMangerSystem::LoadLevel()
@@ -1009,6 +1011,7 @@ int CGameMangerSystem::LoadMainMenu()
 
 void CGameMangerSystem::InitilizeMainMenu()
 {
+	pcAudioSystem->IntiializeSystem();
 	pcGraphicsSystem->CleanD3DLevel(&tThisWorld);
 	atUIVertices.clear();
 

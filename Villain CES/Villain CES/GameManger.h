@@ -8,6 +8,7 @@
 #include"ProjectileSystem.h"
 #include"AI_System.h"
 #include "UI_System.h"
+#include"AudioSystem.h"
 #include <array>
 
 class CGameMangerSystem {
@@ -34,6 +35,7 @@ private:
 	TWorld tThisWorld;
 	CGraphicsSystem	*pcGraphicsSystem;
 	CInputSystem	*pcInputSystem;
+	CAudioSystem    *pcAudioSystem;
 	CPhysicsSystem  *pcPhysicsSystem;
 	CProjectileSystem* pcProjectileSystem;
 	CAISystem		*pcAiSystem;
