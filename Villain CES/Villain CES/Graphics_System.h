@@ -22,6 +22,10 @@ public:
 	ID3D11Device *m_pd3dDevice;                     // the pointer to our Direct3D device interface
 	ID3D11DeviceContext *m_pd3dDeviceContext;           // the pointer to our Direct3D device context
 	ID3D11RenderTargetView *m_pd3dRenderTargetView;
+	ID3D11RenderTargetView *m_pd3dOutsideRenderTargetView;
+	ID3D11Texture2D		*m_pd3dOutsideGlassRenderToTexture;
+	ID3D11ShaderResourceView * m_pd3dOutsideGlassSRV;
+
 	ID3D11DepthStencilState* m_pd3dDepthStencilState;
 	ID3D11DepthStencilView * m_pd3dDepthStencilView;
 	ID3D11RasterizerState* m_pd3dNoCullRasterizerState;
@@ -111,6 +115,7 @@ public:
 	//TTextureOptimization CreateTexturesFromFile(TMaterialImport* arrayOfMaterials, int numberOfEntities);
 	TMaterialOptimized CreateTexturesFromFile(TMaterialImport* arrayOfMaterials, int numberOfEntities);
 	ID3D11ShaderResourceView* TexturesToCubeMap(ID3D11DeviceContext * pd3dDeviceContext, ID3D11Resource* srcText[6]);
+	void UpdateD3D_RenderToTexture();
 	void CreateBuffers(TWorld * ptWorld);
 	void CreateEntityBuffer(TWorld * ptWorld, int nEnityIndex);
 	void CreateShaders(ID3D11Device* pd3dDevice);
@@ -172,6 +177,7 @@ private:
 
 	ID3D11Buffer		*m_pd3dBlinnPhongBuffer;
 	ID3D11Debug			*debug;
+	ID3D11Texture2D		*m_pd3dRenderTargetTexture;
 	float				m_fCameraXPosition;
 	float				m_fCameraYPosition;
 	float				m_fCameraZPosition;

@@ -50,6 +50,7 @@ private:
 	bool GamePaused = false;
 	bool GameStart;
 	bool DrawUI = true;
+	int renderToTexturePassIndex = 0;
 	TMeshImport bulletMesh;
 
 	

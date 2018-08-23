@@ -15,8 +15,9 @@ CGraphicsSystem::~CGraphicsSystem()
 
 void CGraphicsSystem::InitD3D(HWND cTheWindow)
 {
-	#pragma region Window Stuff
+	#pragma region Main Window Stuff
 
+	#pragma region Swapchain
 	// create a struct to hold information about the swap chain
 	DXGI_SWAP_CHAIN_DESC d3dSwapchainDescription;
 
@@ -30,7 +31,7 @@ void CGraphicsSystem::InitD3D(HWND cTheWindow)
 	d3dSwapchainDescription.BufferCount = 1;                                    // one back buffer
 	d3dSwapchainDescription.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;     // use 32-bit color
 	d3dSwapchainDescription.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;      // how swap chain is to be used
-	d3dSwapchainDescription.OutputWindow = cTheWindow;                                // the window to be used
+	d3dSwapchainDescription.OutputWindow = cTheWindow;                          // the window to be used
 	d3dSwapchainDescription.SampleDesc.Count = 1;                               // how many multisamples
 	d3dSwapchainDescription.Windowed = TRUE;                                    // windowed/full-screen mode
 	d3dSwapchainDescription.BufferDesc.Width = cRectangle.right - cRectangle.left;
@@ -38,8 +39,7 @@ void CGraphicsSystem::InitD3D(HWND cTheWindow)
 	d3dSwapchainDescription.BufferDesc.RefreshRate.Numerator = 60;
 	d3dSwapchainDescription.BufferDesc.RefreshRate.Denominator = 1;
 
-	m_fAspectRatio = (float)(cRectangle.bottom - cRectangle.top / cRectangle.right - cRectangle.left);
-#ifdef _DEBUG
+	#ifdef _DEBUG
 	unsigned int nDeviceAndSwapchainFlag = D3D11_CREATE_DEVICE_DEBUG;
 	D3D11CreateDeviceAndSwapChain(NULL,
 		D3D_DRIVER_TYPE_HARDWARE,
@@ -53,8 +53,9 @@ void CGraphicsSystem::InitD3D(HWND cTheWindow)
 		&m_pd3dDevice,
 		NULL,
 		&m_pd3dDeviceContext);
-#endif // DEBUG
-#ifndef _DEBUG
+	#endif // DEBUG
+
+	#ifndef _DEBUG
 	// create a device, device context and swap chain using the information in the scd struct
 	D3D11CreateDeviceAndSwapChain(NULL,
 		D3D_DRIVER_TYPE_HARDWARE,
@@ -69,22 +70,24 @@ void CGraphicsSystem::InitD3D(HWND cTheWindow)
 		NULL,
 		&m_pd3dDeviceContext);
 
-#endif // !_DEBUG
+	#endif // !_DEBUG
 
-#pragma region RenderTargetView And Viewport
+#pragma endregion
+
+	#pragma region RenderTargetView And Viewport
+	m_fAspectRatio = (float)(cRectangle.bottom - cRectangle.top / cRectangle.right - cRectangle.left);
 
 	D3D11_TEXTURE2D_DESC d3dTextureDescription;
 	ZeroMemory(&d3dTextureDescription, sizeof(d3dTextureDescription));
 
-	ID3D11Texture2D *pd3dRenderTargetTexture;
 
-	m_pd3dSwapchain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&pd3dRenderTargetTexture);
-	m_pd3dDevice->CreateRenderTargetView(pd3dRenderTargetTexture, NULL, &m_pd3dRenderTargetView);
+	m_pd3dSwapchain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&m_pd3dRenderTargetTexture);
+	m_pd3dDevice->CreateRenderTargetView(m_pd3dRenderTargetTexture, NULL, &m_pd3dRenderTargetView);
 	float fViewportWidth = 0;
 	float fViewportHeight = 0;
-
-	pd3dRenderTargetTexture->GetDesc(&d3dTextureDescription);
-	pd3dRenderTargetTexture->Release();
+	
+	m_pd3dRenderTargetTexture->GetDesc(&d3dTextureDescription);
+	//pd3dRenderTargetTexture->Release();
 	fViewportWidth = (float)d3dTextureDescription.Width;
 	fViewportHeight = (float)d3dTextureDescription.Height;
 
@@ -98,6 +101,7 @@ void CGraphicsSystem::InitD3D(HWND cTheWindow)
 	};
 #pragma endregion
 
+	#pragma region DepthStencilView And DepthStencilState
 	D3D11_TEXTURE2D_DESC descDepth;
 	descDepth.Width = (UINT)fViewportWidth;
 	descDepth.Height = (UINT)fViewportHeight;
@@ -149,6 +153,9 @@ void CGraphicsSystem::InitD3D(HWND cTheWindow)
 
 #pragma endregion
 
+#pragma endregion
+
+	#pragma region RasterStates
 	/*
 	D3D11_FILL_MODE FillMode;
 	D3D11_CULL_MODE CullMode;
@@ -191,6 +198,9 @@ void CGraphicsSystem::InitD3D(HWND cTheWindow)
 
 	m_pd3dDevice->CreateRasterizerState(&NoCull, &m_pd3dNoCullRasterizerState);
 	m_pd3dDevice->CreateRasterizerState(&Cull, &m_pd3dCullRasterizerState);
+#pragma endregion
+	
+	#pragma region SamplerStates
 	D3D11_SAMPLER_DESC sampTmp
 	{
 		D3D11_FILTER_ANISOTROPIC,
@@ -205,12 +215,38 @@ void CGraphicsSystem::InitD3D(HWND cTheWindow)
 		D3D11_FLOAT32_MAX
 	};
 	m_pd3dDevice->CreateSamplerState(&sampTmp, &m_pd3dSamplerState);
+
+#pragma endregion
+
+	#pragma region RTV
+	DXGI_SAMPLE_DESC tmp;
+	tmp.Count = 1;
+	tmp.Quality = 0;
+	D3D11_TEXTURE2D_DESC offScreenDesc
+	{
+		m_d3dViewport.Width,
+		m_d3dViewport.Height,
+		1,
+		1,
+		DXGI_FORMAT_R8G8B8A8_UNORM_SRGB,
+		tmp,
+		D3D11_USAGE_DEFAULT,
+		D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE,
+		0,//D3D11_CPU_ACCESS_READ | D3D11_CPU_ACCESS_WRITE,
+		D3D11_RESOURCE_MISC_GENERATE_MIPS
+	};
+	m_pd3dSwapchain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&m_pd3dOutsideGlassRenderToTexture);
+
+	m_pd3dDevice->CreateTexture2D(&offScreenDesc, 0, &m_pd3dOutsideGlassRenderToTexture);
+	
+	m_pd3dDevice->CreateRenderTargetView(m_pd3dOutsideGlassRenderToTexture, NULL, &m_pd3dOutsideRenderTargetView);
+#pragma endregion
+
 }
 
 void CGraphicsSystem::UpdateD3D()
 {
 	const float afBackgroundColor[] = { .5f, .05f, .5f, 1 };
-
 	m_pd3dDeviceContext->OMSetRenderTargets(1, &m_pd3dRenderTargetView, m_pd3dDepthStencilView);
 	m_pd3dDeviceContext->ClearRenderTargetView(m_pd3dRenderTargetView, afBackgroundColor);
 	m_pd3dDeviceContext->ClearDepthStencilView(m_pd3dDepthStencilView, D3D11_CLEAR_DEPTH, 1, 0); // clear it to Z exponential Far.
@@ -542,6 +578,7 @@ TMaterialOptimized CGraphicsSystem::CreateTexturesFromFile(TMaterialImport * arr
 				insertFlag = true;
 				//store filename in char*
 				char* x = arrayOfMaterials[i].m_tPBRFileNames[0];
+				int lambert = arrayOfMaterials[i].lambert;
 				//loop number of elements in map times
 				string strEntity;
 				string strMap;
@@ -568,6 +605,10 @@ TMaterialOptimized CGraphicsSystem::CreateTexturesFromFile(TMaterialImport * arr
 						Map_EntityIndex_FileName.insert(pair<int, string>(i, x));
 						materialIndex.push_back(i);
 					}
+				}
+				else if (lambert == 3)
+				{
+					materialIndex.push_back(-2);
 				}
 				else
 				{
@@ -744,6 +785,17 @@ ID3D11ShaderResourceView * CGraphicsSystem::TexturesToCubeMap(ID3D11DeviceContex
 	return srv;
 }
 
+void CGraphicsSystem::UpdateD3D_RenderToTexture()
+{
+	const float afBackgroundColor[] = { .5f, .05f, .5f, 1 };
+
+	//m_pd3dDeviceContext->GenerateMips(
+	m_pd3dDeviceContext->OMSetRenderTargets(1, &m_pd3dOutsideRenderTargetView, m_pd3dDepthStencilView);
+	m_pd3dDeviceContext->ClearRenderTargetView(m_pd3dOutsideRenderTargetView, afBackgroundColor);
+	m_pd3dDeviceContext->ClearDepthStencilView(m_pd3dDepthStencilView, D3D11_CLEAR_DEPTH, 1, 0); // clear it to Z exponential Far.
+	m_pd3dDeviceContext->RSSetViewports(1, &m_d3dViewport);
+}
+
 void CGraphicsSystem::CreateBuffers(TWorld *ptPlanet)//init first frame
 {
 	CreateShaders(m_pd3dDevice);
@@ -909,7 +961,7 @@ XMMATRIX CGraphicsSystem::SetDefaultOffset()
 XMMATRIX CGraphicsSystem::SetDefaultWorldPosition()
 {
 	XMMATRIX DefaultPerspectiveMatrix;
-	// the 90 is for fov if we want to implament field of view
+	// the 90 is for fov if we want to implement field of view
 	DefaultPerspectiveMatrix.r[0].m128_f32[0] = 1;
 	DefaultPerspectiveMatrix.r[0].m128_f32[1] = 0;
 	DefaultPerspectiveMatrix.r[0].m128_f32[2] = 0;
@@ -1075,7 +1127,7 @@ ImporterData CGraphicsSystem::ReadMesh(const char * input_file_path)
 				{
 					bufferSize = sizeof(fMetallicness[materialIndex]) + sizeof(fRoughness[materialIndex]);
 				}
-				else if (lamberts[materialIndex] == 1)
+				else if (lamberts[materialIndex] == 1 || lamberts[materialIndex] == 3)
 				{
 					bufferSize = sizeof(ambientColor[materialIndex]) + sizeof(diffuseColor[materialIndex]) + sizeof(emmissiveColor[materialIndex]) + sizeof(dTransparencyOrShininess[materialIndex]);
 				}
@@ -1130,7 +1182,7 @@ ImporterData CGraphicsSystem::ReadMesh(const char * input_file_path)
 						}
 					}
 				}
-				else if (lamberts[materialIndex] == 1)
+				else if (lamberts[materialIndex] == 1 || lamberts[materialIndex] == 3)
 				{
 					memcpy(&ambientColor[materialIndex], &matBuffer[0], sizeof(ambientColor));
 
@@ -1252,7 +1304,7 @@ ImporterData CGraphicsSystem::ReadMesh(const char * input_file_path)
 		matFile.read((char*)&hasPolygon, sizeof(int));
 		if (hasPolygon)
 		{
-#pragma region ReadMesh
+			#pragma region ReadMesh
 			matFile.read((char*)&polyVertCount, sizeof(int));
 			matFile.read((char*)&uniqueVertexCount, sizeof(int));
 			matFile.read((char*)&worldTranslation[0], sizeof(double) * 3);
@@ -1775,8 +1827,22 @@ void CGraphicsSystem::ExecutePipeline(ID3D11DeviceContext *pd3dDeviceContext, in
 				pd3dDeviceContext->DrawIndexed(m_nIndexCount, 0, 0);
 			}
 			//pd3dDeviceContext->RSSetState(m_pd3dCullRasterizerState);
-			pd3dDeviceContext->PSSetSamplers(0, 0, NULL);
+			//pd3dDeviceContext->PSSetSamplers(0, 1, NULL);
 
+			break;
+		}
+		case 10:
+		{
+			//Set Input_Layout
+			pd3dDeviceContext->IASetInputLayout(m_pd3dMyInputLayout);
+			//Set Shader
+			pd3dDeviceContext->VSSetShader(m_pd3dMyVertexShader, NULL, 0);
+			pd3dDeviceContext->PSSetShader(m_pd3dMyPixelShader, NULL, 0);
+			////Draw
+			if (nGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_SHADERID))
+			{
+				pd3dDeviceContext->DrawIndexed(m_nIndexCount, 0, 0);
+			}
 			break;
 		}
 		default:

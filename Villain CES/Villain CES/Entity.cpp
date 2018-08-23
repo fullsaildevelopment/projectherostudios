@@ -2145,15 +2145,24 @@ unsigned int createMesh(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMeshImpo
 	//TMaterialImport tTempMaterial = tMaterial;
 	int entityMatIndex = temp.materialIndex[meshIndex];
 	int srvIndex = 1;
-	for (int i = 0; i < temp.numberOfMaterials; i++)
+	if (entityMatIndex == -2)
 	{
-		if (temp.Map_SRVIndex_EntityIndex[i] == entityMatIndex)
+		ptWorld->atShaderID[nThisEntity].m_nShaderID = 10;
+	}
+	else
+	{
+		for (int i = 0; i < temp.numberOfMaterials; i++)
 		{
-			srvIndex = i;
+			if (temp.Map_SRVIndex_EntityIndex[i] == entityMatIndex)
+			{
+				srvIndex = i;
+			}
 		}
+		ptWorld->atMesh[nThisEntity].m_d3dSRVDiffuse = temp.SRVArrayOfMaterials[srvIndex];
+		ptWorld->atShaderID[nThisEntity].m_nShaderID = 6;
+
 	}
 
-	ptWorld->atMesh[nThisEntity].m_d3dSRVDiffuse = temp.SRVArrayOfMaterials[srvIndex];
 
 #if TEXTURELOADING
 	for (unsigned int i = 0; i < 9; i++)
@@ -2305,8 +2314,6 @@ unsigned int createMesh(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMeshImpo
 	//default:
 	//	break;
 	//}
-
-	ptWorld->atShaderID[nThisEntity].m_nShaderID = 6;
 
 	TPrimitiveMesh *pMesh = new TPrimitiveMesh[tMesh.nUniqueVertexCount];
 	for (int i = 0; i < tMesh.nUniqueVertexCount; i++)
