@@ -45,6 +45,8 @@ void CGameMangerSystem::LoadLevel()
 	
 	pcGraphicsSystem->CleanD3DLevel(&tThisWorld);
 	
+	InitializePauseScreen();
+
 	pcAiSystem->SetNumberOfAI(2);
 	tTimerInfo->StartClock(tAugerTimers->tSceneTimer);
 
@@ -323,7 +325,7 @@ int CGameMangerSystem::InGameUpdate()
 	 
 	if (pcInputSystem->InputCheck(G_KEY_P)) 
 	{
-		InitializePauseScreen();
+		//InitializePauseScreen();
 		return 3;
 	}
 	/*if (pcInputSystem->InputCheck(G_KEY_U)) {
@@ -1165,7 +1167,7 @@ int CGameMangerSystem::LoadPauseScreen()
 
 	pcGraphicsSystem->UpdateD3D();
 
-	HDC tempHDC = GetDC(0);
+	HDC tHDC = GetDC(0);
 
 	for (int nCurrentEntity = 0; nCurrentEntity < ENTITYCOUNT; nCurrentEntity++)
 	{
@@ -1198,7 +1200,7 @@ int CGameMangerSystem::LoadPauseScreen()
 		}
 		if (tThisWorld.atUIMask[nCurrentEntity].m_tnUIMask == (COMPONENT_UIMASK | COMPONENT_TEXT | COMPONENT_LABEL | COMPONENT_BUTTON))
 		{
-			HGDIOBJ oldFont = SelectObject(tempHDC, (HGDIOBJ)pcUISystem->myFont);
+			HGDIOBJ oldFont = SelectObject(tHDC, (HGDIOBJ)pcUISystem->myFont);
 
 			if (PtInRect(&tThisWorld.atButton[nCurrentEntity].boundingBox, clickPoint))
 				return tThisWorld.atButton[nCurrentEntity].sceneIndex;
@@ -1208,7 +1210,7 @@ int CGameMangerSystem::LoadPauseScreen()
 				tThisWorld.atText[nCurrentEntity].textColor[0] = 166;
 				tThisWorld.atText[nCurrentEntity].textColor[1] = 166;
 				tThisWorld.atText[nCurrentEntity].textColor[2] = 166;
-				SetBkColor(tempHDC, RGB(255, 255, 255));
+				SetBkColor(tHDC, RGB(255, 255, 255));
 			}
 			else
 			{
@@ -1216,26 +1218,18 @@ int CGameMangerSystem::LoadPauseScreen()
 				tThisWorld.atText[nCurrentEntity].textColor[0] = 255;
 				tThisWorld.atText[nCurrentEntity].textColor[1] = 255;
 				tThisWorld.atText[nCurrentEntity].textColor[2] = 255;
-				SetBkColor(tempHDC, RGB(0, 0, 0));
+				SetBkColor(tHDC, RGB(0, 0, 0));
 			}
-			SetTextColor(tempHDC, RGB(tThisWorld.atText[nCurrentEntity].textColor[0], tThisWorld.atText[nCurrentEntity].textColor[1], tThisWorld.atText[nCurrentEntity].textColor[2]));
-			SetBkMode(tempHDC, OPAQUE);
-			//if (drawtext) {
-			//	drawtext = false;
-			//	DrawText(tempHDC, tThisWorld.atText[nCurrentEntity].textBuffer, tThisWorld.atText[nCurrentEntity].textSize, &tThisWorld.atText[nCurrentEntity].textBoundingBox, DT_NOCLIP | DT_WORD_ELLIPSIS);
-			//}
+			SetTextColor(tHDC, RGB(tThisWorld.atText[nCurrentEntity].textColor[0], tThisWorld.atText[nCurrentEntity].textColor[1], tThisWorld.atText[nCurrentEntity].textColor[2]));
+			SetBkMode(tHDC, OPAQUE);
 			
-			//int success = InvalidateRect(cApplicationWindow, &tThisWorld.atButton[nCurrentEntity].boundingBox, true);
+			DrawText(tHDC, tThisWorld.atText[nCurrentEntity].textBuffer, tThisWorld.atText[nCurrentEntity].textSize, &tThisWorld.atText[nCurrentEntity].textBoundingBox, DT_CENTER);
 
-			//DrawText(tempHDC, tThisWorld.atText[nCurrentEntity].textBuffer, tThisWorld.atText[nCurrentEntity].textSize, &tThisWorld.atText[nCurrentEntity].textBoundingBox, DT_CALCRECT);
-			DrawText(tempHDC, tThisWorld.atText[nCurrentEntity].textBuffer, tThisWorld.atText[nCurrentEntity].textSize, &tThisWorld.atText[nCurrentEntity].textBoundingBox, DT_CENTER);
-			//TextOut(tempHDC, tThisWorld.atText[nCurrentEntity].textBoundingBox.left, tThisWorld.atText[nCurrentEntity].textBoundingBox.top, tThisWorld.atText[nCurrentEntity].textBuffer, tThisWorld.atText[nCurrentEntity].textSize);
-
-			SelectObject(tempHDC, oldFont);
+			SelectObject(tHDC, oldFont);
 		}
 	}
 
-	ReleaseDC(cApplicationWindow, tempHDC);
+	ReleaseDC(cApplicationWindow, tHDC);
 
 	pcGraphicsSystem->m_pd3dSwapchain->Present(0, 0);
 
@@ -1249,9 +1243,6 @@ void CGameMangerSystem::InitializePauseScreen()
 	unsigned int nThisEntity;
 	
 	{
-		//wchar_t wideChar[] =
-		//{ L"UI_Textures.fbm/play.png" };
-
 		wchar_t text[] =
 		{ L"CONTINUE" };
 
@@ -1267,9 +1258,6 @@ void CGameMangerSystem::InitializePauseScreen()
 	}
 
 	{
-		//wchar_t wideChar[] =
-		//{ L"UI_Textures.fbm/play.png" };
-
 		wchar_t text[] =
 		{ L"OPTIONS" };
 
@@ -1285,9 +1273,6 @@ void CGameMangerSystem::InitializePauseScreen()
 	}
 
 	{
-		//wchar_t wideChar[] =
-		//{ L"UI_Textures.fbm/play.png" };
-
 		wchar_t text[] =
 		{ L"QUIT" };
 
@@ -1311,40 +1296,9 @@ void CGameMangerSystem::InitializePauseScreen()
 
 		pcGraphicsSystem->CreateEntityBuffer(&tThisWorld, nThisEntity);
 	}
-
-	//nThisEntity = CreateUILabel(&tThisWorld, menuCamera->d3d_Position, 2, 1, 0, 0, atUIVertices);
-	////pcUISystem->AddTextureToUI(&tThisWorld, nThisEntity, pcGraphicsSystem->m_pd3dDevice, wideChar);
-	//pcUISystem->AddButtonToUI(&tThisWorld, nThisEntity, 3, cApplicationWindow);
-
-	//nThisEntity = CreateUILabel(&tThisWorld, menuCamera->d3d_Position, 2, 1, 0, -1.2, atUIVertices);
-	//pcUISystem->AddTextureToUI(&tThisWorld, nThisEntity, pcGraphicsSystem->m_pd3dDevice, wideChar);
-	//pcUISystem->AddButtonToUI(&tThisWorld, nThisEntity, 3, cApplicationWindow);
-	//HDC tempHDC = ::GetDC(0);
-
-	/*POINT tempPoint = { tThisWorld.atButton[nThisEntity].boundingBox.left, tThisWorld.atButton[nThisEntity].boundingBox.top };
-	POINT tempPoint2 = { tThisWorld.atButton[nThisEntity].boundingBox.right, tThisWorld.atButton[nThisEntity].boundingBox.bottom };
-	
-	bool worked = ClientToScreen(cApplicationWindow, &tempPoint);
-	worked = ClientToScreen(cApplicationWindow, &tempPoint2);
-
-	tThisWorld.atText[nThisEntity].textBoundingBox.left = tempPoint.x;
-	tThisWorld.atText[nThisEntity].textBoundingBox.top = tempPoint.y;
-	tThisWorld.atText[nThisEntity].textBoundingBox.right = tempPoint2.x;
-	tThisWorld.atText[nThisEntity].textBoundingBox.bottom = tempPoint2.y;*/
 	
 	if (pcUISystem->myFont == nullptr)
 		pcUISystem->myFont = CreateFontA(36, 20, 0, 0, FW_BOLD, false, false, false, 0, 0, 0, 0, 0, 0);
-
-	//SelectObject(tempHDC, (HGDIOBJ)pcUISystem->myFont);
-
-	//tThisWorld.atText[nThisEntity].textBuffer = wideChar;
-
-	/*SetTextColor(tempHDC, RGB(255, 255, 255));
-	SetBkMode(tempHDC, TRANSPARENT);
-
-	DrawText(tempHDC, wideChar, ARRAYSIZE(wideChar), &tThisWorld.atText[nThisEntity].textBoundingBox, DT_CENTER);*/
-
-	//::ReleaseDC(cApplicationWindow, tempHDC);
 }
 
 void CGameMangerSystem::LoadPathFindingTest()

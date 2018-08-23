@@ -61,12 +61,12 @@ void CUISystem::AddTextToUI(TWorld* tThisWorld, unsigned int nThisEntity, HWND c
 
 	tThisWorld->atText[nThisEntity].textSize = textSize - 1;
 
-	HDC tempHDC = GetDC(0);
+	HDC tHDC = GetDC(0);
 
 	SIZE tempSize;
-	GetTextExtentPoint32(tempHDC, tThisWorld->atText[nThisEntity].textBuffer, tThisWorld->atText[nThisEntity].textSize, &tempSize);
+	GetTextExtentPoint32(tHDC, tThisWorld->atText[nThisEntity].textBuffer, tThisWorld->atText[nThisEntity].textSize, &tempSize);
 
-	ReleaseDC(cApplicationWindow, tempHDC);
+	ReleaseDC(cApplicationWindow, tHDC);
 
 	POINT tempPoint = { tThisWorld->atButton[nThisEntity].boundingBox.left, tThisWorld->atButton[nThisEntity].boundingBox.top };
 	POINT tempPoint2 = { tThisWorld->atButton[nThisEntity].boundingBox.right, tThisWorld->atButton[nThisEntity].boundingBox.bottom };
