@@ -52,21 +52,49 @@ void CUISystem::AddButtonToUI(TWorld* tThisWorld, unsigned int nThisEntity, int 
 
 void CUISystem::AddTextToUI(TWorld* tThisWorld, unsigned int nThisEntity, HWND cApplicationWindow, wchar_t* text, unsigned int textSize, int* textColor)
 {
+	tThisWorld->atText[nThisEntity].textBuffer = new wchar_t[textSize]; 
+
+	for (int i = 0; i < textSize; ++i)
+	{
+		tThisWorld->atText[nThisEntity].textBuffer[i] = text[i];
+	}
+
+	tThisWorld->atText[nThisEntity].textSize = textSize - 1;
+
+	HDC tempHDC = GetDC(0);
+
+	SIZE tempSize;
+	GetTextExtentPoint32(tempHDC, tThisWorld->atText[nThisEntity].textBuffer, tThisWorld->atText[nThisEntity].textSize, &tempSize);
+
+	ReleaseDC(cApplicationWindow, tempHDC);
+
 	POINT tempPoint = { tThisWorld->atButton[nThisEntity].boundingBox.left, tThisWorld->atButton[nThisEntity].boundingBox.top };
 	POINT tempPoint2 = { tThisWorld->atButton[nThisEntity].boundingBox.right, tThisWorld->atButton[nThisEntity].boundingBox.bottom };
 
 	bool worked = ClientToScreen(cApplicationWindow, &tempPoint);
 	worked = ClientToScreen(cApplicationWindow, &tempPoint2);
 
-	
+	int difference = (tempSize.cx * 3) - (tempPoint2.x - tempPoint.x);
+	if (difference > 0)
+	{
+		tThisWorld->atText[nThisEntity].textBoundingBox.left = tempPoint.x - (difference / 2);
+		tThisWorld->atText[nThisEntity].textBoundingBox.top = tempPoint.y;
+		tThisWorld->atText[nThisEntity].textBoundingBox.right = tempPoint2.x + (difference / 2);
+		tThisWorld->atText[nThisEntity].textBoundingBox.bottom = tempPoint2.y;
 
-	tThisWorld->atText[nThisEntity].textBoundingBox.left = tempPoint.x;
-	tThisWorld->atText[nThisEntity].textBoundingBox.top = tempPoint.y;
-	tThisWorld->atText[nThisEntity].textBoundingBox.right = tempPoint2.x;
-	tThisWorld->atText[nThisEntity].textBoundingBox.bottom = tempPoint2.y;
+		tThisWorld->atButton[nThisEntity].boundingBox.left -= (difference / 2);
+		tThisWorld->atButton[nThisEntity].boundingBox.right += (difference / 2);
+	}
+	else
+	{
+		tThisWorld->atText[nThisEntity].textBoundingBox.left = tempPoint.x + (abs(difference) / 2);
+		tThisWorld->atText[nThisEntity].textBoundingBox.top = tempPoint.y;
+		tThisWorld->atText[nThisEntity].textBoundingBox.right = tempPoint2.x - (abs(difference) / 2);;
+		tThisWorld->atText[nThisEntity].textBoundingBox.bottom = tempPoint2.y;
 
-	tThisWorld->atText[nThisEntity].textBuffer = text;
-	tThisWorld->atText[nThisEntity].textSize = textSize - 1;
+		tThisWorld->atButton[nThisEntity].boundingBox.left += (abs(difference) / 2);
+		tThisWorld->atButton[nThisEntity].boundingBox.right -= (abs(difference) / 2);
+	}
 
 	tThisWorld->atText[nThisEntity].textColor[0] = textColor[0];
 	tThisWorld->atText[nThisEntity].textColor[1] = textColor[1];

@@ -217,8 +217,8 @@ void CGraphicsSystem::CleanD3DLevel(TWorld * ptPlanet)
 {
 	for (int nEntityIndex = 0; nEntityIndex < ENTITYCOUNT; nEntityIndex++)
 	{
-		if (ptPlanet->atUIMask[nEntityIndex].m_tnUIMask == (COMPONENT_LABEL | COMPONENT_TEXT | COMPONENT_UIMASK | COMPONENT_BUTTON))
-			continue;
+		/*if (ptPlanet->atUIMask[nEntityIndex].m_tnUIMask == (COMPONENT_LABEL | COMPONENT_TEXT | COMPONENT_UIMASK | COMPONENT_BUTTON))
+			continue;*/
 		//Check planet's mask at [i] to see what needs to be released
 		if (ptPlanet->atGraphicsMask[nEntityIndex].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_DEBUGMESH | COMPONENT_SHADERID))
 		{
@@ -236,6 +236,7 @@ void CGraphicsSystem::CleanD3DLevel(TWorld * ptPlanet)
 		{
 			ptPlanet->atMesh[nEntityIndex].m_pd3dVertexBuffer->Release();
 			ptPlanet->atMesh[nEntityIndex].m_pd3dIndexBuffer->Release();
+			ptPlanet->atMesh[nEntityIndex].m_d3dSRVDiffuse->Release();
 		}
 		destroyEntity(ptPlanet, nEntityIndex);
 	}
@@ -407,8 +408,8 @@ void CGraphicsSystem::CreateBuffers(TWorld *ptPlanet)//init first frame
 		{
 			if (ptPlanet->atMesh[nCurrentEntity].m_nIndexCount && ptPlanet->atMesh[nCurrentEntity].m_nVertexCount)
 			{
-				m_pd3dDevice->CreateBuffer(&ptPlanet->atMesh[nCurrentEntity].m_d3dVertexBufferDesc, &ptPlanet->atMesh[nCurrentEntity].m_d3dVertexData, &ptPlanet->atMesh[nCurrentEntity].m_pd3dVertexBuffer);
-				m_pd3dDevice->CreateBuffer(&ptPlanet->atMesh[nCurrentEntity].m_d3dIndexBufferDesc, &ptPlanet->atMesh[nCurrentEntity].m_d3dIndexData, &ptPlanet->atMesh[nCurrentEntity].m_pd3dIndexBuffer);
+				HRESULT hr = m_pd3dDevice->CreateBuffer(&ptPlanet->atMesh[nCurrentEntity].m_d3dVertexBufferDesc, &ptPlanet->atMesh[nCurrentEntity].m_d3dVertexData, &ptPlanet->atMesh[nCurrentEntity].m_pd3dVertexBuffer);
+				hr = m_pd3dDevice->CreateBuffer(&ptPlanet->atMesh[nCurrentEntity].m_d3dIndexBufferDesc, &ptPlanet->atMesh[nCurrentEntity].m_d3dIndexData, &ptPlanet->atMesh[nCurrentEntity].m_pd3dIndexBuffer);
 			}
 		}
 	}

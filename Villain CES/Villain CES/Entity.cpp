@@ -214,6 +214,21 @@ void destroyEntity(TWorld * ptWorld, unsigned int nThisEntity)
 	ptWorld->atClip[nThisEntity].tryToShoot = false;
 	ptWorld->atClip[nThisEntity].tryToReload = false;
 	ptWorld->atClip[nThisEntity].maderay = false;
+
+	ptWorld->atLabel[nThisEntity].height = 0;
+	ptWorld->atLabel[nThisEntity].width = 0;
+	ptWorld->atLabel[nThisEntity].x = 0;
+	ptWorld->atLabel[nThisEntity].y = 0;
+
+	ptWorld->atButton[nThisEntity].boundingBox = { 0, 0, 0, 0 };
+	ptWorld->atButton[nThisEntity].sceneIndex = 0;
+
+	ptWorld->atText[nThisEntity].textBoundingBox = { 0, 0, 0, 0 };
+	ptWorld->atText[nThisEntity].textBuffer = nullptr;
+	ptWorld->atText[nThisEntity].textColor[0] = 0;
+	ptWorld->atText[nThisEntity].textColor[1] = 0;
+	ptWorld->atText[nThisEntity].textColor[2] = 0;
+	ptWorld->atText[nThisEntity].textSize = -1;
 }
 
 unsigned int createDebugTransformLines(TWorld * ptWorld)

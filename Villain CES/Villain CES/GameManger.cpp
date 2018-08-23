@@ -971,14 +971,26 @@ int CGameMangerSystem::LoadMainMenu()
 
 	for (int nCurrentEntity = 0; nCurrentEntity < ENTITYCOUNT; nCurrentEntity++)
 	{
-		if (tThisWorld.atUIMask[nCurrentEntity].m_tnUIMask == COMPONENT_UIMASK | COMPONENT_LABEL | COMPONENT_BUTTON)
+		if (tThisWorld.atUIMask[nCurrentEntity].m_tnUIMask == (COMPONENT_UIMASK | COMPONENT_LABEL))
+		{
+			tTempVertexBuffer.m_d3dWorldMatrix = tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix;
+			tTempVertexBuffer.m_d3dViewMatrix = m_d3dViewMatrix;
+			tTempVertexBuffer.m_d3dProjectionMatrix = m_d3dProjectionMatrix;
+
+			pcGraphicsSystem->InitUIShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tTempVertexBuffer, tTempPixelBuffer, tThisWorld.atMesh[nCurrentEntity], menuCamera->d3d_Position);
+			pcGraphicsSystem->ExecutePipeline(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atMesh[nCurrentEntity].m_nIndexCount, tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask, tThisWorld.atShaderID[nCurrentEntity].m_nShaderID);
+			
+			tTempPixelBuffer.hoverColor = XMFLOAT4(0, 0, 0, 1);
+		}
+
+		if (tThisWorld.atUIMask[nCurrentEntity].m_tnUIMask == (COMPONENT_UIMASK | COMPONENT_LABEL | COMPONENT_BUTTON))
 		{
 			if (PtInRect(&tThisWorld.atButton[nCurrentEntity].boundingBox, clickPoint))
 			{
 				if (tThisWorld.atButton[nCurrentEntity].sceneIndex == 1)
 				{
 					atUIVertices.clear();
-					pcGraphicsSystem->CleanD3DLevel(&tThisWorld);
+					//pcGraphicsSystem->CleanD3DLevel(&tThisWorld);
 				}
 					//	InitializePauseScreen();
 
@@ -1074,7 +1086,7 @@ int CGameMangerSystem::LoadTitleScreen()
 
 	for (int nCurrentEntity = 0; nCurrentEntity < ENTITYCOUNT; nCurrentEntity++)
 	{
-		if (tThisWorld.atUIMask[nCurrentEntity].m_tnUIMask == COMPONENT_UIMASK | COMPONENT_LABEL | COMPONENT_BUTTON)
+		if (tThisWorld.atUIMask[nCurrentEntity].m_tnUIMask == (COMPONENT_UIMASK | COMPONENT_LABEL))
 		{
 			if (PtInRect(&tThisWorld.atButton[nCurrentEntity].boundingBox, clickPoint))
 			{
@@ -1120,6 +1132,7 @@ int CGameMangerSystem::LoadTitleScreen()
 void CGameMangerSystem::InitializeTitleScreen()
 {
 	pcGraphicsSystem->CleanD3DLevel(&tThisWorld);
+	atUIVertices.clear();
 	
 	menuCamera->d3d_Position = pcGraphicsSystem->SetDefaultCameraMatrix();
 	
@@ -1195,7 +1208,7 @@ int CGameMangerSystem::LoadPauseScreen()
 				tThisWorld.atText[nCurrentEntity].textColor[0] = 166;
 				tThisWorld.atText[nCurrentEntity].textColor[1] = 166;
 				tThisWorld.atText[nCurrentEntity].textColor[2] = 166;
-
+				SetBkColor(tempHDC, RGB(255, 255, 255));
 			}
 			else
 			{
@@ -1214,8 +1227,9 @@ int CGameMangerSystem::LoadPauseScreen()
 			
 			//int success = InvalidateRect(cApplicationWindow, &tThisWorld.atButton[nCurrentEntity].boundingBox, true);
 
-			//DrawText(tempHDC, tThisWorld.atText[nCurrentEntity].textBuffer, tThisWorld.atText[nCurrentEntity].textSize, &tThisWorld.atText[nCurrentEntity].textBoundingBox, DT_NOCLIP | DT_WORD_ELLIPSIS);
-			TextOut(tempHDC, tThisWorld.atText[nCurrentEntity].textBoundingBox.left, tThisWorld.atText[nCurrentEntity].textBoundingBox.top, tThisWorld.atText[nCurrentEntity].textBuffer, tThisWorld.atText[nCurrentEntity].textSize);
+			//DrawText(tempHDC, tThisWorld.atText[nCurrentEntity].textBuffer, tThisWorld.atText[nCurrentEntity].textSize, &tThisWorld.atText[nCurrentEntity].textBoundingBox, DT_CALCRECT);
+			DrawText(tempHDC, tThisWorld.atText[nCurrentEntity].textBuffer, tThisWorld.atText[nCurrentEntity].textSize, &tThisWorld.atText[nCurrentEntity].textBoundingBox, DT_CENTER);
+			//TextOut(tempHDC, tThisWorld.atText[nCurrentEntity].textBoundingBox.left, tThisWorld.atText[nCurrentEntity].textBoundingBox.top, tThisWorld.atText[nCurrentEntity].textBuffer, tThisWorld.atText[nCurrentEntity].textSize);
 
 			SelectObject(tempHDC, oldFont);
 		}
@@ -1239,7 +1253,7 @@ void CGameMangerSystem::InitializePauseScreen()
 		//{ L"UI_Textures.fbm/play.png" };
 
 		wchar_t text[] =
-		{ L"START" };
+		{ L"CONTINUE" };
 
 		int tempTextColor[3] = { 255, 255, 255 };
 
@@ -1252,6 +1266,41 @@ void CGameMangerSystem::InitializePauseScreen()
 		pcGraphicsSystem->CreateEntityBuffer(&tThisWorld, nThisEntity);
 	}
 
+	{
+		//wchar_t wideChar[] =
+		//{ L"UI_Textures.fbm/play.png" };
+
+		wchar_t text[] =
+		{ L"OPTIONS" };
+
+		int tempTextColor[3] = { 255, 255, 255 };
+
+		nThisEntity = CreateUILabel(&tThisWorld, menuCamera->d3d_Position, 2, 1, 0, 0, atUIVertices);
+		//pcUISystem->AddTextureToUI(&tThisWorld, nThisEntity, pcGraphicsSystem->m_pd3dDevice, wideChar);
+		pcUISystem->AddButtonToUI(&tThisWorld, nThisEntity, -3, cApplicationWindow);
+
+		pcUISystem->AddTextToUI(&tThisWorld, nThisEntity, cApplicationWindow, text, ARRAYSIZE(text), tempTextColor);
+
+		pcGraphicsSystem->CreateEntityBuffer(&tThisWorld, nThisEntity);
+	}
+
+	{
+		//wchar_t wideChar[] =
+		//{ L"UI_Textures.fbm/play.png" };
+
+		wchar_t text[] =
+		{ L"QUIT" };
+
+		int tempTextColor[3] = { 255, 255, 255 };
+
+		nThisEntity = CreateUILabel(&tThisWorld, menuCamera->d3d_Position, 2, 1, 0, -1.2, atUIVertices);
+		//pcUISystem->AddTextureToUI(&tThisWorld, nThisEntity, pcGraphicsSystem->m_pd3dDevice, wideChar);
+		pcUISystem->AddButtonToUI(&tThisWorld, nThisEntity, -3, cApplicationWindow);
+
+		pcUISystem->AddTextToUI(&tThisWorld, nThisEntity, cApplicationWindow, text, ARRAYSIZE(text), tempTextColor);
+
+		pcGraphicsSystem->CreateEntityBuffer(&tThisWorld, nThisEntity);
+	}
 
 	{
 		wchar_t wideChar[] =
@@ -1270,7 +1319,7 @@ void CGameMangerSystem::InitializePauseScreen()
 	//nThisEntity = CreateUILabel(&tThisWorld, menuCamera->d3d_Position, 2, 1, 0, -1.2, atUIVertices);
 	//pcUISystem->AddTextureToUI(&tThisWorld, nThisEntity, pcGraphicsSystem->m_pd3dDevice, wideChar);
 	//pcUISystem->AddButtonToUI(&tThisWorld, nThisEntity, 3, cApplicationWindow);
-	HDC tempHDC = ::GetDC(0);
+	//HDC tempHDC = ::GetDC(0);
 
 	/*POINT tempPoint = { tThisWorld.atButton[nThisEntity].boundingBox.left, tThisWorld.atButton[nThisEntity].boundingBox.top };
 	POINT tempPoint2 = { tThisWorld.atButton[nThisEntity].boundingBox.right, tThisWorld.atButton[nThisEntity].boundingBox.bottom };
@@ -1284,7 +1333,7 @@ void CGameMangerSystem::InitializePauseScreen()
 	tThisWorld.atText[nThisEntity].textBoundingBox.bottom = tempPoint2.y;*/
 	
 	if (pcUISystem->myFont == nullptr)
-		pcUISystem->myFont = CreateFontA(36, 21, 0, 0, FW_BOLD, false, false, false, 0, 0, 0, 0, 0, 0);
+		pcUISystem->myFont = CreateFontA(36, 20, 0, 0, FW_BOLD, false, false, false, 0, 0, 0, 0, 0, 0);
 
 	//SelectObject(tempHDC, (HGDIOBJ)pcUISystem->myFont);
 
@@ -1295,7 +1344,7 @@ void CGameMangerSystem::InitializePauseScreen()
 
 	DrawText(tempHDC, wideChar, ARRAYSIZE(wideChar), &tThisWorld.atText[nThisEntity].textBoundingBox, DT_CENTER);*/
 
-	::ReleaseDC(cApplicationWindow, tempHDC);
+	//::ReleaseDC(cApplicationWindow, tempHDC);
 }
 
 void CGameMangerSystem::LoadPathFindingTest()
