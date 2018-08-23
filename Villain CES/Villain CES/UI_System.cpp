@@ -13,7 +13,6 @@ CUISystem::~CUISystem()
 
 void CUISystem::DrawMenu(TWorld* ptWorld, CGraphicsSystem* pcGraphicsSystem, XMMATRIX cameraMatrix, XMMATRIX worldMatrix)
 {
-	
 }
 
 void CUISystem::AddTextureToUI(TWorld* tThisWorld, unsigned int nThisEntity, ID3D11Device* device, wchar_t* filepath)
@@ -101,4 +100,30 @@ void CUISystem::AddTextToUI(TWorld* tThisWorld, unsigned int nThisEntity, HWND c
 	tThisWorld->atText[nThisEntity].textColor[2] = textColor[2];
 
 	tThisWorld->atUIMask[nThisEntity].m_tnUIMask = tThisWorld->atUIMask[nThisEntity].m_tnUIMask | COMPONENT_TEXT;
+}
+
+void CUISystem::DrawPauseMenu(TWorld* tThisWorld, HDC* toHDC, HWND* cApplicationWindow, unsigned int nCurrentEntity)
+{
+	RECT window;
+	GetWindowRect(*cApplicationWindow, &window);
+
+	float screenWidth = window.right - window.left;
+	float screenHeight = window.bottom - window.top;
+
+	HDC tempHDC = CreateCompatibleDC(*toHDC);
+	HBITMAP memBM = CreateCompatibleBitmap(*toHDC, screenWidth, screenHeight);
+	SelectObject(tempHDC, memBM);
+
+	RECT tempRect;
+	SetRect(&tempRect, tThisWorld->atText[nCurrentEntity].textBoundingBox.left, tThisWorld->atText[nCurrentEntity].textBoundingBox.top, tThisWorld->atText[nCurrentEntity].textBoundingBox.right, tThisWorld->atText[nCurrentEntity].textBoundingBox.bottom);
+
+	DrawText(tempHDC, tThisWorld->atText[nCurrentEntity].textBuffer, tThisWorld->atText[nCurrentEntity].textSize, &tempRect, DT_CENTER);
+
+	BitBlt(*toHDC, tThisWorld->atText[nCurrentEntity].textBoundingBox.left, tThisWorld->atText[nCurrentEntity].textBoundingBox.right, tThisWorld->atText[nCurrentEntity].textBoundingBox.right - tThisWorld->atText[nCurrentEntity].textBoundingBox.left, tThisWorld->atText[nCurrentEntity].textBoundingBox.bottom - tThisWorld->atText[nCurrentEntity].textBoundingBox.top, tempHDC, tempRect.left, tempRect.top, SRCCOPY);
+
+	DeleteObject(memBM);
+	ReleaseDC(NULL, tempHDC);
+	DeleteDC(tempHDC);
+
+	//SelectObject(tHDC, oldFont);
 }
