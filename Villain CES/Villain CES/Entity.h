@@ -91,6 +91,9 @@ unsigned int createCube(TWorld * ptWorld);
 
 unsigned int createDebugGrid(TWorld * ptWorld);
 
+
+unsigned int CreateSkybox(TWorld * ptWorld, ID3D11ShaderResourceView* srv);
+
 unsigned int CreateClayTon(TWorld * ptWorld);
 unsigned int CreateBullet(TWorld * ptWorld, XMMATRIX bulletSpawnLocation, int MaterialID);
 unsigned int AimingLine(TWorld * ptWorld, XMMATRIX BulletSpawnLocation, int parentWorldMatrixIndex, float xoffset, float yoffset, float zoffset);

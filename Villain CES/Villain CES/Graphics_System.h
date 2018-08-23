@@ -10,6 +10,8 @@
 #include "QuadGeometryShader.csh"
 #include "QuadVertexShader.csh"
 #include "QuadPixelShader.csh"
+#include "SkyboxVertexShader.csh"
+#include "SkyboxPixelShader.csh"
 #include <vector>
 #include <string.h>
 class CGraphicsSystem
@@ -22,6 +24,10 @@ public:
 	ID3D11RenderTargetView *m_pd3dRenderTargetView;
 	ID3D11DepthStencilState* m_pd3dDepthStencilState;
 	ID3D11DepthStencilView * m_pd3dDepthStencilView;
+	ID3D11RasterizerState* m_pd3dNoCullRasterizerState;
+	ID3D11RasterizerState* m_pd3dCullRasterizerState;
+	ID3D11SamplerState * m_pd3dSamplerState;
+
 	ID3D11Texture2D* m_pd3dDepthStencil;
 	D3D11_VIEWPORT m_d3dViewport;
 
@@ -103,6 +109,7 @@ public:
 	*/
 	//TTextureOptimization CreateTexturesFromFile(TMaterialImport* arrayOfMaterials, int numberOfEntities);
 	TMaterialOptimized CreateTexturesFromFile(TMaterialImport* arrayOfMaterials, int numberOfEntities);
+	ID3D11ShaderResourceView* TexturesToCubeMap(ID3D11DeviceContext * pd3dDeviceContext, ID3D11Resource* srcText[6]);
 	void CreateBuffers(TWorld * ptWorld);
 	void CreateEntityBuffer(TWorld * ptWorld, int nEnityIndex);
 	void CreateShaders(ID3D11Device* pd3dDevice);
@@ -118,6 +125,7 @@ public:
 
 	void InitPrimalShaderData(ID3D11DeviceContext * pd3dDeviceContext, XMMATRIX d3dWorldMatrix, XMMATRIX d3dViewMatrix, XMMATRIX d3dProjectionMatrix, TDebugMesh tDebugMesh, XMMATRIX CameraMatrix);
 	void InitPrimalShaderData2(ID3D11DeviceContext * pd3dDeviceContext, TPrimalVertexBufferType d3dVertexBuffer, TPrimalPixelBufferType d3dPixelBuffer, TSimpleMesh tSimpleMesh, XMMATRIX CameraMatrix);
+	void InitSkyboxShaderData(ID3D11DeviceContext * pd3dDeviceContext, TMyVertexBufferType d3dVertexBuffer, TMesh tSimpleMesh, XMMATRIX CameraMatrix);
 	void InitMyShaderData(ID3D11DeviceContext * pd3dDeviceContext, TMyVertexBufferType d3dVertexBuffer, TMesh tSimpleMesh, XMMATRIX CameraMatrix);
 	void InitUIShaderData(ID3D11DeviceContext * pd3dDeviceContext, TUIVertexBufferType d3dVertexBuffer, TUIPixelBufferType d3dPixelBuffer, TMesh tMesh, XMMATRIX CameraMatrix);
 	void ExecutePipeline(ID3D11DeviceContext *pd3dDeviceContext, int m_nIndexCount, int nGraphicsMask, int nShaderID);
@@ -155,6 +163,11 @@ private:
 	ID3D11InputLayout	*m_pd3dUIInputLayout;
 	ID3D11Buffer		*m_pd3dUIVertexBuffer;
 	ID3D11Buffer		*m_pd3dUIPixelBuffer;
+
+	ID3D11VertexShader	*m_pd3dSkyboxVertexShader;
+	ID3D11PixelShader	*m_pd3dSkyboxPixelShader;
+	ID3D11InputLayout	*m_pd3dSkyboxInputLayout;
+	ID3D11Buffer		*m_pd3dSkyboxVertexBuffer;
 
 	ID3D11Buffer		*m_pd3dBlinnPhongBuffer;
 	ID3D11Debug			*debug;

@@ -137,8 +137,8 @@ unsigned int SpawnLevelChanger(TWorld * ptWorld, XMMATRIX SpawnPosition)
 {
 	unsigned int nThisEntity = createEntity(ptWorld);
 
-	ptWorld->atCollisionMask[nThisEntity].m_tnCollisionMask = COMPONENT_COLLISIONMASK | COMPONENT_AABB | COMPONENT_STATIC | COMPONENT_TRIGGER;
 	ptWorld->atGraphicsMask[nThisEntity].m_tnGraphicsMask = COMPONENT_GRAPHICSMASK | COMPONENT_SIMPLEMESH | COMPONENT_SHADERID;
+	ptWorld->atCollisionMask[nThisEntity].m_tnCollisionMask = COMPONENT_COLLISIONMASK | COMPONENT_AABB | COMPONENT_STATIC | COMPONENT_TRIGGER;
 	ptWorld->atAIMask[nThisEntity].m_tnAIMask = COMPONENT_AIMASK;
 	ptWorld->atUIMask[nThisEntity].m_tnUIMask = COMPONENT_UIMASK;
 	ptWorld->atPhysicsMask[nThisEntity].m_tnPhysicsMask = COMPONENT_PHYSICSMASK;
@@ -331,73 +331,89 @@ unsigned int createCube(TWorld * ptWorld)
 
 	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexData.SysMemPitch = 0;
 	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexData.SysMemSlicePitch = 0;
-
+	
 	ptWorld->atShaderID[nThisEntity].m_nShaderID = 3;
 	return 0;
 }
 
-/*
-* createPlayerBox():  creates a simple box
-*
-* Ins:                  the world pointer
-*						the location to spawn the inactive Bullet
-*
-*
-* Outs:
-*
-* Returns:              returns the index of the bullet that was made for the world index
-*
-* Mod. Date:              07/16/2018
-* Mod. Initials:          AP
-*/
-
-/*
-unsigned int createDummyPlayer(TWorld* ptWorld, XMMATRIX playerMatrix)
+unsigned int CreateSkybox(TWorld * ptWorld, ID3D11ShaderResourceView * srv)
 {
 	unsigned int nThisEntity = createEntity(ptWorld);
-	//ptWorld->anComponentMask[nThisEntity] =  COMPONENT_DEBUGMESH;
-	ptWorld->atGraphicsMask[nThisEntity].m_tnGraphicsMask = COMPONENT_GRAPHICSMASK | COMPONENT_DEBUGMESH | COMPONENT_SHADERID;//138
-	ptWorld->atAIMask[nThisEntity].m_tnAIMask = COMPONENT_AIMASK;
-	ptWorld->atCollisionMask[nThisEntity].m_tnCollisionMask = COMPONENT_COLLISIONMASK;
-	ptWorld->atUIMask[nThisEntity].m_tnUIMask = COMPONENT_UIMASK;
-	ptWorld->atPhysicsMask[nThisEntity].m_tnPhysicsMask = COMPONENT_PHYSICSMASK;
-	ptWorld->atDebugMesh[nThisEntity].m_nVertexCount = 6;
-	XMVECTOR vectorPos = playerMatrix.r[3];
-	XMFLOAT3 playerPos;
-	playerPos.x = vectorPos.m128_f32[0];
-	playerPos.y = vectorPos.m128_f32[1];
-	playerPos.z = vectorPos.m128_f32[2];
 
-	static TPrimalVert atPlayerVertices[]
+	ptWorld->atGraphicsMask[nThisEntity].m_tnGraphicsMask = COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_SKYBOX | COMPONENT_TEXTURE | COMPONENT_SHADERID;
+	static XMFLOAT3 skyboxVerts[]
 	{
-		TPrimalVert{ XMFLOAT3(0, 0, 0),    XMFLOAT4(1,0,0,1) },//00	Green
-		TPrimalVert{ XMFLOAT3(0, playerPos.y , 0), XMFLOAT4(1,0,0,1) },//01	Green
-		TPrimalVert{ XMFLOAT3(0, 0, 0),    XMFLOAT4(0,1,0,1) },//00	Red
-		TPrimalVert{ XMFLOAT3(playerPos.x, 0, 0), XMFLOAT4(0,1,0,1) },//01	Red
-		TPrimalVert{ XMFLOAT3(0, 0, 0),    XMFLOAT4(0,0,1,1) },//00	Blue
-		TPrimalVert{ XMFLOAT3(0, 0, playerPos.z), XMFLOAT4(0,0,1,1) },//01	Blue
+		XMFLOAT3(-500.0f, 500.0f, 500.0f),
+		XMFLOAT3(500.0f, 500.0f, 500.0f),
+		XMFLOAT3(-500.0f, -500.0f, 500.0f),
+		XMFLOAT3(500.0f, -500.0f, 500.0f),
+		XMFLOAT3(-500.0f, 500.0f, -500.0f),
+		XMFLOAT3(500.0f, 500.0f, -500.0f),
+		XMFLOAT3(-500.0f, -500.0f, -500.0f),
+		XMFLOAT3(500.0f, -500.0f, -500.0f),
+
+		XMFLOAT3(500.0f, 500.0f, 500.0f),
+		XMFLOAT3(-500.0f, 500.0f, 500.0f),
+		XMFLOAT3(-500.0f, -500.0f, -500.0f),
+		XMFLOAT3(500.0f, -500.0f, -500.0f),
+		XMFLOAT3(-500.0f, -500.0f, 500.0f),
+		XMFLOAT3(-500.0f, 500.0f, 500.0f),
+		XMFLOAT3(500.0f, 500.0f, 500.0f),
+		XMFLOAT3(500.0f, -500.0f, 500.0f)
 	};
 
-	ptWorld->atDebugMesh[nThisEntity].m_nVertexBufferStride = sizeof(TPrimalVert);
-	ptWorld->atDebugMesh[nThisEntity].m_nVertexBufferOffset = 0;
+	static short cubeIndices[]
+	{
+		2,0,3,//0,2,3,
+		1,3,0,//3,1,0,
+		//
+		6,7,4,//7,6,4,
+		5,4,7,//4,5,7,
+		//
+		9,4,8,//4,9,8,
+		8,4,5,//4,8,5,
+		//
+		3,10,2,//10,3,2,
+		3,11,10,//11,3,10,
+		//
+		6,4,12,//4,6,12,
+		13,12,4,//12,13,4,
+		//
+		15,14,7,//14,15,7,
+		7,14,5,//14,7,5,
+	};
+	ptWorld->atMesh[nThisEntity].m_d3dSRVDiffuse = srv;
+	ptWorld->atMesh[nThisEntity].m_nIndexCount = 36;
+	ptWorld->atMesh[nThisEntity].m_nVertexCount = 16;
 
-	ptWorld->atDebugMesh[nThisEntity].m_d3dVertexBufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
-	ptWorld->atDebugMesh[nThisEntity].m_d3dVertexBufferDesc.ByteWidth = sizeof(TPrimalVert) * ptWorld->atDebugMesh[nThisEntity].m_nVertexCount;
-	ptWorld->atDebugMesh[nThisEntity].m_d3dVertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-	ptWorld->atDebugMesh[nThisEntity].m_d3dVertexBufferDesc.CPUAccessFlags = 0;
-	ptWorld->atDebugMesh[nThisEntity].m_d3dVertexBufferDesc.MiscFlags = 0;
-	ptWorld->atDebugMesh[nThisEntity].m_d3dVertexBufferDesc.StructureByteStride = 0;
+	ptWorld->atMesh[nThisEntity].m_nVertexBufferStride = sizeof(XMFLOAT3);
+	ptWorld->atMesh[nThisEntity].m_nVertexBufferOffset = 0;
 
-	ptWorld->atDebugMesh[nThisEntity].m_d3dVertexData.pSysMem = atPlayerVertices;
-	ptWorld->atDebugMesh[nThisEntity].m_d3dVertexData.SysMemPitch = 0;
-	ptWorld->atDebugMesh[nThisEntity].m_d3dVertexData.SysMemSlicePitch = 0;
-	ptWorld->atShaderID[nThisEntity].m_nShaderID = 2;
-	return 0;
-}
-*/
+	ptWorld->atMesh[nThisEntity].m_d3dVertexBufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
+	ptWorld->atMesh[nThisEntity].m_d3dVertexBufferDesc.ByteWidth = sizeof(XMFLOAT3) * ptWorld->atMesh[nThisEntity].m_nVertexCount;
+	ptWorld->atMesh[nThisEntity].m_d3dVertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	ptWorld->atMesh[nThisEntity].m_d3dVertexBufferDesc.CPUAccessFlags = 0;
+	ptWorld->atMesh[nThisEntity].m_d3dVertexBufferDesc.MiscFlags = 0;
+	ptWorld->atMesh[nThisEntity].m_d3dVertexBufferDesc.StructureByteStride = 0;
 
-unsigned int createPlayerBox(TWorld * ptWorld, CCollisionSystem* pcCollisionSystem)
-{
+	ptWorld->atMesh[nThisEntity].m_d3dIndexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
+	ptWorld->atMesh[nThisEntity].m_d3dIndexBufferDesc.ByteWidth = sizeof(short) * ptWorld->atMesh[nThisEntity].m_nIndexCount;
+	ptWorld->atMesh[nThisEntity].m_d3dIndexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+	ptWorld->atMesh[nThisEntity].m_d3dIndexBufferDesc.CPUAccessFlags = 0;
+	ptWorld->atMesh[nThisEntity].m_d3dIndexBufferDesc.MiscFlags = 0;
+	ptWorld->atMesh[nThisEntity].m_d3dIndexBufferDesc.StructureByteStride = 0;
+
+	ptWorld->atMesh[nThisEntity].m_d3dVertexData.pSysMem = skyboxVerts;
+	ptWorld->atMesh[nThisEntity].m_d3dIndexData.pSysMem = cubeIndices;
+
+	ptWorld->atMesh[nThisEntity].m_d3dVertexData.SysMemPitch = 0;
+	ptWorld->atMesh[nThisEntity].m_d3dVertexData.SysMemSlicePitch = 0;
+
+	ptWorld->atMesh[nThisEntity].m_d3dIndexData.SysMemPitch = 0;
+	ptWorld->atMesh[nThisEntity].m_d3dIndexData.SysMemSlicePitch = 0;
+
+	ptWorld->atShaderID[nThisEntity].m_nShaderID = 9;
+
 	return 0;
 }
 

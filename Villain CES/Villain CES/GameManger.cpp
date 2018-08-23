@@ -2686,6 +2686,23 @@ void CGameMangerSystem::LoadMikesGraphicsSandbox()
 	//	int myMesh = createMesh(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, tempImport.vtMeshes[meshIndex], tempImport.vtMaterials[meshIndex]);
 	//}
 
+	#pragma region Create Skybox
+	ID3D11Resource * spaceMap[6];
+	
+	
+	CreateWICTextureFromFile(pcGraphicsSystem->m_pd3dDevice, L"Cubemap_SpaceBlue/bkg1_back.png", &spaceMap[0], NULL, NULL);
+	CreateWICTextureFromFile(pcGraphicsSystem->m_pd3dDevice, L"Cubemap_SpaceBlue/bkg1_left.png", &spaceMap[1], NULL, NULL);
+	CreateWICTextureFromFile(pcGraphicsSystem->m_pd3dDevice, L"Cubemap_SpaceBlue/bkg1_right.png", &spaceMap[2], NULL, NULL);
+	
+	CreateWICTextureFromFile(pcGraphicsSystem->m_pd3dDevice, L"Cubemap_SpaceBlue/bkg1_front.png", &spaceMap[3], NULL, NULL);
+	CreateWICTextureFromFile(pcGraphicsSystem->m_pd3dDevice, L"Cubemap_SpaceBlue/bkg1_top.png", &spaceMap[4], NULL, NULL);
+	CreateWICTextureFromFile(pcGraphicsSystem->m_pd3dDevice, L"Cubemap_SpaceBlue/bkg1_bot.png", &spaceMap[5], NULL, NULL);
+
+	ID3D11ShaderResourceView * tempSrv = pcGraphicsSystem->TexturesToCubeMap(pcGraphicsSystem->m_pd3dDeviceContext, spaceMap);
+	CreateSkybox(&tThisWorld, tempSrv);
+
+#pragma endregion
+
 	tempImport = pcGraphicsSystem->ReadMesh("meshData_NoBrewery7.txt");
 	TMaterialOptimized matOpt =  pcGraphicsSystem->CreateTexturesFromFile(tempImport.vtMaterials, tempImport.meshCount);
 	for (int meshIndex = 0; meshIndex < tempImport.meshCount; meshIndex++)
@@ -2700,11 +2717,10 @@ void CGameMangerSystem::LoadMikesGraphicsSandbox()
 	//{
 	//	int myMesh = createMesh(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, tempImport.vtMeshes[meshIndex], matOpt, meshIndex);		
 	//}
-
-
 	createGSQuad(&tThisWorld, XMFLOAT4(1, 0, 0, 1));
 	createGSQuad(&tThisWorld, XMFLOAT4(1, 1, 1, 1));
 
+	
 	pcGraphicsSystem->CreateBuffers(&tThisWorld);
 }
 
@@ -2761,6 +2777,15 @@ int CGameMangerSystem::MikesGraphicsSandbox()
 			tMyVertexBufferTemp.m_d3dViewMatrix = debugCamera->d3d_Position;
 
 			pcGraphicsSystem->InitMyShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tMyVertexBufferTemp, tThisWorld.atMesh[nCurrentEntity], debugCamera->d3d_Position);
+			pcGraphicsSystem->ExecutePipeline(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atMesh[nCurrentEntity].m_nIndexCount, tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask, tThisWorld.atShaderID[nCurrentEntity].m_nShaderID);
+		}
+
+		if (tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_SKYBOX | COMPONENT_TEXTURE | COMPONENT_SHADERID))
+		{
+			tMyVertexBufferTemp.m_d3dWorldMatrix = tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix;
+			tMyVertexBufferTemp.m_d3dViewMatrix = debugCamera->d3d_Position;
+			tMyVertexBufferTemp.m_d3dProjectionMatrix = m_d3dProjectionMatrix;
+			pcGraphicsSystem->InitSkyboxShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tMyVertexBufferTemp, tThisWorld.atMesh[nCurrentEntity], debugCamera->d3d_Position);
 			pcGraphicsSystem->ExecutePipeline(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atMesh[nCurrentEntity].m_nIndexCount, tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask, tThisWorld.atShaderID[nCurrentEntity].m_nShaderID);
 		}
 

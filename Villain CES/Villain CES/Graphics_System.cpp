@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "Graphics_System.h"
 #include <map>
+#define FARVIEW 1000
 CGraphicsSystem::CGraphicsSystem()
 {
 	m_fCameraXPosition = 0;
@@ -124,7 +125,7 @@ void CGraphicsSystem::InitD3D(HWND cTheWindow)
 	// Depth test parameters
 	d3dDepthStencilDescription.DepthEnable = true;
 	d3dDepthStencilDescription.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
-	d3dDepthStencilDescription.DepthFunc = D3D11_COMPARISON_LESS;
+	d3dDepthStencilDescription.DepthFunc = D3D11_COMPARISON_LESS_EQUAL;
 
 	// Stencil test parameters
 	d3dDepthStencilDescription.StencilEnable = true;
@@ -147,6 +148,63 @@ void CGraphicsSystem::InitD3D(HWND cTheWindow)
 	m_pd3dDevice->CreateDepthStencilState(&d3dDepthStencilDescription, &m_pd3dDepthStencilState);
 
 #pragma endregion
+
+	/*
+	D3D11_FILL_MODE FillMode;
+	D3D11_CULL_MODE CullMode;
+	BOOL FrontCounterClockwise;
+	INT DepthBias;
+	FLOAT DepthBiasClamp;
+	FLOAT SlopeScaledDepthBias;
+	BOOL DepthClipEnable;
+	BOOL ScissorEnable;
+	BOOL MultisampleEnable;
+	BOOL AntialiasedLineEnable;
+	*/
+	D3D11_RASTERIZER_DESC NoCull
+	{
+		D3D11_FILL_SOLID,
+		D3D11_CULL_NONE,
+		true,
+		1,
+		1.0f,
+		0.0f,
+		true,
+		false,
+		true,
+		false
+	};
+
+	D3D11_RASTERIZER_DESC Cull
+	{
+		D3D11_FILL_SOLID,
+		D3D11_CULL_BACK,
+		true,
+		1,
+		1.0f,
+		0.0f,
+		true,
+		false,
+		true,
+		false
+	};
+
+	m_pd3dDevice->CreateRasterizerState(&NoCull, &m_pd3dNoCullRasterizerState);
+	m_pd3dDevice->CreateRasterizerState(&Cull, &m_pd3dCullRasterizerState);
+	D3D11_SAMPLER_DESC sampTmp
+	{
+		D3D11_FILTER_MIN_MAG_MIP_LINEAR,
+		D3D11_TEXTURE_ADDRESS_WRAP,
+		D3D11_TEXTURE_ADDRESS_WRAP,
+		D3D11_TEXTURE_ADDRESS_MIRROR,
+		1.0f,
+		1,
+		D3D11_COMPARISON_LESS_EQUAL,
+		1,
+		0,
+		D3D11_FLOAT32_MAX
+	};
+	m_pd3dDevice->CreateSamplerState(&sampTmp, &m_pd3dSamplerState);
 }
 
 void CGraphicsSystem::UpdateD3D()
@@ -263,7 +321,7 @@ void CGraphicsSystem::CreateShaders(ID3D11Device * device)
 	//Get a count of the elements in the layout.
 	int	nElements = sizeof(m_d3dMyLayoutDesc) / sizeof(m_d3dMyLayoutDesc[0]);
 
-	//Create the vertex input layout.
+	//Create the input layout.
 	device->CreateInputLayout(m_d3dMyLayoutDesc, nElements, MyVertexShader,
 		sizeof(MyVertexShader), &m_pd3dMyInputLayout);
 
@@ -409,6 +467,37 @@ void CGraphicsSystem::CreateShaders(ID3D11Device * device)
 	device->CreateBuffer(&d3dQuadPixelBufferDesc, NULL, &m_pd3dQuadPixelBuffer);
 #pragma endregion
 
+	#pragma region SkyboxShaders
+	D3D11_BUFFER_DESC d3dSkyboxMatrixBufferDesc;
+	D3D11_BUFFER_DESC d3dSkyboxPixelBufferDesc;
+	device->CreateVertexShader(SkyboxVertexShader, sizeof(SkyboxVertexShader), NULL, &m_pd3dSkyboxVertexShader);
+	device->CreatePixelShader(SkyboxPixelShader, sizeof(SkyboxPixelShader), NULL, &m_pd3dSkyboxPixelShader);
+
+	//Input Layout Setup
+	//Now setup the layout of the data that goes into the shader.
+	D3D11_INPUT_ELEMENT_DESC m_d3dSkyboxLayoutDesc[] =
+	{
+		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+	};
+
+	//Get a count of the elements in the layout.
+	int nSkyboxElements = sizeof(m_d3dSkyboxLayoutDesc) / sizeof(m_d3dSkyboxLayoutDesc[0]);
+
+	//Create the vertex input layout.
+	device->CreateInputLayout(m_d3dSkyboxLayoutDesc, nSkyboxElements, SkyboxVertexShader,
+		sizeof(SkyboxVertexShader), &m_pd3dSkyboxInputLayout);
+
+	//Setup the description of the dynamic matrix constant buffer that is in the vertex shader.
+	d3dSkyboxMatrixBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+	d3dSkyboxMatrixBufferDesc.ByteWidth = sizeof(TUIVertexBufferType);
+	d3dSkyboxMatrixBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	d3dSkyboxMatrixBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	d3dSkyboxMatrixBufferDesc.MiscFlags = 0;
+	d3dSkyboxMatrixBufferDesc.StructureByteStride = 0;
+
+	//Create the constant buffer pointer so we can access the vertex shader constant buffer from within this class.
+	device->CreateBuffer(&d3dSkyboxMatrixBufferDesc, NULL, &m_pd3dSkyboxVertexBuffer);
+#pragma endregion
 }
 
 TMaterialOptimized CGraphicsSystem::CreateTexturesFromFile(TMaterialImport * arrayOfMaterials, int numberOfEntities)
@@ -577,6 +666,62 @@ TMaterialOptimized CGraphicsSystem::CreateTexturesFromFile(TMaterialImport * arr
 		return answer;
 }
 
+ID3D11ShaderResourceView * CGraphicsSystem::TexturesToCubeMap(ID3D11DeviceContext * pd3dDeviceContext, ID3D11Resource * srcTex[6])
+{
+	// Each element in the texture array has the same format/dimensions.
+	D3D11_TEXTURE2D_DESC texElementDesc;
+	((ID3D11Texture2D*)srcTex[0])->GetDesc(&texElementDesc);
+
+	D3D11_TEXTURE2D_DESC texArrayDesc;
+	texArrayDesc.Width = texElementDesc.Width;
+	texArrayDesc.Height = texElementDesc.Height;
+	texArrayDesc.MipLevels = texElementDesc.MipLevels;
+	texArrayDesc.ArraySize = 6;
+	texArrayDesc.Format = texElementDesc.Format;
+	texArrayDesc.SampleDesc.Count = 1;
+	texArrayDesc.SampleDesc.Quality = 0;
+	texArrayDesc.Usage = D3D11_USAGE_DEFAULT;
+	texArrayDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+	texArrayDesc.CPUAccessFlags = 0;
+	texArrayDesc.MiscFlags = D3D11_RESOURCE_MISC_TEXTURECUBE;
+	pd3dDeviceContext->GetDevice(&m_pd3dDevice);
+	ID3D11Texture2D* texArray = 0;
+	m_pd3dDevice->CreateTexture2D(&texArrayDesc, 0, &texArray);
+
+	// Copy individual texture elements into texture array.
+	D3D11_BOX sourceRegion;
+
+	//Copy the mip-map levels of the textures
+	for (UINT x = 0; x < 6; x++)
+	{
+		for (UINT mipLevel = 0; mipLevel < texArrayDesc.MipLevels; mipLevel++)
+		{
+			sourceRegion.left = 0;
+			sourceRegion.right = (texArrayDesc.Width >> mipLevel);
+			sourceRegion.top = 0;
+			sourceRegion.bottom = (texArrayDesc.Height >> mipLevel);
+			sourceRegion.front = 0;
+			sourceRegion.back = 1;
+
+			//test for overflow
+			if (sourceRegion.bottom == 0 || sourceRegion.right == 0)
+				break;
+
+			pd3dDeviceContext->CopySubresourceRegion(texArray, D3D11CalcSubresource(mipLevel, x, texArrayDesc.MipLevels), 0, 0, 0, srcTex[x], mipLevel, &sourceRegion);
+		}
+	}
+
+	// Create a resource view to the texture array.
+	D3D11_SHADER_RESOURCE_VIEW_DESC viewDesc;
+	viewDesc.Format = texArrayDesc.Format;
+	viewDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURECUBE;
+	viewDesc.TextureCube.MostDetailedMip = 0;
+	viewDesc.TextureCube.MipLevels = texArrayDesc.MipLevels;
+	ID3D11ShaderResourceView * srv;
+	m_pd3dDevice->CreateShaderResourceView(texArray, &viewDesc, &srv);
+	return srv;
+}
+
 void CGraphicsSystem::CreateBuffers(TWorld *ptPlanet)//init first frame
 {
 	CreateShaders(m_pd3dDevice);
@@ -596,7 +741,7 @@ void CGraphicsSystem::CreateBuffers(TWorld *ptPlanet)//init first frame
 				m_pd3dDevice->CreateBuffer(&ptPlanet->atSimpleMesh[nCurrentEntity].m_d3dIndexBufferDesc, &ptPlanet->atSimpleMesh[nCurrentEntity].m_d3dIndexData, &ptPlanet->atSimpleMesh[nCurrentEntity].m_pd3dIndexBuffer);
 			}
 		}
-		if (ptPlanet->atGraphicsMask[nCurrentEntity].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_SHADERID))
+		if (ptPlanet->atGraphicsMask[nCurrentEntity].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_SHADERID) || ptPlanet->atGraphicsMask[nCurrentEntity].m_tnGraphicsMask == COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_SKYBOX | COMPONENT_TEXTURE | COMPONENT_SHADERID)
 		{
 			if (ptPlanet->atMesh[nCurrentEntity].m_nIndexCount && ptPlanet->atMesh[nCurrentEntity].m_nVertexCount)
 			{
@@ -696,12 +841,12 @@ XMMATRIX CGraphicsSystem::SetDefaultPerspective()
 
 	DefaultPerspectiveMatrix.r[2].m128_f32[0] = 0;
 	DefaultPerspectiveMatrix.r[2].m128_f32[1] = 0;
-	DefaultPerspectiveMatrix.r[2].m128_f32[2] = 100 / (100 - 0.1f);
+	DefaultPerspectiveMatrix.r[2].m128_f32[2] = FARVIEW / (FARVIEW - 0.1f);
 	DefaultPerspectiveMatrix.r[2].m128_f32[3] = 1;
 
 	DefaultPerspectiveMatrix.r[3].m128_f32[0] = 0;
 	DefaultPerspectiveMatrix.r[3].m128_f32[1] = 0;
-	DefaultPerspectiveMatrix.r[3].m128_f32[2] = -(100 * 0.1f) / (100 - 0.1f);
+	DefaultPerspectiveMatrix.r[3].m128_f32[2] = -(FARVIEW * 0.1f) / (FARVIEW - 0.1f);
 	DefaultPerspectiveMatrix.r[3].m128_f32[3] = 0;
 	return DefaultPerspectiveMatrix;
 }
@@ -724,12 +869,12 @@ XMMATRIX CGraphicsSystem::SetDefaultPerspective(float FOV)
 
 	DefaultPerspectiveMatrix.r[2].m128_f32[0] = 0;
 	DefaultPerspectiveMatrix.r[2].m128_f32[1] = 0;
-	DefaultPerspectiveMatrix.r[2].m128_f32[2] = 100 / (100 - 0.1f);
+	DefaultPerspectiveMatrix.r[2].m128_f32[2] = FARVIEW / (FARVIEW- 0.1f);
 	DefaultPerspectiveMatrix.r[2].m128_f32[3] = 1;
 
 	DefaultPerspectiveMatrix.r[3].m128_f32[0] = 0;
 	DefaultPerspectiveMatrix.r[3].m128_f32[1] = 0;
-	DefaultPerspectiveMatrix.r[3].m128_f32[2] = -(100 * 0.1f) / (100 - 0.1f);
+	DefaultPerspectiveMatrix.r[3].m128_f32[2] = -(FARVIEW * 0.1f) / (FARVIEW - 0.1f);
 	DefaultPerspectiveMatrix.r[3].m128_f32[3] = 0;
 	return DefaultPerspectiveMatrix;
 }
@@ -1318,6 +1463,49 @@ void CGraphicsSystem::InitPrimalShaderData2(ID3D11DeviceContext * pd3dDeviceCont
 	pd3dDeviceContext->IASetIndexBuffer(tSimpleMesh.m_pd3dIndexBuffer, DXGI_FORMAT_R16_UINT, 0);
 }
 
+void CGraphicsSystem::InitSkyboxShaderData(ID3D11DeviceContext * pd3dDeviceContext, TMyVertexBufferType d3dVertexBuffer, TMesh tMesh, XMMATRIX CameraMatrix)
+{
+	D3D11_MAPPED_SUBRESOURCE d3dSkyboxVertexMappedResource;
+
+	TMyVertexBufferType	*ptSkyboxVertexBufferDataPointer = nullptr;
+
+	XMMATRIX d3dView;
+	d3dView = d3dVertexBuffer.m_d3dViewMatrix;
+	d3dView = XMMatrixInverse(nullptr, CameraMatrix);
+	unsigned int bufferNumber = 0;
+	m_fCameraXPosition = CameraMatrix.r[3].m128_f32[0];
+	m_fCameraYPosition = CameraMatrix.r[3].m128_f32[1];
+	m_fCameraZPosition = CameraMatrix.r[3].m128_f32[2];
+
+	XMMATRIX tempWorld = XMMatrixIdentity();
+	XMMATRIX tempProj = d3dVertexBuffer.m_d3dProjectionMatrix;
+	tempWorld = XMMatrixTranslation(m_fCameraXPosition, m_fCameraYPosition, m_fCameraZPosition);
+
+	#pragma region Map To Vertex Constant Buffer
+	pd3dDeviceContext->Map(m_pd3dSkyboxVertexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &d3dSkyboxVertexMappedResource);
+
+	// Get a pointer to the data in the constant buffer.
+	ptSkyboxVertexBufferDataPointer = (TMyVertexBufferType*)d3dSkyboxVertexMappedResource.pData;
+
+	// Copy the matrices into the constant buffer.
+	ptSkyboxVertexBufferDataPointer->m_d3dWorldMatrix = tempWorld;
+	ptSkyboxVertexBufferDataPointer->m_d3dViewMatrix = d3dView;
+	ptSkyboxVertexBufferDataPointer->m_d3dProjectionMatrix = tempProj;
+
+	// Unlock the constant buffer.
+	pd3dDeviceContext->Unmap(m_pd3dSkyboxVertexBuffer, 0);
+#pragma endregion
+
+	pd3dDeviceContext->VSSetConstantBuffers(bufferNumber, 1, &m_pd3dSkyboxVertexBuffer);
+	pd3dDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	pd3dDeviceContext->IASetVertexBuffers(0, 1, &tMesh.m_pd3dVertexBuffer, &tMesh.m_nVertexBufferStride, &tMesh.m_nVertexBufferOffset);
+	pd3dDeviceContext->IASetIndexBuffer(tMesh.m_pd3dIndexBuffer, DXGI_FORMAT_R16_UINT, 0);
+	if (&tMesh.m_d3dSRVDiffuse != NULL)
+	{
+		pd3dDeviceContext->PSSetShaderResources(0, 1, &tMesh.m_d3dSRVDiffuse);
+	}
+}
+
 void CGraphicsSystem::InitMyShaderData(ID3D11DeviceContext * pd3dDeviceContext, TMyVertexBufferType d3dVertexBuffer, TMesh tMesh, XMMATRIX CameraMatrix)
 {
 	D3D11_MAPPED_SUBRESOURCE d3dMyVertexMappedResource;
@@ -1433,123 +1621,143 @@ void CGraphicsSystem::ExecutePipeline(ID3D11DeviceContext *pd3dDeviceContext, in
 {
 	switch (nShaderID)
 	{
-	case 1:
-	{
-		//Set Input_Layout
-		pd3dDeviceContext->IASetInputLayout(m_pd3dMyInputLayout);
-		//Set Shader
-		pd3dDeviceContext->VSSetShader(m_pd3dMyVertexShader, NULL, 0);
-		pd3dDeviceContext->PSSetShader(m_pd3dMyPixelShader, NULL, 0);
-		////Draw
-		if (nGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_SHADERID))
+		case 1:
 		{
-			pd3dDeviceContext->DrawIndexed(m_nIndexCount, 0, 0);
+			//Set Input_Layout
+			pd3dDeviceContext->IASetInputLayout(m_pd3dMyInputLayout);
+			//Set Shader
+			pd3dDeviceContext->VSSetShader(m_pd3dMyVertexShader, NULL, 0);
+			pd3dDeviceContext->PSSetShader(m_pd3dMyPixelShader, NULL, 0);
+			////Draw
+			if (nGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_SHADERID))
+			{
+				pd3dDeviceContext->DrawIndexed(m_nIndexCount, 0, 0);
+			}
+			break;
 		}
-		break;
-	}
-	case 2:
-	{
-		//Set Input_Layout
-		pd3dDeviceContext->IASetInputLayout(m_pd3dPrimalInputLayout);
-		//Set Shader
-		pd3dDeviceContext->VSSetShader(m_pd3dPrimalVertexShader, NULL, 0);
-		pd3dDeviceContext->PSSetShader(m_pd3dPrimalPixelShader, NULL, 0);
-		//Draw
-		if (nGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_DEBUGMESH | COMPONENT_SHADERID))
+		case 2:
 		{
-			pd3dDeviceContext->Draw(m_nIndexCount, 0);
+			//Set Input_Layout
+			pd3dDeviceContext->IASetInputLayout(m_pd3dPrimalInputLayout);
+			//Set Shader
+			pd3dDeviceContext->VSSetShader(m_pd3dPrimalVertexShader, NULL, 0);
+			pd3dDeviceContext->PSSetShader(m_pd3dPrimalPixelShader, NULL, 0);
+			//Draw
+			if (nGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_DEBUGMESH | COMPONENT_SHADERID))
+			{
+				pd3dDeviceContext->Draw(m_nIndexCount, 0);
+			}
+			break;
 		}
-		break;
-	}
-	case 3:
-	{
-		pd3dDeviceContext->IASetInputLayout(m_pd3dPrimalInputLayout);
-		//Set Shader
-		pd3dDeviceContext->VSSetShader(m_pd3dPrimalVertexShader, NULL, 0);
-		pd3dDeviceContext->GSSetShader(nullptr, NULL, 0);
-		pd3dDeviceContext->PSSetShader(m_pd3dPrimalPixelShader, NULL, 0);
-		//Draw
-		if (nGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_SIMPLEMESH | COMPONENT_SHADERID))
+		case 3:
 		{
-			pd3dDeviceContext->DrawIndexed(m_nIndexCount, 0, 0);
+			pd3dDeviceContext->IASetInputLayout(m_pd3dPrimalInputLayout);
+			//Set Shader
+			pd3dDeviceContext->VSSetShader(m_pd3dPrimalVertexShader, NULL, 0);
+			pd3dDeviceContext->GSSetShader(nullptr, NULL, 0);
+			pd3dDeviceContext->PSSetShader(m_pd3dPrimalPixelShader, NULL, 0);
+			//Draw
+			if (nGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_SIMPLEMESH | COMPONENT_SHADERID))
+			{
+				pd3dDeviceContext->DrawIndexed(m_nIndexCount, 0, 0);
+			}
+			break;
 		}
-		break;
-	}
-	case 4:
-	{
-		//Set Input_Layout
-		pd3dDeviceContext->IASetInputLayout(m_pd3dMyInputLayout);
-		//Set Shader
-		pd3dDeviceContext->VSSetShader(m_pd3dMyVertexShader, NULL, 0);
-		pd3dDeviceContext->GSSetShader(nullptr, NULL, 0);
-		pd3dDeviceContext->PSSetShader(m_pd3dMyPixelShader, NULL, 0);
-		////Draw
-		if (nGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_SHADERID))
+		case 4:
 		{
-			pd3dDeviceContext->DrawIndexed(m_nIndexCount, 0, 0);
+			//Set Input_Layout
+			pd3dDeviceContext->IASetInputLayout(m_pd3dMyInputLayout);
+			//Set Shader
+			pd3dDeviceContext->VSSetShader(m_pd3dMyVertexShader, NULL, 0);
+			pd3dDeviceContext->GSSetShader(nullptr, NULL, 0);
+			pd3dDeviceContext->PSSetShader(m_pd3dMyPixelShader, NULL, 0);
+			////Draw
+			if (nGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_SHADERID))
+			{
+				pd3dDeviceContext->DrawIndexed(m_nIndexCount, 0, 0);
+			}
+			break;
 		}
-		break;
-	}
-	case 5:
-	{
-		//Set Input_Layout
-		pd3dDeviceContext->IASetInputLayout(m_pd3dMyInputLayout);
-		//Set Shader
-		pd3dDeviceContext->VSSetShader(m_pd3dMyVertexShader, NULL, 0);
-		pd3dDeviceContext->GSSetShader(nullptr, NULL, 0);
-		pd3dDeviceContext->PSSetShader(m_pd3dMyPixelShader, NULL, 0);
-		////Draw
-		if (nGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_SHADERID))
+		case 5:
 		{
-			pd3dDeviceContext->DrawIndexed(m_nIndexCount, 0, 0);
+			//Set Input_Layout
+			pd3dDeviceContext->IASetInputLayout(m_pd3dMyInputLayout);
+			//Set Shader
+			pd3dDeviceContext->VSSetShader(m_pd3dMyVertexShader, NULL, 0);
+			pd3dDeviceContext->GSSetShader(nullptr, NULL, 0);
+			pd3dDeviceContext->PSSetShader(m_pd3dMyPixelShader, NULL, 0);
+			////Draw
+			if (nGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_SHADERID))
+			{
+				pd3dDeviceContext->DrawIndexed(m_nIndexCount, 0, 0);
+			}
+			break;
 		}
-		break;
-	}
-	case 6:
-	{
-		//Set Input_Layout
-		pd3dDeviceContext->IASetInputLayout(m_pd3dMyInputLayout);
-		//Set Shader
-		pd3dDeviceContext->VSSetShader(m_pd3dMyVertexShader, NULL, 0);
-		pd3dDeviceContext->PSSetShader(m_pd3dMyPixelShader, NULL, 0);
-		////Draw
-		if (nGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_SHADERID))
+		case 6:
 		{
-			pd3dDeviceContext->DrawIndexed(m_nIndexCount, 0, 0);
-		}
-		break;
-	}	
-	case 7:
-	{
-		//Set Input_Layout
-		pd3dDeviceContext->IASetInputLayout(m_pd3dUIInputLayout);
-		//Set Shader
-		pd3dDeviceContext->VSSetShader(m_pd3dUIVertexShader, NULL, 0);
-		pd3dDeviceContext->PSSetShader(m_pd3dUIPixelShader, NULL, 0);
-		////Draw
-		if (nGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_SHADERID))
+			//Set Input_Layout
+			pd3dDeviceContext->IASetInputLayout(m_pd3dMyInputLayout);
+			//Set Shader
+			pd3dDeviceContext->VSSetShader(m_pd3dMyVertexShader, NULL, 0);
+			pd3dDeviceContext->PSSetShader(m_pd3dMyPixelShader, NULL, 0);
+			////Draw
+			if (nGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_SHADERID))
+			{
+				pd3dDeviceContext->DrawIndexed(m_nIndexCount, 0, 0);
+			}
+			break;
+		}	
+		case 7:
 		{
-			pd3dDeviceContext->DrawIndexed(m_nIndexCount, 0, 0);
+			//Set Input_Layout
+			pd3dDeviceContext->IASetInputLayout(m_pd3dUIInputLayout);
+			//Set Shader
+			pd3dDeviceContext->VSSetShader(m_pd3dUIVertexShader, NULL, 0);
+			pd3dDeviceContext->PSSetShader(m_pd3dUIPixelShader, NULL, 0);
+			////Draw
+			if (nGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_SHADERID))
+			{
+				pd3dDeviceContext->DrawIndexed(m_nIndexCount, 0, 0);
+			}
+			break;
 		}
-		break;
-	}
-	case 8:
-	{
-		//Set Input_Layout
-		pd3dDeviceContext->IASetInputLayout(m_pd3dQuadInputLayout);
-		//Set Shader
-		pd3dDeviceContext->VSSetShader(m_pd3dQuadVertexShader, NULL, 0);
-		pd3dDeviceContext->GSSetShader(m_pd3dQuadGeometryShader, NULL, 0);
-		pd3dDeviceContext->PSSetShader(m_pd3dQuadPixelShader, NULL, 0);
-		//Draw
-		if (nGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_DEBUGMESH | COMPONENT_SHADERID))
+		case 8:
 		{
-			pd3dDeviceContext->Draw(m_nIndexCount, 0);
+			//Set Input_Layout
+			pd3dDeviceContext->IASetInputLayout(m_pd3dQuadInputLayout);
+			//Set Shader
+			pd3dDeviceContext->VSSetShader(m_pd3dQuadVertexShader, NULL, 0);
+			pd3dDeviceContext->GSSetShader(m_pd3dQuadGeometryShader, NULL, 0);
+			pd3dDeviceContext->PSSetShader(m_pd3dQuadPixelShader, NULL, 0);
+			//Draw
+			if (nGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_DEBUGMESH | COMPONENT_SHADERID))
+			{
+				pd3dDeviceContext->Draw(m_nIndexCount, 0);
+			}
+			pd3dDeviceContext->GSSetShader(NULL, NULL, 0);
+			break;
 		}
-		pd3dDeviceContext->GSSetShader(NULL, NULL, 0);
-		break;
-	}
-	default:
-		break;
+		case 9:
+		{
+			pd3dDeviceContext->RSSetState(m_pd3dNoCullRasterizerState);
+			pd3dDeviceContext->PSSetSamplers(0, 1, &m_pd3dSamplerState);
+			//Set Input_Layout
+			pd3dDeviceContext->IASetInputLayout(m_pd3dSkyboxInputLayout);
+			//Set Shader
+			pd3dDeviceContext->VSSetShader(m_pd3dSkyboxVertexShader, NULL, 0);
+			pd3dDeviceContext->PSSetShader(m_pd3dSkyboxPixelShader, NULL, 0);
+
+			//Draw
+			if (nGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_SKYBOX | COMPONENT_TEXTURE | COMPONENT_SHADERID))
+			{
+				pd3dDeviceContext->DrawIndexed(m_nIndexCount, 0, 0);
+			}
+			//pd3dDeviceContext->RSSetState(m_pd3dCullRasterizerState);
+			pd3dDeviceContext->PSSetSamplers(0, 0, NULL);
+
+			break;
+		}
+		default:
+			break;
 	}
 }

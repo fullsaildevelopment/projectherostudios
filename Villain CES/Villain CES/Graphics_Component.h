@@ -13,7 +13,8 @@ enum eGraphicsComponent
 	COMPONENT_SHADERID = 1 << 6, // have information on what inputs and outputs go to other shaders as well
 	COMPONENT_CAMERA = 1 << 7,
 	COMPONENT_SIMPLEMESH = 1 << 8,
-	COMPONENT_PBRMESH = 1 << 9
+	COMPONENT_PBRMESH = 1 << 9,
+	COMPONENT_SKYBOX = 1 << 10
 };
 
 struct TGraphicsMask
