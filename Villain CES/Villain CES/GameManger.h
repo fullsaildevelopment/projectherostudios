@@ -19,11 +19,12 @@ public:
 	int InGameUpdate();
 	void RestartLevel();
 	int LoadMainMenu();
-	void InitilizeMainMenu();
+	void InitializeMainMenu();
 	int LoadTitleScreen();
 	void InitializeTitleScreen();
 	int LoadPauseScreen();
 	void InitializePauseScreen();
+	void InitializeDeathScreen();
 
 	void LoadPathFindingTest();
 	int PathFindingExample();
@@ -53,7 +54,7 @@ private:
 	float*xPos = new float();
 	float*yPos = new float();
 	TMeshImport bulletMesh;
-
+	bool playerDead = false;
 
 	
 	//ZB Variables

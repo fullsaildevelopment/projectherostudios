@@ -222,6 +222,7 @@ void destroyEntity(TWorld * ptWorld, unsigned int nThisEntity)
 
 	ptWorld->atButton[nThisEntity].boundingBox = { 0, 0, 0, 0 };
 	ptWorld->atButton[nThisEntity].sceneIndex = 0;
+	ptWorld->atButton[nThisEntity].enabled = false;
 
 	ptWorld->atText[nThisEntity].textBoundingBox = { 0, 0, 0, 0 };
 	ptWorld->atText[nThisEntity].textBuffer = nullptr;

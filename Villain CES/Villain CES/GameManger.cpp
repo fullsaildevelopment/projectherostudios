@@ -45,6 +45,7 @@ void CGameMangerSystem::LoadLevel()
 	pcGraphicsSystem->CleanD3DLevel(&tThisWorld);
 	
 	InitializePauseScreen();
+	//InitializeDeathScreen();
 
 	pcAiSystem->SetNumberOfAI(2);
 	tTimerInfo->StartClock(tAugerTimers->tSceneTimer);
@@ -326,7 +327,6 @@ int CGameMangerSystem::InGameUpdate()
 	 
 	if (pcInputSystem->InputCheck(G_KEY_P)) 
 	{
-		//InitializePauseScreen();
 		return 3;
 	}
 	// ui stuff
@@ -468,6 +468,24 @@ int CGameMangerSystem::InGameUpdate()
 		}
 
 #pragma endregion
+		/* DONT DELETE
+		CGraphicsSystem::TUIVertexBufferType tUIVertexBuffer;
+		CGraphicsSystem::TUIPixelBufferType tUIPixelBuffer;
+
+		POINT hoverPoint;
+		GetCursorPos(&hoverPoint);
+		ScreenToClient(cApplicationWindow, &hoverPoint);
+
+		POINT clickPoint = { -1, -1 };
+		if (pcInputSystem->InputCheck(G_BUTTON_LEFT) == 1)
+		{
+			GetCursorPos(&clickPoint);
+			ScreenToClient(cApplicationWindow, &clickPoint);
+		}
+
+		pcGraphicsSystem->UpdateD3D();
+
+		HDC tHDC = GetDC(0);*/
 
 		for (int nCurrentEntity = 0; nCurrentEntity < ENTITYCOUNT; nCurrentEntity++)
 		{
@@ -853,6 +871,7 @@ int CGameMangerSystem::InGameUpdate()
 					}
 					if (tThisWorld.atClayton[PlayerStartIndex].health <= 0)
 					{
+						//playerDead = true;
 						return -1;
 					}
 					//		tTempPixelBuffer.m_d3dCollisionColor = XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f);
@@ -931,8 +950,57 @@ int CGameMangerSystem::InGameUpdate()
 				}
 				pcGraphicsSystem->ExecutePipeline(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atSimpleMesh[nCurrentEntity].m_nIndexCount, tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask, tThisWorld.atShaderID[nCurrentEntity].m_nShaderID);
 			}
+
+			/* DON'T DELETE
+			if (playerDead)
+			{
+				if (tThisWorld.atUIMask[nCurrentEntity].m_tnUIMask == (COMPONENT_UIMASK | COMPONENT_LABEL | COMPONENT_BUTTON | COMPONENT_DEATHSCREEN))
+				{
+					wchar_t text[] =
+					{ L"YOU GOT KILLED BY ..." };
+
+					int tempTextColor[3] = { 255, 255, 255 };
+
+					pcUISystem->AddTextToUI(&tThisWorld, nCurrentEntity, cApplicationWindow, text, ARRAYSIZE(text), tempTextColor);
+				}
+				if (tThisWorld.atUIMask[nCurrentEntity].m_tnUIMask == (COMPONENT_UIMASK | COMPONENT_LABEL | COMPONENT_BUTTON | COMPONENT_TEXT | COMPONENT_DEATHSCREEN))
+				{
+					HGDIOBJ oldFont = SelectObject(tHDC, (HGDIOBJ)pcUISystem->myFont);
+					
+					if (tThisWorld.atButton[nCurrentEntity].enabled)
+					{
+						if (PtInRect(&tThisWorld.atButton[nCurrentEntity].boundingBox, clickPoint))
+							return tThisWorld.atButton[nCurrentEntity].sceneIndex;
+						else if (PtInRect(&tThisWorld.atButton[nCurrentEntity].boundingBox, hoverPoint))
+						{
+							tUIPixelBuffer.hoverColor = XMFLOAT4(.65, .65, .65, 1);
+							tThisWorld.atText[nCurrentEntity].textColor[0] = 166;
+							tThisWorld.atText[nCurrentEntity].textColor[1] = 166;
+							tThisWorld.atText[nCurrentEntity].textColor[2] = 166;
+							SetBkColor(tHDC, RGB(255, 255, 255));
+						}
+						else
+						{
+							tUIPixelBuffer.hoverColor = XMFLOAT4(0, 0, 0, 1);
+							tThisWorld.atText[nCurrentEntity].textColor[0] = 255;
+							tThisWorld.atText[nCurrentEntity].textColor[1] = 255;
+							tThisWorld.atText[nCurrentEntity].textColor[2] = 255;
+							SetBkColor(tHDC, RGB(0, 0, 0));
+						}
+					}
+					SetTextColor(tHDC, RGB(tThisWorld.atText[nCurrentEntity].textColor[0], tThisWorld.atText[nCurrentEntity].textColor[1], tThisWorld.atText[nCurrentEntity].textColor[2]));
+					SetBkMode(tHDC, OPAQUE);
+
+					DrawText(tHDC, tThisWorld.atText[nCurrentEntity].textBuffer, tThisWorld.atText[nCurrentEntity].textSize, &tThisWorld.atText[nCurrentEntity].textBoundingBox, DT_CENTER);
+					
+					SelectObject(tHDC, oldFont);
+
+				}
+			}
+			*/
 		}
 	
+		//ReleaseDC(cApplicationWindow, tHDC);
 
 	pcGraphicsSystem->m_pd3dSwapchain->Present(0, 0);
 	zValue += 0.001;
@@ -989,11 +1057,7 @@ int CGameMangerSystem::LoadMainMenu()
 			if (PtInRect(&tThisWorld.atButton[nCurrentEntity].boundingBox, clickPoint))
 			{
 				if (tThisWorld.atButton[nCurrentEntity].sceneIndex == 1)
-				{
 					atUIVertices.clear();
-					//pcGraphicsSystem->CleanD3DLevel(&tThisWorld);
-				}
-					//	InitializePauseScreen();
 
 				return tThisWorld.atButton[nCurrentEntity].sceneIndex;
 			}
@@ -1019,7 +1083,7 @@ int CGameMangerSystem::LoadMainMenu()
 	return 0;
 }
 
-void CGameMangerSystem::InitilizeMainMenu()
+void CGameMangerSystem::InitializeMainMenu()
 {
 	pcGraphicsSystem->CleanD3DLevel(&tThisWorld);
 	atUIVertices.clear();
@@ -1032,7 +1096,7 @@ void CGameMangerSystem::InitilizeMainMenu()
 		nThisEntity = CreateUILabel(&tThisWorld, menuCamera->d3d_Position, 2, 1, .5, 0, atUIVertices);
 		pcUISystem->AddTextureToUI(&tThisWorld, nThisEntity, pcGraphicsSystem->m_pd3dDevice, wideChar);
 		//                                                  modify this to switch testing levels in Augur.cpp
-		pcUISystem->AddButtonToUI(&tThisWorld, nThisEntity, 1, cApplicationWindow);
+		pcUISystem->AddButtonToUI(&cApplicationWindow, &tThisWorld, nThisEntity, 1, true);
 	}
 	{
 		wchar_t wideChar[] =
@@ -1040,7 +1104,7 @@ void CGameMangerSystem::InitilizeMainMenu()
 
 		nThisEntity = CreateUILabel(&tThisWorld, menuCamera->d3d_Position, 2, 1, .5, -2.4, atUIVertices);
 		pcUISystem->AddTextureToUI(&tThisWorld, nThisEntity, pcGraphicsSystem->m_pd3dDevice, wideChar);
-		pcUISystem->AddButtonToUI(&tThisWorld, nThisEntity, 3, cApplicationWindow);
+		pcUISystem->AddButtonToUI(&cApplicationWindow, &tThisWorld, nThisEntity, 3, true);
 	}
 	{
 		wchar_t wideChar[] =
@@ -1048,7 +1112,7 @@ void CGameMangerSystem::InitilizeMainMenu()
 	
 		nThisEntity = CreateUILabel(&tThisWorld, menuCamera->d3d_Position, 2, 1, .5, -3.6, atUIVertices);
 		pcUISystem->AddTextureToUI(&tThisWorld, nThisEntity, pcGraphicsSystem->m_pd3dDevice, wideChar);
-		pcUISystem->AddButtonToUI(&tThisWorld, nThisEntity, 4, cApplicationWindow);
+		pcUISystem->AddButtonToUI(&cApplicationWindow, &tThisWorld, nThisEntity, 3, true);
 	}
 	{
 		wchar_t wideChar[] =
@@ -1269,9 +1333,9 @@ void CGameMangerSystem::InitializePauseScreen()
 
 		nThisEntity = CreateUILabel(&tThisWorld, menuCamera->d3d_Position, 2, 1, 0, 1.2, atUIVertices);
 		//pcUISystem->AddTextureToUI(&tThisWorld, nThisEntity, pcGraphicsSystem->m_pd3dDevice, wideChar);
-		pcUISystem->AddButtonToUI(&tThisWorld, nThisEntity, 2, cApplicationWindow);
+		pcUISystem->AddButtonToUI(&cApplicationWindow, &tThisWorld, nThisEntity, 2, true);
 
-		pcUISystem->AddTextToUI(&tThisWorld, nThisEntity, cApplicationWindow, text, ARRAYSIZE(text), tempTextColor);
+		pcUISystem->AddTextToUI(&cApplicationWindow, &tThisWorld, nThisEntity, text, ARRAYSIZE(text), tempTextColor);
 
 		pcGraphicsSystem->CreateEntityBuffer(&tThisWorld, nThisEntity);
 	}
@@ -1284,9 +1348,9 @@ void CGameMangerSystem::InitializePauseScreen()
 
 		nThisEntity = CreateUILabel(&tThisWorld, menuCamera->d3d_Position, 2, 1, 0, 0, atUIVertices);
 		//pcUISystem->AddTextureToUI(&tThisWorld, nThisEntity, pcGraphicsSystem->m_pd3dDevice, wideChar);
-		pcUISystem->AddButtonToUI(&tThisWorld, nThisEntity, -3, cApplicationWindow);
+		pcUISystem->AddButtonToUI(&cApplicationWindow, &tThisWorld, nThisEntity, -3, true);
 
-		pcUISystem->AddTextToUI(&tThisWorld, nThisEntity, cApplicationWindow, text, ARRAYSIZE(text), tempTextColor);
+		pcUISystem->AddTextToUI(&cApplicationWindow, &tThisWorld, nThisEntity, text, ARRAYSIZE(text), tempTextColor);
 
 		pcGraphicsSystem->CreateEntityBuffer(&tThisWorld, nThisEntity);
 	}
@@ -1299,9 +1363,9 @@ void CGameMangerSystem::InitializePauseScreen()
 
 		nThisEntity = CreateUILabel(&tThisWorld, menuCamera->d3d_Position, 2, 1, 0, -1.2, atUIVertices);
 		//pcUISystem->AddTextureToUI(&tThisWorld, nThisEntity, pcGraphicsSystem->m_pd3dDevice, wideChar);
-		pcUISystem->AddButtonToUI(&tThisWorld, nThisEntity, -3, cApplicationWindow);
+		pcUISystem->AddButtonToUI(&cApplicationWindow, &tThisWorld, nThisEntity, -3, true);
 
-		pcUISystem->AddTextToUI(&tThisWorld, nThisEntity, cApplicationWindow, text, ARRAYSIZE(text), tempTextColor);
+		pcUISystem->AddTextToUI(&cApplicationWindow, &tThisWorld, nThisEntity, text, ARRAYSIZE(text), tempTextColor);
 
 		pcGraphicsSystem->CreateEntityBuffer(&tThisWorld, nThisEntity);
 	}
@@ -1318,6 +1382,17 @@ void CGameMangerSystem::InitializePauseScreen()
 	
 	if (pcUISystem->myFont == nullptr)
 		pcUISystem->myFont = CreateFontA(36, 20, 0, 0, FW_BOLD, false, false, false, 0, 0, 0, 0, 0, 0);
+}
+
+void CGameMangerSystem::InitializeDeathScreen()
+{
+	unsigned int nThisEntity = CreateUILabel(&tThisWorld, menuCamera->d3d_Position, 4, 2, 0, 2.4, atUIVertices);
+	//pcUISystem->AddTextureToUI(&tThisWorld, nThisEntity, pcGraphicsSystem->m_pd3dDevice, wideChar);
+	pcUISystem->AddButtonToUI(&cApplicationWindow, &tThisWorld, nThisEntity, 2, false);
+
+	pcUISystem->AddMaskToUI(&tThisWorld, nThisEntity, COMPONENT_DEATHSCREEN);
+
+	pcGraphicsSystem->CreateEntityBuffer(&tThisWorld, nThisEntity);
 }
 
 void CGameMangerSystem::LoadPathFindingTest()

@@ -26,10 +26,10 @@ void CUISystem::AddTextureToUI(TWorld* tThisWorld, unsigned int nThisEntity, ID3
 	tThisWorld->atGraphicsMask[nThisEntity].m_tnGraphicsMask = tThisWorld->atGraphicsMask[nThisEntity].m_tnGraphicsMask | COMPONENT_TEXTURE;
 }
 
-void CUISystem::AddButtonToUI(TWorld* tThisWorld, unsigned int nThisEntity, int sceneIndex, HWND cApplicationWindow)
+void CUISystem::AddButtonToUI(HWND* cApplicationWindow, TWorld* tThisWorld, unsigned int nThisEntity, int sceneIndex, bool enabled)
 {
 	RECT window;
-	GetWindowRect(cApplicationWindow, &window);
+	GetWindowRect(*cApplicationWindow, &window);
 
 	float screenWidth = window.right - window.left;
 	float screenHeight = window.bottom - window.top;
@@ -46,10 +46,12 @@ void CUISystem::AddButtonToUI(TWorld* tThisWorld, unsigned int nThisEntity, int 
 
 	tThisWorld->atButton[nThisEntity].sceneIndex = sceneIndex;
 
+	tThisWorld->atButton[nThisEntity].enabled = enabled;
+
 	tThisWorld->atUIMask[nThisEntity].m_tnUIMask = tThisWorld->atUIMask[nThisEntity].m_tnUIMask | COMPONENT_BUTTON;
 }
 
-void CUISystem::AddTextToUI(TWorld* tThisWorld, unsigned int nThisEntity, HWND cApplicationWindow, wchar_t* text, unsigned int textSize, int* textColor)
+void CUISystem::AddTextToUI(HWND* cApplicationWindow, TWorld* tThisWorld, unsigned int nThisEntity, wchar_t* text, unsigned int textSize, int* textColor)
 {
 	tThisWorld->atText[nThisEntity].textBuffer = new wchar_t[textSize]; 
 
@@ -65,13 +67,13 @@ void CUISystem::AddTextToUI(TWorld* tThisWorld, unsigned int nThisEntity, HWND c
 	SIZE tempSize;
 	GetTextExtentPoint32(tHDC, tThisWorld->atText[nThisEntity].textBuffer, tThisWorld->atText[nThisEntity].textSize, &tempSize);
 
-	ReleaseDC(cApplicationWindow, tHDC);
+	ReleaseDC(*cApplicationWindow, tHDC);
 
 	POINT tempPoint = { tThisWorld->atButton[nThisEntity].boundingBox.left, tThisWorld->atButton[nThisEntity].boundingBox.top };
 	POINT tempPoint2 = { tThisWorld->atButton[nThisEntity].boundingBox.right, tThisWorld->atButton[nThisEntity].boundingBox.bottom };
 
-	bool worked = ClientToScreen(cApplicationWindow, &tempPoint);
-	worked = ClientToScreen(cApplicationWindow, &tempPoint2);
+	bool worked = ClientToScreen(*cApplicationWindow, &tempPoint);
+	worked = ClientToScreen(*cApplicationWindow, &tempPoint2);
 
 	int difference = (tempSize.cx * 3) - (tempPoint2.x - tempPoint.x);
 	if (difference > 0)
@@ -102,7 +104,12 @@ void CUISystem::AddTextToUI(TWorld* tThisWorld, unsigned int nThisEntity, HWND c
 	tThisWorld->atUIMask[nThisEntity].m_tnUIMask = tThisWorld->atUIMask[nThisEntity].m_tnUIMask | COMPONENT_TEXT;
 }
 
-void CUISystem::DrawPauseMenu(TWorld* tThisWorld, HDC* toHDC, HWND* cApplicationWindow, unsigned int nCurrentEntity)
+void CUISystem::AddMaskToUI(TWorld* tThisWorld, unsigned int nThisEntity, eUIComponent mask)
+{
+	tThisWorld->atUIMask[nThisEntity].m_tnUIMask = tThisWorld->atUIMask[nThisEntity].m_tnUIMask | mask;
+}
+
+void CUISystem::DrawPauseMenu(HWND* cApplicationWindow, TWorld* tThisWorld, HDC* toHDC, unsigned int nCurrentEntity)
 {
 	RECT window;
 	GetWindowRect(*cApplicationWindow, &window);

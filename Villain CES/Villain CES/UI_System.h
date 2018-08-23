@@ -10,9 +10,10 @@ public:
 
 	void DrawMenu(TWorld* ptWorld, CGraphicsSystem* pcGraphicsSystem, XMMATRIX cameraMatrix, XMMATRIX worldMatrix);
 	void AddTextureToUI(TWorld* tThisWorld, unsigned int nThisEntity, ID3D11Device* device, wchar_t* filepath);
-	void AddButtonToUI(TWorld* tThisWorld, unsigned int nThisEntity, int sceneIndex, HWND cApplicationWindow);
-	void AddTextToUI(TWorld* tThisWorld, unsigned int nThisEntity, HWND cApplicationWindow, wchar_t* text, unsigned int textSize, int* textColor);
-	void DrawPauseMenu(TWorld* tThisWorld, HDC* toHDC, HWND* cApplicationWindow, unsigned int nCurrentEntity);
+	void AddButtonToUI(HWND* cApplicationWindow, TWorld* tThisWorld, unsigned int nThisEntity, int sceneIndex, bool enabled);
+	void AddTextToUI(HWND* cApplicationWindow, TWorld* tThisWorld, unsigned int nThisEntity, wchar_t* text, unsigned int textSize, int* textColor);
+	void AddMaskToUI(TWorld* tThisWorld, unsigned int nThisEntity, eUIComponent mask);
+	void DrawPauseMenu(HWND* cApplicationWindow, TWorld* tThisWorld, HDC* toHDC, unsigned int nCurrentEntity);
 
 	HFONT myFont = nullptr;
 };
