@@ -113,6 +113,7 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>d3d11.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -161,6 +162,8 @@
     <ClInclude Include="AudioSystem.h" />
     <ClInclude Include="Auger.h" />
     <ClInclude Include="CAnimationSystem.h" />
+    <ClInclude Include="Common\AkFilePackageLowLevelIO.h" />
+    <ClInclude Include="Common\AkMultipleFileLocation.h" />
     <ClInclude Include="GameManger.h" />
     <ClInclude Include="InputSystem.h" />
     <ClInclude Include="Collision_Component.h" />
@@ -185,12 +188,19 @@
     <ClInclude Include="UI_Component.h" />
     <ClInclude Include="UI_System.h" />
     <ClInclude Include="Villain CES.h" />
+    <ClInclude Include="Win32\AkFileHelpers.h" />
+    <ClInclude Include="Win32\AkFilePackageLowLevelIOBlocking.h" />
     <ClInclude Include="XTime.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AI_System.cpp" />
     <ClCompile Include="Auger.cpp" />
     <ClCompile Include="CAnimationSystem.cpp" />
+    <ClCompile Include="Common\AkDefaultLowLevelIODispatcher.cpp" />
+    <ClCompile Include="Common\AkFileLocationBase.cpp" />
+    <ClCompile Include="Common\AkFilePackage.cpp" />
+    <ClCompile Include="Common\AkFilePackageLUT.cpp" />
+    <ClCompile Include="Common\AkMultipleFileLocation.cpp" />
     <ClCompile Include="DirectXTex-master\DDSTextureLoader\DDSTextureLoader.cpp" />
     <ClCompile Include="DirectXTex-master\WICTextureLoader\WICTextureLoader.cpp" />
     <ClCompile Include="GameManger.cpp" />
@@ -209,6 +219,7 @@
     <ClCompile Include="Graphics_System.cpp" />
     <ClCompile Include="UI_System.cpp" />
     <ClCompile Include="Villain CES.cpp" />
+    <ClCompile Include="Win32\AkDefaultIOHookBlocking.cpp" />
     <ClCompile Include="XTime.cpp" />
   </ItemGroup>
   <ItemGroup>
