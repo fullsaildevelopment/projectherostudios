@@ -178,7 +178,7 @@ void CGraphicsSystem::InitD3D(HWND cTheWindow)
 	D3D11_RASTERIZER_DESC Cull
 	{
 		D3D11_FILL_SOLID,
-		D3D11_CULL_BACK,
+		D3D11_CULL_FRONT,
 		true,
 		1,
 		1.0f,
@@ -193,12 +193,12 @@ void CGraphicsSystem::InitD3D(HWND cTheWindow)
 	m_pd3dDevice->CreateRasterizerState(&Cull, &m_pd3dCullRasterizerState);
 	D3D11_SAMPLER_DESC sampTmp
 	{
-		D3D11_FILTER_MIN_MAG_MIP_LINEAR,
+		D3D11_FILTER_ANISOTROPIC,
 		D3D11_TEXTURE_ADDRESS_WRAP,
 		D3D11_TEXTURE_ADDRESS_WRAP,
 		D3D11_TEXTURE_ADDRESS_MIRROR,
 		1.0f,
-		1,
+		16,
 		D3D11_COMPARISON_LESS_EQUAL,
 		1,
 		0,
@@ -217,7 +217,6 @@ void CGraphicsSystem::UpdateD3D()
 	m_pd3dDeviceContext->RSSetViewports(1, &m_d3dViewport);
 }
 
-
 void CGraphicsSystem::CleanD3D(TWorld *ptPlanet)
 {
 	// close and release all existing COM objects
@@ -234,7 +233,7 @@ void CGraphicsSystem::CleanD3D(TWorld *ptPlanet)
 			ptPlanet->atSimpleMesh[nEntityIndex].m_pd3dVertexBuffer->Release();
 			ptPlanet->atSimpleMesh[nEntityIndex].m_pd3dIndexBuffer->Release();
 		}
-		if (ptPlanet->atGraphicsMask[nEntityIndex].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_SHADERID))
+		if (ptPlanet->atGraphicsMask[nEntityIndex].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_SHADERID) || ptPlanet->atGraphicsMask[nEntityIndex].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_SKYBOX | COMPONENT_TEXTURE | COMPONENT_SHADERID))
 		{
 			ptPlanet->atMesh[nEntityIndex].m_pd3dVertexBuffer->Release();
 			ptPlanet->atMesh[nEntityIndex].m_pd3dIndexBuffer->Release();
@@ -246,6 +245,7 @@ void CGraphicsSystem::CleanD3D(TWorld *ptPlanet)
 
 #endif // !_DEBUG
 	}
+
 	m_pd3dSwapchain->Release();
 	m_pd3dDevice->Release();
 	m_pd3dDeviceContext->Release();
@@ -259,6 +259,28 @@ void CGraphicsSystem::CleanD3D(TWorld *ptPlanet)
 	m_pd3dPrimalInputLayout->Release();
 	m_pd3dPrimalVertexBuffer->Release();
 	m_pd3dPrimalPixelBuffer->Release();
+
+	m_pd3dQuadVertexShader->Release();
+	m_pd3dQuadPixelShader->Release();
+	m_pd3dQuadGeometryShader->Release();
+	m_pd3dQuadGeometryBuffer->Release();
+	m_pd3dQuadPixelBuffer->Release();
+
+	m_pd3dMyVertexShader->Release();
+	m_pd3dMyPixelShader->Release();
+	m_pd3dMyInputLayout->Release();
+	m_pd3dMyVertexBuffer->Release();
+
+	m_pd3dUIVertexShader->Release();
+	m_pd3dUIPixelShader->Release();
+	m_pd3dUIInputLayout->Release();
+	m_pd3dUIVertexBuffer->Release();
+	m_pd3dUIPixelBuffer->Release();
+
+	m_pd3dSkyboxVertexShader->Release();
+	m_pd3dSkyboxPixelShader->Release();
+	m_pd3dSkyboxInputLayout->Release();
+	m_pd3dSkyboxVertexBuffer->Release();
 	if (debug != nullptr)
 	{
 		HRESULT result = debug->ReportLiveDeviceObjects(D3D11_RLDO_SUMMARY | D3D11_RLDO_DETAIL);
@@ -1287,7 +1309,7 @@ XMVECTOR CGraphicsSystem::GetCameraPos()
 	return campos;
 }
 
-void CGraphicsSystem::InitQuadShaderData(ID3D11DeviceContext * pd3dDeviceContext, XMMATRIX d3dWorldMatrix, XMMATRIX d3dViewMatrix, XMMATRIX d3dProjectionMatrix, TDebugMesh tDebugMesh, XMMATRIX CameraMatrix, XMFLOAT4 BackgroundColor)
+void CGraphicsSystem::InitQuadShaderData(ID3D11DeviceContext * pd3dDeviceContext, XMMATRIX d3dWorldMatrix, XMMATRIX d3dViewMatrix, XMMATRIX d3dProjectionMatrix, TDebugMesh tDebugMesh, XMMATRIX CameraMatrix, XMFLOAT4 BackgroundColor, float fHealth)
 {
 	D3D11_MAPPED_SUBRESOURCE d3dQuadMappedResource;
 	D3D11_MAPPED_SUBRESOURCE d3dQuadPixelMappedResource;
@@ -1315,7 +1337,7 @@ void CGraphicsSystem::InitQuadShaderData(ID3D11DeviceContext * pd3dDeviceContext
 	ptQuadMatrixBufferDataPointer->m_d3dWorldMatrix = d3dWorldMatrix;
 	ptQuadMatrixBufferDataPointer->m_d3dViewMatrix = d3dView;
 	ptQuadMatrixBufferDataPointer->m_d3dProjectionMatrix = d3dProjectionMatrix;
-
+	ptQuadMatrixBufferDataPointer->m_fHealth = fHealth;
 	// Unlock the constant buffer.
 	pd3dDeviceContext->Unmap(m_pd3dQuadGeometryBuffer, 0);
 

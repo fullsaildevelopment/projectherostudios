@@ -8,6 +8,7 @@ cbuffer MatrixBuffer : register(b0)
 	matrix d3dWorldMatrix;
 	matrix d3dViewMatrix;
 	matrix d3dProjectionMatrix;
+	float fHealth;
 };
 
 struct TQuadGeoInputType
@@ -36,10 +37,10 @@ void QuadGeometryShader(point TQuadGeoInputType gIn[1],
 	float halfHeight = 1.0f ;//* gIn[0].sizeW.y;
 
 	float4 v[4];
-	v[0] = float4(-halfWidth, -halfHeight, 0.0f, 1.0f);
-	v[1] = float4(-halfWidth, +halfHeight, 0.0f, 1.0f);
-	v[2] = float4(+halfWidth, -halfHeight, 0.0f, 1.0f);
-	v[3] = float4(+halfWidth, +halfHeight, 0.0f, 1.0f);
+	v[0] = float4(-halfWidth * fHealth, -halfHeight, 0.0f, 1.0f);
+	v[1] = float4(-halfWidth * fHealth, +halfHeight, 0.0f, 1.0f);
+	v[2] = float4(+halfWidth * fHealth, -halfHeight, 0.0f, 1.0f);
+	v[3] = float4(+halfWidth * fHealth, +halfHeight, 0.0f, 1.0f);
 	
 	float4 center = gIn[0].d3dPosition;
 	center = mul(center, d3dWorldMatrix);

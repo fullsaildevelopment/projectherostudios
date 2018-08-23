@@ -2678,7 +2678,7 @@ void CGameMangerSystem::LoadMikesGraphicsSandbox()
 	tCameraMode.bSwitch = false;
 
 	ImporterData tempImport;
-
+	TMaterialOptimized matOpt;
 	//tempImport = pcGraphicsSystem->ReadMesh("meshData_ScifiRoom.txt");
 
 	//for (int meshIndex = 0; meshIndex < tempImport.meshCount; meshIndex++)
@@ -2703,8 +2703,15 @@ void CGameMangerSystem::LoadMikesGraphicsSandbox()
 
 #pragma endregion
 
+	//tempImport = pcGraphicsSystem->ReadMesh("meshData_Satellite.txt");
+	//TMaterialOptimized matOpt = pcGraphicsSystem->CreateTexturesFromFile(tempImport.vtMaterials, tempImport.meshCount);
+	//for (int meshIndex = 0; meshIndex < tempImport.meshCount; meshIndex++)
+	//{
+	//	int myMesh = createMesh(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, tempImport.vtMeshes[meshIndex], matOpt, meshIndex);
+	//}
+
 	tempImport = pcGraphicsSystem->ReadMesh("meshData_NoBrewery7.txt");
-	TMaterialOptimized matOpt =  pcGraphicsSystem->CreateTexturesFromFile(tempImport.vtMaterials, tempImport.meshCount);
+	matOpt =  pcGraphicsSystem->CreateTexturesFromFile(tempImport.vtMaterials, tempImport.meshCount);
 	for (int meshIndex = 0; meshIndex < tempImport.meshCount; meshIndex++)
 	{
 		int myMesh = createMesh(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, tempImport.vtMeshes[meshIndex], matOpt, meshIndex);
@@ -2729,10 +2736,17 @@ int CGameMangerSystem::MikesGraphicsSandbox()
 	static XMMATRIX m_d3d_ResultMatrix = pcGraphicsSystem->SetDefaultWorldPosition();
 	static XMMATRIX m_d3dOffsetMatrix = pcGraphicsSystem->SetDefaultOffset();
 	tCameraMode = pcInputSystem->CameraModeListen(tCameraMode);
-
 	if (pcInputSystem->InputCheck(G_KEY_P))
 	{
 		return 3;
+	}
+
+	if (pcInputSystem->InputCheck(G_KEY_Y))
+	{
+		if (Health > 0)
+		{
+			Health -= .1f;
+		}
 	}
 
 	if (tCameraMode.bSwitch == true)
@@ -2766,7 +2780,7 @@ int CGameMangerSystem::MikesGraphicsSandbox()
 			tTempVertexBuffer.m_d3dWorldMatrix = m_d3dWorldMatrix;
 			tTempVertexBuffer.m_d3dViewMatrix = debugCamera->d3d_Position;
 			tMyVertexBufferTemp.m_d3dViewMatrix = debugCamera->d3d_Position;
-			pcGraphicsSystem->InitQuadShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, m_d3dViewMatrix, m_d3dProjectionMatrix, tThisWorld.atDebugMesh[nCurrentEntity], debugCamera->d3d_Position, tThisWorld.atBar[nCurrentEntity].backgroundColor);
+			pcGraphicsSystem->InitQuadShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, m_d3dViewMatrix, m_d3dProjectionMatrix, tThisWorld.atDebugMesh[nCurrentEntity], debugCamera->d3d_Position, tThisWorld.atBar[nCurrentEntity].backgroundColor, Health);
 			pcGraphicsSystem->ExecutePipeline(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atDebugMesh[nCurrentEntity].m_nVertexCount, tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask, tThisWorld.atShaderID[nCurrentEntity].m_nShaderID);
 		}
 

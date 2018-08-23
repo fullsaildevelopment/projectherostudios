@@ -71,4 +71,6 @@ private:
 	System_Times *tTimerInfo;
 	float m_RealTimeFov;
 	bool bMoving;
+	float Health = 1.0f;
+
 };
