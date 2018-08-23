@@ -470,6 +470,12 @@ XMMATRIX CGraphicsSystem::SetDefaultCameraMatrix()
 
 }
 
+XMMATRIX CGraphicsSystem::ResetAimModeCameraOffset()
+{
+
+	return XMMatrixTranslationFromVector(XMVectorSet(0, 1.7f, 8.5f, 1.0f));
+}
+
 XMMATRIX CGraphicsSystem::SetDefaultViewMatrix()
 {
 	XMMATRIX DefaultViewMatrix;
@@ -538,7 +544,7 @@ XMMATRIX CGraphicsSystem::SetDefaultPerspective(float FOV)
 
 XMMATRIX CGraphicsSystem::SetDefaultOffset()
 {
-	return XMMatrixTranslation(0, 1.5f, 8.5f);
+	return XMMatrixTranslation(-0.9f, 2.0f, 7.5f);
 }
 
 XMMATRIX CGraphicsSystem::SetDefaultWorldPosition()
