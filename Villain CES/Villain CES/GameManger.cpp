@@ -385,6 +385,7 @@ int CGameMangerSystem::InGameUpdate()
 		if (tCameraMode.bSwitch == true)
 		{
 			m_d3d_ResultMatrix = pcInputSystem->CameraOrientationReset(m_d3d_ResultMatrix);
+			m_d3dOffsetMatrix = pcGraphicsSystem->SetDefaultOffset();
 			tCameraMode.bSwitch = false;
 		}
 			m_d3d_ResultMatrix = pcInputSystem->WalkCameraControls(XMVectorSet(0, 1.0f, 0, 0), m_d3d_ResultMatrix, bMoving);
