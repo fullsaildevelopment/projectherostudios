@@ -81,7 +81,7 @@ void CGraphicsSystem::InitD3D(HWND cTheWindow)
 	ID3D11Texture2D *pd3dRenderTargetTexture;
 
 	m_pd3dSwapchain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&pd3dRenderTargetTexture);
-	m_pd3dSwapchain->SetFullscreenState(true, NULL);
+//	m_pd3dSwapchain->SetFullscreenState(true, NULL);
 	m_pd3dDevice->CreateRenderTargetView(pd3dRenderTargetTexture, NULL, &m_pd3dRenderTargetView);
 	float fViewportWidth = 0;
 	float fViewportHeight = 0;
