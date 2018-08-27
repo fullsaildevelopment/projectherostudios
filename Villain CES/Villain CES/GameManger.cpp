@@ -1784,7 +1784,7 @@ void CGameMangerSystem::FirstSkeltonAiTestLoad()
 	AimingLine(&tThisWorld, m_d3dWorldMatrix, PlayerStartIndex, -1, 1, 10.5);
 
 	GunIndexForPlayer = CreateGun(&tThisWorld, m_d3dWorldMatrix, PlayerStartIndex, -1, 1, 10.5, 3, 100);
-	tThisWorld.atClip[GunIndexForPlayer].bulletSpeed = 0.1;
+	tThisWorld.atClip[GunIndexForPlayer].bulletSpeed = 0.001;
 	//tThisWorld.atClip[GunIndexForPlayer].
 
 	tThisWorld.atClayton[PlayerStartIndex].health = 100000;

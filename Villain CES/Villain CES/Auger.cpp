@@ -126,6 +126,7 @@ void CAuger::Update(bool* loopgame)
 	case 3:
 		if (pcInputSystem->InputCheck(G_KEY_U))
 			CurrentSpotInGame = 8;
+		
 		break;
 	case 4:
 		*loopgame = false;
@@ -149,7 +150,7 @@ void CAuger::Update(bool* loopgame)
 	
 		
 			GetWindowRect(window2, &rect);
-			SetCursorPos((rect.right / 2.0)+rect.left, (rect.bottom / 2.0) + rect.top);
+			SetCursorPos((rect.right / 2.0)-40, (rect.bottom / 2.0) + rect.top);
 		
 		break;
 	default:
