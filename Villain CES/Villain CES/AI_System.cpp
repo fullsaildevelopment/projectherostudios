@@ -1,14 +1,6 @@
 
 #include "AI_System.h"
 
-CAISystem::CAISystem()
-	:open([](PlannerNode* const& c, PlannerNode* const& t) 
-	{
-		return c->finalCost > t->finalCost; 
-	}
-)
-
-
 CAISystem::~CAISystem()
 {
 }

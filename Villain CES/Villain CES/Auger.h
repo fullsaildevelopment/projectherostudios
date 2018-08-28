@@ -8,6 +8,7 @@ public:
 	CGameMangerSystem * pcGameMangerSystem;
 	CInputSystem	*pcInputSystem;
 	CGraphicsSystem	*pcGraphicsSystem;
+	CProjectileSystem* pcProjectileSystem;
 
 	CAuger();
 	CAuger(HWND cTheWindow);

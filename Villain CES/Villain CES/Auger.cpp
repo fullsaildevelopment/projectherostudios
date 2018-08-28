@@ -90,10 +90,7 @@ void CAuger::Update(bool* loopgame)
 		
 		// main menu
 	case 0:
-		CurrentSpotInGame=pcGameMangerSystem->LoadMainMenu();
-	
-
-	
+		CurrentSpotInGame=pcGameMangerSystem->LoadMainMenu();	
 		break;
 
 	case 1:
@@ -131,9 +128,8 @@ void CAuger::Update(bool* loopgame)
 	case 8 :
 		CurrentSpotInGame = pcGameMangerSystem->SpacePirateGamePlay();
 	
-		
-			GetWindowRect(window2, &rect);
-			SetCursorPos((rect.right / 2.0) + 20, (rect.bottom / 2.0) + 65);
+		GetWindowRect(window2, &rect);
+		SetCursorPos((rect.right / 2.0) + 20, (rect.bottom / 2.0) + 65);
 		
 		break;
 	case 9:

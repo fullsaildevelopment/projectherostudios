@@ -1,5 +1,4 @@
 #pragma once
-#include"stdafx.h"
 #ifndef CES_AI_COMPONENT_H
 #define CES_AI_COMPONENT_H
 
@@ -9,7 +8,7 @@ enum eAIComponent
 	COMPONENT_FOLLOW = 1 << 1,
 	COMPONENT_SHOOT = 1 << 2,
 	COMPONENT_SEARCH = 1 << 3,
-	COMPONENT_SPOTEDPLAYER = 1 << 4,
+	COMPONENT_SPOTTEDPLAYER = 1 << 4,
 	COMPONENT_PATHFINDTEST  = 1<< 5,
 	COMPONENT_COVERTRIGGER	= 1 << 6
 };
