@@ -241,6 +241,48 @@ bool CCollisionSystem::IsLineInBox(XMVECTOR startPoint, XMVECTOR endPoint,XMMATR
 	}
 	return true;
 }
+bool CCollisionSystem::intersectRayAABox2(XMVECTOR startPoint, XMVECTOR endPoint, TAABB boxclide)
+{
+	XMVECTOR T_1, T_2; // vectors to hold the T-values for every direction
+	double t_near = -DBL_MAX; // maximums defined in float.h
+	double t_far = DBL_MAX;
+	XMVECTOR raydirecon;
+	XMVECTOR minopint;
+	minopint.m128_f32[0] = boxclide.m_dMinPoint.x;
+	minopint.m128_f32[1] = boxclide.m_dMinPoint.y;
+	minopint.m128_f32[2] = boxclide.m_dMinPoint.z;
+	XMVECTOR maxPoint;
+	maxPoint.m128_f32[0] = boxclide.m_dMaxPoint.x;
+	maxPoint.m128_f32[1] = boxclide.m_dMaxPoint.y;
+	maxPoint.m128_f32[2] = boxclide.m_dMaxPoint.z;
+	raydirecon = endPoint - startPoint;
+	for (int i = 0; i < 3; i++) { //we test slabs in every direction
+		if (raydirecon.m128_f32[i] == 0) { // ray parallel to planes in this direction
+			if ((startPoint.m128_f32[i] < minopint.m128_f32[i]) || (startPoint.m128_f32[i] >maxPoint.m128_f32[i])) {
+				return false; // parallel AND outside box : no intersection possible
+			}
+		}
+		else { // ray not parallel to planes in this direction
+			T_1.m128_f32[i] = (minopint.m128_f32[i] - startPoint.m128_f32[i]) / raydirecon.m128_f32[i];
+			T_2.m128_f32[i] = (maxPoint.m128_f32[i] - startPoint.m128_f32[i]) / raydirecon.m128_f32[i];
+
+			if (T_1.m128_f32[i] > T_2.m128_f32[i]) { // we want T_1 to hold values for intersection with near plane
+				swap(T_1, T_2);
+			}
+			if (T_1.m128_f32[i] > t_near) {
+				t_near = T_1.m128_f32[i];
+			}
+			if (T_2.m128_f32[i] < t_far) {
+				t_far = T_2.m128_f32[i];
+			}
+			if ((t_near > t_far) || (t_far < 0)) {
+				return false;
+			}
+		}
+	}
+	//tnear = t_near; tfar = t_far; // put return values in place
+	return true; // if we made it here, there was an intersection - YAY
+}
 XMMATRIX CCollisionSystem::WalkingThrewObjectCheck(XMMATRIX worldPos, TAABB otherCollision, TAABB currentCollision)
 {
 	XMMATRIX D3DMatrix=worldPos;

@@ -12,7 +12,8 @@ enum eAIComponent
 	COMPONENT_SPOTEDPLAYER = 1 << 4,
 	COMPONENT_PATHFINDTEST  = 1<< 5,
 	COMPONENT_COVERTRIGGER	= 1 << 6,
-	COMPONENT_HEALINGAI		= 1 << 7
+	COMPONENT_HEALINGAI		= 1 << 7,
+	COMPONENT_FIGHTINGAI	= 1 << 8
 };
 
 struct TAIMask
@@ -33,6 +34,7 @@ struct TAIVision {
 	XMMATRIX playerLastKnownLocation;
 	int		 wallIndex = -1;
 	bool keepSearching = true;
+	unsigned int indexLookingAt;
 	
 
 };

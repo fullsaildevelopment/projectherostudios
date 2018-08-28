@@ -29,6 +29,7 @@ public:
 	TAABB createAABBS(std::vector<XMFLOAT3> verticies,TAABB AABBDATA);
 	bool classify_aabb_to_aabb(TAABB aabb1, TAABB aabb2);
 	bool IsLineInBox(XMVECTOR startPoint, XMVECTOR endPoint, XMMATRIX worldMatrix, TAABB boxclide,float* distance);
+	bool intersectRayAABox2(XMVECTOR startPoint, XMVECTOR endPoint, TAABB boxclide);
 	XMMATRIX WalkingThrewObjectCheck(XMMATRIX worldPos,TAABB otherCollision,TAABB currentCollision);
 	list<TAABB> m_AAbb;
 	vector<TAABB> AiFrustumCheck;
