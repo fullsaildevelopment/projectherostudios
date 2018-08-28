@@ -43,6 +43,9 @@ struct TWorld
 	TAIPathFinding	atPathPlanining[ENTITYCOUNT];
 	TAIActive		atActiveAI[ENTITYCOUNT];
 	TAIMovement		atAIMovement[ENTITYCOUNT];
+	Tcover			atCover[ENTITYCOUNT];
+	TCoverTrigger	atCoverTrigger[ENTITYCOUNT];
+	TAIHeath		atAiHeath[ENTITYCOUNT];
 	//Collision
 	TCollisionMask	atCollisionMask[ENTITYCOUNT];
 	TAABB			atAABB[ENTITYCOUNT];
@@ -118,6 +121,6 @@ unsigned int CreateNodePoint(TWorld * ptWorld, XMMATRIX SpawnPosition);
 unsigned int CreateTestAIPathFinding(TWorld * ptWorld, XMMATRIX SpawnPosition);
 unsigned int CreateSpacePirate(TWorld * ptWorld, XMMATRIX SpawnPosition);
 
-unsigned int CreateCover(TWorld * ptWorld, XMMATRIX SpawnPosition);
-
+unsigned int CreateCover(TWorld * ptWorld, XMMATRIX SpawnPosition, vector<int> coverNodes);
+unsigned int CreateCoverTriggerZone(TWorld * ptWorld, XMMATRIX SpawnPosition);
 unsigned int createGSQuad(TWorld * ptWorld, XMFLOAT4 BackgroundColor);

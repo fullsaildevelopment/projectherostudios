@@ -9,18 +9,8 @@ CAuger::CAuger(HWND window)
 	pcInputSystem = new CInputSystem();
 	pcInputSystem->InitializeGInput(window);
 	pcGameMangerSystem = new CGameMangerSystem(window, pcInputSystem);
-
-	//pcGraphicsSystem = new CGraphicsSystem();
-/*cApplicationWindow = window;
-
-pcGraphicsSystem = new CGraphicsSystem();
-pcInputSystem = new CInputSystem();
-pcCollisionSystem = new CCollisionSystem();
-pcPhysicsSystem = new CPhysicsSystem();
-pcInputSystem->InitializeGInput(window);
-pcProjectileSystem = new CProjectileSystem();
-pcAiSystem = new CAISystem();
-srand(time(NULL));*/
+	window2 = window;
+	pcProjectileSystem = new CProjectileSystem();
 }
 
 CAuger::~CAuger()
@@ -81,7 +71,7 @@ void CAuger::Update(bool* loopgame)
 	
 	//createDummyPlayer(&tThisWorld, m_d3dPlayerMatrix);
 	//d3d_ResultMatrix = 
-	
+	RECT rect = { 0 };
 	switch (CurrentSpotInGame)
 	{ 
 	case -3:
@@ -101,6 +91,9 @@ void CAuger::Update(bool* loopgame)
 		// main menu
 	case 0:
 		CurrentSpotInGame=pcGameMangerSystem->LoadMainMenu();
+	
+
+	
 		break;
 
 	case 1:
@@ -109,10 +102,14 @@ void CAuger::Update(bool* loopgame)
 		break;
 	case 2:
 		CurrentSpotInGame = pcGameMangerSystem->InGameUpdate();
+
+
+		GetWindowRect(window2, &rect);
+		SetCursorPos((rect.right / 2.0f) + 20, (rect.bottom / 2.0f) + 64);
 		break;
 	case 3:
 		if (pcInputSystem->InputCheck(G_KEY_U))
-			CurrentSpotInGame = 10;
+			CurrentSpotInGame = 8;
 		break;
 	case 4:
 		*loopgame = false;
@@ -123,6 +120,9 @@ void CAuger::Update(bool* loopgame)
 		break;
 	case 6 :
 		CurrentSpotInGame=pcGameMangerSystem->PathFindingExample();
+
+		GetWindowRect(window2, &rect);
+		SetCursorPos((rect.right / 2.0f) + 20, (rect.bottom / 2.0f) + 64);
 		break;
 	case 7 :
 		  pcGameMangerSystem->FirstSkeltonAiTestLoad();
@@ -130,6 +130,11 @@ void CAuger::Update(bool* loopgame)
 		  break;
 	case 8 :
 		CurrentSpotInGame = pcGameMangerSystem->SpacePirateGamePlay();
+	
+		
+			GetWindowRect(window2, &rect);
+			SetCursorPos((rect.right / 2.0) + 20, (rect.bottom / 2.0) + 65);
+		
 		break;
 	case 9:
 		pcGameMangerSystem->LoadMikesGraphicsSandbox();

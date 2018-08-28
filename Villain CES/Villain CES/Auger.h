@@ -11,6 +11,7 @@ public:
 
 	CAuger();
 	CAuger(HWND cTheWindow);
+	HWND window2;
 
 	~CAuger();
 

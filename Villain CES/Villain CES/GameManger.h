@@ -30,7 +30,8 @@ public:
 	void LoadMikesGraphicsSandbox();
 	int MikesGraphicsSandbox();
 private:
-	
+	float scale = 0;
+	XMMATRIX CameraNewPosition;
 	XMMATRIX secondCam;
 	CCollisionSystem * pcCollisionSystem;
 	TWorld tThisWorld;
@@ -51,7 +52,10 @@ private:
 	bool GameStart;
 	bool DrawUI = true;
 	int renderToTexturePassIndex = 0;
+	float*xPos = new float();
+	float*yPos = new float();
 	TMeshImport bulletMesh;
+
 
 	
 	//ZB Variables

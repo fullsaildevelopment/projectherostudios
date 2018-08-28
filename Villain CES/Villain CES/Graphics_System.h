@@ -140,7 +140,7 @@ public:
 	ImporterData ReadMesh(const char * input_file_path);
 	XMVECTOR GetCameraPos();
 	XMMATRIX SetDefaultCameraMatrix();
-	//XMMATRIX SetPlayerViewMatrix(XMMATRIX d3d_ViewM, XMMATRIX d3d_playerM);
+	XMMATRIX ResetAimModeCameraOffset();
 	//Last Frame
 	void CleanD3DLevel(TWorld * ptWorld);         //  releases memory
 	void CleanD3DObject(TWorld *ptPlanet, int nEntityIndex);

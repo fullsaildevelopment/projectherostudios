@@ -11,12 +11,15 @@ CCollisionSystem::~CCollisionSystem()
 
 bool CCollisionSystem::aabb_to_frustum(TAABB & aabb, frustum_t & frustum)
 {
-	for (int i = 0; i < 6; ++i) {
+	for (int i = 0; i < 6; ++i) 
+	{
 		
-		if (classify_aabb_to_plane(aabb, frustum[i]) != -1) {
+		if (classify_aabb_to_plane(aabb, frustum[i]) != -1) 
+		{
 			continue;
 		}
-		else {
+		else 
+		{
 			return false;
 		}
 	}
@@ -38,8 +41,10 @@ bool CCollisionSystem::aabb_to_frustum(TAABB & aabb, frustum_t & frustum)
 */
 bool CCollisionSystem::ContainAABB(int nIndex)
 {
-	for (list<TAABB>::iterator ptr = m_AAbb.begin(); ptr != m_AAbb.end(); ++ptr) {
-		if (ptr->m_IndexLocation == nIndex) {
+	for (list<TAABB>::iterator ptr = m_AAbb.begin(); ptr != m_AAbb.end(); ++ptr) 
+	{
+		if (ptr->m_IndexLocation == nIndex) 
+		{
 			return true;
 		}
 	}
@@ -79,23 +84,27 @@ bool CCollisionSystem::spehreCollison(sphere_t a, sphere_t b)
 	float distance = sqrt((a.center.x - b.center.x) * (a.center.x - b.center.x) +
 		(a.center.y - b.center.y) * (a.center.y - b.center.y) +
 		(a.center.z - b.center.z) * (a.center.z - b.center.z));
-	if (distance < (a.radius + b.radius)) {
+	if (distance < (a.radius + b.radius)) 
+	{
 		return true;
 	}
 	// A and B are touching
 
 
-	else {
+	else 
+	{
 		return false;
 	}
 }
 
 int CCollisionSystem::classify_sphere_to_plane(sphere_t & sphere, plane_t & plane)
 {
-	if ((sphere.center.x*plane.normal.x + sphere.center.y*plane.normal.y + sphere.center.z*plane.normal.z) - plane.offset > sphere.radius) {
+	if ((sphere.center.x*plane.normal.x + sphere.center.y*plane.normal.y + sphere.center.z*plane.normal.z) - plane.offset > sphere.radius) 
+	{
 		return 1;
 	}
-	else if ((sphere.center.x*plane.normal.x + sphere.center.y*plane.normal.y + sphere.center.z*plane.normal.z) - plane.offset < -sphere.radius) {
+	else if ((sphere.center.x*plane.normal.x + sphere.center.y*plane.normal.y + sphere.center.z*plane.normal.z) - plane.offset < -sphere.radius) 
+	{
 		return -1;
 	}
 	else
@@ -107,15 +116,17 @@ int CCollisionSystem::classify_sphere_to_plane(sphere_t & sphere, plane_t & plan
 bool CCollisionSystem::AiVisionCheck(frustum_t eyeSight,vector<int>* index)
 {
 	bool seesomething=false;
-	for (int i = 0; i < AiFrustumCheck.size(); ++i) {
+	for (int i = 0; i < AiFrustumCheck.size(); ++i) 
+	{
 	
-		if (seesomething == false) {
+		if (seesomething == false) 
+		{
 			seesomething = aabb_to_frustum(AiFrustumCheck[i], eyeSight);
 			if(seesomething==true)
 			index->push_back(AiFrustumCheck[i].m_IndexLocation);
-
 		}
-		else if (aabb_to_frustum(AiFrustumCheck[i], eyeSight) == true) {
+		else if (aabb_to_frustum(AiFrustumCheck[i], eyeSight) == true) 
+		{
 			index->push_back(AiFrustumCheck[i].m_IndexLocation);
 		}
 
@@ -139,23 +150,28 @@ bool CCollisionSystem::AiVisionCheck(frustum_t eyeSight,vector<int>* index)
 
 bool CCollisionSystem::classify_aabb_to_aabb(TAABB aabb1, TAABB aabb2)
 {
-	if (aabb1.m_dMinPoint.x <= aabb2.m_dMaxPoint.x) {
+	if (aabb1.m_dMinPoint.x <= aabb2.m_dMaxPoint.x) 
+	{
 		float x = 0;
 	}
 	if (aabb1.m_dMaxPoint.x >= aabb2.m_dMinPoint.x)
 	{
 		float x = 0;
 	}
-	if (aabb1.m_dMinPoint.y <= aabb2.m_dMaxPoint.y) {
+	if (aabb1.m_dMinPoint.y <= aabb2.m_dMaxPoint.y) 
+	{
 		float x = 0;
 	}
-	if (aabb1.m_dMaxPoint.y >= aabb2.m_dMinPoint.y) {
+	if (aabb1.m_dMaxPoint.y >= aabb2.m_dMinPoint.y) 
+	{
 		float x = 0;
 	}
-	if (aabb1.m_dMinPoint.z <= aabb2.m_dMaxPoint.z) {
+	if (aabb1.m_dMinPoint.z <= aabb2.m_dMaxPoint.z) 
+	{
 		float x = 0;
 	}
-	if (aabb1.m_dMaxPoint.z >= aabb2.m_dMinPoint.z) {
+	if (aabb1.m_dMaxPoint.z >= aabb2.m_dMinPoint.z) 
+	{
 		float x = 0;
 	}
 	return (aabb1.m_dMinPoint.x <= aabb2.m_dMaxPoint.x&&aabb1.m_dMaxPoint.x >= aabb2.m_dMinPoint.x) &&
@@ -247,8 +263,10 @@ XMMATRIX CCollisionSystem::WalkingThrewObjectCheck(XMMATRIX worldPos, TAABB othe
 		xRight < yBottom&&
 		xRight < zFar
 		&&xRight < zClose
-		) {
-		while (classify_aabb_to_aabb(otherCollision, UpdateCollision))
+		) 
+	{
+		int numberofLoops = 0;
+		while (classify_aabb_to_aabb(otherCollision, UpdateCollision) && numberofLoops<2000)
 		{
 			//d3d_ResultMatrix = pcGraphicsSystem->SetDefaultWorldPosition();;
 			XMMATRIX moveback;
@@ -257,6 +275,8 @@ XMMATRIX CCollisionSystem::WalkingThrewObjectCheck(XMMATRIX worldPos, TAABB othe
 			D3DMatrix = moveback;
 
 			UpdateCollision = updateAABB(D3DMatrix, UpdateCollision);
+			numberofLoops += 1;
+
 		}
 	}
 	else if (xLeft < xRight
@@ -264,7 +284,8 @@ XMMATRIX CCollisionSystem::WalkingThrewObjectCheck(XMMATRIX worldPos, TAABB othe
 		&&xLeft < yBottom
 		&&xLeft < zFar
 		&&xLeft < zClose) {
-		while (classify_aabb_to_aabb(otherCollision, UpdateCollision))
+		int numberofLoops = 0;
+		while (classify_aabb_to_aabb(otherCollision, UpdateCollision) && numberofLoops<2000)
 		{
 			//d3d_ResultMatrix = pcGraphicsSystem->SetDefaultWorldPosition();;
 			XMMATRIX moveback;
@@ -272,14 +293,18 @@ XMMATRIX CCollisionSystem::WalkingThrewObjectCheck(XMMATRIX worldPos, TAABB othe
 			moveback.r[3].m128_f32[0] -= 0.01f;
 			D3DMatrix = moveback;
 			UpdateCollision = updateAABB(D3DMatrix, UpdateCollision);
+			numberofLoops += 1;
+
 		}
 	}
 	else if (yTop < xLeft&&
 		yTop < xRight&&
 		yTop < yBottom
 		&&yTop < zFar
-		&&yTop < zClose) {
-		while (classify_aabb_to_aabb(otherCollision, UpdateCollision))
+		&&yTop < zClose) 
+	{
+		int numberofLoops = 0;
+		while (classify_aabb_to_aabb(otherCollision, UpdateCollision) && numberofLoops<2000)
 		{
 			//d3d_ResultMatrix = pcGraphicsSystem->SetDefaultWorldPosition();;
 			XMMATRIX moveback;
@@ -287,14 +312,19 @@ XMMATRIX CCollisionSystem::WalkingThrewObjectCheck(XMMATRIX worldPos, TAABB othe
 			moveback.r[3].m128_f32[1] -= 0.01f;
 			D3DMatrix = moveback;
 			UpdateCollision = updateAABB(D3DMatrix, UpdateCollision);
+			numberofLoops += 1;
+
+		
 		}
 	}
 	else if (yBottom < xLeft
 		&&yBottom < xRight
 		&&yBottom < yTop
 		&&yBottom < zClose
-		&&yBottom < zFar) {
-		while (classify_aabb_to_aabb(otherCollision, UpdateCollision))
+		&&yBottom < zFar) 
+	{
+		int numberofLoops = 0;
+		while (classify_aabb_to_aabb(otherCollision, UpdateCollision) && numberofLoops<2000)
 		{
 			//d3d_ResultMatrix = pcGraphicsSystem->SetDefaultWorldPosition();;
 			XMMATRIX moveback;
@@ -302,6 +332,8 @@ XMMATRIX CCollisionSystem::WalkingThrewObjectCheck(XMMATRIX worldPos, TAABB othe
 			moveback.r[3].m128_f32[1] += 0.01f;
 			D3DMatrix = moveback;
 			UpdateCollision = updateAABB(D3DMatrix, UpdateCollision);
+			numberofLoops += 1;
+
 		}
 	}
 	else if (zFar < zClose
@@ -310,7 +342,8 @@ XMMATRIX CCollisionSystem::WalkingThrewObjectCheck(XMMATRIX worldPos, TAABB othe
 		&&zFar < yBottom
 		&&zFar < yTop)
 	{
-		while (classify_aabb_to_aabb(otherCollision, UpdateCollision))
+		int numberofLoops = 0;
+		while (classify_aabb_to_aabb(otherCollision, UpdateCollision) && numberofLoops<2000)
 		{
 			//d3d_ResultMatrix = pcGraphicsSystem->SetDefaultWorldPosition();;
 			XMMATRIX moveback;
@@ -318,6 +351,8 @@ XMMATRIX CCollisionSystem::WalkingThrewObjectCheck(XMMATRIX worldPos, TAABB othe
 			moveback.r[3].m128_f32[2] += 0.01f;
 			D3DMatrix = moveback;
 			UpdateCollision = updateAABB(D3DMatrix, UpdateCollision);
+			numberofLoops += 1;
+
 		}
 	}
 	else if (zClose < zFar
@@ -325,7 +360,8 @@ XMMATRIX CCollisionSystem::WalkingThrewObjectCheck(XMMATRIX worldPos, TAABB othe
 		&&zClose < xRight
 		&&zClose < yBottom
 		&&zClose < yTop) {
-		while (classify_aabb_to_aabb(otherCollision, UpdateCollision))
+		int numberofLoops = 0;
+		while (classify_aabb_to_aabb(otherCollision, UpdateCollision)&&numberofLoops<2000)
 		{
 			//d3d_ResultMatrix = pcGraphicsSystem->SetDefaultWorldPosition();;
 			XMMATRIX moveback;
@@ -333,6 +369,8 @@ XMMATRIX CCollisionSystem::WalkingThrewObjectCheck(XMMATRIX worldPos, TAABB othe
 			moveback.r[3].m128_f32[2] -= 0.01f;
 			D3DMatrix = moveback;
 			UpdateCollision = updateAABB(D3DMatrix, UpdateCollision);
+			numberofLoops += 1;
+
 		}
 	}
 	return D3DMatrix;
@@ -387,9 +425,13 @@ bool CCollisionSystem::replaceAABB(int nIndex, TAABB m_AABB2)
 int inline GetIntersection(float fDst1, float fDst2, XMVECTOR P1, XMVECTOR P2, XMVECTOR &Hit) 
 {
 	if ((fDst1 * fDst2) >= 0.0f) 
+	{
 		return 0;
+	}
 	if (fDst1 == fDst2) 
+	{
 		return 0;
+	}
 	Hit = P1 + (P2 - P1) * (-fDst1 / (fDst2 - fDst1));
 	return 1;
 }
@@ -427,8 +469,11 @@ TAABB CCollisionSystem::updateAABB(XMMATRIX worldMatrix, TAABB aabb)
 	newaabb.m_dMaxPointOrginal = aabb.m_dMaxPointOrginal;
 
 	if (replaceAABB(aabb.m_IndexLocation, newaabb) == true)
+	{
 		return newaabb;
-	else {
+	}
+	else 
+	{
 		return aabb;
 	}
 }
@@ -467,7 +512,8 @@ TAABB CCollisionSystem::createAABBS(std::vector<XMFLOAT3> verticies, TAABB AABBD
 			aabb.m_dMinPointOrginal.x = aabb.m_dMinPoint.x;
 		}
 
-		if (verticies[i].y > aabb.m_dMaxPoint.y) {
+		if (verticies[i].y > aabb.m_dMaxPoint.y) 
+		{
 			aabb.m_dMaxPoint.y = verticies[i].y;
 			aabb.m_dMaxPointOrginal.y = aabb.m_dMaxPoint.y;
 		}

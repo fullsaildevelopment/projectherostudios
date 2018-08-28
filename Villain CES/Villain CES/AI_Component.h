@@ -10,7 +10,8 @@ enum eAIComponent
 	COMPONENT_SHOOT = 1 << 2,
 	COMPONENT_SEARCH = 1 << 3,
 	COMPONENT_SPOTEDPLAYER = 1 << 4,
-	COMPONENT_PATHFINDTEST  = 1<< 5
+	COMPONENT_PATHFINDTEST  = 1<< 5,
+	COMPONENT_COVERTRIGGER	= 1 << 6
 };
 
 struct TAIMask
@@ -18,10 +19,12 @@ struct TAIMask
 	int m_tnAIMask = 0;
 	int GunIndex = -1;
 };
-struct TAIActive {
+struct TAIActive 
+{
 	bool active=false;
 };
-struct TAIVision {
+struct TAIVision 
+{
 	frustum_t eyes0;
 	float3 normalAtBegining[6];
 	int indexoffrustum;
@@ -32,18 +35,38 @@ struct TAIVision {
 	int		 wallIndex = -1;
 	bool keepSearching = true;
 };
-struct TAIMovement {
+struct TAIMovement 
+{
 	float strafeCoolDown = 0;
 	float StrafeCoolDownValue = 100;
 };
+struct TAIHeath 
+{
+	float heath = 100;
+};
 
-struct TAIPathFinding {
+struct TAIPathFinding 
+{
 	vector<XMVECTOR> directions;
 	int index = 0;
 	int startingNode;
 	int Goal;
 	bool testingPathFinding = true;
+	bool foundDestination = false;
+	int DelayMovement = 0;
+	bool InterRuptPathPlanning=true;
+	
 
+};
+struct Tcover 
+{
+	vector<int> CoverPositions;
+	int availableCovers = 0;
+};
+struct TCoverTrigger 
+{
+	vector<Tcover> coverAiCanGoTo;
+	bool inCover;
 };
 
 #endif

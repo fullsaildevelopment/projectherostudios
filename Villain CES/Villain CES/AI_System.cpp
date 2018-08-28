@@ -2,10 +2,12 @@
 #include "AI_System.h"
 
 CAISystem::CAISystem()
-	:open([](PlannerNode* const& c, PlannerNode* const& t) {return c->finalCost > t->finalCost; })
-{
+	:open([](PlannerNode* const& c, PlannerNode* const& t) 
+	{
+		return c->finalCost > t->finalCost; 
+	}
+)
 
-}
 
 CAISystem::~CAISystem()
 {
@@ -372,25 +374,31 @@ int CAISystem::GetNumberOfAI()
 
 void CAISystem::FindBestPath(int start, int end, vector<XMVECTOR>* directions)
 {
-	if (open.size() == 0) {
+	if (open.size() == 0) 
+	{
 		SearchNode* beiningingnode = Nodes[start];
 		PlannerNode* firstplan = new PlannerNode();
 		firstplan->state = beiningingnode;
 		open.push(firstplan);
 	}
-	while (!open.empty()) {
+	while (!open.empty()) 
+	{
 		PlannerNode* current = open.front();
 		open.pop();
-		if (current->state == Nodes[end]) {
+		if (current->state == Nodes[end]) 
+		{
 			MakeDirections(directions, current);
 			return;
 		}
-		for (int i = 0; i < current->state->edges.size(); ++i) {
+		for (int i = 0; i < current->state->edges.size(); ++i) 
+		{
 			SearchNode* successor = current->state->edges[i];
 			float temptcost = calculateTest(current, successor);
-			if (visited[successor] != nullptr) {
+			if (visited[successor] != nullptr) 
+			{
 				PlannerNode* babynode = visited[successor];
-				if (temptcost < babynode->givenCost) {
+				if (temptcost < babynode->givenCost) 
+				{
 					open.remove(babynode);
 					babynode->givenCost = temptcost;
 					babynode->finalCost = GetFinalCost(babynode);
@@ -410,7 +418,6 @@ void CAISystem::FindBestPath(int start, int end, vector<XMVECTOR>* directions)
 				open.push(babynode);
 			}
 		}
-	//	time -= 1;
 	}
 }
 
@@ -421,8 +428,6 @@ void CAISystem::AddNodeToPathFinding(int index, XMFLOAT3 pos, float weight)
 	newNode->weight = weight;
 	newNode->tile->pos = pos;
 	Nodes[index] = newNode;
-	
-	//newNode->edges
 }
 
 void CAISystem::AddEdgestoNode(int nodeyouAreChanging, vector<int> edges)
@@ -435,14 +440,21 @@ void CAISystem::AddEdgestoNode(int nodeyouAreChanging, vector<int> edges)
 
 void CAISystem::PathPlaningMovement(TAIPathFinding* path, XMMATRIX* worldMatrix)
 {
+	XMMATRIX beforeMutplcation = *worldMatrix;
 	if (path->index <path->directions.size()) 
 	{
 		XMVECTOR direction =path->directions[path->index] - worldMatrix->r[3];
+	//	direction = XMVector3Transform(direction, *worldMatrix);
 		direction = XMVector3Normalize(direction);
-		direction *= 0.001f;//Frame Dependent
+		direction *= 0.01f;//Frame Dependent
+		
 		XMMATRIX localMatrix2 = XMMatrixTranslationFromVector(direction);
-
-		*worldMatrix = XMMatrixMultiply(localMatrix2, *worldMatrix);
+		XMMATRIX idenity = XMMatrixIdentity();
+		idenity.r[3].m128_f32[0] = beforeMutplcation.r[3].m128_f32[0];
+		idenity.r[3].m128_f32[1] = beforeMutplcation.r[3].m128_f32[1];
+		idenity.r[3].m128_f32[2] = beforeMutplcation.r[3].m128_f32[2];
+		idenity.r[3].m128_f32[3] = beforeMutplcation.r[3].m128_f32[3];
+		*worldMatrix = XMMatrixMultiply(localMatrix2, idenity);
 		if (sqrtf(
 			((path->directions[path->index].m128_f32[0] - worldMatrix->r[3].m128_f32[0])*(path->directions[path->index].m128_f32[0] - worldMatrix->r[3].m128_f32[0])) +
 			((path->directions[path->index].m128_f32[1] - worldMatrix->r[3].m128_f32[1])*(path->directions[path->index].m128_f32[1] - worldMatrix->r[3].m128_f32[1])) +
@@ -454,12 +466,28 @@ void CAISystem::PathPlaningMovement(TAIPathFinding* path, XMMATRIX* worldMatrix)
 	}
 	else 
 	{
-		path->directions.clear();
-		path->testingPathFinding = true;
-		path->startingNode = path->Goal;
-		path->Goal = 15;
 		path->index = 0;
+		path->directions.clear();
+		path->foundDestination = true;
+		path->startingNode = path->Goal;
+		open.clear();
+		visited.clear();
+		path->InterRuptPathPlanning = true;
 	}
+	worldMatrix->r[0].m128_f32[0] = beforeMutplcation.r[0].m128_f32[0];
+	worldMatrix->r[0].m128_f32[1] = beforeMutplcation.r[0].m128_f32[1];
+	worldMatrix->r[0].m128_f32[2] = beforeMutplcation.r[0].m128_f32[2];
+	worldMatrix->r[0].m128_f32[3] = beforeMutplcation.r[0].m128_f32[3];
+
+	worldMatrix->r[1].m128_f32[0] =beforeMutplcation.r[1].m128_f32[0];
+	worldMatrix->r[1].m128_f32[1] =beforeMutplcation.r[1].m128_f32[1];
+	worldMatrix->r[1].m128_f32[2] =beforeMutplcation.r[1].m128_f32[2];
+	worldMatrix->r[1].m128_f32[3] =beforeMutplcation.r[1].m128_f32[3];
+
+	worldMatrix->r[2].m128_f32[0] = beforeMutplcation.r[2].m128_f32[0];
+	worldMatrix->r[2].m128_f32[1] = beforeMutplcation.r[2].m128_f32[1];
+	worldMatrix->r[2].m128_f32[2] = beforeMutplcation.r[2].m128_f32[2];
+	worldMatrix->r[2].m128_f32[3] = beforeMutplcation.r[2].m128_f32[3];
 }
 
 void CAISystem::LookAtObject(XMMATRIX thingToLookAt, XMMATRIX * AIMatrix)
@@ -484,7 +512,8 @@ float CAISystem::CalcualteDistance(tiledata * _search, tiledata * goal)
 
 void CAISystem::MakeDirections(vector<XMVECTOR>* directions, PlannerNode* current)
 {
-	if (current != nullptr) {
+	if (current != nullptr) 
+	{
 		XMVECTOR pos;
 		pos.m128_f32[0] = current->state->tile->pos.x;
 		pos.m128_f32[1] = current->state->tile->pos.y;
@@ -493,4 +522,37 @@ void CAISystem::MakeDirections(vector<XMVECTOR>* directions, PlannerNode* curren
 		directions->insert(directions->begin(), pos);
 		MakeDirections(directions, current->parent);
 	}
+}
+
+void CAISystem::MoveAiToCoverLocation(TCoverTrigger Cover,TWorld * ptWorld)
+{
+	
+	int index=0;
+	for (int i = 0; i < AIInCombat.size(); ++i) 
+	{
+		if (ptWorld->atPathPlanining[AIInCombat[i]].InterRuptPathPlanning == true) 
+		{
+			if (ptWorld->atPathPlanining[AIInCombat[i]].Goal != Cover.coverAiCanGoTo[0].CoverPositions[index]) 
+			{
+				ptWorld->atAIMask[AIInCombat[i]].m_tnAIMask = COMPONENT_AIMASK | COMPONENT_SEARCH | COMPONENT_PATHFINDTEST;
+				ptWorld->atPathPlanining[AIInCombat[i]].Goal = Cover.coverAiCanGoTo[0].CoverPositions[index];
+				ptWorld->atPathPlanining[AIInCombat[i]].testingPathFinding = true;
+				ptWorld->atPathPlanining[AIInCombat[i]].DelayMovement = rand() % 1000 + 50;
+				ptWorld->atPathPlanining[AIInCombat[i]].InterRuptPathPlanning = false;
+			}
+		}
+	}
+}
+
+void CAISystem::AddAiInCombat(int aiEnitity)
+{
+	
+	for (int i = 0; AIInCombat.size(); ++i) 
+	{
+		if (AIInCombat[i] == aiEnitity) 
+		{
+			return;
+		}
+	}
+	AIInCombat.push_back(aiEnitity);
 }

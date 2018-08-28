@@ -156,7 +156,7 @@ unsigned int mouseWriteCount = 0;
 			POINT p;
 			if (GetCursorPos(&p))
 			{
-
+				
 			}
 			if (ScreenToClient(window, &p))
 			{

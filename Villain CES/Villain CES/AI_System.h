@@ -14,7 +14,6 @@ public:
 	~CAISystem();
 
 
-	int calculate_frustum(TWorld * ptWorld,frustum_t& frustum, float4x4 camera_transform, float fov, float aspect_ratio, float near_offset, float far_offset, int parentWorldMatrixIndex, float xoffset, float yoffset, float zoffset);
 	plane_t calculate_plane(float3 a, float3 b, float3 c) {
 		plane_t tempt;
 		XMVECTOR aV;
@@ -49,6 +48,9 @@ public:
 		
 		return tempt;
 	}
+public:
+	int calculate_frustum(TWorld * ptWorld,frustum_t& frustum, float4x4 camera_transform, float fov, float aspect_ratio, float near_offset, float far_offset, int parentWorldMatrixIndex, float xoffset, float yoffset, float zoffset);
+
 	void UpdateFrustum(frustum_t& frustum, float4x4 camera_transform, float fov, float aspect_ratio, float near_offset, float far_offset);
 	//void FollowAndShoot(XMMATRIX playerMatrix, Clips* AiGun);
 	void FollowObject(XMMATRIX thingToFollow, XMMATRIX* AIMatrix);
@@ -64,8 +66,11 @@ public:
 	void PathPlaningMovement(TAIPathFinding* path, XMMATRIX* worldMatrix);
 	void LookAtObject(XMMATRIX thingToLookAt, XMMATRIX* AIMatrix);
 	void Strafe(XMMATRIX* AiMatrix);
+	void MoveAiToCoverLocation(TCoverTrigger Cover, TWorld * ptWorld);
+	void AddAiInCombat(int aiEnitity);
 private:
-	
+	vector<int> AIInCombat;
+
 	int numberofAI;
 	struct tiledata 
 	{
@@ -86,17 +91,17 @@ private:
 		float heuristicCost;
 		float givenCost;
 		float finalCost;
-
-
 	};
 	map<int, SearchNode*>Nodes;
 	float CalcualteDistance(tiledata* _search, tiledata * goal);
 	map<SearchNode*, PlannerNode*> visited;
 	PriorityQueue<PlannerNode*> open;
-	float GetFinalCost(PlannerNode* finalCOst) {
+	float GetFinalCost(PlannerNode* finalCOst) 
+	{
 		return finalCOst->givenCost + finalCOst->heuristicCost*finalCOst->state->weight;
 	}
-	float calculateTest(PlannerNode* _givencost, SearchNode* _weight) {
+	float calculateTest(PlannerNode* _givencost, SearchNode* _weight) 
+	{
 		return _givencost->givenCost + _weight->weight;
 	}
 	void MakeDirections(vector<XMVECTOR> *directions, PlannerNode* current);
