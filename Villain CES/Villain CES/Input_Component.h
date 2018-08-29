@@ -4,10 +4,10 @@
 enum eInput_Component
 {
 	COMPONENT_INPUTMASK = 1 << 0,
-	COMPONENT_TEST		= 1 << 1,
-	COMPONENT_CLAYTON	= 1 << 2,
-	COMPONENT_SETH		= 1 << 3,
-	COMPONENT_CAELIS	= 1 << 4
+	COMPONENT_TEST = 1 << 1,
+	COMPONENT_CLAYTON = 1 << 2,
+	COMPONENT_SETH = 1 << 3,
+	COMPONENT_CAELIS = 1 << 4
 };
 
 struct TInputMask

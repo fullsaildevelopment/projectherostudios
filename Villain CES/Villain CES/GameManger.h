@@ -1,12 +1,12 @@
 #pragma once
 #include "Graphics_System.h"
 #include "InputSystem.h"
-#include"Collision_System.h"
-#include"Physics_System.h"
-#include"Timer.h"
+#include "Collision_System.h"
+#include "Physics_System.h"
+#include "Timer.h"
 #include "Entity.h"
-#include"ProjectileSystem.h"
-#include"AI_System.h"
+#include "ProjectileSystem.h"
+#include "AI_System.h"
 #include "UI_System.h"
 #include <array>
 
@@ -27,7 +27,8 @@ public:
 	int PathFindingExample();
 	void FirstSkeltonAiTestLoad();
 	int SpacePirateGamePlay();
-	
+	void LoadMikesGraphicsSandbox();
+	int MikesGraphicsSandbox();
 private:
 	float scale = 0;
 	XMMATRIX CameraNewPosition;
@@ -50,6 +51,7 @@ private:
 	bool GamePaused = false;
 	bool GameStart;
 	bool DrawUI = true;
+	int renderToTexturePassIndex = 0;
 	float*xPos = new float();
 	float*yPos = new float();
 	TMeshImport bulletMesh;
@@ -74,4 +76,6 @@ private:
 	System_Times *tTimerInfo;
 	float m_RealTimeFov;
 	bool bMoving;
+	float Health = 1.0f;
+
 };

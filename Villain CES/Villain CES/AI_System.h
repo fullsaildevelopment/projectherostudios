@@ -1,20 +1,27 @@
 #pragma once
-#include"ProjectileSystem.h"
-
-#include"Entity.h"
-#include"stdafx.h"
-#include"PriorityQueue.h"
-#include<map>
+#include "stdafx.h"
+#include "ProjectileSystem.h"
+#include "PriorityQueue.h"
+#include <map>
 #include "platform.h"
+#include "Entity.h"
 using namespace fullsail_ai;
 
 class CAISystem
 {
 public:
-	CAISystem();
+	CAISystem()
+		:open([](PlannerNode* const& c, PlannerNode* const& t)
+	{
+		return c->finalCost > t->finalCost;
+	}
+		)
+	{
+
+	}
 	~CAISystem();
 
-	
+
 	plane_t calculate_plane(float3 a, float3 b, float3 c) {
 		plane_t tempt;
 		XMVECTOR aV;
@@ -49,10 +56,9 @@ public:
 		
 		return tempt;
 	}
-
-
 public:
 	int calculate_frustum(TWorld * ptWorld,frustum_t& frustum, float4x4 camera_transform, float fov, float aspect_ratio, float near_offset, float far_offset, int parentWorldMatrixIndex, float xoffset, float yoffset, float zoffset);
+
 	void UpdateFrustum(frustum_t& frustum, float4x4 camera_transform, float fov, float aspect_ratio, float near_offset, float far_offset);
 	//void FollowAndShoot(XMMATRIX playerMatrix, Clips* AiGun);
 	void FollowObject(XMMATRIX thingToFollow, XMMATRIX* AIMatrix);
@@ -74,7 +80,8 @@ private:
 	vector<int> AIInCombat;
 
 	int numberofAI;
-	struct tiledata {
+	struct tiledata 
+	{
 		XMFLOAT3 pos;
 	};
 	struct SearchNode
@@ -92,21 +99,18 @@ private:
 		float heuristicCost;
 		float givenCost;
 		float finalCost;
-
-
 	};
 	map<int, SearchNode*>Nodes;
 	float CalcualteDistance(tiledata* _search, tiledata * goal);
 	map<SearchNode*, PlannerNode*> visited;
 	PriorityQueue<PlannerNode*> open;
-	float GetFinalCost(PlannerNode* finalCOst) {
+	float GetFinalCost(PlannerNode* finalCOst) 
+	{
 		return finalCOst->givenCost + finalCOst->heuristicCost*finalCOst->state->weight;
 	}
-	float calculateTest(PlannerNode* _givencost, SearchNode* _weight) {
+	float calculateTest(PlannerNode* _givencost, SearchNode* _weight) 
+	{
 		return _givencost->givenCost + _weight->weight;
 	}
 	void MakeDirections(vector<XMVECTOR> *directions, PlannerNode* current);
-	
-	
 };
-

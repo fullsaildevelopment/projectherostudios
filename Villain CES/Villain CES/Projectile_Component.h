@@ -12,8 +12,6 @@ enum eProjectileComponent
 	COMPONENT_METAL = 1 << 2,
 	COMPONENT_CLIP = 1 << 3,
 	COMPONENT_RAYGUN = 1 << 4
-	
-
 };
 struct TProjectileMask
 {
@@ -22,7 +20,7 @@ struct TProjectileMask
 struct Clips
 {
 	bool maderay;
-	bool GunMode=false;
+	bool GunMode = false;
 	float fShootingCoolDown;
 	list<bool> nBulletsAvailables;
 	vector<int> nBulletsFired;

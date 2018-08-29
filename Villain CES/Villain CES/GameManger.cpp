@@ -1,5 +1,8 @@
 #include "GameManger.h"
 #define AI_ON true
+#define MIKES_SANDBOX_ON false
+#define SKELETON_LOAD_ON false
+#define MAIN_LEVEL_ON true
 CGameMangerSystem::CGameMangerSystem(HWND window,CInputSystem* _pcInputSystem)
 {
 	cApplicationWindow = window;
@@ -41,12 +44,37 @@ CGameMangerSystem::~CGameMangerSystem()
 
 void CGameMangerSystem::LoadLevel()
 {
-	// master
-	
+	// master	
 	pcGraphicsSystem->CleanD3DLevel(&tThisWorld);
 	
 	pcAiSystem->SetNumberOfAI(2);
 	tTimerInfo->StartClock(tAugerTimers->tSceneTimer);
+	ImporterData tempImport;
+	TMaterialOptimized matOpt;
+
+	#pragma region Create Skybox
+	ID3D11Resource * spaceMap[6];
+
+
+	CreateWICTextureFromFile(pcGraphicsSystem->m_pd3dDevice, L"Cubemap_SpaceBlue/bkg1_back.png", &spaceMap[0], NULL, NULL);
+	CreateWICTextureFromFile(pcGraphicsSystem->m_pd3dDevice, L"Cubemap_SpaceBlue/bkg1_left.png", &spaceMap[1], NULL, NULL);
+	CreateWICTextureFromFile(pcGraphicsSystem->m_pd3dDevice, L"Cubemap_SpaceBlue/bkg1_right.png", &spaceMap[2], NULL, NULL);
+
+	CreateWICTextureFromFile(pcGraphicsSystem->m_pd3dDevice, L"Cubemap_SpaceBlue/bkg1_front.png", &spaceMap[3], NULL, NULL);
+	CreateWICTextureFromFile(pcGraphicsSystem->m_pd3dDevice, L"Cubemap_SpaceBlue/bkg1_top.png", &spaceMap[4], NULL, NULL);
+	CreateWICTextureFromFile(pcGraphicsSystem->m_pd3dDevice, L"Cubemap_SpaceBlue/bkg1_bot.png", &spaceMap[5], NULL, NULL);
+
+	ID3D11ShaderResourceView * tempSrv = pcGraphicsSystem->TexturesToCubeMap(pcGraphicsSystem->m_pd3dDeviceContext, spaceMap);
+	renderToTexturePassIndex = CreateSkybox(&tThisWorld, tempSrv);
+
+#pragma endregion
+	
+	tempImport = pcGraphicsSystem->ReadMesh("meshData_NoBrewery7.txt");
+	matOpt = pcGraphicsSystem->CreateTexturesFromFile(tempImport.vtMaterials, tempImport.meshCount);
+	for (int meshIndex = 0; meshIndex < tempImport.meshCount; meshIndex++)
+	{
+		int myMesh = createMesh(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, tempImport.vtMeshes[meshIndex], matOpt, meshIndex);
+	}
 
 	m_d3dWorldMatrix = pcGraphicsSystem->SetDefaultWorldPosition();//Call some sort of function from the graphics system to create this matrix
 	m_d3dViewMatrix = pcGraphicsSystem->SetDefaultViewMatrix();//Call some sort of function from the graphics system to create this matrix
@@ -55,22 +83,20 @@ void CGameMangerSystem::LoadLevel()
 	debugCamera->d3d_Position = pcGraphicsSystem->SetDefaultCameraMatrix();
 	m_d3dProjectionMatrix = pcGraphicsSystem->SetDefaultPerspective(m_RealTimeFov);
 	m_d3dPlayerMatrix = pcGraphicsSystem->SetDefaultWorldPosition();
+	tCameraMode.bWalkMode = true;
 	tCameraMode.bDebugMode = false;
 	tCameraMode.bAimMode = false;
-	tCameraMode.bWalkMode = true;
 	tCameraMode.bSwitch = false;
 	bMoving = false;
 	m_RealTimeFov = 90.0f;
 	//m_d3dPlayerMatrix = XMMatrixMultiply(m_d3dPlayerMatrix, XMMatrixScaling(.01, .01, .01));
 
 	m_d3dPlayerMatrix.r[3].m128_f32[2] -= 10;
-	ImporterData tempImport;
 	tempImport = pcGraphicsSystem->ReadMesh("meshData_Pirate.txt");
 
 	for (int meshIndex = 0; meshIndex < tempImport.meshCount; meshIndex++)
 	{
-		PlayerStartIndex = createClayton(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, tempImport.vtMeshes[meshIndex], tempImport.vtMaterials[meshIndex]);
-		
+		PlayerStartIndex = createClayton(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, tempImport.vtMeshes[meshIndex], tempImport.vtMaterials[meshIndex]);		
 	}
 
 	tThisWorld.atClayton[PlayerStartIndex].health = 100;
@@ -85,14 +111,16 @@ void CGameMangerSystem::LoadLevel()
 	XMMATRIX celling = m_d3dWorldMatrix;
 	celling.r[3].m128_f32[1] += 10;
 	CreateCelling(&tThisWorld, celling);
-	XMMATRIX AILocation = m_d3dWorldMatrix;
-	AILocation.r[3].m128_f32[2] += -5;
-	AILocation.r[3].m128_f32[0] += -5;
 	//CreateSimpleGunAi(&tThisWorld, AILocation);
 
 
 	AimingLine(&tThisWorld, m_d3dWorldMatrix, PlayerStartIndex, -1, 1, 10.5);
 
+
+	#pragma region Gun & AI Init
+	XMMATRIX AILocation = m_d3dWorldMatrix;
+	AILocation.r[3].m128_f32[2] += -5;
+	AILocation.r[3].m128_f32[0] += -5;
 	GunIndexForPlayer = CreateGun(&tThisWorld, m_d3dWorldMatrix, PlayerStartIndex, -1, 1, 10.5,3,100);
 	tThisWorld.atClip[GunIndexForPlayer].bulletSpeed = 0.001;
 	AILocation = m_d3dWorldMatrix;
@@ -103,7 +131,6 @@ void CGameMangerSystem::LoadLevel()
 	tThisWorld.atAIMask[AiIndex].GunIndex = GunINdexai;
 
 	tThisWorld.atClip[GunINdexai].bulletSpeed = 0.0001;//Frame Dependent
-
 
 	AILocation = m_d3dWorldMatrix;
 	AILocation.r[3].m128_f32[0] += -3;
@@ -123,25 +150,29 @@ void CGameMangerSystem::LoadLevel()
 	tThisWorld.atWorldMatrix[SimpleAi2].worldMatrix = XMMatrixLookAtLH(tThisWorld.atWorldMatrix[SimpleAi2].worldMatrix.r[3],
 	m_d3dPlayerMatrix.r[3], XMVectorSet(0, 1, 0, 0));
 	tThisWorld.atWorldMatrix[SimpleAi2].worldMatrix = XMMatrixInverse(NULL, tThisWorld.atWorldMatrix[SimpleAi2].worldMatrix);
+#pragma endregion
+
 	//CreateSimpleGunAi(&tThisWorld, AILocation);
 	XMMATRIX groundSpawnPoint;
 	groundSpawnPoint = m_d3dWorldMatrix;
 	groundSpawnPoint.r[3].m128_f32[1] -= 2;
 	CreateGround(&tThisWorld, groundSpawnPoint);
 
-	tempImport = pcGraphicsSystem->ReadMesh("meshData_Example_Objects.txt");
+	//tempImport = pcGraphicsSystem->ReadMesh("meshData_Example_Objects.txt");
 
-	for (int meshIndex = 1; meshIndex < tempImport.meshCount; meshIndex++)
-	{
-		int myMesh = createMesh(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, tempImport.vtMeshes[meshIndex], tempImport.vtMaterials[meshIndex]);
-	}
+	//for (int meshIndex = 1; meshIndex < tempImport.meshCount; meshIndex++)
+	//{
+	//	//int myMesh = createMesh(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, tempImport.vtMeshes[meshIndex], tempImport.vtMaterials[meshIndex]);
+	//}
 
-	tempImport = pcGraphicsSystem->ReadMesh("meshData_ScifiRoom.txt");
+	//tempImport = pcGraphicsSystem->ReadMesh("meshData_ScifiRoom.txt");
 
-	for (int meshIndex = 0; meshIndex < tempImport.meshCount; meshIndex++)
-	{
-		int myMesh = createMesh(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, tempImport.vtMeshes[meshIndex], tempImport.vtMaterials[meshIndex]);
-	}
+	//for (int meshIndex = 0; meshIndex < tempImport.meshCount; meshIndex++)
+	//{
+	//	//int myMesh = createMesh(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, tempImport.vtMeshes[meshIndex], tempImport.vtMaterials[meshIndex]);
+	//}
+
+	#pragma region Second Camera Init
 	std::array<plane_t, 6> planes;
 	float4x4 secondcamera;
 	secondcamera.row1.x = 1;
@@ -203,8 +234,9 @@ void CGameMangerSystem::LoadLevel()
 	secondcamera.row4.w = tThisWorld.atWorldMatrix[SimpleAi2].worldMatrix.r[3].m128_f32[3];
 
 	frustumIndex=pcAiSystem->calculate_frustum(&tThisWorld, planes, secondcamera, 70, 1, 0.1, 20, SimpleAi2, -2.1, 1.4, 19.6);
+#pragma endregion
 
-
+	#pragma region AI Init
 	tThisWorld.atWorldMatrix[frustumIndex].worldMatrix = AILocation;
 	
 	tThisWorld.atAIVision[SimpleAi2].eyes0 = planes;
@@ -257,8 +289,11 @@ void CGameMangerSystem::LoadLevel()
 	pcAiSystem->AddEdgestoNode(nodelocation3, edges);
 
 
+#pragma endregion
 
-	if (pcCollisionSystem->m_AAbb.size() !=0 ) {
+	#pragma region Collision Init
+	if (pcCollisionSystem->m_AAbb.size() !=0 ) 
+	{
 		float x = 0;
 	}
 	XMFLOAT4 blue;
@@ -295,6 +330,7 @@ void CGameMangerSystem::LoadLevel()
 		}
 	}
 
+#pragma endregion
 
 	for (int nCurrentEntity = 0; nCurrentEntity < ENTITYCOUNT; nCurrentEntity++) 
 	{
@@ -309,8 +345,7 @@ void CGameMangerSystem::LoadLevel()
 }
 
 int CGameMangerSystem::InGameUpdate()
-{
-	
+{	
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 	_CrtSetBreakAlloc(-1); //Important!
 	m_d3dProjectionMatrix = pcGraphicsSystem->SetDefaultPerspective(m_RealTimeFov);
@@ -328,8 +363,10 @@ int CGameMangerSystem::InGameUpdate()
 		return 3;
 	}
 	// ui stuff
-	if (GamePaused == true) {
-		if (DrawUI == true) {
+	if (GamePaused == true) 
+	{
+		if (DrawUI == true) 
+		{
 			XMMATRIX UiPos = tThisWorld.atWorldMatrix[PlayerStartIndex].worldMatrix;
 			//UiPos.r[3].m128_f32[1] -= 1;
 			XMVECTOR foward;
@@ -385,18 +422,13 @@ int CGameMangerSystem::InGameUpdate()
 		if (tCameraMode.bSwitch == true)
 		{
 			m_d3d_ResultMatrix = pcInputSystem->CameraOrientationReset(m_d3d_ResultMatrix);
+			m_d3dOffsetMatrix = pcGraphicsSystem->SetDefaultOffset();
 			tCameraMode.bSwitch = false;
 		}
 			m_d3d_ResultMatrix = pcInputSystem->WalkCameraControls(XMVectorSet(0, 1.0f, 0, 0), m_d3d_ResultMatrix, bMoving);
 		
 		walkCamera->d3d_Position = XMMatrixMultiply(m_d3d_ResultMatrix,m_d3dPlayerMatrix) ;
 		walkCamera->d3d_Position = XMMatrixMultiply(m_d3dOffsetMatrix, walkCamera->d3d_Position);
-		
-		
-
-		
-	
-
 	}
 	else if (tCameraMode.bAimMode == true)
 	{
@@ -404,7 +436,7 @@ int CGameMangerSystem::InGameUpdate()
 		if (tCameraMode.bSwitch == true)
 		{
 			m_d3d_ResultMatrix = pcInputSystem->CameraOrientationReset(m_d3d_ResultMatrix);
-			m_d3d_ResultMatrix = pcInputSystem->CameraBehaviorLerp(m_d3d_ResultMatrix, m_d3dPlayerMatrix,scale);
+			//m_d3d_ResultMatrix = pcInputSystem->CameraBehaviorLerp(m_d3d_ResultMatrix, m_d3dPlayerMatrix,scale);
 			tCameraMode.bSwitch = false;
 		}
 
@@ -418,8 +450,7 @@ int CGameMangerSystem::InGameUpdate()
 		
 	}
 	else
-	{
-	
+	{	
 		if (tCameraMode.bSwitch == true)
 		{
 			m_d3d_ResultMatrix = pcInputSystem->CameraOrientationReset(m_d3d_ResultMatrix);
@@ -435,7 +466,75 @@ int CGameMangerSystem::InGameUpdate()
 	CGraphicsSystem::TMyVertexBufferType tMyVertexBufferTemp;
 	tTempPixelBuffer.m_d3dCollisionColor = XMFLOAT4(1.0f, 0.0f, 0.0f, 0.0f);
 
+	pcGraphicsSystem->UpdateD3D();
+	pcGraphicsSystem->UpdateD3D_RenderToTexture();
 
+	for (int nCurrentEntity = 0; nCurrentEntity <= renderToTexturePassIndex; nCurrentEntity++)
+	{
+		tMyVertexBufferTemp.m_d3dWorldMatrix = tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix;
+		tMyVertexBufferTemp.m_d3dProjectionMatrix = m_d3dProjectionMatrix;
+		tTempVertexBuffer.m_d3dWorldMatrix = tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix;
+		tTempVertexBuffer.m_d3dProjectionMatrix = m_d3dProjectionMatrix;
+		//Possible Spaceships
+		if (tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_SHADERID))
+		{
+			if (tCameraMode.bWalkMode == true)
+			{
+				pcGraphicsSystem->InitMyShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tMyVertexBufferTemp, tThisWorld.atMesh[nCurrentEntity], walkCamera->d3d_Position);
+			}
+			else if (tCameraMode.bAimMode == true)
+			{
+				pcGraphicsSystem->InitMyShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tMyVertexBufferTemp, tThisWorld.atMesh[nCurrentEntity], aimCamera->d3d_Position);
+			}
+			else
+			{
+				pcGraphicsSystem->InitMyShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tMyVertexBufferTemp, tThisWorld.atMesh[nCurrentEntity], debugCamera->d3d_Position);
+			}
+
+			pcGraphicsSystem->ExecutePipeline(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atMesh[nCurrentEntity].m_nIndexCount, tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask, tThisWorld.atShaderID[nCurrentEntity].m_nShaderID);
+		}
+		//Skybox
+		if (tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_SKYBOX | COMPONENT_TEXTURE | COMPONENT_SHADERID))
+		{
+			if (tCameraMode.bWalkMode == true)
+			{
+				tMyVertexBufferTemp.m_d3dViewMatrix = walkCamera->d3d_Position;
+				tTempVertexBuffer.m_d3dViewMatrix = walkCamera->d3d_Position;
+				pcGraphicsSystem->InitSkyboxShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tMyVertexBufferTemp, tThisWorld.atMesh[nCurrentEntity], walkCamera->d3d_Position);
+			}
+			else if (tCameraMode.bAimMode == true)
+			{
+				tTempVertexBuffer.m_d3dViewMatrix = aimCamera->d3d_Position;
+				tMyVertexBufferTemp.m_d3dViewMatrix = aimCamera->d3d_Position;
+				pcGraphicsSystem->InitSkyboxShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tMyVertexBufferTemp, tThisWorld.atMesh[nCurrentEntity], aimCamera->d3d_Position);
+			}
+			else
+			{
+				tTempVertexBuffer.m_d3dWorldMatrix = m_d3dWorldMatrix;
+				tTempVertexBuffer.m_d3dViewMatrix = debugCamera->d3d_Position;
+				tMyVertexBufferTemp.m_d3dViewMatrix = debugCamera->d3d_Position;
+				pcGraphicsSystem->InitSkyboxShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tMyVertexBufferTemp, tThisWorld.atMesh[nCurrentEntity], debugCamera->d3d_Position);
+			}
+			pcGraphicsSystem->ExecutePipeline(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atMesh[nCurrentEntity].m_nIndexCount, tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask, tThisWorld.atShaderID[nCurrentEntity].m_nShaderID);
+
+		}
+
+	}
+
+	pcGraphicsSystem->m_pd3dDevice->CreateShaderResourceView(pcGraphicsSystem->m_pd3dOutsideGlassRenderToTexture, NULL, &pcGraphicsSystem->m_pd3dOutsideGlassSRV);
+	pcGraphicsSystem->m_pd3dDeviceContext->GenerateMips(pcGraphicsSystem->m_pd3dOutsideGlassSRV);
+
+	//Assign Glass Texture to Glass Entities
+	for (int nCurrentEntity = 0; nCurrentEntity < ENTITYCOUNT; nCurrentEntity++)
+	{
+		if (tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_SHADERID))
+		{
+			if (tThisWorld.atShaderID[nCurrentEntity].m_nShaderID == 10)
+			{
+				tThisWorld.atMesh[nCurrentEntity].m_d3dSRVDiffuse = pcGraphicsSystem->m_pd3dOutsideGlassSRV;
+			}
+		}
+	}
 
 	pcGraphicsSystem->UpdateD3D();
 	#pragma region Input Garbage
@@ -486,7 +585,7 @@ int CGameMangerSystem::InGameUpdate()
 				pcGraphicsSystem->ExecutePipeline(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atDebugMesh[nCurrentEntity].m_nVertexCount, tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask, tThisWorld.atShaderID[nCurrentEntity].m_nShaderID);
 
 			}
-			// ai code would run here
+
 			if (tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_SHADERID))
 			{
 				if (tCameraMode.bWalkMode == true)
@@ -498,20 +597,19 @@ int CGameMangerSystem::InGameUpdate()
 				{
 					tTempVertexBuffer.m_d3dViewMatrix = aimCamera->d3d_Position;
 					tMyVertexBufferTemp.m_d3dViewMatrix = aimCamera->d3d_Position;
-
 				}
 				else if (tCameraMode.bDebugMode == true)
 				{
 					tTempVertexBuffer.m_d3dWorldMatrix = m_d3dWorldMatrix;
 					tTempVertexBuffer.m_d3dViewMatrix = debugCamera->d3d_Position;
 					tMyVertexBufferTemp.m_d3dViewMatrix = debugCamera->d3d_Position;
-
 				}
-				else {
-						tTempVertexBuffer.m_d3dWorldMatrix = tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix;
-						tTempVertexBuffer.m_d3dViewMatrix = m_d3dViewMatrix;
-						tMyVertexBufferTemp.m_d3dViewMatrix = m_d3dViewMatrix;
-					}
+				else 
+				{
+					tTempVertexBuffer.m_d3dWorldMatrix = tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix;
+					tTempVertexBuffer.m_d3dViewMatrix = m_d3dViewMatrix;
+					tMyVertexBufferTemp.m_d3dViewMatrix = m_d3dViewMatrix;
+				}
 				
 				if (tThisWorld.atInputMask[nCurrentEntity].m_tnInputMask == (COMPONENT_CLAYTON | COMPONENT_INPUTMASK))
 				{
@@ -542,23 +640,10 @@ int CGameMangerSystem::InGameUpdate()
 					pcGraphicsSystem->InitMyShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tMyVertexBufferTemp, tThisWorld.atMesh[nCurrentEntity], debugCamera->d3d_Position);
 				}
 
-
 				pcGraphicsSystem->ExecutePipeline(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atMesh[nCurrentEntity].m_nIndexCount, tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask, tThisWorld.atShaderID[nCurrentEntity].m_nShaderID);
 			}
 
-			/*if (pcAiSystem->GetNumberOfAI() <= 0)
-			{
-				return -1;
-			}*/
-//			if (tThisWorld.atAIMask[nCurrentEntity].m_tnAIMask == (COMPONENT_AIMASK | COMPONENT_FOLLOW) || tThisWorld.atAIMask[nCurrentEntity].m_tnAIMask == (COMPONENT_SHOOT | COMPONENT_AIMASK | COMPONENT_FOLLOW))
-//			{
-//#if AI_ON				
-//				pcAiSystem->FollowObject(tThisWorld.atWorldMatrix[PlayerStartIndex].worldMatrix, &tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix);
-//				pcAiSystem->ShootGun(&tThisWorld.atClip[tThisWorld.atAIMask[nCurrentEntity].GunIndex]);
-//#endif // AI_ON
-//			}
-
-			if (tThisWorld.atAIMask[nCurrentEntity].m_tnAIMask == (COMPONENT_AIMASK | COMPONENT_SEARCH) || tThisWorld.atAIMask[nCurrentEntity].m_tnAIMask == (COMPONENT_AIMASK | COMPONENT_SPOTEDPLAYER)) {
+			if (tThisWorld.atAIMask[nCurrentEntity].m_tnAIMask == (COMPONENT_AIMASK | COMPONENT_SEARCH) || tThisWorld.atAIMask[nCurrentEntity].m_tnAIMask == (COMPONENT_AIMASK | COMPONENT_SPOTTEDPLAYER)) {
 
 
 				//if (tThisWorld.atAIVision[nCurrentEntity].keepSearching == true) {
@@ -602,14 +687,15 @@ int CGameMangerSystem::InGameUpdate()
 				//pcAiSystem->UpdateFrustum(tThisWorld.atAIVision[nCurrentEntity].eyes0, secondcamera, 70, 1, 0.1, 20);
 				//	 pcAiSystem->calculate_frustum(&tThisWorld,tThisWorld.atAIVision[nCurrentEntity].eyes0, secondcamera,70,1,0.1,20, nCurrentEntity, -2.1, 1.4, 19.6);
 				vector<int> indexes;
-				if (pcCollisionSystem->AiVisionCheck(tThisWorld.atAIVision[nCurrentEntity].eyes0, &indexes) == true) {
+				if (pcCollisionSystem->AiVisionCheck(tThisWorld.atAIVision[nCurrentEntity].eyes0, &indexes) == true) 
+				{
 					float x = 0;
 
 					tThisWorld.atSimpleMesh[nCurrentEntity].m_nColor = XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f);
 				}
-				else {
+				else 
+				{
 					tThisWorld.atSimpleMesh[nCurrentEntity].m_nColor = XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f);
-
 				}
 
 				/*	if (cloasestPlayer < closestWall) {
@@ -630,22 +716,7 @@ int CGameMangerSystem::InGameUpdate()
 				}*/
 
 			}
-			//else if(tThisWorld.atAIMask[nCurrentEntity].m_tnAIMask==())
 
-		/*if (tThisWorld.atAIMask[nCurrentEntity].m_tnAIMask == (COMPONENT_AIMASK | COMPONENT_PATHFINDTEST)) {
-			if (tThisWorld.atPathPlanining[nCurrentEntity].testingPathFinding == true) {
-
-				pcAiSystem->FindBestPath(tThisWorld.atPathPlanining[nCurrentEntity].startingNode,
-					tThisWorld.atPathPlanining[nCurrentEntity].Goal,
-					&tThisWorld.atPathPlanining[nCurrentEntity].directions);
-
-				tThisWorld.atPathPlanining[nCurrentEntity].testingPathFinding = false;
-			}
-			else {
-				pcAiSystem->PathPlaningMovement(&tThisWorld.atPathPlanining[nCurrentEntity], &tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix);
-			}
-
-		}*/
 			if (tThisWorld.atProjectiles[nCurrentEntity].m_tnProjectileMask == (COMPONENT_PROJECTILESMASK | COMPONENT_CLIP))
 			{
 				if (tThisWorld.atClip[nCurrentEntity].GunMode == false && tThisWorld.atClip[nCurrentEntity].tryToShoot == true)
@@ -738,11 +809,9 @@ int CGameMangerSystem::InGameUpdate()
 
 			}
 
-
 			if (nCurrentEntity == PlayerStartIndex) {
 				float x = 0;
 			}
-			//tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = pcPhysicsSystem->ResolveForces(&tThisWorld.atRigidBody[nCurrentEntity], tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, true);
 
 			if (tThisWorld.atProjectiles[nCurrentEntity].m_tnProjectileMask == (COMPONENT_PROJECTILESMASK | COMPONENT_RAYGUN)) {
 				float CloseEstObject = 10000000000000000000.0f;
@@ -867,53 +936,6 @@ int CGameMangerSystem::InGameUpdate()
 
 				}
 			}
-			else {
-
-				//	tTempPixelBuffer.m_d3dCollisionColor = tThisWorld.atSimpleMesh[nCurrentEntity].m_nColor;
-
-			}
-			tTempPixelBuffer.m_d3dCollisionColor = tThisWorld.atSimpleMesh[nCurrentEntity].m_nColor;
-
-			/*if (tThisWorld.atParentWorldMatrix[nCurrentEntity] != -1)
-			{
-
-				tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = XMMatrixMultiply(pcGraphicsSystem->SetDefaultWorldPosition(),
-					tThisWorld.atWorldMatrix[tThisWorld.atParentWorldMatrix[nCurrentEntity]].worldMatrix);
-
-				tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = XMMatrixMultiply(tThisWorld.atOffSetMatrix[nCurrentEntity], tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix);
-
-				if (nCurrentEntity == frustumIndex) {
-					XMMATRIX empty;
-					empty = pcGraphicsSystem->SetDefaultWorldPosition();
-					XMMATRIX rotation;
-					XMMATRIX d3dTmpViewM;
-					rotation = XMMatrixRotationY(-0.3);
-					empty.r[1] = tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix.r[1];
-					empty.r[0] = tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix.r[0];
-					d3dTmpViewM = empty;
-					XMVECTOR d3d_newX, d3d_newY, d3d_existingZ;
-					d3dTmpViewM = XMMatrixMultiply(rotation, d3dTmpViewM);
-					d3d_existingZ = d3dTmpViewM.r[2];
-					d3d_newX = XMVector3Cross(empty.r[1], d3d_existingZ);
-					d3d_newY = XMVector3Cross(d3d_existingZ, d3d_newX);
-
-					d3d_newX = XMVector3Normalize(d3d_newX);
-					d3d_newY = XMVector3Normalize(d3d_newY);
-
-					d3d_existingZ = XMVector3Normalize(d3d_existingZ);
-
-					d3dTmpViewM.r[0] = d3d_newX;
-					d3dTmpViewM.r[1] = d3d_newY;
-					d3dTmpViewM.r[2] = d3d_existingZ;
-					empty = d3dTmpViewM;
-					empty.r[3].m128_f32[0] = 3;
-					empty.r[3].m128_f32[1] = 0;
-					empty.r[3].m128_f32[2] = 1;
-
-
-					tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = empty;
-				}
-			}*/
 
 			if (tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_SIMPLEMESH | COMPONENT_SHADERID))
 			{
@@ -932,6 +954,30 @@ int CGameMangerSystem::InGameUpdate()
 					pcGraphicsSystem->InitPrimalShaderData2(pcGraphicsSystem->m_pd3dDeviceContext, tTempVertexBuffer, tTempPixelBuffer, tThisWorld.atSimpleMesh[nCurrentEntity], debugCamera->d3d_Position);
 				}
 				pcGraphicsSystem->ExecutePipeline(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atSimpleMesh[nCurrentEntity].m_nIndexCount, tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask, tThisWorld.atShaderID[nCurrentEntity].m_nShaderID);
+			}
+
+			if (tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_SKYBOX | COMPONENT_TEXTURE | COMPONENT_SHADERID))
+			{
+				if (tCameraMode.bWalkMode == true)
+				{
+					tMyVertexBufferTemp.m_d3dViewMatrix = walkCamera->d3d_Position;
+					tTempVertexBuffer.m_d3dViewMatrix = walkCamera->d3d_Position;
+					pcGraphicsSystem->InitSkyboxShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tMyVertexBufferTemp, tThisWorld.atMesh[nCurrentEntity], walkCamera->d3d_Position);
+				}
+				else if (tCameraMode.bAimMode == true)
+				{
+					tTempVertexBuffer.m_d3dViewMatrix = aimCamera->d3d_Position;
+					tMyVertexBufferTemp.m_d3dViewMatrix = aimCamera->d3d_Position;
+					pcGraphicsSystem->InitSkyboxShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tMyVertexBufferTemp, tThisWorld.atMesh[nCurrentEntity], aimCamera->d3d_Position);
+				}
+				else
+				{
+					tTempVertexBuffer.m_d3dWorldMatrix = m_d3dWorldMatrix;
+					tTempVertexBuffer.m_d3dViewMatrix = debugCamera->d3d_Position;
+					tMyVertexBufferTemp.m_d3dViewMatrix = debugCamera->d3d_Position;
+					pcGraphicsSystem->InitSkyboxShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tMyVertexBufferTemp, tThisWorld.atMesh[nCurrentEntity], debugCamera->d3d_Position);
+				}
+				pcGraphicsSystem->ExecutePipeline(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atMesh[nCurrentEntity].m_nIndexCount, tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask, tThisWorld.atShaderID[nCurrentEntity].m_nShaderID);
 			}
 
 		}
@@ -983,7 +1029,7 @@ int CGameMangerSystem::LoadMainMenu()
 			}
 			else if (PtInRect(&tThisWorld.atButton[nCurrentEntity].boundingBox, hoverPoint))
 			{
-				tTempPixelBuffer.hoverColor = XMFLOAT4(.65, .65, .65, 1);
+				tTempPixelBuffer.hoverColor = XMFLOAT4(.65f, .65f, .65f, 1);
 			}
 			else
 			{
@@ -1003,7 +1049,9 @@ int CGameMangerSystem::LoadMainMenu()
 
 	if (pcInputSystem->InputCheck(G_KEY_ESCAPE) == 1)
 		return 4;
-
+#if MIKES_SANDBOX_ON
+	return 9;
+#endif
 	return 0;
 }
 
@@ -1020,7 +1068,18 @@ void CGameMangerSystem::InitilizeMainMenu()
 		nThisEntity = CreateUILabel(&tThisWorld, menuCamera->d3d_Position, 2, 1, .5, 0, atUIVertices);
 		pcUISystem->AddTextureToUI(&tThisWorld, nThisEntity, pcGraphicsSystem->m_pd3dDevice, wideChar);
 		//                                                  modify this to switch testing levels in Augur.cpp
-		pcUISystem->AddButtonToUI(&tThisWorld, nThisEntity,7, cApplicationWindow);
+#if MIKES_SANDBOX_ON
+		pcUISystem->AddButtonToUI(&tThisWorld, nThisEntity, 9, cApplicationWindow);
+
+#endif
+#if SKELETON_LOAD_ON
+		pcUISystem->AddButtonToUI(&tThisWorld, nThisEntity, 7, cApplicationWindow);
+
+#endif
+#if MAIN_LEVEL_ON
+		pcUISystem->AddButtonToUI(&tThisWorld, nThisEntity, 1, cApplicationWindow);
+
+#endif
 	}
 	{
 		wchar_t wideChar[] =
@@ -1146,10 +1205,10 @@ void CGameMangerSystem::LoadPathFindingTest()
 
 	m_d3dWorldMatrix = pcGraphicsSystem->SetDefaultWorldPosition();//Call some sort of function from the graphics system to create this matrix
 	m_d3dViewMatrix = pcGraphicsSystem->SetDefaultViewMatrix();//Call some sort of function from the graphics system to create this matrix
+	m_d3dProjectionMatrix = pcGraphicsSystem->SetDefaultPerspective();
+	debugCamera->d3d_Position = pcGraphicsSystem->SetDefaultCameraMatrix();
 	walkCamera->d3d_Position = pcGraphicsSystem->SetDefaultCameraMatrix();
 	aimCamera->d3d_Position = pcGraphicsSystem->SetDefaultCameraMatrix();
-	debugCamera->d3d_Position = pcGraphicsSystem->SetDefaultCameraMatrix();
-	m_d3dProjectionMatrix = pcGraphicsSystem->SetDefaultPerspective();
 
 	tCameraMode.bDebugMode = false;
 	tCameraMode.bAimMode = true;
@@ -1219,14 +1278,14 @@ void CGameMangerSystem::LoadPathFindingTest()
 
 	for (int meshIndex = 1; meshIndex < tempImport.meshCount; meshIndex++)
 	{
-		int myMesh = createMesh(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, tempImport.vtMeshes[meshIndex], tempImport.vtMaterials[meshIndex]);
+		//int myMesh = createMesh(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, tempImport.vtMeshes[meshIndex], tempImport.vtMaterials[meshIndex]);
 	}
 
 	tempImport = pcGraphicsSystem->ReadMesh("meshData_ScifiRoom.txt");
 
 	for (int meshIndex = 0; meshIndex < tempImport.meshCount; meshIndex++)
 	{
-		int myMesh = createMesh(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, tempImport.vtMeshes[meshIndex], tempImport.vtMaterials[meshIndex]);
+		//int myMesh = createMesh(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, tempImport.vtMeshes[meshIndex], tempImport.vtMaterials[meshIndex]);
 	}
 
 #pragma region 
@@ -2322,14 +2381,14 @@ void CGameMangerSystem::FirstSkeltonAiTestLoad()
 
 	for (int meshIndex = 1; meshIndex < tempImport.meshCount; meshIndex++)
 	{
-		int myMesh = createMesh(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, tempImport.vtMeshes[meshIndex], tempImport.vtMaterials[meshIndex]);
+		//int myMesh = createMesh(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, tempImport.vtMeshes[meshIndex], tempImport.vtMaterials[meshIndex]);
 	}
 
 	tempImport = pcGraphicsSystem->ReadMesh("meshData_ScifiRoom.txt");
 
 	for (int meshIndex = 0; meshIndex < tempImport.meshCount; meshIndex++)
 	{
-		int myMesh = createMesh(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, tempImport.vtMeshes[meshIndex], tempImport.vtMaterials[meshIndex]);
+		//int myMesh = createMesh(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, tempImport.vtMeshes[meshIndex], tempImport.vtMaterials[meshIndex]);
 	}
 	//AILocation.r[3].m128_f32[0] -= 7;
 	//int nodeLocation = CreateNodePoint(&tThisWorld, AILocation);
@@ -3184,3 +3243,198 @@ int CGameMangerSystem::SpacePirateGamePlay()
 
 
 }
+
+void CGameMangerSystem::LoadMikesGraphicsSandbox()
+{
+	pcGraphicsSystem->CleanD3DLevel(&tThisWorld);
+
+	m_d3dWorldMatrix = pcGraphicsSystem->SetDefaultWorldPosition();//Call some sort of function from the graphics system to create this matrix
+	m_d3dViewMatrix = pcGraphicsSystem->SetDefaultViewMatrix();//Call some sort of function from the graphics system to create this matrix
+	m_d3dProjectionMatrix = pcGraphicsSystem->SetDefaultPerspective();
+
+	debugCamera->d3d_Position = pcGraphicsSystem->SetDefaultCameraMatrix();
+	tCameraMode.bDebugMode = true;
+	tCameraMode.bAimMode = false;
+	tCameraMode.bWalkMode = false;
+	tCameraMode.bSwitch = false;
+
+	ImporterData tempImport;
+	TMaterialOptimized matOpt;
+	//tempImport = pcGraphicsSystem->ReadMesh("meshData_ScifiRoom.txt");
+
+	//for (int meshIndex = 0; meshIndex < tempImport.meshCount; meshIndex++)
+	//{
+	//	int myMesh = createMesh(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, tempImport.vtMeshes[meshIndex], tempImport.vtMaterials[meshIndex]);
+	//}
+
+	#pragma region Create Skybox
+	ID3D11Resource * spaceMap[6];
+	
+	
+	CreateWICTextureFromFile(pcGraphicsSystem->m_pd3dDevice, L"Cubemap_SpaceBlue/bkg1_back.png", &spaceMap[0], NULL, NULL);
+	CreateWICTextureFromFile(pcGraphicsSystem->m_pd3dDevice, L"Cubemap_SpaceBlue/bkg1_left.png", &spaceMap[1], NULL, NULL);
+	CreateWICTextureFromFile(pcGraphicsSystem->m_pd3dDevice, L"Cubemap_SpaceBlue/bkg1_right.png", &spaceMap[2], NULL, NULL);
+	
+	CreateWICTextureFromFile(pcGraphicsSystem->m_pd3dDevice, L"Cubemap_SpaceBlue/bkg1_front.png", &spaceMap[3], NULL, NULL);
+	CreateWICTextureFromFile(pcGraphicsSystem->m_pd3dDevice, L"Cubemap_SpaceBlue/bkg1_top.png", &spaceMap[4], NULL, NULL);
+	CreateWICTextureFromFile(pcGraphicsSystem->m_pd3dDevice, L"Cubemap_SpaceBlue/bkg1_bot.png", &spaceMap[5], NULL, NULL);
+
+	ID3D11ShaderResourceView * tempSrv = pcGraphicsSystem->TexturesToCubeMap(pcGraphicsSystem->m_pd3dDeviceContext, spaceMap);
+	renderToTexturePassIndex = CreateSkybox(&tThisWorld, tempSrv);
+
+#pragma endregion
+
+	//tempImport = pcGraphicsSystem->ReadMesh("meshData_Satellite.txt");
+	//TMaterialOptimized matOpt = pcGraphicsSystem->CreateTexturesFromFile(tempImport.vtMaterials, tempImport.meshCount);
+	//for (int meshIndex = 0; meshIndex < tempImport.meshCount; meshIndex++)
+	//{
+	//	int myMesh = createMesh(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, tempImport.vtMeshes[meshIndex], matOpt, meshIndex);
+	//}
+
+	tempImport = pcGraphicsSystem->ReadMesh("meshData_NoBrewery7.txt");
+	matOpt =  pcGraphicsSystem->CreateTexturesFromFile(tempImport.vtMaterials, tempImport.meshCount);
+	for (int meshIndex = 0; meshIndex < tempImport.meshCount; meshIndex++)
+	{
+		int myMesh = createMesh(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, tempImport.vtMeshes[meshIndex], matOpt, meshIndex);
+	}
+
+	//tempImport = pcGraphicsSystem->ReadMesh("meshData_Pirate.txt");
+	//matOpt = pcGraphicsSystem->CreateTexturesFromFile(tempImport.vtMaterials, tempImport.meshCount);
+
+	//for (int meshIndex = 0; meshIndex < tempImport.meshCount; meshIndex++)
+	//{
+	//	int myMesh = createMesh(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, tempImport.vtMeshes[meshIndex], matOpt, meshIndex);		
+	//}
+	createGSQuad(&tThisWorld, XMFLOAT4(1, 0, 0, 1));
+	createGSQuad(&tThisWorld, XMFLOAT4(1, 1, 1, 1));
+
+	
+	pcGraphicsSystem->CreateBuffers(&tThisWorld);
+}
+
+int CGameMangerSystem::MikesGraphicsSandbox()
+{
+	#pragma region Camera
+	static XMMATRIX m_d3d_ResultMatrix = pcGraphicsSystem->SetDefaultWorldPosition();
+	static XMMATRIX m_d3dOffsetMatrix = pcGraphicsSystem->SetDefaultOffset();
+	tCameraMode = pcInputSystem->CameraModeListen(tCameraMode);
+	if (pcInputSystem->InputCheck(G_KEY_P))
+	{
+		return 3;
+	}
+
+	if (pcInputSystem->InputCheck(G_KEY_Y))
+	{
+		if (Health > 0)
+		{
+			Health -= .1f;
+		}
+	}
+
+	if (tCameraMode.bSwitch == true)
+	{
+		m_d3d_ResultMatrix = pcInputSystem->CameraOrientationReset(m_d3d_ResultMatrix);
+		tCameraMode.bSwitch = false;
+	}
+	m_d3d_ResultMatrix = pcInputSystem->DebugCamera(m_d3d_ResultMatrix, m_d3dWorldMatrix);
+
+	debugCamera->d3d_Position = XMMatrixMultiply(m_d3d_ResultMatrix, m_d3dWorldMatrix);
+
+#pragma endregion
+
+	CGraphicsSystem::TPrimalVertexBufferType tTempVertexBuffer;
+	CGraphicsSystem::TPrimalPixelBufferType tTempPixelBuffer;
+	CGraphicsSystem::TMyVertexBufferType tMyVertexBufferTemp;
+	tTempPixelBuffer.m_d3dCollisionColor = XMFLOAT4(1.0f, 0.0f, 0.0f, 0.0f);
+	pcGraphicsSystem->UpdateD3D();
+	pcGraphicsSystem->UpdateD3D_RenderToTexture();
+
+	for (int nCurrentEntity = 0; nCurrentEntity <= renderToTexturePassIndex; nCurrentEntity++)
+	{
+		tMyVertexBufferTemp.m_d3dWorldMatrix = tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix;
+		tMyVertexBufferTemp.m_d3dProjectionMatrix = m_d3dProjectionMatrix;
+		tTempVertexBuffer.m_d3dWorldMatrix = tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix;
+		tTempVertexBuffer.m_d3dProjectionMatrix = m_d3dProjectionMatrix;
+
+		if (tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_SHADERID))
+		{
+			tTempVertexBuffer.m_d3dWorldMatrix = m_d3dWorldMatrix;
+			tTempVertexBuffer.m_d3dViewMatrix = debugCamera->d3d_Position;
+			tMyVertexBufferTemp.m_d3dViewMatrix = debugCamera->d3d_Position;
+
+			pcGraphicsSystem->InitMyShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tMyVertexBufferTemp, tThisWorld.atMesh[nCurrentEntity], debugCamera->d3d_Position);
+			pcGraphicsSystem->ExecutePipeline(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atMesh[nCurrentEntity].m_nIndexCount, tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask, tThisWorld.atShaderID[nCurrentEntity].m_nShaderID);
+		}
+
+		if (tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_SKYBOX | COMPONENT_TEXTURE | COMPONENT_SHADERID))
+		{
+			tMyVertexBufferTemp.m_d3dWorldMatrix = tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix;
+			tMyVertexBufferTemp.m_d3dViewMatrix = debugCamera->d3d_Position;
+			tMyVertexBufferTemp.m_d3dProjectionMatrix = m_d3dProjectionMatrix;
+			pcGraphicsSystem->InitSkyboxShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tMyVertexBufferTemp, tThisWorld.atMesh[nCurrentEntity], debugCamera->d3d_Position);
+			pcGraphicsSystem->ExecutePipeline(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atMesh[nCurrentEntity].m_nIndexCount, tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask, tThisWorld.atShaderID[nCurrentEntity].m_nShaderID);
+		}
+	}
+	//pcGraphicsSystem->m_pd3dSwapchain->Present(0, 0);
+
+	pcGraphicsSystem->m_pd3dDevice->CreateShaderResourceView(pcGraphicsSystem->m_pd3dOutsideGlassRenderToTexture, NULL, &pcGraphicsSystem->m_pd3dOutsideGlassSRV);
+	pcGraphicsSystem->m_pd3dDeviceContext->GenerateMips(pcGraphicsSystem->m_pd3dOutsideGlassSRV);
+
+	for (int nCurrentEntity = 0; nCurrentEntity < ENTITYCOUNT; nCurrentEntity++)
+	{
+		if (tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_SHADERID))
+		{
+			if (tThisWorld.atShaderID[nCurrentEntity].m_nShaderID == 10)
+			{
+				tThisWorld.atMesh[nCurrentEntity].m_d3dSRVDiffuse = pcGraphicsSystem->m_pd3dOutsideGlassSRV;
+			}
+		}
+	}
+
+	pcGraphicsSystem->UpdateD3D();
+
+	for (int nCurrentEntity = 0; nCurrentEntity < ENTITYCOUNT; nCurrentEntity++)
+	{
+		tMyVertexBufferTemp.m_d3dWorldMatrix = tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix;
+		tMyVertexBufferTemp.m_d3dProjectionMatrix = m_d3dProjectionMatrix;
+		tTempVertexBuffer.m_d3dWorldMatrix = tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix;
+		tTempVertexBuffer.m_d3dProjectionMatrix = m_d3dProjectionMatrix;
+
+		if (tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_DEBUGMESH | COMPONENT_SHADERID))
+		{
+			tTempVertexBuffer.m_d3dWorldMatrix = m_d3dWorldMatrix;
+			tTempVertexBuffer.m_d3dViewMatrix = debugCamera->d3d_Position;
+			tMyVertexBufferTemp.m_d3dViewMatrix = debugCamera->d3d_Position;
+			pcGraphicsSystem->InitQuadShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, m_d3dViewMatrix, m_d3dProjectionMatrix, tThisWorld.atDebugMesh[nCurrentEntity], debugCamera->d3d_Position, tThisWorld.atBar[nCurrentEntity].backgroundColor, Health);
+			pcGraphicsSystem->ExecutePipeline(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atDebugMesh[nCurrentEntity].m_nVertexCount, tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask, tThisWorld.atShaderID[nCurrentEntity].m_nShaderID);
+		}
+
+		if (tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_SHADERID))
+		{
+			tTempVertexBuffer.m_d3dWorldMatrix = m_d3dWorldMatrix;
+			tTempVertexBuffer.m_d3dViewMatrix = debugCamera->d3d_Position;
+			tMyVertexBufferTemp.m_d3dViewMatrix = debugCamera->d3d_Position;
+
+			pcGraphicsSystem->InitMyShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tMyVertexBufferTemp, tThisWorld.atMesh[nCurrentEntity], debugCamera->d3d_Position);
+			pcGraphicsSystem->ExecutePipeline(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atMesh[nCurrentEntity].m_nIndexCount, tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask, tThisWorld.atShaderID[nCurrentEntity].m_nShaderID);
+			if (tThisWorld.atShaderID[nCurrentEntity].m_nShaderID == 10)
+			{
+				//tThisWorld.atMesh->m_d3dSRVDiffuse->Release();
+			}
+		}
+
+		if (tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_SKYBOX | COMPONENT_TEXTURE | COMPONENT_SHADERID))
+		{
+			tMyVertexBufferTemp.m_d3dWorldMatrix = tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix;
+			tMyVertexBufferTemp.m_d3dViewMatrix = debugCamera->d3d_Position;
+			tMyVertexBufferTemp.m_d3dProjectionMatrix = m_d3dProjectionMatrix;
+			pcGraphicsSystem->InitSkyboxShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tMyVertexBufferTemp, tThisWorld.atMesh[nCurrentEntity], debugCamera->d3d_Position);
+			pcGraphicsSystem->ExecutePipeline(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atMesh[nCurrentEntity].m_nIndexCount, tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask, tThisWorld.atShaderID[nCurrentEntity].m_nShaderID);
+		}
+
+	}
+	pcGraphicsSystem->m_pd3dSwapchain->Present(0, 0);
+
+	return 10;
+}
+

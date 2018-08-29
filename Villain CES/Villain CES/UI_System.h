@@ -12,4 +12,3 @@ public:
 	void AddTextureToUI(TWorld* tThisWorld, unsigned int nThisEntity, ID3D11Device* device, wchar_t* filepath);
 	void AddButtonToUI(TWorld* tThisWorld, unsigned int nThisEntity, int sceneIndex, HWND cApplicationWindow);
 };
-

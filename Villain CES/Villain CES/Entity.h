@@ -28,7 +28,6 @@ struct TWorld
 	TWorldMatrix	atWorldMatrix[ENTITYCOUNT];
 	int				atParentWorldMatrix[ENTITYCOUNT];
 	XMMATRIX		atOffSetMatrix[ENTITYCOUNT];
-
 	//UI
 	TUIMask			atUIMask[ENTITYCOUNT];
 	TBar			atBar[ENTITYCOUNT];
@@ -63,6 +62,7 @@ struct TWorld
 };
 
 
+
 struct TPrimalVert
 {
 	XMFLOAT3 m_d3dfPosition;
@@ -79,12 +79,14 @@ struct /*alignas(64)*/ TUIVertices
 {
 	TUIVert m_d3dfPositions[4];
 };
-unsigned int CreateDoorWay(TWorld* ptWorld, XMMATRIX SpawnPosition);
 
-unsigned int SpawnLevelChanger(TWorld *ptWorld, XMMATRIX SpawnPosition);
 unsigned int createEntity(TWorld *ptWorld);
 
 void destroyEntity(TWorld *ptWorld, unsigned int nEntity);
+
+unsigned int CreateDoorWay(TWorld* ptWorld, XMMATRIX SpawnPosition);
+
+unsigned int SpawnLevelChanger(TWorld *ptWorld, XMMATRIX SpawnPosition);
 
 unsigned int createDebugTransformLines(TWorld *ptWorld);
 
@@ -92,15 +94,18 @@ unsigned int createCube(TWorld * ptWorld);
 
 unsigned int createDebugGrid(TWorld * ptWorld);
 
+
+unsigned int CreateSkybox(TWorld * ptWorld, ID3D11ShaderResourceView* srv);
+
 unsigned int CreateClayTon(TWorld * ptWorld);
-unsigned int CreateBullet(TWorld * ptWorld,XMMATRIX bulletSpawnLocation, int MaterialID);
+unsigned int CreateBullet(TWorld * ptWorld, XMMATRIX bulletSpawnLocation, int MaterialID);
 unsigned int AimingLine(TWorld * ptWorld, XMMATRIX BulletSpawnLocation, int parentWorldMatrixIndex, float xoffset, float yoffset, float zoffset);
 unsigned int createDebugCamera(TWorld * ptWorld, XMMATRIX debugCamera);
 unsigned int CreateGround(TWorld* ptWorld, XMMATRIX SpawnPosition);
 unsigned int CreateWall(TWorld* ptWorld, XMMATRIX SpawnPosition);
 unsigned int CreateCelling(TWorld* ptWorld, XMMATRIX SpawnPosition);
 unsigned int CreateGun(TWorld* ptWorld, XMMATRIX BulletSpawnLocation, int parentWorldMatrixIndex, float xoffset, float yoffset, float zoffset,int clipSize, float shootingCOooldown);
-unsigned int createMesh(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMeshImport tMesh, TMaterialImport tMaterial);
+unsigned int createMesh(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMeshImport tMesh, TMaterialOptimized tMaterial, int meshIndex);
 unsigned int createClayton(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMeshImport tMesh, TMaterialImport tMaterial);
 unsigned int createClaytonAnim(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMeshImport tMesh, TMaterialImport tMaterial, TAnimatedMesh tAnimation);
 unsigned int CreateTemptUIBox(TWorld * ptWorld, XMMATRIX SpawnPosition);
@@ -117,6 +122,7 @@ unsigned int CreateTestAIPathFinding(TWorld * ptWorld, XMMATRIX SpawnPosition);
 unsigned int CreateSpacePirate(TWorld * ptWorld, XMMATRIX SpawnPosition);
 
 unsigned int CreateCover(TWorld * ptWorld, XMMATRIX SpawnPosition, vector<int> coverNodes);
-unsigned int CreateCoverTriggerZone(TWorld * ptWorld, XMMATRIX SpawnPosition);
+
 unsigned int CreateHealingAI(TWorld * ptWorld, XMMATRIX SpawnPosition, unsigned int playerIndex);
-unsigned int CreateFriendlySwordsMan(TWorld * ptWorld, XMMATRIX SpawnPosition, unsigned int playerIndex);
+unsigned int CreateFriendlySwordsMan(TWorld * ptWorld, XMMATRIX SpawnPosition, unsigned int playerIndex);unsigned int CreateCoverTriggerZone(TWorld * ptWorld, XMMATRIX SpawnPosition);
+unsigned int createGSQuad(TWorld * ptWorld, XMFLOAT4 BackgroundColor);
