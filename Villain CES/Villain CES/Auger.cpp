@@ -119,8 +119,12 @@ void CAuger::Update(bool* loopgame)
 	case 2:
 		CurrentSpotInGame = pcGameMangerSystem->InGameUpdate();
 
-		GetWindowRect(window2, &rect);
-		SetCursorPos((rect.right / 2.0f) + 20, (rect.bottom / 2.0f) + 64);
+		if (!pcGameMangerSystem->GamePaused)
+		{
+			GetWindowRect(window2, &rect);
+			SetCursorPos((rect.right / 2.0f) + 20, (rect.bottom / 2.0f) + 64);
+		}
+
 		break;
 	case 3:
 		CurrentSpotInGame = pcGameMangerSystem->LoadPauseScreen();
@@ -151,6 +155,10 @@ void CAuger::Update(bool* loopgame)
 		GetWindowRect(window2, &rect);
 		SetCursorPos((rect.right / 2.0) + 20, (rect.bottom / 2.0) + 65);
 		break;
+	case 9:
+	{
+		CurrentSpotInGame = pcGameMangerSystem->LoadOptionsMenu();
+	}
 	default:
 		break;
 	}

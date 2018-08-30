@@ -26,7 +26,12 @@ float4 UIPixelShader(TUIPixelInputType tInput) : SV_TARGET
 {
 	float4 temp = g_d3dDiffuseTexture.Sample(g_SampleType, tInput.d3dTexture);
 
-	temp += hoverColor;
+	//if (hoverColor[3] == 1)
+		temp += hoverColor;
+	//else
+	//{
+	//	return temp;
+	//}
 
 	return temp;
 }

@@ -150,6 +150,21 @@ void CGraphicsSystem::InitD3D(HWND cTheWindow)
 	// Create depth stencil state
 	m_pd3dDevice->CreateDepthStencilState(&d3dDepthStencilDescription, &m_pd3dDepthStencilState);
 	
+	D3D11_BLEND_DESC d3dBlendDescription;
+	d3dBlendDescription.AlphaToCoverageEnable = false;
+	d3dBlendDescription.IndependentBlendEnable = false;
+	d3dBlendDescription.RenderTarget[0].BlendEnable = true;
+	d3dBlendDescription.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
+	d3dBlendDescription.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
+	d3dBlendDescription.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+	d3dBlendDescription.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ZERO;
+	d3dBlendDescription.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
+	d3dBlendDescription.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
+	d3dBlendDescription.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+
+	m_pd3dDevice->CreateBlendState(&d3dBlendDescription, &m_pd3dBlendState);
+
+	m_pd3dDeviceContext->OMSetBlendState(m_pd3dBlendState, 0, 0xffffffff);
 #pragma endregion
 
 }
@@ -408,8 +423,17 @@ void CGraphicsSystem::CreateBuffers(TWorld *ptPlanet)//init first frame
 		{
 			if (ptPlanet->atMesh[nCurrentEntity].m_nIndexCount && ptPlanet->atMesh[nCurrentEntity].m_nVertexCount)
 			{
-				HRESULT hr = m_pd3dDevice->CreateBuffer(&ptPlanet->atMesh[nCurrentEntity].m_d3dVertexBufferDesc, &ptPlanet->atMesh[nCurrentEntity].m_d3dVertexData, &ptPlanet->atMesh[nCurrentEntity].m_pd3dVertexBuffer);
-				hr = m_pd3dDevice->CreateBuffer(&ptPlanet->atMesh[nCurrentEntity].m_d3dIndexBufferDesc, &ptPlanet->atMesh[nCurrentEntity].m_d3dIndexData, &ptPlanet->atMesh[nCurrentEntity].m_pd3dIndexBuffer);
+				m_pd3dDevice->CreateBuffer(&ptPlanet->atMesh[nCurrentEntity].m_d3dVertexBufferDesc, &ptPlanet->atMesh[nCurrentEntity].m_d3dVertexData, &ptPlanet->atMesh[nCurrentEntity].m_pd3dVertexBuffer);
+				m_pd3dDevice->CreateBuffer(&ptPlanet->atMesh[nCurrentEntity].m_d3dIndexBufferDesc, &ptPlanet->atMesh[nCurrentEntity].m_d3dIndexData, &ptPlanet->atMesh[nCurrentEntity].m_pd3dIndexBuffer);
+			}
+		}
+
+		if (ptPlanet->atGraphicsMask[nCurrentEntity].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_SHADERID))
+		{
+			if (ptPlanet->atMesh[nCurrentEntity].m_nIndexCount && ptPlanet->atMesh[nCurrentEntity].m_nVertexCount)
+			{
+				m_pd3dDevice->CreateBuffer(&ptPlanet->atMesh[nCurrentEntity].m_d3dVertexBufferDesc, &ptPlanet->atMesh[nCurrentEntity].m_d3dVertexData, &ptPlanet->atMesh[nCurrentEntity].m_pd3dVertexBuffer);
+				m_pd3dDevice->CreateBuffer(&ptPlanet->atMesh[nCurrentEntity].m_d3dIndexBufferDesc, &ptPlanet->atMesh[nCurrentEntity].m_d3dIndexData, &ptPlanet->atMesh[nCurrentEntity].m_pd3dIndexBuffer);
 			}
 		}
 	}
@@ -433,6 +457,15 @@ void CGraphicsSystem::CreateEntityBuffer(TWorld * ptWorld, int nEnityIndex)
 	}
 
 	if (ptWorld->atGraphicsMask[nEnityIndex].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_SHADERID))
+	{
+		if (ptWorld->atMesh[nEnityIndex].m_nIndexCount && ptWorld->atMesh[nEnityIndex].m_nVertexCount)
+		{
+			m_pd3dDevice->CreateBuffer(&ptWorld->atMesh[nEnityIndex].m_d3dVertexBufferDesc, &ptWorld->atMesh[nEnityIndex].m_d3dVertexData, &ptWorld->atMesh[nEnityIndex].m_pd3dVertexBuffer);
+			m_pd3dDevice->CreateBuffer(&ptWorld->atMesh[nEnityIndex].m_d3dIndexBufferDesc, &ptWorld->atMesh[nEnityIndex].m_d3dIndexData, &ptWorld->atMesh[nEnityIndex].m_pd3dIndexBuffer);
+		}
+	}
+
+	if (ptWorld->atGraphicsMask[nEnityIndex].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_SHADERID))
 	{
 		if (ptWorld->atMesh[nEnityIndex].m_nIndexCount && ptWorld->atMesh[nEnityIndex].m_nVertexCount)
 		{
@@ -1310,6 +1343,8 @@ void CGraphicsSystem::ExecutePipeline(ID3D11DeviceContext *pd3dDeviceContext, in
 			{
 				pd3dDeviceContext->DrawIndexed(m_nIndexCount, 0, 0);
 			}
+			else if (nGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_SHADERID))
+				pd3dDeviceContext->DrawIndexed(m_nIndexCount, 0, 0);
 		}
 			break;
 		default:

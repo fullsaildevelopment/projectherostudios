@@ -183,6 +183,26 @@ unsigned int createEntity(TWorld * ptWorld)
 	return(ENTITYCOUNT);
 }
 
+
+unsigned int createEntityReverse(TWorld * ptWorld)
+{
+	unsigned int nCurrentEntity;
+	//Mark entity for Creation by finding the first index in the entity list that has no components. 
+	//Return the index of this marked entity
+	for (nCurrentEntity = ENTITYCOUNT; nCurrentEntity > 0; --nCurrentEntity)
+	{
+		if (ptWorld->atGraphicsMask[nCurrentEntity].m_tnGraphicsMask == COMPONENT_NONE)
+		{
+			printf("Entity created: %d\n", nCurrentEntity);
+			
+			return(nCurrentEntity);
+		}
+	}
+
+	printf("Error!  No more entities left!\n");
+	return(ENTITYCOUNT);
+}
+
 void destroyEntity(TWorld * ptWorld, unsigned int nThisEntity)
 {
 	//Set component list for current entity to none.
@@ -230,6 +250,7 @@ void destroyEntity(TWorld * ptWorld, unsigned int nThisEntity)
 	ptWorld->atText[nThisEntity].textColor[1] = 0;
 	ptWorld->atText[nThisEntity].textColor[2] = 0;
 	ptWorld->atText[nThisEntity].textSize = -1;
+	ptWorld->atText[nThisEntity].justification = 0;
 }
 
 unsigned int createDebugTransformLines(TWorld * ptWorld)
@@ -2842,12 +2863,14 @@ unsigned int createClaytonAnim(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TM
 	return nThisEntity;
 }
 
-unsigned int CreateUILabel(TWorld * ptWorld, XMMATRIX SpawnPosition, float width, float height, float offsetX, float offsetY, std::vector<TUIVertices*>& atUIVertices)
+unsigned int CreateUILabel(TWorld * ptWorld, XMMATRIX SpawnPosition, float width, float height, float offsetX, float offsetY, std::vector<TUIVertices*>& atUIVertices, int _nThisEntity)
 {
-	unsigned int nThisEntity = createEntity(ptWorld);
+	unsigned int nThisEntity;
 
-	//if (window != nullptr)
-	//	uiMask = uiMask | COMPONENT_BUTTON;
+	if (_nThisEntity == -1)
+		nThisEntity = createEntity(ptWorld);
+	else
+		nThisEntity = _nThisEntity;
 
 	ptWorld->atCollisionMask[nThisEntity].m_tnCollisionMask = COMPONENT_COLLISIONMASK;
 	ptWorld->atGraphicsMask[nThisEntity].m_tnGraphicsMask = COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_SHADERID;

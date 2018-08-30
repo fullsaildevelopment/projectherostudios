@@ -131,6 +131,8 @@ private:
 	ID3D11Buffer		*m_pd3dUIVertexBuffer;
 	ID3D11Buffer		*m_pd3dUIPixelBuffer;
 
+	ID3D11BlendState	*m_pd3dBlendState;
+
 	ID3D11Buffer		*m_pd3dBlinnPhongBuffer;
 	ID3D11Debug			*debug;
 	float				m_fCameraXPosition;
