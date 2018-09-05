@@ -214,23 +214,8 @@ void CGraphicsSystem::InitD3D(HWND cTheWindow)
 		0,
 		D3D11_FLOAT32_MAX
 	};
+
 	m_pd3dDevice->CreateSamplerState(&sampTmp, &m_pd3dSamplerState);
-
-	D3D11_BLEND_DESC d3dBlendDescription;
-	d3dBlendDescription.AlphaToCoverageEnable = false;
-	d3dBlendDescription.IndependentBlendEnable = false;
-	d3dBlendDescription.RenderTarget[0].BlendEnable = true;
-	d3dBlendDescription.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
-	d3dBlendDescription.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
-	d3dBlendDescription.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
-	d3dBlendDescription.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ZERO;
-	d3dBlendDescription.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
-	d3dBlendDescription.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
-	d3dBlendDescription.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
-
-	m_pd3dDevice->CreateBlendState(&d3dBlendDescription, &m_pd3dBlendState);
-
-	m_pd3dDeviceContext->OMSetBlendState(m_pd3dBlendState, 0, 0xffffffff);
 #pragma endregion
 
 	#pragma region RTV
@@ -257,6 +242,23 @@ void CGraphicsSystem::InitD3D(HWND cTheWindow)
 	m_pd3dDevice->CreateRenderTargetView(m_pd3dOutsideGlassRenderToTexture, NULL, &m_pd3dOutsideRenderTargetView);
 #pragma endregion
 
+#pragma region BlendState
+	D3D11_BLEND_DESC d3dBlendDescription;
+	d3dBlendDescription.AlphaToCoverageEnable = false;
+	d3dBlendDescription.IndependentBlendEnable = false;
+	d3dBlendDescription.RenderTarget[0].BlendEnable = true;
+	d3dBlendDescription.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
+	d3dBlendDescription.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
+	d3dBlendDescription.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+	d3dBlendDescription.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ZERO;
+	d3dBlendDescription.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
+	d3dBlendDescription.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
+	d3dBlendDescription.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+
+	m_pd3dDevice->CreateBlendState(&d3dBlendDescription, &m_pd3dBlendState);
+
+	m_pd3dDeviceContext->OMSetBlendState(m_pd3dBlendState, 0, 0xffffffff);
+#pragma endregion
 }
 
 void CGraphicsSystem::UpdateD3D()
@@ -288,7 +290,7 @@ void CGraphicsSystem::CleanD3D(TWorld *ptPlanet)
 		{
 			ptPlanet->atMesh[nEntityIndex].m_pd3dVertexBuffer->Release();
 			ptPlanet->atMesh[nEntityIndex].m_pd3dIndexBuffer->Release();
-			ptPlanet->atMesh[nEntityIndex].m_d3dSRVDiffuse->Release();
+			//ptPlanet->atMesh[nEntityIndex].m_d3dSRVDiffuse->Release();
 		}
 		destroyEntity(ptPlanet, nEntityIndex);
 #ifdef _DEBUG
@@ -361,7 +363,13 @@ void CGraphicsSystem::CleanD3DLevel(TWorld * ptPlanet)
 		{
 			ptPlanet->atMesh[nEntityIndex].m_pd3dVertexBuffer->Release();
 			ptPlanet->atMesh[nEntityIndex].m_pd3dIndexBuffer->Release();
-			ptPlanet->atMesh[nEntityIndex].m_d3dSRVDiffuse->Release();
+			//ptPlanet->atMesh[nEntityIndex].m_d3dSRVDiffuse->Release();
+		}
+
+		if (ptPlanet->atGraphicsMask[nEntityIndex].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_SHADERID))
+		{
+			ptPlanet->atMesh[nEntityIndex].m_pd3dVertexBuffer->Release();
+			ptPlanet->atMesh[nEntityIndex].m_pd3dIndexBuffer->Release();
 		}
 		destroyEntity(ptPlanet, nEntityIndex);
 	}

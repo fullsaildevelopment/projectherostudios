@@ -141,10 +141,11 @@ void CAuger::Update(bool* loopgame)
 	case 10:
 		CurrentSpotInGame = pcGameMangerSystem->MikesGraphicsSandbox();
 		break;
-	case 9:
+	case 11:
 	{
 		CurrentSpotInGame = pcGameMangerSystem->LoadOptionsMenu();
 	}
+		break;
 	default:
 		break;
 	}

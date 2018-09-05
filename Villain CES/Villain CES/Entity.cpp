@@ -188,7 +188,7 @@ unsigned int createEntityReverse(TWorld * ptWorld)
 	unsigned int nCurrentEntity;
 	//Mark entity for Creation by finding the first index in the entity list that has no components. 
 	//Return the index of this marked entity
-	for (nCurrentEntity = ENTITYCOUNT; nCurrentEntity > 0; --nCurrentEntity)
+	for (nCurrentEntity = ENTITYCOUNT; nCurrentEntity >= 0; --nCurrentEntity)
 	{
 		if (ptWorld->atGraphicsMask[nCurrentEntity].m_tnGraphicsMask == COMPONENT_NONE)
 		{
@@ -251,7 +251,7 @@ void destroyEntity(TWorld * ptWorld, unsigned int nThisEntity)
 	ptWorld->atText[nThisEntity].textSize = -1;
 	ptWorld->atText[nThisEntity].justification = 0;
 
-	ptWorld->atMesh[nThisEntity].m_d3dSRVDiffuse = nullptr;
+	//ptWorld->atMesh[nThisEntity].m_d3dSRVDiffuse = NULL;
 }
 
 unsigned int createDebugTransformLines(TWorld * ptWorld)

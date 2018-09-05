@@ -49,7 +49,10 @@ void CGameMangerSystem::LoadLevel()
 {
 	// master	
 	pcGraphicsSystem->CleanD3DLevel(&tThisWorld);
-	
+	for (int i = 0; i < matOpt.numberOfMaterials; i++)
+	{
+		matOpt.SRVArrayOfMaterials[i]->Release();
+	}
 	InitializeDeathScreen();
 	InitializePauseScreen();
 	GameOver = false;
@@ -459,7 +462,7 @@ int CGameMangerSystem::InGameUpdate()
 			m_d3dPlayerMatrix = pcInputSystem->AimMode(m_d3dPlayerMatrix);
 
 			aimCamera->d3d_Position = XMMatrixMultiply(m_d3d_ResultMatrix, m_d3dPlayerMatrix);
-
+		}
 		if (tCameraMode.bSwitch == true)
 		{
 			if (tCameraMode.bSwitch == true)
@@ -471,6 +474,7 @@ int CGameMangerSystem::InGameUpdate()
 			debugCamera->d3d_Position = XMMatrixMultiply(m_d3d_ResultMatrix, m_d3dWorldMatrix);
 		}
 	}
+
 	CGraphicsSystem::TPrimalVertexBufferType tTempVertexBuffer;
 	CGraphicsSystem::TPrimalPixelBufferType tTempPixelBuffer;
 	CGraphicsSystem::TMyVertexBufferType tMyVertexBufferTemp;
@@ -1020,7 +1024,7 @@ int CGameMangerSystem::InGameUpdate()
 							{
 								clickTime = 0;
 
-								if (tThisWorld.atButton[nCurrentEntity].sceneIndex == 9)
+								if (tThisWorld.atButton[nCurrentEntity].sceneIndex == 11)
 									options = true;
 								else if (tThisWorld.atButton[nCurrentEntity].sceneIndex == -3)
 									return tThisWorld.atButton[nCurrentEntity].sceneIndex;
@@ -1088,6 +1092,9 @@ int CGameMangerSystem::InGameUpdate()
 
 						tUIPixelBuffer.hoverColor = XMFLOAT4(1, 0, 0, 1);
 
+						if (tThisWorld.atMesh[nCurrentEntity].m_d3dSRVDiffuse != nullptr)
+							tThisWorld.atMesh[nCurrentEntity].m_d3dSRVDiffuse = nullptr;
+
 						pcGraphicsSystem->InitUIShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tUIVertexBuffer, tUIPixelBuffer, tThisWorld.atMesh[nCurrentEntity], menuCamera->d3d_Position);
 						pcGraphicsSystem->ExecutePipeline(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atMesh[nCurrentEntity].m_nIndexCount, tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask, tThisWorld.atShaderID[nCurrentEntity].m_nShaderID);
 					}
@@ -1099,6 +1106,9 @@ int CGameMangerSystem::InGameUpdate()
 						tUIVertexBuffer.ratio = -1;
 
 						tUIPixelBuffer.hoverColor = XMFLOAT4(0, 0, 0, 1);
+
+						if (tThisWorld.atMesh[nCurrentEntity].m_d3dSRVDiffuse != nullptr)
+							tThisWorld.atMesh[nCurrentEntity].m_d3dSRVDiffuse = nullptr;
 
 						pcGraphicsSystem->InitUIShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tUIVertexBuffer, tUIPixelBuffer, tThisWorld.atMesh[nCurrentEntity], menuCamera->d3d_Position);
 						pcGraphicsSystem->ExecutePipeline(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atMesh[nCurrentEntity].m_nIndexCount, tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask, tThisWorld.atShaderID[nCurrentEntity].m_nShaderID);
@@ -1247,6 +1257,11 @@ int CGameMangerSystem::InGameUpdate()
 			ReleaseDC(cApplicationWindow, tHDC);
 		}
 
+		if (pcInputSystem->InputCheck(G_KEY_V))
+		{
+			GameOver = true;
+		}
+
 		if (pcInputSystem->InputCheck(G_KEY_B))
 		{
 			tThisWorld.atClayton[PlayerStartIndex].health = 0;
@@ -1326,7 +1341,7 @@ int CGameMangerSystem::LoadMainMenu()
 							
 							return tThisWorld.atButton[nCurrentEntity].sceneIndex;
 						}
-						else if (tThisWorld.atButton[nCurrentEntity].sceneIndex == 9)
+						else if (tThisWorld.atButton[nCurrentEntity].sceneIndex == 11)
 							options = true;
 					}
 					else if (PtInRect(&tThisWorld.atButton[nCurrentEntity].boundingBox, hoverPoint))
@@ -1491,7 +1506,7 @@ void CGameMangerSystem::InitializeMainMenu()
 
 		nThisEntity = CreateUILabel(&tThisWorld, menuCamera->d3d_Position, 2, 1, .5, -2.4, atUIVertices, -1, .1);
 		pcUISystem->AddTextureToUI(&tThisWorld, nThisEntity, pcGraphicsSystem->m_pd3dDevice, wideChar);
-		pcUISystem->AddButtonToUI(&cApplicationWindow, &tThisWorld, nThisEntity, 9, true);
+		pcUISystem->AddButtonToUI(&cApplicationWindow, &tThisWorld, nThisEntity, 11, true);
 	}
 	{
 		wchar_t wideChar[] =
@@ -1811,7 +1826,7 @@ void CGameMangerSystem::InitializePauseScreen()
 		nThisEntity = createEntityReverse(&tThisWorld);
 		CreateUILabel(&tThisWorld, menuCamera->d3d_Position, 2, 1, 0, 1.2, atUIVertices, nThisEntity, .1);
 		pcUISystem->AddTextureToUI(&tThisWorld, nThisEntity, pcGraphicsSystem->m_pd3dDevice, wideChar);
-		pcUISystem->AddButtonToUI(&cApplicationWindow, &tThisWorld, nThisEntity, 9, true);
+		pcUISystem->AddButtonToUI(&cApplicationWindow, &tThisWorld, nThisEntity, 11, true);
 
 		pcUISystem->AddMaskToUI(&tThisWorld, nThisEntity, COMPONENT_PAUSESCREEN);
 	}
@@ -4435,7 +4450,10 @@ int CGameMangerSystem::SpacePirateGamePlay()
 void CGameMangerSystem::LoadMikesGraphicsSandbox()
 {
 	pcGraphicsSystem->CleanD3DLevel(&tThisWorld);
-
+	for (int  i = 0; i < matOpt.numberOfMaterials; i++)
+	{
+		matOpt.SRVArrayOfMaterials[i]->Release();
+	}
 	m_d3dWorldMatrix = pcGraphicsSystem->SetDefaultWorldPosition();//Call some sort of function from the graphics system to create this matrix
 	m_d3dViewMatrix = pcGraphicsSystem->SetDefaultViewMatrix();//Call some sort of function from the graphics system to create this matrix
 	m_d3dProjectionMatrix = pcGraphicsSystem->SetDefaultPerspective();
@@ -4447,7 +4465,6 @@ void CGameMangerSystem::LoadMikesGraphicsSandbox()
 	tCameraMode.bSwitch = false;
 
 	ImporterData tempImport;
-	TMaterialOptimized matOpt;
 	//tempImport = pcGraphicsSystem->ReadMesh("meshData_ScifiRoom.txt");
 
 	//for (int meshIndex = 0; meshIndex < tempImport.meshCount; meshIndex++)

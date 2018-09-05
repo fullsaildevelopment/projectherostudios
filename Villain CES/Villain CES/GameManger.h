@@ -38,6 +38,8 @@ public:
 	bool GameOver = false;
 	bool GamePaused = false;
 private:
+	TMaterialOptimized matOpt;
+
 	bool drawtext = true;
 	float scale = 0;
 	XMMATRIX CameraNewPosition;
