@@ -28,6 +28,7 @@ struct TBar
 	 TODO:
 		 Fill out Bar Struct
 	 */
+	XMFLOAT4 backgroundColor;
 };
 
 struct TText

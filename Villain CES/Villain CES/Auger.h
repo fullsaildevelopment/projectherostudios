@@ -1,18 +1,14 @@
 #pragma once
-
-#include "InputSystem.h"
-#include"Entity.h"
-#include"GameManger.h"
+#include "GameManger.h"
+#include <stdint.h>
 
 class CAuger
 {
 public:
-
-	CGameMangerSystem* pcGameMangerSystem;
+	CGameMangerSystem * pcGameMangerSystem;
 	CInputSystem	*pcInputSystem;
 	CGraphicsSystem	*pcGraphicsSystem;
-
-
+	CProjectileSystem* pcProjectileSystem;
 
 	CAuger();
 	CAuger(HWND cTheWindow);
@@ -25,7 +21,7 @@ public:
 	void Update(bool* loopGame);
 	void End();
 private:
-	
+
 	int CurrentSpotInGame;
 	//XMMATRIX m_d3dViewMatrix;
 
@@ -40,7 +36,6 @@ private:
 	int		m_nClipSize = 10;
 
 	
-	bool tempt;
+	bool tempt = true;
 	
 };
-

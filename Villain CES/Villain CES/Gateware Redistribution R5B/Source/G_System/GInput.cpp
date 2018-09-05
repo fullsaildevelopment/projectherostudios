@@ -13,7 +13,6 @@
 #include <time.h>
 
 class Input : public SYSTEM::GInput {
-
 private:
 
 	/* GInterface */
@@ -31,7 +30,7 @@ private:
 #elif __linux__
 	SYSTEM::LINUX_WINDOW _linuxWindow;
 #elif __APPLE__
-    NSWindow * currentResponder;
+	NSWindow * currentResponder;
 #endif
 
 public:
@@ -79,7 +78,6 @@ GATEWARE_EXPORT_EXPLICIT GReturn CreateGInput(void* _windowHandle, unsigned int 
 }
 
 GReturn GW::SYSTEM::CreateGInput(void* _windowHandle, unsigned int _handleSize, GInput** _outFpointer) {
-
 	if (_outFpointer == nullptr || _windowHandle == nullptr) {
 		return INVALID_ARGUMENT;
 	}
@@ -98,12 +96,10 @@ GReturn GW::SYSTEM::CreateGInput(void* _windowHandle, unsigned int _handleSize, 
 	_mInput->InitializeLinux(_windowHandle);
 #endif
 
-
 	//Todo call my intialize.
 	(*_outFpointer) = _mInput;
 
 	return SUCCESS;
-
 }
 
 Input::Input() {
@@ -114,11 +110,9 @@ Input::Input() {
 }
 
 Input::~Input() {
-
 }
 
 GReturn Input::GetCount(unsigned int& _outCount) {
-
 	_outCount = referenceCount;
 
 	return SUCCESS;
@@ -134,28 +128,25 @@ GReturn Input::IncrementCount() {
 }
 
 GReturn Input::DecrementCount() {
-
 	if (referenceCount == 0)
 		return FAILURE;
 	referenceCount -= 1;
 
 	if (referenceCount == 0) {
-
 #ifdef __linux__
-        threadOpen = false;
-        inputThread->join();
+		threadOpen = false;
+		inputThread->join();
 #endif
 #ifdef _WIN32
 		//Sets the WinProc back. (Fixes the StackOverFlow bug)
 		SetWindowLongPtr((HWND)hWnd, GWLP_WNDPROC, (LONG_PTR)_userWinProc);
 #endif
 #ifdef __APPLE__
-        [currentResponder setNextResponder:nil];
+		[currentResponder setNextResponder : nil];
 #endif
-        
+
 		delete inputThread;
 		delete this;
-
 	}
 
 	return SUCCESS;
@@ -196,7 +187,6 @@ GReturn Input::InitializeWindows(void* _data) {
 	_userWinProc = SetWindowLongPtr((HWND)hWnd, GWLP_WNDPROC, (LONG_PTR)GWinProc);
 
 	if (_userWinProc == NULL) {
-
 	}
 
 	//Getting Raw Input Devices. #include <time.h>.
@@ -206,19 +196,16 @@ GReturn Input::InitializeWindows(void* _data) {
 
 	//Get Number of Devices.
 	if (GetRawInputDeviceList(NULL, &numDevices, sizeof(RAWINPUTDEVICELIST)) != 0) {
-
 	}
 
 	//Allocate the list of devices.
 	if ((pRawInputDeviceList = (PRAWINPUTDEVICELIST)malloc(sizeof(RAWINPUTDEVICELIST) * numDevices)) == NULL) {
-
 	}
 
 	int nNoOfDevices = 0;
 	//Using the new List and number of devices.
 	//Populate the raw input device list.
 	if ((nNoOfDevices = GetRawInputDeviceList(pRawInputDeviceList, &numDevices, sizeof(RAWINPUTDEVICELIST))) == ((UINT)-1)) {
-
 	}
 
 	RID_DEVICE_INFO rdi;
@@ -226,21 +213,17 @@ GReturn Input::InitializeWindows(void* _data) {
 
 	//For all of the devices, display their correspondent information.
 	for (int i = 0; i < nNoOfDevices; i++) {
-
 		UINT size = 256;
 		TCHAR tBuffer[256] = { 0 };
 		tBuffer[0] = '\0';
 
-
 		//Find the device name.
 		if (GetRawInputDeviceInfo(pRawInputDeviceList[i].hDevice, RIDI_DEVICENAME, tBuffer, &size) < 0) {
-
 		}
 
 		UINT cbSize = rdi.cbSize;
 		//Get the device information.
 		if (GetRawInputDeviceInfo(pRawInputDeviceList[i].hDevice, RIDI_DEVICEINFO, &rdi, &cbSize) < 0) {
-
 		}
 	}
 
@@ -261,8 +244,6 @@ GReturn Input::InitializeWindows(void* _data) {
 
 	if (RegisterRawInputDevices(rID, 2, sizeof(rID[0])) == false) {
 	}
-
-
 
 	//Capslock
 	if ((GetKeyState(VK_CAPITAL) & 0x0001) != 0) {
@@ -288,7 +269,6 @@ GReturn Input::InitializeWindows(void* _data) {
 }
 
 GReturn Input::InitializeLinux(void* _data) {
-
 #ifdef __linux__
 	//Copy data into a LINUX_WINDOW(void * display, void * window) structure.
 	memcpy(&_linuxWindow, _data, sizeof(SYSTEM::LINUX_WINDOW));
@@ -299,7 +279,7 @@ GReturn Input::InitializeLinux(void* _data) {
 
 	//Copy void* _linuxWindow.window into a Window class to pass to XSelectInput.
 	//memcpy(&_window, _linuxWindow.window, sizeof(_window));
-    _window = (Window)(_linuxWindow.window);
+	_window = (Window)(_linuxWindow.window);
 
 	//Select the type of Input events we wish to recieve.
 	//XSelectInput(_display, _window, ExposureMask | ButtonPressMask | ButtonReleaseMask | KeyReleaseMask | KeyPressMask | LockMask | ControlMask | ShiftMask);
@@ -312,17 +292,15 @@ GReturn Input::InitializeLinux(void* _data) {
 	inputThread = new std::thread(&Input::InputThread, this);
 
 	return SUCCESS;
-
 }
 
 GReturn Input::InitializeMac(void* _data) {
-
 #ifdef __APPLE__
 
 	//Need to convert data back into an NSWindow*.
 	//NSWindow * currentResponder = ((__bridge NSWindow*)_data);
-    currentResponder = ((__bridge NSWindow*)_data);
-    
+	currentResponder = ((__bridge NSWindow*)_data);
+
 	//We only want to process the message and pass it on. So if there is already
 	//a responder we set our responders next responder to be the current next responder.
 	[responder setNextResponder : currentResponder.nextResponder];
@@ -336,7 +314,6 @@ GReturn Input::InitializeMac(void* _data) {
 	//In order to get mouse button presses we need to set our responder to be
 	//the next responder in the contentView as well.
 	[currentResponder.contentView setNextResponder : responder];
-
 
 #endif
 
@@ -352,7 +329,6 @@ GReturn Input::GetState(int _keyCode, float& _outState) {
 }
 
 GReturn Input::GetMouseDelta(float& _x, float& _y) {
-
 	_x = _mouseDeltaX;
 	_y = _mouseDeltaY;
 	if (mouseReadCount != mouseWriteCount)
@@ -361,11 +337,9 @@ GReturn Input::GetMouseDelta(float& _x, float& _y) {
 		return SUCCESS;
 	}
 	return REDUNDANT_OPERATION;
-
 }
 
 GReturn Input::GetMousePosition(float& _x, float& _y) {
-
 	_x = _mousePositionX;
 	_y = _mousePositionY;
 
@@ -379,13 +353,11 @@ GReturn Input::GetKeyMask(unsigned int& _outKeyMask) {
 
 void Input::InputThread()
 {
-
 #ifdef __linux__
 	int _code = -1;
 
 	while (threadOpen)
 	{
-
 		//Cast the void* _linuxWindow. display to a display pointer to pass to XNextEvent.
 		Display * _display = (Display*)(_linuxWindow.display);
 		char keys_return[32];
@@ -401,7 +373,6 @@ void Input::InputThread()
 			}
 		}
 
-
 		Window a, b;
 		XQueryPointer(_display, _window, &a, &b, &_mouseScreenPositionX, &_mouseScreenPositionY, &_mousePositionX, &_mousePositionY, &keyMask);
 		//printf("KeyMask: %d\n", keyMask);
@@ -409,7 +380,6 @@ void Input::InputThread()
 		if (keyMask & Button1Mask) {
 			//printf("Left\n");
 			n_Keys[G_BUTTON_LEFT];
-
 		}
 		if (keyMask & Button3Mask) {
 			//printf("Right\n");
@@ -431,11 +401,6 @@ void Input::InputThread()
 		//Set the previous mouse position as the current.
 		_mousePrevX = _mousePositionX;
 		_mousePrevY = _mousePositionY;
-
-
 	}
 #endif
-
 }
-
-

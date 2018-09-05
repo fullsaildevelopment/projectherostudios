@@ -25,14 +25,13 @@ struct TPrimalPixelInputType
 	float4 d3dColor : POSITION1;
 };
 
-
 ////////////////////////////////////////////////////////////////////////////////
 // Vertex Shader
 ////////////////////////////////////////////////////////////////////////////////
 TPrimalPixelInputType PrimalVertexShader(TPrimalVertexInputType tInput)
 {
 	TPrimalPixelInputType tOutput;
-	tOutput.d3dPosition= float4(tInput.d3dPosition.xyz, 1);
+	tOutput.d3dPosition = float4(tInput.d3dPosition.xyz, 1);
 	tOutput.d3dPosition = mul(tOutput.d3dPosition, d3dWorldMatrix);
 	tOutput.d3dPosition = mul(tOutput.d3dPosition, d3dViewMatrix);
 	tOutput.d3dPosition = mul(tOutput.d3dPosition, d3dProjectionMatrix);

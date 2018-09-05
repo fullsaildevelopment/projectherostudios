@@ -35,7 +35,6 @@ namespace GW
 		*/
 		class GInput : public CORE::GSingleThreaded
 		{
-
 		public:
 
 			//! Get the current state of any key.
@@ -53,7 +52,7 @@ namespace GW
 
 			//! Get the change in mouse position.
 			/*!
-			* 
+			*
 			*	\param [out] _x a reference to a float to store the mouse delta position x.
 			*	\param [out] _y a reference to a float to store the mouse delta position y.
 			*
@@ -73,7 +72,7 @@ namespace GW
 
 			//! Get the key mask.
 			/*!
-			*	The key mask lets the input object know which of the functions below are  
+			*	The key mask lets the input object know which of the functions below are
 			*	active by manipulating individual bits of an unsigned int.
 			*	Values for G_MASK can be found in GKeyDefines.
 			*
@@ -84,7 +83,7 @@ namespace GW
 
 		//! Creates a GInput Object.
 		/*!
-		*	Initializes a handle to a window based on the void* data passed in. The  
+		*	Initializes a handle to a window based on the void* data passed in. The
 		*	created GInput object will have its reference count initialized to one.
 		*
 		*	\param [in] _windowHandle (Windows) The handle to the window (HWND).
