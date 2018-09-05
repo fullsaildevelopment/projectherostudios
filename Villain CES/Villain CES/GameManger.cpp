@@ -1028,8 +1028,8 @@ int CGameMangerSystem::InGameUpdate()
 									options = true;
 								else if (tThisWorld.atButton[nCurrentEntity].sceneIndex == -3)
 									return tThisWorld.atButton[nCurrentEntity].sceneIndex;
-								else if (tThisWorld.atButton[nCurrentEntity].sceneIndex == 2)
-									GamePaused = false;
+								//else if (tThisWorld.atButton[nCurrentEntity].sceneIndex == 2)
+								//	GamePaused = false;
 
 							}
 							else if (PtInRect(&tThisWorld.atButton[nCurrentEntity].boundingBox, hoverPoint))
