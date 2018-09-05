@@ -1,12 +1,12 @@
 #include "stdafx.h"
 #include "Graphics_System.h"
-
+#include <map>
+#define FARVIEW 1000
 CGraphicsSystem::CGraphicsSystem()
 {
 	m_fCameraXPosition = 0;
 	m_fCameraYPosition = 0.5;
 	m_fCameraZPosition = -10;
-
 }
 
 CGraphicsSystem::~CGraphicsSystem()
@@ -15,8 +15,9 @@ CGraphicsSystem::~CGraphicsSystem()
 
 void CGraphicsSystem::InitD3D(HWND cTheWindow)
 {
-	#pragma region Window Stuff
+	#pragma region Main Window Stuff
 
+	#pragma region Swapchain
 	// create a struct to hold information about the swap chain
 	DXGI_SWAP_CHAIN_DESC d3dSwapchainDescription;
 
@@ -30,7 +31,7 @@ void CGraphicsSystem::InitD3D(HWND cTheWindow)
 	d3dSwapchainDescription.BufferCount = 1;                                    // one back buffer
 	d3dSwapchainDescription.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;     // use 32-bit color
 	d3dSwapchainDescription.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;      // how swap chain is to be used
-	d3dSwapchainDescription.OutputWindow = cTheWindow;                                // the window to be used
+	d3dSwapchainDescription.OutputWindow = cTheWindow;                          // the window to be used
 	d3dSwapchainDescription.SampleDesc.Count = 1;                               // how many multisamples
 	d3dSwapchainDescription.Windowed = TRUE;                                    // windowed/full-screen mode
 	d3dSwapchainDescription.BufferDesc.Width = cRectangle.right - cRectangle.left;
@@ -38,8 +39,7 @@ void CGraphicsSystem::InitD3D(HWND cTheWindow)
 	d3dSwapchainDescription.BufferDesc.RefreshRate.Numerator = 60;
 	d3dSwapchainDescription.BufferDesc.RefreshRate.Denominator = 1;
 
-	m_fAspectRatio = (float)(cRectangle.bottom - cRectangle.top / cRectangle.right - cRectangle.left);
-#ifdef _DEBUG
+	#ifdef _DEBUG
 	unsigned int nDeviceAndSwapchainFlag = D3D11_CREATE_DEVICE_DEBUG;
 	D3D11CreateDeviceAndSwapChain(NULL,
 		D3D_DRIVER_TYPE_HARDWARE,
@@ -53,8 +53,9 @@ void CGraphicsSystem::InitD3D(HWND cTheWindow)
 		&m_pd3dDevice,
 		NULL,
 		&m_pd3dDeviceContext);
-#endif // DEBUG
-#ifndef _DEBUG
+	#endif // DEBUG
+
+	#ifndef _DEBUG
 	// create a device, device context and swap chain using the information in the scd struct
 	D3D11CreateDeviceAndSwapChain(NULL,
 		D3D_DRIVER_TYPE_HARDWARE,
@@ -69,24 +70,24 @@ void CGraphicsSystem::InitD3D(HWND cTheWindow)
 		NULL,
 		&m_pd3dDeviceContext);
 
-#endif // !_DEBUG
+	#endif // !_DEBUG
 
+#pragma endregion
 
-
-#pragma region RenderTargetView And Viewport
+	#pragma region RenderTargetView And Viewport
+	m_fAspectRatio = (float)(cRectangle.bottom - cRectangle.top / cRectangle.right - cRectangle.left);
 
 	D3D11_TEXTURE2D_DESC d3dTextureDescription;
 	ZeroMemory(&d3dTextureDescription, sizeof(d3dTextureDescription));
 
-	ID3D11Texture2D *pd3dRenderTargetTexture;
 
-	m_pd3dSwapchain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&pd3dRenderTargetTexture);
-	m_pd3dDevice->CreateRenderTargetView(pd3dRenderTargetTexture, NULL, &m_pd3dRenderTargetView);
+	m_pd3dSwapchain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&m_pd3dRenderTargetTexture);
+	m_pd3dDevice->CreateRenderTargetView(m_pd3dRenderTargetTexture, NULL, &m_pd3dRenderTargetView);
 	float fViewportWidth = 0;
 	float fViewportHeight = 0;
-
-	pd3dRenderTargetTexture->GetDesc(&d3dTextureDescription);
-	pd3dRenderTargetTexture->Release();
+	
+	m_pd3dRenderTargetTexture->GetDesc(&d3dTextureDescription);
+	//pd3dRenderTargetTexture->Release();
 	fViewportWidth = (float)d3dTextureDescription.Width;
 	fViewportHeight = (float)d3dTextureDescription.Height;
 
@@ -100,6 +101,7 @@ void CGraphicsSystem::InitD3D(HWND cTheWindow)
 	};
 #pragma endregion
 
+	#pragma region DepthStencilView And DepthStencilState
 	D3D11_TEXTURE2D_DESC descDepth;
 	descDepth.Width = (UINT)fViewportWidth;
 	descDepth.Height = (UINT)fViewportHeight;
@@ -115,7 +117,6 @@ void CGraphicsSystem::InitD3D(HWND cTheWindow)
 
 	m_pd3dDevice->CreateTexture2D(&descDepth, NULL, &m_pd3dDepthStencil);
 
-
 	D3D11_DEPTH_STENCIL_VIEW_DESC d3dDepthStencilViewDescription;
 	d3dDepthStencilViewDescription.Format = DXGI_FORMAT_D32_FLOAT;
 	d3dDepthStencilViewDescription.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
@@ -128,7 +129,7 @@ void CGraphicsSystem::InitD3D(HWND cTheWindow)
 	// Depth test parameters
 	d3dDepthStencilDescription.DepthEnable = true;
 	d3dDepthStencilDescription.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
-	d3dDepthStencilDescription.DepthFunc = D3D11_COMPARISON_LESS;
+	d3dDepthStencilDescription.DepthFunc = D3D11_COMPARISON_LESS_EQUAL;
 
 	// Stencil test parameters
 	d3dDepthStencilDescription.StencilEnable = true;
@@ -149,7 +150,96 @@ void CGraphicsSystem::InitD3D(HWND cTheWindow)
 
 	// Create depth stencil state
 	m_pd3dDevice->CreateDepthStencilState(&d3dDepthStencilDescription, &m_pd3dDepthStencilState);
+
+#pragma endregion
+
+#pragma endregion
+
+	#pragma region RasterStates
+	/*
+	D3D11_FILL_MODE FillMode;
+	D3D11_CULL_MODE CullMode;
+	BOOL FrontCounterClockwise;
+	INT DepthBias;
+	FLOAT DepthBiasClamp;
+	FLOAT SlopeScaledDepthBias;
+	BOOL DepthClipEnable;
+	BOOL ScissorEnable;
+	BOOL MultisampleEnable;
+	BOOL AntialiasedLineEnable;
+	*/
+	D3D11_RASTERIZER_DESC NoCull
+	{
+		D3D11_FILL_SOLID,
+		D3D11_CULL_NONE,
+		true,
+		1,
+		1.0f,
+		0.0f,
+		true,
+		false,
+		true,
+		false
+	};
+
+	D3D11_RASTERIZER_DESC Cull
+	{
+		D3D11_FILL_SOLID,
+		D3D11_CULL_FRONT,
+		true,
+		1,
+		1.0f,
+		0.0f,
+		true,
+		false,
+		true,
+		false
+	};
+
+	m_pd3dDevice->CreateRasterizerState(&NoCull, &m_pd3dNoCullRasterizerState);
+	m_pd3dDevice->CreateRasterizerState(&Cull, &m_pd3dCullRasterizerState);
+#pragma endregion
 	
+	#pragma region SamplerStates
+	D3D11_SAMPLER_DESC sampTmp
+	{
+		D3D11_FILTER_ANISOTROPIC,
+		D3D11_TEXTURE_ADDRESS_WRAP,
+		D3D11_TEXTURE_ADDRESS_WRAP,
+		D3D11_TEXTURE_ADDRESS_MIRROR,
+		1.0f,
+		16,
+		D3D11_COMPARISON_LESS_EQUAL,
+		1,
+		0,
+		D3D11_FLOAT32_MAX
+	};
+	m_pd3dDevice->CreateSamplerState(&sampTmp, &m_pd3dSamplerState);
+
+#pragma endregion
+
+	#pragma region RTV
+	DXGI_SAMPLE_DESC tmp;
+	tmp.Count = 1;
+	tmp.Quality = 0;
+	D3D11_TEXTURE2D_DESC offScreenDesc
+	{
+		m_d3dViewport.Width,
+		m_d3dViewport.Height,
+		1,
+		1,
+		DXGI_FORMAT_R8G8B8A8_UNORM_SRGB,
+		tmp,
+		D3D11_USAGE_DEFAULT,
+		D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE,
+		0,//D3D11_CPU_ACCESS_READ | D3D11_CPU_ACCESS_WRITE,
+		D3D11_RESOURCE_MISC_GENERATE_MIPS
+	};
+	m_pd3dSwapchain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&m_pd3dOutsideGlassRenderToTexture);
+
+	m_pd3dDevice->CreateTexture2D(&offScreenDesc, 0, &m_pd3dOutsideGlassRenderToTexture);
+	
+	m_pd3dDevice->CreateRenderTargetView(m_pd3dOutsideGlassRenderToTexture, NULL, &m_pd3dOutsideRenderTargetView);
 #pragma endregion
 
 }
@@ -157,7 +247,6 @@ void CGraphicsSystem::InitD3D(HWND cTheWindow)
 void CGraphicsSystem::UpdateD3D()
 {
 	const float afBackgroundColor[] = { .5f, .05f, .5f, 1 };
-
 	m_pd3dDeviceContext->OMSetRenderTargets(1, &m_pd3dRenderTargetView, m_pd3dDepthStencilView);
 	m_pd3dDeviceContext->ClearRenderTargetView(m_pd3dRenderTargetView, afBackgroundColor);
 	m_pd3dDeviceContext->ClearDepthStencilView(m_pd3dDepthStencilView, D3D11_CLEAR_DEPTH, 1, 0); // clear it to Z exponential Far.
@@ -172,7 +261,7 @@ void CGraphicsSystem::CleanD3D(TWorld *ptPlanet)
 		//Check planet's mask at [i] to see what needs to be released
 		if (ptPlanet->atGraphicsMask[nEntityIndex].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_DEBUGMESH | COMPONENT_SHADERID))
 		{
-			ptPlanet->atDebugMesh[nEntityIndex].m_pd3dVertexBuffer->Release();			
+			ptPlanet->atDebugMesh[nEntityIndex].m_pd3dVertexBuffer->Release();
 		}
 
 		if (ptPlanet->atGraphicsMask[nEntityIndex].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_SIMPLEMESH | COMPONENT_SHADERID))
@@ -180,7 +269,7 @@ void CGraphicsSystem::CleanD3D(TWorld *ptPlanet)
 			ptPlanet->atSimpleMesh[nEntityIndex].m_pd3dVertexBuffer->Release();
 			ptPlanet->atSimpleMesh[nEntityIndex].m_pd3dIndexBuffer->Release();
 		}
-		if (ptPlanet->atGraphicsMask[nEntityIndex].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_SHADERID))
+		if (ptPlanet->atGraphicsMask[nEntityIndex].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_SHADERID) || ptPlanet->atGraphicsMask[nEntityIndex].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_SKYBOX | COMPONENT_TEXTURE | COMPONENT_SHADERID))
 		{
 			ptPlanet->atMesh[nEntityIndex].m_pd3dVertexBuffer->Release();
 			ptPlanet->atMesh[nEntityIndex].m_pd3dIndexBuffer->Release();
@@ -188,11 +277,11 @@ void CGraphicsSystem::CleanD3D(TWorld *ptPlanet)
 		}
 		destroyEntity(ptPlanet, nEntityIndex);
 #ifdef _DEBUG
-	//	HRESULT result = debug->ReportLiveDeviceObjects(D3D11_RLDO_SUMMARY | D3D11_RLDO_DETAIL);
+		//HRESULT result = debug->ReportLiveDeviceObjects(D3D11_RLDO_SUMMARY | D3D11_RLDO_DETAIL);
 
 #endif // !_DEBUG
-
 	}
+
 	m_pd3dSwapchain->Release();
 	m_pd3dDevice->Release();
 	m_pd3dDeviceContext->Release();
@@ -200,12 +289,34 @@ void CGraphicsSystem::CleanD3D(TWorld *ptPlanet)
 	m_pd3dDepthStencilState->Release();
 	m_pd3dDepthStencilView->Release();
 	m_pd3dRenderTargetView->Release();
-		
+
 	m_pd3dPrimalVertexShader->Release();
 	m_pd3dPrimalPixelShader->Release();
 	m_pd3dPrimalInputLayout->Release();
 	m_pd3dPrimalVertexBuffer->Release();
 	m_pd3dPrimalPixelBuffer->Release();
+
+	m_pd3dQuadVertexShader->Release();
+	m_pd3dQuadPixelShader->Release();
+	m_pd3dQuadGeometryShader->Release();
+	m_pd3dQuadGeometryBuffer->Release();
+	m_pd3dQuadPixelBuffer->Release();
+
+	m_pd3dMyVertexShader->Release();
+	m_pd3dMyPixelShader->Release();
+	m_pd3dMyInputLayout->Release();
+	m_pd3dMyVertexBuffer->Release();
+
+	m_pd3dUIVertexShader->Release();
+	m_pd3dUIPixelShader->Release();
+	m_pd3dUIInputLayout->Release();
+	m_pd3dUIVertexBuffer->Release();
+	m_pd3dUIPixelBuffer->Release();
+
+	m_pd3dSkyboxVertexShader->Release();
+	m_pd3dSkyboxPixelShader->Release();
+	m_pd3dSkyboxInputLayout->Release();
+	m_pd3dSkyboxVertexBuffer->Release();
 	if (debug != nullptr)
 	{
 		HRESULT result = debug->ReportLiveDeviceObjects(D3D11_RLDO_SUMMARY | D3D11_RLDO_DETAIL);
@@ -229,7 +340,6 @@ void CGraphicsSystem::CleanD3DLevel(TWorld * ptPlanet)
 		{
 			ptPlanet->atSimpleMesh[nEntityIndex].m_pd3dVertexBuffer->Release();
 			ptPlanet->atSimpleMesh[nEntityIndex].m_pd3dIndexBuffer->Release();
-
 		}
 
 		if (ptPlanet->atGraphicsMask[nEntityIndex].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_SHADERID))
@@ -253,13 +363,12 @@ void CGraphicsSystem::CleanD3DObject(TWorld * ptPlanet, int nEntityIndex)
 	{
 		ptPlanet->atSimpleMesh[nEntityIndex].m_pd3dVertexBuffer->Release();
 		ptPlanet->atSimpleMesh[nEntityIndex].m_pd3dIndexBuffer->Release();
-
 	}
 	destroyEntity(ptPlanet, nEntityIndex);
 }
 
 void CGraphicsSystem::CreateShaders(ID3D11Device * device)
-{	
+{
 	#pragma region MyShaders
 	D3D11_BUFFER_DESC d3dMyVertexBufferDesc;
 	device->CreateVertexShader(MyVertexShader, sizeof(MyVertexShader), NULL, &m_pd3dMyVertexShader);
@@ -279,7 +388,7 @@ void CGraphicsSystem::CreateShaders(ID3D11Device * device)
 	//Get a count of the elements in the layout.
 	int	nElements = sizeof(m_d3dMyLayoutDesc) / sizeof(m_d3dMyLayoutDesc[0]);
 
-	//Create the vertex input layout.
+	//Create the input layout.
 	device->CreateInputLayout(m_d3dMyLayoutDesc, nElements, MyVertexShader,
 		sizeof(MyVertexShader), &m_pd3dMyInputLayout);
 
@@ -381,6 +490,319 @@ void CGraphicsSystem::CreateShaders(ID3D11Device * device)
 	device->CreateBuffer(&d3dUIPixelBufferDesc, NULL, &m_pd3dUIPixelBuffer);
 #pragma endregion
 
+	#pragma region QuadGeometryShaders
+	D3D11_BUFFER_DESC d3dQuadMatrixBufferDesc;
+	D3D11_BUFFER_DESC d3dQuadPixelBufferDesc;
+	device->CreateVertexShader(QuadVertexShader, sizeof(QuadVertexShader), NULL, &m_pd3dQuadVertexShader);
+	device->CreatePixelShader(QuadPixelShader, sizeof(QuadPixelShader), NULL, &m_pd3dQuadPixelShader);
+	device->CreateGeometryShader(QuadGeometryShader, sizeof(QuadGeometryShader), NULL, &m_pd3dQuadGeometryShader);
+	//Input Layout Setup
+	//Now setup the layout of the data that goes into the shader.
+	D3D11_INPUT_ELEMENT_DESC m_d3dQuadLayoutDesc[] =
+	{
+		{ "POSITION", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "POSITION", 1, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+	};
+	//Get a count of the elements in the layout.
+	int nQuadElements = sizeof(m_d3dQuadLayoutDesc) / sizeof(m_d3dQuadLayoutDesc[0]);
+
+	//Create the vertex input layout.
+	device->CreateInputLayout(m_d3dQuadLayoutDesc, nQuadElements, QuadVertexShader,
+		sizeof(QuadVertexShader), &m_pd3dQuadInputLayout);
+
+	//Setup the description of the dynamic matrix constant buffer that is in the vertex shader.
+	d3dQuadMatrixBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+	d3dQuadMatrixBufferDesc.ByteWidth = sizeof(TQuadGeometryBufferType);
+	d3dQuadMatrixBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	d3dQuadMatrixBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	d3dQuadMatrixBufferDesc.MiscFlags = 0;
+	d3dQuadMatrixBufferDesc.StructureByteStride = 0;
+
+	//Create the constant buffer pointer so we can access the vertex shader constant buffer from within this class.
+	device->CreateBuffer(&d3dQuadMatrixBufferDesc, NULL, &m_pd3dQuadGeometryBuffer);
+
+
+	//Setup the description of the dynamic matrix constant buffer that is in the vertex shader.
+	d3dQuadPixelBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+	d3dQuadPixelBufferDesc.ByteWidth = sizeof(TQuadPixelBufferType);
+	d3dQuadPixelBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	d3dQuadPixelBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	d3dQuadPixelBufferDesc.MiscFlags = 0;
+	d3dQuadPixelBufferDesc.StructureByteStride = 0;
+
+	//Create the constant buffer pointer so we can access the vertex shader constant buffer from within this class.
+	device->CreateBuffer(&d3dQuadPixelBufferDesc, NULL, &m_pd3dQuadPixelBuffer);
+#pragma endregion
+
+	#pragma region SkyboxShaders
+	D3D11_BUFFER_DESC d3dSkyboxMatrixBufferDesc;
+	D3D11_BUFFER_DESC d3dSkyboxPixelBufferDesc;
+	device->CreateVertexShader(SkyboxVertexShader, sizeof(SkyboxVertexShader), NULL, &m_pd3dSkyboxVertexShader);
+	device->CreatePixelShader(SkyboxPixelShader, sizeof(SkyboxPixelShader), NULL, &m_pd3dSkyboxPixelShader);
+
+	//Input Layout Setup
+	//Now setup the layout of the data that goes into the shader.
+	D3D11_INPUT_ELEMENT_DESC m_d3dSkyboxLayoutDesc[] =
+	{
+		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+	};
+
+	//Get a count of the elements in the layout.
+	int nSkyboxElements = sizeof(m_d3dSkyboxLayoutDesc) / sizeof(m_d3dSkyboxLayoutDesc[0]);
+
+	//Create the vertex input layout.
+	device->CreateInputLayout(m_d3dSkyboxLayoutDesc, nSkyboxElements, SkyboxVertexShader,
+		sizeof(SkyboxVertexShader), &m_pd3dSkyboxInputLayout);
+
+	//Setup the description of the dynamic matrix constant buffer that is in the vertex shader.
+	d3dSkyboxMatrixBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+	d3dSkyboxMatrixBufferDesc.ByteWidth = sizeof(TUIVertexBufferType);
+	d3dSkyboxMatrixBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	d3dSkyboxMatrixBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	d3dSkyboxMatrixBufferDesc.MiscFlags = 0;
+	d3dSkyboxMatrixBufferDesc.StructureByteStride = 0;
+
+	//Create the constant buffer pointer so we can access the vertex shader constant buffer from within this class.
+	device->CreateBuffer(&d3dSkyboxMatrixBufferDesc, NULL, &m_pd3dSkyboxVertexBuffer);
+#pragma endregion
+}
+
+TMaterialOptimized CGraphicsSystem::CreateTexturesFromFile(TMaterialImport * arrayOfMaterials, int numberOfEntities)
+{
+		//Maps texture filenames to entity indices
+		map<int, string> Map_EntityIndex_FileName;
+		string x;
+		std::vector<int> materialIndex;
+		bool insertFlag = true;
+		if (arrayOfMaterials[0].m_tPBRFileNames[0] != NULL)
+		{
+			x = arrayOfMaterials[0].m_tPBRFileNames[0];
+			Map_EntityIndex_FileName.insert(pair<int, string>(0, x));
+			//Vector of indices, one index for each entity that correspond to texture file names
+			materialIndex.push_back(0);
+			//loop number of entity times
+			for (int i = 1; i < numberOfEntities; i++)
+			{
+				//reset flag to true that we should insert filename into map
+				insertFlag = true;
+				//store filename in char*
+				char* x = arrayOfMaterials[i].m_tPBRFileNames[0];
+				int lambert = arrayOfMaterials[i].lambert;
+				//loop number of elements in map times
+				string strEntity;
+				string strMap;
+				if (x != nullptr)
+				{
+					strEntity = x;
+					for (int mapIndex = 0; mapIndex < Map_EntityIndex_FileName.size(); mapIndex++)
+					{
+						if (!Map_EntityIndex_FileName[mapIndex].empty())
+						{
+							strMap = Map_EntityIndex_FileName[mapIndex];
+							//if this current filename in the map is equal to the one of this entity
+							if (strMap == strEntity)
+							{
+								//set insert flag to false so we don't insert this texture to the map
+								insertFlag = false;
+								materialIndex.push_back(mapIndex);
+								break;
+							}
+						}
+					}
+					if (insertFlag && *x != NULL)
+					{
+						Map_EntityIndex_FileName.insert(pair<int, string>(i, x));
+						materialIndex.push_back(i);
+					}
+				}
+				else if (lambert == 3)
+				{
+					materialIndex.push_back(-2);
+				}
+				else
+				{
+					materialIndex.push_back(-1);
+				}
+			}
+		}
+		else if(arrayOfMaterials[0].m_tFileNames[0] != NULL)
+		{
+			x = arrayOfMaterials[0].m_tFileNames[0];
+			Map_EntityIndex_FileName.insert(pair<int, string>(0, x));
+			//Vector of indices, one index for each entity that correspond to texture file names
+			materialIndex.push_back(0);
+			//loop number of entity times
+			for (int i = 1; i < numberOfEntities; i++)
+			{
+				//reset flag to true that we should insert filename into map
+				insertFlag = true;
+				//store filename in char*
+				char* x = arrayOfMaterials[i].m_tFileNames[0];
+				//loop number of elements in map times
+				string strEntity;
+				string strMap;
+				if (x != nullptr)
+				{
+					strEntity = x;
+					for (int mapIndex = 0; mapIndex < Map_EntityIndex_FileName.size(); mapIndex++)
+					{
+						if (!Map_EntityIndex_FileName[mapIndex].empty())
+						{
+							strMap = Map_EntityIndex_FileName[mapIndex];
+							//if this current filename in the map is equal to the one of this entity
+							if (strMap == strEntity)
+							{
+								//set insert flag to false so we don't insert this texture to the map
+								insertFlag = false;
+								materialIndex.push_back(mapIndex);
+								break;
+							}
+						}
+					}
+					if (insertFlag && *x != NULL)
+					{
+						Map_EntityIndex_FileName.insert(pair<int, string>(i, x));
+						materialIndex.push_back(i);
+					}
+				}
+				else
+				{
+					materialIndex.push_back(-1);
+				}
+			}
+		}
+		else//Apply a wood texture to the mesh
+		{
+			ID3D11ShaderResourceView **SRVArrayOfMaterials = new ID3D11ShaderResourceView * [1];
+			int* Map_SRVIndex_EntityIndexArray = new int[1];
+			Map_SRVIndex_EntityIndexArray[0] = 0;
+			for (int i = 0; i < numberOfEntities; i++)
+			{
+				materialIndex.push_back(0);
+			}
+			CreateWICTextureFromFile(m_pd3dDevice, L"TestScene_V1.fbm\\Wood01_col.jpg", NULL, &SRVArrayOfMaterials[0], NULL);
+			TMaterialOptimized answer;
+			answer.Map_SRVIndex_EntityIndex = Map_SRVIndex_EntityIndexArray;
+			answer.materialIndex = materialIndex;
+			answer.SRVArrayOfMaterials = SRVArrayOfMaterials;
+			answer.numberOfMaterials = 1;
+			return answer;
+		}
+		std::map<int, string>::iterator mapItr;
+		wchar_t fnPBR[260];
+		size_t result = 0;
+		mbstate_t d;
+		int count = 0;
+		for (mapItr = Map_EntityIndex_FileName.begin(); mapItr != Map_EntityIndex_FileName.end(); mapItr++)
+		{
+			if (mapItr->second.size())
+			{
+				count++;
+			}
+		}
+
+		ID3D11ShaderResourceView **SRVArrayOfMaterials = new ID3D11ShaderResourceView*[count];
+		count = 0;
+		//Key - Count
+		//Value - Entity Index
+		std::map<int, int> Map_SRVIndex_EntityIndex;
+		for (mapItr = Map_EntityIndex_FileName.begin(); mapItr != Map_EntityIndex_FileName.end(); mapItr++)
+		{
+			if (mapItr->second.size())
+			{
+				const char * name = mapItr->second.c_str();
+				int size = mapItr->second.size();
+				mbsrtowcs_s(&result, fnPBR, 260, (const char **)(&name), size, &d);
+				CreateWICTextureFromFile(m_pd3dDevice, &fnPBR[1], NULL, &SRVArrayOfMaterials[count], NULL);
+				Map_SRVIndex_EntityIndex.insert(pair<int, int>(count, mapItr->first));
+				count++;
+				int test = 0;
+			}
+		}
+		int* Map_SRVIndex_EntityIndexArray = new int[count];
+		int intArrayIndex = 0;
+		for (mapItr = Map_EntityIndex_FileName.begin(); mapItr != Map_EntityIndex_FileName.end(); mapItr++)
+		{
+			if (mapItr->second.size())
+			{
+				Map_SRVIndex_EntityIndexArray[intArrayIndex] = mapItr->first;
+				intArrayIndex++;
+				int test = 0;
+			}
+		}
+		TMaterialOptimized answer;
+		answer.Map_SRVIndex_EntityIndex = Map_SRVIndex_EntityIndexArray;
+		answer.materialIndex = materialIndex;
+		answer.SRVArrayOfMaterials = SRVArrayOfMaterials;
+		answer.numberOfMaterials = Map_SRVIndex_EntityIndex.size();
+		return answer;
+}
+
+ID3D11ShaderResourceView * CGraphicsSystem::TexturesToCubeMap(ID3D11DeviceContext * pd3dDeviceContext, ID3D11Resource * srcTex[6])
+{
+	// Each element in the texture array has the same format/dimensions.
+	D3D11_TEXTURE2D_DESC texElementDesc;
+	((ID3D11Texture2D*)srcTex[0])->GetDesc(&texElementDesc);
+
+	D3D11_TEXTURE2D_DESC texArrayDesc;
+	texArrayDesc.Width = texElementDesc.Width;
+	texArrayDesc.Height = texElementDesc.Height;
+	texArrayDesc.MipLevels = texElementDesc.MipLevels;
+	texArrayDesc.ArraySize = 6;
+	texArrayDesc.Format = texElementDesc.Format;
+	texArrayDesc.SampleDesc.Count = 1;
+	texArrayDesc.SampleDesc.Quality = 0;
+	texArrayDesc.Usage = D3D11_USAGE_DEFAULT;
+	texArrayDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+	texArrayDesc.CPUAccessFlags = 0;
+	texArrayDesc.MiscFlags = D3D11_RESOURCE_MISC_TEXTURECUBE;
+	pd3dDeviceContext->GetDevice(&m_pd3dDevice);
+	ID3D11Texture2D* texArray = 0;
+	m_pd3dDevice->CreateTexture2D(&texArrayDesc, 0, &texArray);
+
+	// Copy individual texture elements into texture array.
+	D3D11_BOX sourceRegion;
+
+	//Copy the mip-map levels of the textures
+	for (UINT x = 0; x < 6; x++)
+	{
+		for (UINT mipLevel = 0; mipLevel < texArrayDesc.MipLevels; mipLevel++)
+		{
+			sourceRegion.left = 0;
+			sourceRegion.right = (texArrayDesc.Width >> mipLevel);
+			sourceRegion.top = 0;
+			sourceRegion.bottom = (texArrayDesc.Height >> mipLevel);
+			sourceRegion.front = 0;
+			sourceRegion.back = 1;
+
+			//test for overflow
+			if (sourceRegion.bottom == 0 || sourceRegion.right == 0)
+				break;
+
+			pd3dDeviceContext->CopySubresourceRegion(texArray, D3D11CalcSubresource(mipLevel, x, texArrayDesc.MipLevels), 0, 0, 0, srcTex[x], mipLevel, &sourceRegion);
+		}
+	}
+
+	// Create a resource view to the texture array.
+	D3D11_SHADER_RESOURCE_VIEW_DESC viewDesc;
+	viewDesc.Format = texArrayDesc.Format;
+	viewDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURECUBE;
+	viewDesc.TextureCube.MostDetailedMip = 0;
+	viewDesc.TextureCube.MipLevels = texArrayDesc.MipLevels;
+	ID3D11ShaderResourceView * srv;
+	m_pd3dDevice->CreateShaderResourceView(texArray, &viewDesc, &srv);
+	return srv;
+}
+
+void CGraphicsSystem::UpdateD3D_RenderToTexture()
+{
+	const float afBackgroundColor[] = { .5f, .05f, .5f, 1 };
+
+	//m_pd3dDeviceContext->GenerateMips(
+	m_pd3dDeviceContext->OMSetRenderTargets(1, &m_pd3dOutsideRenderTargetView, m_pd3dDepthStencilView);
+	m_pd3dDeviceContext->ClearRenderTargetView(m_pd3dOutsideRenderTargetView, afBackgroundColor);
+	m_pd3dDeviceContext->ClearDepthStencilView(m_pd3dDepthStencilView, D3D11_CLEAR_DEPTH, 1, 0); // clear it to Z exponential Far.
+	m_pd3dDeviceContext->RSSetViewports(1, &m_d3dViewport);
 }
 
 void CGraphicsSystem::CreateBuffers(TWorld *ptPlanet)//init first frame
@@ -393,7 +815,6 @@ void CGraphicsSystem::CreateBuffers(TWorld *ptPlanet)//init first frame
 		{
 			if (ptPlanet->atDebugMesh[nCurrentEntity].m_nVertexCount)
 				m_pd3dDevice->CreateBuffer(&ptPlanet->atDebugMesh[nCurrentEntity].m_d3dVertexBufferDesc, &ptPlanet->atDebugMesh[nCurrentEntity].m_d3dVertexData, &ptPlanet->atDebugMesh[nCurrentEntity].m_pd3dVertexBuffer);
-
 		}
 		if (ptPlanet->atGraphicsMask[nCurrentEntity].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_SIMPLEMESH | COMPONENT_SHADERID))
 		{
@@ -401,10 +822,9 @@ void CGraphicsSystem::CreateBuffers(TWorld *ptPlanet)//init first frame
 			{
 				m_pd3dDevice->CreateBuffer(&ptPlanet->atSimpleMesh[nCurrentEntity].m_d3dVertexBufferDesc, &ptPlanet->atSimpleMesh[nCurrentEntity].m_d3dVertexData, &ptPlanet->atSimpleMesh[nCurrentEntity].m_pd3dVertexBuffer);
 				m_pd3dDevice->CreateBuffer(&ptPlanet->atSimpleMesh[nCurrentEntity].m_d3dIndexBufferDesc, &ptPlanet->atSimpleMesh[nCurrentEntity].m_d3dIndexData, &ptPlanet->atSimpleMesh[nCurrentEntity].m_pd3dIndexBuffer);
-
 			}
-		}	
-		if (ptPlanet->atGraphicsMask[nCurrentEntity].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_SHADERID))
+		}
+		if (ptPlanet->atGraphicsMask[nCurrentEntity].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_SHADERID) || ptPlanet->atGraphicsMask[nCurrentEntity].m_tnGraphicsMask == COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_SKYBOX | COMPONENT_TEXTURE | COMPONENT_SHADERID)
 		{
 			if (ptPlanet->atMesh[nCurrentEntity].m_nIndexCount && ptPlanet->atMesh[nCurrentEntity].m_nVertexCount)
 			{
@@ -421,7 +841,6 @@ void CGraphicsSystem::CreateEntityBuffer(TWorld * ptWorld, int nEnityIndex)
 	{
 		if (ptWorld->atDebugMesh[nEnityIndex].m_nVertexCount)
 			m_pd3dDevice->CreateBuffer(&ptWorld->atDebugMesh[nEnityIndex].m_d3dVertexBufferDesc, &ptWorld->atDebugMesh[nEnityIndex].m_d3dVertexData, &ptWorld->atDebugMesh[nEnityIndex].m_pd3dVertexBuffer);
-
 	}
 	if (ptWorld->atGraphicsMask[nEnityIndex].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_SIMPLEMESH | COMPONENT_SHADERID))
 	{
@@ -443,40 +862,40 @@ void CGraphicsSystem::CreateEntityBuffer(TWorld * ptWorld, int nEnityIndex)
 }
 
 void CGraphicsSystem::UpdateBuffer(TWorld * ptWorld, std::vector<TSimpleMesh> vtVertexVector, int nEntity, int nMask)
-{	
+{
 	bool bIsVertexBufferSet = false;
-		if (bIsVertexBufferSet)
+	if (bIsVertexBufferSet)
+	{
+		// This is where it copies the new vertices to the buffer.
+		// but it's causing flickering in the entire screen...
+		D3D11_MAPPED_SUBRESOURCE d3dMappedBufferResource;
+		if (nMask == COMPONENT_DEBUGMESH)
 		{
-			// This is where it copies the new vertices to the buffer.
-			// but it's causing flickering in the entire screen...
-			D3D11_MAPPED_SUBRESOURCE d3dMappedBufferResource;
-			if (nMask == COMPONENT_DEBUGMESH)
-			{
-				m_pd3dDeviceContext->Map(ptWorld->atDebugMesh[nEntity].m_pd3dVertexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &d3dMappedBufferResource);
-				memcpy(d3dMappedBufferResource.pData, &vtVertexVector[0], sizeof(vtVertexVector));
-				m_pd3dDeviceContext->Unmap(ptWorld->atDebugMesh[nEntity].m_pd3dVertexBuffer, 0);
-			}
+			m_pd3dDeviceContext->Map(ptWorld->atDebugMesh[nEntity].m_pd3dVertexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &d3dMappedBufferResource);
+			memcpy(d3dMappedBufferResource.pData, &vtVertexVector[0], sizeof(vtVertexVector));
+			m_pd3dDeviceContext->Unmap(ptWorld->atDebugMesh[nEntity].m_pd3dVertexBuffer, 0);
 		}
-		else
-		{			
-			UINT nVertexBufferStride = sizeof(TSimpleMesh);
-			UINT nVertexBufferOffset = 0;
+	}
+	else
+	{
+		UINT nVertexBufferStride = sizeof(TSimpleMesh);
+		UINT nVertexBufferOffset = 0;
 
-			D3D11_SUBRESOURCE_DATA d3dBufferResourceData;
-			ZeroMemory(&d3dBufferResourceData, sizeof(d3dBufferResourceData));
-			d3dBufferResourceData.pSysMem = &vtVertexVector[0];
-			if (nMask == COMPONENT_DEBUGMESH)
-			{
-				// This is run in the first frame. But what if new vertices are added to the scene?
-				ptWorld->atDebugMesh[nEntity].m_d3dVertexBufferDesc.ByteWidth = sizeof(TSimpleMesh) * ptWorld->atDebugMesh[nEntity].m_nVertexCount;
+		D3D11_SUBRESOURCE_DATA d3dBufferResourceData;
+		ZeroMemory(&d3dBufferResourceData, sizeof(d3dBufferResourceData));
+		d3dBufferResourceData.pSysMem = &vtVertexVector[0];
+		if (nMask == COMPONENT_DEBUGMESH)
+		{
+			// This is run in the first frame. But what if new vertices are added to the scene?
+			ptWorld->atDebugMesh[nEntity].m_d3dVertexBufferDesc.ByteWidth = sizeof(TSimpleMesh) * ptWorld->atDebugMesh[nEntity].m_nVertexCount;
 
-				if (ptWorld->atDebugMesh[nEntity].m_pd3dVertexBuffer)
-					ptWorld->atDebugMesh[nEntity].m_pd3dVertexBuffer->Release();
-				m_pd3dDevice->CreateBuffer(&ptWorld->atDebugMesh[nEntity].m_d3dVertexBufferDesc, &d3dBufferResourceData, &ptWorld->atDebugMesh[nEntity].m_pd3dVertexBuffer);
-				m_pd3dDeviceContext->IASetVertexBuffers(0, 1, &ptWorld->atDebugMesh[nEntity].m_pd3dVertexBuffer, &nVertexBufferStride, &nVertexBufferOffset);
-			}
-			bIsVertexBufferSet = true;
+			if (ptWorld->atDebugMesh[nEntity].m_pd3dVertexBuffer)
+				ptWorld->atDebugMesh[nEntity].m_pd3dVertexBuffer->Release();
+			m_pd3dDevice->CreateBuffer(&ptWorld->atDebugMesh[nEntity].m_d3dVertexBufferDesc, &d3dBufferResourceData, &ptWorld->atDebugMesh[nEntity].m_pd3dVertexBuffer);
+			m_pd3dDeviceContext->IASetVertexBuffers(0, 1, &ptWorld->atDebugMesh[nEntity].m_pd3dVertexBuffer, &nVertexBufferStride, &nVertexBufferOffset);
 		}
+		bIsVertexBufferSet = true;
+	}
 }
 
 XMMATRIX CGraphicsSystem::SetDefaultCameraMatrix()
@@ -485,7 +904,6 @@ XMMATRIX CGraphicsSystem::SetDefaultCameraMatrix()
 	DefaultCameraMatrix = SetDefaultWorldPosition();
 
 	return DefaultCameraMatrix;
-
 }
 
 XMMATRIX CGraphicsSystem::ResetAimModeCameraOffset()
@@ -505,7 +923,6 @@ XMMATRIX CGraphicsSystem::SetDefaultViewMatrix()
 
 XMMATRIX CGraphicsSystem::SetDefaultPerspective()
 {
-
 	XMMATRIX DefaultPerspectiveMatrix;
 	// the 90 is for fov if we want to implement field of view
 	m_fFOV = 90.0f;
@@ -522,12 +939,12 @@ XMMATRIX CGraphicsSystem::SetDefaultPerspective()
 
 	DefaultPerspectiveMatrix.r[2].m128_f32[0] = 0;
 	DefaultPerspectiveMatrix.r[2].m128_f32[1] = 0;
-	DefaultPerspectiveMatrix.r[2].m128_f32[2] = 100 / (100 - 0.1f);
+	DefaultPerspectiveMatrix.r[2].m128_f32[2] = FARVIEW / (FARVIEW - 0.1f);
 	DefaultPerspectiveMatrix.r[2].m128_f32[3] = 1;
 
 	DefaultPerspectiveMatrix.r[3].m128_f32[0] = 0;
 	DefaultPerspectiveMatrix.r[3].m128_f32[1] = 0;
-	DefaultPerspectiveMatrix.r[3].m128_f32[2] = -(100 * 0.1f) / (100 - 0.1f);
+	DefaultPerspectiveMatrix.r[3].m128_f32[2] = -(FARVIEW * 0.1f) / (FARVIEW - 0.1f);
 	DefaultPerspectiveMatrix.r[3].m128_f32[3] = 0;
 	return DefaultPerspectiveMatrix;
 }
@@ -550,12 +967,12 @@ XMMATRIX CGraphicsSystem::SetDefaultPerspective(float FOV)
 
 	DefaultPerspectiveMatrix.r[2].m128_f32[0] = 0;
 	DefaultPerspectiveMatrix.r[2].m128_f32[1] = 0;
-	DefaultPerspectiveMatrix.r[2].m128_f32[2] = 100 / (100 - 0.1f);
+	DefaultPerspectiveMatrix.r[2].m128_f32[2] = FARVIEW / (FARVIEW- 0.1f);
 	DefaultPerspectiveMatrix.r[2].m128_f32[3] = 1;
 
 	DefaultPerspectiveMatrix.r[3].m128_f32[0] = 0;
 	DefaultPerspectiveMatrix.r[3].m128_f32[1] = 0;
-	DefaultPerspectiveMatrix.r[3].m128_f32[2] = -(100 * 0.1f) / (100 - 0.1f);
+	DefaultPerspectiveMatrix.r[3].m128_f32[2] = -(FARVIEW * 0.1f) / (FARVIEW - 0.1f);
 	DefaultPerspectiveMatrix.r[3].m128_f32[3] = 0;
 	return DefaultPerspectiveMatrix;
 }
@@ -567,9 +984,8 @@ XMMATRIX CGraphicsSystem::SetDefaultOffset()
 
 XMMATRIX CGraphicsSystem::SetDefaultWorldPosition()
 {
-
 	XMMATRIX DefaultPerspectiveMatrix;
-	// the 90 is for fov if we want to implament field of view
+	// the 90 is for fov if we want to implement field of view
 	DefaultPerspectiveMatrix.r[0].m128_f32[0] = 1;
 	DefaultPerspectiveMatrix.r[0].m128_f32[1] = 0;
 	DefaultPerspectiveMatrix.r[0].m128_f32[2] = 0;
@@ -594,15 +1010,15 @@ XMMATRIX CGraphicsSystem::SetDefaultWorldPosition()
 
 ImporterData CGraphicsSystem::ReadMesh(const char * input_file_path)
 {
-	#pragma region Declarations
+#pragma region Declarations
 	int * lamberts = nullptr;
 	TMyAmbientColor * ambientColor = nullptr;
 	TMyDiffuseColor * diffuseColor = nullptr;
-	TMySpecularColor* specularColor= nullptr;
+	TMySpecularColor* specularColor = nullptr;
 	TMyEmissiveColor* emmissiveColor = nullptr;
-	TMyFileNameSizes* fileNameSizes= nullptr;
+	TMyFileNameSizes* fileNameSizes = nullptr;
 	TMyFileNames* fileNames = nullptr;
-	TPBRFileNameSizes* pbrfileNameSizes= nullptr;
+	TPBRFileNameSizes* pbrfileNameSizes = nullptr;
 	TPBRFileNames* pbrfileNames = nullptr;
 	double *dTransparencyOrShininess = nullptr;
 	float *fMetallicness = nullptr;
@@ -632,14 +1048,14 @@ ImporterData CGraphicsSystem::ReadMesh(const char * input_file_path)
 
 	std::ifstream matFile(input_file_path, std::ios::in | std::ios::binary);
 	matFile.read((char*)&meshCount, sizeof(int));
-	
-	#pragma region ImportDataMemoryAllocations
+
+#pragma region ImportDataMemoryAllocations
 
 	ImporterData tImportMe;
-	tImportMe.vtMeshes		= new TMeshImport[meshCount];
-	tImportMe.vtMaterials	= new TMaterialImport[meshCount];
-	tImportMe.vtAnimations	= new TAnimationImport[meshCount];
-	tImportMe.meshCount		= meshCount;
+	tImportMe.vtMeshes = new TMeshImport[meshCount];
+	tImportMe.vtMaterials = new TMaterialImport[meshCount];
+	tImportMe.vtAnimations = new TAnimationImport[meshCount];
+	tImportMe.meshCount = meshCount;
 #pragma endregion
 
 	for (int meshIndex = 0; meshIndex < meshCount; meshIndex++)
@@ -647,7 +1063,7 @@ ImporterData CGraphicsSystem::ReadMesh(const char * input_file_path)
 		matFile.read((char*)&hasPose, sizeof(int));
 		if (hasPose)
 		{
-			#pragma region ReadAnimationData	
+
 			bSize += sizeof(int);
 			matFile.read((char*)&duration, sizeof(double));
 			matFile.read((char*)&nodeCount, sizeof(int));
@@ -704,22 +1120,22 @@ ImporterData CGraphicsSystem::ReadMesh(const char * input_file_path)
 		if (hasMaterial)
 		{
 			matFile.read((char*)&materialCount, sizeof(int));
-			#pragma region Material Initializations
-		lamberts = new int[materialCount];
-		ambientColor	= new TMyAmbientColor[materialCount];
-		diffuseColor	= new TMyDiffuseColor[materialCount];
-		specularColor	= new TMySpecularColor[materialCount];
-		emmissiveColor	= new TMyEmissiveColor[materialCount];
-		pbrfileNameSizes= new TPBRFileNameSizes[materialCount];
-		pbrfileNames	= new TPBRFileNames[materialCount];
-		fileNameSizes	= new TMyFileNameSizes[materialCount];
-		fileNames		= new TMyFileNames[materialCount];
-		dTransparencyOrShininess = new double[materialCount];
-		fRoughness		= new float[materialCount];
-		fMetallicness	= new float[materialCount];
-		dTransparencyOrShininess[0] = 0;
-		fRoughness[0] = 0;
-		fMetallicness[0] = 0;
+#pragma region Material Initializations
+			lamberts = new int[materialCount];
+			ambientColor = new TMyAmbientColor[materialCount];
+			diffuseColor = new TMyDiffuseColor[materialCount];
+			specularColor = new TMySpecularColor[materialCount];
+			emmissiveColor = new TMyEmissiveColor[materialCount];
+			pbrfileNameSizes = new TPBRFileNameSizes[materialCount];
+			pbrfileNames = new TPBRFileNames[materialCount];
+			fileNameSizes = new TMyFileNameSizes[materialCount];
+			fileNames = new TMyFileNames[materialCount];
+			dTransparencyOrShininess = new double[materialCount];
+			fRoughness = new float[materialCount];
+			fMetallicness = new float[materialCount];
+			dTransparencyOrShininess[0] = 0;
+			fRoughness[0] = 0;
+			fMetallicness[0] = 0;
 #pragma endregion
 		}
 
@@ -727,7 +1143,7 @@ ImporterData CGraphicsSystem::ReadMesh(const char * input_file_path)
 		{
 			for (int materialIndex = 0; materialIndex < materialCount; materialIndex++)
 			{
-				#pragma region ReadMaterials
+#pragma region ReadMaterials
 				bSize += sizeof(int);
 				matFile.read((char*)&lamberts[materialIndex], sizeof(int));
 
@@ -735,7 +1151,7 @@ ImporterData CGraphicsSystem::ReadMesh(const char * input_file_path)
 				{
 					bufferSize = sizeof(fMetallicness[materialIndex]) + sizeof(fRoughness[materialIndex]);
 				}
-				else if (lamberts[materialIndex] == 1)
+				else if (lamberts[materialIndex] == 1 || lamberts[materialIndex] == 3)
 				{
 					bufferSize = sizeof(ambientColor[materialIndex]) + sizeof(diffuseColor[materialIndex]) + sizeof(emmissiveColor[materialIndex]) + sizeof(dTransparencyOrShininess[materialIndex]);
 				}
@@ -790,9 +1206,8 @@ ImporterData CGraphicsSystem::ReadMesh(const char * input_file_path)
 						}
 					}
 				}
-				else if (lamberts[materialIndex] == 1)
+				else if (lamberts[materialIndex] == 1 || lamberts[materialIndex] == 3)
 				{
-
 					memcpy(&ambientColor[materialIndex], &matBuffer[0], sizeof(ambientColor));
 
 					memcpy(&diffuseColor[materialIndex], &matBuffer[sizeof(ambientColor[materialIndex])], sizeof(diffuseColor[materialIndex]));
@@ -800,7 +1215,6 @@ ImporterData CGraphicsSystem::ReadMesh(const char * input_file_path)
 					memcpy(&emmissiveColor[materialIndex], &matBuffer[sizeof(ambientColor[materialIndex]) + sizeof(diffuseColor[materialIndex])], sizeof(emmissiveColor[materialIndex]));
 
 					memcpy(&dTransparencyOrShininess[materialIndex], &matBuffer[sizeof(ambientColor[materialIndex]) + sizeof(diffuseColor[materialIndex])] + sizeof(emmissiveColor[materialIndex]), sizeof(dTransparencyOrShininess[materialIndex]));
-
 
 					for (int i = 0; i < 5; i++)
 					{
@@ -838,7 +1252,6 @@ ImporterData CGraphicsSystem::ReadMesh(const char * input_file_path)
 							}
 						}
 					}
-
 				}
 				else if (lamberts[materialIndex] == 0)
 				{
@@ -888,9 +1301,7 @@ ImporterData CGraphicsSystem::ReadMesh(const char * input_file_path)
 							}
 						}
 					}
-
 				}
-
 
 				delete[] matBuffer;
 				matBuffer = nullptr;
@@ -961,7 +1372,7 @@ ImporterData CGraphicsSystem::ReadMesh(const char * input_file_path)
 		}
 	}
 	matFile.close();
-	
+
 	return tImportMe;
 }
 
@@ -974,6 +1385,65 @@ XMVECTOR CGraphicsSystem::GetCameraPos()
 	return campos;
 }
 
+void CGraphicsSystem::InitQuadShaderData(ID3D11DeviceContext * pd3dDeviceContext, XMMATRIX d3dWorldMatrix, XMMATRIX d3dViewMatrix, XMMATRIX d3dProjectionMatrix, TDebugMesh tDebugMesh, XMMATRIX CameraMatrix, XMFLOAT4 BackgroundColor, float fHealth)
+{
+	D3D11_MAPPED_SUBRESOURCE d3dQuadMappedResource;
+	D3D11_MAPPED_SUBRESOURCE d3dQuadPixelMappedResource;
+
+	TQuadGeometryBufferType* ptQuadMatrixBufferDataPointer = nullptr;
+	TQuadPixelBufferType* ptQuadPixelBufferDataPointer = nullptr;
+
+
+	unsigned int bufferNumber;
+
+	d3dViewMatrix = XMMatrixInverse(nullptr, CameraMatrix);
+
+	XMMATRIX d3dView;
+
+	d3dView = d3dViewMatrix;
+
+	#pragma region Map To Geometry Constant Buffer
+
+	pd3dDeviceContext->Map(m_pd3dQuadGeometryBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &d3dQuadMappedResource);
+
+	// Get a pointer to the data in the constant buffer.
+	ptQuadMatrixBufferDataPointer = (TQuadGeometryBufferType*)d3dQuadMappedResource.pData;
+
+	// Copy the matrices into the constant buffer.
+	ptQuadMatrixBufferDataPointer->m_d3dWorldMatrix = d3dWorldMatrix;
+	ptQuadMatrixBufferDataPointer->m_d3dViewMatrix = d3dView;
+	ptQuadMatrixBufferDataPointer->m_d3dProjectionMatrix = d3dProjectionMatrix;
+	ptQuadMatrixBufferDataPointer->m_fHealth = fHealth;
+	// Unlock the constant buffer.
+	pd3dDeviceContext->Unmap(m_pd3dQuadGeometryBuffer, 0);
+
+#pragma endregion
+
+	#pragma region Map To Pixel Constant Buffer
+	pd3dDeviceContext->Map(m_pd3dQuadPixelBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &d3dQuadPixelMappedResource);
+
+	// Get a pointer to the data in the constant buffer.
+	ptQuadPixelBufferDataPointer = (TQuadPixelBufferType*)d3dQuadPixelMappedResource.pData;
+
+	// Copy the matrices into the constant buffer.
+	ptQuadPixelBufferDataPointer->m_d3dBackgroundColor = BackgroundColor;
+
+	// Unlock the constant buffer.
+	pd3dDeviceContext->Unmap(m_pd3dQuadPixelBuffer, 0);
+
+#pragma endregion
+
+	// Position of the constant buffer in the vertex shader.
+	bufferNumber = 0;
+
+	pd3dDeviceContext->PSSetConstantBuffers(bufferNumber, 1, &m_pd3dQuadPixelBuffer);
+
+	// Set the constant buffer in the Geometry shader with the updated values.
+	pd3dDeviceContext->GSSetConstantBuffers(0, 1, &m_pd3dQuadGeometryBuffer);
+	pd3dDeviceContext->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_POINTLIST);
+	pd3dDeviceContext->IASetVertexBuffers(0, 1, &tDebugMesh.m_pd3dVertexBuffer, &tDebugMesh.m_nVertexBufferStride, &tDebugMesh.m_nVertexBufferOffset);
+}
+
 void CGraphicsSystem::InitPrimalShaderData(ID3D11DeviceContext * pd3dDeviceContext, XMMATRIX d3dWorldMatrix, XMMATRIX d3dViewMatrix, XMMATRIX d3dProjectionMatrix, TDebugMesh tDebugMesh, XMMATRIX CameraMatrix)
 {
 	D3D11_MAPPED_SUBRESOURCE d3dPrimalMappedResource;
@@ -983,16 +1453,14 @@ void CGraphicsSystem::InitPrimalShaderData(ID3D11DeviceContext * pd3dDeviceConte
 	TPrimalPixelBufferType	*ptPrimalPixelBufferDataPointer = nullptr;
 
 	unsigned int bufferNumber;
-	
+
 	d3dViewMatrix = XMMatrixInverse(nullptr, CameraMatrix);
 
 	XMMATRIX d3dView;
 
 	d3dView = d3dViewMatrix;
 
-
 	pd3dDeviceContext->Map(m_pd3dPrimalVertexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &d3dPrimalMappedResource);
-
 
 	// Get a pointer to the data in the constant buffer.
 	ptPrimalMatrixBufferDataPointer = (TPrimalVertexBufferType*)d3dPrimalMappedResource.pData;
@@ -1005,7 +1473,6 @@ void CGraphicsSystem::InitPrimalShaderData(ID3D11DeviceContext * pd3dDeviceConte
 	// Unlock the constant buffer.
 	pd3dDeviceContext->Unmap(m_pd3dPrimalVertexBuffer, 0);
 
-
 #pragma region Map To Pixel Constant Buffer
 	pd3dDeviceContext->Map(m_pd3dPrimalPixelBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &d3dPrimalPixelMappedResource);
 
@@ -1013,13 +1480,12 @@ void CGraphicsSystem::InitPrimalShaderData(ID3D11DeviceContext * pd3dDeviceConte
 	ptPrimalPixelBufferDataPointer = (TPrimalPixelBufferType*)d3dPrimalPixelMappedResource.pData;
 
 	// Copy the matrices into the constant buffer.
-	ptPrimalPixelBufferDataPointer->m_d3dCollisionColor = XMFLOAT4(0,0,0,0);
+	ptPrimalPixelBufferDataPointer->m_d3dCollisionColor = XMFLOAT4(0, 0, 0, 0);
 
 	// Unlock the constant buffer.
 	pd3dDeviceContext->Unmap(m_pd3dPrimalPixelBuffer, 0);
 
 #pragma endregion
-
 
 	// Position of the constant buffer in the vertex shader.
 	bufferNumber = 0;
@@ -1029,7 +1495,6 @@ void CGraphicsSystem::InitPrimalShaderData(ID3D11DeviceContext * pd3dDeviceConte
 	pd3dDeviceContext->VSSetConstantBuffers(bufferNumber, 1, &m_pd3dPrimalVertexBuffer);
 	pd3dDeviceContext->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_LINELIST);
 	pd3dDeviceContext->IASetVertexBuffers(0, 1, &tDebugMesh.m_pd3dVertexBuffer, &tDebugMesh.m_nVertexBufferStride, &tDebugMesh.m_nVertexBufferOffset);
-
 }
 
 void CGraphicsSystem::InitPrimalShaderData2(ID3D11DeviceContext * pd3dDeviceContext, TPrimalVertexBufferType d3dVertexBuffer, TPrimalPixelBufferType d3dPixelBuffer, TSimpleMesh tSimpleMesh, XMMATRIX CameraMatrix)
@@ -1039,7 +1504,7 @@ void CGraphicsSystem::InitPrimalShaderData2(ID3D11DeviceContext * pd3dDeviceCont
 
 	TPrimalVertexBufferType	*ptPrimalVertexBufferDataPointer = nullptr;
 	TPrimalPixelBufferType	*ptPrimalPixelBufferDataPointer = nullptr;
-	
+
 	d3dVertexBuffer.m_d3dViewMatrix = XMMatrixInverse(nullptr, CameraMatrix);
 	unsigned int bufferNumber;
 	//XMMATRIX d3dTmpViewM;
@@ -1054,9 +1519,8 @@ void CGraphicsSystem::InitPrimalShaderData2(ID3D11DeviceContext * pd3dDeviceCont
 	XMMATRIX tempProj = d3dVertexBuffer.m_d3dProjectionMatrix;
 	d3dView = d3dVertexBuffer.m_d3dViewMatrix;
 
-	#pragma region Map To Vertex Constant Buffer
+#pragma region Map To Vertex Constant Buffer
 	pd3dDeviceContext->Map(m_pd3dPrimalVertexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &d3dPrimalVertexMappedResource);
-
 
 	// Get a pointer to the data in the constant buffer.
 	ptPrimalVertexBufferDataPointer = (TPrimalVertexBufferType*)d3dPrimalVertexMappedResource.pData;
@@ -1071,8 +1535,7 @@ void CGraphicsSystem::InitPrimalShaderData2(ID3D11DeviceContext * pd3dDeviceCont
 
 #pragma endregion
 
-
-	#pragma region Map To Pixel Constant Buffer
+#pragma region Map To Pixel Constant Buffer
 	pd3dDeviceContext->Map(m_pd3dPrimalPixelBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &d3dPrimalPixelMappedResource);
 
 	// Get a pointer to the data in the constant buffer.
@@ -1086,7 +1549,6 @@ void CGraphicsSystem::InitPrimalShaderData2(ID3D11DeviceContext * pd3dDeviceCont
 
 #pragma endregion
 
-
 	// Position of the constant buffer in the vertex shader.
 	bufferNumber = 0;
 
@@ -1097,6 +1559,49 @@ void CGraphicsSystem::InitPrimalShaderData2(ID3D11DeviceContext * pd3dDeviceCont
 	pd3dDeviceContext->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	pd3dDeviceContext->IASetVertexBuffers(0, 1, &tSimpleMesh.m_pd3dVertexBuffer, &tSimpleMesh.m_nVertexBufferStride, &tSimpleMesh.m_nVertexBufferOffset);
 	pd3dDeviceContext->IASetIndexBuffer(tSimpleMesh.m_pd3dIndexBuffer, DXGI_FORMAT_R16_UINT, 0);
+}
+
+void CGraphicsSystem::InitSkyboxShaderData(ID3D11DeviceContext * pd3dDeviceContext, TMyVertexBufferType d3dVertexBuffer, TMesh tMesh, XMMATRIX CameraMatrix)
+{
+	D3D11_MAPPED_SUBRESOURCE d3dSkyboxVertexMappedResource;
+
+	TMyVertexBufferType	*ptSkyboxVertexBufferDataPointer = nullptr;
+
+	XMMATRIX d3dView;
+	d3dView = d3dVertexBuffer.m_d3dViewMatrix;
+	d3dView = XMMatrixInverse(nullptr, CameraMatrix);
+	unsigned int bufferNumber = 0;
+	m_fCameraXPosition = CameraMatrix.r[3].m128_f32[0];
+	m_fCameraYPosition = CameraMatrix.r[3].m128_f32[1];
+	m_fCameraZPosition = CameraMatrix.r[3].m128_f32[2];
+
+	XMMATRIX tempWorld = XMMatrixIdentity();
+	XMMATRIX tempProj = d3dVertexBuffer.m_d3dProjectionMatrix;
+	tempWorld = XMMatrixTranslation(m_fCameraXPosition, m_fCameraYPosition, m_fCameraZPosition);
+
+	#pragma region Map To Vertex Constant Buffer
+	pd3dDeviceContext->Map(m_pd3dSkyboxVertexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &d3dSkyboxVertexMappedResource);
+
+	// Get a pointer to the data in the constant buffer.
+	ptSkyboxVertexBufferDataPointer = (TMyVertexBufferType*)d3dSkyboxVertexMappedResource.pData;
+
+	// Copy the matrices into the constant buffer.
+	ptSkyboxVertexBufferDataPointer->m_d3dWorldMatrix = tempWorld;
+	ptSkyboxVertexBufferDataPointer->m_d3dViewMatrix = d3dView;
+	ptSkyboxVertexBufferDataPointer->m_d3dProjectionMatrix = tempProj;
+
+	// Unlock the constant buffer.
+	pd3dDeviceContext->Unmap(m_pd3dSkyboxVertexBuffer, 0);
+#pragma endregion
+
+	pd3dDeviceContext->VSSetConstantBuffers(bufferNumber, 1, &m_pd3dSkyboxVertexBuffer);
+	pd3dDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	pd3dDeviceContext->IASetVertexBuffers(0, 1, &tMesh.m_pd3dVertexBuffer, &tMesh.m_nVertexBufferStride, &tMesh.m_nVertexBufferOffset);
+	pd3dDeviceContext->IASetIndexBuffer(tMesh.m_pd3dIndexBuffer, DXGI_FORMAT_R16_UINT, 0);
+	if (&tMesh.m_d3dSRVDiffuse != NULL)
+	{
+		pd3dDeviceContext->PSSetShaderResources(0, 1, &tMesh.m_d3dSRVDiffuse);
+	}
 }
 
 void CGraphicsSystem::InitMyShaderData(ID3D11DeviceContext * pd3dDeviceContext, TMyVertexBufferType d3dVertexBuffer, TMesh tMesh, XMMATRIX CameraMatrix)
@@ -1116,9 +1621,8 @@ void CGraphicsSystem::InitMyShaderData(ID3D11DeviceContext * pd3dDeviceContext, 
 	XMMATRIX tempWorld = d3dVertexBuffer.m_d3dWorldMatrix;
 	XMMATRIX tempProj = d3dVertexBuffer.m_d3dProjectionMatrix;
 
-	#pragma region Map To Vertex Constant Buffer
+#pragma region Map To Vertex Constant Buffer
 	pd3dDeviceContext->Map(m_pd3dMyVertexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &d3dMyVertexMappedResource);
-
 
 	// Get a pointer to the data in the constant buffer.
 	ptMyVertexBufferDataPointer = (TMyVertexBufferType*)d3dMyVertexMappedResource.pData;
@@ -1132,7 +1636,7 @@ void CGraphicsSystem::InitMyShaderData(ID3D11DeviceContext * pd3dDeviceContext, 
 	pd3dDeviceContext->Unmap(m_pd3dMyVertexBuffer, 0);
 
 #pragma endregion
-	
+
 	pd3dDeviceContext->VSSetConstantBuffers(bufferNumber, 1, &m_pd3dMyVertexBuffer);
 	pd3dDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	pd3dDeviceContext->IASetVertexBuffers(0, 1, &tMesh.m_pd3dVertexBuffer, &tMesh.m_nVertexBufferStride, &tMesh.m_nVertexBufferOffset);
@@ -1215,7 +1719,7 @@ void CGraphicsSystem::ExecutePipeline(ID3D11DeviceContext *pd3dDeviceContext, in
 {
 	switch (nShaderID)
 	{
-		case 1:	
+		case 1:
 		{
 			//Set Input_Layout
 			pd3dDeviceContext->IASetInputLayout(m_pd3dMyInputLayout);
@@ -1248,11 +1752,12 @@ void CGraphicsSystem::ExecutePipeline(ID3D11DeviceContext *pd3dDeviceContext, in
 			pd3dDeviceContext->IASetInputLayout(m_pd3dPrimalInputLayout);
 			//Set Shader
 			pd3dDeviceContext->VSSetShader(m_pd3dPrimalVertexShader, NULL, 0);
+			pd3dDeviceContext->GSSetShader(nullptr, NULL, 0);
 			pd3dDeviceContext->PSSetShader(m_pd3dPrimalPixelShader, NULL, 0);
 			//Draw
 			if (nGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_SIMPLEMESH | COMPONENT_SHADERID))
 			{
-				pd3dDeviceContext->DrawIndexed(m_nIndexCount, 0,0);
+				pd3dDeviceContext->DrawIndexed(m_nIndexCount, 0, 0);
 			}
 			break;
 		}
@@ -1262,6 +1767,7 @@ void CGraphicsSystem::ExecutePipeline(ID3D11DeviceContext *pd3dDeviceContext, in
 			pd3dDeviceContext->IASetInputLayout(m_pd3dMyInputLayout);
 			//Set Shader
 			pd3dDeviceContext->VSSetShader(m_pd3dMyVertexShader, NULL, 0);
+			pd3dDeviceContext->GSSetShader(nullptr, NULL, 0);
 			pd3dDeviceContext->PSSetShader(m_pd3dMyPixelShader, NULL, 0);
 			////Draw
 			if (nGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_SHADERID))
@@ -1276,6 +1782,7 @@ void CGraphicsSystem::ExecutePipeline(ID3D11DeviceContext *pd3dDeviceContext, in
 			pd3dDeviceContext->IASetInputLayout(m_pd3dMyInputLayout);
 			//Set Shader
 			pd3dDeviceContext->VSSetShader(m_pd3dMyVertexShader, NULL, 0);
+			pd3dDeviceContext->GSSetShader(nullptr, NULL, 0);
 			pd3dDeviceContext->PSSetShader(m_pd3dMyPixelShader, NULL, 0);
 			////Draw
 			if (nGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_SHADERID))
@@ -1297,7 +1804,7 @@ void CGraphicsSystem::ExecutePipeline(ID3D11DeviceContext *pd3dDeviceContext, in
 				pd3dDeviceContext->DrawIndexed(m_nIndexCount, 0, 0);
 			}
 			break;
-		}
+		}	
 		case 7:
 		{
 			//Set Input_Layout
@@ -1310,8 +1817,58 @@ void CGraphicsSystem::ExecutePipeline(ID3D11DeviceContext *pd3dDeviceContext, in
 			{
 				pd3dDeviceContext->DrawIndexed(m_nIndexCount, 0, 0);
 			}
-		}
 			break;
+		}
+		case 8:
+		{
+			//Set Input_Layout
+			pd3dDeviceContext->IASetInputLayout(m_pd3dQuadInputLayout);
+			//Set Shader
+			pd3dDeviceContext->VSSetShader(m_pd3dQuadVertexShader, NULL, 0);
+			pd3dDeviceContext->GSSetShader(m_pd3dQuadGeometryShader, NULL, 0);
+			pd3dDeviceContext->PSSetShader(m_pd3dQuadPixelShader, NULL, 0);
+			//Draw
+			if (nGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_DEBUGMESH | COMPONENT_SHADERID))
+			{
+				pd3dDeviceContext->Draw(m_nIndexCount, 0);
+			}
+			pd3dDeviceContext->GSSetShader(NULL, NULL, 0);
+			break;
+		}
+		case 9:
+		{
+			pd3dDeviceContext->RSSetState(m_pd3dNoCullRasterizerState);
+			pd3dDeviceContext->PSSetSamplers(0, 1, &m_pd3dSamplerState);
+			//Set Input_Layout
+			pd3dDeviceContext->IASetInputLayout(m_pd3dSkyboxInputLayout);
+			//Set Shader
+			pd3dDeviceContext->VSSetShader(m_pd3dSkyboxVertexShader, NULL, 0);
+			pd3dDeviceContext->PSSetShader(m_pd3dSkyboxPixelShader, NULL, 0);
+
+			//Draw
+			if (nGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_SKYBOX | COMPONENT_TEXTURE | COMPONENT_SHADERID))
+			{
+				pd3dDeviceContext->DrawIndexed(m_nIndexCount, 0, 0);
+			}
+			//pd3dDeviceContext->RSSetState(m_pd3dCullRasterizerState);
+			//pd3dDeviceContext->PSSetSamplers(0, 1, NULL);
+
+			break;
+		}
+		case 10:
+		{
+			//Set Input_Layout
+			pd3dDeviceContext->IASetInputLayout(m_pd3dMyInputLayout);
+			//Set Shader
+			pd3dDeviceContext->VSSetShader(m_pd3dMyVertexShader, NULL, 0);
+			pd3dDeviceContext->PSSetShader(m_pd3dMyPixelShader, NULL, 0);
+			////Draw
+			if (nGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_SHADERID))
+			{
+				pd3dDeviceContext->DrawIndexed(m_nIndexCount, 0, 0);
+			}
+			break;
+		}
 		default:
 			break;
 	}

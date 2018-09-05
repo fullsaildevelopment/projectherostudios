@@ -3,7 +3,7 @@
 CInputSystem::CInputSystem()
 {
 	m_fMouseRotationSpeed = .003f;//Frame Dependent
-	m_fMouseMovementSpeed = .01f;//Frame Dependent
+	m_fMouseMovementSpeed = .1f;//Frame Dependent
 }
 
 
@@ -41,10 +41,12 @@ TCameraToggle CInputSystem::CameraModeListen(TCameraToggle tMyCam)
 	}
 	if (InputCheck(G_BUTTON_RIGHT) == 1)
 	{
-		tTempCamMode.bAimMode = true;
-		tTempCamMode.bDebugMode = false;
-		tTempCamMode.bWalkMode = false;
-		tTempCamMode.bSwitch = true;
+		if (tTempCamMode.bAimMode == false) {
+			tTempCamMode.bAimMode = true;
+			tTempCamMode.bDebugMode = false;
+			tTempCamMode.bWalkMode = false;
+			tTempCamMode.bSwitch = true;
+		}
 
 	}
 
@@ -106,7 +108,7 @@ XMMATRIX CInputSystem::DebugCamera(XMMATRIX d3d_ViewM, XMMATRIX d3d_WorldM)
 		d3dTmpViewM = XMMatrixMultiply(d3dMovementM, d3dTmpViewM);
 
 	}
-	if (InputCheck(G_KEY_DOWN) == 1) {
+	if (InputCheck(G_KEY_LEFTSHIFT) == 1) {
 		d3dMovementM = XMMatrixTranslation(0, -m_fMouseMovementSpeed, 0);
 		d3dTmpViewM = XMMatrixMultiply(d3dMovementM, d3dTmpViewM);
 	}
@@ -479,17 +481,21 @@ XMMATRIX CInputSystem::WalkCameraControls(XMVECTOR U, XMMATRIX viewM, bool &_mov
 	
 }
 
-XMMATRIX CInputSystem::CameraBehaviorLerp(XMMATRIX m1, XMMATRIX m2)
+XMMATRIX CInputSystem::CameraBehaviorLerp(XMMATRIX m1, XMMATRIX m2,float scale)
 {
 	XMMATRIX lerpedMatrix;
+	XMVECTOR q1=XMQuaternionRotationMatrix(m1);
+	XMVECTOR q2 = XMQuaternionRotationMatrix(m2);
+	XMVECTOR lerpQuaternion=XMQuaternionSlerp(q1, q2, scale);
+	lerpedMatrix =XMMatrixRotationQuaternion(lerpQuaternion);
 
-	lerpedMatrix.r[0] = (m2.r[0] - m1.r[0]) * 0.1f + m1.r[0];
-	lerpedMatrix.r[1] = (m2.r[1] - m1.r[1]) * 0.1f + m1.r[1];
-	lerpedMatrix.r[2] = (m2.r[2] - m1.r[2]) * 0.1f + m1.r[2];
-	lerpedMatrix.r[3] = (m2.r[3] - m1.r[3]) * 0.1f + m1.r[3];
+	//lerpedMatrix.r[0] = m2.r[0];
+	//lerpedMatrix.r[1] = m2.r[1];
+	lerpedMatrix.r[3] = m2.r[3];
 
-
-
+	
+	
+	
 	return lerpedMatrix;
 }
 XMMATRIX CInputSystem::CameraOrientationReset(XMMATRIX m1)
