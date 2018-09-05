@@ -1126,6 +1126,7 @@ int CGameMangerSystem::LoadMainMenu()
 
 	if (pcInputSystem->InputCheck(G_KEY_ESCAPE) == 1)
 		return 4;
+
 #if MIKES_SANDBOX_ON
 	return 9;
 #endif
@@ -1146,16 +1147,17 @@ void CGameMangerSystem::InitializeMainMenu()
 		pcUISystem->AddTextureToUI(&tThisWorld, nThisEntity, pcGraphicsSystem->m_pd3dDevice, wideChar);
 		//                                                  modify this to switch testing levels in Augur.cpp
 		pcUISystem->AddButtonToUI(&cApplicationWindow, &tThisWorld, nThisEntity, 1, true);
+
 #if MIKES_SANDBOX_ON
-		pcUISystem->AddButtonToUI(&tThisWorld, nThisEntity, 9, cApplicationWindow);
+		pcUISystem->AddButtonToUI(&cApplicationWindow, &tThisWorld, nThisEntity, 9, true);
 
 #endif
 #if SKELETON_LOAD_ON
-		pcUISystem->AddButtonToUI(&tThisWorld, nThisEntity, 7, cApplicationWindow);
+		pcUISystem->AddButtonToUI(&cApplicationWindow, &tThisWorld, nThisEntity, 7, true);
 
 #endif
 #if MAIN_LEVEL_ON
-		pcUISystem->AddButtonToUI(&tThisWorld, nThisEntity, 1, cApplicationWindow);
+		pcUISystem->AddButtonToUI(&cApplicationWindow, &tThisWorld, nThisEntity, 1, true);
 
 #endif
 	}

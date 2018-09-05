@@ -1,59 +1,6 @@
 #include "stdafx.h"
 #include "Entity.h"
 #define TEXTURELOADING false
-unsigned int createEntity(TWorld * ptWorld)
-{
-	unsigned int nCurrentEntity;
-	//Return the index of this marked entity
-	for (nCurrentEntity = 0; nCurrentEntity < ENTITYCOUNT; ++nCurrentEntity)
-	{
-		if (ptWorld->atGraphicsMask[nCurrentEntity].m_tnGraphicsMask == COMPONENT_NONE)
-		{
-			printf("Entity created: %d\n", nCurrentEntity);
-			if (nCurrentEntity == 16) 
-			{
-				float x = 0;
-			}
-			return(nCurrentEntity);
-		}
-	}
-
-	printf("Error!  No more entities left!\n");
-	return(ENTITYCOUNT);
-}
-
-void destroyEntity(TWorld * ptWorld, unsigned int nThisEntity)
-{
-	//Set component list for current entity to none.
-	printf("Entity destroyed: %d\n", nThisEntity);
-	ptWorld->atGraphicsMask[nThisEntity].m_tnGraphicsMask = COMPONENT_NONE;
-	ptWorld->atCollisionMask[nThisEntity].m_tnCollisionMask = COMPONENT_COLLISIONMASK;
-	ptWorld->atAIMask[nThisEntity].m_tnAIMask = COMPONENT_AIMASK;
-	ptWorld->atUIMask[nThisEntity].m_tnUIMask = COMPONENT_UIMASK;
-	ptWorld->atPhysicsMask[nThisEntity].m_tnPhysicsMask = COMPONENT_PHYSICSMASK;
-	ptWorld->atProjectiles[nThisEntity].m_tnProjectileMask = COMPONENT_PROJECTILESMASK;
-	ptWorld->atInputMask[nThisEntity].m_tnInputMask = COMPONENT_INPUTMASK;
-	XMVECTOR zeroVector;
-	zeroVector.m128_f32[0] = 0;
-	zeroVector.m128_f32[1] = 0;
-	zeroVector.m128_f32[2] = 0;
-	zeroVector.m128_f32[3] = 0;
-	ptWorld->atParentWorldMatrix[nThisEntity] = -1;
-	ptWorld->atRigidBody[nThisEntity].totalForce = zeroVector;
-	ptWorld->atRigidBody[nThisEntity].velocity = zeroVector;
-	ptWorld->atRigidBody[nThisEntity].gravity = zeroVector;
-	ptWorld->atRigidBody[nThisEntity].maxVelocity = zeroVector;
-
-	ptWorld->atSimpleMesh[nThisEntity].m_VertexData.clear();
-	ptWorld->atAABB[nThisEntity].m_SceneChange = -30;
-	ptWorld->atAABB[nThisEntity].m_MaterialType = MATERIAL_METAL;
-	ptWorld->atClip[nThisEntity].fAliveTime.clear();
-	ptWorld->atClip[nThisEntity].nBulletsAvailables.clear();
-	ptWorld->atClip[nThisEntity].nBulletsFired.clear();
-	ptWorld->atClip[nThisEntity].tryToShoot = false;
-	ptWorld->atClip[nThisEntity].tryToReload = false;
-	ptWorld->atClip[nThisEntity].maderay = false;
-}
 
 unsigned int CreateDoorWay(TWorld * ptWorld, XMMATRIX SpawnPosition)
 {
