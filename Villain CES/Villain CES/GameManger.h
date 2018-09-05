@@ -33,7 +33,7 @@ public:
 	int PathFindingExample();
 	void FirstSkeltonAiTestLoad();
 	int SpacePirateGamePlay();
-	bool playerDead = false;
+	bool GameOver = false;
 	bool GamePaused = false;
 private:
 	bool drawtext = true;

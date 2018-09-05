@@ -11,10 +11,6 @@ CUISystem::~CUISystem()
 {
 }
 
-void CUISystem::DrawMenu(TWorld* ptWorld, CGraphicsSystem* pcGraphicsSystem, XMMATRIX cameraMatrix, XMMATRIX worldMatrix)
-{
-}
-
 void CUISystem::AddTextureToUI(TWorld* tThisWorld, unsigned int nThisEntity, ID3D11Device* device, wchar_t* filepath)
 {
 	HRESULT result;
@@ -41,8 +37,8 @@ void CUISystem::AddButtonToUI(HWND* cApplicationWindow, TWorld* tThisWorld, unsi
 
 	tThisWorld->atButton[nThisEntity].boundingBox.bottom = (screenHeight / 2) + (ratioBottomY * -1) - 17 + tThisWorld->atLabel[nThisEntity].y;
 	tThisWorld->atButton[nThisEntity].boundingBox.top = (screenHeight / 2) + (ratioTopY * -1) - 17 + tThisWorld->atLabel[nThisEntity].y;
-	tThisWorld->atButton[nThisEntity].boundingBox.left = (screenWidth / 2) + ratioLeftX - 7 - tThisWorld->atLabel[nThisEntity].x;
-	tThisWorld->atButton[nThisEntity].boundingBox.right = (screenWidth / 2) + ratioRightX - 7 - tThisWorld->atLabel[nThisEntity].x;
+	tThisWorld->atButton[nThisEntity].boundingBox.left = (screenWidth / 2) + ratioLeftX - 9;
+	tThisWorld->atButton[nThisEntity].boundingBox.right = (screenWidth / 2) + ratioRightX - 9;
 
 	tThisWorld->atButton[nThisEntity].sceneIndex = sceneIndex;
 
@@ -135,32 +131,6 @@ void CUISystem::AddMaskToUI(TWorld* tThisWorld, unsigned int nThisEntity, eUICom
 	tThisWorld->atUIMask[nThisEntity].m_tnUIMask = tThisWorld->atUIMask[nThisEntity].m_tnUIMask | mask;
 }
 
-void CUISystem::DrawPauseMenu(HWND* cApplicationWindow, TWorld* tThisWorld, HDC* toHDC, unsigned int nCurrentEntity)
-{
-	RECT window;
-	GetWindowRect(*cApplicationWindow, &window);
-
-	float screenWidth = window.right - window.left;
-	float screenHeight = window.bottom - window.top;
-
-	HDC tempHDC = CreateCompatibleDC(*toHDC);
-	HBITMAP memBM = CreateCompatibleBitmap(*toHDC, screenWidth, screenHeight);
-	SelectObject(tempHDC, memBM);
-
-	RECT tempRect;
-	SetRect(&tempRect, tThisWorld->atText[nCurrentEntity].textBoundingBox.left, tThisWorld->atText[nCurrentEntity].textBoundingBox.top, tThisWorld->atText[nCurrentEntity].textBoundingBox.right, tThisWorld->atText[nCurrentEntity].textBoundingBox.bottom);
-
-	DrawText(tempHDC, tThisWorld->atText[nCurrentEntity].textBuffer, tThisWorld->atText[nCurrentEntity].textSize, &tempRect, DT_CENTER);
-
-	BitBlt(*toHDC, tThisWorld->atText[nCurrentEntity].textBoundingBox.left, tThisWorld->atText[nCurrentEntity].textBoundingBox.right, tThisWorld->atText[nCurrentEntity].textBoundingBox.right - tThisWorld->atText[nCurrentEntity].textBoundingBox.left, tThisWorld->atText[nCurrentEntity].textBoundingBox.bottom - tThisWorld->atText[nCurrentEntity].textBoundingBox.top, tempHDC, tempRect.left, tempRect.top, SRCCOPY);
-
-	DeleteObject(memBM);
-	ReleaseDC(NULL, tempHDC);
-	DeleteDC(tempHDC);
-
-	//SelectObject(tHDC, oldFont);
-}
-
 void CUISystem::AdjustBoundingBox(HWND* cApplicationWindow, TWorld* tThisWorld, unsigned int nThisEntity)
 {
 	HDC tHDC = GetDC(0);
@@ -174,8 +144,8 @@ void CUISystem::AdjustBoundingBox(HWND* cApplicationWindow, TWorld* tThisWorld, 
 	POINT tempPoint = { tThisWorld->atButton[nThisEntity].boundingBox.left, tThisWorld->atButton[nThisEntity].boundingBox.top };
 	POINT tempPoint2 = { tThisWorld->atButton[nThisEntity].boundingBox.right, tThisWorld->atButton[nThisEntity].boundingBox.bottom };
 
-	bool worked = ClientToScreen(*cApplicationWindow, &tempPoint);
-	worked = ClientToScreen(*cApplicationWindow, &tempPoint2);
+	ClientToScreen(*cApplicationWindow, &tempPoint);
+	ClientToScreen(*cApplicationWindow, &tempPoint2);
 
 	int difference = (tempSize.cx) - (tempPoint2.x - tempPoint.x);
 	
@@ -271,4 +241,43 @@ void CUISystem::AdjustBoundingBox(HWND* cApplicationWindow, TWorld* tThisWorld, 
 
 	SelectObject(tHDC, oldFont);
 	ReleaseDC(*cApplicationWindow, tHDC);
+}
+
+void CUISystem::AddBarToUI(HWND* cApplicationWindow, TWorld* tThisWorld, unsigned int nThisEntity)
+{
+	RECT window;
+	GetWindowRect(*cApplicationWindow, &window);
+
+	float screenWidth = window.right - window.left;
+	float screenHeight = window.bottom - window.top;
+
+	float ratioLeftX = (screenWidth / 2) * ((tThisWorld->atLabel[nThisEntity].x - (tThisWorld->atLabel[nThisEntity].width / 2)) * .1);
+	float ratioTopY = (screenHeight / 2) * ((tThisWorld->atLabel[nThisEntity].y + (tThisWorld->atLabel[nThisEntity].height / 2)) * .1);
+	float ratioRightX = (screenWidth / 2) * ((tThisWorld->atLabel[nThisEntity].x + (tThisWorld->atLabel[nThisEntity].width / 2)) * .1);
+	float ratioBottomY = (screenHeight / 2) * ((tThisWorld->atLabel[nThisEntity].y - (tThisWorld->atLabel[nThisEntity].height / 2)) * .1);
+
+	//tThisWorld->atBar[nThisEntity].start = new POINT{ (screenWidth / 2) + ratioLeftX - 7 - tThisWorld->atLabel[nThisEntity].x , (screenHeight / 2) + (ratioBottomY * -1) - 17 + tThisWorld->atLabel[nThisEntity].y };
+	//tThisWorld->atBar[nThisEntity].end = new POINT{ (screenWidth / 2) + ratioRightX - 7 - tThisWorld->atLabel[nThisEntity].x , (screenHeight / 2) + (ratioTopY * -1) - 17 + tThisWorld->atLabel[nThisEntity].y };
+	//POINT start, end;
+	tThisWorld->atBar[nThisEntity].start.y = (screenHeight / 2) + (ratioTopY * -1) - 17 + tThisWorld->atLabel[nThisEntity].y;
+	tThisWorld->atBar[nThisEntity].end.y = (screenHeight / 2) + (ratioBottomY * -1) - 17 + tThisWorld->atLabel[nThisEntity].y;
+	tThisWorld->atBar[nThisEntity].start.x = (screenWidth / 2) + ratioLeftX - 9;
+	tThisWorld->atBar[nThisEntity].end.x = (screenWidth / 2) + ratioRightX - 9;
+
+	tThisWorld->atBar[nThisEntity].barBoundingBox.top = (screenHeight / 2) + (ratioTopY * -1) - 17 + tThisWorld->atLabel[nThisEntity].y;
+	tThisWorld->atBar[nThisEntity].barBoundingBox.bottom = (screenHeight / 2) + (ratioBottomY * -1) - 17 + tThisWorld->atLabel[nThisEntity].y;
+	tThisWorld->atBar[nThisEntity].barBoundingBox.left = (screenWidth / 2) + ratioLeftX - 14;
+	tThisWorld->atBar[nThisEntity].barBoundingBox.right = (screenWidth / 2) + ratioRightX - 4;
+
+	ClientToScreen(*cApplicationWindow, &tThisWorld->atBar[nThisEntity].start);
+	ClientToScreen(*cApplicationWindow, &tThisWorld->atBar[nThisEntity].end);
+
+	//tThisWorld->atBar[nThisEntity].barBoundingBox.top = start.y;
+	//tThisWorld->atBar[nThisEntity].barBoundingBox.bottom = end.y;
+	//tThisWorld->atBar[nThisEntity].barBoundingBox.left = start.x;
+	//tThisWorld->atBar[nThisEntity].barBoundingBox.right = end.x;
+
+	tThisWorld->atBar[nThisEntity].ratio = 1;
+
+	tThisWorld->atUIMask[nThisEntity].m_tnUIMask = tThisWorld->atUIMask[nThisEntity].m_tnUIMask | COMPONENT_BAR;
 }

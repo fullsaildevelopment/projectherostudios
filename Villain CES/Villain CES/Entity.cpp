@@ -251,6 +251,8 @@ void destroyEntity(TWorld * ptWorld, unsigned int nThisEntity)
 	ptWorld->atText[nThisEntity].textColor[2] = 0;
 	ptWorld->atText[nThisEntity].textSize = -1;
 	ptWorld->atText[nThisEntity].justification = 0;
+
+	ptWorld->atMesh[nThisEntity].m_d3dSRVDiffuse = nullptr;
 }
 
 unsigned int createDebugTransformLines(TWorld * ptWorld)
@@ -2863,7 +2865,7 @@ unsigned int createClaytonAnim(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TM
 	return nThisEntity;
 }
 
-unsigned int CreateUILabel(TWorld * ptWorld, XMMATRIX SpawnPosition, float width, float height, float offsetX, float offsetY, std::vector<TUIVertices*>& atUIVertices, int _nThisEntity)
+unsigned int CreateUILabel(TWorld * ptWorld, XMMATRIX SpawnPosition, float width, float height, float offsetX, float offsetY, std::vector<TUIVertices*>& atUIVertices, int _nThisEntity, float z)
 {
 	unsigned int nThisEntity;
 
@@ -2880,10 +2882,10 @@ unsigned int CreateUILabel(TWorld * ptWorld, XMMATRIX SpawnPosition, float width
 
 	TUIVertices* rectVerts = new TUIVertices
 	{
-		TUIVert{ XMFLOAT3((offsetX - (width / 2)) * .1, (offsetY + (height / 2)) * .1, 0), XMFLOAT2(0, 0) },	//0 Top Left
-		TUIVert{ XMFLOAT3((offsetX + (width / 2)) * .1, (offsetY + (height / 2)) * .1, 0), XMFLOAT2(1, 0) },	//1 Top Right
-		TUIVert{ XMFLOAT3((offsetX - (width / 2)) * .1, (offsetY - (height / 2)) * .1, 0), XMFLOAT2(0, 1) },	//2 Bottom Left
-		TUIVert{ XMFLOAT3((offsetX + (width / 2)) * .1, (offsetY - (height / 2)) * .1, 0), XMFLOAT2(1, 1) }		//3 Bottom Right
+		TUIVert{ XMFLOAT3((offsetX - (width / 2)) * .1, (offsetY + (height / 2)) * .1, z), XMFLOAT2(0, 0) },	//0 Top Left
+		TUIVert{ XMFLOAT3((offsetX + (width / 2)) * .1, (offsetY + (height / 2)) * .1, z), XMFLOAT2(1, 0) },	//1 Top Right
+		TUIVert{ XMFLOAT3((offsetX - (width / 2)) * .1, (offsetY - (height / 2)) * .1, z), XMFLOAT2(0, 1) },	//2 Bottom Left
+		TUIVert{ XMFLOAT3((offsetX + (width / 2)) * .1, (offsetY - (height / 2)) * .1, z), XMFLOAT2(1, 1) }		//3 Bottom Right
 	};
 
 	atUIVertices.push_back(rectVerts);

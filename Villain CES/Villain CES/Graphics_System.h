@@ -61,12 +61,14 @@ public:
 
 	struct TUIVertexBufferType
 	{
-		XMMATRIX m_d3dWorldMatrix;
-		XMMATRIX m_d3dViewMatrix;
-		XMMATRIX m_d3dProjectionMatrix;
+		//XMMATRIX m_d3dWorldMatrix;
+		//XMMATRIX m_d3dViewMatrix;
+		//XMMATRIX m_d3dProjectionMatrix;
 
-		//XMFLOAT2 rcpDim;
-		//XMFLOAT2 rcpDim2;
+		float start;
+		float end;
+		float ratio;
+		float padding;
 	};
 
 	struct TUIPixelBufferType

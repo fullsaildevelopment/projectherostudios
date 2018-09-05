@@ -1184,15 +1184,15 @@ void CGraphicsSystem::InitUIShaderData(ID3D11DeviceContext * pd3dDeviceContext, 
 	TUIVertexBufferType	*ptUIVertexBufferDataPointer = nullptr;
 	TUIPixelBufferType	*ptUIPixelBufferDataPointer = nullptr;
 
-	XMMATRIX d3dView;
-	d3dView = d3dVertexBuffer.m_d3dViewMatrix;
-	d3dView = XMMatrixInverse(nullptr, CameraMatrix);
+	//XMMATRIX d3dView;
+	//d3dView = d3dVertexBuffer.m_d3dViewMatrix;
+	//d3dView = XMMatrixInverse(nullptr, CameraMatrix);
 
 	unsigned int vBufferNumber = 0;
 	unsigned int pBufferNumber = 0;
 	
-	XMMATRIX tempWorld = d3dVertexBuffer.m_d3dWorldMatrix;
-	XMMATRIX tempProj = d3dVertexBuffer.m_d3dProjectionMatrix;
+	//XMMATRIX tempWorld = d3dVertexBuffer.m_d3dWorldMatrix;
+	//XMMATRIX tempProj = d3dVertexBuffer.m_d3dProjectionMatrix;
 
 #pragma region Map To Vertex Constant Buffer
 	pd3dDeviceContext->Map(m_pd3dUIVertexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &d3dUIVertexMappedResource);
@@ -1202,12 +1202,14 @@ void CGraphicsSystem::InitUIShaderData(ID3D11DeviceContext * pd3dDeviceContext, 
 	ptUIVertexBufferDataPointer = (TUIVertexBufferType*)d3dUIVertexMappedResource.pData;
 
 	// Copy the matrices into the constant buffer.
-	ptUIVertexBufferDataPointer->m_d3dWorldMatrix = tempWorld;
-	ptUIVertexBufferDataPointer->m_d3dViewMatrix = d3dView;
-	ptUIVertexBufferDataPointer->m_d3dProjectionMatrix = tempProj;
+	//ptUIVertexBufferDataPointer->m_d3dWorldMatrix = tempWorld;
+	//ptUIVertexBufferDataPointer->m_d3dViewMatrix = d3dView;
+	//ptUIVertexBufferDataPointer->m_d3dProjectionMatrix = tempProj;
 
-	//ptUIVertexBufferDataPointer->rcpDim = d3dVertexBuffer.rcpDim;
-	//ptUIVertexBufferDataPointer->rcpDim2 = d3dVertexBuffer.rcpDim2;
+	ptUIVertexBufferDataPointer->start = d3dVertexBuffer.start;
+	ptUIVertexBufferDataPointer->end = d3dVertexBuffer.end;
+	ptUIVertexBufferDataPointer->ratio = d3dVertexBuffer.ratio;
+	ptUIVertexBufferDataPointer->padding = d3dVertexBuffer.padding;
 
 	// Unlock the constant buffer.
 	pd3dDeviceContext->Unmap(m_pd3dUIVertexBuffer, 0);
@@ -1223,9 +1225,6 @@ void CGraphicsSystem::InitUIShaderData(ID3D11DeviceContext * pd3dDeviceContext, 
 
 	// Copy the matrices into the constant buffer.
 	ptUIPixelBufferDataPointer->hoverColor = d3dPixelBuffer.hoverColor;
-
-	//ptUIVertexBufferDataPointer->rcpDim = d3dVertexBuffer.rcpDim;
-	//ptUIVertexBufferDataPointer->rcpDim2 = d3dVertexBuffer.rcpDim2;
 
 	// Unlock the constant buffer.
 	pd3dDeviceContext->Unmap(m_pd3dUIPixelBuffer, 0);

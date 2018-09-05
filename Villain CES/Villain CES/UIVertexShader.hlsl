@@ -5,12 +5,14 @@
 
 cbuffer MatrixBuffer : register(b0)
 {
-	matrix d3dWorldMatrix;
-	matrix d3dViewMatrix;
-	matrix d3dProjectionMatrix;
+	//matrix d3dWorldMatrix;
+	//matrix d3dViewMatrix;
+	//matrix d3dProjectionMatrix;
 
-	//float2 rcpDim;
-	//float2 rcpDim2;
+	float start;
+	float end;
+	float ratio;
+	float padding;
 };
 
 //////////////
@@ -40,11 +42,37 @@ TUIPixelInputType UIVertexShader( TUIVertexInputType tInput )
 	//tOutput.d3dPosition.xy = tInput.d3dPosition.xy * rcpDim;
 	//tOutput.d3dPosition.zw = float2(0, 1);
 
-	tOutput.d3dPosition = float4(tInput.d3dPosition.xyz, 1);
+	//if (padding == -1)
+	//{
+		tOutput.d3dPosition = float4(tInput.d3dPosition.xyz, 1);
+	//}
+	//else
+	//{
+	//	tOutput.d3dPosition = float4(tInput.d3dPosition.xy, .1, 1);
+	//}
+
 	tOutput.d3dTexture = tInput.d3dTexture;
-	//tOutput.d3dPosition = mul(tOutput.d3dPosition, d3dWorldMatrix);
-	//tOutput.d3dPosition = mul(tOutput.d3dPosition, d3dViewMatrix);
-	//tOutput.d3dPosition = mul(tOutput.d3dPosition, d3dProjectionMatrix);
-	tOutput.d3dColor = float4(1, 1, 1, 1);
+
+	tOutput.d3dColor = float4(0, 0, 0, 1);
+
+	if (start == -1 || end == -1 || ratio == -1)
+	{
+		//tOutput.d3dPosition = mul(tOutput.d3dPosition, d3dWorldMatrix);
+		//tOutput.d3dPosition = mul(tOutput.d3dPosition, d3dViewMatrix);
+		//tOutput.d3dPosition = mul(tOutput.d3dPosition, d3dProjectionMatrix);
+	}
+	else
+	{
+		float barPosition = ((end - start) * ratio) + start;
+
+		if (barPosition < tOutput.d3dPosition.x)
+			tOutput.d3dPosition.x = barPosition;
+			/*tOutput.d3dColor = float4(1, 1, 1, 1);
+		else
+			tOutput.d3dColor = float4(0, 0, 0, 1);*/
+
+	}
+
+	
 	return tOutput;
 }

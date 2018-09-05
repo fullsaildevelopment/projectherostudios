@@ -21,6 +21,9 @@ struct TUIMask
 
 struct TBar
 {
+	POINT start, end;
+	RECT barBoundingBox;
+	float ratio;
 	 /*
 	 TODO:
 		 Fill out Bar Struct
