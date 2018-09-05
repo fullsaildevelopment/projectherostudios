@@ -126,3 +126,9 @@ unsigned int CreateCover(TWorld * ptWorld, XMMATRIX SpawnPosition, vector<int> c
 unsigned int CreateHealingAI(TWorld * ptWorld, XMMATRIX SpawnPosition, unsigned int playerIndex);
 unsigned int CreateFriendlySwordsMan(TWorld * ptWorld, XMMATRIX SpawnPosition, unsigned int playerIndex);unsigned int CreateCoverTriggerZone(TWorld * ptWorld, XMMATRIX SpawnPosition);
 unsigned int createGSQuad(TWorld * ptWorld, XMFLOAT4 BackgroundColor);
+unsigned int CreateStoneObstacle(TWorld * ptWorld, XMMATRIX SpawnPosition);
+unsigned int CreateStoneObstacleHorizontal(TWorld * ptWorld, XMMATRIX SpawnPosition);
+
+unsigned int CreateStairCase(TWorld * ptWorld, XMMATRIX SpawnPosition);
+unsigned int CreateTree(TWorld * ptWorld, XMMATRIX SpawnPosition);
+unsigned int CreateCylinder(TWorld * ptWorld, XMMATRIX SpawnPosition);

@@ -29,8 +29,11 @@ public:
 	int SpacePirateGamePlay();
 	void LoadMikesGraphicsSandbox();
 	int MikesGraphicsSandbox();
+	void LoadLevelWithMapInIt();
+	int RealLevelUpdate();
 private:
 	float scale = 0;
+	bool collisionon;
 	XMMATRIX CameraNewPosition;
 	XMMATRIX secondCam;
 	CCollisionSystem * pcCollisionSystem;

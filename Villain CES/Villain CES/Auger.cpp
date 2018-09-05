@@ -143,6 +143,14 @@ void CAuger::Update(bool* loopgame)
 	case 10:
 		CurrentSpotInGame = pcGameMangerSystem->MikesGraphicsSandbox();
 		break;
+	case 11: 
+		pcGameMangerSystem->LoadLevelWithMapInIt();
+		CurrentSpotInGame = 12;
+		break;
+	case 12:
+		CurrentSpotInGame = pcGameMangerSystem->RealLevelUpdate();
+		break;
+	
 	default:
 		break;
 	}
