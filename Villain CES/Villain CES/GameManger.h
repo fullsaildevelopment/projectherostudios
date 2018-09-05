@@ -33,7 +33,6 @@ public:
 	int RealLevelUpdate();
 private:
 	float scale = 0;
-	bool collisionon;
 	XMMATRIX CameraNewPosition;
 	XMMATRIX secondCam;
 	CCollisionSystem * pcCollisionSystem;

@@ -2684,7 +2684,7 @@ int CGameMangerSystem::SpacePirateGamePlay()
 			if (nCurrentEntity == rayindex) {
 				tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = tThisWorld.atWorldMatrix[PlayerStartIndex].worldMatrix;
 			}
-			pcGraphicsSystem->InitPrimalShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, aimCamera->d3d_Position, m_d3dProjectionMatrix, tThisWorld.atDebugMesh[nCurrentEntity], aimCamera->d3d_Position);
+			pcGraphicsSystem->InitPrimalShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, tMyVertexBufferTemp.m_d3dViewMatrix, m_d3dProjectionMatrix, tThisWorld.atDebugMesh[nCurrentEntity], tMyVertexBufferTemp.m_d3dViewMatrix);
 
 			pcGraphicsSystem->ExecutePipeline(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atDebugMesh[nCurrentEntity].m_nVertexCount, tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask, tThisWorld.atShaderID[nCurrentEntity].m_nShaderID);
 
@@ -3499,6 +3499,8 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	{
 		PlayerStartIndex = createClayton(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, tempImport.vtMeshes[meshIndex], tempImport.vtMaterials[meshIndex]);
 	}
+	GunIndexForPlayer = CreateGun(&tThisWorld, m_d3dWorldMatrix, PlayerStartIndex, -1, 1, 10.5, 3, 100);
+	tThisWorld.atClip[GunIndexForPlayer].bulletSpeed = 0.001;
 
 	/*XMMATRIX ground = m_d3dPlayerMatrix;
 	ground.r[3].m128_f32[1] -= 0.4;
@@ -3667,30 +3669,9 @@ int CGameMangerSystem::RealLevelUpdate()
 		walkCamera->d3d_Position = XMMatrixMultiply(m_d3dOffsetMatrix, walkCamera->d3d_Position);
 		tMyVertexBufferTemp.m_d3dViewMatrix = walkCamera->d3d_Position;
 		tTempVertexBuffer.m_d3dViewMatrix = walkCamera->d3d_Position;
-
-
-
-		collisionon = true;
-		XMVECTOR playerGravity;
-		playerGravity.m128_f32[1] = -0.0001;
-		playerGravity.m128_f32[0] = 0;
-		playerGravity.m128_f32[2] = 0;
-		playerGravity.m128_f32[3] = 0;
-		tThisWorld.atRigidBody[PlayerStartIndex].gravity = playerGravity;
-
-
-
 	}
 	else if (tCameraMode.bAimMode == true)
 	{
-		collisionon = false;
-		XMVECTOR playerGravity;
-		playerGravity.m128_f32[1] = 0;
-		playerGravity.m128_f32[0] = 0;
-		playerGravity.m128_f32[2] = 0;
-		playerGravity.m128_f32[3] = 0;
-		tThisWorld.atRigidBody[PlayerStartIndex].gravity = playerGravity;
-
 	
 		if (tCameraMode.bSwitch == true)
 		{
@@ -3842,7 +3823,7 @@ int CGameMangerSystem::RealLevelUpdate()
 			if (nCurrentEntity == rayindex) {
 				tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = tThisWorld.atWorldMatrix[PlayerStartIndex].worldMatrix;
 			}
-			pcGraphicsSystem->InitPrimalShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, aimCamera->d3d_Position, m_d3dProjectionMatrix, tThisWorld.atDebugMesh[nCurrentEntity], aimCamera->d3d_Position);
+			pcGraphicsSystem->InitPrimalShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, tMyVertexBufferTemp.m_d3dViewMatrix, m_d3dProjectionMatrix, tThisWorld.atDebugMesh[nCurrentEntity], tMyVertexBufferTemp.m_d3dViewMatrix);
 
 			pcGraphicsSystem->ExecutePipeline(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atDebugMesh[nCurrentEntity].m_nVertexCount, tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask, tThisWorld.atShaderID[nCurrentEntity].m_nShaderID);
 
@@ -4180,7 +4161,7 @@ int CGameMangerSystem::RealLevelUpdate()
 			tThisWorld.atAABB[nCurrentEntity] = pcCollisionSystem->updateAABB(tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, tThisWorld.atAABB[nCurrentEntity]);
 		}
 
-		if (collisionon == true) {
+		
 			if ((tThisWorld.atCollisionMask[nCurrentEntity].m_tnCollisionMask == (COMPONENT_COLLISIONMASK | COMPONENT_AABB | COMPONENT_NONSTATIC | COMPONENT_TRIGGER) | tThisWorld.atCollisionMask[nCurrentEntity].m_tnCollisionMask == (COMPONENT_COLLISIONMASK | COMPONENT_NONTRIGGER | COMPONENT_AABB | COMPONENT_NONSTATIC)))
 			{
 				if (nCurrentEntity == PlayerStartIndex) {
@@ -4334,7 +4315,7 @@ int CGameMangerSystem::RealLevelUpdate()
 				//	tTempPixelBuffer.m_d3dCollisionColor = tThisWorld.atSimpleMesh[nCurrentEntity].m_nColor;
 
 			}
-		}
+		
 		tTempPixelBuffer.m_d3dCollisionColor = tThisWorld.atSimpleMesh[nCurrentEntity].m_nColor;
 
 		if (tThisWorld.atParentWorldMatrix[nCurrentEntity] != -1)
