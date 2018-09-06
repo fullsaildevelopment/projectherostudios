@@ -10,6 +10,7 @@
 #include"AK/MusicEngine/Common/AkMusicEngine.h"
 #include"AK/SoundEngine/Common/AkSoundEngine.h"
 #include"AK/SpatialAudio/Common/AkSpatialAudio.h"
+#include"GeneratedSoundBanks/Wwise_IDs.h"
 //File Package
 #include"Win32/AkDefaultIOHookBlocking.h"
 #include"Common/AkFilePackageLowLevelIO.h"
@@ -19,10 +20,12 @@
 #include"Win32/AkFilePackageLowLevelIOBlocking.h"
 #include"Common/AkFilePackageLUT.h"
 
-#ifndef AK_OPTIMIZED
-// Only needed for debug mode
-#include <AK/Comm/AkCommunication.h>
-#endif //AK_OPTIMIZED
+#define INIT_BNK L"Init.bnk"
+#define FOOTSTEP_BNK L"Bus3d_Demo.bnk"
+//#ifndef AK_OPTIMIZED
+//// Only needed for debug mode
+//#include <AK/Comm/AkCommunication.h>
+//#endif //AK_OPTIMIZED
 namespace AK
 {
 	// reason these are inline that way they will not defined in multiple .obj files for our .exe
@@ -65,11 +68,20 @@ class CAudioSystem
 public:
 	CAudioSystem();
 	~CAudioSystem();
-	void IntiializeSystem();
-	void PlaySoundInBank(CAudioSystem* mySound);
-	void SendSoundsToEngine(AkUniqueID &uID, AkGameObjectID &obj_ID);
-	void SendSoundsToEngine(const char* soundName, AkGameObjectID &obj_ID);
+	void IntiializeSystem(AKRESULT &out_ErrorCheck);
+	void TermSoundEngine();
 
+	static void PlaySoundInBank();
+	void SendSoundsToEngine(const AkUniqueID uID, AkGameObjectID obj_ID);
+	void SetBanksFolderPath(const AkOSChar* _inFilePath);
+	void SendSoundsToEngine(const wchar_t* soundName, AkGameObjectID obj_ID);
+	void ClearActiveGameObjs();
+	void RegisterGameObj(AkGameObjectID in_gameObj);
+	void UnRegisterGameObj(AkGameObjectID in_gameObj);
+	void LoadBankFile(const wchar_t* inBankname, AkBankID &bnkId, AKRESULT &out_ErrorCheck);
+	void UnloadBankFile(const wchar_t* inBankname, AkBankID &bnkId, AKRESULT &out_ErrorCheck);
+	void SetListener(AkGameObjectID in_ListenerID, AkUInt32 _instanceNumb, AKRESULT &out_ErrorCheck);
+	void ClearAllActiveBnks();
 private:
 	CAkFilePackageLowLevelIOBlocking * m_LowIOHook;
 };

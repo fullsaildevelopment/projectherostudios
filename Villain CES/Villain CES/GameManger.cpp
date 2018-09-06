@@ -26,6 +26,7 @@ CGameMangerSystem::CGameMangerSystem(HWND window,CInputSystem* _pcInputSystem)
 CGameMangerSystem::~CGameMangerSystem()
 {
 	pcGraphicsSystem->CleanD3D(&tThisWorld);
+	pcAudioSystem->TermSoundEngine();
 	delete pcGraphicsSystem;
 	delete pcInputSystem;
 	delete pcCollisionSystem;
@@ -950,6 +951,10 @@ void CGameMangerSystem::RestartLevel()
 
 int CGameMangerSystem::LoadMainMenu()
 {
+	if (pcInputSystem->InputCheck(G_KEY_H) == 1)
+	{
+	pcAudioSystem->SendSoundsToEngine(AK::EVENTS::PLAY_FOOTSTEP,footSteps);
+	}
 	//////////
 	m_d3dWorldMatrix = pcGraphicsSystem->SetDefaultWorldPosition();
 	m_d3dViewMatrix = pcGraphicsSystem->SetDefaultViewMatrix();
@@ -1011,7 +1016,6 @@ int CGameMangerSystem::LoadMainMenu()
 
 void CGameMangerSystem::InitilizeMainMenu()
 {
-	pcAudioSystem->IntiializeSystem();
 	pcGraphicsSystem->CleanD3DLevel(&tThisWorld);
 	atUIVertices.clear();
 
@@ -1055,6 +1059,7 @@ void CGameMangerSystem::InitilizeMainMenu()
 
 int CGameMangerSystem::LoadTitleScreen()
 {
+	pcAudioSystem->SetListener(Listener, 1, ErrorResult);
 	//////////
 	m_d3dWorldMatrix = pcGraphicsSystem->SetDefaultWorldPosition();
 	m_d3dViewMatrix = pcGraphicsSystem->SetDefaultViewMatrix();
@@ -1112,18 +1117,25 @@ int CGameMangerSystem::LoadTitleScreen()
 			if (i == G_KEY_ESCAPE)
 				return 4;
 
-			return -3;
+			return 9;
 		}
 	}
 
 	if (pcInputSystem->InputCheck(G_BUTTON_LEFT))
-		return -3;
+		return 9;
 
-	return -2;
+	return 10;
 }
 
 void CGameMangerSystem::InitializeTitleScreen()
 {
+	pcAudioSystem->IntiializeSystem(ErrorResult);
+	pcAudioSystem->SetBanksFolderPath(AKTEXT("../Villain CES/GeneratedSoundBanks/Windows"));
+	pcAudioSystem->RegisterGameObj(Listener);
+	pcAudioSystem->RegisterGameObj(footSteps);
+	pcAudioSystem->LoadBankFile(INIT_BNK, init_bnkID,ErrorResult);
+	pcAudioSystem->LoadBankFile(FOOTSTEP_BNK, footsteps_bnkID, ErrorResult);
+	
 	pcGraphicsSystem->CleanD3DLevel(&tThisWorld);
 	
 	menuCamera->d3d_Position = pcGraphicsSystem->SetDefaultCameraMatrix();

@@ -72,6 +72,11 @@ private:
 	TCamera * menuCamera;
 	Timers * tAugerTimers;
 	System_Times *tTimerInfo;
+	AkGameObjectID footSteps;
+	AkGameObjectID Listener;
+	AkBankID footsteps_bnkID;
+	AkBankID init_bnkID;
+	AKRESULT ErrorResult;
 	float m_RealTimeFov;
 	bool bMoving;
 };

@@ -47,7 +47,7 @@ void CAuger::Start()
 void CAuger::InitializeSystems()
 {
 	//pcGameMangerSystem->LoadLevel();
-	CurrentSpotInGame = -1;
+	CurrentSpotInGame = 11;
 	//pcGraphicsSystem->InitD3D(cApplicationWindow);
 	
 	//createDebugGrid(&tThisWorld);
@@ -90,7 +90,7 @@ void CAuger::Update(bool* loopgame)
 	RECT rect = { 0 };
 	switch (CurrentSpotInGame)
 	{ 
-	case -3:
+	/*case -3:
 		pcGameMangerSystem->InitilizeMainMenu();
 		CurrentSpotInGame = 0;
 		break;
@@ -102,7 +102,7 @@ void CAuger::Update(bool* loopgame)
 	case -1:
 		pcGameMangerSystem->InitializeTitleScreen();
 		CurrentSpotInGame = -2;
-		break;
+		break;*/
 		
 		// main menu
 	case 0:
@@ -151,12 +151,25 @@ void CAuger::Update(bool* loopgame)
 		GetWindowRect(window2, &rect);
 		SetCursorPos((rect.right / 2.0) + 20, (rect.bottom / 2.0) + 65);
 		break;
+	case 9:
+		pcGameMangerSystem->InitilizeMainMenu();
+		CurrentSpotInGame = 0;
+		break;
+
+	case 10:
+		CurrentSpotInGame = pcGameMangerSystem->LoadTitleScreen();
+		break;
+
+	case 11:
+		pcGameMangerSystem->InitializeTitleScreen();
+		CurrentSpotInGame = 10;
+		break;
 	default:
 		break;
 	}
 		
 	
-
+	
 		
 	}
 
