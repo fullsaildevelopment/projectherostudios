@@ -1,32 +1,16 @@
-#include "stdafx.h"
 #include "Auger.h"
-#include"Collision_Component.h"
-#include <stdint.h>
 
 CAuger::CAuger()
 {
-
 }
 
 CAuger::CAuger(HWND window)
 {
 	pcInputSystem = new CInputSystem();
 	pcInputSystem->InitializeGInput(window);
-	pcGameMangerSystem = new CGameMangerSystem(window,pcInputSystem);
+	pcGameMangerSystem = new CGameMangerSystem(window, pcInputSystem);
 	window2 = window;
-		
-		//pcGraphicsSystem = new CGraphicsSystem();
-	/*cApplicationWindow = window;
-	
-	pcGraphicsSystem = new CGraphicsSystem();
-	pcInputSystem = new CInputSystem();
-	pcCollisionSystem = new CCollisionSystem();
-	pcPhysicsSystem = new CPhysicsSystem();
-	pcInputSystem->InitializeGInput(window);
 	pcProjectileSystem = new CProjectileSystem();
-
-	pcAiSystem = new CAISystem();
-	srand(time(NULL));*/
 }
 
 CAuger::~CAuger()
@@ -91,7 +75,7 @@ void CAuger::Update(bool* loopgame)
 	switch (CurrentSpotInGame)
 	{ 
 	/*case -3:
-		pcGameMangerSystem->InitilizeMainMenu();
+		pcGameMangerSystem->InitializeMainMenu();
 		CurrentSpotInGame = 0;
 		break;
 
@@ -106,10 +90,7 @@ void CAuger::Update(bool* loopgame)
 		
 		// main menu
 	case 0:
-		CurrentSpotInGame=pcGameMangerSystem->LoadMainMenu();
-	
-
-	
+		CurrentSpotInGame=pcGameMangerSystem->LoadMainMenu();	
 		break;
 
 	case 1:
@@ -119,12 +100,14 @@ void CAuger::Update(bool* loopgame)
 	case 2:
 		CurrentSpotInGame = pcGameMangerSystem->InGameUpdate();
 
+		if (!pcGameMangerSystem->GamePaused && !pcGameMangerSystem->GameOver)
+		{
+			GetWindowRect(window2, &rect);
+			SetCursorPos((rect.right / 2.0f) + 20, (rect.bottom / 2.0f) + 64);
+		}
 
-		GetWindowRect(window2, &rect);
-		SetCursorPos((rect.right / 2.0f) + 20, (rect.bottom / 2.0f) + 64);
 		break;
 	case 3:
-		if(pcInputSystem->InputCheck(G_KEY_U))
 		CurrentSpotInGame = 2;
 		break;
 	case 4:
@@ -147,36 +130,30 @@ void CAuger::Update(bool* loopgame)
 	case 8 :
 		CurrentSpotInGame = pcGameMangerSystem->SpacePirateGamePlay();
 	
-
 		GetWindowRect(window2, &rect);
 		SetCursorPos((rect.right / 2.0) + 20, (rect.bottom / 2.0) + 65);
+		
 		break;
 	case 9:
-		pcGameMangerSystem->InitilizeMainMenu();
-		CurrentSpotInGame = 0;
-		break;
-
-	case 10:
-		CurrentSpotInGame = pcGameMangerSystem->LoadTitleScreen();
-		break;
-
-	case 11:
-		pcGameMangerSystem->InitializeTitleScreen();
+		pcGameMangerSystem->LoadMikesGraphicsSandbox();
 		CurrentSpotInGame = 10;
+		break;
+	case 10:
+		CurrentSpotInGame = pcGameMangerSystem->MikesGraphicsSandbox();
+		break;
+	case 11:
+	{
+		CurrentSpotInGame = pcGameMangerSystem->LoadOptionsMenu();
+	}
 		break;
 	default:
 		break;
 	}
-		
+}
 	
-	
-		
-	}
-
 
 void CAuger::End()
 {
-	
 	//delete pcInputSystem;
 }
 

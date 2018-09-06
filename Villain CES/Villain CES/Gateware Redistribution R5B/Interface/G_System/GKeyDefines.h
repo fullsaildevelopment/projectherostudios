@@ -144,9 +144,6 @@ namespace GW
 
 #pragma pack(pop)
 	} // end SYSTEM namespace
-
 } // end GW namespace
 
 #endif
-
-

@@ -3,11 +3,15 @@
 #define CES_UI_COMPONENT_H
 enum eUIComponent
 {
-	COMPONENT_UIMASK	= 1 << 0,
-	COMPONENT_BAR		= 1 << 1,
-	COMPONENT_TEXT		= 1 << 2,
-	COMPONENT_LABEL		= 1 << 3,
-	COMPONENT_BUTTON	= 1 << 4
+	COMPONENT_UIMASK		= 1 << 0,
+	COMPONENT_BAR			= 1 << 1,
+	COMPONENT_TEXT			= 1 << 2,
+	COMPONENT_LABEL			= 1 << 3,
+	COMPONENT_BUTTON		= 1 << 4,
+	COMPONENT_PAUSESCREEN	= 1 << 5,
+	COMPONENT_OPTIONS		= 1 << 6,
+	COMPONENT_DEATHSCREEN	= 1 << 7,
+	COMPONENT_BACKGROUND	= 1 << 8
 };
 
 struct TUIMask
@@ -17,16 +21,23 @@ struct TUIMask
 
 struct TBar
 {
+	POINT start, end;
+	RECT barBoundingBox;
+	float ratio;
 	 /*
 	 TODO:
 		 Fill out Bar Struct
 	 */
+	XMFLOAT4 backgroundColor;
 };
 
 struct TText
 {
-	char * textBuffer = nullptr;
-
+	wchar_t * textBuffer = nullptr;
+	unsigned int textSize = 0;
+	RECT textBoundingBox;
+	int textColor[3] = { 0, 0, 0 };
+	int justification = 0;
 	/*
 	TODO:
 		Fill out Text Struct
@@ -46,5 +57,6 @@ struct TButton
 {
 	RECT boundingBox;
 	int sceneIndex;
+	bool enabled;
 };
 #endif
