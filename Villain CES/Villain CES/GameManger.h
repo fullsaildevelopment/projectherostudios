@@ -9,6 +9,7 @@
 #include "AI_System.h"
 #include "UI_System.h"
 #include <array>
+#pragma comment(lib, "MSIMG32.lib")
 
 class CGameMangerSystem {
 public:
@@ -19,9 +20,14 @@ public:
 	int InGameUpdate();
 	void RestartLevel();
 	int LoadMainMenu();
-	void InitilizeMainMenu();
+	void InitializeMainMenu();
 	int LoadTitleScreen();
 	void InitializeTitleScreen();
+	int LoadPauseScreen();
+	void InitializePauseScreen();
+	void InitializeDeathScreen();
+	int LoadOptionsMenu();
+	void InitializeOptionsMenu();
 
 	void LoadPathFindingTest();
 	int PathFindingExample();
@@ -29,9 +35,14 @@ public:
 	int SpacePirateGamePlay();
 	void LoadMikesGraphicsSandbox();
 	int MikesGraphicsSandbox();
+	bool GameOver = false;
+	bool GamePaused = false;
 	void LoadLevelWithMapInIt();
 	int RealLevelUpdate();
 private:
+	TMaterialOptimized matOpt;
+
+	bool drawtext = true;
 	float scale = 0;
 	XMMATRIX CameraNewPosition;
 	XMMATRIX secondCam;
@@ -50,16 +61,18 @@ private:
 	int rayindex = -10;
 	int frustumIndex;
 	float zValue = 5;
-	bool GamePaused = false;
 	bool GameStart;
 	bool DrawUI = true;
 	int renderToTexturePassIndex = 0;
 	float*xPos = new float();
 	float*yPos = new float();
 	TMeshImport bulletMesh;
-
-
+	RECT windowRect;
+	int screenWidth;
+	int screenHeight;
 	
+	bool options = false;
+
 	//ZB Variables
 	TCameraToggle tCameraMode;
 	XMMATRIX m_d3dWorldMatrix;
@@ -69,7 +82,9 @@ private:
 	
 	
 	std::vector<TUIVertices*> atUIVertices;
-	
+	XTime clickTimer;
+	float clickTime;
+
 	TCamera *walkCamera;
 	TCamera *aimCamera;
 	TCamera *debugCamera;

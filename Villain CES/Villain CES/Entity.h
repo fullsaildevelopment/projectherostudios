@@ -75,13 +75,13 @@ struct TUIVert
 	XMFLOAT2 m_d3dfUVs;
 };
 
-struct /*alignas(64)*/ TUIVertices
+struct TUIVertices
 {
 	TUIVert m_d3dfPositions[4];
 };
 
 unsigned int createEntity(TWorld *ptWorld);
-
+unsigned int createEntityReverse(TWorld * ptWorld);
 void destroyEntity(TWorld *ptWorld, unsigned int nEntity);
 
 unsigned int CreateDoorWay(TWorld* ptWorld, XMMATRIX SpawnPosition);
@@ -113,8 +113,8 @@ unsigned int CreateSimpleGunAi(TWorld * ptWorld, XMMATRIX SpawnPosition);
 unsigned int CreateSimpleSearchAi(TWorld* ptWorld, XMMATRIX SpawnPosition);
 unsigned int CreateAIVision(TWorld * ptWorld, XMMATRIX bulletSpawnLocation, float zDistance, int parentWorldMatrixIndex, float xoffset, float yoffset, float zoffset);
 unsigned int CreateRayBullet(TWorld * ptWorld, XMMATRIX bulletSpawnLocation, float zDistance, int parentWorldMatrixIndex, float xoffset, float yoffset, float zoffset);
-unsigned int CreateUILabel(TWorld * ptWorld, XMMATRIX SpawnPosition, float width, float height, float offsetX, float offsetY, std::vector<TUIVertices*>& atUIVertices);
- //float zDistance = 0.5f;
+unsigned int CreateUILabel(TWorld * ptWorld, XMMATRIX SpawnPosition, float width, float height, float offsetX, float offsetY, std::vector<TUIVertices*>& atUIVertices, int _nThisEntity = -1, float z = 0);
+//float zDistance = 0.5f;
 //	fartopleft, nearbottomleft, neartopright, nearbottomright, fartopright, farbottomleft, farbottomright, neartopleft;
 unsigned int CreateFrustumLines(TWorld * ptWorld,XMFLOAT3 fartopleft, XMFLOAT3 nearbottomleft, XMFLOAT3 neartopright, XMFLOAT3 nearbottomright, XMFLOAT3 fartopright, XMFLOAT3 farbottomleft, XMFLOAT3 farbottomright, XMFLOAT3 neartopleft, int parentWorldMatrixIndex, float xoffset, float yoffset, float zoffset,XMFLOAT3 normalLine1, XMFLOAT3 normalLine2);
 unsigned int CreateNodePoint(TWorld * ptWorld, XMMATRIX SpawnPosition);
