@@ -1,59 +1,6 @@
 #include "stdafx.h"
 #include "Entity.h"
 #define TEXTURELOADING false
-unsigned int createEntity(TWorld * ptWorld)
-{
-	unsigned int nCurrentEntity;
-	//Return the index of this marked entity
-	for (nCurrentEntity = 0; nCurrentEntity < ENTITYCOUNT; ++nCurrentEntity)
-	{
-		if (ptWorld->atGraphicsMask[nCurrentEntity].m_tnGraphicsMask == COMPONENT_NONE)
-		{
-			printf("Entity created: %d\n", nCurrentEntity);
-			if (nCurrentEntity == 16) 
-			{
-				float x = 0;
-			}
-			return(nCurrentEntity);
-		}
-	}
-
-	printf("Error!  No more entities left!\n");
-	return(ENTITYCOUNT);
-}
-
-void destroyEntity(TWorld * ptWorld, unsigned int nThisEntity)
-{
-	//Set component list for current entity to none.
-	printf("Entity destroyed: %d\n", nThisEntity);
-	ptWorld->atGraphicsMask[nThisEntity].m_tnGraphicsMask = COMPONENT_NONE;
-	ptWorld->atCollisionMask[nThisEntity].m_tnCollisionMask = COMPONENT_COLLISIONMASK;
-	ptWorld->atAIMask[nThisEntity].m_tnAIMask = COMPONENT_AIMASK;
-	ptWorld->atUIMask[nThisEntity].m_tnUIMask = COMPONENT_UIMASK;
-	ptWorld->atPhysicsMask[nThisEntity].m_tnPhysicsMask = COMPONENT_PHYSICSMASK;
-	ptWorld->atProjectiles[nThisEntity].m_tnProjectileMask = COMPONENT_PROJECTILESMASK;
-	ptWorld->atInputMask[nThisEntity].m_tnInputMask = COMPONENT_INPUTMASK;
-	XMVECTOR zeroVector;
-	zeroVector.m128_f32[0] = 0;
-	zeroVector.m128_f32[1] = 0;
-	zeroVector.m128_f32[2] = 0;
-	zeroVector.m128_f32[3] = 0;
-	ptWorld->atParentWorldMatrix[nThisEntity] = -1;
-	ptWorld->atRigidBody[nThisEntity].totalForce = zeroVector;
-	ptWorld->atRigidBody[nThisEntity].velocity = zeroVector;
-	ptWorld->atRigidBody[nThisEntity].gravity = zeroVector;
-	ptWorld->atRigidBody[nThisEntity].maxVelocity = zeroVector;
-
-	ptWorld->atSimpleMesh[nThisEntity].m_VertexData.clear();
-	ptWorld->atAABB[nThisEntity].m_SceneChange = -30;
-	ptWorld->atAABB[nThisEntity].m_MaterialType = MATERIAL_METAL;
-	ptWorld->atClip[nThisEntity].fAliveTime.clear();
-	ptWorld->atClip[nThisEntity].nBulletsAvailables.clear();
-	ptWorld->atClip[nThisEntity].nBulletsFired.clear();
-	ptWorld->atClip[nThisEntity].tryToShoot = false;
-	ptWorld->atClip[nThisEntity].tryToReload = false;
-	ptWorld->atClip[nThisEntity].maderay = false;
-}
 
 unsigned int CreateDoorWay(TWorld * ptWorld, XMMATRIX SpawnPosition)
 {
@@ -212,6 +159,99 @@ unsigned int SpawnLevelChanger(TWorld * ptWorld, XMMATRIX SpawnPosition)
 
 	ptWorld->atWorldMatrix[nThisEntity].worldMatrix = SpawnPosition;
 	return nThisEntity;
+}
+
+unsigned int createEntity(TWorld * ptWorld)
+{
+	unsigned int nCurrentEntity;
+	//Mark entity for Creation by finding the first index in the entity list that has no components. 
+	//Return the index of this marked entity
+	for (nCurrentEntity = 0; nCurrentEntity < ENTITYCOUNT; ++nCurrentEntity)
+	{
+		if (ptWorld->atGraphicsMask[nCurrentEntity].m_tnGraphicsMask == COMPONENT_NONE)
+		{
+			printf("Entity created: %d\n", nCurrentEntity);
+			if (nCurrentEntity == 16) {
+				float x = 0;
+			}
+			return(nCurrentEntity);
+		}
+	}
+
+	printf("Error!  No more entities left!\n");
+	return(ENTITYCOUNT);
+}
+
+
+unsigned int createEntityReverse(TWorld * ptWorld)
+{
+	unsigned int nCurrentEntity;
+	//Mark entity for Creation by finding the first index in the entity list that has no components. 
+	//Return the index of this marked entity
+	for (nCurrentEntity = ENTITYCOUNT; nCurrentEntity >= 0; --nCurrentEntity)
+	{
+		if (ptWorld->atGraphicsMask[nCurrentEntity].m_tnGraphicsMask == COMPONENT_NONE)
+		{
+			printf("Entity created: %d\n", nCurrentEntity);
+			
+			return(nCurrentEntity);
+		}
+	}
+
+	printf("Error!  No more entities left!\n");
+	return(ENTITYCOUNT);
+}
+
+void destroyEntity(TWorld * ptWorld, unsigned int nThisEntity)
+{
+	//Set component list for current entity to none.
+	printf("Entity destroyed: %d\n", nThisEntity);
+	ptWorld->atGraphicsMask[nThisEntity].m_tnGraphicsMask = COMPONENT_NONE;
+	ptWorld->atCollisionMask[nThisEntity].m_tnCollisionMask = COMPONENT_COLLISIONMASK;
+	ptWorld->atAIMask[nThisEntity].m_tnAIMask = COMPONENT_AIMASK;
+	ptWorld->atUIMask[nThisEntity].m_tnUIMask = COMPONENT_UIMASK;
+	ptWorld->atPhysicsMask[nThisEntity].m_tnPhysicsMask = COMPONENT_PHYSICSMASK;
+	ptWorld->atProjectiles[nThisEntity].m_tnProjectileMask = COMPONENT_PROJECTILESMASK;
+	ptWorld->atInputMask[nThisEntity].m_tnInputMask = COMPONENT_INPUTMASK;
+	XMVECTOR zeroVector;
+	zeroVector.m128_f32[0] = 0;
+	zeroVector.m128_f32[1] = 0;
+	zeroVector.m128_f32[2] = 0;
+	zeroVector.m128_f32[3] = 0;
+	ptWorld->atParentWorldMatrix[nThisEntity] = -1;
+	ptWorld->atRigidBody[nThisEntity].totalForce = zeroVector;
+	ptWorld->atRigidBody[nThisEntity].velocity = zeroVector;
+	ptWorld->atRigidBody[nThisEntity].gravity = zeroVector;
+	ptWorld->atRigidBody[nThisEntity].maxVelocity = zeroVector;
+
+	ptWorld->atSimpleMesh[nThisEntity].m_VertexData.clear();
+	ptWorld->atAABB[nThisEntity].m_SceneChange = -30;
+	ptWorld->atAABB[nThisEntity].m_MaterialType = MATERIAL_METAL;
+	ptWorld->atClip[nThisEntity].fAliveTime.clear();
+	ptWorld->atClip[nThisEntity].nBulletsAvailables.clear();
+	ptWorld->atClip[nThisEntity].nBulletsFired.clear();
+	ptWorld->atClip[nThisEntity].tryToShoot = false;
+	ptWorld->atClip[nThisEntity].tryToReload = false;
+	ptWorld->atClip[nThisEntity].maderay = false;
+
+	ptWorld->atLabel[nThisEntity].height = 0;
+	ptWorld->atLabel[nThisEntity].width = 0;
+	ptWorld->atLabel[nThisEntity].x = 0;
+	ptWorld->atLabel[nThisEntity].y = 0;
+
+	ptWorld->atButton[nThisEntity].boundingBox = { 0, 0, 0, 0 };
+	ptWorld->atButton[nThisEntity].sceneIndex = 0;
+	ptWorld->atButton[nThisEntity].enabled = false;
+
+	ptWorld->atText[nThisEntity].textBoundingBox = { 0, 0, 0, 0 };
+	ptWorld->atText[nThisEntity].textBuffer = nullptr;
+	ptWorld->atText[nThisEntity].textColor[0] = 0;
+	ptWorld->atText[nThisEntity].textColor[1] = 0;
+	ptWorld->atText[nThisEntity].textColor[2] = 0;
+	ptWorld->atText[nThisEntity].textSize = -1;
+	ptWorld->atText[nThisEntity].justification = 0;
+
+	//ptWorld->atMesh[nThisEntity].m_d3dSRVDiffuse = NULL;
 }
 
 unsigned int createDebugTransformLines(TWorld * ptWorld)
@@ -3460,14 +3500,14 @@ unsigned int createClaytonAnim(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TM
 	return nThisEntity;
 }
 
-//unsigned int CreateUIButton(TWorld * ptWorld, XMMATRIX SpawnPosition, float width, float height, float offsetX, float offsetY, LPRECT window, std::vector<TUIVertices*> & atRectVertices)
-
-unsigned int CreateUILabel(TWorld * ptWorld, XMMATRIX SpawnPosition, float width, float height, float offsetX, float offsetY, std::vector<TUIVertices*>& atUIVertices)
+unsigned int CreateUILabel(TWorld * ptWorld, XMMATRIX SpawnPosition, float width, float height, float offsetX, float offsetY, std::vector<TUIVertices*>& atUIVertices, int _nThisEntity, float z)
 {
-	unsigned int nThisEntity = createEntity(ptWorld);
+	unsigned int nThisEntity;
 
-	//if (window != nullptr)
-	//	uiMask = uiMask | COMPONENT_BUTTON;
+	if (_nThisEntity == -1)
+		nThisEntity = createEntity(ptWorld);
+	else
+		nThisEntity = _nThisEntity;
 
 	ptWorld->atCollisionMask[nThisEntity].m_tnCollisionMask = COMPONENT_COLLISIONMASK;
 	ptWorld->atGraphicsMask[nThisEntity].m_tnGraphicsMask = COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_SHADERID;
@@ -3477,10 +3517,10 @@ unsigned int CreateUILabel(TWorld * ptWorld, XMMATRIX SpawnPosition, float width
 
 	TUIVertices* rectVerts = new TUIVertices
 	{
-		TUIVert{ XMFLOAT3((offsetX - (width / 2)) * .1, (offsetY + (height / 2)) * .1, 0), XMFLOAT2(0, 0) },	//0 Top Left
-		TUIVert{ XMFLOAT3((offsetX + (width / 2)) * .1, (offsetY + (height / 2)) * .1, 0), XMFLOAT2(1, 0) },	//1 Top Right
-		TUIVert{ XMFLOAT3((offsetX - (width / 2)) * .1, (offsetY - (height / 2)) * .1, 0), XMFLOAT2(0, 1) },	//2 Bottom Left
-		TUIVert{ XMFLOAT3((offsetX + (width / 2)) * .1, (offsetY - (height / 2)) * .1, 0), XMFLOAT2(1, 1) }		//3 Bottom Right
+		TUIVert{ XMFLOAT3((offsetX - (width / 2)) * .1, (offsetY + (height / 2)) * .1, z), XMFLOAT2(0, 0) },	//0 Top Left
+		TUIVert{ XMFLOAT3((offsetX + (width / 2)) * .1, (offsetY + (height / 2)) * .1, z), XMFLOAT2(1, 0) },	//1 Top Right
+		TUIVert{ XMFLOAT3((offsetX - (width / 2)) * .1, (offsetY - (height / 2)) * .1, z), XMFLOAT2(0, 1) },	//2 Bottom Left
+		TUIVert{ XMFLOAT3((offsetX + (width / 2)) * .1, (offsetY - (height / 2)) * .1, z), XMFLOAT2(1, 1) }		//3 Bottom Right
 	};
 
 	atUIVertices.push_back(rectVerts);
@@ -3491,7 +3531,7 @@ unsigned int CreateUILabel(TWorld * ptWorld, XMMATRIX SpawnPosition, float width
 	ptWorld->atLabel[nThisEntity].x = offsetX;
 	ptWorld->atLabel[nThisEntity].y = offsetY;
 
-	XMMATRIX spawnMatrix = /*XMMatrixMultiply(*/SpawnPosition/*, XMMatrixScaling(width, height, 0))*/;
+	XMMATRIX spawnMatrix = SpawnPosition;
 
 	static short rectIndices[]
 	{
@@ -3511,7 +3551,7 @@ unsigned int CreateUILabel(TWorld * ptWorld, XMMATRIX SpawnPosition, float width
 	ptWorld->atMesh[nThisEntity].m_d3dVertexBufferDesc.CPUAccessFlags = 0;
 	ptWorld->atMesh[nThisEntity].m_d3dVertexBufferDesc.MiscFlags = 0;
 	ptWorld->atMesh[nThisEntity].m_d3dVertexBufferDesc.StructureByteStride = 0;
-
+	
 	ptWorld->atMesh[nThisEntity].m_d3dIndexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
 	ptWorld->atMesh[nThisEntity].m_d3dIndexBufferDesc.ByteWidth = sizeof(short) * ptWorld->atMesh[nThisEntity].m_nIndexCount;
 	ptWorld->atMesh[nThisEntity].m_d3dIndexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;

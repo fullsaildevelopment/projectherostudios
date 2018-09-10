@@ -75,7 +75,7 @@ void CAuger::Update(bool* loopgame)
 	switch (CurrentSpotInGame)
 	{ 
 	case -3:
-		pcGameMangerSystem->InitilizeMainMenu();
+		pcGameMangerSystem->InitializeMainMenu();
 		CurrentSpotInGame = 0;
 		break;
 
@@ -100,13 +100,15 @@ void CAuger::Update(bool* loopgame)
 	case 2:
 		CurrentSpotInGame = pcGameMangerSystem->InGameUpdate();
 
+		if (!pcGameMangerSystem->GamePaused && !pcGameMangerSystem->GameOver)
+		{
+			GetWindowRect(window2, &rect);
+			SetCursorPos((rect.right / 2.0f) + 20, (rect.bottom / 2.0f) + 64);
+		}
 
-		GetWindowRect(window2, &rect);
-		SetCursorPos((rect.right / 2.0f) + 20, (rect.bottom / 2.0f) + 64);
 		break;
 	case 3:
-		if (pcInputSystem->InputCheck(G_KEY_U))
-			CurrentSpotInGame = 8;
+		CurrentSpotInGame = 2;
 		
 		break;
 	case 4:
@@ -142,6 +144,11 @@ void CAuger::Update(bool* loopgame)
 		break;
 	case 10:
 		CurrentSpotInGame = pcGameMangerSystem->MikesGraphicsSandbox();
+		break;
+	case 11:
+	{
+		CurrentSpotInGame = pcGameMangerSystem->LoadOptionsMenu();
+	}
 		break;
 	case 11: 
 		pcGameMangerSystem->LoadLevelWithMapInIt();
