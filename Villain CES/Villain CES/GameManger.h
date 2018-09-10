@@ -36,6 +36,8 @@ public:
 	int MikesGraphicsSandbox();
 	bool GameOver = false;
 	bool GamePaused = false;
+	void LoadLevelWithMapInIt();
+	int RealLevelUpdate();
 private:
 	TMaterialOptimized matOpt;
 
