@@ -23,11 +23,10 @@ public:
 	void InitializeMainMenu();
 	int LoadTitleScreen();
 	void InitializeTitleScreen();
-	int LoadPauseScreen();
 	void InitializePauseScreen();
 	void InitializeDeathScreen();
-	int LoadOptionsMenu();
 	void InitializeOptionsMenu();
+	void InitializeHUD();
 
 	void LoadPathFindingTest();
 	int PathFindingExample();
@@ -78,8 +77,9 @@ private:
 	XMMATRIX m_d3dProjectionMatrix;
 	XMMATRIX m_d3dPlayerMatrix;
 	
-	
-	std::vector<TUIVertices*> atUIVertices;
+	ID3D11ShaderResourceView* fontTexture = nullptr;
+	std::vector<TUIVert*> atUIVertices;
+	std::vector<short*> atUIIndices;
 	XTime clickTimer;
 	float clickTime;
 

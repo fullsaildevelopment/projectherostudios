@@ -11,15 +11,23 @@ CUISystem::~CUISystem()
 {
 }
 
-void CUISystem::AddTextureToUI(TWorld* tThisWorld, unsigned int nThisEntity, ID3D11Device* device, wchar_t* filepath)
+void CUISystem::AddTextureToUI(TWorld* tThisWorld, unsigned int nThisEntity, ID3D11Device* device, wchar_t* filepath, ID3D11ShaderResourceView* srvDiffuse)
 {
-	HRESULT result;
+	if (srvDiffuse == nullptr)
+	{
+		HRESULT result;
 
-	ID3D11Resource* resource;
+		ID3D11Resource* resource;
 
-	result = CreateWICTextureFromFile(device, filepath, &resource, &tThisWorld->atMesh[nThisEntity].m_d3dSRVDiffuse, NULL);
+		result = CreateWICTextureFromFile(device, filepath, &resource, &tThisWorld->atMesh[nThisEntity].m_d3dSRVDiffuse, NULL);
 
-	tThisWorld->atGraphicsMask[nThisEntity].m_tnGraphicsMask = tThisWorld->atGraphicsMask[nThisEntity].m_tnGraphicsMask | COMPONENT_TEXTURE;
+		tThisWorld->atGraphicsMask[nThisEntity].m_tnGraphicsMask = tThisWorld->atGraphicsMask[nThisEntity].m_tnGraphicsMask | COMPONENT_TEXTURE;
+	}
+	else
+	{
+		tThisWorld->atMesh[nThisEntity].m_d3dSRVDiffuse = srvDiffuse;
+		tThisWorld->atGraphicsMask[nThisEntity].m_tnGraphicsMask = tThisWorld->atGraphicsMask[nThisEntity].m_tnGraphicsMask | COMPONENT_TEXTURE;
+	}
 }
 
 void CUISystem::AddButtonToUI(HWND* cApplicationWindow, TWorld* tThisWorld, unsigned int nThisEntity, int sceneIndex, bool enabled)
@@ -134,12 +142,31 @@ void CUISystem::AddMaskToUI(TWorld* tThisWorld, unsigned int nThisEntity, eUICom
 void CUISystem::AdjustBoundingBox(HWND* cApplicationWindow, TWorld* tThisWorld, unsigned int nThisEntity)
 {
 	HDC tHDC = GetDC(0);
-	HGDIOBJ oldFont = SelectObject(tHDC, (HGDIOBJ)myFont);
+	//HGDIOBJ oldFont = SelectObject(tHDC, (HGDIOBJ)myFont);
 
 	SIZE tempSize;
 	GetTextExtentPoint32(tHDC, tThisWorld->atText[nThisEntity].textBuffer, tThisWorld->atText[nThisEntity].textSize, &tempSize);
 
 	int height = DrawText(tHDC, tThisWorld->atText[nThisEntity].textBuffer, tThisWorld->atText[nThisEntity].textSize, &tThisWorld->atText[nThisEntity].textBoundingBox, DT_CALCRECT);
+
+	/*if (tThisWorld->atButton[nThisEntity].boundingBox.left == 0)
+	{
+		RECT window;
+		GetWindowRect(*cApplicationWindow, &window);
+
+		float screenWidth = window.right - window.left;
+		float screenHeight = window.bottom - window.top;
+
+		float ratioLeftX = (screenWidth / 2) * ((tThisWorld->atLabel[nThisEntity].x - (tThisWorld->atLabel[nThisEntity].width / 2)) * .1);
+		float ratioTopY = (screenHeight / 2) * ((tThisWorld->atLabel[nThisEntity].y + (tThisWorld->atLabel[nThisEntity].height / 2)) * .1);
+		float ratioRightX = (screenWidth / 2) * ((tThisWorld->atLabel[nThisEntity].x + (tThisWorld->atLabel[nThisEntity].width / 2)) * .1);
+		float ratioBottomY = (screenHeight / 2) * ((tThisWorld->atLabel[nThisEntity].y - (tThisWorld->atLabel[nThisEntity].height / 2)) * .1);
+
+		tThisWorld->atButton[nThisEntity].boundingBox.bottom = (screenHeight / 2) + (ratioBottomY * -1) - 17 + tThisWorld->atLabel[nThisEntity].y;
+		tThisWorld->atButton[nThisEntity].boundingBox.top = (screenHeight / 2) + (ratioTopY * -1) - 17 + tThisWorld->atLabel[nThisEntity].y;
+		tThisWorld->atButton[nThisEntity].boundingBox.left = (screenWidth / 2) + ratioLeftX - 9;
+		tThisWorld->atButton[nThisEntity].boundingBox.right = (screenWidth / 2) + ratioRightX - 9;
+	}*/
 
 	POINT tempPoint = { tThisWorld->atButton[nThisEntity].boundingBox.left, tThisWorld->atButton[nThisEntity].boundingBox.top };
 	POINT tempPoint2 = { tThisWorld->atButton[nThisEntity].boundingBox.right, tThisWorld->atButton[nThisEntity].boundingBox.bottom };
@@ -239,7 +266,7 @@ void CUISystem::AdjustBoundingBox(HWND* cApplicationWindow, TWorld* tThisWorld, 
 
 	//tThisWorld->atUIMask[nThisEntity].m_tnUIMask = tThisWorld->atUIMask[nThisEntity].m_tnUIMask | COMPONENT_TEXT;
 
-	SelectObject(tHDC, oldFont);
+	//SelectObject(tHDC, oldFont);
 	ReleaseDC(*cApplicationWindow, tHDC);
 }
 

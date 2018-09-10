@@ -2909,7 +2909,7 @@ unsigned int createClaytonAnim(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TM
 	return nThisEntity;
 }
 
-unsigned int CreateUILabel(TWorld * ptWorld, XMMATRIX SpawnPosition, float width, float height, float offsetX, float offsetY, std::vector<TUIVertices*>& atUIVertices, int _nThisEntity, float z)
+unsigned int CreateUILabel(TWorld * ptWorld, XMMATRIX SpawnPosition, float width, float height, float offsetX, float offsetY, std::vector<TUIVert*>& atUIVertices, int _nThisEntity, float z)
 {
 	unsigned int nThisEntity;
 
@@ -2924,13 +2924,19 @@ unsigned int CreateUILabel(TWorld * ptWorld, XMMATRIX SpawnPosition, float width
 	ptWorld->atUIMask[nThisEntity].m_tnUIMask = COMPONENT_UIMASK | COMPONENT_LABEL;
 	ptWorld->atPhysicsMask[nThisEntity].m_tnPhysicsMask = COMPONENT_PHYSICSMASK;
 
-	TUIVertices* rectVerts = new TUIVertices
-	{
-		TUIVert{ XMFLOAT3((offsetX - (width / 2)) * .1, (offsetY + (height / 2)) * .1, z), XMFLOAT2(0, 0) },	//0 Top Left
-		TUIVert{ XMFLOAT3((offsetX + (width / 2)) * .1, (offsetY + (height / 2)) * .1, z), XMFLOAT2(1, 0) },	//1 Top Right
-		TUIVert{ XMFLOAT3((offsetX - (width / 2)) * .1, (offsetY - (height / 2)) * .1, z), XMFLOAT2(0, 1) },	//2 Bottom Left
-		TUIVert{ XMFLOAT3((offsetX + (width / 2)) * .1, (offsetY - (height / 2)) * .1, z), XMFLOAT2(1, 1) }		//3 Bottom Right
-	};
+	TUIVert* rectVerts = new TUIVert[4];
+	//{
+		rectVerts[0].m_d3dfPosition = XMFLOAT3((offsetX - (width / 2)) * .1, (offsetY + (height / 2)) * .1, z);	//0 Top Left
+		rectVerts[0].m_d3dfUVs = XMFLOAT2(0, 0);
+		rectVerts[1].m_d3dfPosition = XMFLOAT3((offsetX + (width / 2)) * .1, (offsetY + (height / 2)) * .1, z);	//1 Top Right
+		rectVerts[1].m_d3dfUVs = XMFLOAT2(1, 0);
+		rectVerts[2].m_d3dfPosition = XMFLOAT3((offsetX - (width / 2)) * .1, (offsetY - (height / 2)) * .1, z);	//2 Bottom Left
+		rectVerts[2].m_d3dfUVs = XMFLOAT2(0, 1);
+		rectVerts[3].m_d3dfPosition = XMFLOAT3((offsetX + (width / 2)) * .1, (offsetY - (height / 2)) * .1, z);		//3 Bottom Right
+		rectVerts[3].m_d3dfUVs = XMFLOAT2(1, 1);
+		//};
+
+	//rectVerts->m_d3dfPositions = verts;
 
 	atUIVertices.push_back(rectVerts);
 	int index = atUIVertices.size() - 1;
@@ -2969,7 +2975,7 @@ unsigned int CreateUILabel(TWorld * ptWorld, XMMATRIX SpawnPosition, float width
 	ptWorld->atMesh[nThisEntity].m_d3dIndexBufferDesc.StructureByteStride = 0;
 
 
-	ptWorld->atMesh[nThisEntity].m_d3dVertexData.pSysMem = &atUIVertices[index]->m_d3dfPositions;
+	ptWorld->atMesh[nThisEntity].m_d3dVertexData.pSysMem = &atUIVertices[index][0];
 	ptWorld->atMesh[nThisEntity].m_d3dIndexData.pSysMem = rectIndices;
 
 	ptWorld->atMesh[nThisEntity].m_d3dVertexData.SysMemPitch = 0;
@@ -2982,7 +2988,560 @@ unsigned int CreateUILabel(TWorld * ptWorld, XMMATRIX SpawnPosition, float width
 
 	for (int i = 0; i < ptWorld->atMesh[nThisEntity].m_nVertexCount; ++i) 
 	{
-		ptWorld->atMesh[nThisEntity].m_VertexData.push_back(atUIVertices[index]->m_d3dfPositions[i].m_d3dfPosition);
+		ptWorld->atMesh[nThisEntity].m_VertexData.push_back(atUIVertices[index][i].m_d3dfPosition);
+	}
+
+	ptWorld->atWorldMatrix[nThisEntity].worldMatrix = spawnMatrix;
+
+	return nThisEntity;
+}
+
+unsigned int CreateUILabelForText(TWorld* ptWorld, XMMATRIX SpawnPosition, float width, float height, float offsetX, float offsetY, std::vector<TUIVert*> atUIVertices, std::vector<short*> atUIIndices, wchar_t* text, unsigned int _textSize, int _nThisEntity, float z)
+{
+	unsigned int nThisEntity;
+	unsigned int textSize = _textSize - 1;
+
+	if (_nThisEntity == -1)
+		nThisEntity = createEntity(ptWorld);
+	else
+		nThisEntity = _nThisEntity;
+
+	ptWorld->atCollisionMask[nThisEntity].m_tnCollisionMask = COMPONENT_COLLISIONMASK;
+	ptWorld->atGraphicsMask[nThisEntity].m_tnGraphicsMask = COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_SHADERID;
+	ptWorld->atAIMask[nThisEntity].m_tnAIMask = COMPONENT_AIMASK;
+	ptWorld->atUIMask[nThisEntity].m_tnUIMask = COMPONENT_UIMASK | COMPONENT_LABEL;
+	ptWorld->atPhysicsMask[nThisEntity].m_tnPhysicsMask = COMPONENT_PHYSICSMASK;
+
+	XMFLOAT3 ratioPos1 = XMFLOAT3{ (offsetX - (width / 2)) * .1f, (offsetY + (height / 2)) * .1f, z };
+	XMFLOAT3 ratioPos2 = XMFLOAT3{ (offsetX + (width / 2)) * .1f, (offsetY + (height / 2)) * .1f, z };
+	XMFLOAT3 ratioPos3 = XMFLOAT3{ (offsetX - (width / 2)) * .1f, (offsetY - (height / 2)) * .1f, z };
+	//XMFLOAT3 ratioPos4 = XMVectorSet((offsetX + (width / 2)) * .1, (offsetY - (height / 2)) * .1, z);
+	
+	float ratioX = ratioPos2.x - ratioPos1.x;
+	float ratioY = ratioPos3.y - ratioPos1.y;
+
+	TUIVert* rectVerts = new TUIVert[4 * textSize];
+
+	XMFLOAT2 tempUVs[4];
+
+	int loopIndex = 0;
+	for (int i = 0; loopIndex < textSize; i+=4)
+	{
+		switch (text[loopIndex])
+		{
+		case ' ':
+		{
+			tempUVs[0] = XMFLOAT2{ 0 / 950.0f, 4 / 20.0f };
+			tempUVs[1] = XMFLOAT2{ 10 / 950.0f, 4 / 20.0f };
+			tempUVs[2] = XMFLOAT2{ 0 / 950.0f, 14 / 20.0f };
+			tempUVs[3] = XMFLOAT2{ 10 / 950.0f, 14 / 20.0f };
+		}
+			break;
+		case ':':
+		{
+			tempUVs[0] = XMFLOAT2{ 260 / 950.0f, 4 / 20.0f };
+			tempUVs[1] = XMFLOAT2{ 270 / 950.0f, 4 / 20.0f };
+			tempUVs[2] = XMFLOAT2{ 260 / 950.0f, 14 / 20.0f };
+			tempUVs[3] = XMFLOAT2{ 270 / 950.0f, 14 / 20.0f };
+		}
+			break;
+		case 'A':
+		{
+			tempUVs[0] = XMFLOAT2{ 330 / 950.0f, 4 / 20.0f };
+			tempUVs[1] = XMFLOAT2{ 340 / 950.0f, 4 / 20.0f };
+			tempUVs[2] = XMFLOAT2{ 330 / 950.0f, 14 / 20.0f };
+			tempUVs[3] = XMFLOAT2{ 340 / 950.0f, 14 / 20.0f };
+		}
+			break;
+		case 'B':
+		{
+			tempUVs[0] = XMFLOAT2{ 340 / 950.0f, 4 / 20.0f };
+			tempUVs[1] = XMFLOAT2{ 350 / 950.0f, 4 / 20.0f };
+			tempUVs[2] = XMFLOAT2{ 340 / 950.0f, 14 / 20.0f };
+			tempUVs[3] = XMFLOAT2{ 350 / 950.0f, 14 / 20.0f };
+		}
+			break;
+		case 'C':
+		{
+			tempUVs[0] = XMFLOAT2{ 350 / 950.0f, 4 / 20.0f };
+			tempUVs[1] = XMFLOAT2{ 360 / 950.0f, 4 / 20.0f };
+			tempUVs[2] = XMFLOAT2{ 350 / 950.0f, 14 / 20.0f };
+			tempUVs[3] = XMFLOAT2{ 360 / 950.0f, 14 / 20.0f };
+		}
+			break;
+		case 'D':
+		{
+			tempUVs[0] = XMFLOAT2{ 360 / 950.0f, 4 / 20.0f };
+			tempUVs[1] = XMFLOAT2{ 370 / 950.0f, 4 / 20.0f };
+			tempUVs[2] = XMFLOAT2{ 360 / 950.0f, 14 / 20.0f };
+			tempUVs[3] = XMFLOAT2{ 370 / 950.0f, 14 / 20.0f };
+		}
+			break;
+		case 'E':
+		{
+			tempUVs[0] = XMFLOAT2{ 370 / 950.0f, 4 / 20.0f };
+			tempUVs[1] = XMFLOAT2{ 380 / 950.0f, 4 / 20.0f };
+			tempUVs[2] = XMFLOAT2{ 370 / 950.0f, 14 / 20.0f };
+			tempUVs[3] = XMFLOAT2{ 380 / 950.0f, 14 / 20.0f };
+		}
+			break;
+		case 'F':
+		{
+			tempUVs[0] = XMFLOAT2{ 380 / 950.0f, 4 / 20.0f };
+			tempUVs[1] = XMFLOAT2{ 390 / 950.0f, 4 / 20.0f };
+			tempUVs[2] = XMFLOAT2{ 380 / 950.0f, 14 / 20.0f };
+			tempUVs[3] = XMFLOAT2{ 390 / 950.0f, 14 / 20.0f };
+		}
+			break;
+		case 'G':
+		{
+			tempUVs[0] = XMFLOAT2{ 390 / 950.0f, 4 / 20.0f };
+			tempUVs[1] = XMFLOAT2{ 400 / 950.0f, 4 / 20.0f };
+			tempUVs[2] = XMFLOAT2{ 390 / 950.0f, 14 / 20.0f };
+			tempUVs[3] = XMFLOAT2{ 400 / 950.0f, 14 / 20.0f };
+		}
+			break;
+		case 'H':
+		{
+			tempUVs[0] = XMFLOAT2{ 400 / 950.0f, 4 / 20.0f };
+			tempUVs[1] = XMFLOAT2{ 410 / 950.0f, 4 / 20.0f };
+			tempUVs[2] = XMFLOAT2{ 400 / 950.0f, 14 / 20.0f };
+			tempUVs[3] = XMFLOAT2{ 410 / 950.0f, 14 / 20.0f };
+		}
+			break;
+		case 'I':
+		{
+			tempUVs[0] = XMFLOAT2{ 410 / 950.0f, 4 / 20.0f };
+			tempUVs[1] = XMFLOAT2{ 420 / 950.0f, 4 / 20.0f };
+			tempUVs[2] = XMFLOAT2{ 410 / 950.0f, 14 / 20.0f };
+			tempUVs[3] = XMFLOAT2{ 420 / 950.0f, 14 / 20.0f };
+		}
+			break;
+		case 'J':
+		{
+			tempUVs[0] = XMFLOAT2{ 420 / 950.0f, 4 / 20.0f };
+			tempUVs[1] = XMFLOAT2{ 430 / 950.0f, 4 / 20.0f };
+			tempUVs[2] = XMFLOAT2{ 420 / 950.0f, 14 / 20.0f };
+			tempUVs[3] = XMFLOAT2{ 430 / 950.0f, 14 / 20.0f };
+		}
+			break;
+		case 'K':
+		{
+			tempUVs[0] = XMFLOAT2{ 430 / 950.0f, 4 / 20.0f };
+			tempUVs[1] = XMFLOAT2{ 440 / 950.0f, 4 / 20.0f };
+			tempUVs[2] = XMFLOAT2{ 430 / 950.0f, 14 / 20.0f };
+			tempUVs[3] = XMFLOAT2{ 440 / 950.0f, 14 / 20.0f };
+		}
+			break;
+		case 'L':
+		{
+			tempUVs[0] = XMFLOAT2{ 440 / 950.0f, 4 / 20.0f };
+			tempUVs[1] = XMFLOAT2{ 450 / 950.0f, 4 / 20.0f };
+			tempUVs[2] = XMFLOAT2{ 440 / 950.0f, 14 / 20.0f };
+			tempUVs[3] = XMFLOAT2{ 450 / 950.0f, 14 / 20.0f };
+		}
+			break;
+		case 'M':
+		{
+			tempUVs[0] = XMFLOAT2{ 450 / 950.0f, 4 / 20.0f };
+			tempUVs[1] = XMFLOAT2{ 460 / 950.0f, 4 / 20.0f };
+			tempUVs[2] = XMFLOAT2{ 450 / 950.0f, 14 / 20.0f };
+			tempUVs[3] = XMFLOAT2{ 460 / 950.0f, 14 / 20.0f };
+		}
+			break;
+		case 'N':
+		{
+			tempUVs[0] = XMFLOAT2{ 460 / 950.0f, 4 / 20.0f };
+			tempUVs[1] = XMFLOAT2{ 470 / 950.0f, 4 / 20.0f };
+			tempUVs[2] = XMFLOAT2{ 460 / 950.0f, 14 / 20.0f };
+			tempUVs[3] = XMFLOAT2{ 470 / 950.0f, 14 / 20.0f };
+		}
+			break;
+		case 'O':
+		{
+			tempUVs[0] = XMFLOAT2{ 470 / 950.0f, 4 / 20.0f };
+			tempUVs[1] = XMFLOAT2{ 480 / 950.0f, 4 / 20.0f };
+			tempUVs[2] = XMFLOAT2{ 470 / 950.0f, 14 / 20.0f };
+			tempUVs[3] = XMFLOAT2{ 480 / 950.0f, 14 / 20.0f };
+		}
+			break;
+		case 'P':
+		{
+			tempUVs[0] = XMFLOAT2{ 480 / 950.0f, 4 / 20.0f };
+			tempUVs[1] = XMFLOAT2{ 490 / 950.0f, 4 / 20.0f };
+			tempUVs[2] = XMFLOAT2{ 480 / 950.0f, 14 / 20.0f };
+			tempUVs[3] = XMFLOAT2{ 490 / 950.0f, 14 / 20.0f };
+		}
+			break;
+		case 'Q':
+		{
+			tempUVs[0] = XMFLOAT2{ 490 / 950.0f, 4 / 20.0f };
+			tempUVs[1] = XMFLOAT2{ 500 / 950.0f, 4 / 20.0f };
+			tempUVs[2] = XMFLOAT2{ 490 / 950.0f, 14 / 20.0f };
+			tempUVs[3] = XMFLOAT2{ 500 / 950.0f, 14 / 20.0f };
+		}
+			break;
+		case 'R':
+		{
+			tempUVs[0] = XMFLOAT2{ 500 / 950.0f, 4 / 20.0f };
+			tempUVs[1] = XMFLOAT2{ 510 / 950.0f, 4 / 20.0f };
+			tempUVs[2] = XMFLOAT2{ 500 / 950.0f, 14 / 20.0f };
+			tempUVs[3] = XMFLOAT2{ 510 / 950.0f, 14 / 20.0f };
+		}
+			break;
+		case 'S':
+		{
+			tempUVs[0] = XMFLOAT2{ 510 / 950.0f, 4 / 20.0f };
+			tempUVs[1] = XMFLOAT2{ 520 / 950.0f, 4 / 20.0f };
+			tempUVs[2] = XMFLOAT2{ 510 / 950.0f, 14 / 20.0f };
+			tempUVs[3] = XMFLOAT2{ 520 / 950.0f, 14 / 20.0f };
+		}
+			break;
+		case 'T':
+		{
+			tempUVs[0] = XMFLOAT2{ 520 / 950.0f, 4 / 20.0f };
+			tempUVs[1] = XMFLOAT2{ 530 / 950.0f, 4 / 20.0f };
+			tempUVs[2] = XMFLOAT2{ 520 / 950.0f, 14 / 20.0f };
+			tempUVs[3] = XMFLOAT2{ 530 / 950.0f, 14 / 20.0f };
+		}
+			break;
+		case 'U':
+		{
+			tempUVs[0] = XMFLOAT2{ 530 / 950.0f, 4 / 20.0f };
+			tempUVs[1] = XMFLOAT2{ 540 / 950.0f, 4 / 20.0f };
+			tempUVs[2] = XMFLOAT2{ 530 / 950.0f, 14 / 20.0f };
+			tempUVs[3] = XMFLOAT2{ 540 / 950.0f, 14 / 20.0f };
+		}
+			break;
+		case 'V':
+		{
+			tempUVs[0] = XMFLOAT2{ 540 / 950.0f, 4 / 20.0f };
+			tempUVs[1] = XMFLOAT2{ 550 / 950.0f, 4 / 20.0f };
+			tempUVs[2] = XMFLOAT2{ 540 / 950.0f, 14 / 20.0f };
+			tempUVs[3] = XMFLOAT2{ 550 / 950.0f, 14 / 20.0f };
+		}
+			break;
+		case 'W':
+		{
+			tempUVs[0] = XMFLOAT2{ 550 / 950.0f, 4 / 20.0f };
+			tempUVs[1] = XMFLOAT2{ 560 / 950.0f, 4 / 20.0f };
+			tempUVs[2] = XMFLOAT2{ 550 / 950.0f, 14 / 20.0f };
+			tempUVs[3] = XMFLOAT2{ 560 / 950.0f, 14 / 20.0f };
+		}
+			break;
+		case 'X':
+		{
+			tempUVs[0] = XMFLOAT2{ 560 / 950.0f, 4 / 20.0f };
+			tempUVs[1] = XMFLOAT2{ 570 / 950.0f, 4 / 20.0f };
+			tempUVs[2] = XMFLOAT2{ 560 / 950.0f, 14 / 20.0f };
+			tempUVs[3] = XMFLOAT2{ 570 / 950.0f, 14 / 20.0f };
+		}
+			break;
+		case 'Y':
+		{
+			tempUVs[0] = XMFLOAT2{ 570 / 950.0f, 4 / 20.0f };
+			tempUVs[1] = XMFLOAT2{ 580 / 950.0f, 4 / 20.0f };
+			tempUVs[2] = XMFLOAT2{ 570 / 950.0f, 14 / 20.0f };
+			tempUVs[3] = XMFLOAT2{ 580 / 950.0f, 14 / 20.0f };
+		}
+			break;
+		case 'Z':
+		{
+			tempUVs[0] = XMFLOAT2{ 580 / 950.0f, 4 / 20.0f };
+			tempUVs[1] = XMFLOAT2{ 590 / 950.0f, 4 / 20.0f };
+			tempUVs[2] = XMFLOAT2{ 580 / 950.0f, 14 / 20.0f };
+			tempUVs[3] = XMFLOAT2{ 590 / 950.0f, 14 / 20.0f };
+		}
+			break;
+		case 'a':
+		{
+			tempUVs[0] = XMFLOAT2{ 650 / 950.0f, 4 / 20.0f };
+			tempUVs[1] = XMFLOAT2{ 660 / 950.0f, 4 / 20.0f };
+			tempUVs[2] = XMFLOAT2{ 650 / 950.0f, 14 / 20.0f };
+			tempUVs[3] = XMFLOAT2{ 660 / 950.0f, 14 / 20.0f };
+		}
+			break;
+		case 'b':
+		{
+			tempUVs[0] = XMFLOAT2{ 660 / 950.0f, 4 / 20.0f };
+			tempUVs[1] = XMFLOAT2{ 670 / 950.0f, 4 / 20.0f };
+			tempUVs[2] = XMFLOAT2{ 660 / 950.0f, 14 / 20.0f };
+			tempUVs[3] = XMFLOAT2{ 670 / 950.0f, 14 / 20.0f };
+		}
+			break;
+		case 'c':
+		{
+			tempUVs[0] = XMFLOAT2{ 670 / 950.0f, 4 / 20.0f };
+			tempUVs[1] = XMFLOAT2{ 680 / 950.0f, 4 / 20.0f };
+			tempUVs[2] = XMFLOAT2{ 670 / 950.0f, 14 / 20.0f };
+			tempUVs[3] = XMFLOAT2{ 680 / 950.0f, 14 / 20.0f };
+		}
+			break;
+		case 'd':
+		{
+			tempUVs[0] = XMFLOAT2{ 680 / 950.0f, 4 / 20.0f };
+			tempUVs[1] = XMFLOAT2{ 690 / 950.0f, 4 / 20.0f };
+			tempUVs[2] = XMFLOAT2{ 680 / 950.0f, 14 / 20.0f };
+			tempUVs[3] = XMFLOAT2{ 690 / 950.0f, 14 / 20.0f };
+		}
+			break;
+		case 'e':
+		{
+			tempUVs[0] = XMFLOAT2{ 690 / 950.0f, 4 / 20.0f };
+			tempUVs[1] = XMFLOAT2{ 700 / 950.0f, 4 / 20.0f };
+			tempUVs[2] = XMFLOAT2{ 690 / 950.0f, 14 / 20.0f };
+			tempUVs[3] = XMFLOAT2{ 700 / 950.0f, 14 / 20.0f };
+		}
+			break;
+		case 'f':
+		{
+			tempUVs[0] = XMFLOAT2{ 700 / 950.0f, 4 / 20.0f };
+			tempUVs[1] = XMFLOAT2{ 710 / 950.0f, 4 / 20.0f };
+			tempUVs[2] = XMFLOAT2{ 700 / 950.0f, 14 / 20.0f };
+			tempUVs[3] = XMFLOAT2{ 710 / 950.0f, 14 / 20.0f };
+		}
+			break;
+		case 'g':
+		{
+			tempUVs[0] = XMFLOAT2{ 710 / 950.0f, 4 / 20.0f };
+			tempUVs[1] = XMFLOAT2{ 720 / 950.0f, 4 / 20.0f };
+			tempUVs[2] = XMFLOAT2{ 710 / 950.0f, 16 / 20.0f };
+			tempUVs[3] = XMFLOAT2{ 720 / 950.0f, 16 / 20.0f };
+		}
+			break;
+		case 'h':
+		{
+			tempUVs[0] = XMFLOAT2{ 720 / 950.0f, 4 / 20.0f };
+			tempUVs[1] = XMFLOAT2{ 730 / 950.0f, 4 / 20.0f };
+			tempUVs[2] = XMFLOAT2{ 720 / 950.0f, 14 / 20.0f };
+			tempUVs[3] = XMFLOAT2{ 730 / 950.0f, 14 / 20.0f };
+		}
+			break;
+		case 'i':
+		{
+			tempUVs[0] = XMFLOAT2{ 730 / 950.0f, 4 / 20.0f };
+			tempUVs[1] = XMFLOAT2{ 740 / 950.0f, 4 / 20.0f };
+			tempUVs[2] = XMFLOAT2{ 730 / 950.0f, 14 / 20.0f };
+			tempUVs[3] = XMFLOAT2{ 740 / 950.0f, 14 / 20.0f };
+		}
+			break;
+		case 'j':
+		{
+			tempUVs[0] = XMFLOAT2{ 740 / 950.0f, 4 / 20.0f };
+			tempUVs[1] = XMFLOAT2{ 750 / 950.0f, 4 / 20.0f };
+			tempUVs[2] = XMFLOAT2{ 740 / 950.0f, 16 / 20.0f };
+			tempUVs[3] = XMFLOAT2{ 750 / 950.0f, 16 / 20.0f };
+		}
+			break;
+		case 'k':
+		{
+			tempUVs[0] = XMFLOAT2{ 750 / 950.0f, 4 / 20.0f };
+			tempUVs[1] = XMFLOAT2{ 760 / 950.0f, 4 / 20.0f };
+			tempUVs[2] = XMFLOAT2{ 750 / 950.0f, 14 / 20.0f };
+			tempUVs[3] = XMFLOAT2{ 760 / 950.0f, 14 / 20.0f };
+		}
+			break;
+		case 'l':
+		{
+			tempUVs[0] = XMFLOAT2{ 760 / 950.0f, 4 / 20.0f };
+			tempUVs[1] = XMFLOAT2{ 770 / 950.0f, 4 / 20.0f };
+			tempUVs[2] = XMFLOAT2{ 760 / 950.0f, 14 / 20.0f };
+			tempUVs[3] = XMFLOAT2{ 770 / 950.0f, 14 / 20.0f };
+		}
+			break;
+		case 'm':
+		{
+			tempUVs[0] = XMFLOAT2{ 770 / 950.0f, 4 / 20.0f };
+			tempUVs[1] = XMFLOAT2{ 780 / 950.0f, 4 / 20.0f };
+			tempUVs[2] = XMFLOAT2{ 770 / 950.0f, 14 / 20.0f };
+			tempUVs[3] = XMFLOAT2{ 780 / 950.0f, 14 / 20.0f };
+		}
+			break;
+		case 'n':
+		{
+			tempUVs[0] = XMFLOAT2{ 780 / 950.0f, 4 / 20.0f };
+			tempUVs[1] = XMFLOAT2{ 790 / 950.0f, 4 / 20.0f };
+			tempUVs[2] = XMFLOAT2{ 780 / 950.0f, 14 / 20.0f };
+			tempUVs[3] = XMFLOAT2{ 790 / 950.0f, 14 / 20.0f };
+		}
+			break;
+		case 'o':
+		{
+			tempUVs[0] = XMFLOAT2{ 790 / 950.0f, 4 / 20.0f };
+			tempUVs[1] = XMFLOAT2{ 800 / 950.0f, 4 / 20.0f };
+			tempUVs[2] = XMFLOAT2{ 790 / 950.0f, 14 / 20.0f };
+			tempUVs[3] = XMFLOAT2{ 800 / 950.0f, 14 / 20.0f };
+		}
+			break;
+		case 'p':
+		{
+			tempUVs[0] = XMFLOAT2{ 800 / 950.0f, 4 / 20.0f };
+			tempUVs[1] = XMFLOAT2{ 810 / 950.0f, 4 / 20.0f };
+			tempUVs[2] = XMFLOAT2{ 800 / 950.0f, 16 / 20.0f };
+			tempUVs[3] = XMFLOAT2{ 810 / 950.0f, 16 / 20.0f };
+		}
+			break;
+		case 'q':
+		{
+			tempUVs[0] = XMFLOAT2{ 810 / 950.0f, 4 / 20.0f };
+			tempUVs[1] = XMFLOAT2{ 820 / 950.0f, 4 / 20.0f };
+			tempUVs[2] = XMFLOAT2{ 810 / 950.0f, 16 / 20.0f };
+			tempUVs[3] = XMFLOAT2{ 820 / 950.0f, 16 / 20.0f };
+		}
+			break;
+		case 'r':
+		{
+			tempUVs[0] = XMFLOAT2{ 820 / 950.0f, 4 / 20.0f };
+			tempUVs[1] = XMFLOAT2{ 830 / 950.0f, 4 / 20.0f };
+			tempUVs[2] = XMFLOAT2{ 820 / 950.0f, 14 / 20.0f };
+			tempUVs[3] = XMFLOAT2{ 830 / 950.0f, 14 / 20.0f };
+		}
+			break;
+		case 's':
+		{
+			tempUVs[0] = XMFLOAT2{ 830 / 950.0f, 4 / 20.0f };
+			tempUVs[1] = XMFLOAT2{ 840 / 950.0f, 4 / 20.0f };
+			tempUVs[2] = XMFLOAT2{ 830 / 950.0f, 14 / 20.0f };
+			tempUVs[3] = XMFLOAT2{ 840 / 950.0f, 14 / 20.0f };
+		}
+			break;
+		case 't':
+		{
+			tempUVs[0] = XMFLOAT2{ 840 / 950.0f, 4 / 20.0f };
+			tempUVs[1] = XMFLOAT2{ 850 / 950.0f, 4 / 20.0f };
+			tempUVs[2] = XMFLOAT2{ 840 / 950.0f, 14 / 20.0f };
+			tempUVs[3] = XMFLOAT2{ 850 / 950.0f, 14 / 20.0f };
+		}
+			break;
+		case 'u':
+		{
+			tempUVs[0] = XMFLOAT2{ 850 / 950.0f, 4 / 20.0f };
+			tempUVs[1] = XMFLOAT2{ 860 / 950.0f, 4 / 20.0f };
+			tempUVs[2] = XMFLOAT2{ 850 / 950.0f, 14 / 20.0f };
+			tempUVs[3] = XMFLOAT2{ 860 / 950.0f, 14 / 20.0f };
+		}
+			break;
+		case 'v':
+		{
+			tempUVs[0] = XMFLOAT2{ 860 / 950.0f, 4 / 20.0f };
+			tempUVs[1] = XMFLOAT2{ 870 / 950.0f, 4 / 20.0f };
+			tempUVs[2] = XMFLOAT2{ 860 / 950.0f, 14 / 20.0f };
+			tempUVs[3] = XMFLOAT2{ 870 / 950.0f, 14 / 20.0f };
+		}
+			break;
+		case 'w':
+		{
+			tempUVs[0] = XMFLOAT2{ 870 / 950.0f, 4 / 20.0f };
+			tempUVs[1] = XMFLOAT2{ 880 / 950.0f, 4 / 20.0f };
+			tempUVs[2] = XMFLOAT2{ 870 / 950.0f, 14 / 20.0f };
+			tempUVs[3] = XMFLOAT2{ 880 / 950.0f, 14 / 20.0f };
+		}
+			break;
+		case 'x':
+		{
+			tempUVs[0] = XMFLOAT2{ 880 / 950.0f, 4 / 20.0f };
+			tempUVs[1] = XMFLOAT2{ 890 / 950.0f, 4 / 20.0f };
+			tempUVs[2] = XMFLOAT2{ 880 / 950.0f, 14 / 20.0f };
+			tempUVs[3] = XMFLOAT2{ 890 / 950.0f, 14 / 20.0f };
+		}
+			break;
+		case 'y':
+		{
+			tempUVs[0] = XMFLOAT2{ 890 / 950.0f, 4 / 20.0f };
+			tempUVs[1] = XMFLOAT2{ 900 / 950.0f, 4 / 20.0f };
+			tempUVs[2] = XMFLOAT2{ 890 / 950.0f, 16 / 20.0f };
+			tempUVs[3] = XMFLOAT2{ 900 / 950.0f, 16 / 20.0f };
+		}
+			break;
+		case 'z':
+		{
+			tempUVs[0] = XMFLOAT2{ 900 / 950.0f, 4 / 20.0f };
+			tempUVs[1] = XMFLOAT2{ 910 / 950.0f, 4 / 20.0f };
+			tempUVs[2] = XMFLOAT2{ 900 / 950.0f, 14 / 20.0f };
+			tempUVs[3] = XMFLOAT2{ 910 / 950.0f, 14 / 20.0f };
+		}
+			break;
+		default:
+			break;
+		}
+
+		rectVerts[i + 0].m_d3dfPosition = XMFLOAT3(ratioPos1.x + ((ratioX / textSize) * loopIndex), ratioPos1.y, ratioPos1.z);
+		rectVerts[i + 0].m_d3dfUVs = XMFLOAT2(tempUVs[0].x, tempUVs[0].y);
+		rectVerts[i + 1].m_d3dfPosition = XMFLOAT3(ratioPos1.x + ((ratioX / textSize) * (loopIndex + 1)), ratioPos1.y, ratioPos1.z);
+		rectVerts[i + 1].m_d3dfUVs = XMFLOAT2(tempUVs[1].x, tempUVs[1].y);
+		rectVerts[i + 2].m_d3dfPosition = XMFLOAT3(ratioPos1.x + ((ratioX / textSize) * loopIndex), ratioPos3.y, ratioPos1.z);
+		rectVerts[i + 2].m_d3dfUVs = XMFLOAT2(tempUVs[2].x, tempUVs[2].y);
+		rectVerts[i + 3].m_d3dfPosition = XMFLOAT3(ratioPos1.x + ((ratioX / textSize) * (loopIndex + 1)), ratioPos3.y, ratioPos1.z);
+		rectVerts[i + 3].m_d3dfUVs = XMFLOAT2(tempUVs[3].x, tempUVs[3].y);
+
+		++loopIndex;
+	}
+
+	atUIVertices.push_back(rectVerts);
+	int index = atUIVertices.size() - 1;
+
+	ptWorld->atLabel[nThisEntity].width = width;
+	ptWorld->atLabel[nThisEntity].height = height;
+	ptWorld->atLabel[nThisEntity].x = offsetX;
+	ptWorld->atLabel[nThisEntity].y = offsetY;
+
+	XMMATRIX spawnMatrix = SpawnPosition;
+
+	short* rectIndices = new short[6 * textSize];
+
+	loopIndex = 0;
+	int counterIndex = 0;
+	for (int i = 0; loopIndex < textSize; i+=6)
+	{
+		rectIndices[i] = counterIndex;
+		rectIndices[i + 1] = counterIndex + 1;
+		rectIndices[i + 2] = counterIndex + 3;	//tl->tr->br
+		rectIndices[i + 3] = counterIndex + 3;	//br->bl->tl
+		rectIndices[i + 4] = counterIndex + 2;
+		rectIndices[i + 5] = counterIndex;
+
+		++loopIndex;
+		counterIndex += 4;
+	}
+
+	atUIIndices.push_back(rectIndices);
+	int indicesIndex = atUIIndices.size() - 1;
+
+	ptWorld->atMesh[nThisEntity].m_nIndexCount = 6 * textSize;
+	ptWorld->atMesh[nThisEntity].m_nVertexCount = 4 * textSize;
+
+	ptWorld->atMesh[nThisEntity].m_nVertexBufferStride = sizeof(TUIVert);
+	ptWorld->atMesh[nThisEntity].m_nVertexBufferOffset = 0;
+
+	ptWorld->atMesh[nThisEntity].m_d3dVertexBufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
+	ptWorld->atMesh[nThisEntity].m_d3dVertexBufferDesc.ByteWidth = sizeof(TUIVert) * ptWorld->atMesh[nThisEntity].m_nVertexCount;
+	ptWorld->atMesh[nThisEntity].m_d3dVertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	ptWorld->atMesh[nThisEntity].m_d3dVertexBufferDesc.CPUAccessFlags = 0;
+	ptWorld->atMesh[nThisEntity].m_d3dVertexBufferDesc.MiscFlags = 0;
+	ptWorld->atMesh[nThisEntity].m_d3dVertexBufferDesc.StructureByteStride = 0;
+
+	ptWorld->atMesh[nThisEntity].m_d3dIndexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
+	ptWorld->atMesh[nThisEntity].m_d3dIndexBufferDesc.ByteWidth = sizeof(short) * ptWorld->atMesh[nThisEntity].m_nIndexCount;
+	ptWorld->atMesh[nThisEntity].m_d3dIndexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+	ptWorld->atMesh[nThisEntity].m_d3dIndexBufferDesc.CPUAccessFlags = 0;
+	ptWorld->atMesh[nThisEntity].m_d3dIndexBufferDesc.MiscFlags = 0;
+	ptWorld->atMesh[nThisEntity].m_d3dIndexBufferDesc.StructureByteStride = 0;
+
+
+	ptWorld->atMesh[nThisEntity].m_d3dVertexData.pSysMem = &atUIVertices[index][0];
+	ptWorld->atMesh[nThisEntity].m_d3dIndexData.pSysMem = &atUIIndices[indicesIndex][0];
+
+	ptWorld->atMesh[nThisEntity].m_d3dVertexData.SysMemPitch = 0;
+	ptWorld->atMesh[nThisEntity].m_d3dVertexData.SysMemSlicePitch = 0;
+
+	ptWorld->atMesh[nThisEntity].m_d3dIndexData.SysMemPitch = 0;
+	ptWorld->atMesh[nThisEntity].m_d3dIndexData.SysMemSlicePitch = 0;
+
+	ptWorld->atShaderID[nThisEntity].m_nShaderID = 7;	//Shader that supports UIShaders
+
+	for (int i = 0; i < ptWorld->atMesh[nThisEntity].m_nVertexCount; ++i)
+	{
+		ptWorld->atMesh[nThisEntity].m_VertexData.push_back(atUIVertices[index][i].m_d3dfPosition);
 	}
 
 	ptWorld->atWorldMatrix[nThisEntity].worldMatrix = spawnMatrix;
