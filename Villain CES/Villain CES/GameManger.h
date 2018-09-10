@@ -38,6 +38,9 @@ public:
 	int MikesGraphicsSandbox();
 	bool GameOver = false;
 	bool GamePaused = false;
+
+	//ZB-Helper Methods
+	bool GetWalkCameraState();
 private:
 	TMaterialOptimized matOpt;
 
@@ -89,7 +92,7 @@ private:
 	TCamera *aimCamera;
 	TCamera *debugCamera;
 	TCamera * menuCamera;
-	Timers * tAugerTimers;
+	//Timers * tAugerTimers;
 	System_Times *tTimerInfo;
 	AkGameObjectID footSteps;
 	AkGameObjectID Listener;

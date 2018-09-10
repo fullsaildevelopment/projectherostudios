@@ -2,6 +2,7 @@
 #include"AudioSystem.h"
 CAudioSystem::CAudioSystem()
 {
+	m_LowIOHook = NULL;
 	m_LowIOHook = new CAkFilePackageLowLevelIOBlocking();
 }
 
@@ -95,8 +96,8 @@ void CAudioSystem::TermSoundEngine()
 	AK::SoundEngine::Term();
 
 	m_LowIOHook->Term();
-	//delete m_LowIOHook;
-
+	delete m_LowIOHook;
+	m_LowIOHook = NULL;
 	if (AK::IAkStreamMgr::Get())
 	{
 		AK::IAkStreamMgr::Get()->Destroy();

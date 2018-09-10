@@ -31,7 +31,7 @@ void CAuger::Start()
 void CAuger::InitializeSystems()
 {
 	//pcGameMangerSystem->LoadLevel();
-	CurrentSpotInGame = 11;
+	CurrentSpotInGame = 14;
 	//pcGraphicsSystem->InitD3D(cApplicationWindow);
 	
 	//createDebugGrid(&tThisWorld);
@@ -100,7 +100,7 @@ void CAuger::Update(bool* loopgame)
 	case 2:
 		CurrentSpotInGame = pcGameMangerSystem->InGameUpdate();
 
-		if (!pcGameMangerSystem->GamePaused && !pcGameMangerSystem->GameOver)
+		if (!pcGameMangerSystem->GamePaused && !pcGameMangerSystem->GameOver && pcGameMangerSystem->GetWalkCameraState() == false)
 		{
 			GetWindowRect(window2, &rect);
 			SetCursorPos((rect.right / 2.0f) + 20, (rect.bottom / 2.0f) + 64);
@@ -145,7 +145,19 @@ void CAuger::Update(bool* loopgame)
 	{
 		CurrentSpotInGame = pcGameMangerSystem->LoadOptionsMenu();
 	}
+	case 12:
+		pcGameMangerSystem->InitializeMainMenu();
+		CurrentSpotInGame = 0;
 		break;
+
+	case 13:
+		CurrentSpotInGame = pcGameMangerSystem->LoadTitleScreen();
+		break;
+
+	case 14:
+		pcGameMangerSystem->InitializeTitleScreen();
+		CurrentSpotInGame = 13;
+		break; 
 	default:
 		break;
 	}

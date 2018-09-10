@@ -281,3 +281,45 @@ void CUISystem::AddBarToUI(HWND* cApplicationWindow, TWorld* tThisWorld, unsigne
 
 	tThisWorld->atUIMask[nThisEntity].m_tnUIMask = tThisWorld->atUIMask[nThisEntity].m_tnUIMask | COMPONENT_BAR;
 }
+
+void CUISystem::CreateEnemyHealthBar(HWND* cApplicationWindow, TWorld * tThisWorld, unsigned int &nThisEntity, XMFLOAT4 in_EnemyPos)
+{
+	RECT window;
+	GetWindowRect(*cApplicationWindow, &window);
+
+	float screenWidth = window.right - window.left;
+	float screenHeight = window.bottom - window.top;
+
+	float ratioLeftX = (screenWidth / 2) * ((tThisWorld->atLabel[nThisEntity].x - (tThisWorld->atLabel[nThisEntity].width / 2)) * .1);
+	float ratioTopY = (screenHeight / 2) * ((tThisWorld->atLabel[nThisEntity].y + (tThisWorld->atLabel[nThisEntity].height / 2)) * .1);
+	float ratioRightX = (screenWidth / 2) * ((tThisWorld->atLabel[nThisEntity].x + (tThisWorld->atLabel[nThisEntity].width / 2)) * .1);
+	float ratioBottomY = (screenHeight / 2) * ((tThisWorld->atLabel[nThisEntity].y - (tThisWorld->atLabel[nThisEntity].height / 2)) * .1);
+
+	//tThisWorld->atBar[nThisEntity].start.x = (screenWidth / 2) * 0.1;
+	//tThisWorld->atBar[nThisEntity].start.y = (screenHeight / 2) * 0.1;
+
+	//
+
+	//ClientToScreen(*cApplicationWindow, &tThisWorld->atBar[nThisEntity].start);
+	//ClientToScreen(*cApplicationWindow, &tThisWorld->atBar[nThisEntity].end);
+
+
+	//tThisWorld->atBar[nThisEntity].ratio = 1.0f / tThisWorld->atAiHeath[nThisEntity].heath;
+	//tThisWorld->atBar[nThisEntity].backgroundColor = XMFLOAT4(1,0,0,1);
+
+	tThisWorld->atUIMask[nThisEntity].m_tnUIMask = tThisWorld->atUIMask[nThisEntity].m_tnUIMask | COMPONENT_BAR;
+
+	nThisEntity = createGSQuad(tThisWorld, tThisWorld->atBar[nThisEntity].backgroundColor);
+}
+
+void CUISystem::UpdateEnemyHealthBar(TWorld * tThisWorld, unsigned int nThisEntity, XMFLOAT4 &out_EnemyPos)
+{
+	
+}
+
+float CUISystem::GetEnemyHealth(TWorld * tThisWorld, unsigned int nThisEntity)
+{
+	return tThisWorld->atAiHeath[nThisEntity].heath;
+}
+
+

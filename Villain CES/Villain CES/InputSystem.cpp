@@ -2,7 +2,7 @@
 #include<string>
 CInputSystem::CInputSystem()
 {
-	m_fMouseRotationSpeed = .003f;//Frame Dependent
+	m_fMouseRotationSpeed = .03f;//Frame Dependent
 	m_fMouseMovementSpeed = .1f;//Frame Dependent
 }
 
@@ -578,7 +578,7 @@ void CInputSystem::MouseBoundryCheck(float _x, float _y, float &_outX, float &_o
 	if (restrictedX >= 1410.0f || restrictedX <= 6.0f)
 	{
 		restrictedX -= 712.0f;
-		_outX = restrictedX * m_fMouseRotationSpeed ;
+		_outX = restrictedX * m_fMouseRotationSpeed;
 	}
 	
 	//Max & Min Y window check
