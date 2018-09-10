@@ -31,7 +31,7 @@ void CAuger::Start()
 void CAuger::InitializeSystems()
 {
 	//pcGameMangerSystem->LoadLevel();
-	CurrentSpotInGame = -3;
+	CurrentSpotInGame = 0;
 	//pcGraphicsSystem->InitD3D(cApplicationWindow);
 	
 	//createDebugGrid(&tThisWorld);
@@ -74,30 +74,28 @@ void CAuger::Update(bool* loopgame)
 	RECT rect = { 0 };
 	switch (CurrentSpotInGame)
 	{ 
-	case -3:
-		pcGameMangerSystem->InitializeMainMenu();
-		CurrentSpotInGame = 0;
-		break;
-
-	case -2:
-		CurrentSpotInGame = pcGameMangerSystem->LoadTitleScreen();
-		break;
-
-	case -1:
-		pcGameMangerSystem->InitializeTitleScreen();
-		CurrentSpotInGame = -2;
-		break;
-		
-		// main menu
 	case 0:
-		CurrentSpotInGame=pcGameMangerSystem->LoadMainMenu();	
+		pcGameMangerSystem->InitializeTitleScreen();
+		CurrentSpotInGame = 1;
 		break;
 
 	case 1:
-		pcGameMangerSystem->LoadLevel();
-		CurrentSpotInGame = 2;
+		CurrentSpotInGame = pcGameMangerSystem->LoadTitleScreen();
 		break;
 	case 2:
+		pcGameMangerSystem->InitializeMainMenu();
+		CurrentSpotInGame = 3;
+
+		break;
+	case 3:
+		CurrentSpotInGame = pcGameMangerSystem->LoadMainMenu();
+		
+		break;
+	case 4:
+		pcGameMangerSystem->LoadLevel();
+		CurrentSpotInGame = 5;
+		break;
+	case 5 :
 		CurrentSpotInGame = pcGameMangerSystem->InGameUpdate();
 
 		if (!pcGameMangerSystem->GamePaused && !pcGameMangerSystem->GameOver)
@@ -105,18 +103,6 @@ void CAuger::Update(bool* loopgame)
 			GetWindowRect(window2, &rect);
 			SetCursorPos(((rect.right - rect.left) / 2.0f) + rect.left, ((rect.bottom - rect.top) / 2.0f) + rect.top);
 		}
-
-		break;
-	case 3:
-		CurrentSpotInGame = 2;
-		
-		break;
-	case 4:
-		*loopgame = false;
-		break;
-	case 5 :
-		pcGameMangerSystem->LoadPathFindingTest();
-		CurrentSpotInGame = 6;
 		break;
 	case 6 :
 		CurrentSpotInGame=pcGameMangerSystem->PathFindingExample();
@@ -145,11 +131,6 @@ void CAuger::Update(bool* loopgame)
 	case 10:
 		CurrentSpotInGame = pcGameMangerSystem->MikesGraphicsSandbox();
 		break;
-	case 11:
-	{
-		//CurrentSpotInGame = pcGameMangerSystem->LoadOptionsMenu();
-	}
-		break;
 	case 11: 
 		pcGameMangerSystem->LoadLevelWithMapInIt();
 		CurrentSpotInGame = 12;
@@ -158,6 +139,11 @@ void CAuger::Update(bool* loopgame)
 		CurrentSpotInGame = pcGameMangerSystem->RealLevelUpdate();
 		break;
 	
+
+	case 14:
+		pcGameMangerSystem->LoadPathFindingTest();
+		CurrentSpotInGame = 6;
+		break;
 	default:
 		break;
 	}
