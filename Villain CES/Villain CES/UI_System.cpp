@@ -244,9 +244,13 @@ void CUISystem::AddBarToUI(HWND* cApplicationWindow, TWorld* tThisWorld, unsigne
 	tThisWorld->atUIMask[nThisEntity].m_tnUIMask = tThisWorld->atUIMask[nThisEntity].m_tnUIMask | COMPONENT_BAR;
 }
 
-void CUISystem::GetUVsForCharacter(wchar_t * character, XMFLOAT2 UVs)
+void CUISystem::GetUVsForCharacter(wchar_t* character, XMFLOAT2* UVs)
 {
-	switch (character)
+	delete[] UVs;
+
+	UVs = new XMFLOAT2[4];
+
+	switch (*character)
 	{
 	case ' ':
 	{

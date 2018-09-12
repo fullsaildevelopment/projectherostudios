@@ -14,6 +14,6 @@ public:
 	void AddMaskToUI(TWorld* tThisWorld, unsigned int nThisEntity, eUIComponent mask);
 	void AdjustBoundingBox(HWND* cApplicationWindow, TWorld* tThisWorld, unsigned int nThisEntity);
 	void AddBarToUI(HWND* cApplicationWindow, TWorld* tThisWorld, unsigned int nThisEntity);
-	void GetUVsForCharacter(wchar_t* character, XMFLOAT2 UVs);
+	void GetUVsForCharacter(wchar_t* character, XMFLOAT2* UVs);
 	//HFONT myFont = nullptr;
 };
