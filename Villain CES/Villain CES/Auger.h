@@ -26,7 +26,7 @@ private:
 	//XMMATRIX m_d3dViewMatrix;
 
 
-
+	LPPOINT CURSOR;
 	XMMATRIX peguins;
 	int nAiminglineIndex;
 	int		m_nIndexToBullets;

@@ -340,9 +340,9 @@ XMMATRIX CAISystem::LookBackLeftToRight(XMMATRIX AiMatrix,bool leftorRight)
 	XMMATRIX d3dTmpViewM, d3dMovementM, d3dRotation;
 	float fXchange = 0, fYchange = 0, fXEnd = 0, fYEnd = 0;
 	if(leftorRight==true)
-	d3dRotation = XMMatrixRotationY(0.0001);
+	d3dRotation = XMMatrixRotationY(0.001);
 	else  {
-		d3dRotation = XMMatrixRotationY(-0.0001);
+		d3dRotation = XMMatrixRotationY(-0.001);
 	}
 	d3dTmpViewM = AiMatrix;
 	XMVECTOR d3d_newX, d3d_newY, d3d_existingZ;
