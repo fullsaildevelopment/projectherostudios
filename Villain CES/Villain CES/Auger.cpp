@@ -106,7 +106,7 @@ void CAuger::Update(bool* loopgame)
 		break;
 	case 3:
 		if (pcInputSystem->InputCheck(G_KEY_U))
-			CurrentSpotInGame = 8;
+			CurrentSpotInGame = 2;
 		break;
 	case 4:
 		*loopgame = false;

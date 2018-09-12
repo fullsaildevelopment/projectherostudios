@@ -10,10 +10,6 @@ unsigned int createEntity(TWorld * ptWorld)
 		if (ptWorld->atGraphicsMask[nCurrentEntity].m_tnGraphicsMask == COMPONENT_NONE)
 		{
 			printf("Entity created: %d\n", nCurrentEntity);
-			if (nCurrentEntity == 16) 
-			{
-				float x = 0;
-			}
 			return(nCurrentEntity);
 		}
 	}
@@ -2191,10 +2187,6 @@ unsigned int createMesh(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMeshImpo
 	unsigned int nThisEntity = createEntity(ptWorld);
 	TMaterialOptimized temp = tMaterial;
 
-	wchar_t fnPBR[9][260];
-	wchar_t fnTRAD[5][260];
-	size_t result = 0;
-	mbstate_t d;
 	//TMaterialImport tTempMaterial = tMaterial;
 	int entityMatIndex = temp.materialIndex[meshIndex];
 	int srvIndex = 1;
@@ -2340,8 +2332,9 @@ unsigned int createMesh(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMeshImpo
 	}
 #pragma endregion
 #endif
-
 	ptWorld->atGraphicsMask[nThisEntity].m_tnGraphicsMask = COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_SHADERID;
+	ptWorld->atCollisionMask[nThisEntity].m_tnCollisionMask = COMPONENT_COLLISIONMASK | COMPONENT_AABB | COMPONENT_STATIC | COMPONENT_TRIGGER;
+
 	//ptWorld->atCollisionMask[nThisEntity].m_tnCollisionMask = COMPONENT_COLLISIONMASK | COMPONENT_AABB | COMPONENT_NONSTATIC | COMPONENT_NONTRIGGER;
 	//ptWorld->atAIMask[nThisEntity].m_tnAIMask = COMPONENT_AIMASK;
 	//ptWorld->atUIMask[nThisEntity].m_tnUIMask = COMPONENT_UIMASK;
@@ -2369,6 +2362,7 @@ unsigned int createMesh(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMeshImpo
 	//}
 
 	TPrimitiveMesh *pMesh = new TPrimitiveMesh[tMesh.nUniqueVertexCount];
+	XMFLOAT3 d3d_TempFloat3;
 	for (int i = 0; i < tMesh.nUniqueVertexCount; i++)
 	{
 		TPrimitiveMesh tmp;
@@ -2380,13 +2374,17 @@ unsigned int createMesh(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMeshImpo
 			//}
 			//else
 			tmp.pos[j] = tMesh.meshArrays[i].pos[j];
+
 			if (j < 2)
 			{
 				tmp.uv[j] = tMesh.meshArrays[i].uv[j];
 			}
 		}
+		d3d_TempFloat3.x = tmp.pos[0];
+		d3d_TempFloat3.y = tmp.pos[1];
+		d3d_TempFloat3.z = tmp.pos[2];
+		ptWorld->atMesh[nThisEntity].m_VertexData.push_back(d3d_TempFloat3);
 		pMesh[i] = tmp;
-
 	}
 
 	ptWorld->atMesh[nThisEntity].m_nVertexCount = tMesh.nUniqueVertexCount;
@@ -2424,10 +2422,6 @@ unsigned int createMesh(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMeshImpo
 unsigned int createGSQuad(TWorld * ptWorld, XMFLOAT4 backgroundColor)
 {
 	unsigned int nThisEntity = createEntity(ptWorld);
-
-
-
-
 
 	ptWorld->atGraphicsMask[nThisEntity].m_tnGraphicsMask = COMPONENT_GRAPHICSMASK | COMPONENT_DEBUGMESH | COMPONENT_SHADERID;
 	ptWorld->atCollisionMask[nThisEntity].m_tnCollisionMask = COMPONENT_COLLISIONMASK;
@@ -2674,134 +2668,24 @@ unsigned int createClayton(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMeshI
 	return nThisEntity;
 }
 
-unsigned int createClaytonAnim(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMeshImport tMesh, TMaterialImport tMaterial, TAnimatedMesh tAnimation)
+unsigned int createClaytonAnim(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMeshImport tMesh, TMaterialOptimized tMaterial, TAnimationImport tAnim, int meshIndex)
 {
 	unsigned int nThisEntity = createEntity(ptWorld);
 
-	#pragma region CreateTexturesFromFile
+	ptWorld->atShaderID[nThisEntity].m_nShaderID = 11;
+	TMaterialOptimized temp = tMaterial;
 
-	wchar_t fnPBR[9][260];
-	wchar_t fnTRAD[5][260];
-	size_t result = 0;
-	mbstate_t d;
-	TMaterialImport tTempMaterial = tMaterial;
+	int entityMatIndex = temp.materialIndex[meshIndex];
+	int srvIndex = 1;
 
-	for (unsigned int i = 0; i < 9; i++)
+	for (int i = 0; i < temp.numberOfMaterials; i++)
 	{
-		if (i < 5 && tTempMaterial.m_tFileNames[i])
+		if (temp.Map_SRVIndex_EntityIndex[i] == entityMatIndex)
 		{
-			tTempMaterial.m_tFileNames[i] = &tMaterial.m_tFileNames[i][1];
-			mbsrtowcs_s(&result, fnTRAD[i], 260, (const char **)(&tTempMaterial.m_tFileNames[i]), tTempMaterial.m_tFileNameSizes[i], &d);
-		}
-		if (tTempMaterial.m_tPBRFileNames[i])
-		{
-			tTempMaterial.m_tPBRFileNames[i] = &tMaterial.m_tPBRFileNames[i][1];
-			mbsrtowcs_s(&result, fnPBR[i], 260, (const char **)(&tTempMaterial.m_tPBRFileNames[i]), tTempMaterial.m_tPBRFileNameSizes[i], &d);
+			srvIndex = i;
 		}
 	}
-
-	ID3D11Resource * defaultDiffuseTexture;
-
-	ID3D11Resource * ambientTexture;
-	ID3D11Resource * diffuseTexture;
-	ID3D11Resource * specularTexture;
-	ID3D11Resource * emissiveTexture;
-	ID3D11Resource * normalTexture;
-	ID3D11Resource * bumpTexture;
-
-	ID3D11Resource * d3dColorMap;
-	ID3D11Resource * d3dNormalMap;
-	ID3D11Resource * d3dEmissiveMap;
-	ID3D11Resource * d3dMetallicMap;
-	ID3D11Resource * d3dRoughnessMap;
-	ID3D11Resource * d3dAmbientOcclusionMap;
-	ID3D11Resource * d3dGlobalDiffuseCubeMap;
-	ID3D11Resource * d3dGlobalSpecularCubeMap;
-	ID3D11Resource * d3dIBLCubeMap;
-
-	ID3D11ShaderResourceView * srv;
-
-	for (unsigned int i = 0; i < 9; i++)
-	{
-		if (tMaterial.m_tPBRFileNames[i])
-		{
-			if (tMaterial.m_tPBRFileNames[i][0] == 'c')
-			{
-				result = CreateWICTextureFromFile(m_pd3dDevice, fnPBR[i], &d3dColorMap, &srv, NULL);
-				break;
-			}
-
-			//if (tMaterial.m_tPBRFileNames[i][0] == 'n')
-			//{
-			//	result = CreateWICTextureFromFile(m_pd3dDevice, fnPBR[i], &d3dNormalMap, nullptr, NULL);
-			//}
-			//if (tMaterial.m_tPBRFileNames[i][0] == 'e')
-			//{
-			//	result = CreateWICTextureFromFile(m_pd3dDevice, fnPBR[i], &d3dEmissiveMap, nullptr, NULL);
-			//}
-			//if (tMaterial.m_tPBRFileNames[i][0] == 'm')
-			//{
-			//	result = CreateWICTextureFromFile(m_pd3dDevice, fnPBR[i], &d3dMetallicMap, nullptr, NULL);
-			//}
-			//if (tMaterial.m_tPBRFileNames[i][0] == 'r')
-			//{
-			//	result = CreateWICTextureFromFile(m_pd3dDevice, fnPBR[i], &d3dRoughnessMap, nullptr, NULL);
-			//}
-			//if (tMaterial.m_tPBRFileNames[i][0] == 'a')
-			//{
-			//	result = CreateWICTextureFromFile(m_pd3dDevice, fnPBR[i], &d3dAmbientOcclusionMap, nullptr, NULL);
-			//}
-			//if (tMaterial.m_tPBRFileNames[i][0] == 'd')
-			//{
-			//	result = CreateDDSTextureFromFile(m_pd3dDevice, fnPBR[i], &d3dGlobalDiffuseCubeMap, nullptr, NULL);
-			//}
-			//if (tMaterial.m_tPBRFileNames[i][0] == 's')
-			//{
-			//	result = CreateDDSTextureFromFile(m_pd3dDevice, fnPBR[i], &d3dGlobalSpecularCubeMap, nullptr, NULL);
-			//}
-			//if (tMaterial.m_tPBRFileNames[i][0] == 'l')
-			//{
-			//	result = CreateDDSTextureFromFile(m_pd3dDevice, fnPBR[i], &d3dIBLCubeMap, nullptr, NULL);
-			//}
-		}
-
-		if (tMaterial.m_tFileNames[i] && i < 5)
-		{
-
-			//if (tMaterial.m_tFileNames[i][0] == 'a')
-			//{
-			//	result = CreateWICTextureFromFile(m_pd3dDevice, fnTRAD[i], &ambientTexture, nullptr, NULL);
-			//}
-			//if (tMaterial.m_tFileNames[i][0] == 'b')
-			//{
-			//	result = CreateWICTextureFromFile(m_pd3dDevice, fnTRAD[i], &bumpTexture, nullptr, NULL);
-			//}
-			if (tMaterial.m_tFileNames[i][0] == 'd')
-			{
-				result = CreateWICTextureFromFile(m_pd3dDevice, fnTRAD[i], &diffuseTexture, &srv, NULL);
-				break;
-			}
-
-			//if (tMaterial.m_tFileNames[i][0] == 'e')
-			//{
-			//	result = CreateWICTextureFromFile(m_pd3dDevice, fnTRAD[i], &emissiveTexture, nullptr, NULL);
-			//}
-			//if (tMaterial.m_tFileNames[i][0] == 'n')
-			//{
-			//	result = CreateWICTextureFromFile(m_pd3dDevice, fnTRAD[i], &normalTexture, nullptr, NULL);
-			//}
-			//if (tMaterial.m_tFileNames[i][0] == 's')
-			//{
-			//	result = CreateWICTextureFromFile(m_pd3dDevice, fnTRAD[i], &specularTexture, nullptr, NULL);
-			//}
-		}
-	}
-#pragma endregion
-
-	if ((tMaterial.m_tPBRFileNames[0] == "C" && tMaterial.m_tPBRFileNames[1] == ":") || (tMaterial.m_tFileNames[0] == "C" && tMaterial.m_tFileNames[1] == ":"))
-	{
-		result = CreateWICTextureFromFile(m_pd3dDevice, L"TestScene_V1.fbm\\Wood01_col.jpg", &diffuseTexture, &srv, NULL);
-	}
+	ptWorld->atMesh[nThisEntity].m_d3dSRVDiffuse = temp.SRVArrayOfMaterials[srvIndex];
 
 	ptWorld->atGraphicsMask[nThisEntity].m_tnGraphicsMask = COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_ANIMATION | COMPONENT_SHADERID;
 	ptWorld->atCollisionMask[nThisEntity].m_tnCollisionMask = COMPONENT_COLLISIONMASK | COMPONENT_AABB | COMPONENT_NONSTATIC | COMPONENT_NONTRIGGER;
@@ -2809,8 +2693,8 @@ unsigned int createClaytonAnim(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TM
 	ptWorld->atUIMask[nThisEntity].m_tnUIMask = COMPONENT_UIMASK;
 	ptWorld->atPhysicsMask[nThisEntity].m_tnPhysicsMask = COMPONENT_PHYSICSMASK | COMPONENT_RIGIDBODY;
 	ptWorld->atInputMask[nThisEntity].m_tnInputMask = COMPONENT_INPUTMASK | COMPONENT_CLAYTON;
+	ptWorld->atAnimationMask[nThisEntity].m_tnAnimationMask = COMPONENT_ANIMATIONMASK | COMPONENT_CLAYTONANIM;
 
-	ptWorld->atShaderID[nThisEntity].m_nShaderID = 8;
 
 	TAnimatedMesh *pMesh = new TAnimatedMesh[tMesh.nUniqueVertexCount];
 	for (int i = 0; i < tMesh.nUniqueVertexCount; i++)
@@ -2819,7 +2703,8 @@ unsigned int createClaytonAnim(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TM
 		for (int j = 0; j < 4; j++)
 		{
 			tmp.pos[j] = tMesh.meshArrays[i].pos[j];
-			tmp.pos[j] *= 0.01;
+			tmp.joints[j] = tMesh.meshArrays[i].joints[j];
+			tmp.weights[j] = tMesh.meshArrays[i].weights[j];
 			if (j < 2)
 			{
 				tmp.uv[j] = tMesh.meshArrays[i].uv[j];
@@ -2830,13 +2715,12 @@ unsigned int createClaytonAnim(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TM
 	}
 
 	XMVECTOR playerGravity;
-	playerGravity.m128_f32[1] = -0.00001f;
+	playerGravity.m128_f32[1] = -0.00000f;
 	playerGravity.m128_f32[0] = 0;
 	playerGravity.m128_f32[2] = 0;
 	playerGravity.m128_f32[3] = 0;
 	ptWorld->atRigidBody[nThisEntity].gravity = playerGravity;
 
-	ptWorld->atMesh[nThisEntity].m_d3dSRVDiffuse = srv;
 	ptWorld->atMesh[nThisEntity].m_nVertexCount = tMesh.nUniqueVertexCount;
 	ptWorld->atMesh[nThisEntity].m_nVertexBufferStride = sizeof(TAnimatedMesh);
 	ptWorld->atMesh[nThisEntity].m_nVertexBufferOffset = 0;
@@ -2863,9 +2747,17 @@ unsigned int createClaytonAnim(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TM
 	ptWorld->atMesh[nThisEntity].m_d3dIndexData.SysMemPitch = 0;
 	ptWorld->atMesh[nThisEntity].m_d3dIndexData.SysMemSlicePitch = 0;
 
-	ptWorld->atWorldMatrix[nThisEntity].worldMatrix = XMMatrixMultiply(ptWorld->atWorldMatrix[nThisEntity].worldMatrix, XMMatrixTranslation(0, 0, 0));
-	ptWorld->atWorldMatrix[nThisEntity].worldMatrix = XMMatrixMultiply(ptWorld->atWorldMatrix[nThisEntity].worldMatrix, XMMatrixRotationRollPitchYaw(tMesh.worldRotation[0], tMesh.worldRotation[1], tMesh.worldRotation[2]));
-	ptWorld->atWorldMatrix[nThisEntity].worldMatrix = XMMatrixMultiply(ptWorld->atWorldMatrix[nThisEntity].worldMatrix, XMMatrixScaling(.01, .01, .01));
+	ptWorld->atAnimationVariant[nThisEntity].tClaytonAnim.forward = true;
+	ptWorld->atAnimationVariant[nThisEntity].tClaytonAnim.animType = 1;//Walking
+	ptWorld->atAnimationVariant[nThisEntity].tClaytonAnim.currentFrame = 0;//Walking
+	ptWorld->atAnimationVariant[nThisEntity].tClaytonAnim.nextFrame = 1;//Walking
+
+	ptWorld->atAnimation[nThisEntity].invBindPosesForJoints = tAnim.invBindPosesForJoints;
+	ptWorld->atAnimation[nThisEntity].m_tAnim = tAnim.animClip;
+
+	ptWorld->atWorldMatrix[nThisEntity].worldMatrix = XMMatrixIdentity();//XMMatrixMultiply(ptWorld->atWorldMatrix[nThisEntity].worldMatrix, XMMatrixTranslation(0, 0, 0));
+	//ptWorld->atWorldMatrix[nThisEntity].worldMatrix = XMMatrixMultiply(ptWorld->atWorldMatrix[nThisEntity].worldMatrix, XMMatrixRotationRollPitchYaw(tMesh.worldRotation[0], tMesh.worldRotation[1], tMesh.worldRotation[2]));
+	//ptWorld->atWorldMatrix[nThisEntity].worldMatrix = XMMatrixMultiply(ptWorld->atWorldMatrix[nThisEntity].worldMatrix, XMMatrixScaling(.01, .01, .01));
 	return nThisEntity;
 }
 

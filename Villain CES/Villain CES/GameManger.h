@@ -8,6 +8,7 @@
 #include "ProjectileSystem.h"
 #include "AI_System.h"
 #include "UI_System.h"
+#include "CAnimationSystem.h"
 #include <array>
 
 class CGameMangerSystem {
@@ -39,6 +40,7 @@ private:
 	CInputSystem	*pcInputSystem;
 	CPhysicsSystem  *pcPhysicsSystem;
 	CProjectileSystem* pcProjectileSystem;
+	CAnimationSystem* pcAnimationSystem;
 	CAISystem		*pcAiSystem;
 	CUISystem		*pcUISystem;
 	HWND cApplicationWindow;
@@ -72,7 +74,7 @@ private:
 	TCamera *aimCamera;
 	TCamera *debugCamera;
 	TCamera * menuCamera;
-	Timers * tAugerTimers;
+	System_Times * tAugerTimers;
 	System_Times *tTimerInfo;
 	float m_RealTimeFov;
 	bool bMoving;

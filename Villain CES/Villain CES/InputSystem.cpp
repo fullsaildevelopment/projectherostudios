@@ -2,8 +2,8 @@
 #include<string>
 CInputSystem::CInputSystem()
 {
-	m_fMouseRotationSpeed = .003f;//Frame Dependent
-	m_fMouseMovementSpeed = .1f;//Frame Dependent
+	m_fMouseRotationSpeed = .03f;//Frame Dependent
+	m_fMouseMovementSpeed = 1.0f;//Frame Dependent
 }
 
 
@@ -113,6 +113,18 @@ XMMATRIX CInputSystem::DebugCamera(XMMATRIX d3d_ViewM, XMMATRIX d3d_WorldM)
 		d3dTmpViewM = XMMatrixMultiply(d3dMovementM, d3dTmpViewM);
 	}
 
+
+	if (InputCheck(G_KEY_RIGHTSHIFT))
+	{
+		m_fMouseMovementSpeed += .05;
+	}
+
+	if (InputCheck(G_KEY_FOWARDSLASH))
+	{
+		m_fMouseMovementSpeed = .05;
+	}
+
+
 	if (fXEnd > 2.0f && fXEnd < 1410.0f && fYEnd > 2.0f && fYEnd < 700.0f)
 	{
 		m_pcMyInput->GetMouseDelta(fXchange, fYchange);
@@ -202,6 +214,16 @@ XMMATRIX CInputSystem::CharacterMovement(XMMATRIX d3dplayerMatrix)
 		d3dMovementM = XMMatrixTranslation(0, m_fMouseMovementSpeed, 0);
 		d3dTmpViewM = XMMatrixMultiply(d3dMovementM, d3dTmpViewM);
 
+	}
+
+	if (InputCheck(G_KEY_RIGHTSHIFT))
+	{
+		m_fMouseMovementSpeed *= 10.5;
+	}
+
+	if (InputCheck(G_KEY_FOWARDSLASH))
+	{
+		m_fMouseMovementSpeed /= 10.5;
 	}
 
 	return d3dTmpViewM;

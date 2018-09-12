@@ -4,17 +4,27 @@
 #include<string>
 struct System_Times
 {
-	float applicationTime;
-	float sceneTime;
+	XTime tAppTimer;
+	XTime tSceneTimer;
+	float globalTime;
+	float localTime;
 	System_Times()
 	{
-		applicationTime = 0;
-		sceneTime = 0;
+		globalTime = 0;
+		localTime = 0;
 	 }
-	float GetTime(XTime &timer,float time)
+	float GetGlobalTime(XTime &timer,float &time)
 	{
 		timer.Signal();
 		time = timer.TotalTime();
+
+		return time;
+	}
+
+	float GetLocalTime(XTime &timer, float &time)
+	{
+		timer.Signal();
+		time += timer.SmoothDelta();
 
 		return time;
 	}
@@ -24,28 +34,21 @@ struct System_Times
 		timer.Signal();
 	}
 
-	void DisplayTimes(System_Times* myTimes, CInputSystem *mySystem)
-	{
-		if (mySystem->InputCheck(G_KEY_T) == 1)
-		{
-			float convertedTime;
-			std::string stTimeDisplay;
+	void DisplayTimes(CInputSystem *mySystem)
+	{		
 
-			convertedTime = myTimes->applicationTime / 60.0f;
-			stTimeDisplay = "AppTime: ";
-			stTimeDisplay += std::to_string(convertedTime);
-			cout << stTimeDisplay <<  endl;
+		float convertedTime;
+		std::string stTimeDisplay;
 
-			convertedTime = myTimes->sceneTime / 60.0f;
-			stTimeDisplay = "Scene Time: ";
-			stTimeDisplay += std::to_string(convertedTime);
-			cout << stTimeDisplay <<  endl;
-		}
+		convertedTime = globalTime;
+		stTimeDisplay = "AppTime: ";
+		stTimeDisplay += std::to_string(convertedTime);
+		cout << stTimeDisplay << endl;
+
+		convertedTime = localTime;
+		stTimeDisplay = "Scene Time: ";
+		stTimeDisplay += std::to_string(convertedTime);
+		cout << stTimeDisplay << endl;
+		
 	}
-};
-
-struct Timers 
-{
-	XTime tAppTimer;
-	XTime tSceneTimer;
 };

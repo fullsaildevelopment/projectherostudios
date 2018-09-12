@@ -12,6 +12,8 @@
 #include "QuadPixelShader.csh"
 #include "SkyboxVertexShader.csh"
 #include "SkyboxPixelShader.csh"
+#include "AnimatedVertexShader.csh"
+#include "AnimatedPixelShader.csh"
 #include <vector>
 #include <string.h>
 class CGraphicsSystem
@@ -55,6 +57,14 @@ public:
 		XMMATRIX m_d3dWorldMatrix;
 		XMMATRIX m_d3dViewMatrix;
 		XMMATRIX m_d3dProjectionMatrix;
+	};
+
+	struct TAnimatedVertexBufferType
+	{
+		XMMATRIX m_d3dWorldMatrix;
+		XMMATRIX m_d3dViewMatrix;
+		XMMATRIX m_d3dProjectionMatrix;
+		XMFLOAT4X4 m_d3dJointsForVS[62];
 	};
 
 	struct TMyPixelBufferType
@@ -132,6 +142,7 @@ public:
 	void InitPrimalShaderData(ID3D11DeviceContext * pd3dDeviceContext, XMMATRIX d3dWorldMatrix, XMMATRIX d3dViewMatrix, XMMATRIX d3dProjectionMatrix, TDebugMesh tDebugMesh, XMMATRIX CameraMatrix);
 	void InitPrimalShaderData2(ID3D11DeviceContext * pd3dDeviceContext, TPrimalVertexBufferType d3dVertexBuffer, TPrimalPixelBufferType d3dPixelBuffer, TSimpleMesh tSimpleMesh, XMMATRIX CameraMatrix);
 	void InitSkyboxShaderData(ID3D11DeviceContext * pd3dDeviceContext, TMyVertexBufferType d3dVertexBuffer, TMesh tSimpleMesh, XMMATRIX CameraMatrix);
+	void InitAnimShaderData(ID3D11DeviceContext * pd3dDeviceContext, TAnimatedVertexBufferType d3dVertexBuffer, TMesh tSimpleMesh, XMMATRIX CameraMatrix);
 	void InitMyShaderData(ID3D11DeviceContext * pd3dDeviceContext, TMyVertexBufferType d3dVertexBuffer, TMesh tSimpleMesh, XMMATRIX CameraMatrix);
 	void InitUIShaderData(ID3D11DeviceContext * pd3dDeviceContext, TUIVertexBufferType d3dVertexBuffer, TUIPixelBufferType d3dPixelBuffer, TMesh tMesh, XMMATRIX CameraMatrix);
 	void ExecutePipeline(ID3D11DeviceContext *pd3dDeviceContext, int m_nIndexCount, int nGraphicsMask, int nShaderID);
@@ -174,6 +185,11 @@ private:
 	ID3D11PixelShader	*m_pd3dSkyboxPixelShader;
 	ID3D11InputLayout	*m_pd3dSkyboxInputLayout;
 	ID3D11Buffer		*m_pd3dSkyboxVertexBuffer;
+
+	ID3D11VertexShader	*m_pd3dAnimatedVertexShader;
+	ID3D11PixelShader	*m_pd3dAnimatedPixelShader;
+	ID3D11InputLayout	*m_pd3dAnimatedInputLayout;
+	ID3D11Buffer		*m_pd3dAnimatedVertexBuffer;
 
 	ID3D11Buffer		*m_pd3dBlinnPhongBuffer;
 	ID3D11Debug			*debug;
