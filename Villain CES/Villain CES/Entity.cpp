@@ -2652,7 +2652,7 @@ unsigned int createMesh(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMeshImpo
 	return nThisEntity;
 }
 
-unsigned int createGSQuad(TWorld * ptWorld, XMFLOAT4 backgroundColor)
+unsigned int createGSQuad(TWorld * ptWorld, XMFLOAT4 backgroundColor, int target)
 {
 	unsigned int nThisEntity = createEntity(ptWorld);
 
@@ -2686,7 +2686,11 @@ unsigned int createGSQuad(TWorld * ptWorld, XMFLOAT4 backgroundColor)
 	ptWorld->atDebugMesh[nThisEntity].m_d3dVertexData.SysMemSlicePitch = 0;
 	ptWorld->atBar[nThisEntity].backgroundColor = backgroundColor;
 
+	if (target != -1)
+		ptWorld->atBar[nThisEntity].entityToFollow = target;
+
 	ptWorld->atShaderID[nThisEntity].m_nShaderID = 8;//Geometry Shader
+
 
 	return nThisEntity;
 }
@@ -3602,13 +3606,13 @@ unsigned int CreateUILabelForText(TWorld* ptWorld, XMMATRIX SpawnPosition, float
 	ptWorld->atUIMask[nThisEntity].m_tnUIMask = COMPONENT_UIMASK | COMPONENT_LABEL;
 	ptWorld->atPhysicsMask[nThisEntity].m_tnPhysicsMask = COMPONENT_PHYSICSMASK;
 
-	XMFLOAT3 ratioPos1 = XMFLOAT3{ (offsetX - (width / 2)) * .1f, (offsetY + (height / 2)) * .1f, z };
-	XMFLOAT3 ratioPos2 = XMFLOAT3{ (offsetX + (width / 2)) * .1f, (offsetY + (height / 2)) * .1f, z };
-	XMFLOAT3 ratioPos3 = XMFLOAT3{ (offsetX - (width / 2)) * .1f, (offsetY - (height / 2)) * .1f, z };
+	XMFLOAT3 topLeftPos = XMFLOAT3{ (offsetX - (width / 2)) * .1f, (offsetY + (height / 2)) * .1f, z };
+	XMFLOAT3 topRightPos = XMFLOAT3{ (offsetX + (width / 2)) * .1f, (offsetY + (height / 2)) * .1f, z };
+	XMFLOAT3 bottomLeftPos = XMFLOAT3{ (offsetX - (width / 2)) * .1f, (offsetY - (height / 2)) * .1f, z };
 	//XMFLOAT3 ratioPos4 = XMVectorSet((offsetX + (width / 2)) * .1, (offsetY - (height / 2)) * .1, z);
 	
-	float ratioX = ratioPos2.x - ratioPos1.x;
-	float ratioY = ratioPos3.y - ratioPos1.y;
+	float tWidth = topRightPos.x - topLeftPos.x;
+	float tHeight = bottomLeftPos.y - topLeftPos.y;
 
 	TUIVert* rectVerts = new TUIVert[4 * textSize];
 
@@ -3617,6 +3621,7 @@ unsigned int CreateUILabelForText(TWorld* ptWorld, XMMATRIX SpawnPosition, float
 	int loopIndex = 0;
 	for (int i = 0; loopIndex < textSize; i+=4)
 	{
+		//CUISystem::GetUVsForCharacter(text[loopIndex], tempUVs);
 		switch (text[loopIndex])
 		{
 		case ' ':
@@ -4055,20 +4060,20 @@ unsigned int CreateUILabelForText(TWorld* ptWorld, XMMATRIX SpawnPosition, float
 			break;
 		}
 
-		rectVerts[i + 0].m_d3dfPosition = XMFLOAT3(ratioPos1.x + ((ratioX / textSize) * loopIndex), ratioPos1.y, ratioPos1.z);
+		rectVerts[i + 0].m_d3dfPosition = XMFLOAT3(topLeftPos.x + ((tWidth / textSize) * loopIndex), topLeftPos.y, topLeftPos.z);
 		rectVerts[i + 0].m_d3dfUVs = XMFLOAT2(tempUVs[0].x, tempUVs[0].y);
-		rectVerts[i + 1].m_d3dfPosition = XMFLOAT3(ratioPos1.x + ((ratioX / textSize) * (loopIndex + 1)), ratioPos1.y, ratioPos1.z);
+		rectVerts[i + 1].m_d3dfPosition = XMFLOAT3(topLeftPos.x + ((tWidth / textSize) * (loopIndex + 1)), topLeftPos.y, topLeftPos.z);
 		rectVerts[i + 1].m_d3dfUVs = XMFLOAT2(tempUVs[1].x, tempUVs[1].y);
-		rectVerts[i + 2].m_d3dfPosition = XMFLOAT3(ratioPos1.x + ((ratioX / textSize) * loopIndex), ratioPos3.y, ratioPos1.z);
+		rectVerts[i + 2].m_d3dfPosition = XMFLOAT3(topLeftPos.x + ((tWidth / textSize) * loopIndex), bottomLeftPos.y, topLeftPos.z);
 		rectVerts[i + 2].m_d3dfUVs = XMFLOAT2(tempUVs[2].x, tempUVs[2].y);
-		rectVerts[i + 3].m_d3dfPosition = XMFLOAT3(ratioPos1.x + ((ratioX / textSize) * (loopIndex + 1)), ratioPos3.y, ratioPos1.z);
+		rectVerts[i + 3].m_d3dfPosition = XMFLOAT3(topLeftPos.x + ((tWidth / textSize) * (loopIndex + 1)), bottomLeftPos.y, topLeftPos.z);
 		rectVerts[i + 3].m_d3dfUVs = XMFLOAT2(tempUVs[3].x, tempUVs[3].y);
 
 		++loopIndex;
 	}
 
 	atUIVertices.push_back(rectVerts);
-	int index = atUIVertices.size() - 1;
+	ptWorld->atLabel[nThisEntity].vIndex = atUIVertices.size() - 1;
 
 	ptWorld->atLabel[nThisEntity].width = width;
 	ptWorld->atLabel[nThisEntity].height = height;
@@ -4095,7 +4100,7 @@ unsigned int CreateUILabelForText(TWorld* ptWorld, XMMATRIX SpawnPosition, float
 	}
 
 	atUIIndices.push_back(rectIndices);
-	int indicesIndex = atUIIndices.size() - 1;
+	ptWorld->atLabel[nThisEntity].iIndex = atUIIndices.size() - 1;
 
 	ptWorld->atMesh[nThisEntity].m_nIndexCount = 6 * textSize;
 	ptWorld->atMesh[nThisEntity].m_nVertexCount = 4 * textSize;
@@ -4118,8 +4123,8 @@ unsigned int CreateUILabelForText(TWorld* ptWorld, XMMATRIX SpawnPosition, float
 	ptWorld->atMesh[nThisEntity].m_d3dIndexBufferDesc.StructureByteStride = 0;
 
 
-	ptWorld->atMesh[nThisEntity].m_d3dVertexData.pSysMem = &atUIVertices[index][0];
-	ptWorld->atMesh[nThisEntity].m_d3dIndexData.pSysMem = &atUIIndices[indicesIndex][0];
+	ptWorld->atMesh[nThisEntity].m_d3dVertexData.pSysMem = &atUIVertices[ptWorld->atLabel[nThisEntity].vIndex][0];
+	ptWorld->atMesh[nThisEntity].m_d3dIndexData.pSysMem = &atUIIndices[ptWorld->atLabel[nThisEntity].iIndex][0];
 
 	ptWorld->atMesh[nThisEntity].m_d3dVertexData.SysMemPitch = 0;
 	ptWorld->atMesh[nThisEntity].m_d3dVertexData.SysMemSlicePitch = 0;
@@ -4131,7 +4136,7 @@ unsigned int CreateUILabelForText(TWorld* ptWorld, XMMATRIX SpawnPosition, float
 
 	for (int i = 0; i < ptWorld->atMesh[nThisEntity].m_nVertexCount; ++i)
 	{
-		ptWorld->atMesh[nThisEntity].m_VertexData.push_back(atUIVertices[index][i].m_d3dfPosition);
+		ptWorld->atMesh[nThisEntity].m_VertexData.push_back(atUIVertices[ptWorld->atLabel[nThisEntity].vIndex][i].m_d3dfPosition);
 	}
 
 	ptWorld->atWorldMatrix[nThisEntity].worldMatrix = spawnMatrix;

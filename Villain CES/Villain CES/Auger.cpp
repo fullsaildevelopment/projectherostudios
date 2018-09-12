@@ -74,6 +74,9 @@ void CAuger::Update(bool* loopgame)
 	RECT rect = { 0 };
 	switch (CurrentSpotInGame)
 	{ 
+	case -1:
+		*loopgame = false;
+		break;
 	case 0:
 		pcGameMangerSystem->InitializeTitleScreen();
 		CurrentSpotInGame = 1;
@@ -106,6 +109,7 @@ void CAuger::Update(bool* loopgame)
 			SetCursorPos(((rect.right - rect.left) / 2.0f) + rect.left, ((rect.bottom - rect.top) / 2.0f) + rect.top);
 
 		}
+
 		break;
 	case 6 :
 		CurrentSpotInGame=pcGameMangerSystem->PathFindingExample();

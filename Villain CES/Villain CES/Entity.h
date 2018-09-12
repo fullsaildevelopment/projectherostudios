@@ -11,6 +11,7 @@
 #include "DirectXTex-master\WICTextureLoader\WICTextureLoader.h"
 #include "DirectXTex-master\DDSTextureLoader\DDSTextureLoader.h"
 #include <array>
+//#include "UI_System.h"
 
 struct TWorld
 {
@@ -141,7 +142,7 @@ unsigned int CreateCover(TWorld * ptWorld, XMMATRIX SpawnPosition, vector<int> c
 
 unsigned int CreateHealingAI(TWorld * ptWorld, XMMATRIX SpawnPosition, unsigned int playerIndex);
 unsigned int CreateFriendlySwordsMan(TWorld * ptWorld, XMMATRIX SpawnPosition, unsigned int playerIndex);unsigned int CreateCoverTriggerZone(TWorld * ptWorld, XMMATRIX SpawnPosition);
-unsigned int createGSQuad(TWorld * ptWorld, XMFLOAT4 BackgroundColor);
+unsigned int createGSQuad(TWorld * ptWorld, XMFLOAT4 BackgroundColor, int target = -1);
 unsigned int CreateStoneObstacle(TWorld * ptWorld, XMMATRIX SpawnPosition);
 unsigned int CreateStoneObstacleHorizontal(TWorld * ptWorld, XMMATRIX SpawnPosition);
 

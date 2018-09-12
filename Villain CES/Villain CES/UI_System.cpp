@@ -78,60 +78,7 @@ void CUISystem::AddTextToUI(HWND* cApplicationWindow, TWorld* tThisWorld, unsign
 
 	AdjustBoundingBox(cApplicationWindow, tThisWorld, nThisEntity);
 
-	/*HDC tHDC = GetDC(0);
-	HGDIOBJ oldFont = SelectObject(tHDC, (HGDIOBJ)myFont);
-
-	SIZE tempSize;
-	GetTextExtentPoint32(tHDC, tThisWorld->atText[nThisEntity].textBuffer, tThisWorld->atText[nThisEntity].textSize, &tempSize);
-
-	int height = DrawText(tHDC, tThisWorld->atText[nThisEntity].textBuffer, tThisWorld->atText[nThisEntity].textSize, &tThisWorld->atText[nThisEntity].textBoundingBox, DT_CALCRECT);
-
-	POINT tempPoint = { tThisWorld->atButton[nThisEntity].boundingBox.left, tThisWorld->atButton[nThisEntity].boundingBox.top };
-	POINT tempPoint2 = { tThisWorld->atButton[nThisEntity].boundingBox.right, tThisWorld->atButton[nThisEntity].boundingBox.bottom };
-
-	bool worked = ClientToScreen(*cApplicationWindow, &tempPoint);
-	worked = ClientToScreen(*cApplicationWindow, &tempPoint2);
-
-	int difference = (tempSize.cx) - (tempPoint2.x - tempPoint.x);
-	if (difference > 0)
-	{
-		tThisWorld->atText[nThisEntity].textBoundingBox.left = tempPoint.x - (difference / 2);
-		tThisWorld->atText[nThisEntity].textBoundingBox.top = tempPoint.y;
-		tThisWorld->atText[nThisEntity].textBoundingBox.right = tempPoint2.x + (difference / 2);
-		tThisWorld->atText[nThisEntity].textBoundingBox.bottom = tempPoint2.y;
-
-		tThisWorld->atButton[nThisEntity].boundingBox.left -= (difference / 2);
-		tThisWorld->atButton[nThisEntity].boundingBox.right += (difference / 2);
-	}
-	else
-	{
-		tThisWorld->atText[nThisEntity].textBoundingBox.left = tempPoint.x + ((abs(difference)) / 2);
-		tThisWorld->atText[nThisEntity].textBoundingBox.top = tempPoint.y;
-		tThisWorld->atText[nThisEntity].textBoundingBox.right = tempPoint2.x - ((abs(difference)) / 2);
-		tThisWorld->atText[nThisEntity].textBoundingBox.bottom = tempPoint2.y;
-
-		tThisWorld->atButton[nThisEntity].boundingBox.left += (abs(difference) / 2);
-		tThisWorld->atButton[nThisEntity].boundingBox.right -= (abs(difference) / 2);
-	}
-
-	difference = (height) - (tempPoint2.y - tempPoint.y);
-	if (difference > 0)
-	{
-		tThisWorld->atText[nThisEntity].textBoundingBox.bottom += (difference);
-
-		tThisWorld->atButton[nThisEntity].boundingBox.bottom += (difference);
-	}
-	else
-	{
-		tThisWorld->atText[nThisEntity].textBoundingBox.bottom += (difference);
-
-		tThisWorld->atButton[nThisEntity].boundingBox.bottom += (difference);
-	}*/
-
 	tThisWorld->atUIMask[nThisEntity].m_tnUIMask = tThisWorld->atUIMask[nThisEntity].m_tnUIMask | COMPONENT_TEXT;
-
-	/*SelectObject(tHDC, oldFont);
-	ReleaseDC(*cApplicationWindow, tHDC);*/
 }
 
 void CUISystem::AddMaskToUI(TWorld* tThisWorld, unsigned int nThisEntity, eUIComponent mask)
@@ -209,7 +156,6 @@ void CUISystem::AdjustBoundingBox(HWND* cApplicationWindow, TWorld* tThisWorld, 
 			tThisWorld->atText[nThisEntity].textBoundingBox.bottom = tempPoint2.y;
 
 			tThisWorld->atButton[nThisEntity].boundingBox.left -= (difference);
-			//tThisWorld->atButton[nThisEntity].boundingBox.right += (difference / 2);
 		}
 		else
 		{
@@ -219,7 +165,6 @@ void CUISystem::AdjustBoundingBox(HWND* cApplicationWindow, TWorld* tThisWorld, 
 			tThisWorld->atText[nThisEntity].textBoundingBox.bottom = tempPoint2.y;
 
 			tThisWorld->atButton[nThisEntity].boundingBox.left += (abs(difference));
-			//tThisWorld->atButton[nThisEntity].boundingBox.right -= (abs(difference) / 2);
 		}
 	}
 	else if (tThisWorld->atText[nThisEntity].justification == -1)
@@ -231,7 +176,6 @@ void CUISystem::AdjustBoundingBox(HWND* cApplicationWindow, TWorld* tThisWorld, 
 			tThisWorld->atText[nThisEntity].textBoundingBox.right = tempPoint2.x + (difference);
 			tThisWorld->atText[nThisEntity].textBoundingBox.bottom = tempPoint2.y;
 
-			//tThisWorld->atButton[nThisEntity].boundingBox.left -= (difference / 2);
 			tThisWorld->atButton[nThisEntity].boundingBox.right += (difference);
 		}
 		else
@@ -241,7 +185,6 @@ void CUISystem::AdjustBoundingBox(HWND* cApplicationWindow, TWorld* tThisWorld, 
 			tThisWorld->atText[nThisEntity].textBoundingBox.right = tempPoint2.x - ((abs(difference)));
 			tThisWorld->atText[nThisEntity].textBoundingBox.bottom = tempPoint2.y;
 
-			//tThisWorld->atButton[nThisEntity].boundingBox.left += (abs(difference) / 2);
 			tThisWorld->atButton[nThisEntity].boundingBox.right -= (abs(difference));
 		}
 	}
@@ -283,9 +226,6 @@ void CUISystem::AddBarToUI(HWND* cApplicationWindow, TWorld* tThisWorld, unsigne
 	float ratioRightX = (screenWidth / 2) * ((tThisWorld->atLabel[nThisEntity].x + (tThisWorld->atLabel[nThisEntity].width / 2)) * .1);
 	float ratioBottomY = (screenHeight / 2) * ((tThisWorld->atLabel[nThisEntity].y - (tThisWorld->atLabel[nThisEntity].height / 2)) * .1);
 
-	//tThisWorld->atBar[nThisEntity].start = new POINT{ (screenWidth / 2) + ratioLeftX - 7 - tThisWorld->atLabel[nThisEntity].x , (screenHeight / 2) + (ratioBottomY * -1) - 17 + tThisWorld->atLabel[nThisEntity].y };
-	//tThisWorld->atBar[nThisEntity].end = new POINT{ (screenWidth / 2) + ratioRightX - 7 - tThisWorld->atLabel[nThisEntity].x , (screenHeight / 2) + (ratioTopY * -1) - 17 + tThisWorld->atLabel[nThisEntity].y };
-	//POINT start, end;
 	tThisWorld->atBar[nThisEntity].start.y = (screenHeight / 2) + (ratioTopY * -1) - 17 + tThisWorld->atLabel[nThisEntity].y;
 	tThisWorld->atBar[nThisEntity].end.y = (screenHeight / 2) + (ratioBottomY * -1) - 17 + tThisWorld->atLabel[nThisEntity].y;
 	tThisWorld->atBar[nThisEntity].start.x = (screenWidth / 2) + ratioLeftX - 9;
@@ -299,14 +239,458 @@ void CUISystem::AddBarToUI(HWND* cApplicationWindow, TWorld* tThisWorld, unsigne
 	ClientToScreen(*cApplicationWindow, &tThisWorld->atBar[nThisEntity].start);
 	ClientToScreen(*cApplicationWindow, &tThisWorld->atBar[nThisEntity].end);
 
-	//tThisWorld->atBar[nThisEntity].barBoundingBox.top = start.y;
-	//tThisWorld->atBar[nThisEntity].barBoundingBox.bottom = end.y;
-	//tThisWorld->atBar[nThisEntity].barBoundingBox.left = start.x;
-	//tThisWorld->atBar[nThisEntity].barBoundingBox.right = end.x;
-
 	tThisWorld->atBar[nThisEntity].ratio = 1;
 
 	tThisWorld->atUIMask[nThisEntity].m_tnUIMask = tThisWorld->atUIMask[nThisEntity].m_tnUIMask | COMPONENT_BAR;
+}
+
+void CUISystem::GetUVsForCharacter(wchar_t* character, XMFLOAT2* UVs)
+{
+	delete[] UVs;
+
+	UVs = new XMFLOAT2[4];
+
+	switch (*character)
+	{
+	case ' ':
+	{
+		UVs[0] = XMFLOAT2{ 0 / 950.0f, 4 / 20.0f };
+		UVs[1] = XMFLOAT2{ 10 / 950.0f, 4 / 20.0f };
+		UVs[2] = XMFLOAT2{ 0 / 950.0f, 14 / 20.0f };
+		UVs[3] = XMFLOAT2{ 10 / 950.0f, 14 / 20.0f };
+	}
+	break;
+	case ':':
+	{
+		UVs[0] = XMFLOAT2{ 260 / 950.0f, 4 / 20.0f };
+		UVs[1] = XMFLOAT2{ 270 / 950.0f, 4 / 20.0f };
+		UVs[2] = XMFLOAT2{ 260 / 950.0f, 14 / 20.0f };
+		UVs[3] = XMFLOAT2{ 270 / 950.0f, 14 / 20.0f };
+	}
+	break;
+	case 'A':
+	{
+		UVs[0] = XMFLOAT2{ 330 / 950.0f, 4 / 20.0f };
+		UVs[1] = XMFLOAT2{ 340 / 950.0f, 4 / 20.0f };
+		UVs[2] = XMFLOAT2{ 330 / 950.0f, 14 / 20.0f };
+		UVs[3] = XMFLOAT2{ 340 / 950.0f, 14 / 20.0f };
+	}
+	break;
+	case 'B':
+	{
+		UVs[0] = XMFLOAT2{ 340 / 950.0f, 4 / 20.0f };
+		UVs[1] = XMFLOAT2{ 350 / 950.0f, 4 / 20.0f };
+		UVs[2] = XMFLOAT2{ 340 / 950.0f, 14 / 20.0f };
+		UVs[3] = XMFLOAT2{ 350 / 950.0f, 14 / 20.0f };
+	}
+	break;
+	case 'C':
+	{
+		UVs[0] = XMFLOAT2{ 350 / 950.0f, 4 / 20.0f };
+		UVs[1] = XMFLOAT2{ 360 / 950.0f, 4 / 20.0f };
+		UVs[2] = XMFLOAT2{ 350 / 950.0f, 14 / 20.0f };
+		UVs[3] = XMFLOAT2{ 360 / 950.0f, 14 / 20.0f };
+	}
+	break;
+	case 'D':
+	{
+		UVs[0] = XMFLOAT2{ 360 / 950.0f, 4 / 20.0f };
+		UVs[1] = XMFLOAT2{ 370 / 950.0f, 4 / 20.0f };
+		UVs[2] = XMFLOAT2{ 360 / 950.0f, 14 / 20.0f };
+		UVs[3] = XMFLOAT2{ 370 / 950.0f, 14 / 20.0f };
+	}
+	break;
+	case 'E':
+	{
+		UVs[0] = XMFLOAT2{ 370 / 950.0f, 4 / 20.0f };
+		UVs[1] = XMFLOAT2{ 380 / 950.0f, 4 / 20.0f };
+		UVs[2] = XMFLOAT2{ 370 / 950.0f, 14 / 20.0f };
+		UVs[3] = XMFLOAT2{ 380 / 950.0f, 14 / 20.0f };
+	}
+	break;
+	case 'F':
+	{
+		UVs[0] = XMFLOAT2{ 380 / 950.0f, 4 / 20.0f };
+		UVs[1] = XMFLOAT2{ 390 / 950.0f, 4 / 20.0f };
+		UVs[2] = XMFLOAT2{ 380 / 950.0f, 14 / 20.0f };
+		UVs[3] = XMFLOAT2{ 390 / 950.0f, 14 / 20.0f };
+	}
+	break;
+	case 'G':
+	{
+		UVs[0] = XMFLOAT2{ 390 / 950.0f, 4 / 20.0f };
+		UVs[1] = XMFLOAT2{ 400 / 950.0f, 4 / 20.0f };
+		UVs[2] = XMFLOAT2{ 390 / 950.0f, 14 / 20.0f };
+		UVs[3] = XMFLOAT2{ 400 / 950.0f, 14 / 20.0f };
+	}
+	break;
+	case 'H':
+	{
+		UVs[0] = XMFLOAT2{ 400 / 950.0f, 4 / 20.0f };
+		UVs[1] = XMFLOAT2{ 410 / 950.0f, 4 / 20.0f };
+		UVs[2] = XMFLOAT2{ 400 / 950.0f, 14 / 20.0f };
+		UVs[3] = XMFLOAT2{ 410 / 950.0f, 14 / 20.0f };
+	}
+	break;
+	case 'I':
+	{
+		UVs[0] = XMFLOAT2{ 410 / 950.0f, 4 / 20.0f };
+		UVs[1] = XMFLOAT2{ 420 / 950.0f, 4 / 20.0f };
+		UVs[2] = XMFLOAT2{ 410 / 950.0f, 14 / 20.0f };
+		UVs[3] = XMFLOAT2{ 420 / 950.0f, 14 / 20.0f };
+	}
+	break;
+	case 'J':
+	{
+		UVs[0] = XMFLOAT2{ 420 / 950.0f, 4 / 20.0f };
+		UVs[1] = XMFLOAT2{ 430 / 950.0f, 4 / 20.0f };
+		UVs[2] = XMFLOAT2{ 420 / 950.0f, 14 / 20.0f };
+		UVs[3] = XMFLOAT2{ 430 / 950.0f, 14 / 20.0f };
+	}
+	break;
+	case 'K':
+	{
+		UVs[0] = XMFLOAT2{ 430 / 950.0f, 4 / 20.0f };
+		UVs[1] = XMFLOAT2{ 440 / 950.0f, 4 / 20.0f };
+		UVs[2] = XMFLOAT2{ 430 / 950.0f, 14 / 20.0f };
+		UVs[3] = XMFLOAT2{ 440 / 950.0f, 14 / 20.0f };
+	}
+	break;
+	case 'L':
+	{
+		UVs[0] = XMFLOAT2{ 440 / 950.0f, 4 / 20.0f };
+		UVs[1] = XMFLOAT2{ 450 / 950.0f, 4 / 20.0f };
+		UVs[2] = XMFLOAT2{ 440 / 950.0f, 14 / 20.0f };
+		UVs[3] = XMFLOAT2{ 450 / 950.0f, 14 / 20.0f };
+	}
+	break;
+	case 'M':
+	{
+		UVs[0] = XMFLOAT2{ 450 / 950.0f, 4 / 20.0f };
+		UVs[1] = XMFLOAT2{ 460 / 950.0f, 4 / 20.0f };
+		UVs[2] = XMFLOAT2{ 450 / 950.0f, 14 / 20.0f };
+		UVs[3] = XMFLOAT2{ 460 / 950.0f, 14 / 20.0f };
+	}
+	break;
+	case 'N':
+	{
+		UVs[0] = XMFLOAT2{ 460 / 950.0f, 4 / 20.0f };
+		UVs[1] = XMFLOAT2{ 470 / 950.0f, 4 / 20.0f };
+		UVs[2] = XMFLOAT2{ 460 / 950.0f, 14 / 20.0f };
+		UVs[3] = XMFLOAT2{ 470 / 950.0f, 14 / 20.0f };
+	}
+	break;
+	case 'O':
+	{
+		UVs[0] = XMFLOAT2{ 470 / 950.0f, 4 / 20.0f };
+		UVs[1] = XMFLOAT2{ 480 / 950.0f, 4 / 20.0f };
+		UVs[2] = XMFLOAT2{ 470 / 950.0f, 14 / 20.0f };
+		UVs[3] = XMFLOAT2{ 480 / 950.0f, 14 / 20.0f };
+	}
+	break;
+	case 'P':
+	{
+		UVs[0] = XMFLOAT2{ 480 / 950.0f, 4 / 20.0f };
+		UVs[1] = XMFLOAT2{ 490 / 950.0f, 4 / 20.0f };
+		UVs[2] = XMFLOAT2{ 480 / 950.0f, 14 / 20.0f };
+		UVs[3] = XMFLOAT2{ 490 / 950.0f, 14 / 20.0f };
+	}
+	break;
+	case 'Q':
+	{
+		UVs[0] = XMFLOAT2{ 490 / 950.0f, 4 / 20.0f };
+		UVs[1] = XMFLOAT2{ 500 / 950.0f, 4 / 20.0f };
+		UVs[2] = XMFLOAT2{ 490 / 950.0f, 14 / 20.0f };
+		UVs[3] = XMFLOAT2{ 500 / 950.0f, 14 / 20.0f };
+	}
+	break;
+	case 'R':
+	{
+		UVs[0] = XMFLOAT2{ 500 / 950.0f, 4 / 20.0f };
+		UVs[1] = XMFLOAT2{ 510 / 950.0f, 4 / 20.0f };
+		UVs[2] = XMFLOAT2{ 500 / 950.0f, 14 / 20.0f };
+		UVs[3] = XMFLOAT2{ 510 / 950.0f, 14 / 20.0f };
+	}
+	break;
+	case 'S':
+	{
+		UVs[0] = XMFLOAT2{ 510 / 950.0f, 4 / 20.0f };
+		UVs[1] = XMFLOAT2{ 520 / 950.0f, 4 / 20.0f };
+		UVs[2] = XMFLOAT2{ 510 / 950.0f, 14 / 20.0f };
+		UVs[3] = XMFLOAT2{ 520 / 950.0f, 14 / 20.0f };
+	}
+	break;
+	case 'T':
+	{
+		UVs[0] = XMFLOAT2{ 520 / 950.0f, 4 / 20.0f };
+		UVs[1] = XMFLOAT2{ 530 / 950.0f, 4 / 20.0f };
+		UVs[2] = XMFLOAT2{ 520 / 950.0f, 14 / 20.0f };
+		UVs[3] = XMFLOAT2{ 530 / 950.0f, 14 / 20.0f };
+	}
+	break;
+	case 'U':
+	{
+		UVs[0] = XMFLOAT2{ 530 / 950.0f, 4 / 20.0f };
+		UVs[1] = XMFLOAT2{ 540 / 950.0f, 4 / 20.0f };
+		UVs[2] = XMFLOAT2{ 530 / 950.0f, 14 / 20.0f };
+		UVs[3] = XMFLOAT2{ 540 / 950.0f, 14 / 20.0f };
+	}
+	break;
+	case 'V':
+	{
+		UVs[0] = XMFLOAT2{ 540 / 950.0f, 4 / 20.0f };
+		UVs[1] = XMFLOAT2{ 550 / 950.0f, 4 / 20.0f };
+		UVs[2] = XMFLOAT2{ 540 / 950.0f, 14 / 20.0f };
+		UVs[3] = XMFLOAT2{ 550 / 950.0f, 14 / 20.0f };
+	}
+	break;
+	case 'W':
+	{
+		UVs[0] = XMFLOAT2{ 550 / 950.0f, 4 / 20.0f };
+		UVs[1] = XMFLOAT2{ 560 / 950.0f, 4 / 20.0f };
+		UVs[2] = XMFLOAT2{ 550 / 950.0f, 14 / 20.0f };
+		UVs[3] = XMFLOAT2{ 560 / 950.0f, 14 / 20.0f };
+	}
+	break;
+	case 'X':
+	{
+		UVs[0] = XMFLOAT2{ 560 / 950.0f, 4 / 20.0f };
+		UVs[1] = XMFLOAT2{ 570 / 950.0f, 4 / 20.0f };
+		UVs[2] = XMFLOAT2{ 560 / 950.0f, 14 / 20.0f };
+		UVs[3] = XMFLOAT2{ 570 / 950.0f, 14 / 20.0f };
+	}
+	break;
+	case 'Y':
+	{
+		UVs[0] = XMFLOAT2{ 570 / 950.0f, 4 / 20.0f };
+		UVs[1] = XMFLOAT2{ 580 / 950.0f, 4 / 20.0f };
+		UVs[2] = XMFLOAT2{ 570 / 950.0f, 14 / 20.0f };
+		UVs[3] = XMFLOAT2{ 580 / 950.0f, 14 / 20.0f };
+	}
+	break;
+	case 'Z':
+	{
+		UVs[0] = XMFLOAT2{ 580 / 950.0f, 4 / 20.0f };
+		UVs[1] = XMFLOAT2{ 590 / 950.0f, 4 / 20.0f };
+		UVs[2] = XMFLOAT2{ 580 / 950.0f, 14 / 20.0f };
+		UVs[3] = XMFLOAT2{ 590 / 950.0f, 14 / 20.0f };
+	}
+	break;
+	case 'a':
+	{
+		UVs[0] = XMFLOAT2{ 650 / 950.0f, 4 / 20.0f };
+		UVs[1] = XMFLOAT2{ 660 / 950.0f, 4 / 20.0f };
+		UVs[2] = XMFLOAT2{ 650 / 950.0f, 14 / 20.0f };
+		UVs[3] = XMFLOAT2{ 660 / 950.0f, 14 / 20.0f };
+	}
+	break;
+	case 'b':
+	{
+		UVs[0] = XMFLOAT2{ 660 / 950.0f, 4 / 20.0f };
+		UVs[1] = XMFLOAT2{ 670 / 950.0f, 4 / 20.0f };
+		UVs[2] = XMFLOAT2{ 660 / 950.0f, 14 / 20.0f };
+		UVs[3] = XMFLOAT2{ 670 / 950.0f, 14 / 20.0f };
+	}
+	break;
+	case 'c':
+	{
+		UVs[0] = XMFLOAT2{ 670 / 950.0f, 4 / 20.0f };
+		UVs[1] = XMFLOAT2{ 680 / 950.0f, 4 / 20.0f };
+		UVs[2] = XMFLOAT2{ 670 / 950.0f, 14 / 20.0f };
+		UVs[3] = XMFLOAT2{ 680 / 950.0f, 14 / 20.0f };
+	}
+	break;
+	case 'd':
+	{
+		UVs[0] = XMFLOAT2{ 680 / 950.0f, 4 / 20.0f };
+		UVs[1] = XMFLOAT2{ 690 / 950.0f, 4 / 20.0f };
+		UVs[2] = XMFLOAT2{ 680 / 950.0f, 14 / 20.0f };
+		UVs[3] = XMFLOAT2{ 690 / 950.0f, 14 / 20.0f };
+	}
+	break;
+	case 'e':
+	{
+		UVs[0] = XMFLOAT2{ 690 / 950.0f, 4 / 20.0f };
+		UVs[1] = XMFLOAT2{ 700 / 950.0f, 4 / 20.0f };
+		UVs[2] = XMFLOAT2{ 690 / 950.0f, 14 / 20.0f };
+		UVs[3] = XMFLOAT2{ 700 / 950.0f, 14 / 20.0f };
+	}
+	break;
+	case 'f':
+	{
+		UVs[0] = XMFLOAT2{ 700 / 950.0f, 4 / 20.0f };
+		UVs[1] = XMFLOAT2{ 710 / 950.0f, 4 / 20.0f };
+		UVs[2] = XMFLOAT2{ 700 / 950.0f, 14 / 20.0f };
+		UVs[3] = XMFLOAT2{ 710 / 950.0f, 14 / 20.0f };
+	}
+	break;
+	case 'g':
+	{
+		UVs[0] = XMFLOAT2{ 710 / 950.0f, 4 / 20.0f };
+		UVs[1] = XMFLOAT2{ 720 / 950.0f, 4 / 20.0f };
+		UVs[2] = XMFLOAT2{ 710 / 950.0f, 16 / 20.0f };
+		UVs[3] = XMFLOAT2{ 720 / 950.0f, 16 / 20.0f };
+	}
+	break;
+	case 'h':
+	{
+		UVs[0] = XMFLOAT2{ 720 / 950.0f, 4 / 20.0f };
+		UVs[1] = XMFLOAT2{ 730 / 950.0f, 4 / 20.0f };
+		UVs[2] = XMFLOAT2{ 720 / 950.0f, 14 / 20.0f };
+		UVs[3] = XMFLOAT2{ 730 / 950.0f, 14 / 20.0f };
+	}
+	break;
+	case 'i':
+	{
+		UVs[0] = XMFLOAT2{ 730 / 950.0f, 4 / 20.0f };
+		UVs[1] = XMFLOAT2{ 740 / 950.0f, 4 / 20.0f };
+		UVs[2] = XMFLOAT2{ 730 / 950.0f, 14 / 20.0f };
+		UVs[3] = XMFLOAT2{ 740 / 950.0f, 14 / 20.0f };
+	}
+	break;
+	case 'j':
+	{
+		UVs[0] = XMFLOAT2{ 740 / 950.0f, 4 / 20.0f };
+		UVs[1] = XMFLOAT2{ 750 / 950.0f, 4 / 20.0f };
+		UVs[2] = XMFLOAT2{ 740 / 950.0f, 16 / 20.0f };
+		UVs[3] = XMFLOAT2{ 750 / 950.0f, 16 / 20.0f };
+	}
+	break;
+	case 'k':
+	{
+		UVs[0] = XMFLOAT2{ 750 / 950.0f, 4 / 20.0f };
+		UVs[1] = XMFLOAT2{ 760 / 950.0f, 4 / 20.0f };
+		UVs[2] = XMFLOAT2{ 750 / 950.0f, 14 / 20.0f };
+		UVs[3] = XMFLOAT2{ 760 / 950.0f, 14 / 20.0f };
+	}
+	break;
+	case 'l':
+	{
+		UVs[0] = XMFLOAT2{ 760 / 950.0f, 4 / 20.0f };
+		UVs[1] = XMFLOAT2{ 770 / 950.0f, 4 / 20.0f };
+		UVs[2] = XMFLOAT2{ 760 / 950.0f, 14 / 20.0f };
+		UVs[3] = XMFLOAT2{ 770 / 950.0f, 14 / 20.0f };
+	}
+	break;
+	case 'm':
+	{
+		UVs[0] = XMFLOAT2{ 770 / 950.0f, 4 / 20.0f };
+		UVs[1] = XMFLOAT2{ 780 / 950.0f, 4 / 20.0f };
+		UVs[2] = XMFLOAT2{ 770 / 950.0f, 14 / 20.0f };
+		UVs[3] = XMFLOAT2{ 780 / 950.0f, 14 / 20.0f };
+	}
+	break;
+	case 'n':
+	{
+		UVs[0] = XMFLOAT2{ 780 / 950.0f, 4 / 20.0f };
+		UVs[1] = XMFLOAT2{ 790 / 950.0f, 4 / 20.0f };
+		UVs[2] = XMFLOAT2{ 780 / 950.0f, 14 / 20.0f };
+		UVs[3] = XMFLOAT2{ 790 / 950.0f, 14 / 20.0f };
+	}
+	break;
+	case 'o':
+	{
+		UVs[0] = XMFLOAT2{ 790 / 950.0f, 4 / 20.0f };
+		UVs[1] = XMFLOAT2{ 800 / 950.0f, 4 / 20.0f };
+		UVs[2] = XMFLOAT2{ 790 / 950.0f, 14 / 20.0f };
+		UVs[3] = XMFLOAT2{ 800 / 950.0f, 14 / 20.0f };
+	}
+	break;
+	case 'p':
+	{
+		UVs[0] = XMFLOAT2{ 800 / 950.0f, 4 / 20.0f };
+		UVs[1] = XMFLOAT2{ 810 / 950.0f, 4 / 20.0f };
+		UVs[2] = XMFLOAT2{ 800 / 950.0f, 16 / 20.0f };
+		UVs[3] = XMFLOAT2{ 810 / 950.0f, 16 / 20.0f };
+	}
+	break;
+	case 'q':
+	{
+		UVs[0] = XMFLOAT2{ 810 / 950.0f, 4 / 20.0f };
+		UVs[1] = XMFLOAT2{ 820 / 950.0f, 4 / 20.0f };
+		UVs[2] = XMFLOAT2{ 810 / 950.0f, 16 / 20.0f };
+		UVs[3] = XMFLOAT2{ 820 / 950.0f, 16 / 20.0f };
+	}
+	break;
+	case 'r':
+	{
+		UVs[0] = XMFLOAT2{ 820 / 950.0f, 4 / 20.0f };
+		UVs[1] = XMFLOAT2{ 830 / 950.0f, 4 / 20.0f };
+		UVs[2] = XMFLOAT2{ 820 / 950.0f, 14 / 20.0f };
+		UVs[3] = XMFLOAT2{ 830 / 950.0f, 14 / 20.0f };
+	}
+	break;
+	case 's':
+	{
+		UVs[0] = XMFLOAT2{ 830 / 950.0f, 4 / 20.0f };
+		UVs[1] = XMFLOAT2{ 840 / 950.0f, 4 / 20.0f };
+		UVs[2] = XMFLOAT2{ 830 / 950.0f, 14 / 20.0f };
+		UVs[3] = XMFLOAT2{ 840 / 950.0f, 14 / 20.0f };
+	}
+	break;
+	case 't':
+	{
+		UVs[0] = XMFLOAT2{ 840 / 950.0f, 4 / 20.0f };
+		UVs[1] = XMFLOAT2{ 850 / 950.0f, 4 / 20.0f };
+		UVs[2] = XMFLOAT2{ 840 / 950.0f, 14 / 20.0f };
+		UVs[3] = XMFLOAT2{ 850 / 950.0f, 14 / 20.0f };
+	}
+	break;
+	case 'u':
+	{
+		UVs[0] = XMFLOAT2{ 850 / 950.0f, 4 / 20.0f };
+		UVs[1] = XMFLOAT2{ 860 / 950.0f, 4 / 20.0f };
+		UVs[2] = XMFLOAT2{ 850 / 950.0f, 14 / 20.0f };
+		UVs[3] = XMFLOAT2{ 860 / 950.0f, 14 / 20.0f };
+	}
+	break;
+	case 'v':
+	{
+		UVs[0] = XMFLOAT2{ 860 / 950.0f, 4 / 20.0f };
+		UVs[1] = XMFLOAT2{ 870 / 950.0f, 4 / 20.0f };
+		UVs[2] = XMFLOAT2{ 860 / 950.0f, 14 / 20.0f };
+		UVs[3] = XMFLOAT2{ 870 / 950.0f, 14 / 20.0f };
+	}
+	break;
+	case 'w':
+	{
+		UVs[0] = XMFLOAT2{ 870 / 950.0f, 4 / 20.0f };
+		UVs[1] = XMFLOAT2{ 880 / 950.0f, 4 / 20.0f };
+		UVs[2] = XMFLOAT2{ 870 / 950.0f, 14 / 20.0f };
+		UVs[3] = XMFLOAT2{ 880 / 950.0f, 14 / 20.0f };
+	}
+	break;
+	case 'x':
+	{
+		UVs[0] = XMFLOAT2{ 880 / 950.0f, 4 / 20.0f };
+		UVs[1] = XMFLOAT2{ 890 / 950.0f, 4 / 20.0f };
+		UVs[2] = XMFLOAT2{ 880 / 950.0f, 14 / 20.0f };
+		UVs[3] = XMFLOAT2{ 890 / 950.0f, 14 / 20.0f };
+	}
+	break;
+	case 'y':
+	{
+		UVs[0] = XMFLOAT2{ 890 / 950.0f, 4 / 20.0f };
+		UVs[1] = XMFLOAT2{ 900 / 950.0f, 4 / 20.0f };
+		UVs[2] = XMFLOAT2{ 890 / 950.0f, 16 / 20.0f };
+		UVs[3] = XMFLOAT2{ 900 / 950.0f, 16 / 20.0f };
+	}
+	break;
+	case 'z':
+	{
+		UVs[0] = XMFLOAT2{ 900 / 950.0f, 4 / 20.0f };
+		UVs[1] = XMFLOAT2{ 910 / 950.0f, 4 / 20.0f };
+		UVs[2] = XMFLOAT2{ 900 / 950.0f, 14 / 20.0f };
+		UVs[3] = XMFLOAT2{ 910 / 950.0f, 14 / 20.0f };
+	}
+	break;
+	default:
+		UVs[0] = XMFLOAT2{ -1, -1 };
+		UVs[1] = XMFLOAT2{ -1, -1 };
+		UVs[2] = XMFLOAT2{ -1, -1 };
+		UVs[3] = XMFLOAT2{ -1, -1 };
+		break;
+	}
 }
 
 void CUISystem::CreateEnemyHealthBar(HWND* cApplicationWindow, TWorld * tThisWorld, unsigned int &nThisEntity, XMFLOAT4 in_EnemyPos)
