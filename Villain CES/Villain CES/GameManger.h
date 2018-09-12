@@ -8,6 +8,7 @@
 #include "ProjectileSystem.h"
 #include "AI_System.h"
 #include "UI_System.h"
+#include"AudioSystem.h"
 #include <array>
 #pragma comment(lib, "MSIMG32.lib")
 
@@ -38,6 +39,9 @@ public:
 	bool GamePaused = false;
 	void LoadLevelWithMapInIt();
 	int RealLevelUpdate();
+
+	//ZB-Helper Methods
+	bool GetWalkCameraState();
 private:
 	TMaterialOptimized matOpt;
 
@@ -49,6 +53,7 @@ private:
 	TWorld tThisWorld;
 	CGraphicsSystem	*pcGraphicsSystem;
 	CInputSystem	*pcInputSystem;
+	CAudioSystem    *pcAudioSystem;
 	CPhysicsSystem  *pcPhysicsSystem;
 	CProjectileSystem* pcProjectileSystem;
 	CAISystem		*pcAiSystem;
@@ -89,8 +94,13 @@ private:
 	TCamera *aimCamera;
 	TCamera *debugCamera;
 	TCamera * menuCamera;
-	Timers * tAugerTimers;
+	//Timers * tAugerTimers;
 	System_Times *tTimerInfo;
+	AkGameObjectID footSteps;
+	AkGameObjectID Listener;
+	AkBankID footsteps_bnkID;
+	AkBankID init_bnkID;
+	AKRESULT ErrorResult;
 	float m_RealTimeFov;
 	bool bMoving;
 	float Health = 1.0f;

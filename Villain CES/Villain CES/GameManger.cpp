@@ -8,18 +8,20 @@ CGameMangerSystem::CGameMangerSystem(HWND window,CInputSystem* _pcInputSystem)
 	cApplicationWindow = window;
 	pcGraphicsSystem = new CGraphicsSystem();
 	pcInputSystem = _pcInputSystem;
+	pcInputSystem->SendHWNDToInputSystem(cApplicationWindow);
 	pcCollisionSystem = new CCollisionSystem();
 	pcPhysicsSystem = new CPhysicsSystem();
 	pcProjectileSystem = new CProjectileSystem();
 	pcAiSystem = new CAISystem();
 	pcUISystem = new CUISystem();
 	pcGraphicsSystem->InitD3D(cApplicationWindow);
-	tAugerTimers = new Timers();
+//	tAugerTimers = new Timers();
 	tTimerInfo = new System_Times();
 	aimCamera = new TCamera();
 	walkCamera = new TCamera();
 	debugCamera = new TCamera();
 	menuCamera = new TCamera();
+	pcAudioSystem = new CAudioSystem();
 	//srand(time(NULL));
 
 	GetWindowRect(cApplicationWindow, &windowRect);
@@ -31,18 +33,20 @@ CGameMangerSystem::CGameMangerSystem(HWND window,CInputSystem* _pcInputSystem)
 CGameMangerSystem::~CGameMangerSystem()
 {
 	pcGraphicsSystem->CleanD3D(&tThisWorld);
+	pcAudioSystem->TermSoundEngine();
 	delete pcGraphicsSystem;
 	delete pcInputSystem;
 	delete pcCollisionSystem;
 	delete pcPhysicsSystem;
 	delete pcProjectileSystem;
 	delete pcAiSystem;
-	delete tAugerTimers;
+	//delete tAugerTimers;
 	delete tTimerInfo;
 	delete aimCamera;
 	delete debugCamera;
 	delete walkCamera;
 	delete menuCamera;
+	delete pcAudioSystem;
 }
 
 void CGameMangerSystem::LoadLevel()
@@ -60,7 +64,7 @@ void CGameMangerSystem::LoadLevel()
 	GamePaused = false;
 
 	pcAiSystem->SetNumberOfAI(2);
-	tTimerInfo->StartClock(tAugerTimers->tSceneTimer);
+	//tTimerInfo->StartClock(tAugerTimers->tSceneTimer);
 	ImporterData tempImport;
 	TMaterialOptimized matOpt;
 
@@ -370,8 +374,8 @@ int CGameMangerSystem::InGameUpdate()
 	_CrtSetBreakAlloc(-1); //Important!
 	m_d3dProjectionMatrix = pcGraphicsSystem->SetDefaultPerspective(m_RealTimeFov);
 
-	tTimerInfo->applicationTime = tTimerInfo->GetTime(tAugerTimers->tAppTimer, tTimerInfo->applicationTime);
-	tTimerInfo->sceneTime = tTimerInfo->GetTime(tAugerTimers->tSceneTimer, tTimerInfo->sceneTime);
+	//tTimerInfo->applicationTime = tTimerInfo->GetTime(tAugerTimers->tAppTimer, tTimerInfo->applicationTime);
+	//tTimerInfo->sceneTime = tTimerInfo->GetTime(tAugerTimers->tSceneTimer, tTimerInfo->sceneTime);
 
 	tCameraMode = pcInputSystem->CameraModeListen(tCameraMode);
 
@@ -1111,6 +1115,7 @@ int CGameMangerSystem::InGameUpdate()
 					{
 						if (PtInRect(&tThisWorld.atBar[nCurrentEntity].barBoundingBox, clickPoint) && clickTime > .2)
 						{
+							// bar manipulation with mouse click try and use for enemy health bar - ZB                   
 							tThisWorld.atBar[nCurrentEntity].ratio = (clickPoint.x - tThisWorld.atBar[nCurrentEntity].barBoundingBox.left - 5.0) / (tThisWorld.atBar[nCurrentEntity].barBoundingBox.right - tThisWorld.atBar[nCurrentEntity].barBoundingBox.left - 10);
 							
 							//clickTime = 0;
@@ -1342,6 +1347,11 @@ void CGameMangerSystem::RestartLevel()
 
 int CGameMangerSystem::LoadMainMenu()
 {
+	if (pcInputSystem->InputCheck(G_KEY_H) == 1)
+	{
+	pcAudioSystem->SendSoundsToEngine(AK::EVENTS::PLAY_FOOTSTEP,footSteps);
+	}
+	
 	clickTimer.Signal();
 
 	//////////
@@ -1595,6 +1605,7 @@ void CGameMangerSystem::InitializeMainMenu()
 
 int CGameMangerSystem::LoadTitleScreen()
 {
+	pcAudioSystem->SetListener(Listener, 1, ErrorResult);
 	//////////
 	m_d3dWorldMatrix = pcGraphicsSystem->SetDefaultWorldPosition();
 	m_d3dViewMatrix = pcGraphicsSystem->SetDefaultViewMatrix();
@@ -1666,6 +1677,13 @@ int CGameMangerSystem::LoadTitleScreen()
 
 void CGameMangerSystem::InitializeTitleScreen()
 {
+	pcAudioSystem->IntiializeSystem(ErrorResult);
+	pcAudioSystem->SetBanksFolderPath(AKTEXT("../Villain CES/GeneratedSoundBanks/Windows"));
+	pcAudioSystem->RegisterGameObj(Listener);
+	pcAudioSystem->RegisterGameObj(footSteps);
+	pcAudioSystem->LoadBankFile(INIT_BNK, init_bnkID,ErrorResult);
+	pcAudioSystem->LoadBankFile(FOOTSTEP_BNK, footsteps_bnkID, ErrorResult);
+	
 	pcGraphicsSystem->CleanD3DLevel(&tThisWorld);
 	atUIVertices.clear();
 	atUIIndices.clear();
@@ -2422,7 +2440,7 @@ void CGameMangerSystem::LoadPathFindingTest()
 	edges.clear();
 	edges.push_back(nodelocation4);
 	pcAiSystem->AddEdgestoNode(nodelocation5, edges);
-
+#pragma endregion Nodes & Edges
 
 
 	if (pcCollisionSystem->m_AAbb.size() != 0) {
@@ -2482,8 +2500,8 @@ int CGameMangerSystem::PathFindingExample()
 	_CrtSetBreakAlloc(-1); //Important!
 	m_d3dProjectionMatrix = pcGraphicsSystem->SetDefaultPerspective(m_RealTimeFov);
 
-	tTimerInfo->applicationTime = tTimerInfo->GetTime(tAugerTimers->tAppTimer, tTimerInfo->applicationTime);
-	tTimerInfo->sceneTime = tTimerInfo->GetTime(tAugerTimers->tSceneTimer, tTimerInfo->sceneTime);
+//	tTimerInfo->applicationTime = tTimerInfo->GetTime(tAugerTimers->tAppTimer, tTimerInfo->applicationTime);
+	//tTimerInfo->sceneTime = tTimerInfo->GetTime(tAugerTimers->tSceneTimer, tTimerInfo->sceneTime);
 
 	tCameraMode = pcInputSystem->CameraModeListen(tCameraMode);
 
@@ -3211,8 +3229,6 @@ int CGameMangerSystem::PathFindingExample()
 
 	}
 
-
-
 	pcGraphicsSystem->m_pd3dSwapchain->Present(0, 0);
 	zValue += 0.001;
 	return 6;
@@ -3569,8 +3585,8 @@ int CGameMangerSystem::SpacePirateGamePlay()
 	_CrtSetBreakAlloc(-1); //Important!
 	m_d3dProjectionMatrix = pcGraphicsSystem->SetDefaultPerspective(m_RealTimeFov);
 
-	tTimerInfo->applicationTime = tTimerInfo->GetTime(tAugerTimers->tAppTimer, tTimerInfo->applicationTime);
-	tTimerInfo->sceneTime = tTimerInfo->GetTime(tAugerTimers->tSceneTimer, tTimerInfo->sceneTime);
+	//tTimerInfo->applicationTime = tTimerInfo->GetTime(tAugerTimers->tAppTimer, tTimerInfo->applicationTime);
+	//tTimerInfo->sceneTime = tTimerInfo->GetTime(tAugerTimers->tSceneTimer, tTimerInfo->sceneTime);
 
 	tCameraMode = pcInputSystem->CameraModeListen(tCameraMode);
 
@@ -3674,8 +3690,6 @@ int CGameMangerSystem::SpacePirateGamePlay()
 		}
 		else {
 			m_RealTimeFov = pcInputSystem->ZoomSight(m_RealTimeFov);
-
-
 
 
 			m_d3dPlayerMatrix = pcInputSystem->AimMode(m_d3dPlayerMatrix);
@@ -4507,12 +4521,17 @@ int CGameMangerSystem::MikesGraphicsSandbox()
 	return 10;
 }
 
+bool CGameMangerSystem::GetWalkCameraState()
+{
+	return tCameraMode.bWalkMode;
+}
+
 void CGameMangerSystem::LoadLevelWithMapInIt()
 {
 	pcGraphicsSystem->CleanD3DLevel(&tThisWorld);
 
 	pcAiSystem->SetNumberOfAI(2);
-	tTimerInfo->StartClock(tAugerTimers->tSceneTimer);
+//	tTimerInfo->StartClock(tAugerTimers->tSceneTimer);
 	ImporterData tempImport;
 	TMaterialOptimized matOpt;
 
@@ -4656,8 +4675,8 @@ int CGameMangerSystem::RealLevelUpdate()
 	_CrtSetBreakAlloc(-1); //Important!
 	m_d3dProjectionMatrix = pcGraphicsSystem->SetDefaultPerspective(m_RealTimeFov);
 
-	tTimerInfo->applicationTime = tTimerInfo->GetTime(tAugerTimers->tAppTimer, tTimerInfo->applicationTime);
-	tTimerInfo->sceneTime = tTimerInfo->GetTime(tAugerTimers->tSceneTimer, tTimerInfo->sceneTime);
+	//tTimerInfo->applicationTime = tTimerInfo->GetTime(tAugerTimers->tAppTimer, tTimerInfo->applicationTime);
+	//tTimerInfo->sceneTime = tTimerInfo->GetTime(tAugerTimers->tSceneTimer, tTimerInfo->sceneTime);
 
 	tCameraMode = pcInputSystem->CameraModeListen(tCameraMode);
 

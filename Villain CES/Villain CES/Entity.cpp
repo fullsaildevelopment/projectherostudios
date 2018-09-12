@@ -2656,10 +2656,6 @@ unsigned int createGSQuad(TWorld * ptWorld, XMFLOAT4 backgroundColor, int target
 {
 	unsigned int nThisEntity = createEntity(ptWorld);
 
-
-
-
-
 	ptWorld->atGraphicsMask[nThisEntity].m_tnGraphicsMask = COMPONENT_GRAPHICSMASK | COMPONENT_DEBUGMESH | COMPONENT_SHADERID;
 	ptWorld->atCollisionMask[nThisEntity].m_tnCollisionMask = COMPONENT_COLLISIONMASK;
 	ptWorld->atAIMask[nThisEntity].m_tnAIMask = COMPONENT_AIMASK;
@@ -3313,6 +3309,7 @@ unsigned int createClaytonAnim(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TM
 {
 	unsigned int nThisEntity = createEntity(ptWorld);
 
+#if TEXTURELOADING
 	#pragma region CreateTexturesFromFile
 
 	wchar_t fnPBR[9][260];
@@ -3437,6 +3434,9 @@ unsigned int createClaytonAnim(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TM
 	{
 		result = CreateWICTextureFromFile(m_pd3dDevice, L"TestScene_V1.fbm\\Wood01_col.jpg", &diffuseTexture, &srv, NULL);
 	}
+	ptWorld->atMesh[nThisEntity].m_d3dSRVDiffuse = srv;
+
+#endif // TEXTURELOADING
 
 	ptWorld->atGraphicsMask[nThisEntity].m_tnGraphicsMask = COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_ANIMATION | COMPONENT_SHADERID;
 	ptWorld->atCollisionMask[nThisEntity].m_tnCollisionMask = COMPONENT_COLLISIONMASK | COMPONENT_AABB | COMPONENT_NONSTATIC | COMPONENT_NONTRIGGER;
@@ -3471,7 +3471,6 @@ unsigned int createClaytonAnim(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TM
 	playerGravity.m128_f32[3] = 0;
 	ptWorld->atRigidBody[nThisEntity].gravity = playerGravity;
 
-	ptWorld->atMesh[nThisEntity].m_d3dSRVDiffuse = srv;
 	ptWorld->atMesh[nThisEntity].m_nVertexCount = tMesh.nUniqueVertexCount;
 	ptWorld->atMesh[nThisEntity].m_nVertexBufferStride = sizeof(TAnimatedMesh);
 	ptWorld->atMesh[nThisEntity].m_nVertexBufferOffset = 0;
