@@ -86,7 +86,6 @@ void CAuger::Update(bool* loopgame)
 		pcGameMangerSystem->InitializeMainMenu();
 		CurrentSpotInGame = 3;
 
-		break;
 	case 3:
 		CurrentSpotInGame = pcGameMangerSystem->LoadMainMenu();
 		
@@ -98,10 +97,14 @@ void CAuger::Update(bool* loopgame)
 	case 5 :
 		CurrentSpotInGame = pcGameMangerSystem->InGameUpdate();
 
+		
 		if (!pcGameMangerSystem->GamePaused && !pcGameMangerSystem->GameOver)
 		{
 			GetWindowRect(window2, &rect);
+			//SetCursorPos((rect.right / 2.0f) + 20, (rect.bottom / 2.0f) + 64);
+			// sets mouse cursor to middle of screen ZB
 			SetCursorPos(((rect.right - rect.left) / 2.0f) + rect.left, ((rect.bottom - rect.top) / 2.0f) + rect.top);
+
 		}
 		break;
 	case 6 :
@@ -131,11 +134,11 @@ void CAuger::Update(bool* loopgame)
 	case 10:
 		CurrentSpotInGame = pcGameMangerSystem->MikesGraphicsSandbox();
 		break;
-	case 11: 
+	case 13: 
 		pcGameMangerSystem->LoadLevelWithMapInIt();
-		CurrentSpotInGame = 12;
+		CurrentSpotInGame = 14;
 		break;
-	case 12:
+	case 14:
 		CurrentSpotInGame = pcGameMangerSystem->RealLevelUpdate();
 		break;
 	
@@ -144,11 +147,19 @@ void CAuger::Update(bool* loopgame)
 		pcGameMangerSystem->LoadPathFindingTest();
 		CurrentSpotInGame = 6;
 		break;
+	case 15:
+		CurrentSpotInGame = pcGameMangerSystem->LoadTitleScreen();
+		break;
+
+	case 16:
+		pcGameMangerSystem->InitializeTitleScreen();
+		CurrentSpotInGame = 15;
+		break; 
 	default:
 		break;
 	}
 }
-
+	
 
 void CAuger::End()
 {
