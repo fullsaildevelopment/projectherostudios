@@ -692,7 +692,6 @@ void CUISystem::GetUVsForCharacter(wchar_t* character, XMFLOAT2* UVs)
 		break;
 	}
 }
-}
 
 void CUISystem::CreateEnemyHealthBar(HWND* cApplicationWindow, TWorld * tThisWorld, unsigned int &nThisEntity, XMFLOAT4 in_EnemyPos)
 {
