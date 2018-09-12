@@ -74,6 +74,9 @@ void CAuger::Update(bool* loopgame)
 	RECT rect = { 0 };
 	switch (CurrentSpotInGame)
 	{ 
+	case -1:
+		*loopgame = false;
+		break;
 	case 0:
 		pcGameMangerSystem->InitializeTitleScreen();
 		CurrentSpotInGame = 1;

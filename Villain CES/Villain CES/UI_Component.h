@@ -27,6 +27,7 @@ struct TBar
 	float ratio;
 	 
 	XMFLOAT4 backgroundColor;
+	int entityToFollow = -1;
 };
 
 struct TText

@@ -24,7 +24,7 @@ public:
 	int LoadTitleScreen();
 	void InitializeTitleScreen();
 	void InitializePauseScreen();
-	void InitializeDeathScreen();
+	void InitializeEndScreen();
 	void InitializeOptionsMenu();
 	void InitializeHUD();
 
@@ -94,5 +94,5 @@ private:
 	float m_RealTimeFov;
 	bool bMoving;
 	float Health = 1.0f;
-
+	bool click = false;
 };

@@ -78,60 +78,7 @@ void CUISystem::AddTextToUI(HWND* cApplicationWindow, TWorld* tThisWorld, unsign
 
 	AdjustBoundingBox(cApplicationWindow, tThisWorld, nThisEntity);
 
-	/*HDC tHDC = GetDC(0);
-	HGDIOBJ oldFont = SelectObject(tHDC, (HGDIOBJ)myFont);
-
-	SIZE tempSize;
-	GetTextExtentPoint32(tHDC, tThisWorld->atText[nThisEntity].textBuffer, tThisWorld->atText[nThisEntity].textSize, &tempSize);
-
-	int height = DrawText(tHDC, tThisWorld->atText[nThisEntity].textBuffer, tThisWorld->atText[nThisEntity].textSize, &tThisWorld->atText[nThisEntity].textBoundingBox, DT_CALCRECT);
-
-	POINT tempPoint = { tThisWorld->atButton[nThisEntity].boundingBox.left, tThisWorld->atButton[nThisEntity].boundingBox.top };
-	POINT tempPoint2 = { tThisWorld->atButton[nThisEntity].boundingBox.right, tThisWorld->atButton[nThisEntity].boundingBox.bottom };
-
-	bool worked = ClientToScreen(*cApplicationWindow, &tempPoint);
-	worked = ClientToScreen(*cApplicationWindow, &tempPoint2);
-
-	int difference = (tempSize.cx) - (tempPoint2.x - tempPoint.x);
-	if (difference > 0)
-	{
-		tThisWorld->atText[nThisEntity].textBoundingBox.left = tempPoint.x - (difference / 2);
-		tThisWorld->atText[nThisEntity].textBoundingBox.top = tempPoint.y;
-		tThisWorld->atText[nThisEntity].textBoundingBox.right = tempPoint2.x + (difference / 2);
-		tThisWorld->atText[nThisEntity].textBoundingBox.bottom = tempPoint2.y;
-
-		tThisWorld->atButton[nThisEntity].boundingBox.left -= (difference / 2);
-		tThisWorld->atButton[nThisEntity].boundingBox.right += (difference / 2);
-	}
-	else
-	{
-		tThisWorld->atText[nThisEntity].textBoundingBox.left = tempPoint.x + ((abs(difference)) / 2);
-		tThisWorld->atText[nThisEntity].textBoundingBox.top = tempPoint.y;
-		tThisWorld->atText[nThisEntity].textBoundingBox.right = tempPoint2.x - ((abs(difference)) / 2);
-		tThisWorld->atText[nThisEntity].textBoundingBox.bottom = tempPoint2.y;
-
-		tThisWorld->atButton[nThisEntity].boundingBox.left += (abs(difference) / 2);
-		tThisWorld->atButton[nThisEntity].boundingBox.right -= (abs(difference) / 2);
-	}
-
-	difference = (height) - (tempPoint2.y - tempPoint.y);
-	if (difference > 0)
-	{
-		tThisWorld->atText[nThisEntity].textBoundingBox.bottom += (difference);
-
-		tThisWorld->atButton[nThisEntity].boundingBox.bottom += (difference);
-	}
-	else
-	{
-		tThisWorld->atText[nThisEntity].textBoundingBox.bottom += (difference);
-
-		tThisWorld->atButton[nThisEntity].boundingBox.bottom += (difference);
-	}*/
-
 	tThisWorld->atUIMask[nThisEntity].m_tnUIMask = tThisWorld->atUIMask[nThisEntity].m_tnUIMask | COMPONENT_TEXT;
-
-	/*SelectObject(tHDC, oldFont);
-	ReleaseDC(*cApplicationWindow, tHDC);*/
 }
 
 void CUISystem::AddMaskToUI(TWorld* tThisWorld, unsigned int nThisEntity, eUIComponent mask)
@@ -209,7 +156,6 @@ void CUISystem::AdjustBoundingBox(HWND* cApplicationWindow, TWorld* tThisWorld, 
 			tThisWorld->atText[nThisEntity].textBoundingBox.bottom = tempPoint2.y;
 
 			tThisWorld->atButton[nThisEntity].boundingBox.left -= (difference);
-			//tThisWorld->atButton[nThisEntity].boundingBox.right += (difference / 2);
 		}
 		else
 		{
@@ -219,7 +165,6 @@ void CUISystem::AdjustBoundingBox(HWND* cApplicationWindow, TWorld* tThisWorld, 
 			tThisWorld->atText[nThisEntity].textBoundingBox.bottom = tempPoint2.y;
 
 			tThisWorld->atButton[nThisEntity].boundingBox.left += (abs(difference));
-			//tThisWorld->atButton[nThisEntity].boundingBox.right -= (abs(difference) / 2);
 		}
 	}
 	else if (tThisWorld->atText[nThisEntity].justification == -1)
@@ -231,7 +176,6 @@ void CUISystem::AdjustBoundingBox(HWND* cApplicationWindow, TWorld* tThisWorld, 
 			tThisWorld->atText[nThisEntity].textBoundingBox.right = tempPoint2.x + (difference);
 			tThisWorld->atText[nThisEntity].textBoundingBox.bottom = tempPoint2.y;
 
-			//tThisWorld->atButton[nThisEntity].boundingBox.left -= (difference / 2);
 			tThisWorld->atButton[nThisEntity].boundingBox.right += (difference);
 		}
 		else
@@ -241,7 +185,6 @@ void CUISystem::AdjustBoundingBox(HWND* cApplicationWindow, TWorld* tThisWorld, 
 			tThisWorld->atText[nThisEntity].textBoundingBox.right = tempPoint2.x - ((abs(difference)));
 			tThisWorld->atText[nThisEntity].textBoundingBox.bottom = tempPoint2.y;
 
-			//tThisWorld->atButton[nThisEntity].boundingBox.left += (abs(difference) / 2);
 			tThisWorld->atButton[nThisEntity].boundingBox.right -= (abs(difference));
 		}
 	}
@@ -283,9 +226,6 @@ void CUISystem::AddBarToUI(HWND* cApplicationWindow, TWorld* tThisWorld, unsigne
 	float ratioRightX = (screenWidth / 2) * ((tThisWorld->atLabel[nThisEntity].x + (tThisWorld->atLabel[nThisEntity].width / 2)) * .1);
 	float ratioBottomY = (screenHeight / 2) * ((tThisWorld->atLabel[nThisEntity].y - (tThisWorld->atLabel[nThisEntity].height / 2)) * .1);
 
-	//tThisWorld->atBar[nThisEntity].start = new POINT{ (screenWidth / 2) + ratioLeftX - 7 - tThisWorld->atLabel[nThisEntity].x , (screenHeight / 2) + (ratioBottomY * -1) - 17 + tThisWorld->atLabel[nThisEntity].y };
-	//tThisWorld->atBar[nThisEntity].end = new POINT{ (screenWidth / 2) + ratioRightX - 7 - tThisWorld->atLabel[nThisEntity].x , (screenHeight / 2) + (ratioTopY * -1) - 17 + tThisWorld->atLabel[nThisEntity].y };
-	//POINT start, end;
 	tThisWorld->atBar[nThisEntity].start.y = (screenHeight / 2) + (ratioTopY * -1) - 17 + tThisWorld->atLabel[nThisEntity].y;
 	tThisWorld->atBar[nThisEntity].end.y = (screenHeight / 2) + (ratioBottomY * -1) - 17 + tThisWorld->atLabel[nThisEntity].y;
 	tThisWorld->atBar[nThisEntity].start.x = (screenWidth / 2) + ratioLeftX - 9;
@@ -298,11 +238,6 @@ void CUISystem::AddBarToUI(HWND* cApplicationWindow, TWorld* tThisWorld, unsigne
 
 	ClientToScreen(*cApplicationWindow, &tThisWorld->atBar[nThisEntity].start);
 	ClientToScreen(*cApplicationWindow, &tThisWorld->atBar[nThisEntity].end);
-
-	//tThisWorld->atBar[nThisEntity].barBoundingBox.top = start.y;
-	//tThisWorld->atBar[nThisEntity].barBoundingBox.bottom = end.y;
-	//tThisWorld->atBar[nThisEntity].barBoundingBox.left = start.x;
-	//tThisWorld->atBar[nThisEntity].barBoundingBox.right = end.x;
 
 	tThisWorld->atBar[nThisEntity].ratio = 1;
 
