@@ -447,23 +447,24 @@ XMMATRIX CInputSystem::WalkCameraControls(XMVECTOR U, XMMATRIX viewM, bool &_mov
 	}
 
 
-	if (fXchange > 3.0f || fYchange > 3.0f || fXchange < -3.0f || fYchange < -3.0f )
+	if (fXchange > 1.0f || fYchange > 1.0f || fXchange < -1.0f || fYchange < -1.0f )
 	{
 		_movement = true;
 	
-		if (fYchange > 3.0f || fYchange < -3.0f)
+		/*if (fYchange > 3.0f || fYchange < -3.0f)
 		{
-			d3dRotation = XMMatrixRotationRollPitchYaw(XMConvertToRadians(fYchange + m_fMouseRotationSpeed), XMConvertToRadians(0.0f), XMConvertToRadians(0));//XMMatrixRotationY(fXchange * m_fMouseRotationSpeed);
+			d3dRotation = XMMatrixRotationRollPitchYaw(XMConvertToRadians(fYchange + m_fMouseRotationSpeed), XMConvertToRadians(0.0f), XMConvertToRadians(0));*/
+		//XMMatrixRotationY(fXchange * m_fMouseRotationSpeed);
 
-			d3dTmpViewM = XMMatrixMultiply(d3dTmpViewM, d3dRotation);
-		}
+		//d3dTmpViewM = XMMatrixMultiply(d3dTmpViewM, d3dRotation);
+	//	}
 		
-		if (fXchange > 3.0f || fXchange < -3.0f)
-		{
-			d3dRotation = XMMatrixRotationRollPitchYaw(XMConvertToRadians(0), XMConvertToRadians(fXchange + m_fMouseRotationSpeed), XMConvertToRadians(0));//XMMatrixRotationY(fXchange * m_fMouseRotationSpeed);
+		//if (fXchange > 3.0f || fXchange < -3.0f)
+	//	{
+		d3dRotation = XMMatrixRotationY(fXchange * m_fMouseRotationSpeed); //d3dRotation = XMMatrixRotationRollPitchYaw(XMConvertToRadians(0), XMConvertToRadians(fXchange + m_fMouseRotationSpeed), XMConvertToRadians(0));
 
-			d3dTmpViewM = XMMatrixMultiply(d3dTmpViewM, d3dRotation);
-		}
+		d3dTmpViewM = XMMatrixMultiply(d3dTmpViewM, d3dRotation);
+		//}
 		d3d_existingZ = d3dTmpViewM.r[2];
 		d3d_newX = XMVector3Cross(XMVectorSet(0, 1, 0, 0), d3d_existingZ);
 		d3d_newY = XMVector3Cross(d3d_existingZ, d3d_newX);
@@ -479,7 +480,7 @@ XMMATRIX CInputSystem::WalkCameraControls(XMVECTOR U, XMMATRIX viewM, bool &_mov
 		
 		
 			
-	   /* d3dRotation = XMMatrixRotationX(fYchange * m_fMouseRotationSpeed);
+	    d3dRotation = XMMatrixRotationX(fYchange * m_fMouseRotationSpeed);
 	
 		d3dTmpViewM = XMMatrixMultiply(d3dTmpViewM, d3dRotation);
 
@@ -495,7 +496,7 @@ XMMATRIX CInputSystem::WalkCameraControls(XMVECTOR U, XMMATRIX viewM, bool &_mov
 
 		d3dTmpViewM.r[0] = d3d_newX;
 		d3dTmpViewM.r[1] = d3d_newY;
-		d3dTmpViewM.r[2] = d3d_existingZ;*/
+		d3dTmpViewM.r[2] = d3d_existingZ;
 	}
 	else
 	{
