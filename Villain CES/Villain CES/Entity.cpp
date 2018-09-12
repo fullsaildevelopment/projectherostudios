@@ -1743,7 +1743,7 @@ unsigned int CreateSpacePirate(TWorld * ptWorld, XMMATRIX SpawnPosition)
 		14,7,5,14,15,7
 	};
 	XMVECTOR AIGravity;
-	AIGravity.m128_f32[1] = -0.000001;
+	AIGravity.m128_f32[1] = -0.0001;
 	AIGravity.m128_f32[0] = 0;
 	AIGravity.m128_f32[2] = 0;
 	AIGravity.m128_f32[3] = 0;

@@ -25,13 +25,13 @@ void CAuger::Start()
 	
 	
 	InitializeSystems();
-	
+	CURSOR;
 }
 
 void CAuger::InitializeSystems()
 {
 	//pcGameMangerSystem->LoadLevel();
-	CurrentSpotInGame = -3;
+	CurrentSpotInGame = 12;
 	//pcGraphicsSystem->InitD3D(cApplicationWindow);
 	
 	//createDebugGrid(&tThisWorld);
@@ -71,7 +71,17 @@ void CAuger::Update(bool* loopgame)
 //	UpdateWindow(window2);
 	//createDummyPlayer(&tThisWorld, m_d3dPlayerMatrix);
 	//d3d_ResultMatrix = 
+
 	RECT rect = { 0 };
+	UpdateWindow(window2);
+	GetWindowRect(window2, &rect);
+	 
+	POINT points;
+	GetCursorPos(&points);
+//	float x = CURSOR.x;
+	cout << 'x' <<points.x << endl;
+	cout << 'y'<< points.y << endl;
+
 	switch (CurrentSpotInGame)
 	{ 
 	case -3:
@@ -150,11 +160,11 @@ void CAuger::Update(bool* loopgame)
 		CurrentSpotInGame = pcGameMangerSystem->LoadOptionsMenu();
 	}
 		break;
-	case 11: 
+	case 12: 
 		pcGameMangerSystem->LoadLevelWithMapInIt();
-		CurrentSpotInGame = 12;
+		CurrentSpotInGame = 13;
 		break;
-	case 12:
+	case 13:
 		CurrentSpotInGame = pcGameMangerSystem->RealLevelUpdate();
 		break;
 	
