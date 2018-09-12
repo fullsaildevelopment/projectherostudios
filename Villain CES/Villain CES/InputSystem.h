@@ -72,7 +72,7 @@ public:
 	float ZoomSight(float fFov);
 	void MouseBoundryCheck(float _x, float _y, float &_outX,float &_outY);
 	void SendHWNDToInputSystem(HWND in_WindowHandle);
-	void 
+	
 
 			/*
 		Seth Specific Functions

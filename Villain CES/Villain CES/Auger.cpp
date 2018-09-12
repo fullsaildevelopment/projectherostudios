@@ -141,20 +141,10 @@ void CAuger::Update(bool* loopgame)
 	case 14:
 		CurrentSpotInGame = pcGameMangerSystem->RealLevelUpdate();
 		break;
-	
-
-	case 14:
+	case 15:
 		pcGameMangerSystem->LoadPathFindingTest();
 		CurrentSpotInGame = 6;
 		break;
-	case 15:
-		CurrentSpotInGame = pcGameMangerSystem->LoadTitleScreen();
-		break;
-
-	case 16:
-		pcGameMangerSystem->InitializeTitleScreen();
-		CurrentSpotInGame = 15;
-		break; 
 	default:
 		break;
 	}

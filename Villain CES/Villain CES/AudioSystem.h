@@ -10,7 +10,7 @@
 #include"AK/MusicEngine/Common/AkMusicEngine.h"
 #include"AK/SoundEngine/Common/AkSoundEngine.h"
 #include"AK/SpatialAudio/Common/AkSpatialAudio.h"
-//#include"AK/Tools/Win32/AkPlatformFuncs.h"
+#include"AK/Tools/Win32/AkPlatformFuncs.h"
 #include"GeneratedSoundBanks/Wwise_IDs.h"
 //File Package
 #include"Win32/AkDefaultIOHookBlocking.h"
