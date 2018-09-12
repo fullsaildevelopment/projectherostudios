@@ -72,6 +72,7 @@ public:
 	float ZoomSight(float fFov);
 	void MouseBoundryCheck(float _x, float _y, float &_outX,float &_outY);
 	void SendHWNDToInputSystem(HWND in_WindowHandle);
+	void 
 
 			/*
 		Seth Specific Functions
@@ -99,6 +100,8 @@ private:
 	float				m_fMouseRotationSpeed;
 	float				m_fMouseMovementSpeed;
 	float				m_fDistance;
+	XMVECTOR m_PlayerForwardV;
+	XMVECTOR m_CameraInitV;
     float m_YRotationLimit;
 	HWND m_GameWindow;
 	RECT m_windowBounds;

@@ -103,7 +103,7 @@ void CAuger::Update(bool* loopgame)
 		CurrentSpotInGame = pcGameMangerSystem->InGameUpdate();
 
 		
-		if (!pcGameMangerSystem->GamePaused && !pcGameMangerSystem->GameOver && pcGameMangerSystem->GetWalkCameraState() == false)
+		if (!pcGameMangerSystem->GamePaused && !pcGameMangerSystem->GameOver)
 		{
 			GetWindowRect(window2, &rect);
 			//SetCursorPos((rect.right / 2.0f) + 20, (rect.bottom / 2.0f) + 64);

@@ -611,7 +611,7 @@ void CInputSystem::MouseBoundryCheck(float _x, float _y, float &_outX, float &_o
 
 
 
-	//Window Dimensions 1424 x 720 
+	//Window Dimensions 1440 x 759 
 	float restrictedX = _x, restrictedY = _y;
 	//MaX & Min X window check
 	if (restrictedX >= 1400.0f || restrictedX <= 15.0f)
