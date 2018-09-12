@@ -4591,39 +4591,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	GunIndexForPlayer = CreateGun(&tThisWorld, m_d3dWorldMatrix, PlayerStartIndex, -1, 1, 10.5, 3, 100);
 	tThisWorld.atClip[GunIndexForPlayer].bulletSpeed = 0.001;
 
-	/*XMMATRIX ground = m_d3dPlayerMatrix;
-	ground.r[3].m128_f32[1] -= 0.4;
-	CreateGround(&tThisWorld, ground);
-	XMMATRIX stoneObstocale = ground;
-	stoneObstocale.r[3].m128_f32[1] += 1;
-	stoneObstocale.r[3].m128_f32[2] += -91;
-
-	CreateStoneObstacle(&tThisWorld, stoneObstocale);
-	pcAiSystem->LookAtObject(stoneObstocale, &m_d3dPlayerMatrix);
-	m_d3dPlayerMatrix.r[3] = stoneObstocale.r[3];
-	XMMATRIX cylinder = stoneObstocale;
-	cylinder.r[3].m128_f32[2]
-	CreateCylinder(&tThisWorld, cylinder);
-	stoneObstocale.r[3].m128_f32[0] += 6.7;
-	stoneObstocale.r[3].m128_f32[2] += 14.4;
-	CreateStoneObstacleHorizontal(&tThisWorld, stoneObstocale);
-	stoneObstocale.r[3].m128_f32[0] -= 16;
-	CreateStoneObstacleHorizontal(&tThisWorld, stoneObstocale);
-
-	XMMATRIX wall=ground;
-	CreateWall(&tThisWorld, wall);
-	wall.r[3].m128_f32[0] += 3.2;
-	wall.r[3].m128_f32[2] += -28;
-		
-	CreateWall(&tThisWorld, wall);
-	wall.r[3].m128_f32[2] += -7.1;
-
-	CreateWall(&tThisWorld, wall);
-
-	wall = ground;
-	wall.r[3].m128_f32[0] -= 11;
-	CreateWall(&tThisWorld, wall);*/
-	//CreateStairCase(&tThisWorld, m_d3dPlayerMatrix);
+	
 
 	for (int nCurrentEntity = 0; nCurrentEntity < ENTITYCOUNT; nCurrentEntity++)
 	{
