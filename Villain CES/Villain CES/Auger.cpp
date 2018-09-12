@@ -106,6 +106,7 @@ void CAuger::Update(bool* loopgame)
 			GetWindowRect(window2, &rect);
 			SetCursorPos(((rect.right - rect.left) / 2.0f) + rect.left, ((rect.bottom - rect.top) / 2.0f) + rect.top);
 		}
+
 		break;
 	case 6 :
 		CurrentSpotInGame=pcGameMangerSystem->PathFindingExample();

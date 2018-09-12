@@ -46,6 +46,7 @@ struct TLabel
 	bool addText = false;
 	bool addTexture = false;
 	bool lastUIElement = false;
+	int vIndex = -1, iIndex = -1;
 };
 
 struct TButton
