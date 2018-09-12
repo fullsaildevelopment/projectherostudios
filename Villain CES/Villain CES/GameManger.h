@@ -38,6 +38,8 @@ public:
 	int MikesGraphicsSandbox();
 	bool GameOver = false;
 	bool GamePaused = false;
+	void LoadLevelWithMapInIt();
+	int RealLevelUpdate();
 
 	//ZB-Helper Methods
 	bool GetWalkCameraState();

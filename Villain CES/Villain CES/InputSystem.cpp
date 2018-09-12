@@ -2,8 +2,9 @@
 #include<string>
 CInputSystem::CInputSystem()
 {
-	m_fMouseRotationSpeed = .03f;//Frame Dependent
+	m_fMouseRotationSpeed = .003f;//Frame Dependent
 	m_fMouseMovementSpeed = .1f;//Frame Dependent
+	m_YRotationLimit = 0;
 }
 
 
@@ -421,9 +422,22 @@ XMMATRIX CInputSystem::WalkCameraControls(XMVECTOR U, XMMATRIX viewM, bool &_mov
 	XMVECTOR d3d_newX, d3d_newY, d3d_existingZ;
 	XMMATRIX d3dTmpViewM, d3dRotation;
 	float fXchange = 0, fYchange = 0, fXEnd = 0, fYEnd = 0;
+	// gets mouse's position to check if it is within the Game Window
 	m_pcMyInput->GetMousePosition(fXEnd, fYEnd);
 
 	d3dTmpViewM = viewM;
+
+	if (InputCheck(G_KEY_K) == 1)
+	{
+		std::string stTimeDisplay;
+		stTimeDisplay = "X Coord: ";
+		stTimeDisplay += std::to_string(fXEnd);
+		cout << stTimeDisplay << endl;
+
+		stTimeDisplay = "Y Coord: ";
+		stTimeDisplay += std::to_string(fYEnd);
+		cout << stTimeDisplay << endl;
+	}
 
 	MouseBoundryCheck(fXEnd, fYEnd, fXchange, fYchange);
 
@@ -433,13 +447,23 @@ XMMATRIX CInputSystem::WalkCameraControls(XMVECTOR U, XMMATRIX viewM, bool &_mov
 	}
 
 
-	if (fXchange > 1.0f || fYchange > 1.0f || fXchange < -1.0f || fYchange < -1.0f)
+	if (fXchange > 3.0f || fYchange > 3.0f || fXchange < -3.0f || fYchange < -3.0f )
 	{
 		_movement = true;
-		d3dRotation = XMMatrixRotationY(fXchange * m_fMouseRotationSpeed);
+	
+		if (fYchange > 3.0f || fYchange < -3.0f)
+		{
+			d3dRotation = XMMatrixRotationRollPitchYaw(XMConvertToRadians(fYchange + m_fMouseRotationSpeed), XMConvertToRadians(0.0f), XMConvertToRadians(0));//XMMatrixRotationY(fXchange * m_fMouseRotationSpeed);
 
-		d3dTmpViewM = XMMatrixMultiply(d3dTmpViewM, d3dRotation);
+			d3dTmpViewM = XMMatrixMultiply(d3dTmpViewM, d3dRotation);
+		}
+		
+		if (fXchange > 3.0f || fXchange < -3.0f)
+		{
+			d3dRotation = XMMatrixRotationRollPitchYaw(XMConvertToRadians(0), XMConvertToRadians(fXchange + m_fMouseRotationSpeed), XMConvertToRadians(0));//XMMatrixRotationY(fXchange * m_fMouseRotationSpeed);
 
+			d3dTmpViewM = XMMatrixMultiply(d3dTmpViewM, d3dRotation);
+		}
 		d3d_existingZ = d3dTmpViewM.r[2];
 		d3d_newX = XMVector3Cross(XMVectorSet(0, 1, 0, 0), d3d_existingZ);
 		d3d_newY = XMVector3Cross(d3d_existingZ, d3d_newX);
@@ -452,9 +476,11 @@ XMMATRIX CInputSystem::WalkCameraControls(XMVECTOR U, XMMATRIX viewM, bool &_mov
 		d3dTmpViewM.r[0] = d3d_newX;
 		d3dTmpViewM.r[1] = d3d_newY;
 		d3dTmpViewM.r[2] = d3d_existingZ;
-
-		d3dRotation = XMMatrixRotationX(fYchange * m_fMouseRotationSpeed);
-
+		
+		
+			
+	   /* d3dRotation = XMMatrixRotationX(fYchange * m_fMouseRotationSpeed);
+	
 		d3dTmpViewM = XMMatrixMultiply(d3dTmpViewM, d3dRotation);
 
 
@@ -469,7 +495,7 @@ XMMATRIX CInputSystem::WalkCameraControls(XMVECTOR U, XMMATRIX viewM, bool &_mov
 
 		d3dTmpViewM.r[0] = d3d_newX;
 		d3dTmpViewM.r[1] = d3d_newY;
-		d3dTmpViewM.r[2] = d3d_existingZ;
+		d3dTmpViewM.r[2] = d3d_existingZ;*/
 	}
 	else
 	{
@@ -572,24 +598,68 @@ XMMATRIX CInputSystem::MyTurnTo(XMMATRIX M, XMVECTOR T, float s, XMMATRIX world)
 }
 void CInputSystem::MouseBoundryCheck(float _x, float _y, float &_outX, float &_outY)
 {
+	RECT tmp_WindowPos;
+	POINT mouseCurrPos;
+	UpdateWindow(m_GameWindow);
+	GetWindowRect(m_GameWindow, &tmp_WindowPos);
+	//GetRect()
+	//Update window rect 
+	// using POINT variable try and check the mouse pos with GetCursorPos
+	
+	// use these to set cursor pos no matter where the window handle is on the screen
+
+
+
 	//Window Dimensions 1424 x 720 
 	float restrictedX = _x, restrictedY = _y;
 	//MaX & Min X window check
-	if (restrictedX >= 1410.0f || restrictedX <= 6.0f)
+	if (restrictedX >= 1400.0f || restrictedX <= 15.0f)
 	{
 		restrictedX -= 712.0f;
 		_outX = restrictedX * m_fMouseRotationSpeed;
+		GetCursorPos(&mouseCurrPos);
+		if (restrictedX >= 1400.0f)
+		{
+			SetCursorPos(tmp_WindowPos.left - 5, restrictedY);
+		}
+		else if ( restrictedX <= 15.0f)
+		{
+			SetCursorPos(tmp_WindowPos.left + 5, restrictedY);
+		}
+		
+
+		//SetCursorPos(15, _outY);
+		
 	}
 	
 	//Max & Min Y window check
-	if (restrictedY >= 700.0f || restrictedY <= 5.0f)
-	{
-		restrictedY -= 360;
-		_outY = restrictedY * m_fMouseRotationSpeed;
-	}
+	//if (m_YRotationLimit <= 90.0f && m_YRotationLimit >= -90.0f)
+	//{
+		if (restrictedY >= 680.0f || restrictedY <= 10.0f)
+		{
+			restrictedY -= 360;
+			_outY = restrictedY * m_fMouseRotationSpeed;
+			//SetCursorPos(_outX, 700);
+		/*	if (restrictedY > 360)
+			{
+				m_YRotationLimit++;
+				m_YRotationLimit * 
+			}
+			else
+			{
+				m_YRotationLimit--;
+			}*/
+		}
+	//}
 	
 	
+	
 
 
 
+}
+
+void CInputSystem::SendHWNDToInputSystem(HWND in_WindowHandle)
+{
+	m_GameWindow = in_WindowHandle;
 }

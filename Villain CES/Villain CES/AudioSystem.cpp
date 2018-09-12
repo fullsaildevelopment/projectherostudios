@@ -100,6 +100,7 @@ void CAudioSystem::TermSoundEngine()
 	m_LowIOHook = NULL;
 	if (AK::IAkStreamMgr::Get())
 	{
+		// main problem here is it crashes on exit with a unknown memory leak
 		AK::IAkStreamMgr::Get()->Destroy();
 	}
 

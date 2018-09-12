@@ -23,6 +23,7 @@
 
 #define INIT_BNK L"Init.bnk"
 #define FOOTSTEP_BNK L"Bus3d_Demo.bnk"
+//#define AK_OPTIMIZED
 //#ifndef AK_OPTIMIZED
 //// Only needed for debug mode
 //#include <AK/Comm/AkCommunication.h>
@@ -86,7 +87,7 @@ public:
 private:
 	CAkFilePackageLowLevelIOBlocking * m_LowIOHook;
 };
-
+// C:\Program Files %28x86%29\Audiokinetic\Wwise 2018.1.0.6714\SDK\x64_vc150\Debug\lib
 
 
 

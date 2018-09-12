@@ -31,7 +31,7 @@ void CAuger::Start()
 void CAuger::InitializeSystems()
 {
 	//pcGameMangerSystem->LoadLevel();
-	CurrentSpotInGame = 14;
+	CurrentSpotInGame = 16;
 	//pcGraphicsSystem->InitD3D(cApplicationWindow);
 	
 	//createDebugGrid(&tThisWorld);
@@ -68,12 +68,13 @@ void CAuger::Update(bool* loopgame)
 	//Call some sort of function from the graphics system to create this matrix
 	 //   tCameraMode = pcInputSystem->CameraModeListen(tCameraMode);
 		
-	
+//	UpdateWindow(window2);
 	//createDummyPlayer(&tThisWorld, m_d3dPlayerMatrix);
 	//d3d_ResultMatrix = 
 	RECT rect = { 0 };
 	switch (CurrentSpotInGame)
 	{ 
+	
 	/*case -3:
 		pcGameMangerSystem->InitializeMainMenu();
 		CurrentSpotInGame = 0;
@@ -86,6 +87,7 @@ void CAuger::Update(bool* loopgame)
 	case -1:
 		pcGameMangerSystem->InitializeTitleScreen();
 		CurrentSpotInGame = -2;
+		
 		break;*/
 		
 		// main menu
@@ -100,15 +102,20 @@ void CAuger::Update(bool* loopgame)
 	case 2:
 		CurrentSpotInGame = pcGameMangerSystem->InGameUpdate();
 
+		
 		if (!pcGameMangerSystem->GamePaused && !pcGameMangerSystem->GameOver && pcGameMangerSystem->GetWalkCameraState() == false)
 		{
 			GetWindowRect(window2, &rect);
-			SetCursorPos((rect.right / 2.0f) + 20, (rect.bottom / 2.0f) + 64);
+			//SetCursorPos((rect.right / 2.0f) + 20, (rect.bottom / 2.0f) + 64);
+			// sets mouse cursor to middle of screen ZB
+			SetCursorPos(((rect.right - rect.left) / 2.0f) + rect.left, ((rect.bottom - rect.top) / 2.0f) + rect.top);
+
 		}
 
 		break;
 	case 3:
 		CurrentSpotInGame = 2;
+		
 		break;
 	case 4:
 		*loopgame = false;
@@ -133,6 +140,9 @@ void CAuger::Update(bool* loopgame)
 		GetWindowRect(window2, &rect);
 		SetCursorPos((rect.right / 2.0) + 20, (rect.bottom / 2.0) + 65);
 		
+			GetWindowRect(window2, &rect);
+			SetCursorPos((rect.right / 2.0)-40, (rect.bottom / 2.0) + rect.top);
+		
 		break;
 	case 9:
 		pcGameMangerSystem->LoadMikesGraphicsSandbox();
@@ -149,14 +159,21 @@ void CAuger::Update(bool* loopgame)
 		pcGameMangerSystem->InitializeMainMenu();
 		CurrentSpotInGame = 0;
 		break;
-
-	case 13:
+	case 13: 
+		pcGameMangerSystem->LoadLevelWithMapInIt();
+		CurrentSpotInGame = 14;
+		break;
+	case 14:
+		CurrentSpotInGame = pcGameMangerSystem->RealLevelUpdate();
+		break;
+	
+	case 15:
 		CurrentSpotInGame = pcGameMangerSystem->LoadTitleScreen();
 		break;
 
-	case 14:
+	case 16:
 		pcGameMangerSystem->InitializeTitleScreen();
-		CurrentSpotInGame = 13;
+		CurrentSpotInGame = 15;
 		break; 
 	default:
 		break;
