@@ -11,7 +11,7 @@
 #include"AK/SoundEngine/Common/AkSoundEngine.h"
 #include"AK/SpatialAudio/Common/AkSpatialAudio.h"
 #include"AK/Tools/Win32/AkPlatformFuncs.h"
-#include"GeneratedSoundBanks/Wwise_IDs.h"
+#include"WwiseSounds/Wwise_IDs.h"
 //File Package
 #include"Win32/AkDefaultIOHookBlocking.h"
 #include"Common/AkFilePackageLowLevelIO.h"

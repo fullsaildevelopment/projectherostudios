@@ -1679,7 +1679,7 @@ int CGameMangerSystem::LoadTitleScreen()
 void CGameMangerSystem::InitializeTitleScreen()
 {
 	pcAudioSystem->IntiializeSystem(ErrorResult);
-	pcAudioSystem->SetBanksFolderPath(AKTEXT("../Villain CES/GeneratedSoundBanks/Windows"));
+	pcAudioSystem->SetBanksFolderPath(AKTEXT("../Villain CES/WwiseSounds/Windows"));
 	pcAudioSystem->RegisterGameObj(Listener);
 	pcAudioSystem->RegisterGameObj(footSteps);
 	pcAudioSystem->LoadBankFile(INIT_BNK, init_bnkID,ErrorResult);
