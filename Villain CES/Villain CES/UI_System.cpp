@@ -213,7 +213,7 @@ void CUISystem::AdjustBoundingBox(HWND* cApplicationWindow, TWorld* tThisWorld, 
 	ReleaseDC(*cApplicationWindow, tHDC);
 }
 
-void CUISystem::AddBarToUI(HWND* cApplicationWindow, TWorld* tThisWorld, unsigned int nThisEntity)
+void CUISystem::AddBarToUI(HWND* cApplicationWindow, TWorld* tThisWorld, unsigned int nThisEntity, XMFLOAT4* backgroundColor)
 {
 	RECT window;
 	GetWindowRect(*cApplicationWindow, &window);
@@ -240,6 +240,9 @@ void CUISystem::AddBarToUI(HWND* cApplicationWindow, TWorld* tThisWorld, unsigne
 	ClientToScreen(*cApplicationWindow, &tThisWorld->atBar[nThisEntity].end);
 
 	tThisWorld->atBar[nThisEntity].ratio = 1;
+
+	if (backgroundColor != nullptr)
+		tThisWorld->atBar[nThisEntity].backgroundColor = *backgroundColor;
 
 	tThisWorld->atUIMask[nThisEntity].m_tnUIMask = tThisWorld->atUIMask[nThisEntity].m_tnUIMask | COMPONENT_BAR;
 }
