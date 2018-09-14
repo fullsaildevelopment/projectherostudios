@@ -730,6 +730,11 @@ int CGameMangerSystem::InGameUpdate()
 					if (tThisWorld.atClip[nCurrentEntity].tryToShoot == true && tThisWorld.atClip[nCurrentEntity].nBulletsAvailables.size() > 0 && tThisWorld.atClip[nCurrentEntity].fShootingCoolDown <= 0)
 					{
 
+						/*wchar_t* textBuffer = new wchar_t[1];
+
+						textBuffer[0] = tThisWorld.atClip[nCurrentEntity].nBulletsAvailables.size() - 1;
+
+						pcUISystem->UpdateText(textBuffer, atUIVertices.at(tThisWorld.atLabel[1094].vIndex));*/
 
 						XMVECTOR foward;
 						foward.m128_f32[0] = 0;
@@ -1200,7 +1205,7 @@ int CGameMangerSystem::InGameUpdate()
 								wchar_t textBuffer[] =
 								{ L"SUCCESS" };
 
-								CreateUILabelForText(&tThisWorld, menuCamera->d3d_Position, 2, 1, 0, 4.8, atUIVertices, atUIIndices, textBuffer, ARRAYSIZE(textBuffer), nCurrentEntity, 0.1);
+								CreateUILabelForText(&tThisWorld, menuCamera->d3d_Position, 2, 1, 0, 4.8, &atUIVertices, &atUIIndices, textBuffer, ARRAYSIZE(textBuffer), nCurrentEntity, 0.1);
 
 								pcUISystem->AddTextureToUI(&tThisWorld, nCurrentEntity, pcGraphicsSystem->m_pd3dDevice, nullptr, fontTexture);
 
@@ -1212,7 +1217,7 @@ int CGameMangerSystem::InGameUpdate()
 								wchar_t textBuffer[] =
 								{ L"You Completed The Objective" };
 
-								CreateUILabelForText(&tThisWorld, menuCamera->d3d_Position, 6, 1, 0, 2.4, atUIVertices, atUIIndices, textBuffer, ARRAYSIZE(textBuffer), nCurrentEntity, 0.1);
+								CreateUILabelForText(&tThisWorld, menuCamera->d3d_Position, 6, 1, 0, 2.4, &atUIVertices, &atUIIndices, textBuffer, ARRAYSIZE(textBuffer), nCurrentEntity, 0.1);
 
 								pcUISystem->AddTextureToUI(&tThisWorld, nCurrentEntity, pcGraphicsSystem->m_pd3dDevice, nullptr, fontTexture);
 
@@ -1227,7 +1232,7 @@ int CGameMangerSystem::InGameUpdate()
 								wchar_t textBuffer[] =
 								{ L"DEFEAT" };
 
-								CreateUILabelForText(&tThisWorld, menuCamera->d3d_Position, 2, 1, 0, 4.8, atUIVertices, atUIIndices, textBuffer, ARRAYSIZE(textBuffer), nCurrentEntity, 0.1);
+								CreateUILabelForText(&tThisWorld, menuCamera->d3d_Position, 2, 1, 0, 4.8, &atUIVertices, &atUIIndices, textBuffer, ARRAYSIZE(textBuffer), nCurrentEntity, 0.1);
 
 								pcUISystem->AddTextureToUI(&tThisWorld, nCurrentEntity, pcGraphicsSystem->m_pd3dDevice, nullptr, fontTexture);
 
@@ -1239,7 +1244,7 @@ int CGameMangerSystem::InGameUpdate()
 								wchar_t textBuffer[] =
 								{ L"You Failed To Complete The Objective" };
 
-								CreateUILabelForText(&tThisWorld, menuCamera->d3d_Position, 6, 1, 0, 2.4, atUIVertices, atUIIndices, textBuffer, ARRAYSIZE(textBuffer), nCurrentEntity, 0.1);
+								CreateUILabelForText(&tThisWorld, menuCamera->d3d_Position, 6, 1, 0, 2.4, &atUIVertices, &atUIIndices, textBuffer, ARRAYSIZE(textBuffer), nCurrentEntity, 0.1);
 
 								pcUISystem->AddTextureToUI(&tThisWorld, nCurrentEntity, pcGraphicsSystem->m_pd3dDevice, nullptr, fontTexture);
 
@@ -1287,10 +1292,13 @@ int CGameMangerSystem::InGameUpdate()
 				tUIVertexBuffer.end = -1;
 				tUIVertexBuffer.ratio = -1;
 
-				tUIPixelBuffer.hoverColor = XMFLOAT4(.5, .5, .5, 1);
+				if (tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_SHADERID))
+					tUIPixelBuffer.hoverColor = XMFLOAT4(0, 0, 0, 0);
+				else
+					tUIPixelBuffer.hoverColor = XMFLOAT4(.5, .5, .5, 1);
 
-				if (tThisWorld.atMesh[nCurrentEntity].m_d3dSRVDiffuse != nullptr)
-					tThisWorld.atMesh[nCurrentEntity].m_d3dSRVDiffuse = nullptr;
+				//if (tThisWorld.atMesh[nCurrentEntity].m_d3dSRVDiffuse != nullptr)
+				//	tThisWorld.atMesh[nCurrentEntity].m_d3dSRVDiffuse = nullptr;
 
 				pcGraphicsSystem->InitUIShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tUIVertexBuffer, tUIPixelBuffer, tThisWorld.atMesh[nCurrentEntity], menuCamera->d3d_Position);
 				pcGraphicsSystem->ExecutePipeline(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atMesh[nCurrentEntity].m_nIndexCount, tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask, tThisWorld.atShaderID[nCurrentEntity].m_nShaderID);
@@ -1325,12 +1333,12 @@ int CGameMangerSystem::InGameUpdate()
 			}
 		}
 
-		if (pcInputSystem->InputCheck(G_KEY_Z))
+		if (pcInputSystem->InputCheck(G_KEY_X))
 		{
 			tThisWorld.atAiHeath[901].heath -= 1;
 		}
 
-		if (pcInputSystem->InputCheck(G_KEY_X))
+		if (pcInputSystem->InputCheck(G_KEY_C))
 		{
 			tThisWorld.atAiHeath[905].heath -= 1;
 		}
@@ -1405,7 +1413,7 @@ int CGameMangerSystem::LoadMainMenu()
 					{
 						clickTime = 0;
 
-						if (tThisWorld.atButton[nCurrentEntity].sceneIndex == 4 || tThisWorld.atButton[nCurrentEntity].sceneIndex == 7 || tThisWorld.atButton[nCurrentEntity].sceneIndex == 9 || tThisWorld.atButton[nCurrentEntity].sceneIndex == 11)
+						if (tThisWorld.atButton[nCurrentEntity].sceneIndex < 96)
 						{
 							atUIVertices.clear();
 							atUIIndices.clear();
@@ -1556,17 +1564,17 @@ void CGameMangerSystem::InitializeMainMenu()
 		wchar_t wideChar[] =
 		{ L"UI_Textures.fbm/Auger_MainMenu.png" };
 
-		nThisEntity = CreateUILabel(&tThisWorld, menuCamera->d3d_Position, 20, 20, 0, 0, atUIVertices, -1, .2);
+		nThisEntity = CreateUILabel(&tThisWorld, menuCamera->d3d_Position, 20, 20, 0, 0, &atUIVertices, -1, .2);
 		pcUISystem->AddTextureToUI(&tThisWorld, nThisEntity, pcGraphicsSystem->m_pd3dDevice, wideChar);
 	}
 	{
 		wchar_t wideChar[] =
 		{ L"UI_Textures.fbm/play.png" };
 
-		nThisEntity = CreateUILabel(&tThisWorld, menuCamera->d3d_Position, 2, 1, .5, 0, atUIVertices, -1, .1);
+		nThisEntity = CreateUILabel(&tThisWorld, menuCamera->d3d_Position, 2, 1, .5, 0, &atUIVertices, -1, .1);
 		pcUISystem->AddTextureToUI(&tThisWorld, nThisEntity, pcGraphicsSystem->m_pd3dDevice, wideChar);
 		//                                                  modify this to switch testing levels in Augur.cpp
-		pcUISystem->AddButtonToUI(&cApplicationWindow, &tThisWorld, nThisEntity, 4, true);
+		pcUISystem->AddButtonToUI(&cApplicationWindow, &tThisWorld, nThisEntity, 13, true);
 
 #if MIKES_SANDBOX_ON
 		pcUISystem->AddButtonToUI(&cApplicationWindow, &tThisWorld, nThisEntity, 9, true);
@@ -1577,7 +1585,7 @@ void CGameMangerSystem::InitializeMainMenu()
 
 #endif
 #if MAIN_LEVEL_ON
-		pcUISystem->AddButtonToUI(&cApplicationWindow, &tThisWorld, nThisEntity, 11, true);
+		pcUISystem->AddButtonToUI(&cApplicationWindow, &tThisWorld, nThisEntity, 13, true);
 
 #endif
 	}
@@ -1585,7 +1593,7 @@ void CGameMangerSystem::InitializeMainMenu()
 		wchar_t wideChar[] =
 		{ L"UI_Textures.fbm/options.png" };
 
-		nThisEntity = CreateUILabel(&tThisWorld, menuCamera->d3d_Position, 2, 1, .5, -2.4, atUIVertices, -1, .1);
+		nThisEntity = CreateUILabel(&tThisWorld, menuCamera->d3d_Position, 2, 1, .5, -2.4, &atUIVertices, -1, .1);
 		pcUISystem->AddTextureToUI(&tThisWorld, nThisEntity, pcGraphicsSystem->m_pd3dDevice, wideChar);
 		pcUISystem->AddButtonToUI(&cApplicationWindow, &tThisWorld, nThisEntity, 98, true);
 	}
@@ -1593,7 +1601,7 @@ void CGameMangerSystem::InitializeMainMenu()
 		wchar_t wideChar[] =
 		{ L"UI_Textures.fbm/credits.png" }; 
 	
-		nThisEntity = CreateUILabel(&tThisWorld, menuCamera->d3d_Position, 2, 1, .5, -3.6, atUIVertices, -1, .1);
+		nThisEntity = CreateUILabel(&tThisWorld, menuCamera->d3d_Position, 2, 1, .5, -3.6, &atUIVertices, -1, .1);
 		pcUISystem->AddTextureToUI(&tThisWorld, nThisEntity, pcGraphicsSystem->m_pd3dDevice, wideChar);
 		pcUISystem->AddButtonToUI(&cApplicationWindow, &tThisWorld, nThisEntity, 99, true);
 	}
@@ -1693,7 +1701,7 @@ void CGameMangerSystem::InitializeTitleScreen()
 	wchar_t wideChar[] =
 	{ L"UI_Textures.fbm/Auger_TitleScreen.png" };
 	
-	unsigned int nThisEntity = CreateUILabel(&tThisWorld, menuCamera->d3d_Position, 20, 20, 0, 0, atUIVertices);
+	unsigned int nThisEntity = CreateUILabel(&tThisWorld, menuCamera->d3d_Position, 20, 20, 0, 0, &atUIVertices);
 	m_RealTimeFov = 90.0f;
 
 	pcUISystem->AddTextureToUI(&tThisWorld, nThisEntity, pcGraphicsSystem->m_pd3dDevice, wideChar);
@@ -1704,9 +1712,6 @@ void CGameMangerSystem::InitializeTitleScreen()
 
 void CGameMangerSystem::InitializePauseScreen()
 {
-	atUIVertices.clear();
-	atUIIndices.clear();
-
 	unsigned int nThisEntity;
 
 	{
@@ -1714,7 +1719,7 @@ void CGameMangerSystem::InitializePauseScreen()
 		{ L"../UI_Textures.fbm/transparentSquare.png" };
 
 		nThisEntity = createEntityReverse(&tThisWorld);
-		CreateUILabel(&tThisWorld, menuCamera->d3d_Position, 20, 20, 0, 0, atUIVertices, nThisEntity);
+		CreateUILabel(&tThisWorld, menuCamera->d3d_Position, 20, 20, 0, 0, &atUIVertices, nThisEntity);
 		pcUISystem->AddTextureToUI(&tThisWorld, nThisEntity, pcGraphicsSystem->m_pd3dDevice, filePath);
 
 		pcUISystem->AddMaskToUI(&tThisWorld, nThisEntity, COMPONENT_PAUSESCREEN);
@@ -1727,7 +1732,7 @@ void CGameMangerSystem::InitializePauseScreen()
 		{ L"CONTINUE" };
 
 		nThisEntity = createEntityReverse(&tThisWorld);
-		CreateUILabelForText(&tThisWorld, menuCamera->d3d_Position, 2, 1, 0, 4.8, atUIVertices, atUIIndices, textBuffer, ARRAYSIZE(textBuffer), nThisEntity, .1);
+		CreateUILabelForText(&tThisWorld, menuCamera->d3d_Position, 2, 1, 0, 4.8, &atUIVertices, &atUIIndices, textBuffer, ARRAYSIZE(textBuffer), nThisEntity, .1);
 		pcUISystem->AddTextureToUI(&tThisWorld, nThisEntity, pcGraphicsSystem->m_pd3dDevice, nullptr, fontTexture);
 		pcUISystem->AddButtonToUI(&cApplicationWindow, &tThisWorld, nThisEntity, 5, true);
 
@@ -1739,7 +1744,7 @@ void CGameMangerSystem::InitializePauseScreen()
 		{ L"SAVE" };
 
 		nThisEntity = createEntityReverse(&tThisWorld);
-		CreateUILabelForText(&tThisWorld, menuCamera->d3d_Position, 1, 1, 0, 3.6, atUIVertices, atUIIndices, textBuffer, ARRAYSIZE(textBuffer), nThisEntity, .1);
+		CreateUILabelForText(&tThisWorld, menuCamera->d3d_Position, 1, 1, 0, 3.6, &atUIVertices, &atUIIndices, textBuffer, ARRAYSIZE(textBuffer), nThisEntity, .1);
 		pcUISystem->AddTextureToUI(&tThisWorld, nThisEntity, pcGraphicsSystem->m_pd3dDevice, nullptr, fontTexture);
 		pcUISystem->AddButtonToUI(&cApplicationWindow, &tThisWorld, nThisEntity, 96, true);
 
@@ -1751,7 +1756,7 @@ void CGameMangerSystem::InitializePauseScreen()
 		{ L"LOAD" };
 
 		nThisEntity = createEntityReverse(&tThisWorld);
-		CreateUILabelForText(&tThisWorld, menuCamera->d3d_Position, 1, 1, 0, 2.4, atUIVertices, atUIIndices, textBuffer, ARRAYSIZE(textBuffer), nThisEntity, .1);
+		CreateUILabelForText(&tThisWorld, menuCamera->d3d_Position, 1, 1, 0, 2.4, &atUIVertices, &atUIIndices, textBuffer, ARRAYSIZE(textBuffer), nThisEntity, .1);
 		pcUISystem->AddTextureToUI(&tThisWorld, nThisEntity, pcGraphicsSystem->m_pd3dDevice, nullptr, fontTexture);
 		pcUISystem->AddButtonToUI(&cApplicationWindow, &tThisWorld, nThisEntity, 97, true);
 
@@ -1763,7 +1768,7 @@ void CGameMangerSystem::InitializePauseScreen()
 		{ L"OPTIONS" };
 
 		nThisEntity = createEntityReverse(&tThisWorld);
-		CreateUILabelForText(&tThisWorld, menuCamera->d3d_Position, 2, 1, 0, 1.2, atUIVertices, atUIIndices, textBuffer, ARRAYSIZE(textBuffer), nThisEntity, .1);
+		CreateUILabelForText(&tThisWorld, menuCamera->d3d_Position, 2, 1, 0, 1.2, &atUIVertices, &atUIIndices, textBuffer, ARRAYSIZE(textBuffer), nThisEntity, .1);
 		pcUISystem->AddTextureToUI(&tThisWorld, nThisEntity, pcGraphicsSystem->m_pd3dDevice, nullptr, fontTexture);
 		pcUISystem->AddButtonToUI(&cApplicationWindow, &tThisWorld, nThisEntity, 98, true);
 
@@ -1775,7 +1780,7 @@ void CGameMangerSystem::InitializePauseScreen()
 		{ L"EXIT" };
 
 		nThisEntity = createEntityReverse(&tThisWorld);
-		CreateUILabelForText(&tThisWorld, menuCamera->d3d_Position, 1, 1, 0, 0, atUIVertices, atUIIndices, textBuffer, ARRAYSIZE(textBuffer), nThisEntity, .1);
+		CreateUILabelForText(&tThisWorld, menuCamera->d3d_Position, 1, 1, 0, 0, &atUIVertices, &atUIIndices, textBuffer, ARRAYSIZE(textBuffer), nThisEntity, .1);
 		pcUISystem->AddTextureToUI(&tThisWorld, nThisEntity, pcGraphicsSystem->m_pd3dDevice, nullptr, fontTexture);
 		pcUISystem->AddButtonToUI(&cApplicationWindow, &tThisWorld, nThisEntity, 2, true);
 
@@ -1787,7 +1792,7 @@ void CGameMangerSystem::InitializePauseScreen()
 		{ L"SUBTITLES:" };
 
 		nThisEntity = createEntityReverse(&tThisWorld);
-		CreateUILabelForText(&tThisWorld, menuCamera->d3d_Position, 2.05, .8, -1.545, 6.1, atUIVertices, atUIIndices, textBuffer, ARRAYSIZE(textBuffer), nThisEntity, .1);
+		CreateUILabelForText(&tThisWorld, menuCamera->d3d_Position, 2.05, .8, -1.545, 6.1, &atUIVertices, &atUIIndices, textBuffer, ARRAYSIZE(textBuffer), nThisEntity, .1);
 		pcUISystem->AddTextureToUI(&tThisWorld, nThisEntity, pcGraphicsSystem->m_pd3dDevice, nullptr, fontTexture);
 		pcUISystem->AddButtonToUI(&cApplicationWindow, &tThisWorld, nThisEntity, 0, false);
 
@@ -1799,7 +1804,7 @@ void CGameMangerSystem::InitializePauseScreen()
 		{ L"MASTER VOLUME:" };
 
 		nThisEntity = createEntityReverse(&tThisWorld);
-		CreateUILabelForText(&tThisWorld, menuCamera->d3d_Position, 3, .8, -2.001, 4.9, atUIVertices, atUIIndices, textBuffer, ARRAYSIZE(textBuffer), nThisEntity, .1);
+		CreateUILabelForText(&tThisWorld, menuCamera->d3d_Position, 3, .8, -2.001, 4.9, &atUIVertices, &atUIIndices, textBuffer, ARRAYSIZE(textBuffer), nThisEntity, .1);
 		pcUISystem->AddTextureToUI(&tThisWorld, nThisEntity, pcGraphicsSystem->m_pd3dDevice, nullptr, fontTexture);
 		pcUISystem->AddButtonToUI(&cApplicationWindow, &tThisWorld, nThisEntity, 0, false);
 
@@ -1809,7 +1814,7 @@ void CGameMangerSystem::InitializePauseScreen()
 	{
 		int tempTextColor[3] = { 200, 0, 0 };
 
-		nThisEntity = CreateUILabel(&tThisWorld, menuCamera->d3d_Position, 2, .5, .5, 4.8, atUIVertices);
+		nThisEntity = CreateUILabel(&tThisWorld, menuCamera->d3d_Position, 2, .5, .5, 4.8, &atUIVertices);
 		pcUISystem->AddBarToUI(&cApplicationWindow, &tThisWorld, nThisEntity);
 
 		pcUISystem->AddMaskToUI(&tThisWorld, nThisEntity, COMPONENT_OPTIONS);
@@ -1818,7 +1823,7 @@ void CGameMangerSystem::InitializePauseScreen()
 	{
 		int tempTextColor[3] = { 200, 0, 0 };
 
-		nThisEntity = CreateUILabel(&tThisWorld, menuCamera->d3d_Position, 2, .5, .5, 4.8, atUIVertices);
+		nThisEntity = CreateUILabel(&tThisWorld, menuCamera->d3d_Position, 2, .5, .5, 4.8, &atUIVertices);
 		pcUISystem->AddBarToUI(&cApplicationWindow, &tThisWorld, nThisEntity);
 
 		pcUISystem->AddMaskToUI(&tThisWorld, nThisEntity, COMPONENT_OPTIONS);
@@ -1830,7 +1835,7 @@ void CGameMangerSystem::InitializePauseScreen()
 		{ L"DIALOGUE VOLUME:" };
 
 		nThisEntity = createEntityReverse(&tThisWorld);
-		CreateUILabelForText(&tThisWorld, menuCamera->d3d_Position, 3.4, .8, -2.22, 3.7, atUIVertices, atUIIndices, textBuffer, ARRAYSIZE(textBuffer), nThisEntity, .1);
+		CreateUILabelForText(&tThisWorld, menuCamera->d3d_Position, 3.4, .8, -2.22, 3.7, &atUIVertices, &atUIIndices, textBuffer, ARRAYSIZE(textBuffer), nThisEntity, .1);
 		pcUISystem->AddTextureToUI(&tThisWorld, nThisEntity, pcGraphicsSystem->m_pd3dDevice, nullptr, fontTexture);
 		pcUISystem->AddButtonToUI(&cApplicationWindow, &tThisWorld, nThisEntity, 0, false);
 
@@ -1840,7 +1845,7 @@ void CGameMangerSystem::InitializePauseScreen()
 	{
 		int tempTextColor[3] = { 200, 0, 0 };
 
-		nThisEntity = CreateUILabel(&tThisWorld, menuCamera->d3d_Position, 2, .5, .5, 3.6, atUIVertices);
+		nThisEntity = CreateUILabel(&tThisWorld, menuCamera->d3d_Position, 2, .5, .5, 3.6, &atUIVertices);
 		pcUISystem->AddBarToUI(&cApplicationWindow, &tThisWorld, nThisEntity);
 
 		pcUISystem->AddMaskToUI(&tThisWorld, nThisEntity, COMPONENT_OPTIONS);
@@ -1849,7 +1854,7 @@ void CGameMangerSystem::InitializePauseScreen()
 	{
 		int tempTextColor[3] = { 200, 0, 0 };
 
-		nThisEntity = CreateUILabel(&tThisWorld, menuCamera->d3d_Position, 2, .5, .5, 3.6, atUIVertices);
+		nThisEntity = CreateUILabel(&tThisWorld, menuCamera->d3d_Position, 2, .5, .5, 3.6, &atUIVertices);
 		pcUISystem->AddBarToUI(&cApplicationWindow, &tThisWorld, nThisEntity);
 
 		pcUISystem->AddMaskToUI(&tThisWorld, nThisEntity, COMPONENT_OPTIONS);
@@ -1861,7 +1866,7 @@ void CGameMangerSystem::InitializePauseScreen()
 		{ L"MUSIC VOLUME:" };
 
 		nThisEntity = createEntityReverse(&tThisWorld);
-		CreateUILabelForText(&tThisWorld, menuCamera->d3d_Position, 2.8, .8, -1.915, 2.5, atUIVertices, atUIIndices, textBuffer, ARRAYSIZE(textBuffer), nThisEntity, .1);
+		CreateUILabelForText(&tThisWorld, menuCamera->d3d_Position, 2.8, .8, -1.915, 2.5, &atUIVertices, &atUIIndices, textBuffer, ARRAYSIZE(textBuffer), nThisEntity, .1);
 		pcUISystem->AddTextureToUI(&tThisWorld, nThisEntity, pcGraphicsSystem->m_pd3dDevice, nullptr, fontTexture);
 		pcUISystem->AddButtonToUI(&cApplicationWindow, &tThisWorld, nThisEntity, 0, false);
 
@@ -1871,7 +1876,7 @@ void CGameMangerSystem::InitializePauseScreen()
 	{
 		int tempTextColor[3] = { 200, 0, 0 };
 
-		nThisEntity = CreateUILabel(&tThisWorld, menuCamera->d3d_Position, 2, .5, .5, 2.4, atUIVertices);
+		nThisEntity = CreateUILabel(&tThisWorld, menuCamera->d3d_Position, 2, .5, .5, 2.4, &atUIVertices);
 		pcUISystem->AddBarToUI(&cApplicationWindow, &tThisWorld, nThisEntity);
 
 		pcUISystem->AddMaskToUI(&tThisWorld, nThisEntity, COMPONENT_OPTIONS);
@@ -1880,7 +1885,7 @@ void CGameMangerSystem::InitializePauseScreen()
 	{
 		int tempTextColor[3] = { 200, 0, 0 };
 
-		nThisEntity = CreateUILabel(&tThisWorld, menuCamera->d3d_Position, 2, .5, .5, 2.4, atUIVertices);
+		nThisEntity = CreateUILabel(&tThisWorld, menuCamera->d3d_Position, 2, .5, .5, 2.4, &atUIVertices);
 		pcUISystem->AddBarToUI(&cApplicationWindow, &tThisWorld, nThisEntity);
 
 		pcUISystem->AddMaskToUI(&tThisWorld, nThisEntity, COMPONENT_OPTIONS);
@@ -1892,7 +1897,7 @@ void CGameMangerSystem::InitializePauseScreen()
 		{ L"FX VOLUME:" };
 
 		nThisEntity = createEntityReverse(&tThisWorld);
-		CreateUILabelForText(&tThisWorld, menuCamera->d3d_Position, 2.15, .8, -1.595, 1.3, atUIVertices, atUIIndices, textBuffer, ARRAYSIZE(textBuffer), nThisEntity, .1);
+		CreateUILabelForText(&tThisWorld, menuCamera->d3d_Position, 2.15, .8, -1.595, 1.3, &atUIVertices, &atUIIndices, textBuffer, ARRAYSIZE(textBuffer), nThisEntity, .1);
 		pcUISystem->AddTextureToUI(&tThisWorld, nThisEntity, pcGraphicsSystem->m_pd3dDevice, nullptr, fontTexture);
 		pcUISystem->AddButtonToUI(&cApplicationWindow, &tThisWorld, nThisEntity, 0, false);
 
@@ -1902,7 +1907,7 @@ void CGameMangerSystem::InitializePauseScreen()
 	{
 		int tempTextColor[3] = { 200, 0, 0 };
 
-		nThisEntity = CreateUILabel(&tThisWorld, menuCamera->d3d_Position, 2, .5, .5, 1.2, atUIVertices);
+		nThisEntity = CreateUILabel(&tThisWorld, menuCamera->d3d_Position, 2, .5, .5, 1.2, &atUIVertices);
 		pcUISystem->AddBarToUI(&cApplicationWindow, &tThisWorld, nThisEntity);
 
 		pcUISystem->AddMaskToUI(&tThisWorld, nThisEntity, COMPONENT_OPTIONS);
@@ -1911,7 +1916,7 @@ void CGameMangerSystem::InitializePauseScreen()
 	{
 		int tempTextColor[3] = { 200, 0, 0 };
 
-		nThisEntity = CreateUILabel(&tThisWorld, menuCamera->d3d_Position, 2, .5, .5, 1.2, atUIVertices);
+		nThisEntity = CreateUILabel(&tThisWorld, menuCamera->d3d_Position, 2, .5, .5, 1.2, &atUIVertices);
 		pcUISystem->AddBarToUI(&cApplicationWindow, &tThisWorld, nThisEntity);
 
 		pcUISystem->AddMaskToUI(&tThisWorld, nThisEntity, COMPONENT_OPTIONS);
@@ -1923,7 +1928,7 @@ void CGameMangerSystem::InitializePauseScreen()
 		{ L"DIFFICULTY:" };
 
 		nThisEntity = createEntityReverse(&tThisWorld);
-		CreateUILabelForText(&tThisWorld, menuCamera->d3d_Position, 2.15, .8, -1.60, 0.1, atUIVertices, atUIIndices, textBuffer, ARRAYSIZE(textBuffer), nThisEntity, .1);
+		CreateUILabelForText(&tThisWorld, menuCamera->d3d_Position, 2.15, .8, -1.60, 0.1, &atUIVertices, &atUIIndices, textBuffer, ARRAYSIZE(textBuffer), nThisEntity, .1);
 		pcUISystem->AddTextureToUI(&tThisWorld, nThisEntity, pcGraphicsSystem->m_pd3dDevice, nullptr, fontTexture);
 		pcUISystem->AddButtonToUI(&cApplicationWindow, &tThisWorld, nThisEntity, 0, false);
 
@@ -1935,7 +1940,7 @@ void CGameMangerSystem::InitializePauseScreen()
 		{ L"BRIGHTNESS:" };
 
 		nThisEntity = createEntityReverse(&tThisWorld);
-		CreateUILabelForText(&tThisWorld, menuCamera->d3d_Position, 2.15, .8, -1.59, -1.1, atUIVertices, atUIIndices, textBuffer, ARRAYSIZE(textBuffer), nThisEntity, .1);
+		CreateUILabelForText(&tThisWorld, menuCamera->d3d_Position, 2.15, .8, -1.59, -1.1, &atUIVertices, &atUIIndices, textBuffer, ARRAYSIZE(textBuffer), nThisEntity, .1);
 		pcUISystem->AddTextureToUI(&tThisWorld, nThisEntity, pcGraphicsSystem->m_pd3dDevice, nullptr, fontTexture);
 		pcUISystem->AddButtonToUI(&cApplicationWindow, &tThisWorld, nThisEntity, 0, false);
 
@@ -1945,7 +1950,7 @@ void CGameMangerSystem::InitializePauseScreen()
 	{
 		int tempTextColor[3] = { 200, 0, 0 };
 
-		nThisEntity = CreateUILabel(&tThisWorld, menuCamera->d3d_Position, 2, .5, .5, -1.2, atUIVertices);
+		nThisEntity = CreateUILabel(&tThisWorld, menuCamera->d3d_Position, 2, .5, .5, -1.2, &atUIVertices);
 		pcUISystem->AddBarToUI(&cApplicationWindow, &tThisWorld, nThisEntity);
 
 		pcUISystem->AddMaskToUI(&tThisWorld, nThisEntity, COMPONENT_OPTIONS);
@@ -1954,7 +1959,7 @@ void CGameMangerSystem::InitializePauseScreen()
 	{
 		int tempTextColor[3] = { 200, 0, 0 };
 
-		nThisEntity = CreateUILabel(&tThisWorld, menuCamera->d3d_Position, 2, .5, .5, -1.2, atUIVertices);
+		nThisEntity = CreateUILabel(&tThisWorld, menuCamera->d3d_Position, 2, .5, .5, -1.2, &atUIVertices);
 		pcUISystem->AddBarToUI(&cApplicationWindow, &tThisWorld, nThisEntity);
 
 		pcUISystem->AddMaskToUI(&tThisWorld, nThisEntity, COMPONENT_OPTIONS);
@@ -1966,7 +1971,7 @@ void CGameMangerSystem::InitializePauseScreen()
 		{ L"BACK" };
 
 		nThisEntity = createEntityReverse(&tThisWorld);
-		CreateUILabelForText(&tThisWorld, menuCamera->d3d_Position, 1, 1, 0, -2.4, atUIVertices, atUIIndices, textBuffer, ARRAYSIZE(textBuffer), nThisEntity, .1);
+		CreateUILabelForText(&tThisWorld, menuCamera->d3d_Position, 1, 1, 0, -2.4, &atUIVertices, &atUIIndices, textBuffer, ARRAYSIZE(textBuffer), nThisEntity, .1);
 		pcUISystem->AddTextureToUI(&tThisWorld, nThisEntity, pcGraphicsSystem->m_pd3dDevice, nullptr, fontTexture);
 		pcUISystem->AddButtonToUI(&cApplicationWindow, &tThisWorld, nThisEntity, 5, true);
 
@@ -2004,10 +2009,10 @@ void CGameMangerSystem::InitializeEndScreen()
 		{ L"CONTINUE" };
 
 		nThisEntity = createEntityReverse(&tThisWorld);
-		CreateUILabelForText(&tThisWorld, menuCamera->d3d_Position, 1.4, 1, -1, -1.2, atUIVertices, atUIIndices, textBuffer, ARRAYSIZE(textBuffer), nThisEntity, .1);
+		CreateUILabelForText(&tThisWorld, menuCamera->d3d_Position, 1.4, 1, -1, -1.2, &atUIVertices, &atUIIndices, textBuffer, ARRAYSIZE(textBuffer), nThisEntity, .1);
 
 		pcUISystem->AddTextureToUI(&tThisWorld, nThisEntity, pcGraphicsSystem->m_pd3dDevice, nullptr, fontTexture);
-		pcUISystem->AddButtonToUI(&cApplicationWindow, &tThisWorld, nThisEntity, 4, true);
+		pcUISystem->AddButtonToUI(&cApplicationWindow, &tThisWorld, nThisEntity, 13, true);
 
 		pcUISystem->AddMaskToUI(&tThisWorld, nThisEntity, COMPONENT_DEATHSCREEN);
 	}
@@ -2017,7 +2022,7 @@ void CGameMangerSystem::InitializeEndScreen()
 		{ L"EXIT" };
 
 		nThisEntity = createEntityReverse(&tThisWorld);
-		CreateUILabelForText(&tThisWorld, menuCamera->d3d_Position, .8, 1, 1, -1.2, atUIVertices, atUIIndices, textBuffer, ARRAYSIZE(textBuffer), nThisEntity, .1);
+		CreateUILabelForText(&tThisWorld, menuCamera->d3d_Position, .8, 1, 1, -1.2, &atUIVertices, &atUIIndices, textBuffer, ARRAYSIZE(textBuffer), nThisEntity, .1);
 
 		pcUISystem->AddTextureToUI(&tThisWorld, nThisEntity, pcGraphicsSystem->m_pd3dDevice, nullptr, fontTexture);
 		pcUISystem->AddButtonToUI(&cApplicationWindow, &tThisWorld, nThisEntity, 2, true);
@@ -2051,7 +2056,7 @@ void CGameMangerSystem::InitializeOptionsMenu()
 		wchar_t wideChar[] =
 		{ L"UI_Textures.fbm/Auger_Space.png" };
 
-		nThisEntity = CreateUILabel(&tThisWorld, menuCamera->d3d_Position, 20, 20, 0, 0, atUIVertices, -1, 0.2);
+		nThisEntity = CreateUILabel(&tThisWorld, menuCamera->d3d_Position, 20, 20, 0, 0, &atUIVertices, -1, 0.2);
 		pcUISystem->AddTextureToUI(&tThisWorld, nThisEntity, pcGraphicsSystem->m_pd3dDevice, wideChar);
 
 		pcUISystem->AddMaskToUI(&tThisWorld, nThisEntity, COMPONENT_OPTIONS);
@@ -2061,7 +2066,7 @@ void CGameMangerSystem::InitializeOptionsMenu()
 		wchar_t textBuffer[] =
 		{ L"SUBTITLES:" };
 
-		nThisEntity = CreateUILabelForText(&tThisWorld, menuCamera->d3d_Position, 2.05, .8, -1.545, 6.1, atUIVertices, atUIIndices, textBuffer, ARRAYSIZE(textBuffer));
+		nThisEntity = CreateUILabelForText(&tThisWorld, menuCamera->d3d_Position, 2.05, .8, -1.545, 6.1, &atUIVertices, &atUIIndices, textBuffer, ARRAYSIZE(textBuffer));
 		pcUISystem->AddTextureToUI(&tThisWorld, nThisEntity, pcGraphicsSystem->m_pd3dDevice, nullptr, fontTexture);
 		pcUISystem->AddButtonToUI(&cApplicationWindow, &tThisWorld, nThisEntity, 0, false);
 
@@ -2072,7 +2077,7 @@ void CGameMangerSystem::InitializeOptionsMenu()
 		wchar_t textBuffer[] =
 		{ L"MASTER VOLUME:" };
 
-		nThisEntity = CreateUILabelForText(&tThisWorld, menuCamera->d3d_Position, 3, .8, -2.001, 4.9, atUIVertices, atUIIndices, textBuffer, ARRAYSIZE(textBuffer));
+		nThisEntity = CreateUILabelForText(&tThisWorld, menuCamera->d3d_Position, 3, .8, -2.001, 4.9, &atUIVertices, &atUIIndices, textBuffer, ARRAYSIZE(textBuffer));
 		pcUISystem->AddTextureToUI(&tThisWorld, nThisEntity, pcGraphicsSystem->m_pd3dDevice, nullptr, fontTexture);
 		pcUISystem->AddButtonToUI(&cApplicationWindow, &tThisWorld, nThisEntity, 0, false);
 		
@@ -2082,7 +2087,7 @@ void CGameMangerSystem::InitializeOptionsMenu()
 	{
 		int tempTextColor[3] = { 200, 0, 0 };
 
-		nThisEntity = CreateUILabel(&tThisWorld, menuCamera->d3d_Position, 2, .5, .5, 4.8, atUIVertices);
+		nThisEntity = CreateUILabel(&tThisWorld, menuCamera->d3d_Position, 2, .5, .5, 4.8, &atUIVertices);
 		pcUISystem->AddBarToUI(&cApplicationWindow, &tThisWorld, nThisEntity);
 	
 		pcUISystem->AddMaskToUI(&tThisWorld, nThisEntity, COMPONENT_OPTIONS);
@@ -2091,7 +2096,7 @@ void CGameMangerSystem::InitializeOptionsMenu()
 	{
 		int tempTextColor[3] = { 200, 0, 0 };
 
-		nThisEntity = CreateUILabel(&tThisWorld, menuCamera->d3d_Position, 2, .5, .5, 4.8, atUIVertices);
+		nThisEntity = CreateUILabel(&tThisWorld, menuCamera->d3d_Position, 2, .5, .5, 4.8, &atUIVertices);
 		pcUISystem->AddBarToUI(&cApplicationWindow, &tThisWorld, nThisEntity);
 
 		pcUISystem->AddMaskToUI(&tThisWorld, nThisEntity, COMPONENT_OPTIONS);
@@ -2102,7 +2107,7 @@ void CGameMangerSystem::InitializeOptionsMenu()
 		wchar_t textBuffer[] =
 		{ L"DIALOGUE VOLUME:" };
 
-		nThisEntity = CreateUILabelForText(&tThisWorld, menuCamera->d3d_Position, 3.4, .8, -2.22, 3.7, atUIVertices, atUIIndices, textBuffer, ARRAYSIZE(textBuffer));
+		nThisEntity = CreateUILabelForText(&tThisWorld, menuCamera->d3d_Position, 3.4, .8, -2.22, 3.7, &atUIVertices, &atUIIndices, textBuffer, ARRAYSIZE(textBuffer));
 		pcUISystem->AddTextureToUI(&tThisWorld, nThisEntity, pcGraphicsSystem->m_pd3dDevice, nullptr, fontTexture);
 		pcUISystem->AddButtonToUI(&cApplicationWindow, &tThisWorld, nThisEntity, 0, false);
 
@@ -2112,7 +2117,7 @@ void CGameMangerSystem::InitializeOptionsMenu()
 	{
 		int tempTextColor[3] = { 200, 0, 0 };
 	
-		nThisEntity = CreateUILabel(&tThisWorld, menuCamera->d3d_Position, 2, .5, .5, 3.6, atUIVertices);
+		nThisEntity = CreateUILabel(&tThisWorld, menuCamera->d3d_Position, 2, .5, .5, 3.6, &atUIVertices);
 		pcUISystem->AddBarToUI(&cApplicationWindow, &tThisWorld, nThisEntity);
 	
 		pcUISystem->AddMaskToUI(&tThisWorld, nThisEntity, COMPONENT_OPTIONS);
@@ -2121,7 +2126,7 @@ void CGameMangerSystem::InitializeOptionsMenu()
 	{
 		int tempTextColor[3] = { 200, 0, 0 };
 
-		nThisEntity = CreateUILabel(&tThisWorld, menuCamera->d3d_Position, 2, .5, .5, 3.6, atUIVertices);
+		nThisEntity = CreateUILabel(&tThisWorld, menuCamera->d3d_Position, 2, .5, .5, 3.6, &atUIVertices);
 		pcUISystem->AddBarToUI(&cApplicationWindow, &tThisWorld, nThisEntity);
 
 		pcUISystem->AddMaskToUI(&tThisWorld, nThisEntity, COMPONENT_OPTIONS);
@@ -2132,7 +2137,7 @@ void CGameMangerSystem::InitializeOptionsMenu()
 		wchar_t textBuffer[] =
 		{ L"MUSIC VOLUME:" };
 
-		nThisEntity = CreateUILabelForText(&tThisWorld, menuCamera->d3d_Position, 2.8, .8, -1.915, 2.5, atUIVertices, atUIIndices, textBuffer, ARRAYSIZE(textBuffer));
+		nThisEntity = CreateUILabelForText(&tThisWorld, menuCamera->d3d_Position, 2.8, .8, -1.915, 2.5, &atUIVertices, &atUIIndices, textBuffer, ARRAYSIZE(textBuffer));
 		pcUISystem->AddTextureToUI(&tThisWorld, nThisEntity, pcGraphicsSystem->m_pd3dDevice, nullptr, fontTexture);
 		pcUISystem->AddButtonToUI(&cApplicationWindow, &tThisWorld, nThisEntity, 0, false);
 
@@ -2142,7 +2147,7 @@ void CGameMangerSystem::InitializeOptionsMenu()
 	{
 		int tempTextColor[3] = { 200, 0, 0 };
 	
-		nThisEntity = CreateUILabel(&tThisWorld, menuCamera->d3d_Position, 2, .5, .5, 2.4, atUIVertices);
+		nThisEntity = CreateUILabel(&tThisWorld, menuCamera->d3d_Position, 2, .5, .5, 2.4, &atUIVertices);
 		pcUISystem->AddBarToUI(&cApplicationWindow, &tThisWorld, nThisEntity);
 	
 		pcUISystem->AddMaskToUI(&tThisWorld, nThisEntity, COMPONENT_OPTIONS);
@@ -2151,7 +2156,7 @@ void CGameMangerSystem::InitializeOptionsMenu()
 	{
 		int tempTextColor[3] = { 200, 0, 0 };
 
-		nThisEntity = CreateUILabel(&tThisWorld, menuCamera->d3d_Position, 2, .5, .5, 2.4, atUIVertices);
+		nThisEntity = CreateUILabel(&tThisWorld, menuCamera->d3d_Position, 2, .5, .5, 2.4, &atUIVertices);
 		pcUISystem->AddBarToUI(&cApplicationWindow, &tThisWorld, nThisEntity);
 
 		pcUISystem->AddMaskToUI(&tThisWorld, nThisEntity, COMPONENT_OPTIONS);
@@ -2162,7 +2167,7 @@ void CGameMangerSystem::InitializeOptionsMenu()
 		wchar_t textBuffer[] =
 		{ L"FX VOLUME:" };
 
-		nThisEntity = CreateUILabelForText(&tThisWorld, menuCamera->d3d_Position, 2.15, .8, -1.595, 1.3, atUIVertices, atUIIndices, textBuffer, ARRAYSIZE(textBuffer));
+		nThisEntity = CreateUILabelForText(&tThisWorld, menuCamera->d3d_Position, 2.15, .8, -1.595, 1.3, &atUIVertices, &atUIIndices, textBuffer, ARRAYSIZE(textBuffer));
 		pcUISystem->AddTextureToUI(&tThisWorld, nThisEntity, pcGraphicsSystem->m_pd3dDevice, nullptr, fontTexture);
 		pcUISystem->AddButtonToUI(&cApplicationWindow, &tThisWorld, nThisEntity, 0, false);
 
@@ -2172,7 +2177,7 @@ void CGameMangerSystem::InitializeOptionsMenu()
 	{
 		int tempTextColor[3] = { 200, 0, 0 };
 	
-		nThisEntity = CreateUILabel(&tThisWorld, menuCamera->d3d_Position, 2, .5, .5, 1.2, atUIVertices);
+		nThisEntity = CreateUILabel(&tThisWorld, menuCamera->d3d_Position, 2, .5, .5, 1.2, &atUIVertices);
 		pcUISystem->AddBarToUI(&cApplicationWindow, &tThisWorld, nThisEntity);
 	
 		pcUISystem->AddMaskToUI(&tThisWorld, nThisEntity, COMPONENT_OPTIONS);
@@ -2181,7 +2186,7 @@ void CGameMangerSystem::InitializeOptionsMenu()
 	{
 		int tempTextColor[3] = { 200, 0, 0 };
 
-		nThisEntity = CreateUILabel(&tThisWorld, menuCamera->d3d_Position, 2, .5, .5, 1.2, atUIVertices);
+		nThisEntity = CreateUILabel(&tThisWorld, menuCamera->d3d_Position, 2, .5, .5, 1.2, &atUIVertices);
 		pcUISystem->AddBarToUI(&cApplicationWindow, &tThisWorld, nThisEntity);
 
 		pcUISystem->AddMaskToUI(&tThisWorld, nThisEntity, COMPONENT_OPTIONS);
@@ -2192,7 +2197,7 @@ void CGameMangerSystem::InitializeOptionsMenu()
 		wchar_t textBuffer[] =
 		{ L"DIFFICULTY:" };
 
-		nThisEntity = CreateUILabelForText(&tThisWorld, menuCamera->d3d_Position, 2.15, .8, -1.60, 0.1, atUIVertices, atUIIndices, textBuffer, ARRAYSIZE(textBuffer));
+		nThisEntity = CreateUILabelForText(&tThisWorld, menuCamera->d3d_Position, 2.15, .8, -1.60, 0.1, &atUIVertices, &atUIIndices, textBuffer, ARRAYSIZE(textBuffer));
 		pcUISystem->AddTextureToUI(&tThisWorld, nThisEntity, pcGraphicsSystem->m_pd3dDevice, nullptr, fontTexture);
 		pcUISystem->AddButtonToUI(&cApplicationWindow, &tThisWorld, nThisEntity, 0, false);
 
@@ -2203,7 +2208,7 @@ void CGameMangerSystem::InitializeOptionsMenu()
 		wchar_t textBuffer[] =
 		{ L"BRIGHTNESS:" };
 
-		nThisEntity = CreateUILabelForText(&tThisWorld, menuCamera->d3d_Position, 2.15, .8, -1.59, -1.1, atUIVertices, atUIIndices, textBuffer, ARRAYSIZE(textBuffer));
+		nThisEntity = CreateUILabelForText(&tThisWorld, menuCamera->d3d_Position, 2.15, .8, -1.59, -1.1, &atUIVertices, &atUIIndices, textBuffer, ARRAYSIZE(textBuffer));
 		pcUISystem->AddTextureToUI(&tThisWorld, nThisEntity, pcGraphicsSystem->m_pd3dDevice, nullptr, fontTexture);
 		pcUISystem->AddButtonToUI(&cApplicationWindow, &tThisWorld, nThisEntity, 0, false);
 
@@ -2213,7 +2218,7 @@ void CGameMangerSystem::InitializeOptionsMenu()
 	{
 		int tempTextColor[3] = { 200, 0, 0 };
 	
-		nThisEntity = CreateUILabel(&tThisWorld, menuCamera->d3d_Position, 2, .5, .5, -1.2, atUIVertices);
+		nThisEntity = CreateUILabel(&tThisWorld, menuCamera->d3d_Position, 2, .5, .5, -1.2, &atUIVertices);
 		pcUISystem->AddBarToUI(&cApplicationWindow, &tThisWorld, nThisEntity);
 	
 		pcUISystem->AddMaskToUI(&tThisWorld, nThisEntity, COMPONENT_OPTIONS);
@@ -2222,7 +2227,7 @@ void CGameMangerSystem::InitializeOptionsMenu()
 	{
 		int tempTextColor[3] = { 200, 0, 0 };
 
-		nThisEntity = CreateUILabel(&tThisWorld, menuCamera->d3d_Position, 2, .5, .5, -1.2, atUIVertices);
+		nThisEntity = CreateUILabel(&tThisWorld, menuCamera->d3d_Position, 2, .5, .5, -1.2, &atUIVertices);
 		pcUISystem->AddBarToUI(&cApplicationWindow, &tThisWorld, nThisEntity);
 
 		pcUISystem->AddMaskToUI(&tThisWorld, nThisEntity, COMPONENT_OPTIONS);
@@ -2233,7 +2238,7 @@ void CGameMangerSystem::InitializeOptionsMenu()
 		wchar_t textBuffer[] =
 		{ L"BACK" };
 
-		nThisEntity = CreateUILabelForText(&tThisWorld, menuCamera->d3d_Position, 1, 1, 0, -2.4, atUIVertices, atUIIndices, textBuffer, ARRAYSIZE(textBuffer));
+		nThisEntity = CreateUILabelForText(&tThisWorld, menuCamera->d3d_Position, 1, 1, 0, -2.4, &atUIVertices, &atUIIndices, textBuffer, ARRAYSIZE(textBuffer));
 		pcUISystem->AddTextureToUI(&tThisWorld, nThisEntity, pcGraphicsSystem->m_pd3dDevice, nullptr, fontTexture);
 		pcUISystem->AddButtonToUI(&cApplicationWindow, &tThisWorld, nThisEntity, 3, true);
 
@@ -2243,43 +2248,67 @@ void CGameMangerSystem::InitializeOptionsMenu()
 
 void CGameMangerSystem::InitializeHUD()
 {
-	//unsigned int nThisEntity;
+	atUIVertices.clear();
+	atUIIndices.clear();
 
-	//{
-	//	nThisEntity = createEntityReverse(&tThisWorld);
-	//	CreateUILabel(&tThisWorld, menuCamera->d3d_Position, .4, .15, .34, .3, atUIVertices, nThisEntity, .1);
-	//	//pcUISystem->AddTextureToUI(&tThisWorld, nThisEntity, pcGraphicsSystem->m_pd3dDevice, nullptr, fontTexture);
-	//	//pcUISystem->AddButtonToUI(&cApplicationWindow, &tThisWorld, nThisEntity, 2, true);
+	unsigned int nThisEntity;
 
-	//	pcUISystem->AddMaskToUI(&tThisWorld, nThisEntity, COMPONENT_HUD);
-	//}
+	{
+		nThisEntity = createEntityReverse(&tThisWorld);
+		CreateUILabel(&tThisWorld, menuCamera->d3d_Position, .4, .15, .33, .3, &atUIVertices, nThisEntity, .1);
+		//pcUISystem->AddTextureToUI(&tThisWorld, nThisEntity, pcGraphicsSystem->m_pd3dDevice, nullptr, fontTexture);
+		//pcUISystem->AddButtonToUI(&cApplicationWindow, &tThisWorld, nThisEntity, 2, true);
 
-	//{
-	//	nThisEntity = createEntityReverse(&tThisWorld);
-	//	CreateUILabel(&tThisWorld, menuCamera->d3d_Position, .4, .15, -.32, .3, atUIVertices, nThisEntity, .1);
-	//	//pcUISystem->AddTextureToUI(&tThisWorld, nThisEntity, pcGraphicsSystem->m_pd3dDevice, nullptr, fontTexture);
-	//	//pcUISystem->AddButtonToUI(&cApplicationWindow, &tThisWorld, nThisEntity, 2, true);
+		pcUISystem->AddMaskToUI(&tThisWorld, nThisEntity, COMPONENT_HUD);
+	}
 
-	//	pcUISystem->AddMaskToUI(&tThisWorld, nThisEntity, COMPONENT_HUD);
-	//}
+	{
+		nThisEntity = createEntityReverse(&tThisWorld);
+		CreateUILabel(&tThisWorld, menuCamera->d3d_Position, .4, .15, -.31, .3, &atUIVertices, nThisEntity, .1);
+		//pcUISystem->AddTextureToUI(&tThisWorld, nThisEntity, pcGraphicsSystem->m_pd3dDevice, nullptr, fontTexture);
+		//pcUISystem->AddButtonToUI(&cApplicationWindow, &tThisWorld, nThisEntity, 2, true);
 
-	//{
-	//	nThisEntity = createEntityReverse(&tThisWorld);
-	//	CreateUILabel(&tThisWorld, menuCamera->d3d_Position, .1, .4, 0, .74, atUIVertices, nThisEntity, .1);
-	//	//pcUISystem->AddTextureToUI(&tThisWorld, nThisEntity, pcGraphicsSystem->m_pd3dDevice, nullptr, fontTexture);
-	//	//pcUISystem->AddButtonToUI(&cApplicationWindow, &tThisWorld, nThisEntity, 2, true);
+		pcUISystem->AddMaskToUI(&tThisWorld, nThisEntity, COMPONENT_HUD);
+	}
 
-	//	pcUISystem->AddMaskToUI(&tThisWorld, nThisEntity, COMPONENT_HUD);
-	//}
+	{
+		nThisEntity = createEntityReverse(&tThisWorld);
+		CreateUILabel(&tThisWorld, menuCamera->d3d_Position, .1, .4, 0, .73, &atUIVertices, nThisEntity, .1);
+		//pcUISystem->AddTextureToUI(&tThisWorld, nThisEntity, pcGraphicsSystem->m_pd3dDevice, nullptr, fontTexture);
+		//pcUISystem->AddButtonToUI(&cApplicationWindow, &tThisWorld, nThisEntity, 2, true);
 
-	//{
-	//	nThisEntity = createEntityReverse(&tThisWorld);
-	//	CreateUILabel(&tThisWorld, menuCamera->d3d_Position, .1, .4, 0, -.14, atUIVertices, nThisEntity, .1);
-	//	//pcUISystem->AddTextureToUI(&tThisWorld, nThisEntity, pcGraphicsSystem->m_pd3dDevice, nullptr, fontTexture);
-	//	//pcUISystem->AddButtonToUI(&cApplicationWindow, &tThisWorld, nThisEntity, 2, true);
+		pcUISystem->AddMaskToUI(&tThisWorld, nThisEntity, COMPONENT_HUD);
+	}
 
-	//	pcUISystem->AddMaskToUI(&tThisWorld, nThisEntity, COMPONENT_HUD);
-	//}
+	{
+		nThisEntity = createEntityReverse(&tThisWorld);
+		CreateUILabel(&tThisWorld, menuCamera->d3d_Position, .1, .4, 0, -.13, &atUIVertices, nThisEntity, .1);
+		//pcUISystem->AddTextureToUI(&tThisWorld, nThisEntity, pcGraphicsSystem->m_pd3dDevice, nullptr, fontTexture);
+		//pcUISystem->AddButtonToUI(&cApplicationWindow, &tThisWorld, nThisEntity, 2, true);
+
+		pcUISystem->AddMaskToUI(&tThisWorld, nThisEntity, COMPONENT_HUD);
+	}
+
+	{
+		nThisEntity = createEntityReverse(&tThisWorld);
+		CreateUILabel(&tThisWorld, menuCamera->d3d_Position, 2, 2, 6, -8, &atUIVertices, nThisEntity, .1);
+		//pcUISystem->AddTextureToUI(&tThisWorld, nThisEntity, pcGraphicsSystem->m_pd3dDevice, nullptr, fontTexture);
+		//pcUISystem->AddButtonToUI(&cApplicationWindow, &tThisWorld, nThisEntity, 2, true);
+
+		pcUISystem->AddMaskToUI(&tThisWorld, nThisEntity, COMPONENT_HUD);
+	}
+
+	{
+		wchar_t textBuffer[] =
+		{ L"3" };
+
+		nThisEntity = createEntityReverse(&tThisWorld);
+		CreateUILabelForText(&tThisWorld, menuCamera->d3d_Position, .75, 1, 6.625, -7.5, &atUIVertices, &atUIIndices, textBuffer, ARRAYSIZE(textBuffer), nThisEntity, .1);
+		pcUISystem->AddTextureToUI(&tThisWorld, nThisEntity, pcGraphicsSystem->m_pd3dDevice, nullptr, fontTexture);
+		//pcUISystem->AddButtonToUI(&cApplicationWindow, &tThisWorld, nThisEntity, 2, true);
+
+		pcUISystem->AddMaskToUI(&tThisWorld, nThisEntity, COMPONENT_HUD);
+	}
 }
 
 void CGameMangerSystem::LoadPathFindingTest()
@@ -4530,6 +4559,12 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 {
 	pcGraphicsSystem->CleanD3DLevel(&tThisWorld);
 
+	InitializeHUD();
+	InitializePauseScreen();
+	InitializeEndScreen();
+	GameOver = false;
+	GamePaused = false;
+
 	pcAiSystem->SetNumberOfAI(2);
 //	tTimerInfo->StartClock(tAugerTimers->tSceneTimer);
 	ImporterData tempImport;
@@ -4589,6 +4624,8 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	}
 	GunIndexForPlayer = CreateGun(&tThisWorld, m_d3dWorldMatrix, PlayerStartIndex, -1, 1, 10.5, 3, 100);
 	tThisWorld.atClip[GunIndexForPlayer].bulletSpeed = 0.001;
+
+	tThisWorld.atClayton[PlayerStartIndex].health = 100;
 
 	/*XMMATRIX ground = m_d3dPlayerMatrix;
 	ground.r[3].m128_f32[1] -= 0.4;
@@ -4685,12 +4722,21 @@ int CGameMangerSystem::RealLevelUpdate()
 	CGraphicsSystem::TPrimalVertexBufferType tTempVertexBuffer;
 	CGraphicsSystem::TPrimalPixelBufferType tTempPixelBuffer;
 	CGraphicsSystem::TMyVertexBufferType tMyVertexBufferTemp;
+	CGraphicsSystem::TUIVertexBufferType tUIVertexBuffer;
+	CGraphicsSystem::TUIPixelBufferType tUIPixelBuffer;
 
-	if (pcInputSystem->InputCheck(G_KEY_P))
+	if (pcInputSystem->InputCheck(G_KEY_P) && !GameOver)
 	{
-		return 3;
+		GamePaused = true;
 	}
-	// ui stuff
+	if (pcInputSystem->InputCheck(G_KEY_U) && !options && !GameOver)
+	{
+		GamePaused = false;
+	}
+
+	clickTimer.Signal();
+
+	/*// ui stuff
 	if (GamePaused == true) {
 		if (DrawUI == true) {
 			XMMATRIX UiPos = tThisWorld.atWorldMatrix[PlayerStartIndex].worldMatrix;
@@ -4741,7 +4787,7 @@ int CGameMangerSystem::RealLevelUpdate()
 			UIIndex.push_back(CreateTemptUIBox(&tThisWorld, UiPos));
 			pcGraphicsSystem->CreateEntityBuffer(&tThisWorld, UIIndex.back());
 		}
-	}
+	}*/
 
 	if (tCameraMode.bWalkMode == true)
 	{
@@ -4847,6 +4893,20 @@ int CGameMangerSystem::RealLevelUpdate()
 
 	pcGraphicsSystem->m_pd3dDevice->CreateShaderResourceView(pcGraphicsSystem->m_pd3dOutsideGlassRenderToTexture, NULL, &pcGraphicsSystem->m_pd3dOutsideGlassSRV);
 	pcGraphicsSystem->m_pd3dDeviceContext->GenerateMips(pcGraphicsSystem->m_pd3dOutsideGlassSRV);
+
+	POINT hoverPoint;
+	GetCursorPos(&hoverPoint);
+	ScreenToClient(cApplicationWindow, &hoverPoint);
+
+	POINT clickPoint = { -1, -1 };
+	if (pcInputSystem->InputCheck(G_BUTTON_LEFT) == 1)
+	{
+		GetCursorPos(&clickPoint);
+		ScreenToClient(cApplicationWindow, &clickPoint);
+
+		if (GameOver && tThisWorld.atClayton[PlayerStartIndex].health > 0)
+			return 2;
+	}
 
 	for (int nCurrentEntity = 0; nCurrentEntity < ENTITYCOUNT; nCurrentEntity++)
 	{
@@ -5154,7 +5214,15 @@ int CGameMangerSystem::RealLevelUpdate()
 				}
 				if (tThisWorld.atClip[nCurrentEntity].tryToShoot == true && tThisWorld.atClip[nCurrentEntity].nBulletsAvailables.size() > 0 && tThisWorld.atClip[nCurrentEntity].fShootingCoolDown <= 0)
 				{
+					wchar_t* textBuffer = new wchar_t[1];
 
+					textBuffer[0] = (tThisWorld.atClip[nCurrentEntity].nBulletsAvailables.size() - 1);
+
+					pcUISystem->UpdateText(&tThisWorld, 1094, &atUIVertices, textBuffer, atUIVertices.at(tThisWorld.atLabel[1094].vIndex));
+
+					pcGraphicsSystem->CreateEntityBuffer(&tThisWorld, 1094);
+
+					delete[] textBuffer;
 
 					XMVECTOR foward;
 					foward.m128_f32[0] = 0;
@@ -5188,6 +5256,15 @@ int CGameMangerSystem::RealLevelUpdate()
 					pcProjectileSystem->Reload(&tThisWorld.atClip[nCurrentEntity]);
 					tThisWorld.atClip[nCurrentEntity].tryToReload = false;
 
+					wchar_t* textBuffer = new wchar_t[1];
+
+					textBuffer[0] = (tThisWorld.atClip[nCurrentEntity].nBulletsAvailables.size());
+
+					pcUISystem->UpdateText(&tThisWorld, 1094, &atUIVertices, textBuffer, atUIVertices.at(tThisWorld.atLabel[1094].vIndex));
+
+					pcGraphicsSystem->CreateEntityBuffer(&tThisWorld, 1094);
+
+					delete[] textBuffer;
 				}
 				if (tThisWorld.atClip[nCurrentEntity].nBulletsFired.size() != 0) {
 					for (int i = 0; i < tThisWorld.atClip[nCurrentEntity].nBulletsFired.size(); ++i) {
@@ -5386,7 +5463,8 @@ int CGameMangerSystem::RealLevelUpdate()
 					}
 					if (tThisWorld.atClayton[PlayerStartIndex].health <= 0)
 					{
-						return -1;
+						GameOver = true;
+						//return -1;
 					}
 					//		tTempPixelBuffer.m_d3dCollisionColor = XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f);
 
@@ -5471,13 +5549,307 @@ int CGameMangerSystem::RealLevelUpdate()
 			return 11;
 		}
 
+		if (GamePaused)
+		{
+			if (!options)
+			{
+				if (tThisWorld.atUIMask[nCurrentEntity].m_tnUIMask == (COMPONENT_UIMASK | COMPONENT_LABEL | COMPONENT_BUTTON | COMPONENT_PAUSESCREEN))
+				{
+					tUIVertexBuffer.start = -1;
+					tUIVertexBuffer.end = -1;
+					tUIVertexBuffer.ratio = -1;
+
+					tUIPixelBuffer.hoverColor = XMFLOAT4(0, 0, 0, 0);
+
+					if (tThisWorld.atButton[nCurrentEntity].enabled && clickTime > .2)
+					{
+						if (PtInRect(&tThisWorld.atButton[nCurrentEntity].boundingBox, clickPoint))
+						{
+							clickTime = 0;
+
+							if (tThisWorld.atButton[nCurrentEntity].sceneIndex == 98)
+								options = true;
+							else if (tThisWorld.atButton[nCurrentEntity].sceneIndex == 5)
+								GamePaused = false;
+							else if (tThisWorld.atButton[nCurrentEntity].sceneIndex == 96 || tThisWorld.atButton[nCurrentEntity].sceneIndex == 97)
+							{
+
+							}
+							else
+								return tThisWorld.atButton[nCurrentEntity].sceneIndex;
+
+						}
+						else if (PtInRect(&tThisWorld.atButton[nCurrentEntity].boundingBox, hoverPoint))
+							tUIPixelBuffer.hoverColor = XMFLOAT4(.6, .6, .6, 0);
+						else
+							tUIPixelBuffer.hoverColor = XMFLOAT4(0, 0, 0, 0);
+					}
+
+					pcGraphicsSystem->InitUIShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tUIVertexBuffer, tUIPixelBuffer, tThisWorld.atMesh[nCurrentEntity], menuCamera->d3d_Position);
+					pcGraphicsSystem->ExecutePipeline(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atMesh[nCurrentEntity].m_nIndexCount, tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask, tThisWorld.atShaderID[nCurrentEntity].m_nShaderID);
+				}
+			}
+			else if (options)
+			{
+				if (tThisWorld.atUIMask[nCurrentEntity].m_tnUIMask == (COMPONENT_UIMASK | COMPONENT_LABEL | COMPONENT_BUTTON | COMPONENT_OPTIONS))
+				{
+					tUIVertexBuffer.start = -1;
+					tUIVertexBuffer.end = -1;
+					tUIVertexBuffer.ratio = -1;
+
+					tUIPixelBuffer.hoverColor = XMFLOAT4(0, 0, 0, 0);
+
+					if (tThisWorld.atButton[nCurrentEntity].enabled && clickTime > .2)
+					{
+						if (PtInRect(&tThisWorld.atButton[nCurrentEntity].boundingBox, clickPoint))
+						{
+							clickTime = 0;
+
+							if (tThisWorld.atButton[nCurrentEntity].sceneIndex == 5)
+								options = false;
+						}
+						else if (PtInRect(&tThisWorld.atButton[nCurrentEntity].boundingBox, hoverPoint))
+						{
+							tUIPixelBuffer.hoverColor = XMFLOAT4(.6, .6, .6, 0);
+						}
+						else
+						{
+							tUIPixelBuffer.hoverColor = XMFLOAT4(0, 0, 0, 0);
+						}
+					}
+
+					pcGraphicsSystem->InitUIShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tUIVertexBuffer, tUIPixelBuffer, tThisWorld.atMesh[nCurrentEntity], menuCamera->d3d_Position);
+					pcGraphicsSystem->ExecutePipeline(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atMesh[nCurrentEntity].m_nIndexCount, tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask, tThisWorld.atShaderID[nCurrentEntity].m_nShaderID);
+
+				}
+
+				if (tThisWorld.atUIMask[nCurrentEntity].m_tnUIMask == (COMPONENT_UIMASK | COMPONENT_LABEL | COMPONENT_BAR | COMPONENT_OPTIONS))
+				{
+					if (PtInRect(&tThisWorld.atBar[nCurrentEntity].barBoundingBox, clickPoint) && clickTime > .2)
+					{
+						// bar manipulation with mouse click try and use for enemy health bar - ZB                   
+						tThisWorld.atBar[nCurrentEntity].ratio = (clickPoint.x - tThisWorld.atBar[nCurrentEntity].barBoundingBox.left - 5.0) / (tThisWorld.atBar[nCurrentEntity].barBoundingBox.right - tThisWorld.atBar[nCurrentEntity].barBoundingBox.left - 10);
+
+						//clickTime = 0;
+					}
+
+					tUIVertexBuffer.start = (tThisWorld.atBar[nCurrentEntity].barBoundingBox.left + 14 - (screenWidth / 2.0)) / (screenWidth / 2);
+					tUIVertexBuffer.end = (tThisWorld.atBar[nCurrentEntity].barBoundingBox.right + 4 - (screenWidth / 2.0)) / (screenWidth / 2);
+					tUIVertexBuffer.ratio = tThisWorld.atBar[nCurrentEntity].ratio;
+
+					tUIPixelBuffer.hoverColor = XMFLOAT4(1, 0, 0, 1);
+
+					if (tThisWorld.atMesh[nCurrentEntity].m_d3dSRVDiffuse != nullptr)
+						tThisWorld.atMesh[nCurrentEntity].m_d3dSRVDiffuse = nullptr;
+
+					pcGraphicsSystem->InitUIShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tUIVertexBuffer, tUIPixelBuffer, tThisWorld.atMesh[nCurrentEntity], menuCamera->d3d_Position);
+					pcGraphicsSystem->ExecutePipeline(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atMesh[nCurrentEntity].m_nIndexCount, tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask, tThisWorld.atShaderID[nCurrentEntity].m_nShaderID);
+				}
+
+				if (tThisWorld.atUIMask[nCurrentEntity].m_tnUIMask == (COMPONENT_UIMASK | COMPONENT_LABEL | COMPONENT_BAR | COMPONENT_BACKGROUND | COMPONENT_OPTIONS))
+				{
+					tUIVertexBuffer.start = -1;
+					tUIVertexBuffer.end = -1;
+					tUIVertexBuffer.ratio = -1;
+
+					tUIPixelBuffer.hoverColor = XMFLOAT4(0, 0, 0, 1);
+
+					if (tThisWorld.atMesh[nCurrentEntity].m_d3dSRVDiffuse != nullptr)
+						tThisWorld.atMesh[nCurrentEntity].m_d3dSRVDiffuse = nullptr;
+
+					pcGraphicsSystem->InitUIShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tUIVertexBuffer, tUIPixelBuffer, tThisWorld.atMesh[nCurrentEntity], menuCamera->d3d_Position);
+					pcGraphicsSystem->ExecutePipeline(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atMesh[nCurrentEntity].m_nIndexCount, tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask, tThisWorld.atShaderID[nCurrentEntity].m_nShaderID);
+				}
+			}
+		}
+		else
+		{
+			if (GameOver)
+			{
+				if (tThisWorld.atUIMask[nCurrentEntity].m_tnUIMask == (COMPONENT_UIMASK | COMPONENT_LABEL | COMPONENT_BUTTON | COMPONENT_DEATHSCREEN))
+				{
+					if (tThisWorld.atClayton[PlayerStartIndex].health <= 0)
+					{
+						tUIVertexBuffer.start = -1;
+						tUIVertexBuffer.end = -1;
+						tUIVertexBuffer.ratio = -1;
+
+						tUIPixelBuffer.hoverColor = XMFLOAT4(0, 0, 0, 0);
+
+						if (tThisWorld.atButton[nCurrentEntity].enabled && clickTime > .2)
+						{
+							if (PtInRect(&tThisWorld.atButton[nCurrentEntity].boundingBox, clickPoint))
+							{
+								clickTime = 0;
+
+								if (tThisWorld.atButton[nCurrentEntity].sceneIndex < 96)
+									return tThisWorld.atButton[nCurrentEntity].sceneIndex;
+							}
+							else if (PtInRect(&tThisWorld.atButton[nCurrentEntity].boundingBox, hoverPoint))
+							{
+								tUIPixelBuffer.hoverColor = XMFLOAT4(.6, .6, .6, 0);
+							}
+							else
+							{
+								tUIPixelBuffer.hoverColor = XMFLOAT4(0, 0, 0, 0);
+							}
+						}
+
+						pcGraphicsSystem->InitUIShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tUIVertexBuffer, tUIPixelBuffer, tThisWorld.atMesh[nCurrentEntity], menuCamera->d3d_Position);
+						pcGraphicsSystem->ExecutePipeline(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atMesh[nCurrentEntity].m_nIndexCount, tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask, tThisWorld.atShaderID[nCurrentEntity].m_nShaderID);
+					}
+				}
+
+				if (tThisWorld.atUIMask[nCurrentEntity].m_tnUIMask == (COMPONENT_UIMASK | COMPONENT_DEATHSCREEN))
+				{
+					if (tThisWorld.atClayton[PlayerStartIndex].health > 0)
+					{
+						if (tThisWorld.atLabel[nCurrentEntity].addTexture && tThisWorld.atLabel[nCurrentEntity].lastUIElement)
+						{
+							wchar_t textBuffer[] =
+							{ L"SUCCESS" };
+
+							CreateUILabelForText(&tThisWorld, menuCamera->d3d_Position, 2, 1, 0, 4.8, &atUIVertices, &atUIIndices, textBuffer, ARRAYSIZE(textBuffer), nCurrentEntity, 0.1);
+
+							pcUISystem->AddTextureToUI(&tThisWorld, nCurrentEntity, pcGraphicsSystem->m_pd3dDevice, nullptr, fontTexture);
+
+							pcUISystem->AddMaskToUI(&tThisWorld, nCurrentEntity, COMPONENT_DEATHSCREEN);
+							pcGraphicsSystem->CreateEntityBuffer(&tThisWorld, nCurrentEntity);
+						}
+						else if (tThisWorld.atLabel[nCurrentEntity].addTexture)
+						{
+							wchar_t textBuffer[] =
+							{ L"You Completed The Objective" };
+
+							CreateUILabelForText(&tThisWorld, menuCamera->d3d_Position, 6, 1, 0, 2.4, &atUIVertices, &atUIIndices, textBuffer, ARRAYSIZE(textBuffer), nCurrentEntity, 0.1);
+
+							pcUISystem->AddTextureToUI(&tThisWorld, nCurrentEntity, pcGraphicsSystem->m_pd3dDevice, nullptr, fontTexture);
+
+							pcUISystem->AddMaskToUI(&tThisWorld, nCurrentEntity, COMPONENT_DEATHSCREEN);
+							pcGraphicsSystem->CreateEntityBuffer(&tThisWorld, nCurrentEntity);
+						}
+					}
+					else
+					{
+						if (tThisWorld.atLabel[nCurrentEntity].addTexture && tThisWorld.atLabel[nCurrentEntity].lastUIElement)
+						{
+							wchar_t textBuffer[] =
+							{ L"DEFEAT" };
+
+							CreateUILabelForText(&tThisWorld, menuCamera->d3d_Position, 2, 1, 0, 4.8, &atUIVertices, &atUIIndices, textBuffer, ARRAYSIZE(textBuffer), nCurrentEntity, 0.1);
+
+							pcUISystem->AddTextureToUI(&tThisWorld, nCurrentEntity, pcGraphicsSystem->m_pd3dDevice, nullptr, fontTexture);
+
+							pcUISystem->AddMaskToUI(&tThisWorld, nCurrentEntity, COMPONENT_DEATHSCREEN);
+							pcGraphicsSystem->CreateEntityBuffer(&tThisWorld, nCurrentEntity);
+						}
+						else if (tThisWorld.atLabel[nCurrentEntity].addTexture)
+						{
+							wchar_t textBuffer[] =
+							{ L"You Failed To Complete The Objective" };
+
+							CreateUILabelForText(&tThisWorld, menuCamera->d3d_Position, 6, 1, 0, 2.4, &atUIVertices, &atUIIndices, textBuffer, ARRAYSIZE(textBuffer), nCurrentEntity, 0.1);
+
+							pcUISystem->AddTextureToUI(&tThisWorld, nCurrentEntity, pcGraphicsSystem->m_pd3dDevice, nullptr, fontTexture);
+
+							pcUISystem->AddMaskToUI(&tThisWorld, nCurrentEntity, COMPONENT_DEATHSCREEN);
+							pcGraphicsSystem->CreateEntityBuffer(&tThisWorld, nCurrentEntity);
+						}
+					}
+				}
+
+				if (tThisWorld.atUIMask[nCurrentEntity].m_tnUIMask == (COMPONENT_UIMASK | COMPONENT_LABEL | COMPONENT_DEATHSCREEN))
+				{
+					tUIVertexBuffer.start = -1;
+					tUIVertexBuffer.end = -1;
+					tUIVertexBuffer.ratio = -1;
+
+					if (tThisWorld.atLabel[nCurrentEntity].addTexture && !tThisWorld.atLabel[nCurrentEntity].lastUIElement)
+						tUIPixelBuffer.hoverColor = XMFLOAT4(1, 0, 0, 0);
+					else
+						tUIPixelBuffer.hoverColor = XMFLOAT4(0, 0, 0, 0);
+
+					pcGraphicsSystem->InitUIShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tUIVertexBuffer, tUIPixelBuffer, tThisWorld.atMesh[nCurrentEntity], menuCamera->d3d_Position);
+					pcGraphicsSystem->ExecutePipeline(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atMesh[nCurrentEntity].m_nIndexCount, tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask, tThisWorld.atShaderID[nCurrentEntity].m_nShaderID);
+				}
+			}
+		}
+
+		if (GamePaused || GameOver || options)
+		{
+			if (tThisWorld.atUIMask[nCurrentEntity].m_tnUIMask == (COMPONENT_UIMASK | COMPONENT_LABEL | COMPONENT_PAUSESCREEN | COMPONENT_DEATHSCREEN | COMPONENT_OPTIONS))
+			{
+				tUIVertexBuffer.start = -1;
+				tUIVertexBuffer.end = -1;
+				tUIVertexBuffer.ratio = -1;
+
+				tUIPixelBuffer.hoverColor = XMFLOAT4(0, 0, 0, .2);
+
+				pcGraphicsSystem->InitUIShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tUIVertexBuffer, tUIPixelBuffer, tThisWorld.atMesh[nCurrentEntity], menuCamera->d3d_Position);
+				pcGraphicsSystem->ExecutePipeline(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atMesh[nCurrentEntity].m_nIndexCount, tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask, tThisWorld.atShaderID[nCurrentEntity].m_nShaderID);
+			}
+		}
+
+		if (tThisWorld.atUIMask[nCurrentEntity].m_tnUIMask == (COMPONENT_UIMASK | COMPONENT_LABEL | COMPONENT_HUD))
+		{
+			tUIVertexBuffer.start = -1;
+			tUIVertexBuffer.end = -1;
+			tUIVertexBuffer.ratio = -1;
+
+			if (tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_SHADERID))
+				tUIPixelBuffer.hoverColor = XMFLOAT4(0, 0, 0, 0);
+			else
+				tUIPixelBuffer.hoverColor = XMFLOAT4(.5, .5, .5, 1);
+
+			//if (tThisWorld.atMesh[nCurrentEntity].m_d3dSRVDiffuse != nullptr)
+			//	tThisWorld.atMesh[nCurrentEntity].m_d3dSRVDiffuse = nullptr;
+
+			pcGraphicsSystem->InitUIShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tUIVertexBuffer, tUIPixelBuffer, tThisWorld.atMesh[nCurrentEntity], menuCamera->d3d_Position);
+			pcGraphicsSystem->ExecutePipeline(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atMesh[nCurrentEntity].m_nIndexCount, tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask, tThisWorld.atShaderID[nCurrentEntity].m_nShaderID);
+
+		}
 	}
 
+	if (pcInputSystem->InputCheck(G_KEY_V))
+	{
+		GameOver = true;
+	}
 
+	if (pcInputSystem->InputCheck(G_KEY_B))
+	{
+		tThisWorld.atClayton[PlayerStartIndex].health = 0;
+		GameOver = true;
+	}
+
+	if (GameOver && tThisWorld.atClayton[PlayerStartIndex].health > 0)
+	{
+		for (auto i = G_KEY_UNKNOWN; i <= G_KEY_9; ++i)
+		{
+			if (pcInputSystem->InputCheck(i) == 1)
+			{
+				if (i == G_KEY_V)
+					continue;
+
+				return 2;
+			}
+		}
+	}
+
+	if (pcInputSystem->InputCheck(G_KEY_X))
+	{
+		tThisWorld.atAiHeath[901].heath -= 1;
+	}
+
+	if (pcInputSystem->InputCheck(G_KEY_C))
+	{
+		tThisWorld.atAiHeath[905].heath -= 1;
+	}
+
+	clickTime += clickTimer.Delta();
 
 	pcGraphicsSystem->m_pd3dSwapchain->Present(0, 0);
 	zValue += 0.001;
-	return 12;
+	return 14;
 
 }
 
