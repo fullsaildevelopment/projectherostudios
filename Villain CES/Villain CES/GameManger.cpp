@@ -2,7 +2,7 @@
 #define AI_ON true
 #define MIKES_SANDBOX_ON false
 #define SKELETON_LOAD_ON false
-#define MAIN_LEVEL_ON false
+#define MAIN_LEVEL_ON true
 CGameMangerSystem::CGameMangerSystem(HWND window,CInputSystem* _pcInputSystem)
 {
 	cApplicationWindow = window;
@@ -47,6 +47,11 @@ CGameMangerSystem::~CGameMangerSystem()
 	delete walkCamera;
 	delete menuCamera;
 	delete pcAudioSystem;
+	delete pcUISystem;
+
+	fontTexture->Release();
+	atUIVertices.clear();
+	atUIIndices.clear();
 }
 
 void CGameMangerSystem::LoadLevel()
@@ -730,11 +735,15 @@ int CGameMangerSystem::InGameUpdate()
 					if (tThisWorld.atClip[nCurrentEntity].tryToShoot == true && tThisWorld.atClip[nCurrentEntity].nBulletsAvailables.size() > 0 && tThisWorld.atClip[nCurrentEntity].fShootingCoolDown <= 0)
 					{
 
-						/*wchar_t* textBuffer = new wchar_t[1];
+						wchar_t* textBuffer = new wchar_t[1];
 
-						textBuffer[0] = tThisWorld.atClip[nCurrentEntity].nBulletsAvailables.size() - 1;
+						textBuffer[0] = (tThisWorld.atClip[nCurrentEntity].nBulletsAvailables.size() - 1);
 
-						pcUISystem->UpdateText(textBuffer, atUIVertices.at(tThisWorld.atLabel[1094].vIndex));*/
+						pcUISystem->UpdateText(&tThisWorld, 1094, &atUIVertices, textBuffer, atUIVertices.at(tThisWorld.atLabel[1094].vIndex));
+
+						pcGraphicsSystem->CreateEntityBuffer(&tThisWorld, 1094);
+
+						delete[] textBuffer;
 
 						XMVECTOR foward;
 						foward.m128_f32[0] = 0;
@@ -768,6 +777,15 @@ int CGameMangerSystem::InGameUpdate()
 						pcProjectileSystem->Reload(&tThisWorld.atClip[nCurrentEntity]);
 						tThisWorld.atClip[nCurrentEntity].tryToReload = false;
 
+						wchar_t* textBuffer = new wchar_t[1];
+
+						textBuffer[0] = (tThisWorld.atClip[nCurrentEntity].nBulletsAvailables.size() - 1);
+
+						pcUISystem->UpdateText(&tThisWorld, 1094, &atUIVertices, textBuffer, atUIVertices.at(tThisWorld.atLabel[1094].vIndex));
+
+						pcGraphicsSystem->CreateEntityBuffer(&tThisWorld, 1094);
+
+						delete[] textBuffer;
 					}
 					if (tThisWorld.atClip[nCurrentEntity].nBulletsFired.size() != 0) {
 						for (int i = 0; i < tThisWorld.atClip[nCurrentEntity].nBulletsFired.size(); ++i) {
@@ -792,7 +810,7 @@ int CGameMangerSystem::InGameUpdate()
 
 					}
 					if (tThisWorld.atClip[nCurrentEntity].fShootingCoolDown > 0)
-						tThisWorld.atClip[nCurrentEntity].fShootingCoolDown -= 0.1;
+						tThisWorld.atClip[nCurrentEntity].fShootingCoolDown -= 1.1;
 				}
 
 
@@ -1062,7 +1080,7 @@ int CGameMangerSystem::InGameUpdate()
 
 								if (tThisWorld.atButton[nCurrentEntity].sceneIndex == 98)
 									options = true;
-								else if (tThisWorld.atButton[nCurrentEntity].sceneIndex == 5)
+								else if (tThisWorld.atButton[nCurrentEntity].sceneIndex == nCurrentScene)
 									GamePaused = false;
 								else if (tThisWorld.atButton[nCurrentEntity].sceneIndex == 96 || tThisWorld.atButton[nCurrentEntity].sceneIndex == 97)
 								{
@@ -1098,7 +1116,7 @@ int CGameMangerSystem::InGameUpdate()
 							{
 								clickTime = 0;
 
-								if (tThisWorld.atButton[nCurrentEntity].sceneIndex == 5)
+								if (tThisWorld.atButton[nCurrentEntity].sceneIndex == nCurrentScene)
 									options = false;
 							}
 							else if (PtInRect(&tThisWorld.atButton[nCurrentEntity].boundingBox, hoverPoint))
@@ -1304,6 +1322,58 @@ int CGameMangerSystem::InGameUpdate()
 				pcGraphicsSystem->ExecutePipeline(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atMesh[nCurrentEntity].m_nIndexCount, tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask, tThisWorld.atShaderID[nCurrentEntity].m_nShaderID);
 
 			}
+
+			if (tThisWorld.atUIMask[nCurrentEntity].m_tnUIMask == (COMPONENT_UIMASK | COMPONENT_LABEL | COMPONENT_HUD))
+			{
+				tUIVertexBuffer.start = -1;
+				tUIVertexBuffer.end = -1;
+				tUIVertexBuffer.ratio = -1;
+
+				if (tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_SHADERID))
+					tUIPixelBuffer.hoverColor = XMFLOAT4(0, 0, 0, 0);
+				else
+					tUIPixelBuffer.hoverColor = XMFLOAT4(.5, .5, .5, 1);
+
+				pcGraphicsSystem->InitUIShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tUIVertexBuffer, tUIPixelBuffer, tThisWorld.atMesh[nCurrentEntity], menuCamera->d3d_Position);
+				pcGraphicsSystem->ExecutePipeline(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atMesh[nCurrentEntity].m_nIndexCount, tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask, tThisWorld.atShaderID[nCurrentEntity].m_nShaderID);
+
+			}
+
+			if (tThisWorld.atUIMask[nCurrentEntity].m_tnUIMask == (COMPONENT_UIMASK | COMPONENT_LABEL | COMPONENT_BAR | COMPONENT_HUD))
+			{
+				if (tThisWorld.atBar[nCurrentEntity].backgroundColor.x == 0 &&
+					tThisWorld.atBar[nCurrentEntity].backgroundColor.y == 0 &&
+					tThisWorld.atBar[nCurrentEntity].backgroundColor.z == 1 &&
+					tThisWorld.atBar[nCurrentEntity].backgroundColor.w == 1)
+				{
+					tUIVertexBuffer.start = (tThisWorld.atBar[nCurrentEntity].barBoundingBox.left + 14 - (screenWidth / 2.0)) / (screenWidth / 2);
+					tUIVertexBuffer.end = (tThisWorld.atBar[nCurrentEntity].barBoundingBox.right + 4 - (screenWidth / 2.0)) / (screenWidth / 2);
+					tUIVertexBuffer.ratio = (100 - tThisWorld.atClip[GunIndexForPlayer].fShootingCoolDown) * .01;
+				}
+				else if (tThisWorld.atBar[nCurrentEntity].backgroundColor.x == 1 &&
+					tThisWorld.atBar[nCurrentEntity].backgroundColor.y == 0 &&
+					tThisWorld.atBar[nCurrentEntity].backgroundColor.z == 0 &&
+					tThisWorld.atBar[nCurrentEntity].backgroundColor.w == 1)
+				{
+					tUIVertexBuffer.start = (tThisWorld.atBar[nCurrentEntity].barBoundingBox.left + 14 - (screenWidth / 2.0)) / (screenWidth / 2);
+					tUIVertexBuffer.end = (tThisWorld.atBar[nCurrentEntity].barBoundingBox.right + 4 - (screenWidth / 2.0)) / (screenWidth / 2);
+					tUIVertexBuffer.ratio = tThisWorld.atClayton[PlayerStartIndex].health * .01;
+				}
+				else
+				{
+					tUIVertexBuffer.start = -1;
+					tUIVertexBuffer.end = -1;
+					tUIVertexBuffer.ratio = -1;
+				}
+
+				tUIPixelBuffer.hoverColor = tThisWorld.atBar[nCurrentEntity].backgroundColor;
+
+				if (tThisWorld.atMesh[nCurrentEntity].m_d3dSRVDiffuse != nullptr)
+					tThisWorld.atMesh[nCurrentEntity].m_d3dSRVDiffuse = nullptr;
+
+				pcGraphicsSystem->InitUIShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tUIVertexBuffer, tUIPixelBuffer, tThisWorld.atMesh[nCurrentEntity], menuCamera->d3d_Position);
+				pcGraphicsSystem->ExecutePipeline(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atMesh[nCurrentEntity].m_nIndexCount, tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask, tThisWorld.atShaderID[nCurrentEntity].m_nShaderID);
+			}
 		}
 
 		pcGraphicsSystem->m_pd3dSwapchain->Present(0, 0);
@@ -1341,6 +1411,11 @@ int CGameMangerSystem::InGameUpdate()
 		if (pcInputSystem->InputCheck(G_KEY_C))
 		{
 			tThisWorld.atAiHeath[905].heath -= 1;
+		}
+
+		if (pcInputSystem->InputCheck(G_KEY_F))
+		{
+			tThisWorld.atClayton[PlayerStartIndex].health -= 1;
 		}
 
 		clickTime += clickTimer.Delta();
@@ -1586,7 +1661,7 @@ void CGameMangerSystem::InitializeMainMenu()
 		nThisEntity = CreateUILabel(&tThisWorld, menuCamera->d3d_Position, 2, 1, .5, 0, &atUIVertices, -1, .1);
 		pcUISystem->AddTextureToUI(&tThisWorld, nThisEntity, pcGraphicsSystem->m_pd3dDevice, wideChar);
 		//                                                  modify this to switch testing levels in Augur.cpp
-		pcUISystem->AddButtonToUI(&cApplicationWindow, &tThisWorld, nThisEntity, 13, true);
+		pcUISystem->AddButtonToUI(&cApplicationWindow, &tThisWorld, nThisEntity, 4, true);
 
 #if MIKES_SANDBOX_ON
 		pcUISystem->AddButtonToUI(&cApplicationWindow, &tThisWorld, nThisEntity, 9, true);
@@ -1746,7 +1821,7 @@ void CGameMangerSystem::InitializePauseScreen()
 		nThisEntity = createEntityReverse(&tThisWorld);
 		CreateUILabelForText(&tThisWorld, menuCamera->d3d_Position, 2, 1, 0, 4.8, &atUIVertices, &atUIIndices, textBuffer, ARRAYSIZE(textBuffer), nThisEntity, .1);
 		pcUISystem->AddTextureToUI(&tThisWorld, nThisEntity, pcGraphicsSystem->m_pd3dDevice, nullptr, fontTexture);
-		pcUISystem->AddButtonToUI(&cApplicationWindow, &tThisWorld, nThisEntity, 5, true);
+		pcUISystem->AddButtonToUI(&cApplicationWindow, &tThisWorld, nThisEntity, nCurrentScene + 1, true);
 
 		pcUISystem->AddMaskToUI(&tThisWorld, nThisEntity, COMPONENT_PAUSESCREEN);
 	}
@@ -1960,7 +2035,7 @@ void CGameMangerSystem::InitializePauseScreen()
 		nThisEntity = createEntityReverse(&tThisWorld);
 		CreateUILabelForText(&tThisWorld, menuCamera->d3d_Position, 1, 1, 0, -2.4, &atUIVertices, &atUIIndices, textBuffer, ARRAYSIZE(textBuffer), nThisEntity, .1);
 		pcUISystem->AddTextureToUI(&tThisWorld, nThisEntity, pcGraphicsSystem->m_pd3dDevice, nullptr, fontTexture);
-		pcUISystem->AddButtonToUI(&cApplicationWindow, &tThisWorld, nThisEntity, 5, true);
+		pcUISystem->AddButtonToUI(&cApplicationWindow, &tThisWorld, nThisEntity, nCurrentScene + 1, true);
 
 		pcUISystem->AddMaskToUI(&tThisWorld, nThisEntity, COMPONENT_OPTIONS);
 	}
@@ -2207,7 +2282,7 @@ void CGameMangerSystem::InitializeOptionsMenu()
 
 		nThisEntity = CreateUILabelForText(&tThisWorld, menuCamera->d3d_Position, 1, 1, 0, -2.4, &atUIVertices, &atUIIndices, textBuffer, ARRAYSIZE(textBuffer), -1, 0.1);
 		pcUISystem->AddTextureToUI(&tThisWorld, nThisEntity, pcGraphicsSystem->m_pd3dDevice, nullptr, fontTexture);
-		pcUISystem->AddButtonToUI(&cApplicationWindow, &tThisWorld, nThisEntity, 3, true);
+		pcUISystem->AddButtonToUI(&cApplicationWindow, &tThisWorld, nThisEntity, nCurrentScene + 1, true);
 
 		pcUISystem->AddMaskToUI(&tThisWorld, nThisEntity, COMPONENT_OPTIONS);
 	}
@@ -2222,28 +2297,28 @@ void CGameMangerSystem::InitializeHUD()
 
 	{
 		nThisEntity = createEntityReverse(&tThisWorld);
-		CreateUILabel(&tThisWorld, menuCamera->d3d_Position, .4, .15, .43, -.4, &atUIVertices, nThisEntity, .1);
+		CreateUILabel(&tThisWorld, menuCamera->d3d_Position, .35, .15, .4, -.4, &atUIVertices, nThisEntity, .1);
 
 		pcUISystem->AddMaskToUI(&tThisWorld, nThisEntity, COMPONENT_HUD);
 	}
 
 	{
 		nThisEntity = createEntityReverse(&tThisWorld);
-		CreateUILabel(&tThisWorld, menuCamera->d3d_Position, .4, .15, -.27, -.4, &atUIVertices, nThisEntity, .1);
+		CreateUILabel(&tThisWorld, menuCamera->d3d_Position, .35, .15, -.24, -.4, &atUIVertices, nThisEntity, .1);
 
 		pcUISystem->AddMaskToUI(&tThisWorld, nThisEntity, COMPONENT_HUD);
 	}
 
 	{
 		nThisEntity = createEntityReverse(&tThisWorld);
-		CreateUILabel(&tThisWorld, menuCamera->d3d_Position, .1, .4, .08, 0, &atUIVertices, nThisEntity, .1);
+		CreateUILabel(&tThisWorld, menuCamera->d3d_Position, .1, .45, .08, 0.05, &atUIVertices, nThisEntity, .1);
 
 		pcUISystem->AddMaskToUI(&tThisWorld, nThisEntity, COMPONENT_HUD);
 	}
 
 	{
 		nThisEntity = createEntityReverse(&tThisWorld);
-		CreateUILabel(&tThisWorld, menuCamera->d3d_Position, .1, .4, .08, -.8, &atUIVertices, nThisEntity, .1);
+		CreateUILabel(&tThisWorld, menuCamera->d3d_Position, .1, .45, .08, -.85, &atUIVertices, nThisEntity, .1);
 
 		pcUISystem->AddMaskToUI(&tThisWorld, nThisEntity, COMPONENT_HUD);
 	}
@@ -5557,7 +5632,7 @@ int CGameMangerSystem::RealLevelUpdate()
 
 							if (tThisWorld.atButton[nCurrentEntity].sceneIndex == 98)
 								options = true;
-							else if (tThisWorld.atButton[nCurrentEntity].sceneIndex == 5)
+							else if (tThisWorld.atButton[nCurrentEntity].sceneIndex == nCurrentScene)
 								GamePaused = false;
 							else if (tThisWorld.atButton[nCurrentEntity].sceneIndex == 96 || tThisWorld.atButton[nCurrentEntity].sceneIndex == 97)
 							{
@@ -5593,7 +5668,7 @@ int CGameMangerSystem::RealLevelUpdate()
 						{
 							clickTime = 0;
 
-							if (tThisWorld.atButton[nCurrentEntity].sceneIndex == 5)
+							if (tThisWorld.atButton[nCurrentEntity].sceneIndex == nCurrentScene)
 								options = false;
 						}
 						else if (PtInRect(&tThisWorld.atButton[nCurrentEntity].boundingBox, hoverPoint))
@@ -5638,6 +5713,9 @@ int CGameMangerSystem::RealLevelUpdate()
 					}
 
 					tUIPixelBuffer.hoverColor = tThisWorld.atBar[nCurrentEntity].backgroundColor;
+
+					if (tThisWorld.atMesh[nCurrentEntity].m_d3dSRVDiffuse != nullptr)
+						tThisWorld.atMesh[nCurrentEntity].m_d3dSRVDiffuse = nullptr;
 
 					pcGraphicsSystem->InitUIShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tUIVertexBuffer, tUIPixelBuffer, tThisWorld.atMesh[nCurrentEntity], menuCamera->d3d_Position);
 					pcGraphicsSystem->ExecutePipeline(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atMesh[nCurrentEntity].m_nIndexCount, tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask, tThisWorld.atShaderID[nCurrentEntity].m_nShaderID);
@@ -5816,6 +5894,9 @@ int CGameMangerSystem::RealLevelUpdate()
 			}
 
 			tUIPixelBuffer.hoverColor = tThisWorld.atBar[nCurrentEntity].backgroundColor;
+
+			if (tThisWorld.atMesh[nCurrentEntity].m_d3dSRVDiffuse != nullptr)
+				tThisWorld.atMesh[nCurrentEntity].m_d3dSRVDiffuse = nullptr;
 
 			pcGraphicsSystem->InitUIShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tUIVertexBuffer, tUIPixelBuffer, tThisWorld.atMesh[nCurrentEntity], menuCamera->d3d_Position);
 			pcGraphicsSystem->ExecutePipeline(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atMesh[nCurrentEntity].m_nIndexCount, tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask, tThisWorld.atShaderID[nCurrentEntity].m_nShaderID);

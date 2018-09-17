@@ -11,7 +11,6 @@
 #include "DirectXTex-master\WICTextureLoader\WICTextureLoader.h"
 #include "DirectXTex-master\DDSTextureLoader\DDSTextureLoader.h"
 #include <array>
-//#include "UI_System.h"
 
 struct TWorld
 {
@@ -75,26 +74,6 @@ struct TUIVert
 	XMFLOAT3 m_d3dfPosition;
 	XMFLOAT2 m_d3dfUVs;
 };
-
-//struct TUIVertices
-//{
-//	TUIVert* m_d3dfPositions;
-//
-//	TUIVertices(unsigned int size)
-//	{
-//		m_d3dfPositions = new TUIVert[size];
-//	}
-//};
-
-//struct TUIIndices
-//{
-//	short* m_d3dfIndices;
-//
-//	TUIIndices(unsigned int size)
-//	{
-//		m_d3dfIndices = new short[size];
-//	}
-//};
 
 unsigned int createEntity(TWorld *ptWorld);
 unsigned int createEntityReverse(TWorld * ptWorld);

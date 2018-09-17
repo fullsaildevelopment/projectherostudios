@@ -22,7 +22,7 @@ public:
 	void End();
 private:
 
-	int CurrentSpotInGame;
+	//int CurrentSpotInGame;
 	//XMMATRIX m_d3dViewMatrix;
 
 
