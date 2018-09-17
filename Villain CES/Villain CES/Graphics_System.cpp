@@ -1516,11 +1516,11 @@ void CGraphicsSystem::InitQuadShaderData(ID3D11DeviceContext * pd3dDeviceContext
 	// Position of the constant buffer in the vertex shader.
 	bufferNumber = 0;
 
+	pd3dDeviceContext->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_POINTLIST);
 	pd3dDeviceContext->PSSetConstantBuffers(bufferNumber, 1, &m_pd3dQuadPixelBuffer);
 
 	// Set the constant buffer in the Geometry shader with the updated values.
 	pd3dDeviceContext->GSSetConstantBuffers(0, 1, &m_pd3dQuadGeometryBuffer);
-	pd3dDeviceContext->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_POINTLIST);
 	pd3dDeviceContext->IASetVertexBuffers(0, 1, &tDebugMesh.m_pd3dVertexBuffer, &tDebugMesh.m_nVertexBufferStride, &tDebugMesh.m_nVertexBufferOffset);
 }
 
@@ -1971,7 +1971,7 @@ void CGraphicsSystem::ExecutePipeline(ID3D11DeviceContext *pd3dDeviceContext, in
 			{
 				pd3dDeviceContext->Draw(m_nIndexCount, 0);
 			}
-			pd3dDeviceContext->GSSetShader(NULL, NULL, 0);
+			pd3dDeviceContext->GSSetShader(nullptr, NULL, 0);
 			break;
 		}
 		case Skybox:

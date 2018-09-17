@@ -18,7 +18,6 @@ public:
 
 	CGameMangerSystem(HWND window, CInputSystem* pcInputSystem);
 	~CGameMangerSystem();
-	void LoadLevel();
 	int LoadMainMenu();
 	void InitializeMainMenu();
 	int LoadTitleScreen();
