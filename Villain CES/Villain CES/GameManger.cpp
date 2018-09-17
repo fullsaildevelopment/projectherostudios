@@ -2837,7 +2837,8 @@ int CGameMangerSystem::SpacePirateGamePlay()
 
 
 		}
-		else {
+		else 
+		{
 
 			//tTempPixelBuffer.m_d3dCollisionColor = tThisWorld.atSimpleMesh[nCurrentEntity].m_nColor;
 
@@ -2959,19 +2960,19 @@ void CGameMangerSystem::LoadMikesGraphicsSandbox()
 
 #pragma endregion
 
-	tempImport = pcGraphicsSystem->ReadMesh("meshData_Satellite.txt");
-	matOpt = pcGraphicsSystem->CreateTexturesFromFile(tempImport.vtMaterials, tempImport.meshCount);
-	for (int meshIndex = 0; meshIndex < tempImport.meshCount; meshIndex++)
-	{
-		int myMesh = createMesh(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, tempImport.vtMeshes[meshIndex], matOpt, meshIndex);
-	}
-
-	//tempImport = pcGraphicsSystem->ReadMesh("meshData_NoBrewery7.txt");
-	//matOpt =  pcGraphicsSystem->CreateTexturesFromFile(tempImport.vtMaterials, tempImport.meshCount);
+	//tempImport = pcGraphicsSystem->ReadMesh("meshData_Satellite.txt");
+	//matOpt = pcGraphicsSystem->CreateTexturesFromFile(tempImport.vtMaterials, tempImport.meshCount);
 	//for (int meshIndex = 0; meshIndex < tempImport.meshCount; meshIndex++)
 	//{
 	//	int myMesh = createMesh(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, tempImport.vtMeshes[meshIndex], matOpt, meshIndex);
 	//}
+
+	tempImport = pcGraphicsSystem->ReadMesh("meshData_NoBrewery8.txt");
+	matOpt =  pcGraphicsSystem->CreateTexturesFromFile(tempImport.vtMaterials, tempImport.meshCount);
+	for (int meshIndex = 0; meshIndex < tempImport.meshCount; meshIndex++)
+	{
+		int myMesh = createMesh(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, tempImport.vtMeshes[meshIndex], matOpt, meshIndex);
+	}
 
 	//tempImport = pcGraphicsSystem->ReadMesh("meshData_LaserFlintlock.txt");
 	//matOpt =  pcGraphicsSystem->CreateTexturesFromFile(tempImport.vtMaterials, tempImport.meshCount);
@@ -2997,16 +2998,13 @@ void CGameMangerSystem::LoadMikesGraphicsSandbox()
 		int myMesh = createClaytonAnim(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, tempImport.vtMeshes[meshIndex], matOpt, tempImport.vtAnimations[meshIndex], meshIndex);
 	}
 
-
 	//createGSQuad(&tThisWorld, XMFLOAT4(1, 0, 0, 1));
 	//createGSQuad(&tThisWorld, XMFLOAT4(1, 1, 1, 1));
 
-	
-
 	pcGraphicsSystem->CreateBuffers(&tThisWorld);
-		/*
+	/*
 		loop through all entities
-			current entites System_Times StartClock
+			current entities System_Times StartClock
 
 		*/
 
@@ -3135,8 +3133,8 @@ int CGameMangerSystem::MikesGraphicsSandbox()
 			tAnimVertexBuffer.m_d3dWorldMatrix = m_d3dWorldMatrix;
 			tAnimVertexBuffer.m_d3dViewMatrix = debugCamera->d3d_Position;
 			tAnimVertexBuffer.m_d3dProjectionMatrix = m_d3dProjectionMatrix;
-			XMFLOAT4X4 * tweenJoints = pcAnimationSystem->PlayAnimation(tThisWorld.atAnimationVariant[nCurrentEntity], tThisWorld.atAnimation[nCurrentEntity], tThisWorld.atAnimation[nCurrentEntity].tTimer.localTime);
-			tAnimVertexBuffer.m_d3dJointsForVS = tweenJoints;
+			XMFLOAT4X4 * tweenJoints = pcAnimationSystem->PlayAnimation(tThisWorld.atAnimationVariant[nCurrentEntity], tThisWorld.atAnimation[nCurrentEntity], tThisWorld.atAnimation[0].tTimer.localTime);
+			memcpy(&tAnimVertexBuffer.m_d3dJointsForVS, &tweenJoints, sizeof(tweenJoints));
 			pcGraphicsSystem->InitAnimShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tAnimVertexBuffer, tThisWorld.atMesh[nCurrentEntity], debugCamera->d3d_Position);
 			pcGraphicsSystem->ExecutePipeline(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atMesh[nCurrentEntity].m_nIndexCount, tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask, tThisWorld.atShaderID[nCurrentEntity].m_nShaderID);
 		}
@@ -3145,22 +3143,19 @@ int CGameMangerSystem::MikesGraphicsSandbox()
 		{
 			tMyVertexBufferTemp.m_d3dWorldMatrix = tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix;
 			tMyVertexBufferTemp.m_d3dViewMatrix = debugCamera->d3d_Position;
+
 			tMyVertexBufferTemp.m_d3dProjectionMatrix = m_d3dProjectionMatrix;
 			pcGraphicsSystem->InitSkyboxShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tMyVertexBufferTemp, tThisWorld.atMesh[nCurrentEntity], debugCamera->d3d_Position);
 			pcGraphicsSystem->ExecutePipeline(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atMesh[nCurrentEntity].m_nIndexCount, tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask, tThisWorld.atShaderID[nCurrentEntity].m_nShaderID);
 		}
-
 	}
 	
 	pcGraphicsSystem->m_pd3dSwapchain->Present(0, 0);	
-	//tThisWorld.atAnimation[0].tTimer.GetGlobalTime(tThisWorld.atAnimation[0].tTimer.tSceneTimer, tThisWorld.atAnimation[0].tTimer.globalTime);
-	if (pcInputSystem->InputCheck(G_KEY_B == 1))
-	{
-		tThisWorld.atAnimation[0].tTimer.GetLocalTime(tThisWorld.atAnimation[0].tTimer.tSceneTimer, tThisWorld.atAnimation[0].tTimer.localTime);
-		tThisWorld.atAnimation[0].tTimer.DisplayTimes(pcInputSystem);
-	}
+
+	tThisWorld.atAnimation[0].tTimer.GetLocalTime(tThisWorld.atAnimation[0].tTimer.tSceneTimer, tThisWorld.atAnimation[0].tTimer.localTime);
+	tThisWorld.atAnimation[0].tTimer.DisplayTimes(pcInputSystem);
+	
 
 	//End Time
 	return 10;
 }
-

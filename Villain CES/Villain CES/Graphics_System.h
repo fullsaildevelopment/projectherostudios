@@ -64,7 +64,7 @@ public:
 		XMMATRIX m_d3dWorldMatrix;
 		XMMATRIX m_d3dViewMatrix;
 		XMMATRIX m_d3dProjectionMatrix;
-		XMFLOAT4X4 m_d3dJointsForVS[62];
+		XMFLOAT4X4 m_d3dJointsForVS[59];
 	};
 
 	struct TMyPixelBufferType

@@ -12,7 +12,7 @@ CAnimationSystem::~CAnimationSystem()
 XMFLOAT4X4 * CAnimationSystem::PlayAnimation(TAnimationVariant animationVariant, TAnimation theAnimation, float realTime)
 {
 	CalculateFrameCount(animationVariant, theAnimation, realTime);
-	static XMFLOAT4X4 jointsForVS[62];//Clayton Joints
+	static XMFLOAT4X4 jointsForVS[59];//Clayton Joints
 	std::vector<XMMATRIX> thisFramesTweenJointMatrix;
 
 	if (animationVariant.tClaytonAnim.forward)

@@ -1660,7 +1660,7 @@ void CGraphicsSystem::InitAnimShaderData(ID3D11DeviceContext * pd3dDeviceContext
 	ptAnimatedVertexBufferDataPointer->m_d3dWorldMatrix = tempWorld;
 	ptAnimatedVertexBufferDataPointer->m_d3dViewMatrix = d3dView;
 	ptAnimatedVertexBufferDataPointer->m_d3dProjectionMatrix = tempProj;
-	ptAnimatedVertexBufferDataPointer->m_d3dJointsForVS = d3dVertexBuffer.m_d3dJointsForVS;
+	memcpy(&ptAnimatedVertexBufferDataPointer->m_d3dJointsForVS, &d3dVertexBuffer.m_d3dJointsForVS, sizeof(d3dVertexBuffer.m_d3dJointsForVS));
 	// Unlock the constant buffer.
 	pd3dDeviceContext->Unmap(m_pd3dAnimatedVertexBuffer, 0);
 
