@@ -10,15 +10,8 @@ using namespace fullsail_ai;
 class CAISystem
 {
 public:
-	CAISystem()
-		:open([](PlannerNode* const& c, PlannerNode* const& t)
-	{
-		return c->finalCost > t->finalCost;
-	}
-		)
-	{
-
-	}
+	CAISystem();
+	
 	~CAISystem();
 
 

@@ -1,111 +1,93 @@
 #pragma once
-
+//SDK files from Libraries.
+#include<malloc.h>
 #include"AK/SoundEngine/Common/AkMemoryMgr.h"
 #include"AK/SoundEngine/Common/AkModule.h"
+#include"AK/SoundEngine/Common/AkTypes.h"
 #include"AK/SoundEngine/Common/IAkStreamMgr.h"
 #include"AK/SoundEngine/Platforms/Windows/AkWinSoundEngine.h"
 #include"AK/SoundEngine/Common/AkStreamMgrModule.h"
-#include"AK/Tools/Common/AkPlatformFuncs.h"
 #include"AK/MusicEngine/Common/AkMusicEngine.h"
 #include"AK/SoundEngine/Common/AkSoundEngine.h"
-#ifndef AK_OPTIMIZED
-// Only needed for debug mode
-#include <AK/Comm/AkCommunication.h>
-#endif //AK_OPTIMIZED
+#include"AK/SpatialAudio/Common/AkSpatialAudio.h"
+#include"AK/Tools/Win32/AkPlatformFuncs.h"
+#include"GeneratedSoundBanks/Wwise_IDs.h"
+//File Package
+#include"Win32/AkDefaultIOHookBlocking.h"
+#include"Common/AkFilePackageLowLevelIO.h"
+#include"Common/AkDefaultLowLevelIODispatcher.h"
+#include"Common/AkFileLocationBase.h"
+#include"Common/AkFilePackage.h"
+#include"Win32/AkFilePackageLowLevelIOBlocking.h"
+#include"Common/AkFilePackageLUT.h"
+
+#define INIT_BNK L"Init.bnk"
+#define FOOTSTEP_BNK L"Bus3d_Demo.bnk"
+//#define AK_OPTIMIZED
+//#ifndef AK_OPTIMIZED
+//// Only needed for debug mode
+//#include <AK/Comm/AkCommunication.h>
+//#endif //AK_OPTIMIZED
+namespace AK
+{
+	// reason these are inline that way they will not defined in multiple .obj files for our .exe
+#ifdef WIN32
+	inline void * AllocHook(size_t in_size)
+	{
+		return malloc(in_size);
+	}
+	inline void FreeHook(void * in_ptr)
+	{
+		free(in_ptr);
+	}
+	// Note: VirtualAllocHook() may be used by I/O pools of the default implementation
+	// of the Stream Manager, to allow "true" unbuffered I/O (using FILE_FLAG_NO_BUFFERING
+	// - refer to the Windows SDK documentation for more details). This is NOT mandatory;
+	// you may implement it with a simple malloc().
+	inline void * VirtualAllocHook(
+		void * in_pMemAddress,
+		size_t in_size,
+		DWORD in_dwAllocationType,
+		DWORD in_dwProtect
+	)
+	{
+		return VirtualAlloc(in_pMemAddress, in_size, in_dwAllocationType, in_dwProtect);
+	}
+	inline void VirtualFreeHook(
+		void * in_pMemAddress,
+		size_t in_size,
+		DWORD in_dwFreeType
+	)
+	{
+		VirtualFree(in_pMemAddress, in_size, in_dwFreeType);
+	}
+#endif
+}
 using namespace AK;
-class GameSound
+using namespace AKPLATFORM;
+class CAudioSystem 
 {
 public:
-	GameSound();
-	~GameSound();
-	void IntiializeSystem();
-	void PlaySoundInBank(GameSound* mysound);
+	CAudioSystem();
+	~CAudioSystem();
+	void IntiializeSystem(AKRESULT &out_ErrorCheck);
+	void TermSoundEngine();
+
+	static void PlaySoundInBank();
+	void SendSoundsToEngine(const AkUniqueID uID, AkGameObjectID obj_ID);
+	void SetBanksFolderPath(const AkOSChar* _inFilePath);
+	void SendSoundsToEngine(const wchar_t* soundName, AkGameObjectID obj_ID);
+	void ClearActiveGameObjs();
+	void RegisterGameObj(AkGameObjectID in_gameObj);
+	void UnRegisterGameObj(AkGameObjectID in_gameObj);
+	void LoadBankFile(const wchar_t* inBankname, AkBankID &bnkId, AKRESULT &out_ErrorCheck);
+	void UnloadBankFile(const wchar_t* inBankname, AkBankID &bnkId, AKRESULT &out_ErrorCheck);
+	void SetListener(AkGameObjectID in_ListenerID, AkUInt32 _instanceNumb, AKRESULT &out_ErrorCheck);
+	void ClearAllActiveBnks();
 private:
-
+	CAkFilePackageLowLevelIOBlocking * m_LowIOHook;
 };
+// C:\Program Files %28x86%29\Audiokinetic\Wwise 2018.1.0.6714\SDK\x64_vc150\Debug\lib
 
-GameSound::GameSound()
-{
-}
-
-GameSound::~GameSound()
-{
-}
-
-inline void GameSound::IntiializeSystem()
-{
-#pragma region
-	AkMemSettings myMemoryManager;
-	myMemoryManager.uMaxNumPools = 20;
-	int test = 0;
-	if (AK::MemoryMgr::Init(&myMemoryManager) != AK_Success)
-	{
-		// Memeory Manager failed to create
-		test = -1;
-	}
-#pragma endregion Memory Manager Init
-	
-#pragma region
-	AkStreamMgrSettings myStream;
-	AK::StreamMgr::GetDefaultSettings(myStream);
-	if (!AK::StreamMgr::Create(myStream))
-	{
-		test = -2;
-	}
-
-
-	AkDeviceSettings myDevice;
-	AK::StreamMgr::GetDefaultDeviceSettings(myDevice);
-	//Schedule type Blocking
-	myDevice.uSchedulerTypeFlags = AK_SCHEDULER_BLOCKING;
-	AK::StreamMgr::SetFileLocationResolver();
-	// AkFilePackageLowLevelIOBlocking.h find this file 
-	
-	
-
-#pragma endregion Stream Manager & Device Init
-
-#pragma region
-	AkInitSettings mySoundEngine;
-	AkPlatformInitSettings myPlatform;
-	AK::SoundEngine::GetDefaultInitSettings(mySoundEngine);
-	AK::SoundEngine::GetDefaultPlatformInitSettings(myPlatform);
-	if(AK::SoundEngine::Init(&mySoundEngine, &myPlatform) != AK_Success)
-	{
-		test = -3;
-	}
-
-
-	
-#pragma endregion Sound System & Platform Init
-
-#pragma region
-	AkMusicSettings myMusicEngine;
-	AK::MusicEngine::GetDefaultInitSettings(myMusicEngine);
-
-	if (AK::MusicEngine::Init(&myMusicEngine) != AK_Success)
-	{
-		test = -4;
-	}
-
-#pragma endregion Music Engine Init
-
-#pragma region
-#ifndef AK_OPTIMIZED
-	AkCommSettings myCommunicator;
-	AK::Comm::GetDefaultInitSettings(myCommunicator);
-	if (AK::Comm::Init(myCommunicator) != AK_Success)
-	{
-		test = -5;
-	}
-#endif // !AK_OPTIMIZED
-
-#pragma endregion Communication Between Wwise App & C++ Project
-}
-
-inline void GameSound::PlaySoundInBank(GameSound* mysound)
-{
-	AK::SoundEngine::RenderAudio();
-}
 
 

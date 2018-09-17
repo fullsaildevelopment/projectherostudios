@@ -86,12 +86,14 @@ public:
 
 	struct TUIVertexBufferType
 	{
-		XMMATRIX m_d3dWorldMatrix;
-		XMMATRIX m_d3dViewMatrix;
-		XMMATRIX m_d3dProjectionMatrix;
+		//XMMATRIX m_d3dWorldMatrix;
+		//XMMATRIX m_d3dViewMatrix;
+		//XMMATRIX m_d3dProjectionMatrix;
 
-		//XMFLOAT2 rcpDim;
-		//XMFLOAT2 rcpDim2;
+		float start;
+		float end;
+		float ratio;
+		float padding;
 	};
 
 	struct TUIPixelBufferType
@@ -186,6 +188,8 @@ private:
 	ID3D11InputLayout	*m_pd3dSkyboxInputLayout;
 	ID3D11Buffer		*m_pd3dSkyboxVertexBuffer;
 
+
+	ID3D11BlendState	*m_pd3dBlendState;
 	ID3D11VertexShader	*m_pd3dAnimatedVertexShader;
 	ID3D11PixelShader	*m_pd3dAnimatedPixelShader;
 	ID3D11InputLayout	*m_pd3dAnimatedInputLayout;

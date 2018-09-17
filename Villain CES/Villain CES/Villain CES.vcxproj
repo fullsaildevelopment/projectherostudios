@@ -23,7 +23,7 @@
     <ProjectGuid>{F295078B-8D6D-4BEF-8C35-AB4E37FF64C5}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>VillainCES</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.17134.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -75,14 +75,14 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <LibraryPath>C:\Program Files %28x86%29\Audiokinetic\Wwise 2018.1.0.6714\SDK\x64_vc150\Debug\lib;$(LibraryPath)</LibraryPath>
+    <LibraryPath>..\..\..\$(Platform)_vc150\$(Configuration)\lib;C:\Program Files (x86)\Audiokinetic\Wwise 2018.1.0.6714\SDK\x64_vc150\Debug\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <LibraryPath>C:\Program Files %28x86%29\Audiokinetic\Wwise 2018.1.0.6714\SDK\x64_vc150\Release\lib;$(LibraryPath)</LibraryPath>
+    <LibraryPath>..\..\..\$(Platform)_vc150\$(Configuration)\lib;C:\Program Files (x86)\Audiokinetic\Wwise 2018.1.0.6714\SDK\x64_vc150\Release\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -107,12 +107,14 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(WWISESDK)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(WWISESDK)\include;$(WWISESDK)\samples;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>d3d11.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>d3d11.lib;AkSoundEngine.lib;AkMemoryMgr.lib;AkStreamMgr.lib;AkMusicEngine.lib;CommunicationCentral.lib;dinput8.lib;Winmm.lib;dsound.lib;dxguid.lib;ws2_32.lib;xinput.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalOptions>/VERBOSE:LIB %(AdditionalOptions)</AdditionalOptions>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -144,14 +146,16 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_WINDOWS;AK_OPTIMIZED;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(WWISESDK)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(WWISESDK)\include;$(WWISESDK)\samples;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>d3d11.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>d3d11.lib;AkAudioInputSource.lib;AkCompressorFX.lib;AkDelayFX.lib;AkExpanderFX.lib;AkFlangerFX.lib;AkGainFX.lib;AkGuitarDistortionFX.lib;AkHarmonizerFX.lib;AkMatrixReverbFX.lib;AkMeterFX.lib;AkMotionGeneratorSource.lib;AkMotionSink.lib;AkMotionSourceSource.lib;AkOpusDecoder.lib;AkParametricEQFX.lib;AkPeakLimiterFX.lib;AkPitchShifterFX.lib;AkRecorderFX.lib;AkRoomVerbFX.lib;AkSilenceSource.lib;AkSineSource.lib;AkStereoDelayFX.lib;AkSynthOneSource.lib;AkTimeStretchFX.lib;AkToneSource.lib;AkTremoloFX.lib;dxguid.lib;ws2_32.lib;dinput8.lib;Dsound.lib;XInput.lib;Msacm32.lib;Dbghelp.lib;Winmm.lib;AkVorbisDecoder.lib;AkMusicEngine.lib;AkSpatialAudio.lib;AkStreamMgr.lib;AkMemoryMgr.lib;AkSoundEngine.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <LinkTimeCodeGeneration>Default</LinkTimeCodeGeneration>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -161,6 +165,8 @@
     <ClInclude Include="AudioSystem.h" />
     <ClInclude Include="Auger.h" />
     <ClInclude Include="CAnimationSystem.h" />
+    <ClInclude Include="Common\AkFilePackageLowLevelIO.h" />
+    <ClInclude Include="Common\AkMultipleFileLocation.h" />
     <ClInclude Include="GameManger.h" />
     <ClInclude Include="InputSystem.h" />
     <ClInclude Include="Collision_Component.h" />
@@ -185,12 +191,21 @@
     <ClInclude Include="UI_Component.h" />
     <ClInclude Include="UI_System.h" />
     <ClInclude Include="Villain CES.h" />
+    <ClInclude Include="Win32\AkDefaultIOHookBlocking.h" />
+    <ClInclude Include="Win32\AkFileHelpers.h" />
+    <ClInclude Include="Win32\AkFilePackageLowLevelIOBlocking.h" />
     <ClInclude Include="XTime.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AI_System.cpp" />
+    <ClCompile Include="AudioSystem.cpp" />
     <ClCompile Include="Auger.cpp" />
     <ClCompile Include="CAnimationSystem.cpp" />
+    <ClCompile Include="Common\AkDefaultLowLevelIODispatcher.cpp" />
+    <ClCompile Include="Common\AkFileLocationBase.cpp" />
+    <ClCompile Include="Common\AkFilePackage.cpp" />
+    <ClCompile Include="Common\AkFilePackageLUT.cpp" />
+    <ClCompile Include="Common\AkMultipleFileLocation.cpp" />
     <ClCompile Include="DirectXTex-master\DDSTextureLoader\DDSTextureLoader.cpp" />
     <ClCompile Include="DirectXTex-master\WICTextureLoader\WICTextureLoader.cpp" />
     <ClCompile Include="GameManger.cpp" />
@@ -207,8 +222,10 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Graphics_System.cpp" />
+    <ClCompile Include="Timer.cpp" />
     <ClCompile Include="UI_System.cpp" />
     <ClCompile Include="Villain CES.cpp" />
+    <ClCompile Include="Win32\AkDefaultIOHookBlocking.cpp" />
     <ClCompile Include="XTime.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -363,7 +380,7 @@
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">4.0</ShaderModel>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">4.0</ShaderModel>
       <DisableOptimizations Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</DisableOptimizations>
-      <EnableDebuggingInformation Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</EnableDebuggingInformation>
+      <EnableDebuggingInformation Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</EnableDebuggingInformation>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">4.0</ShaderModel>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">4.0</ShaderModel>
     </FxCompile>

@@ -9,7 +9,9 @@
 #include "AI_System.h"
 #include "UI_System.h"
 #include "CAnimationSystem.h"
+#include"AudioSystem.h"
 #include <array>
+#pragma comment(lib, "MSIMG32.lib")
 
 class CGameMangerSystem {
 public:
@@ -20,9 +22,13 @@ public:
 	int InGameUpdate();
 	void RestartLevel();
 	int LoadMainMenu();
-	void InitilizeMainMenu();
+	void InitializeMainMenu();
 	int LoadTitleScreen();
 	void InitializeTitleScreen();
+	void InitializePauseScreen();
+	void InitializeEndScreen();
+	void InitializeOptionsMenu();
+	void InitializeHUD();
 
 	void LoadPathFindingTest();
 	int PathFindingExample();
@@ -30,7 +36,17 @@ public:
 	int SpacePirateGamePlay();
 	void LoadMikesGraphicsSandbox();
 	int MikesGraphicsSandbox();
+	bool GameOver = false;
+	bool GamePaused = false;
+	void LoadLevelWithMapInIt();
+	int RealLevelUpdate();
+
+	//ZB-Helper Methods
+	bool GetWalkCameraState();
 private:
+	TMaterialOptimized matOpt;
+
+	bool drawtext = true;
 	float scale = 0;
 	XMMATRIX CameraNewPosition;
 	XMMATRIX secondCam;
@@ -38,6 +54,7 @@ private:
 	TWorld tThisWorld;
 	CGraphicsSystem	*pcGraphicsSystem;
 	CInputSystem	*pcInputSystem;
+	CAudioSystem    *pcAudioSystem;
 	CPhysicsSystem  *pcPhysicsSystem;
 	CProjectileSystem* pcProjectileSystem;
 	CAnimationSystem* pcAnimationSystem;
@@ -50,16 +67,18 @@ private:
 	int rayindex = -10;
 	int frustumIndex;
 	float zValue = 5;
-	bool GamePaused = false;
 	bool GameStart;
 	bool DrawUI = true;
 	int renderToTexturePassIndex = 0;
 	float*xPos = new float();
 	float*yPos = new float();
 	TMeshImport bulletMesh;
-
-
+	RECT windowRect;
+	int screenWidth;
+	int screenHeight;
 	
+	bool options = false;
+
 	//ZB Variables
 	TCameraToggle tCameraMode;
 	XMMATRIX m_d3dWorldMatrix;
@@ -67,17 +86,25 @@ private:
 	XMMATRIX m_d3dProjectionMatrix;
 	XMMATRIX m_d3dPlayerMatrix;
 	
-	
-	std::vector<TUIVertices*> atUIVertices;
-	
+	ID3D11ShaderResourceView* fontTexture = nullptr;
+	std::vector<TUIVert*> atUIVertices;
+	std::vector<short*> atUIIndices;
+	XTime clickTimer;
+	float clickTime;
+
 	TCamera *walkCamera;
 	TCamera *aimCamera;
 	TCamera *debugCamera;
 	TCamera * menuCamera;
 	System_Times * tAugerTimers;
 	System_Times *tTimerInfo;
+	AkGameObjectID footSteps;
+	AkGameObjectID Listener;
+	AkBankID footsteps_bnkID;
+	AkBankID init_bnkID;
+	AKRESULT ErrorResult;
 	float m_RealTimeFov;
 	bool bMoving;
 	float Health = 1.0f;
-
+	bool click = false;
 };

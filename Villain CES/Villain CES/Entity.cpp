@@ -1,55 +1,6 @@
 #include "stdafx.h"
 #include "Entity.h"
 #define TEXTURELOADING false
-unsigned int createEntity(TWorld * ptWorld)
-{
-	unsigned int nCurrentEntity;
-	//Return the index of this marked entity
-	for (nCurrentEntity = 0; nCurrentEntity < ENTITYCOUNT; ++nCurrentEntity)
-	{
-		if (ptWorld->atGraphicsMask[nCurrentEntity].m_tnGraphicsMask == COMPONENT_NONE)
-		{
-			printf("Entity created: %d\n", nCurrentEntity);
-			return(nCurrentEntity);
-		}
-	}
-
-	printf("Error!  No more entities left!\n");
-	return(ENTITYCOUNT);
-}
-
-void destroyEntity(TWorld * ptWorld, unsigned int nThisEntity)
-{
-	//Set component list for current entity to none.
-	printf("Entity destroyed: %d\n", nThisEntity);
-	ptWorld->atGraphicsMask[nThisEntity].m_tnGraphicsMask = COMPONENT_NONE;
-	ptWorld->atCollisionMask[nThisEntity].m_tnCollisionMask = COMPONENT_COLLISIONMASK;
-	ptWorld->atAIMask[nThisEntity].m_tnAIMask = COMPONENT_AIMASK;
-	ptWorld->atUIMask[nThisEntity].m_tnUIMask = COMPONENT_UIMASK;
-	ptWorld->atPhysicsMask[nThisEntity].m_tnPhysicsMask = COMPONENT_PHYSICSMASK;
-	ptWorld->atProjectiles[nThisEntity].m_tnProjectileMask = COMPONENT_PROJECTILESMASK;
-	ptWorld->atInputMask[nThisEntity].m_tnInputMask = COMPONENT_INPUTMASK;
-	XMVECTOR zeroVector;
-	zeroVector.m128_f32[0] = 0;
-	zeroVector.m128_f32[1] = 0;
-	zeroVector.m128_f32[2] = 0;
-	zeroVector.m128_f32[3] = 0;
-	ptWorld->atParentWorldMatrix[nThisEntity] = -1;
-	ptWorld->atRigidBody[nThisEntity].totalForce = zeroVector;
-	ptWorld->atRigidBody[nThisEntity].velocity = zeroVector;
-	ptWorld->atRigidBody[nThisEntity].gravity = zeroVector;
-	ptWorld->atRigidBody[nThisEntity].maxVelocity = zeroVector;
-
-	ptWorld->atSimpleMesh[nThisEntity].m_VertexData.clear();
-	ptWorld->atAABB[nThisEntity].m_SceneChange = -30;
-	ptWorld->atAABB[nThisEntity].m_MaterialType = MATERIAL_METAL;
-	ptWorld->atClip[nThisEntity].fAliveTime.clear();
-	ptWorld->atClip[nThisEntity].nBulletsAvailables.clear();
-	ptWorld->atClip[nThisEntity].nBulletsFired.clear();
-	ptWorld->atClip[nThisEntity].tryToShoot = false;
-	ptWorld->atClip[nThisEntity].tryToReload = false;
-	ptWorld->atClip[nThisEntity].maderay = false;
-}
 
 unsigned int CreateDoorWay(TWorld * ptWorld, XMMATRIX SpawnPosition)
 {
@@ -208,6 +159,99 @@ unsigned int SpawnLevelChanger(TWorld * ptWorld, XMMATRIX SpawnPosition)
 
 	ptWorld->atWorldMatrix[nThisEntity].worldMatrix = SpawnPosition;
 	return nThisEntity;
+}
+
+unsigned int createEntity(TWorld * ptWorld)
+{
+	unsigned int nCurrentEntity;
+	//Mark entity for Creation by finding the first index in the entity list that has no components. 
+	//Return the index of this marked entity
+	for (nCurrentEntity = 0; nCurrentEntity < ENTITYCOUNT; ++nCurrentEntity)
+	{
+		if (ptWorld->atGraphicsMask[nCurrentEntity].m_tnGraphicsMask == COMPONENT_NONE)
+		{
+			printf("Entity created: %d\n", nCurrentEntity);
+			if (nCurrentEntity == 16) {
+				float x = 0;
+			}
+			return(nCurrentEntity);
+		}
+	}
+
+	printf("Error!  No more entities left!\n");
+	return(ENTITYCOUNT);
+}
+
+
+unsigned int createEntityReverse(TWorld * ptWorld)
+{
+	unsigned int nCurrentEntity;
+	//Mark entity for Creation by finding the first index in the entity list that has no components. 
+	//Return the index of this marked entity
+	for (nCurrentEntity = ENTITYCOUNT; nCurrentEntity >= 0; --nCurrentEntity)
+	{
+		if (ptWorld->atGraphicsMask[nCurrentEntity].m_tnGraphicsMask == COMPONENT_NONE)
+		{
+			printf("Entity created: %d\n", nCurrentEntity);
+			
+			return(nCurrentEntity);
+		}
+	}
+
+	printf("Error!  No more entities left!\n");
+	return(ENTITYCOUNT);
+}
+
+void destroyEntity(TWorld * ptWorld, unsigned int nThisEntity)
+{
+	//Set component list for current entity to none.
+	printf("Entity destroyed: %d\n", nThisEntity);
+	ptWorld->atGraphicsMask[nThisEntity].m_tnGraphicsMask = COMPONENT_NONE;
+	ptWorld->atCollisionMask[nThisEntity].m_tnCollisionMask = COMPONENT_COLLISIONMASK;
+	ptWorld->atAIMask[nThisEntity].m_tnAIMask = COMPONENT_AIMASK;
+	ptWorld->atUIMask[nThisEntity].m_tnUIMask = COMPONENT_UIMASK;
+	ptWorld->atPhysicsMask[nThisEntity].m_tnPhysicsMask = COMPONENT_PHYSICSMASK;
+	ptWorld->atProjectiles[nThisEntity].m_tnProjectileMask = COMPONENT_PROJECTILESMASK;
+	ptWorld->atInputMask[nThisEntity].m_tnInputMask = COMPONENT_INPUTMASK;
+	XMVECTOR zeroVector;
+	zeroVector.m128_f32[0] = 0;
+	zeroVector.m128_f32[1] = 0;
+	zeroVector.m128_f32[2] = 0;
+	zeroVector.m128_f32[3] = 0;
+	ptWorld->atParentWorldMatrix[nThisEntity] = -1;
+	ptWorld->atRigidBody[nThisEntity].totalForce = zeroVector;
+	ptWorld->atRigidBody[nThisEntity].velocity = zeroVector;
+	ptWorld->atRigidBody[nThisEntity].gravity = zeroVector;
+	ptWorld->atRigidBody[nThisEntity].maxVelocity = zeroVector;
+
+	ptWorld->atSimpleMesh[nThisEntity].m_VertexData.clear();
+	ptWorld->atAABB[nThisEntity].m_SceneChange = -30;
+	ptWorld->atAABB[nThisEntity].m_MaterialType = MATERIAL_METAL;
+	ptWorld->atClip[nThisEntity].fAliveTime.clear();
+	ptWorld->atClip[nThisEntity].nBulletsAvailables.clear();
+	ptWorld->atClip[nThisEntity].nBulletsFired.clear();
+	ptWorld->atClip[nThisEntity].tryToShoot = false;
+	ptWorld->atClip[nThisEntity].tryToReload = false;
+	ptWorld->atClip[nThisEntity].maderay = false;
+
+	ptWorld->atLabel[nThisEntity].height = 0;
+	ptWorld->atLabel[nThisEntity].width = 0;
+	ptWorld->atLabel[nThisEntity].x = 0;
+	ptWorld->atLabel[nThisEntity].y = 0;
+
+	ptWorld->atButton[nThisEntity].boundingBox = { 0, 0, 0, 0 };
+	ptWorld->atButton[nThisEntity].sceneIndex = 0;
+	ptWorld->atButton[nThisEntity].enabled = false;
+
+	ptWorld->atText[nThisEntity].textBoundingBox = { 0, 0, 0, 0 };
+	ptWorld->atText[nThisEntity].textBuffer = nullptr;
+	ptWorld->atText[nThisEntity].textColor[0] = 0;
+	ptWorld->atText[nThisEntity].textColor[1] = 0;
+	ptWorld->atText[nThisEntity].textColor[2] = 0;
+	ptWorld->atText[nThisEntity].textSize = -1;
+	ptWorld->atText[nThisEntity].justification = 0;
+
+	//ptWorld->atMesh[nThisEntity].m_d3dSRVDiffuse = NULL;
 }
 
 unsigned int createDebugTransformLines(TWorld * ptWorld)
@@ -814,23 +858,23 @@ unsigned int CreateGround(TWorld * ptWorld, XMMATRIX SpawnPosition)
 
 	static TPrimalVert atCubeVertices[]
 	{
-		TPrimalVert{ XMFLOAT3(-20, 0.5f, 0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//0 Top F Left
-		TPrimalVert{ XMFLOAT3(4, 0.5f, 0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//1 Top F Right
-		TPrimalVert{ XMFLOAT3(-20, -0.5f, 0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//2 Bottom F Left
-		TPrimalVert{ XMFLOAT3(4, -0.5f, 0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//3 Bottom F Right
-		TPrimalVert{ XMFLOAT3(-20, 0.5f, -20),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//4 Top B Left
-		TPrimalVert{ XMFLOAT3(4, 0.5f, -20),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//5 Top B Right
-		TPrimalVert{ XMFLOAT3(-20, -0.5f, -20),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//6 Bottom B Left
-		TPrimalVert{ XMFLOAT3(4, -0.5f, -20),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//7 Bottom B Right
+		TPrimalVert{ XMFLOAT3(-30, 0.5f, 0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//0 Top F Left
+		TPrimalVert{ XMFLOAT3(10, 0.5f, 0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//1 Top F Right
+		TPrimalVert{ XMFLOAT3(-30, -0.5f, 0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//2 Bottom F Left
+		TPrimalVert{ XMFLOAT3(10, -0.5f, 0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//3 Bottom F Right
+		TPrimalVert{ XMFLOAT3(-30, 0.5f, -180),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//4 Top B Left
+		TPrimalVert{ XMFLOAT3(10, 0.5f, -180),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//5 Top B Right
+		TPrimalVert{ XMFLOAT3(-30, -0.5f, -180),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//6 Bottom B Left
+		TPrimalVert{ XMFLOAT3(10, -0.5f, -180),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//7 Bottom B Right
 
-		TPrimalVert{ XMFLOAT3(4, 0.5f, 0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//8 //Top F Right
-		TPrimalVert{ XMFLOAT3(-20, 0.5f, 0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//9 // Top F Left
-		TPrimalVert{ XMFLOAT3(-20, -0.5f, -20),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//10 Bottom B Left
-		TPrimalVert{ XMFLOAT3(4, -0.5f, -20),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//11 Bottom B Right
-		TPrimalVert{ XMFLOAT3(-20, -0.5f, 0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//12 Bottom F Left
-		TPrimalVert{ XMFLOAT3(-20, 0.5f, 0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//13 Top F Left
-		TPrimalVert{ XMFLOAT3(4, 0.5f, 0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//14 Top F Right
-		TPrimalVert{ XMFLOAT3(4, -0.5f, 0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) }//15 Bottm F Right
+		TPrimalVert{ XMFLOAT3(10, 0.5f, 0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//8 //Top F Right
+		TPrimalVert{ XMFLOAT3(-30, 0.5f, 0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//9 // Top F Left
+		TPrimalVert{ XMFLOAT3(-30, -0.5f, -180),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//10 Bottom B Left
+		TPrimalVert{ XMFLOAT3(10, -0.5f, -180),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//11 Bottom B Right
+		TPrimalVert{ XMFLOAT3(-30, -0.5f, 0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//12 Bottom F Left
+		TPrimalVert{ XMFLOAT3(-30, 0.5f, 0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//13 Top F Left
+		TPrimalVert{ XMFLOAT3(10, 0.5f, 0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//14 Top F Right
+		TPrimalVert{ XMFLOAT3(10, -0.5f, 0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) }//15 Bottm F Right
 	};
 
 	static short cubeIndices[]
@@ -897,15 +941,15 @@ unsigned int CreateWall(TWorld * ptWorld, XMMATRIX SpawnPosition)
 		TPrimalVert{ XMFLOAT3(4, 10, 0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//1 Top F Right
 		TPrimalVert{ XMFLOAT3(2, -0.5f, 0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//2 Bottom F Left
 		TPrimalVert{ XMFLOAT3(4, -0.5f, 0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//3 Bottom F Right
-		TPrimalVert{ XMFLOAT3(2, 10, -20),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//4 Top B Left
-		TPrimalVert{ XMFLOAT3(4, 10, -20),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//5 Top B Right
-		TPrimalVert{ XMFLOAT3(2, -0.5f, -20),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//6 Bottom B Left
-		TPrimalVert{ XMFLOAT3(4, -0.5f, -20),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//7 Bottom B Right
+		TPrimalVert{ XMFLOAT3(2, 10, -28),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//4 Top B Left
+		TPrimalVert{ XMFLOAT3(4, 10, -28),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//5 Top B Right
+		TPrimalVert{ XMFLOAT3(2, -0.5f, -28),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//6 Bottom B Left
+		TPrimalVert{ XMFLOAT3(4, -0.5f, -28),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//7 Bottom B Right
 
 		TPrimalVert{ XMFLOAT3(4, 10, 0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//8 //Top F Right
 		TPrimalVert{ XMFLOAT3(2, 10, 0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//9 // Top F Left
-		TPrimalVert{ XMFLOAT3(2, -0.5f, -20),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//10 Bottom B Left
-		TPrimalVert{ XMFLOAT3(4, -0.5f, -20),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//11 Bottom B Right
+		TPrimalVert{ XMFLOAT3(2, -0.5f, -28),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//10 Bottom B Left
+		TPrimalVert{ XMFLOAT3(4, -0.5f, -28),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//11 Bottom B Right
 		TPrimalVert{ XMFLOAT3(2, -0.5f, 0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//12 Bottom F Left
 		TPrimalVert{ XMFLOAT3(2, 10, 0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//13 Top F Left
 		TPrimalVert{ XMFLOAT3(4, 10, 0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//14 Top F Right
@@ -1506,7 +1550,7 @@ unsigned int CreateNodePoint(TWorld * ptWorld, XMMATRIX SpawnPosition)
 	unsigned int nThisEntity = createEntity(ptWorld);
 
 	ptWorld->atCollisionMask[nThisEntity].m_tnCollisionMask = COMPONENT_COLLISIONMASK;
-	ptWorld->atGraphicsMask[nThisEntity].m_tnGraphicsMask = COMPONENT_GRAPHICSMASK;
+	ptWorld->atGraphicsMask[nThisEntity].m_tnGraphicsMask = COMPONENT_GRAPHICSMASK | COMPONENT_SIMPLEMESH | COMPONENT_SHADERID;
 	ptWorld->atAIMask[nThisEntity].m_tnAIMask = COMPONENT_AIMASK;
 	ptWorld->atUIMask[nThisEntity].m_tnUIMask = COMPONENT_UIMASK;
 	ptWorld->atPhysicsMask[nThisEntity].m_tnPhysicsMask = COMPONENT_PHYSICSMASK;
@@ -1663,10 +1707,10 @@ unsigned int CreateSpacePirate(TWorld * ptWorld, XMMATRIX SpawnPosition)
 
 	ptWorld->atCollisionMask[nThisEntity].m_tnCollisionMask = COMPONENT_COLLISIONMASK | COMPONENT_AABB | COMPONENT_NONSTATIC | COMPONENT_NONTRIGGER;
 	ptWorld->atGraphicsMask[nThisEntity].m_tnGraphicsMask = COMPONENT_GRAPHICSMASK | COMPONENT_SIMPLEMESH | COMPONENT_SHADERID;
-	ptWorld->atAIMask[nThisEntity].m_tnAIMask = COMPONENT_AIMASK | COMPONENT_SEARCH;
+	ptWorld->atAIMask[nThisEntity].m_tnAIMask = COMPONENT_AIMASK | COMPONENT_SEARCH | COMPONENT_PATHFINDTEST;
 	ptWorld->atUIMask[nThisEntity].m_tnUIMask = COMPONENT_UIMASK;
 	ptWorld->atPhysicsMask[nThisEntity].m_tnPhysicsMask = COMPONENT_PHYSICSMASK | COMPONENT_RIGIDBODY;
-	ptWorld->atActiveAI[nThisEntity].active = true;
+	ptWorld->atActiveAI[nThisEntity].active = FALSE;
 	static TPrimalVert atCubeVertices[]
 	{
 		TPrimalVert{ XMFLOAT3(-0.5f, 1, 0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//0 Top F Left
@@ -1699,7 +1743,7 @@ unsigned int CreateSpacePirate(TWorld * ptWorld, XMMATRIX SpawnPosition)
 		14,7,5,14,15,7
 	};
 	XMVECTOR AIGravity;
-	AIGravity.m128_f32[1] = -0.000001;
+	AIGravity.m128_f32[1] = -0.0001;
 	AIGravity.m128_f32[0] = 0;
 	AIGravity.m128_f32[2] = 0;
 	AIGravity.m128_f32[3] = 0;
@@ -1844,7 +1888,7 @@ unsigned int CreateCoverTriggerZone(TWorld * ptWorld, XMMATRIX SpawnPosition)
 	unsigned int nThisEntity = createEntity(ptWorld);
 
 	ptWorld->atCollisionMask[nThisEntity].m_tnCollisionMask = COMPONENT_COLLISIONMASK | COMPONENT_AABB | COMPONENT_STATIC | COMPONENT_TRIGGER;
-	ptWorld->atGraphicsMask[nThisEntity].m_tnGraphicsMask = COMPONENT_GRAPHICSMASK;
+	ptWorld->atGraphicsMask[nThisEntity].m_tnGraphicsMask = COMPONENT_GRAPHICSMASK | COMPONENT_SIMPLEMESH | COMPONENT_SHADERID;
 	ptWorld->atAIMask[nThisEntity].m_tnAIMask = COMPONENT_AIMASK | COMPONENT_COVERTRIGGER;
 	ptWorld->atUIMask[nThisEntity].m_tnUIMask = COMPONENT_UIMASK;
 	ptWorld->atPhysicsMask[nThisEntity].m_tnPhysicsMask = COMPONENT_PHYSICSMASK;
@@ -1890,6 +1934,181 @@ unsigned int CreateCoverTriggerZone(TWorld * ptWorld, XMMATRIX SpawnPosition)
 		14,7,5,14,15,7
 	};
 
+
+	ptWorld->atSimpleMesh[nThisEntity].m_nIndexCount = 36;
+	ptWorld->atSimpleMesh[nThisEntity].m_nVertexCount = 16;
+
+	ptWorld->atSimpleMesh[nThisEntity].m_nVertexBufferStride = sizeof(TPrimalVert);
+	ptWorld->atSimpleMesh[nThisEntity].m_nVertexBufferOffset = 0;
+
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dVertexBufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dVertexBufferDesc.ByteWidth = sizeof(TPrimalVert) * ptWorld->atSimpleMesh[nThisEntity].m_nVertexCount;
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dVertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dVertexBufferDesc.CPUAccessFlags = 0;
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dVertexBufferDesc.MiscFlags = 0;
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dVertexBufferDesc.StructureByteStride = 0;
+
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexBufferDesc.ByteWidth = sizeof(short) * ptWorld->atSimpleMesh[nThisEntity].m_nIndexCount;
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexBufferDesc.CPUAccessFlags = 0;
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexBufferDesc.MiscFlags = 0;
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexBufferDesc.StructureByteStride = 0;
+
+
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dVertexData.pSysMem = atCubeVertices;
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexData.pSysMem = cubeIndices;
+
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dVertexData.SysMemPitch = 0;
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dVertexData.SysMemSlicePitch = 0;
+
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexData.SysMemPitch = 0;
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexData.SysMemSlicePitch = 0;
+
+	ptWorld->atShaderID[nThisEntity].m_nShaderID = 3;
+	for (int i = 0; i < ptWorld->atSimpleMesh[nThisEntity].m_nVertexCount; ++i) {
+		ptWorld->atSimpleMesh[nThisEntity].m_VertexData.push_back(atCubeVertices[i].m_d3dfPosition);
+	}
+
+	ptWorld->atWorldMatrix[nThisEntity].worldMatrix = SpawnPosition;
+	return nThisEntity;
+}
+
+unsigned int CreateFriendlySwordsMan(TWorld * ptWorld, XMMATRIX SpawnPosition, unsigned int playerIndex)
+{
+	unsigned int nThisEntity = createEntity(ptWorld);
+
+	ptWorld->atCollisionMask[nThisEntity].m_tnCollisionMask = COMPONENT_COLLISIONMASK | COMPONENT_AABB | COMPONENT_NONSTATIC | COMPONENT_NONTRIGGER;
+	ptWorld->atGraphicsMask[nThisEntity].m_tnGraphicsMask = COMPONENT_GRAPHICSMASK | COMPONENT_SIMPLEMESH | COMPONENT_SHADERID;
+	ptWorld->atAIMask[nThisEntity].m_tnAIMask = COMPONENT_AIMASK | COMPONENT_FIGHTINGAI;
+	ptWorld->atUIMask[nThisEntity].m_tnUIMask = COMPONENT_UIMASK;
+	ptWorld->atPhysicsMask[nThisEntity].m_tnPhysicsMask = COMPONENT_PHYSICSMASK | COMPONENT_RIGIDBODY;
+	ptWorld->atActiveAI[nThisEntity].active = true;
+	ptWorld->atAiHeath[nThisEntity].heath = 400;
+	static TPrimalVert atCubeVertices[]
+	{
+		TPrimalVert{ XMFLOAT3(-0.5f, 1, 0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//0 Top F Left
+		TPrimalVert{ XMFLOAT3(0.5f, 1, 0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//1 Top F Right
+		TPrimalVert{ XMFLOAT3(-0.5f, -0.5f, 0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//2 Bottom F Left
+		TPrimalVert{ XMFLOAT3(0.5f, -0.5f, 0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//3 Bottom F Right
+		TPrimalVert{ XMFLOAT3(-0.5f, 1, -0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//4 Top B Left
+		TPrimalVert{ XMFLOAT3(0.5f, 1, -0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//5 Top B Right
+		TPrimalVert{ XMFLOAT3(-0.5f, -0.5f, -0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//6 Bottom B Left
+		TPrimalVert{ XMFLOAT3(0.5f, -0.5f, -0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//7 Bottom B Right
+
+		TPrimalVert{ XMFLOAT3(0.5f, 1, 0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//8 //Top F Right
+		TPrimalVert{ XMFLOAT3(-0.5f, 1, 0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//9 // Top F Left
+		TPrimalVert{ XMFLOAT3(-0.5f, -0.5f, -0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//10 Bottom B Left
+		TPrimalVert{ XMFLOAT3(0.5f, -0.5f, -0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//11 Bottom B Right
+		TPrimalVert{ XMFLOAT3(-0.5f, -0.5f, 0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//12 Bottom F Left
+		TPrimalVert{ XMFLOAT3(-0.5f, 1, 0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//13 Top F Left
+		TPrimalVert{ XMFLOAT3(0.5f, 1, 0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//14 Top F Right
+		TPrimalVert{ XMFLOAT3(0.5f, -0.5f, 0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) }//15 Bottm F Right
+	};
+	ptWorld->atSimpleMesh[nThisEntity].m_nColor = XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f);
+
+	static short cubeIndices[]
+	{
+		3,1,0,0,2,3,
+		4,5,7,7,6,4,
+		4,8,5,4,9,8,
+		11,3,10,10,3,2,
+		12,13,4,4,6,12,
+		14,7,5,14,15,7
+	};
+	XMVECTOR AIGravity;
+	AIGravity.m128_f32[1] = -0.000001;
+	AIGravity.m128_f32[0] = 0;
+	AIGravity.m128_f32[2] = 0;
+	AIGravity.m128_f32[3] = 0;
+	ptWorld->atRigidBody[nThisEntity].gravity = AIGravity;
+
+	ptWorld->atSimpleMesh[nThisEntity].m_nIndexCount = 36;
+	ptWorld->atSimpleMesh[nThisEntity].m_nVertexCount = 16;
+
+	ptWorld->atSimpleMesh[nThisEntity].m_nVertexBufferStride = sizeof(TPrimalVert);
+	ptWorld->atSimpleMesh[nThisEntity].m_nVertexBufferOffset = 0;
+
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dVertexBufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dVertexBufferDesc.ByteWidth = sizeof(TPrimalVert) * ptWorld->atSimpleMesh[nThisEntity].m_nVertexCount;
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dVertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dVertexBufferDesc.CPUAccessFlags = 0;
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dVertexBufferDesc.MiscFlags = 0;
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dVertexBufferDesc.StructureByteStride = 0;
+
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexBufferDesc.ByteWidth = sizeof(short) * ptWorld->atSimpleMesh[nThisEntity].m_nIndexCount;
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexBufferDesc.CPUAccessFlags = 0;
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexBufferDesc.MiscFlags = 0;
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexBufferDesc.StructureByteStride = 0;
+
+
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dVertexData.pSysMem = atCubeVertices;
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexData.pSysMem = cubeIndices;
+
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dVertexData.SysMemPitch = 0;
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dVertexData.SysMemSlicePitch = 0;
+
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexData.SysMemPitch = 0;
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexData.SysMemSlicePitch = 0;
+
+	ptWorld->atShaderID[nThisEntity].m_nShaderID = 3;
+	for (int i = 0; i < ptWorld->atSimpleMesh[nThisEntity].m_nVertexCount; ++i) {
+		ptWorld->atSimpleMesh[nThisEntity].m_VertexData.push_back(atCubeVertices[i].m_d3dfPosition);
+	}
+
+	ptWorld->atWorldMatrix[nThisEntity].worldMatrix = SpawnPosition;
+	return nThisEntity;
+}
+
+unsigned int CreateHealingAI(TWorld * ptWorld, XMMATRIX SpawnPosition, unsigned playerIndex)
+{
+	unsigned int nThisEntity = createEntity(ptWorld);
+
+	ptWorld->atCollisionMask[nThisEntity].m_tnCollisionMask = COMPONENT_COLLISIONMASK | COMPONENT_AABB | COMPONENT_NONSTATIC | COMPONENT_NONTRIGGER;
+	ptWorld->atGraphicsMask[nThisEntity].m_tnGraphicsMask = COMPONENT_GRAPHICSMASK | COMPONENT_SIMPLEMESH | COMPONENT_SHADERID;
+	ptWorld->atAIMask[nThisEntity].m_tnAIMask = COMPONENT_AIMASK | COMPONENT_HEALINGAI;
+	ptWorld->atUIMask[nThisEntity].m_tnUIMask = COMPONENT_UIMASK;
+	ptWorld->atPhysicsMask[nThisEntity].m_tnPhysicsMask = COMPONENT_PHYSICSMASK | COMPONENT_RIGIDBODY;
+	ptWorld->atActiveAI[nThisEntity].active = true;
+	static TPrimalVert atCubeVertices[]
+	{
+		TPrimalVert{ XMFLOAT3(-0.5f, 1, 0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//0 Top F Left
+		TPrimalVert{ XMFLOAT3(0.5f, 1, 0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//1 Top F Right
+		TPrimalVert{ XMFLOAT3(-0.5f, -0.5f, 0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//2 Bottom F Left
+		TPrimalVert{ XMFLOAT3(0.5f, -0.5f, 0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//3 Bottom F Right
+		TPrimalVert{ XMFLOAT3(-0.5f, 1, -0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//4 Top B Left
+		TPrimalVert{ XMFLOAT3(0.5f, 1, -0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//5 Top B Right
+		TPrimalVert{ XMFLOAT3(-0.5f, -0.5f, -0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//6 Bottom B Left
+		TPrimalVert{ XMFLOAT3(0.5f, -0.5f, -0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//7 Bottom B Right
+
+		TPrimalVert{ XMFLOAT3(0.5f, 1, 0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//8 //Top F Right
+		TPrimalVert{ XMFLOAT3(-0.5f, 1, 0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//9 // Top F Left
+		TPrimalVert{ XMFLOAT3(-0.5f, -0.5f, -0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//10 Bottom B Left
+		TPrimalVert{ XMFLOAT3(0.5f, -0.5f, -0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//11 Bottom B Right
+		TPrimalVert{ XMFLOAT3(-0.5f, -0.5f, 0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//12 Bottom F Left
+		TPrimalVert{ XMFLOAT3(-0.5f, 1, 0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//13 Top F Left
+		TPrimalVert{ XMFLOAT3(0.5f, 1, 0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//14 Top F Right
+		TPrimalVert{ XMFLOAT3(0.5f, -0.5f, 0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) }//15 Bottm F Right
+	};
+	ptWorld->atSimpleMesh[nThisEntity].m_nColor = XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f);
+
+	static short cubeIndices[]
+	{
+		3,1,0,0,2,3,
+		4,5,7,7,6,4,
+		4,8,5,4,9,8,
+		11,3,10,10,3,2,
+		12,13,4,4,6,12,
+		14,7,5,14,15,7
+	};
+	XMVECTOR AIGravity;
+	AIGravity.m128_f32[1] = -0.000001;
+	AIGravity.m128_f32[0] = 0;
+	AIGravity.m128_f32[2] = 0;
+	AIGravity.m128_f32[3] = 0;
+	ptWorld->atRigidBody[nThisEntity].gravity = AIGravity;
 
 	ptWorld->atSimpleMesh[nThisEntity].m_nIndexCount = 36;
 	ptWorld->atSimpleMesh[nThisEntity].m_nVertexCount = 16;
@@ -2185,6 +2404,9 @@ unsigned int createDebugGrid(TWorld * ptWorld)
 unsigned int createMesh(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMeshImport tMesh, TMaterialOptimized tMaterial, int meshIndex)
 {
 	unsigned int nThisEntity = createEntity(ptWorld);
+
+	ptWorld->atRigidBody[nThisEntity].ground = true;
+
 	TMaterialOptimized temp = tMaterial;
 
 	//TMaterialImport tTempMaterial = tMaterial;
@@ -2335,7 +2557,7 @@ unsigned int createMesh(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMeshImpo
 	ptWorld->atGraphicsMask[nThisEntity].m_tnGraphicsMask = COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_SHADERID;
 	ptWorld->atCollisionMask[nThisEntity].m_tnCollisionMask = COMPONENT_COLLISIONMASK | COMPONENT_AABB | COMPONENT_STATIC | COMPONENT_TRIGGER;
 
-	//ptWorld->atCollisionMask[nThisEntity].m_tnCollisionMask = COMPONENT_COLLISIONMASK | COMPONENT_AABB | COMPONENT_NONSTATIC | COMPONENT_NONTRIGGER;
+	ptWorld->atCollisionMask[nThisEntity].m_tnCollisionMask = COMPONENT_COLLISIONMASK | COMPONENT_AABB | COMPONENT_STATIC | COMPONENT_NONTRIGGER;
 	//ptWorld->atAIMask[nThisEntity].m_tnAIMask = COMPONENT_AIMASK;
 	//ptWorld->atUIMask[nThisEntity].m_tnUIMask = COMPONENT_UIMASK;
 	//ptWorld->atPhysicsMask[nThisEntity].m_tnPhysicsMask = COMPONENT_PHYSICSMASK | COMPONENT_RIGIDBODY;
@@ -2362,9 +2584,13 @@ unsigned int createMesh(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMeshImpo
 	//}
 
 	TPrimitiveMesh *pMesh = new TPrimitiveMesh[tMesh.nUniqueVertexCount];
-	XMFLOAT3 d3d_TempFloat3;
+	XMFLOAT3 pos;
+	ptWorld->atMesh[nThisEntity].m_VertexData.clear();
+
 	for (int i = 0; i < tMesh.nUniqueVertexCount; i++)
 	{
+	
+
 		TPrimitiveMesh tmp;
 		for (int j = 0; j < 4; j++)
 		{
@@ -2380,13 +2606,17 @@ unsigned int createMesh(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMeshImpo
 				tmp.uv[j] = tMesh.meshArrays[i].uv[j];
 			}
 		}
-		d3d_TempFloat3.x = tmp.pos[0];
-		d3d_TempFloat3.y = tmp.pos[1];
-		d3d_TempFloat3.z = tmp.pos[2];
-		ptWorld->atMesh[nThisEntity].m_VertexData.push_back(d3d_TempFloat3);
+		
+		pos.x = tmp.pos[0];
+		pos.y = tmp.pos[1];
+		pos.z = tmp.pos[2];
+
+		ptWorld->atMesh[nThisEntity].m_VertexData.push_back(pos);
+
 		pMesh[i] = tmp;
 	}
 
+	
 	ptWorld->atMesh[nThisEntity].m_nVertexCount = tMesh.nUniqueVertexCount;
 	ptWorld->atMesh[nThisEntity].m_nVertexBufferStride = sizeof(TPrimitiveMesh);
 	ptWorld->atMesh[nThisEntity].m_nVertexBufferOffset = 0;
@@ -2419,7 +2649,7 @@ unsigned int createMesh(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMeshImpo
 	return nThisEntity;
 }
 
-unsigned int createGSQuad(TWorld * ptWorld, XMFLOAT4 backgroundColor)
+unsigned int createGSQuad(TWorld * ptWorld, XMFLOAT4 backgroundColor, int target)
 {
 	unsigned int nThisEntity = createEntity(ptWorld);
 
@@ -2453,7 +2683,411 @@ unsigned int createGSQuad(TWorld * ptWorld, XMFLOAT4 backgroundColor)
 	ptWorld->atDebugMesh[nThisEntity].m_d3dVertexData.SysMemSlicePitch = 0;
 	ptWorld->atBar[nThisEntity].backgroundColor = backgroundColor;
 
+	if (target != -1)
+		ptWorld->atBar[nThisEntity].entityToFollow = target;
+
 	ptWorld->atShaderID[nThisEntity].m_nShaderID = 8;//Geometry Shader
+
+
+	return nThisEntity;
+}
+
+unsigned int CreateStoneObstacle(TWorld * ptWorld, XMMATRIX SpawnPosition)
+{
+	unsigned int nThisEntity = createEntity(ptWorld);
+	ptWorld->atRigidBody[nThisEntity].ground = true;
+	ptWorld->atCollisionMask[nThisEntity].m_tnCollisionMask = COMPONENT_COLLISIONMASK | COMPONENT_AABB | COMPONENT_STATIC | COMPONENT_NONTRIGGER;
+	ptWorld->atGraphicsMask[nThisEntity].m_tnGraphicsMask = COMPONENT_GRAPHICSMASK | COMPONENT_SIMPLEMESH | COMPONENT_SHADERID;
+	ptWorld->atAIMask[nThisEntity].m_tnAIMask = COMPONENT_AIMASK;
+	ptWorld->atUIMask[nThisEntity].m_tnUIMask = COMPONENT_UIMASK;
+	ptWorld->atPhysicsMask[nThisEntity].m_tnPhysicsMask = COMPONENT_PHYSICSMASK;
+	ptWorld->atSimpleMesh[nThisEntity].m_nColor = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+
+	static TPrimalVert atCubeVertices[]
+	{
+		TPrimalVert{ XMFLOAT3(-30, 0.5f, 0),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//0 Top F Left
+		TPrimalVert{ XMFLOAT3(10, 0.5f, 0),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//1 Top F Right
+		TPrimalVert{ XMFLOAT3(-30, -0.5f, 0),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//2 Bottom F Left
+		TPrimalVert{ XMFLOAT3(10, -0.5f, 0),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//3 Bottom F Right
+		TPrimalVert{ XMFLOAT3(-30, 0.5f, 1),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//4 Top B Left
+		TPrimalVert{ XMFLOAT3(10, 0.5f, 1),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//5 Top B Right
+		TPrimalVert{ XMFLOAT3(-30, -0.5f, 1),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//6 Bottom B Left
+		TPrimalVert{ XMFLOAT3(10, -0.5f, 1),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//7 Bottom B Right
+
+		TPrimalVert{ XMFLOAT3(10, 0.5f, 0),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//8 //Top F Right
+		TPrimalVert{ XMFLOAT3(-30, 0.5f, 0),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//9 // Top F Left
+		TPrimalVert{ XMFLOAT3(-30, -0.5f, 1),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//10 Bottom B Left
+		TPrimalVert{ XMFLOAT3(10, -0.5f, 1),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//11 Bottom B Right
+		TPrimalVert{ XMFLOAT3(-30, -0.5f, 0),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//12 Bottom F Left
+		TPrimalVert{ XMFLOAT3(-30, 0.5f, 0),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//13 Top F Left
+		TPrimalVert{ XMFLOAT3(10, 0.5f, 0),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//14 Top F Right
+		TPrimalVert{ XMFLOAT3(10, -0.5f, 0),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) }//15 Bottm F Right
+	};
+
+	static short cubeIndices[]
+	{
+		3,1,0,0,2,3,
+		4,5,7,7,6,4,
+		4,8,5,4,9,8,
+		11,3,10,10,3,2,
+		12,13,4,4,6,12,
+		14,7,5,14,15,7
+	};
+
+	ptWorld->atSimpleMesh[nThisEntity].m_nIndexCount = 36;
+	ptWorld->atSimpleMesh[nThisEntity].m_nVertexCount = 16;
+
+	ptWorld->atSimpleMesh[nThisEntity].m_nVertexBufferStride = sizeof(TPrimalVert);
+	ptWorld->atSimpleMesh[nThisEntity].m_nVertexBufferOffset = 0;
+
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dVertexBufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dVertexBufferDesc.ByteWidth = sizeof(TPrimalVert) * ptWorld->atSimpleMesh[nThisEntity].m_nVertexCount;
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dVertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dVertexBufferDesc.CPUAccessFlags = 0;
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dVertexBufferDesc.MiscFlags = 0;
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dVertexBufferDesc.StructureByteStride = 0;
+
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexBufferDesc.ByteWidth = sizeof(short) * ptWorld->atSimpleMesh[nThisEntity].m_nIndexCount;
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexBufferDesc.CPUAccessFlags = 0;
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexBufferDesc.MiscFlags = 0;
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexBufferDesc.StructureByteStride = 0;
+
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dVertexData.pSysMem = atCubeVertices;
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexData.pSysMem = cubeIndices;
+
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dVertexData.SysMemPitch = 0;
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dVertexData.SysMemSlicePitch = 0;
+
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexData.SysMemPitch = 0;
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexData.SysMemSlicePitch = 0;
+
+	ptWorld->atShaderID[nThisEntity].m_nShaderID = 3;
+	for (unsigned int i = 0; i < ptWorld->atSimpleMesh[nThisEntity].m_nVertexCount; ++i) {
+		ptWorld->atSimpleMesh[nThisEntity].m_VertexData.push_back(atCubeVertices[i].m_d3dfPosition);
+	}
+	ptWorld->atWorldMatrix[nThisEntity].worldMatrix = SpawnPosition;
+
+	return nThisEntity;
+}
+
+unsigned int CreateStoneObstacleHorizontal(TWorld * ptWorld, XMMATRIX SpawnPosition)
+{
+	unsigned int nThisEntity = createEntity(ptWorld);
+	ptWorld->atRigidBody[nThisEntity].ground = true;
+	ptWorld->atCollisionMask[nThisEntity].m_tnCollisionMask = COMPONENT_COLLISIONMASK | COMPONENT_AABB | COMPONENT_STATIC | COMPONENT_NONTRIGGER;
+	ptWorld->atGraphicsMask[nThisEntity].m_tnGraphicsMask = COMPONENT_GRAPHICSMASK | COMPONENT_SIMPLEMESH | COMPONENT_SHADERID;
+	ptWorld->atAIMask[nThisEntity].m_tnAIMask = COMPONENT_AIMASK;
+	ptWorld->atUIMask[nThisEntity].m_tnUIMask = COMPONENT_UIMASK;
+	ptWorld->atPhysicsMask[nThisEntity].m_tnPhysicsMask = COMPONENT_PHYSICSMASK;
+	ptWorld->atSimpleMesh[nThisEntity].m_nColor = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+
+	static TPrimalVert atCubeVertices[]
+	{
+		TPrimalVert{ XMFLOAT3(0, 0.5f, -8),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//0 Top F Left
+		TPrimalVert{ XMFLOAT3(1, 0.5f, -8),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//1 Top F Right
+		TPrimalVert{ XMFLOAT3(0, -0.5f, -8),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//2 Bottom F Left
+		TPrimalVert{ XMFLOAT3(1, -0.5f, -8),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//3 Bottom F Right
+		TPrimalVert{ XMFLOAT3(0, 0.5f, 10),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//4 Top B Left
+		TPrimalVert{ XMFLOAT3(1, 0.5f, 10),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//5 Top B Right
+		TPrimalVert{ XMFLOAT3(0, -0.5f, 10),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//6 Bottom B Left
+		TPrimalVert{ XMFLOAT3(1, -0.5f, 10),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//7 Bottom B Right
+
+		TPrimalVert{ XMFLOAT3(1, 0.5f, -8),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//8 //Top F Right
+		TPrimalVert{ XMFLOAT3(0, 0.5f, -8),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//9 // Top F Left
+		TPrimalVert{ XMFLOAT3(0, -0.5f, 10),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//1 Bottom B Left
+		TPrimalVert{ XMFLOAT3(1, -0.5f, 10),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//11 Bottom B Right
+		TPrimalVert{ XMFLOAT3(0, -0.5f, -8),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//12 Bottom F Left
+		TPrimalVert{ XMFLOAT3(0, 0.5f, -8),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//13 Top F Left
+		TPrimalVert{ XMFLOAT3(1, 0.5f, -8),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//14 Top F Right
+		TPrimalVert{ XMFLOAT3(1, -0.5f, -8),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) }//15 Bottm F Right
+	};
+
+	static short cubeIndices[]
+	{
+		3,1,0,0,2,3,
+		4,5,7,7,6,4,
+		4,8,5,4,9,8,
+		11,3,10,10,3,2,
+		12,13,4,4,6,12,
+		14,7,5,14,15,7
+	};
+
+	ptWorld->atSimpleMesh[nThisEntity].m_nIndexCount = 36;
+	ptWorld->atSimpleMesh[nThisEntity].m_nVertexCount = 16;
+
+	ptWorld->atSimpleMesh[nThisEntity].m_nVertexBufferStride = sizeof(TPrimalVert);
+	ptWorld->atSimpleMesh[nThisEntity].m_nVertexBufferOffset = 0;
+
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dVertexBufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dVertexBufferDesc.ByteWidth = sizeof(TPrimalVert) * ptWorld->atSimpleMesh[nThisEntity].m_nVertexCount;
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dVertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dVertexBufferDesc.CPUAccessFlags = 0;
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dVertexBufferDesc.MiscFlags = 0;
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dVertexBufferDesc.StructureByteStride = 0;
+
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexBufferDesc.ByteWidth = sizeof(short) * ptWorld->atSimpleMesh[nThisEntity].m_nIndexCount;
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexBufferDesc.CPUAccessFlags = 0;
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexBufferDesc.MiscFlags = 0;
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexBufferDesc.StructureByteStride = 0;
+
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dVertexData.pSysMem = atCubeVertices;
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexData.pSysMem = cubeIndices;
+
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dVertexData.SysMemPitch = 0;
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dVertexData.SysMemSlicePitch = 0;
+
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexData.SysMemPitch = 0;
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexData.SysMemSlicePitch = 0;
+
+	ptWorld->atShaderID[nThisEntity].m_nShaderID = 3;
+	for (unsigned int i = 0; i < ptWorld->atSimpleMesh[nThisEntity].m_nVertexCount; ++i) {
+		ptWorld->atSimpleMesh[nThisEntity].m_VertexData.push_back(atCubeVertices[i].m_d3dfPosition);
+	}
+	ptWorld->atWorldMatrix[nThisEntity].worldMatrix = SpawnPosition;
+
+	return nThisEntity;
+}
+
+unsigned int CreateStairCase(TWorld * ptWorld, XMMATRIX SpawnPosition)
+{
+	unsigned int nThisEntity = createEntity(ptWorld);
+	ptWorld->atRigidBody[nThisEntity].ground = true;
+	ptWorld->atCollisionMask[nThisEntity].m_tnCollisionMask = COMPONENT_COLLISIONMASK | COMPONENT_AABB | COMPONENT_STATIC | COMPONENT_NONTRIGGER;
+	ptWorld->atGraphicsMask[nThisEntity].m_tnGraphicsMask = COMPONENT_GRAPHICSMASK | COMPONENT_SIMPLEMESH | COMPONENT_SHADERID;
+	ptWorld->atAIMask[nThisEntity].m_tnAIMask = COMPONENT_AIMASK;
+	ptWorld->atUIMask[nThisEntity].m_tnUIMask = COMPONENT_UIMASK;
+	ptWorld->atPhysicsMask[nThisEntity].m_tnPhysicsMask = COMPONENT_PHYSICSMASK;
+	ptWorld->atSimpleMesh[nThisEntity].m_nColor = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+
+	static TPrimalVert atCubeVertices[]
+	{
+		TPrimalVert{ XMFLOAT3(0, 0.5f, 0),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//0 Top F Left
+		TPrimalVert{ XMFLOAT3(2, 0.5f, 0),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//1 Top F Right
+		TPrimalVert{ XMFLOAT3(0, -0.5f, 0),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//2 Bottom F Left
+		TPrimalVert{ XMFLOAT3(2, -0.5f, 0),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//3 Bottom F Right
+		TPrimalVert{ XMFLOAT3(0, 0.5f, 1),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//4 Top B Left
+		TPrimalVert{ XMFLOAT3(2, 0.5f, 1),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//5 Top B Right
+		TPrimalVert{ XMFLOAT3(0, -0.5f, 1),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//6 Bottom B Left
+		TPrimalVert{ XMFLOAT3(2, -0.5f, 1),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//7 Bottom B Right
+
+		TPrimalVert{ XMFLOAT3(2, 0.5f, 0),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//8 //Top F Right
+		TPrimalVert{ XMFLOAT3(0, 0.5f, 0),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//9 // Top F Left
+		TPrimalVert{ XMFLOAT3(0, -0.5f, 1),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//2 Bottom B Left
+		TPrimalVert{ XMFLOAT3(2, -0.5f, 1),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//11 Bottom B Right
+		TPrimalVert{ XMFLOAT3(0, -0.5f, 0),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//12 Bottom F Left
+		TPrimalVert{ XMFLOAT3(0, 0.5f, 0),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//13 Top F Left
+		TPrimalVert{ XMFLOAT3(2, 0.5f, 0),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//14 Top F Right
+		TPrimalVert{ XMFLOAT3(2, -0.5f, 0),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) }//15 Bottm F Right
+	};
+
+	static short cubeIndices[]
+	{
+		3,1,0,0,2,3,
+		4,5,7,7,6,4,
+		4,8,5,4,9,8,
+		11,3,10,10,3,2,
+		12,13,4,4,6,12,
+		14,7,5,14,15,7
+	};
+
+	ptWorld->atSimpleMesh[nThisEntity].m_nIndexCount = 36;
+	ptWorld->atSimpleMesh[nThisEntity].m_nVertexCount = 16;
+
+	ptWorld->atSimpleMesh[nThisEntity].m_nVertexBufferStride = sizeof(TPrimalVert);
+	ptWorld->atSimpleMesh[nThisEntity].m_nVertexBufferOffset = 0;
+
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dVertexBufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dVertexBufferDesc.ByteWidth = sizeof(TPrimalVert) * ptWorld->atSimpleMesh[nThisEntity].m_nVertexCount;
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dVertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dVertexBufferDesc.CPUAccessFlags = 0;
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dVertexBufferDesc.MiscFlags = 0;
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dVertexBufferDesc.StructureByteStride = 0;
+
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexBufferDesc.ByteWidth = sizeof(short) * ptWorld->atSimpleMesh[nThisEntity].m_nIndexCount;
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexBufferDesc.CPUAccessFlags = 0;
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexBufferDesc.MiscFlags = 0;
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexBufferDesc.StructureByteStride = 0;
+
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dVertexData.pSysMem = atCubeVertices;
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexData.pSysMem = cubeIndices;
+
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dVertexData.SysMemPitch = 0;
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dVertexData.SysMemSlicePitch = 0;
+
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexData.SysMemPitch = 0;
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexData.SysMemSlicePitch = 0;
+
+	ptWorld->atShaderID[nThisEntity].m_nShaderID = 3;
+	for (unsigned int i = 0; i < ptWorld->atSimpleMesh[nThisEntity].m_nVertexCount; ++i) {
+		ptWorld->atSimpleMesh[nThisEntity].m_VertexData.push_back(atCubeVertices[i].m_d3dfPosition);
+	}
+	ptWorld->atWorldMatrix[nThisEntity].worldMatrix = SpawnPosition;
+
+	return nThisEntity;
+}
+
+unsigned int CreateTree(TWorld * ptWorld, XMMATRIX SpawnPosition)
+{
+	unsigned int nThisEntity = createEntity(ptWorld);
+	ptWorld->atRigidBody[nThisEntity].ground = true;
+	ptWorld->atCollisionMask[nThisEntity].m_tnCollisionMask = COMPONENT_COLLISIONMASK | COMPONENT_AABB | COMPONENT_STATIC | COMPONENT_NONTRIGGER;
+	ptWorld->atGraphicsMask[nThisEntity].m_tnGraphicsMask = COMPONENT_GRAPHICSMASK | COMPONENT_SIMPLEMESH | COMPONENT_SHADERID;
+	ptWorld->atAIMask[nThisEntity].m_tnAIMask = COMPONENT_AIMASK;
+	ptWorld->atUIMask[nThisEntity].m_tnUIMask = COMPONENT_UIMASK;
+	ptWorld->atPhysicsMask[nThisEntity].m_tnPhysicsMask = COMPONENT_PHYSICSMASK;
+	ptWorld->atSimpleMesh[nThisEntity].m_nColor = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+
+	static TPrimalVert atCubeVertices[]
+	{
+		TPrimalVert{ XMFLOAT3(0, 0.5f, 0),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//0 Top F Left
+		TPrimalVert{ XMFLOAT3(2, 0.5f, 0),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//1 Top F Right
+		TPrimalVert{ XMFLOAT3(0, -0.5f, 0),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//2 Bottom F Left
+		TPrimalVert{ XMFLOAT3(2, -0.5f, 0),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//3 Bottom F Right
+		TPrimalVert{ XMFLOAT3(0, 0.5f, 1),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//4 Top B Left
+		TPrimalVert{ XMFLOAT3(2, 0.5f, 1),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//5 Top B Right
+		TPrimalVert{ XMFLOAT3(0, -0.5f, 1),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//6 Bottom B Left
+		TPrimalVert{ XMFLOAT3(2, -0.5f, 1),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//7 Bottom B Right
+
+		TPrimalVert{ XMFLOAT3(2, 0.5f, 0),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//8 //Top F Right
+		TPrimalVert{ XMFLOAT3(0, 0.5f, 0),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//9 // Top F Left
+		TPrimalVert{ XMFLOAT3(0, -0.5f, 1),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//2 Bottom B Left
+		TPrimalVert{ XMFLOAT3(2, -0.5f, 1),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//11 Bottom B Right
+		TPrimalVert{ XMFLOAT3(0, -0.5f, 0),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//12 Bottom F Left
+		TPrimalVert{ XMFLOAT3(0, 0.5f, 0),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//13 Top F Left
+		TPrimalVert{ XMFLOAT3(2, 0.5f, 0),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//14 Top F Right
+		TPrimalVert{ XMFLOAT3(2, -0.5f, 0),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) }//15 Bottm F Right
+	};
+
+	static short cubeIndices[]
+	{
+		3,1,0,0,2,3,
+		4,5,7,7,6,4,
+		4,8,5,4,9,8,
+		11,3,10,10,3,2,
+		12,13,4,4,6,12,
+		14,7,5,14,15,7
+	};
+
+	ptWorld->atSimpleMesh[nThisEntity].m_nIndexCount = 36;
+	ptWorld->atSimpleMesh[nThisEntity].m_nVertexCount = 16;
+
+	ptWorld->atSimpleMesh[nThisEntity].m_nVertexBufferStride = sizeof(TPrimalVert);
+	ptWorld->atSimpleMesh[nThisEntity].m_nVertexBufferOffset = 0;
+
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dVertexBufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dVertexBufferDesc.ByteWidth = sizeof(TPrimalVert) * ptWorld->atSimpleMesh[nThisEntity].m_nVertexCount;
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dVertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dVertexBufferDesc.CPUAccessFlags = 0;
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dVertexBufferDesc.MiscFlags = 0;
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dVertexBufferDesc.StructureByteStride = 0;
+
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexBufferDesc.ByteWidth = sizeof(short) * ptWorld->atSimpleMesh[nThisEntity].m_nIndexCount;
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexBufferDesc.CPUAccessFlags = 0;
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexBufferDesc.MiscFlags = 0;
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexBufferDesc.StructureByteStride = 0;
+
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dVertexData.pSysMem = atCubeVertices;
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexData.pSysMem = cubeIndices;
+
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dVertexData.SysMemPitch = 0;
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dVertexData.SysMemSlicePitch = 0;
+
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexData.SysMemPitch = 0;
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexData.SysMemSlicePitch = 0;
+
+	ptWorld->atShaderID[nThisEntity].m_nShaderID = 3;
+	for (unsigned int i = 0; i < ptWorld->atSimpleMesh[nThisEntity].m_nVertexCount; ++i) {
+		ptWorld->atSimpleMesh[nThisEntity].m_VertexData.push_back(atCubeVertices[i].m_d3dfPosition);
+	}
+	ptWorld->atWorldMatrix[nThisEntity].worldMatrix = SpawnPosition;
+
+	return nThisEntity;
+}
+
+unsigned int CreateCylinder(TWorld * ptWorld, XMMATRIX SpawnPosition)
+{
+	unsigned int nThisEntity = createEntity(ptWorld);
+	ptWorld->atRigidBody[nThisEntity].ground = true;
+	ptWorld->atCollisionMask[nThisEntity].m_tnCollisionMask = COMPONENT_COLLISIONMASK | COMPONENT_AABB | COMPONENT_STATIC | COMPONENT_NONTRIGGER;
+	ptWorld->atGraphicsMask[nThisEntity].m_tnGraphicsMask = COMPONENT_GRAPHICSMASK | COMPONENT_SIMPLEMESH | COMPONENT_SHADERID;
+	ptWorld->atAIMask[nThisEntity].m_tnAIMask = COMPONENT_AIMASK;
+	ptWorld->atUIMask[nThisEntity].m_tnUIMask = COMPONENT_UIMASK;
+	ptWorld->atPhysicsMask[nThisEntity].m_tnPhysicsMask = COMPONENT_PHYSICSMASK;
+	ptWorld->atSimpleMesh[nThisEntity].m_nColor = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+
+	static TPrimalVert atCubeVertices[]
+	{
+		TPrimalVert{ XMFLOAT3(0, 0.5f, 0),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//0 Top F Left
+		TPrimalVert{ XMFLOAT3(2, 0.5f, 0),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//1 Top F Right
+		TPrimalVert{ XMFLOAT3(0, -0.5f, 0),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//2 Bottom F Left
+		TPrimalVert{ XMFLOAT3(2, -0.5f, 0),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//3 Bottom F Right
+		TPrimalVert{ XMFLOAT3(0, 0.5f, 1),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//4 Top B Left
+		TPrimalVert{ XMFLOAT3(2, 0.5f, 1),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//5 Top B Right
+		TPrimalVert{ XMFLOAT3(0, -0.5f, 1),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//6 Bottom B Left
+		TPrimalVert{ XMFLOAT3(2, -0.5f, 1),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//7 Bottom B Right
+
+		TPrimalVert{ XMFLOAT3(2, 0.5f, 0),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//8 //Top F Right
+		TPrimalVert{ XMFLOAT3(0, 0.5f, 0),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//9 // Top F Left
+		TPrimalVert{ XMFLOAT3(0, -0.5f, 1),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//2 Bottom B Left
+		TPrimalVert{ XMFLOAT3(2, -0.5f, 1),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//11 Bottom B Right
+		TPrimalVert{ XMFLOAT3(0, -0.5f, 0),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//12 Bottom F Left
+		TPrimalVert{ XMFLOAT3(0, 0.5f, 0),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//13 Top F Left
+		TPrimalVert{ XMFLOAT3(2, 0.5f, 0),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//14 Top F Right
+		TPrimalVert{ XMFLOAT3(2, -0.5f, 0),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) }//15 Bottm F Right
+	};
+
+	static short cubeIndices[]
+	{
+		3,1,0,0,2,3,
+		4,5,7,7,6,4,
+		4,8,5,4,9,8,
+		11,3,10,10,3,2,
+		12,13,4,4,6,12,
+		14,7,5,14,15,7
+	};
+
+	ptWorld->atSimpleMesh[nThisEntity].m_nIndexCount = 36;
+	ptWorld->atSimpleMesh[nThisEntity].m_nVertexCount = 16;
+
+	ptWorld->atSimpleMesh[nThisEntity].m_nVertexBufferStride = sizeof(TPrimalVert);
+	ptWorld->atSimpleMesh[nThisEntity].m_nVertexBufferOffset = 0;
+
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dVertexBufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dVertexBufferDesc.ByteWidth = sizeof(TPrimalVert) * ptWorld->atSimpleMesh[nThisEntity].m_nVertexCount;
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dVertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dVertexBufferDesc.CPUAccessFlags = 0;
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dVertexBufferDesc.MiscFlags = 0;
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dVertexBufferDesc.StructureByteStride = 0;
+
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexBufferDesc.ByteWidth = sizeof(short) * ptWorld->atSimpleMesh[nThisEntity].m_nIndexCount;
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexBufferDesc.CPUAccessFlags = 0;
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexBufferDesc.MiscFlags = 0;
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexBufferDesc.StructureByteStride = 0;
+
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dVertexData.pSysMem = atCubeVertices;
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexData.pSysMem = cubeIndices;
+
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dVertexData.SysMemPitch = 0;
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dVertexData.SysMemSlicePitch = 0;
+
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexData.SysMemPitch = 0;
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexData.SysMemSlicePitch = 0;
+
+	ptWorld->atShaderID[nThisEntity].m_nShaderID = 3;
+	for (unsigned int i = 0; i < ptWorld->atSimpleMesh[nThisEntity].m_nVertexCount; ++i) {
+		ptWorld->atSimpleMesh[nThisEntity].m_VertexData.push_back(atCubeVertices[i].m_d3dfPosition);
+	}
+	ptWorld->atWorldMatrix[nThisEntity].worldMatrix = SpawnPosition;
 
 	return nThisEntity;
 }
@@ -2629,7 +3263,7 @@ unsigned int createClayton(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMeshI
 	}
 
 	XMVECTOR playerGravity;
-	playerGravity.m128_f32[1] = -0.000001;
+	playerGravity.m128_f32[1] = -0.0001;
 	playerGravity.m128_f32[0] = 0;
 	playerGravity.m128_f32[2] = 0;
 	playerGravity.m128_f32[3] = 0;
@@ -2686,6 +3320,8 @@ unsigned int createClaytonAnim(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TM
 		}
 	}
 	ptWorld->atMesh[nThisEntity].m_d3dSRVDiffuse = temp.SRVArrayOfMaterials[srvIndex];
+
+
 
 	ptWorld->atGraphicsMask[nThisEntity].m_tnGraphicsMask = COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_ANIMATION | COMPONENT_SHADERID;
 	ptWorld->atCollisionMask[nThisEntity].m_tnCollisionMask = COMPONENT_COLLISIONMASK | COMPONENT_AABB | COMPONENT_NONSTATIC | COMPONENT_NONTRIGGER;
@@ -2761,14 +3397,14 @@ unsigned int createClaytonAnim(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TM
 	return nThisEntity;
 }
 
-//unsigned int CreateUIButton(TWorld * ptWorld, XMMATRIX SpawnPosition, float width, float height, float offsetX, float offsetY, LPRECT window, std::vector<TUIVertices*> & atRectVertices)
-
-unsigned int CreateUILabel(TWorld * ptWorld, XMMATRIX SpawnPosition, float width, float height, float offsetX, float offsetY, std::vector<TUIVertices*>& atUIVertices)
+unsigned int CreateUILabel(TWorld * ptWorld, XMMATRIX SpawnPosition, float width, float height, float offsetX, float offsetY, std::vector<TUIVert*>& atUIVertices, int _nThisEntity, float z)
 {
-	unsigned int nThisEntity = createEntity(ptWorld);
+	unsigned int nThisEntity;
 
-	//if (window != nullptr)
-	//	uiMask = uiMask | COMPONENT_BUTTON;
+	if (_nThisEntity == -1)
+		nThisEntity = createEntity(ptWorld);
+	else
+		nThisEntity = _nThisEntity;
 
 	ptWorld->atCollisionMask[nThisEntity].m_tnCollisionMask = COMPONENT_COLLISIONMASK;
 	ptWorld->atGraphicsMask[nThisEntity].m_tnGraphicsMask = COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_SHADERID;
@@ -2776,13 +3412,19 @@ unsigned int CreateUILabel(TWorld * ptWorld, XMMATRIX SpawnPosition, float width
 	ptWorld->atUIMask[nThisEntity].m_tnUIMask = COMPONENT_UIMASK | COMPONENT_LABEL;
 	ptWorld->atPhysicsMask[nThisEntity].m_tnPhysicsMask = COMPONENT_PHYSICSMASK;
 
-	TUIVertices* rectVerts = new TUIVertices
-	{
-		TUIVert{ XMFLOAT3((offsetX - (width / 2)) * .1, (offsetY + (height / 2)) * .1, 0), XMFLOAT2(0, 0) },	//0 Top Left
-		TUIVert{ XMFLOAT3((offsetX + (width / 2)) * .1, (offsetY + (height / 2)) * .1, 0), XMFLOAT2(1, 0) },	//1 Top Right
-		TUIVert{ XMFLOAT3((offsetX - (width / 2)) * .1, (offsetY - (height / 2)) * .1, 0), XMFLOAT2(0, 1) },	//2 Bottom Left
-		TUIVert{ XMFLOAT3((offsetX + (width / 2)) * .1, (offsetY - (height / 2)) * .1, 0), XMFLOAT2(1, 1) }		//3 Bottom Right
-	};
+	TUIVert* rectVerts = new TUIVert[4];
+	//{
+		rectVerts[0].m_d3dfPosition = XMFLOAT3((offsetX - (width / 2)) * .1, (offsetY + (height / 2)) * .1, z);	//0 Top Left
+		rectVerts[0].m_d3dfUVs = XMFLOAT2(0, 0);
+		rectVerts[1].m_d3dfPosition = XMFLOAT3((offsetX + (width / 2)) * .1, (offsetY + (height / 2)) * .1, z);	//1 Top Right
+		rectVerts[1].m_d3dfUVs = XMFLOAT2(1, 0);
+		rectVerts[2].m_d3dfPosition = XMFLOAT3((offsetX - (width / 2)) * .1, (offsetY - (height / 2)) * .1, z);	//2 Bottom Left
+		rectVerts[2].m_d3dfUVs = XMFLOAT2(0, 1);
+		rectVerts[3].m_d3dfPosition = XMFLOAT3((offsetX + (width / 2)) * .1, (offsetY - (height / 2)) * .1, z);		//3 Bottom Right
+		rectVerts[3].m_d3dfUVs = XMFLOAT2(1, 1);
+		//};
+
+	//rectVerts->m_d3dfPositions = verts;
 
 	atUIVertices.push_back(rectVerts);
 	int index = atUIVertices.size() - 1;
@@ -2792,7 +3434,7 @@ unsigned int CreateUILabel(TWorld * ptWorld, XMMATRIX SpawnPosition, float width
 	ptWorld->atLabel[nThisEntity].x = offsetX;
 	ptWorld->atLabel[nThisEntity].y = offsetY;
 
-	XMMATRIX spawnMatrix = /*XMMatrixMultiply(*/SpawnPosition/*, XMMatrixScaling(width, height, 0))*/;
+	XMMATRIX spawnMatrix = SpawnPosition;
 
 	static short rectIndices[]
 	{
@@ -2812,7 +3454,7 @@ unsigned int CreateUILabel(TWorld * ptWorld, XMMATRIX SpawnPosition, float width
 	ptWorld->atMesh[nThisEntity].m_d3dVertexBufferDesc.CPUAccessFlags = 0;
 	ptWorld->atMesh[nThisEntity].m_d3dVertexBufferDesc.MiscFlags = 0;
 	ptWorld->atMesh[nThisEntity].m_d3dVertexBufferDesc.StructureByteStride = 0;
-
+	
 	ptWorld->atMesh[nThisEntity].m_d3dIndexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
 	ptWorld->atMesh[nThisEntity].m_d3dIndexBufferDesc.ByteWidth = sizeof(short) * ptWorld->atMesh[nThisEntity].m_nIndexCount;
 	ptWorld->atMesh[nThisEntity].m_d3dIndexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
@@ -2821,7 +3463,7 @@ unsigned int CreateUILabel(TWorld * ptWorld, XMMATRIX SpawnPosition, float width
 	ptWorld->atMesh[nThisEntity].m_d3dIndexBufferDesc.StructureByteStride = 0;
 
 
-	ptWorld->atMesh[nThisEntity].m_d3dVertexData.pSysMem = &atUIVertices[index]->m_d3dfPositions;
+	ptWorld->atMesh[nThisEntity].m_d3dVertexData.pSysMem = &atUIVertices[index][0];
 	ptWorld->atMesh[nThisEntity].m_d3dIndexData.pSysMem = rectIndices;
 
 	ptWorld->atMesh[nThisEntity].m_d3dVertexData.SysMemPitch = 0;
@@ -2834,7 +3476,561 @@ unsigned int CreateUILabel(TWorld * ptWorld, XMMATRIX SpawnPosition, float width
 
 	for (int i = 0; i < ptWorld->atMesh[nThisEntity].m_nVertexCount; ++i) 
 	{
-		ptWorld->atMesh[nThisEntity].m_VertexData.push_back(atUIVertices[index]->m_d3dfPositions[i].m_d3dfPosition);
+		ptWorld->atMesh[nThisEntity].m_VertexData.push_back(atUIVertices[index][i].m_d3dfPosition);
+	}
+
+	ptWorld->atWorldMatrix[nThisEntity].worldMatrix = spawnMatrix;
+
+	return nThisEntity;
+}
+
+unsigned int CreateUILabelForText(TWorld* ptWorld, XMMATRIX SpawnPosition, float width, float height, float offsetX, float offsetY, std::vector<TUIVert*> atUIVertices, std::vector<short*> atUIIndices, wchar_t* text, unsigned int _textSize, int _nThisEntity, float z)
+{
+	unsigned int nThisEntity;
+	unsigned int textSize = _textSize - 1;
+
+	if (_nThisEntity == -1)
+		nThisEntity = createEntity(ptWorld);
+	else
+		nThisEntity = _nThisEntity;
+
+	ptWorld->atCollisionMask[nThisEntity].m_tnCollisionMask = COMPONENT_COLLISIONMASK;
+	ptWorld->atGraphicsMask[nThisEntity].m_tnGraphicsMask = COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_SHADERID;
+	ptWorld->atAIMask[nThisEntity].m_tnAIMask = COMPONENT_AIMASK;
+	ptWorld->atUIMask[nThisEntity].m_tnUIMask = COMPONENT_UIMASK | COMPONENT_LABEL;
+	ptWorld->atPhysicsMask[nThisEntity].m_tnPhysicsMask = COMPONENT_PHYSICSMASK;
+
+	XMFLOAT3 topLeftPos = XMFLOAT3{ (offsetX - (width / 2)) * .1f, (offsetY + (height / 2)) * .1f, z };
+	XMFLOAT3 topRightPos = XMFLOAT3{ (offsetX + (width / 2)) * .1f, (offsetY + (height / 2)) * .1f, z };
+	XMFLOAT3 bottomLeftPos = XMFLOAT3{ (offsetX - (width / 2)) * .1f, (offsetY - (height / 2)) * .1f, z };
+	//XMFLOAT3 ratioPos4 = XMVectorSet((offsetX + (width / 2)) * .1, (offsetY - (height / 2)) * .1, z);
+	
+	float tWidth = topRightPos.x - topLeftPos.x;
+	float tHeight = bottomLeftPos.y - topLeftPos.y;
+
+	TUIVert* rectVerts = new TUIVert[4 * textSize];
+
+	XMFLOAT2 tempUVs[4];
+
+	int loopIndex = 0;
+	for (int i = 0; loopIndex < textSize; i+=4)
+	{
+		//CUISystem::GetUVsForCharacter(text[loopIndex], tempUVs);
+		switch (text[loopIndex])
+		{
+		case ' ':
+		{
+			tempUVs[0] = XMFLOAT2{ 0 / 950.0f, 4 / 20.0f };
+			tempUVs[1] = XMFLOAT2{ 10 / 950.0f, 4 / 20.0f };
+			tempUVs[2] = XMFLOAT2{ 0 / 950.0f, 14 / 20.0f };
+			tempUVs[3] = XMFLOAT2{ 10 / 950.0f, 14 / 20.0f };
+		}
+			break;
+		case ':':
+		{
+			tempUVs[0] = XMFLOAT2{ 260 / 950.0f, 4 / 20.0f };
+			tempUVs[1] = XMFLOAT2{ 270 / 950.0f, 4 / 20.0f };
+			tempUVs[2] = XMFLOAT2{ 260 / 950.0f, 14 / 20.0f };
+			tempUVs[3] = XMFLOAT2{ 270 / 950.0f, 14 / 20.0f };
+		}
+			break;
+		case 'A':
+		{
+			tempUVs[0] = XMFLOAT2{ 330 / 950.0f, 4 / 20.0f };
+			tempUVs[1] = XMFLOAT2{ 340 / 950.0f, 4 / 20.0f };
+			tempUVs[2] = XMFLOAT2{ 330 / 950.0f, 14 / 20.0f };
+			tempUVs[3] = XMFLOAT2{ 340 / 950.0f, 14 / 20.0f };
+		}
+			break;
+		case 'B':
+		{
+			tempUVs[0] = XMFLOAT2{ 340 / 950.0f, 4 / 20.0f };
+			tempUVs[1] = XMFLOAT2{ 350 / 950.0f, 4 / 20.0f };
+			tempUVs[2] = XMFLOAT2{ 340 / 950.0f, 14 / 20.0f };
+			tempUVs[3] = XMFLOAT2{ 350 / 950.0f, 14 / 20.0f };
+		}
+			break;
+		case 'C':
+		{
+			tempUVs[0] = XMFLOAT2{ 350 / 950.0f, 4 / 20.0f };
+			tempUVs[1] = XMFLOAT2{ 360 / 950.0f, 4 / 20.0f };
+			tempUVs[2] = XMFLOAT2{ 350 / 950.0f, 14 / 20.0f };
+			tempUVs[3] = XMFLOAT2{ 360 / 950.0f, 14 / 20.0f };
+		}
+			break;
+		case 'D':
+		{
+			tempUVs[0] = XMFLOAT2{ 360 / 950.0f, 4 / 20.0f };
+			tempUVs[1] = XMFLOAT2{ 370 / 950.0f, 4 / 20.0f };
+			tempUVs[2] = XMFLOAT2{ 360 / 950.0f, 14 / 20.0f };
+			tempUVs[3] = XMFLOAT2{ 370 / 950.0f, 14 / 20.0f };
+		}
+			break;
+		case 'E':
+		{
+			tempUVs[0] = XMFLOAT2{ 370 / 950.0f, 4 / 20.0f };
+			tempUVs[1] = XMFLOAT2{ 380 / 950.0f, 4 / 20.0f };
+			tempUVs[2] = XMFLOAT2{ 370 / 950.0f, 14 / 20.0f };
+			tempUVs[3] = XMFLOAT2{ 380 / 950.0f, 14 / 20.0f };
+		}
+			break;
+		case 'F':
+		{
+			tempUVs[0] = XMFLOAT2{ 380 / 950.0f, 4 / 20.0f };
+			tempUVs[1] = XMFLOAT2{ 390 / 950.0f, 4 / 20.0f };
+			tempUVs[2] = XMFLOAT2{ 380 / 950.0f, 14 / 20.0f };
+			tempUVs[3] = XMFLOAT2{ 390 / 950.0f, 14 / 20.0f };
+		}
+			break;
+		case 'G':
+		{
+			tempUVs[0] = XMFLOAT2{ 390 / 950.0f, 4 / 20.0f };
+			tempUVs[1] = XMFLOAT2{ 400 / 950.0f, 4 / 20.0f };
+			tempUVs[2] = XMFLOAT2{ 390 / 950.0f, 14 / 20.0f };
+			tempUVs[3] = XMFLOAT2{ 400 / 950.0f, 14 / 20.0f };
+		}
+			break;
+		case 'H':
+		{
+			tempUVs[0] = XMFLOAT2{ 400 / 950.0f, 4 / 20.0f };
+			tempUVs[1] = XMFLOAT2{ 410 / 950.0f, 4 / 20.0f };
+			tempUVs[2] = XMFLOAT2{ 400 / 950.0f, 14 / 20.0f };
+			tempUVs[3] = XMFLOAT2{ 410 / 950.0f, 14 / 20.0f };
+		}
+			break;
+		case 'I':
+		{
+			tempUVs[0] = XMFLOAT2{ 410 / 950.0f, 4 / 20.0f };
+			tempUVs[1] = XMFLOAT2{ 420 / 950.0f, 4 / 20.0f };
+			tempUVs[2] = XMFLOAT2{ 410 / 950.0f, 14 / 20.0f };
+			tempUVs[3] = XMFLOAT2{ 420 / 950.0f, 14 / 20.0f };
+		}
+			break;
+		case 'J':
+		{
+			tempUVs[0] = XMFLOAT2{ 420 / 950.0f, 4 / 20.0f };
+			tempUVs[1] = XMFLOAT2{ 430 / 950.0f, 4 / 20.0f };
+			tempUVs[2] = XMFLOAT2{ 420 / 950.0f, 14 / 20.0f };
+			tempUVs[3] = XMFLOAT2{ 430 / 950.0f, 14 / 20.0f };
+		}
+			break;
+		case 'K':
+		{
+			tempUVs[0] = XMFLOAT2{ 430 / 950.0f, 4 / 20.0f };
+			tempUVs[1] = XMFLOAT2{ 440 / 950.0f, 4 / 20.0f };
+			tempUVs[2] = XMFLOAT2{ 430 / 950.0f, 14 / 20.0f };
+			tempUVs[3] = XMFLOAT2{ 440 / 950.0f, 14 / 20.0f };
+		}
+			break;
+		case 'L':
+		{
+			tempUVs[0] = XMFLOAT2{ 440 / 950.0f, 4 / 20.0f };
+			tempUVs[1] = XMFLOAT2{ 450 / 950.0f, 4 / 20.0f };
+			tempUVs[2] = XMFLOAT2{ 440 / 950.0f, 14 / 20.0f };
+			tempUVs[3] = XMFLOAT2{ 450 / 950.0f, 14 / 20.0f };
+		}
+			break;
+		case 'M':
+		{
+			tempUVs[0] = XMFLOAT2{ 450 / 950.0f, 4 / 20.0f };
+			tempUVs[1] = XMFLOAT2{ 460 / 950.0f, 4 / 20.0f };
+			tempUVs[2] = XMFLOAT2{ 450 / 950.0f, 14 / 20.0f };
+			tempUVs[3] = XMFLOAT2{ 460 / 950.0f, 14 / 20.0f };
+		}
+			break;
+		case 'N':
+		{
+			tempUVs[0] = XMFLOAT2{ 460 / 950.0f, 4 / 20.0f };
+			tempUVs[1] = XMFLOAT2{ 470 / 950.0f, 4 / 20.0f };
+			tempUVs[2] = XMFLOAT2{ 460 / 950.0f, 14 / 20.0f };
+			tempUVs[3] = XMFLOAT2{ 470 / 950.0f, 14 / 20.0f };
+		}
+			break;
+		case 'O':
+		{
+			tempUVs[0] = XMFLOAT2{ 470 / 950.0f, 4 / 20.0f };
+			tempUVs[1] = XMFLOAT2{ 480 / 950.0f, 4 / 20.0f };
+			tempUVs[2] = XMFLOAT2{ 470 / 950.0f, 14 / 20.0f };
+			tempUVs[3] = XMFLOAT2{ 480 / 950.0f, 14 / 20.0f };
+		}
+			break;
+		case 'P':
+		{
+			tempUVs[0] = XMFLOAT2{ 480 / 950.0f, 4 / 20.0f };
+			tempUVs[1] = XMFLOAT2{ 490 / 950.0f, 4 / 20.0f };
+			tempUVs[2] = XMFLOAT2{ 480 / 950.0f, 14 / 20.0f };
+			tempUVs[3] = XMFLOAT2{ 490 / 950.0f, 14 / 20.0f };
+		}
+			break;
+		case 'Q':
+		{
+			tempUVs[0] = XMFLOAT2{ 490 / 950.0f, 4 / 20.0f };
+			tempUVs[1] = XMFLOAT2{ 500 / 950.0f, 4 / 20.0f };
+			tempUVs[2] = XMFLOAT2{ 490 / 950.0f, 14 / 20.0f };
+			tempUVs[3] = XMFLOAT2{ 500 / 950.0f, 14 / 20.0f };
+		}
+			break;
+		case 'R':
+		{
+			tempUVs[0] = XMFLOAT2{ 500 / 950.0f, 4 / 20.0f };
+			tempUVs[1] = XMFLOAT2{ 510 / 950.0f, 4 / 20.0f };
+			tempUVs[2] = XMFLOAT2{ 500 / 950.0f, 14 / 20.0f };
+			tempUVs[3] = XMFLOAT2{ 510 / 950.0f, 14 / 20.0f };
+		}
+			break;
+		case 'S':
+		{
+			tempUVs[0] = XMFLOAT2{ 510 / 950.0f, 4 / 20.0f };
+			tempUVs[1] = XMFLOAT2{ 520 / 950.0f, 4 / 20.0f };
+			tempUVs[2] = XMFLOAT2{ 510 / 950.0f, 14 / 20.0f };
+			tempUVs[3] = XMFLOAT2{ 520 / 950.0f, 14 / 20.0f };
+		}
+			break;
+		case 'T':
+		{
+			tempUVs[0] = XMFLOAT2{ 520 / 950.0f, 4 / 20.0f };
+			tempUVs[1] = XMFLOAT2{ 530 / 950.0f, 4 / 20.0f };
+			tempUVs[2] = XMFLOAT2{ 520 / 950.0f, 14 / 20.0f };
+			tempUVs[3] = XMFLOAT2{ 530 / 950.0f, 14 / 20.0f };
+		}
+			break;
+		case 'U':
+		{
+			tempUVs[0] = XMFLOAT2{ 530 / 950.0f, 4 / 20.0f };
+			tempUVs[1] = XMFLOAT2{ 540 / 950.0f, 4 / 20.0f };
+			tempUVs[2] = XMFLOAT2{ 530 / 950.0f, 14 / 20.0f };
+			tempUVs[3] = XMFLOAT2{ 540 / 950.0f, 14 / 20.0f };
+		}
+			break;
+		case 'V':
+		{
+			tempUVs[0] = XMFLOAT2{ 540 / 950.0f, 4 / 20.0f };
+			tempUVs[1] = XMFLOAT2{ 550 / 950.0f, 4 / 20.0f };
+			tempUVs[2] = XMFLOAT2{ 540 / 950.0f, 14 / 20.0f };
+			tempUVs[3] = XMFLOAT2{ 550 / 950.0f, 14 / 20.0f };
+		}
+			break;
+		case 'W':
+		{
+			tempUVs[0] = XMFLOAT2{ 550 / 950.0f, 4 / 20.0f };
+			tempUVs[1] = XMFLOAT2{ 560 / 950.0f, 4 / 20.0f };
+			tempUVs[2] = XMFLOAT2{ 550 / 950.0f, 14 / 20.0f };
+			tempUVs[3] = XMFLOAT2{ 560 / 950.0f, 14 / 20.0f };
+		}
+			break;
+		case 'X':
+		{
+			tempUVs[0] = XMFLOAT2{ 560 / 950.0f, 4 / 20.0f };
+			tempUVs[1] = XMFLOAT2{ 570 / 950.0f, 4 / 20.0f };
+			tempUVs[2] = XMFLOAT2{ 560 / 950.0f, 14 / 20.0f };
+			tempUVs[3] = XMFLOAT2{ 570 / 950.0f, 14 / 20.0f };
+		}
+			break;
+		case 'Y':
+		{
+			tempUVs[0] = XMFLOAT2{ 570 / 950.0f, 4 / 20.0f };
+			tempUVs[1] = XMFLOAT2{ 580 / 950.0f, 4 / 20.0f };
+			tempUVs[2] = XMFLOAT2{ 570 / 950.0f, 14 / 20.0f };
+			tempUVs[3] = XMFLOAT2{ 580 / 950.0f, 14 / 20.0f };
+		}
+			break;
+		case 'Z':
+		{
+			tempUVs[0] = XMFLOAT2{ 580 / 950.0f, 4 / 20.0f };
+			tempUVs[1] = XMFLOAT2{ 590 / 950.0f, 4 / 20.0f };
+			tempUVs[2] = XMFLOAT2{ 580 / 950.0f, 14 / 20.0f };
+			tempUVs[3] = XMFLOAT2{ 590 / 950.0f, 14 / 20.0f };
+		}
+			break;
+		case 'a':
+		{
+			tempUVs[0] = XMFLOAT2{ 650 / 950.0f, 4 / 20.0f };
+			tempUVs[1] = XMFLOAT2{ 660 / 950.0f, 4 / 20.0f };
+			tempUVs[2] = XMFLOAT2{ 650 / 950.0f, 14 / 20.0f };
+			tempUVs[3] = XMFLOAT2{ 660 / 950.0f, 14 / 20.0f };
+		}
+			break;
+		case 'b':
+		{
+			tempUVs[0] = XMFLOAT2{ 660 / 950.0f, 4 / 20.0f };
+			tempUVs[1] = XMFLOAT2{ 670 / 950.0f, 4 / 20.0f };
+			tempUVs[2] = XMFLOAT2{ 660 / 950.0f, 14 / 20.0f };
+			tempUVs[3] = XMFLOAT2{ 670 / 950.0f, 14 / 20.0f };
+		}
+			break;
+		case 'c':
+		{
+			tempUVs[0] = XMFLOAT2{ 670 / 950.0f, 4 / 20.0f };
+			tempUVs[1] = XMFLOAT2{ 680 / 950.0f, 4 / 20.0f };
+			tempUVs[2] = XMFLOAT2{ 670 / 950.0f, 14 / 20.0f };
+			tempUVs[3] = XMFLOAT2{ 680 / 950.0f, 14 / 20.0f };
+		}
+			break;
+		case 'd':
+		{
+			tempUVs[0] = XMFLOAT2{ 680 / 950.0f, 4 / 20.0f };
+			tempUVs[1] = XMFLOAT2{ 690 / 950.0f, 4 / 20.0f };
+			tempUVs[2] = XMFLOAT2{ 680 / 950.0f, 14 / 20.0f };
+			tempUVs[3] = XMFLOAT2{ 690 / 950.0f, 14 / 20.0f };
+		}
+			break;
+		case 'e':
+		{
+			tempUVs[0] = XMFLOAT2{ 690 / 950.0f, 4 / 20.0f };
+			tempUVs[1] = XMFLOAT2{ 700 / 950.0f, 4 / 20.0f };
+			tempUVs[2] = XMFLOAT2{ 690 / 950.0f, 14 / 20.0f };
+			tempUVs[3] = XMFLOAT2{ 700 / 950.0f, 14 / 20.0f };
+		}
+			break;
+		case 'f':
+		{
+			tempUVs[0] = XMFLOAT2{ 700 / 950.0f, 4 / 20.0f };
+			tempUVs[1] = XMFLOAT2{ 710 / 950.0f, 4 / 20.0f };
+			tempUVs[2] = XMFLOAT2{ 700 / 950.0f, 14 / 20.0f };
+			tempUVs[3] = XMFLOAT2{ 710 / 950.0f, 14 / 20.0f };
+		}
+			break;
+		case 'g':
+		{
+			tempUVs[0] = XMFLOAT2{ 710 / 950.0f, 4 / 20.0f };
+			tempUVs[1] = XMFLOAT2{ 720 / 950.0f, 4 / 20.0f };
+			tempUVs[2] = XMFLOAT2{ 710 / 950.0f, 16 / 20.0f };
+			tempUVs[3] = XMFLOAT2{ 720 / 950.0f, 16 / 20.0f };
+		}
+			break;
+		case 'h':
+		{
+			tempUVs[0] = XMFLOAT2{ 720 / 950.0f, 4 / 20.0f };
+			tempUVs[1] = XMFLOAT2{ 730 / 950.0f, 4 / 20.0f };
+			tempUVs[2] = XMFLOAT2{ 720 / 950.0f, 14 / 20.0f };
+			tempUVs[3] = XMFLOAT2{ 730 / 950.0f, 14 / 20.0f };
+		}
+			break;
+		case 'i':
+		{
+			tempUVs[0] = XMFLOAT2{ 730 / 950.0f, 4 / 20.0f };
+			tempUVs[1] = XMFLOAT2{ 740 / 950.0f, 4 / 20.0f };
+			tempUVs[2] = XMFLOAT2{ 730 / 950.0f, 14 / 20.0f };
+			tempUVs[3] = XMFLOAT2{ 740 / 950.0f, 14 / 20.0f };
+		}
+			break;
+		case 'j':
+		{
+			tempUVs[0] = XMFLOAT2{ 740 / 950.0f, 4 / 20.0f };
+			tempUVs[1] = XMFLOAT2{ 750 / 950.0f, 4 / 20.0f };
+			tempUVs[2] = XMFLOAT2{ 740 / 950.0f, 16 / 20.0f };
+			tempUVs[3] = XMFLOAT2{ 750 / 950.0f, 16 / 20.0f };
+		}
+			break;
+		case 'k':
+		{
+			tempUVs[0] = XMFLOAT2{ 750 / 950.0f, 4 / 20.0f };
+			tempUVs[1] = XMFLOAT2{ 760 / 950.0f, 4 / 20.0f };
+			tempUVs[2] = XMFLOAT2{ 750 / 950.0f, 14 / 20.0f };
+			tempUVs[3] = XMFLOAT2{ 760 / 950.0f, 14 / 20.0f };
+		}
+			break;
+		case 'l':
+		{
+			tempUVs[0] = XMFLOAT2{ 760 / 950.0f, 4 / 20.0f };
+			tempUVs[1] = XMFLOAT2{ 770 / 950.0f, 4 / 20.0f };
+			tempUVs[2] = XMFLOAT2{ 760 / 950.0f, 14 / 20.0f };
+			tempUVs[3] = XMFLOAT2{ 770 / 950.0f, 14 / 20.0f };
+		}
+			break;
+		case 'm':
+		{
+			tempUVs[0] = XMFLOAT2{ 770 / 950.0f, 4 / 20.0f };
+			tempUVs[1] = XMFLOAT2{ 780 / 950.0f, 4 / 20.0f };
+			tempUVs[2] = XMFLOAT2{ 770 / 950.0f, 14 / 20.0f };
+			tempUVs[3] = XMFLOAT2{ 780 / 950.0f, 14 / 20.0f };
+		}
+			break;
+		case 'n':
+		{
+			tempUVs[0] = XMFLOAT2{ 780 / 950.0f, 4 / 20.0f };
+			tempUVs[1] = XMFLOAT2{ 790 / 950.0f, 4 / 20.0f };
+			tempUVs[2] = XMFLOAT2{ 780 / 950.0f, 14 / 20.0f };
+			tempUVs[3] = XMFLOAT2{ 790 / 950.0f, 14 / 20.0f };
+		}
+			break;
+		case 'o':
+		{
+			tempUVs[0] = XMFLOAT2{ 790 / 950.0f, 4 / 20.0f };
+			tempUVs[1] = XMFLOAT2{ 800 / 950.0f, 4 / 20.0f };
+			tempUVs[2] = XMFLOAT2{ 790 / 950.0f, 14 / 20.0f };
+			tempUVs[3] = XMFLOAT2{ 800 / 950.0f, 14 / 20.0f };
+		}
+			break;
+		case 'p':
+		{
+			tempUVs[0] = XMFLOAT2{ 800 / 950.0f, 4 / 20.0f };
+			tempUVs[1] = XMFLOAT2{ 810 / 950.0f, 4 / 20.0f };
+			tempUVs[2] = XMFLOAT2{ 800 / 950.0f, 16 / 20.0f };
+			tempUVs[3] = XMFLOAT2{ 810 / 950.0f, 16 / 20.0f };
+		}
+			break;
+		case 'q':
+		{
+			tempUVs[0] = XMFLOAT2{ 810 / 950.0f, 4 / 20.0f };
+			tempUVs[1] = XMFLOAT2{ 820 / 950.0f, 4 / 20.0f };
+			tempUVs[2] = XMFLOAT2{ 810 / 950.0f, 16 / 20.0f };
+			tempUVs[3] = XMFLOAT2{ 820 / 950.0f, 16 / 20.0f };
+		}
+			break;
+		case 'r':
+		{
+			tempUVs[0] = XMFLOAT2{ 820 / 950.0f, 4 / 20.0f };
+			tempUVs[1] = XMFLOAT2{ 830 / 950.0f, 4 / 20.0f };
+			tempUVs[2] = XMFLOAT2{ 820 / 950.0f, 14 / 20.0f };
+			tempUVs[3] = XMFLOAT2{ 830 / 950.0f, 14 / 20.0f };
+		}
+			break;
+		case 's':
+		{
+			tempUVs[0] = XMFLOAT2{ 830 / 950.0f, 4 / 20.0f };
+			tempUVs[1] = XMFLOAT2{ 840 / 950.0f, 4 / 20.0f };
+			tempUVs[2] = XMFLOAT2{ 830 / 950.0f, 14 / 20.0f };
+			tempUVs[3] = XMFLOAT2{ 840 / 950.0f, 14 / 20.0f };
+		}
+			break;
+		case 't':
+		{
+			tempUVs[0] = XMFLOAT2{ 840 / 950.0f, 4 / 20.0f };
+			tempUVs[1] = XMFLOAT2{ 850 / 950.0f, 4 / 20.0f };
+			tempUVs[2] = XMFLOAT2{ 840 / 950.0f, 14 / 20.0f };
+			tempUVs[3] = XMFLOAT2{ 850 / 950.0f, 14 / 20.0f };
+		}
+			break;
+		case 'u':
+		{
+			tempUVs[0] = XMFLOAT2{ 850 / 950.0f, 4 / 20.0f };
+			tempUVs[1] = XMFLOAT2{ 860 / 950.0f, 4 / 20.0f };
+			tempUVs[2] = XMFLOAT2{ 850 / 950.0f, 14 / 20.0f };
+			tempUVs[3] = XMFLOAT2{ 860 / 950.0f, 14 / 20.0f };
+		}
+			break;
+		case 'v':
+		{
+			tempUVs[0] = XMFLOAT2{ 860 / 950.0f, 4 / 20.0f };
+			tempUVs[1] = XMFLOAT2{ 870 / 950.0f, 4 / 20.0f };
+			tempUVs[2] = XMFLOAT2{ 860 / 950.0f, 14 / 20.0f };
+			tempUVs[3] = XMFLOAT2{ 870 / 950.0f, 14 / 20.0f };
+		}
+			break;
+		case 'w':
+		{
+			tempUVs[0] = XMFLOAT2{ 870 / 950.0f, 4 / 20.0f };
+			tempUVs[1] = XMFLOAT2{ 880 / 950.0f, 4 / 20.0f };
+			tempUVs[2] = XMFLOAT2{ 870 / 950.0f, 14 / 20.0f };
+			tempUVs[3] = XMFLOAT2{ 880 / 950.0f, 14 / 20.0f };
+		}
+			break;
+		case 'x':
+		{
+			tempUVs[0] = XMFLOAT2{ 880 / 950.0f, 4 / 20.0f };
+			tempUVs[1] = XMFLOAT2{ 890 / 950.0f, 4 / 20.0f };
+			tempUVs[2] = XMFLOAT2{ 880 / 950.0f, 14 / 20.0f };
+			tempUVs[3] = XMFLOAT2{ 890 / 950.0f, 14 / 20.0f };
+		}
+			break;
+		case 'y':
+		{
+			tempUVs[0] = XMFLOAT2{ 890 / 950.0f, 4 / 20.0f };
+			tempUVs[1] = XMFLOAT2{ 900 / 950.0f, 4 / 20.0f };
+			tempUVs[2] = XMFLOAT2{ 890 / 950.0f, 16 / 20.0f };
+			tempUVs[3] = XMFLOAT2{ 900 / 950.0f, 16 / 20.0f };
+		}
+			break;
+		case 'z':
+		{
+			tempUVs[0] = XMFLOAT2{ 900 / 950.0f, 4 / 20.0f };
+			tempUVs[1] = XMFLOAT2{ 910 / 950.0f, 4 / 20.0f };
+			tempUVs[2] = XMFLOAT2{ 900 / 950.0f, 14 / 20.0f };
+			tempUVs[3] = XMFLOAT2{ 910 / 950.0f, 14 / 20.0f };
+		}
+			break;
+		default:
+			break;
+		}
+
+		rectVerts[i + 0].m_d3dfPosition = XMFLOAT3(topLeftPos.x + ((tWidth / textSize) * loopIndex), topLeftPos.y, topLeftPos.z);
+		rectVerts[i + 0].m_d3dfUVs = XMFLOAT2(tempUVs[0].x, tempUVs[0].y);
+		rectVerts[i + 1].m_d3dfPosition = XMFLOAT3(topLeftPos.x + ((tWidth / textSize) * (loopIndex + 1)), topLeftPos.y, topLeftPos.z);
+		rectVerts[i + 1].m_d3dfUVs = XMFLOAT2(tempUVs[1].x, tempUVs[1].y);
+		rectVerts[i + 2].m_d3dfPosition = XMFLOAT3(topLeftPos.x + ((tWidth / textSize) * loopIndex), bottomLeftPos.y, topLeftPos.z);
+		rectVerts[i + 2].m_d3dfUVs = XMFLOAT2(tempUVs[2].x, tempUVs[2].y);
+		rectVerts[i + 3].m_d3dfPosition = XMFLOAT3(topLeftPos.x + ((tWidth / textSize) * (loopIndex + 1)), bottomLeftPos.y, topLeftPos.z);
+		rectVerts[i + 3].m_d3dfUVs = XMFLOAT2(tempUVs[3].x, tempUVs[3].y);
+
+		++loopIndex;
+	}
+
+	atUIVertices.push_back(rectVerts);
+	ptWorld->atLabel[nThisEntity].vIndex = atUIVertices.size() - 1;
+
+	ptWorld->atLabel[nThisEntity].width = width;
+	ptWorld->atLabel[nThisEntity].height = height;
+	ptWorld->atLabel[nThisEntity].x = offsetX;
+	ptWorld->atLabel[nThisEntity].y = offsetY;
+
+	XMMATRIX spawnMatrix = SpawnPosition;
+
+	short* rectIndices = new short[6 * textSize];
+
+	loopIndex = 0;
+	int counterIndex = 0;
+	for (int i = 0; loopIndex < textSize; i+=6)
+	{
+		rectIndices[i] = counterIndex;
+		rectIndices[i + 1] = counterIndex + 1;
+		rectIndices[i + 2] = counterIndex + 3;	//tl->tr->br
+		rectIndices[i + 3] = counterIndex + 3;	//br->bl->tl
+		rectIndices[i + 4] = counterIndex + 2;
+		rectIndices[i + 5] = counterIndex;
+
+		++loopIndex;
+		counterIndex += 4;
+	}
+
+	atUIIndices.push_back(rectIndices);
+	ptWorld->atLabel[nThisEntity].iIndex = atUIIndices.size() - 1;
+
+	ptWorld->atMesh[nThisEntity].m_nIndexCount = 6 * textSize;
+	ptWorld->atMesh[nThisEntity].m_nVertexCount = 4 * textSize;
+
+	ptWorld->atMesh[nThisEntity].m_nVertexBufferStride = sizeof(TUIVert);
+	ptWorld->atMesh[nThisEntity].m_nVertexBufferOffset = 0;
+
+	ptWorld->atMesh[nThisEntity].m_d3dVertexBufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
+	ptWorld->atMesh[nThisEntity].m_d3dVertexBufferDesc.ByteWidth = sizeof(TUIVert) * ptWorld->atMesh[nThisEntity].m_nVertexCount;
+	ptWorld->atMesh[nThisEntity].m_d3dVertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	ptWorld->atMesh[nThisEntity].m_d3dVertexBufferDesc.CPUAccessFlags = 0;
+	ptWorld->atMesh[nThisEntity].m_d3dVertexBufferDesc.MiscFlags = 0;
+	ptWorld->atMesh[nThisEntity].m_d3dVertexBufferDesc.StructureByteStride = 0;
+
+	ptWorld->atMesh[nThisEntity].m_d3dIndexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
+	ptWorld->atMesh[nThisEntity].m_d3dIndexBufferDesc.ByteWidth = sizeof(short) * ptWorld->atMesh[nThisEntity].m_nIndexCount;
+	ptWorld->atMesh[nThisEntity].m_d3dIndexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+	ptWorld->atMesh[nThisEntity].m_d3dIndexBufferDesc.CPUAccessFlags = 0;
+	ptWorld->atMesh[nThisEntity].m_d3dIndexBufferDesc.MiscFlags = 0;
+	ptWorld->atMesh[nThisEntity].m_d3dIndexBufferDesc.StructureByteStride = 0;
+
+
+	ptWorld->atMesh[nThisEntity].m_d3dVertexData.pSysMem = &atUIVertices[ptWorld->atLabel[nThisEntity].vIndex][0];
+	ptWorld->atMesh[nThisEntity].m_d3dIndexData.pSysMem = &atUIIndices[ptWorld->atLabel[nThisEntity].iIndex][0];
+
+	ptWorld->atMesh[nThisEntity].m_d3dVertexData.SysMemPitch = 0;
+	ptWorld->atMesh[nThisEntity].m_d3dVertexData.SysMemSlicePitch = 0;
+
+	ptWorld->atMesh[nThisEntity].m_d3dIndexData.SysMemPitch = 0;
+	ptWorld->atMesh[nThisEntity].m_d3dIndexData.SysMemSlicePitch = 0;
+
+	ptWorld->atShaderID[nThisEntity].m_nShaderID = 7;	//Shader that supports UIShaders
+
+	for (int i = 0; i < ptWorld->atMesh[nThisEntity].m_nVertexCount; ++i)
+	{
+		ptWorld->atMesh[nThisEntity].m_VertexData.push_back(atUIVertices[ptWorld->atLabel[nThisEntity].vIndex][i].m_d3dfPosition);
 	}
 
 	ptWorld->atWorldMatrix[nThisEntity].worldMatrix = spawnMatrix;

@@ -33,8 +33,8 @@ void QuadGeometryShader(point TQuadGeoInputType gIn[1],
 	//Compute 4 triangle strip vertices (quad) in local space.
 	//The quad faces down the +z axis in local space.
 	//
-	float halfWidth = 1.5f ;//* input[0].sizeW.x;
-	float halfHeight = 1.0f ;//* gIn[0].sizeW.y;
+	float halfWidth = 1.0f ;//* input[0].sizeW.x;
+	float halfHeight = 0.3f ;//* gIn[0].sizeW.y;
 
 	float4 v[4];
 	v[0] = float4(-halfWidth * fHealth, -halfHeight, 0.0f, 1.0f);

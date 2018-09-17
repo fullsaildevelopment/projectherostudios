@@ -214,8 +214,8 @@ void CGraphicsSystem::InitD3D(HWND cTheWindow)
 		0,
 		D3D11_FLOAT32_MAX
 	};
-	m_pd3dDevice->CreateSamplerState(&sampTmp, &m_pd3dSamplerState);
 
+	m_pd3dDevice->CreateSamplerState(&sampTmp, &m_pd3dSamplerState);
 #pragma endregion
 
 	#pragma region RTV
@@ -242,6 +242,23 @@ void CGraphicsSystem::InitD3D(HWND cTheWindow)
 	m_pd3dDevice->CreateRenderTargetView(m_pd3dOutsideGlassRenderToTexture, NULL, &m_pd3dOutsideRenderTargetView);
 #pragma endregion
 
+#pragma region BlendState
+	D3D11_BLEND_DESC d3dBlendDescription;
+	d3dBlendDescription.AlphaToCoverageEnable = false;
+	d3dBlendDescription.IndependentBlendEnable = false;
+	d3dBlendDescription.RenderTarget[0].BlendEnable = true;
+	d3dBlendDescription.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
+	d3dBlendDescription.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
+	d3dBlendDescription.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+	d3dBlendDescription.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ZERO;
+	d3dBlendDescription.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
+	d3dBlendDescription.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
+	d3dBlendDescription.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+
+	m_pd3dDevice->CreateBlendState(&d3dBlendDescription, &m_pd3dBlendState);
+
+	m_pd3dDeviceContext->OMSetBlendState(m_pd3dBlendState, 0, 0xffffffff);
+#pragma endregion
 }
 
 void CGraphicsSystem::UpdateD3D()
@@ -273,7 +290,7 @@ void CGraphicsSystem::CleanD3D(TWorld *ptPlanet)
 		{
 			ptPlanet->atMesh[nEntityIndex].m_pd3dVertexBuffer->Release();
 			ptPlanet->atMesh[nEntityIndex].m_pd3dIndexBuffer->Release();
-			ptPlanet->atMesh[nEntityIndex].m_d3dSRVDiffuse->Release();
+			//ptPlanet->atMesh[nEntityIndex].m_d3dSRVDiffuse->Release();
 		}
 		destroyEntity(ptPlanet, nEntityIndex);
 #ifdef _DEBUG
@@ -333,6 +350,8 @@ void CGraphicsSystem::CleanD3DLevel(TWorld * ptPlanet)
 {
 	for (int nEntityIndex = 0; nEntityIndex < ENTITYCOUNT; nEntityIndex++)
 	{
+		/*if (ptPlanet->atUIMask[nEntityIndex].m_tnUIMask == (COMPONENT_LABEL | COMPONENT_TEXT | COMPONENT_UIMASK | COMPONENT_BUTTON))
+			continue;*/
 		//Check planet's mask at [i] to see what needs to be released
 		if (ptPlanet->atGraphicsMask[nEntityIndex].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_DEBUGMESH | COMPONENT_SHADERID))
 		{
@@ -343,6 +362,19 @@ void CGraphicsSystem::CleanD3DLevel(TWorld * ptPlanet)
 		{
 			ptPlanet->atSimpleMesh[nEntityIndex].m_pd3dVertexBuffer->Release();
 			ptPlanet->atSimpleMesh[nEntityIndex].m_pd3dIndexBuffer->Release();
+		}
+
+		if (ptPlanet->atGraphicsMask[nEntityIndex].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_SHADERID))
+		{
+			ptPlanet->atMesh[nEntityIndex].m_pd3dVertexBuffer->Release();
+			ptPlanet->atMesh[nEntityIndex].m_pd3dIndexBuffer->Release();
+			//ptPlanet->atMesh[nEntityIndex].m_d3dSRVDiffuse->Release();
+		}
+
+		if (ptPlanet->atGraphicsMask[nEntityIndex].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_SHADERID))
+		{
+			ptPlanet->atMesh[nEntityIndex].m_pd3dVertexBuffer->Release();
+			ptPlanet->atMesh[nEntityIndex].m_pd3dIndexBuffer->Release();
 		}
 		destroyEntity(ptPlanet, nEntityIndex);
 	}
@@ -886,6 +918,24 @@ void CGraphicsSystem::CreateEntityBuffer(TWorld * ptWorld, int nEnityIndex)
 		{
 			m_pd3dDevice->CreateBuffer(&ptWorld->atSimpleMesh[nEnityIndex].m_d3dVertexBufferDesc, &ptWorld->atSimpleMesh[nEnityIndex].m_d3dVertexData, &ptWorld->atSimpleMesh[nEnityIndex].m_pd3dVertexBuffer);
 			m_pd3dDevice->CreateBuffer(&ptWorld->atSimpleMesh[nEnityIndex].m_d3dIndexBufferDesc, &ptWorld->atSimpleMesh[nEnityIndex].m_d3dIndexData, &ptWorld->atSimpleMesh[nEnityIndex].m_pd3dIndexBuffer);
+		}
+	}
+
+	if (ptWorld->atGraphicsMask[nEnityIndex].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_SHADERID))
+	{
+		if (ptWorld->atMesh[nEnityIndex].m_nIndexCount && ptWorld->atMesh[nEnityIndex].m_nVertexCount)
+		{
+			m_pd3dDevice->CreateBuffer(&ptWorld->atMesh[nEnityIndex].m_d3dVertexBufferDesc, &ptWorld->atMesh[nEnityIndex].m_d3dVertexData, &ptWorld->atMesh[nEnityIndex].m_pd3dVertexBuffer);
+			m_pd3dDevice->CreateBuffer(&ptWorld->atMesh[nEnityIndex].m_d3dIndexBufferDesc, &ptWorld->atMesh[nEnityIndex].m_d3dIndexData, &ptWorld->atMesh[nEnityIndex].m_pd3dIndexBuffer);
+		}
+	}
+
+	if (ptWorld->atGraphicsMask[nEnityIndex].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_SHADERID))
+	{
+		if (ptWorld->atMesh[nEnityIndex].m_nIndexCount && ptWorld->atMesh[nEnityIndex].m_nVertexCount)
+		{
+			m_pd3dDevice->CreateBuffer(&ptWorld->atMesh[nEnityIndex].m_d3dVertexBufferDesc, &ptWorld->atMesh[nEnityIndex].m_d3dVertexData, &ptWorld->atMesh[nEnityIndex].m_pd3dVertexBuffer);
+			m_pd3dDevice->CreateBuffer(&ptWorld->atMesh[nEnityIndex].m_d3dIndexBufferDesc, &ptWorld->atMesh[nEnityIndex].m_d3dIndexData, &ptWorld->atMesh[nEnityIndex].m_pd3dIndexBuffer);
 		}
 	}
 }
@@ -1727,15 +1777,15 @@ void CGraphicsSystem::InitUIShaderData(ID3D11DeviceContext * pd3dDeviceContext, 
 	TUIVertexBufferType	*ptUIVertexBufferDataPointer = nullptr;
 	TUIPixelBufferType	*ptUIPixelBufferDataPointer = nullptr;
 
-	XMMATRIX d3dView;
-	d3dView = d3dVertexBuffer.m_d3dViewMatrix;
-	d3dView = XMMatrixInverse(nullptr, CameraMatrix);
+	//XMMATRIX d3dView;
+	//d3dView = d3dVertexBuffer.m_d3dViewMatrix;
+	//d3dView = XMMatrixInverse(nullptr, CameraMatrix);
 
 	unsigned int vBufferNumber = 0;
 	unsigned int pBufferNumber = 0;
 	
-	XMMATRIX tempWorld = d3dVertexBuffer.m_d3dWorldMatrix;
-	XMMATRIX tempProj = d3dVertexBuffer.m_d3dProjectionMatrix;
+	//XMMATRIX tempWorld = d3dVertexBuffer.m_d3dWorldMatrix;
+	//XMMATRIX tempProj = d3dVertexBuffer.m_d3dProjectionMatrix;
 
 	#pragma region Map To Vertex Constant Buffer
 	pd3dDeviceContext->Map(m_pd3dUIVertexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &d3dUIVertexMappedResource);
@@ -1745,12 +1795,14 @@ void CGraphicsSystem::InitUIShaderData(ID3D11DeviceContext * pd3dDeviceContext, 
 	ptUIVertexBufferDataPointer = (TUIVertexBufferType*)d3dUIVertexMappedResource.pData;
 
 	// Copy the matrices into the constant buffer.
-	ptUIVertexBufferDataPointer->m_d3dWorldMatrix = tempWorld;
-	ptUIVertexBufferDataPointer->m_d3dViewMatrix = d3dView;
-	ptUIVertexBufferDataPointer->m_d3dProjectionMatrix = tempProj;
+	//ptUIVertexBufferDataPointer->m_d3dWorldMatrix = tempWorld;
+	//ptUIVertexBufferDataPointer->m_d3dViewMatrix = d3dView;
+	//ptUIVertexBufferDataPointer->m_d3dProjectionMatrix = tempProj;
 
-	//ptUIVertexBufferDataPointer->rcpDim = d3dVertexBuffer.rcpDim;
-	//ptUIVertexBufferDataPointer->rcpDim2 = d3dVertexBuffer.rcpDim2;
+	ptUIVertexBufferDataPointer->start = d3dVertexBuffer.start;
+	ptUIVertexBufferDataPointer->end = d3dVertexBuffer.end;
+	ptUIVertexBufferDataPointer->ratio = d3dVertexBuffer.ratio;
+	ptUIVertexBufferDataPointer->padding = d3dVertexBuffer.padding;
 
 	// Unlock the constant buffer.
 	pd3dDeviceContext->Unmap(m_pd3dUIVertexBuffer, 0);
@@ -1766,9 +1818,6 @@ void CGraphicsSystem::InitUIShaderData(ID3D11DeviceContext * pd3dDeviceContext, 
 
 	// Copy the matrices into the constant buffer.
 	ptUIPixelBufferDataPointer->hoverColor = d3dPixelBuffer.hoverColor;
-
-	//ptUIVertexBufferDataPointer->rcpDim = d3dVertexBuffer.rcpDim;
-	//ptUIVertexBufferDataPointer->rcpDim2 = d3dVertexBuffer.rcpDim2;
 
 	// Unlock the constant buffer.
 	pd3dDeviceContext->Unmap(m_pd3dUIPixelBuffer, 0);
@@ -1904,6 +1953,8 @@ void CGraphicsSystem::ExecutePipeline(ID3D11DeviceContext *pd3dDeviceContext, in
 			{
 				pd3dDeviceContext->DrawIndexed(m_nIndexCount, 0, 0);
 			}
+			else if (nGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_SHADERID))
+				pd3dDeviceContext->DrawIndexed(m_nIndexCount, 0, 0);
 			break;
 		}
 		case Quad:

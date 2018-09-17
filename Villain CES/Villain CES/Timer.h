@@ -2,6 +2,7 @@
 #include"XTime.h"
 #include"InputSystem.h"
 #include<string>
+#include"AK/Tools/Win32/AkPlatformFuncs.h"
 struct System_Times
 {
 	XTime tAppTimer;
@@ -52,3 +53,23 @@ struct System_Times
 		
 	}
 };
+class CFPS
+{
+public:
+	CFPS();
+	~CFPS();
+	bool Init_FPSReader();
+	void UpdateFrameTime();
+	void Xtime_Signal();
+
+private:
+ int m_framesPassed;
+ double m_startTime;
+ bool m_Init;
+ float m_fpsCounter;
+ XTime* m_frameRate;
+};
+
+
+
+
