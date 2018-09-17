@@ -3363,11 +3363,10 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 
 #pragma endregion
 
-	tempImport = pcGraphicsSystem->ReadMesh("meshData_NoBrewery7.txt");
+	tempImport = pcGraphicsSystem->ReadMesh("meshData_NoBrewery8.txt");
 	matOpt = pcGraphicsSystem->CreateTexturesFromFile(tempImport.vtMaterials, tempImport.meshCount);
 	for (int meshIndex = 0; meshIndex < tempImport.meshCount; meshIndex++)
-	{
-	
+	{	
 		int myMesh = createMesh(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, tempImport.vtMeshes[meshIndex], matOpt, meshIndex);
 	}
 
