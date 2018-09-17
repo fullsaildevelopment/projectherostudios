@@ -126,6 +126,9 @@
     <ClInclude Include="Win32\AkDefaultIOHookBlocking.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="WwiseSounds\Wwise_IDs.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">

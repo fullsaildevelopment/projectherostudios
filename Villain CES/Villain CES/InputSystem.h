@@ -66,7 +66,11 @@ public:
 	XMMATRIX AimMode(XMMATRIX d3dplayerMatrix);
 
 	XMMATRIX WalkCameraControls(XMVECTOR U, XMMATRIX viewM, bool &_movement);
+	XMMATRIX CameraUpdate(TCamera* in_walkCamera, TCamera* in_aimMode, TCamera* in_debugCamera, XMMATRIX in_resultMatrix, XMMATRIX offsetMatrix);
 	XMMATRIX CameraBehaviorLerp(XMMATRIX m1, XMMATRIX m2, float scale);
+	XMMATRIX MyLookAt(XMVECTOR EyePos, XMVECTOR TargetPos, XMVECTOR Up);
+	void StoreInitCameraForwardV(XMMATRIX in_prevPos);
+	void StorePreviousCameraPos(XMVECTOR in_Pos);
 	XMMATRIX CameraOrientationReset(XMMATRIX m1);
 	XMMATRIX MyTurnTo(XMMATRIX M, XMVECTOR T, float s, XMMATRIX world);
 	float ZoomSight(float fFov);
@@ -102,6 +106,7 @@ private:
 	float				m_fDistance;
 	XMVECTOR m_PlayerForwardV;
 	XMVECTOR m_CameraInitV;
+	XMMATRIX m_prevCameraPos;
     float m_YRotationLimit;
 	HWND m_GameWindow;
 	RECT m_windowBounds;

@@ -39,9 +39,7 @@ public:
 	bool GamePaused = false;
 	void LoadLevelWithMapInIt();
 	int RealLevelUpdate();
-
-	//ZB-Helper Methods
-	bool GetWalkCameraState();
+	
 private:
 	TMaterialOptimized matOpt;
 
@@ -96,9 +94,9 @@ private:
 	TCamera * menuCamera;
 	//Timers * tAugerTimers;
 	System_Times *tTimerInfo;
-	AkGameObjectID footSteps;
+	AkGameObjectID m_AkMainMenuMusic;
 	AkGameObjectID Listener;
-	AkBankID footsteps_bnkID;
+	AkBankID MainMenu_bnkID;
 	AkBankID init_bnkID;
 	AKRESULT ErrorResult;
 	float m_RealTimeFov;

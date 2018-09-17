@@ -22,7 +22,7 @@
 #include"Common/AkFilePackageLUT.h"
 
 #define INIT_BNK L"Init.bnk"
-#define FOOTSTEP_BNK L"Bus3d_Demo.bnk"
+#define MAINMENU_BNK L"Augur_MusicBank.bnk"
 //#define AK_OPTIMIZED
 //#ifndef AK_OPTIMIZED
 //// Only needed for debug mode

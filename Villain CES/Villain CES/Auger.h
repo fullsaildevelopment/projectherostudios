@@ -24,9 +24,6 @@ private:
 
 	int CurrentSpotInGame;
 	//XMMATRIX m_d3dViewMatrix;
-
-
-
 	XMMATRIX peguins;
 	int nAiminglineIndex;
 	int		m_nIndexToBullets;

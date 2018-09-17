@@ -1,0 +1,6 @@
+Event	ID	Name			Wwise Object Path	Notes
+	1838748612	Play_Xurious___Liftwaffe			\Default Work Unit\Play_Xurious___Liftwaffe	
+
+In Memory Audio	ID	Name	Audio source file		Wwise Object Path	Notes	Data Size
+	725541947	Xurious - Liftwaffe	C:\Users\world\Documents\WwiseProjects\Augur_Sounds\.cache\Windows\SFX\Xurious - Liftwaffe_BED56AEF.wem		\Actor-Mixer Hierarchy\Default Work Unit\Xurious - Liftwaffe		45531264
+
