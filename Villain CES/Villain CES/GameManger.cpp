@@ -5423,15 +5423,18 @@ int CGameMangerSystem::RealLevelUpdate()
 				}
 				if (tThisWorld.atClip[nCurrentEntity].tryToShoot == true && tThisWorld.atClip[nCurrentEntity].nBulletsAvailables.size() > 0 && tThisWorld.atClip[nCurrentEntity].fShootingCoolDown <= 0)
 				{
-					wchar_t* textBuffer = new wchar_t[1];
+					if (nCurrentEntity == PlayerStartIndex)
+					{
+						wchar_t* textBuffer = new wchar_t[1];
 
-					textBuffer[0] = (tThisWorld.atClip[nCurrentEntity].nBulletsAvailables.size() - 1);
+						textBuffer[0] = (tThisWorld.atClip[nCurrentEntity].nBulletsAvailables.size() - 1);
 
-					pcUISystem->UpdateText(&tThisWorld, 1094, &atUIVertices, textBuffer, atUIVertices.at(tThisWorld.atLabel[1094].vIndex));
+						pcUISystem->UpdateText(&tThisWorld, 1094, &atUIVertices, textBuffer, atUIVertices.at(tThisWorld.atLabel[1094].vIndex));
 
-					pcGraphicsSystem->CreateEntityBuffer(&tThisWorld, 1094);
+						pcGraphicsSystem->CreateEntityBuffer(&tThisWorld, 1094);
 
-					delete[] textBuffer;
+						delete[] textBuffer;
+					}
 
 					XMVECTOR foward;
 					foward.m128_f32[0] = 0;
@@ -5465,15 +5468,18 @@ int CGameMangerSystem::RealLevelUpdate()
 					pcProjectileSystem->Reload(&tThisWorld.atClip[nCurrentEntity]);
 					tThisWorld.atClip[nCurrentEntity].tryToReload = false;
 
-					wchar_t* textBuffer = new wchar_t[1];
+					if (nCurrentEntity == PlayerStartIndex)
+					{
+						wchar_t* textBuffer = new wchar_t[1];
 
-					textBuffer[0] = (tThisWorld.atClip[nCurrentEntity].nBulletsAvailables.size());
+						textBuffer[0] = (tThisWorld.atClip[nCurrentEntity].nBulletsAvailables.size());
 
-					pcUISystem->UpdateText(&tThisWorld, 1094, &atUIVertices, textBuffer, atUIVertices.at(tThisWorld.atLabel[1094].vIndex));
+						pcUISystem->UpdateText(&tThisWorld, 1094, &atUIVertices, textBuffer, atUIVertices.at(tThisWorld.atLabel[1094].vIndex));
 
-					pcGraphicsSystem->CreateEntityBuffer(&tThisWorld, 1094);
+						pcGraphicsSystem->CreateEntityBuffer(&tThisWorld, 1094);
 
-					delete[] textBuffer;
+						delete[] textBuffer;
+					}
 				}
 				if (tThisWorld.atClip[nCurrentEntity].nBulletsFired.size() != 0) {
 					for (int i = 0; i < tThisWorld.atClip[nCurrentEntity].nBulletsFired.size(); ++i) {
