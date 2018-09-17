@@ -13,8 +13,8 @@ public:
 	void AddTextToUI(HWND* cApplicationWindow, TWorld* tThisWorld, unsigned int nThisEntity, wchar_t* text, unsigned int textSize, int* textColor, int justification = 0);
 	void AddMaskToUI(TWorld* tThisWorld, unsigned int nThisEntity, eUIComponent mask);
 	void AdjustBoundingBox(HWND* cApplicationWindow, TWorld* tThisWorld, unsigned int nThisEntity);
-	void AddBarToUI(HWND* cApplicationWindow, TWorld* tThisWorld, unsigned int nThisEntity);
-	void GetUVsForCharacter(wchar_t* character, XMFLOAT2* UVs);
+	void AddBarToUI(HWND* cApplicationWindow, TWorld* tThisWorld, unsigned int nThisEntity, XMFLOAT4* backgroundColor);
+	void UpdateText(TWorld* tThisWorld, unsigned int nThisEntity, std::vector<TUIVert*>* atUIVertices, wchar_t* character, TUIVert* UVs);
 	void CreateEnemyHealthBar(HWND* cApplicationWindow, TWorld* tThisWorld, unsigned int &nThisEntity, XMFLOAT4 in_EnemyPos);
 	void UpdateEnemyHealthBar(TWorld* tThisWorld, unsigned int nThisEntity, XMFLOAT4 &out_EnemyPos);
 	float GetEnemyHealth(TWorld* tThisWorld, unsigned int nThisEntity);

@@ -3397,7 +3397,7 @@ unsigned int createClaytonAnim(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TM
 	return nThisEntity;
 }
 
-unsigned int CreateUILabel(TWorld * ptWorld, XMMATRIX SpawnPosition, float width, float height, float offsetX, float offsetY, std::vector<TUIVert*>& atUIVertices, int _nThisEntity, float z)
+unsigned int CreateUILabel(TWorld * ptWorld, XMMATRIX SpawnPosition, float width, float height, float offsetX, float offsetY, std::vector<TUIVert*>* atUIVertices, int _nThisEntity, float z)
 {
 	unsigned int nThisEntity;
 
@@ -3426,8 +3426,8 @@ unsigned int CreateUILabel(TWorld * ptWorld, XMMATRIX SpawnPosition, float width
 
 	//rectVerts->m_d3dfPositions = verts;
 
-	atUIVertices.push_back(rectVerts);
-	int index = atUIVertices.size() - 1;
+	atUIVertices->push_back(rectVerts);
+	int index = atUIVertices->size() - 1;
 
 	ptWorld->atLabel[nThisEntity].width = width;
 	ptWorld->atLabel[nThisEntity].height = height;
@@ -3463,7 +3463,7 @@ unsigned int CreateUILabel(TWorld * ptWorld, XMMATRIX SpawnPosition, float width
 	ptWorld->atMesh[nThisEntity].m_d3dIndexBufferDesc.StructureByteStride = 0;
 
 
-	ptWorld->atMesh[nThisEntity].m_d3dVertexData.pSysMem = &atUIVertices[index][0];
+	ptWorld->atMesh[nThisEntity].m_d3dVertexData.pSysMem = &atUIVertices->at(index)[0];
 	ptWorld->atMesh[nThisEntity].m_d3dIndexData.pSysMem = rectIndices;
 
 	ptWorld->atMesh[nThisEntity].m_d3dVertexData.SysMemPitch = 0;
@@ -3476,7 +3476,7 @@ unsigned int CreateUILabel(TWorld * ptWorld, XMMATRIX SpawnPosition, float width
 
 	for (int i = 0; i < ptWorld->atMesh[nThisEntity].m_nVertexCount; ++i) 
 	{
-		ptWorld->atMesh[nThisEntity].m_VertexData.push_back(atUIVertices[index][i].m_d3dfPosition);
+		ptWorld->atMesh[nThisEntity].m_VertexData.push_back(atUIVertices->at(index)[i].m_d3dfPosition);
 	}
 
 	ptWorld->atWorldMatrix[nThisEntity].worldMatrix = spawnMatrix;
@@ -3484,7 +3484,7 @@ unsigned int CreateUILabel(TWorld * ptWorld, XMMATRIX SpawnPosition, float width
 	return nThisEntity;
 }
 
-unsigned int CreateUILabelForText(TWorld* ptWorld, XMMATRIX SpawnPosition, float width, float height, float offsetX, float offsetY, std::vector<TUIVert*> atUIVertices, std::vector<short*> atUIIndices, wchar_t* text, unsigned int _textSize, int _nThisEntity, float z)
+unsigned int CreateUILabelForText(TWorld* ptWorld, XMMATRIX SpawnPosition, float width, float height, float offsetX, float offsetY, std::vector<TUIVert*>* atUIVertices, std::vector<short*>* atUIIndices, wchar_t* text, unsigned int _textSize, int _nThisEntity, float z)
 {
 	unsigned int nThisEntity;
 	unsigned int textSize = _textSize - 1;
@@ -3515,444 +3515,7 @@ unsigned int CreateUILabelForText(TWorld* ptWorld, XMMATRIX SpawnPosition, float
 	int loopIndex = 0;
 	for (int i = 0; loopIndex < textSize; i+=4)
 	{
-		//CUISystem::GetUVsForCharacter(text[loopIndex], tempUVs);
-		switch (text[loopIndex])
-		{
-		case ' ':
-		{
-			tempUVs[0] = XMFLOAT2{ 0 / 950.0f, 4 / 20.0f };
-			tempUVs[1] = XMFLOAT2{ 10 / 950.0f, 4 / 20.0f };
-			tempUVs[2] = XMFLOAT2{ 0 / 950.0f, 14 / 20.0f };
-			tempUVs[3] = XMFLOAT2{ 10 / 950.0f, 14 / 20.0f };
-		}
-			break;
-		case ':':
-		{
-			tempUVs[0] = XMFLOAT2{ 260 / 950.0f, 4 / 20.0f };
-			tempUVs[1] = XMFLOAT2{ 270 / 950.0f, 4 / 20.0f };
-			tempUVs[2] = XMFLOAT2{ 260 / 950.0f, 14 / 20.0f };
-			tempUVs[3] = XMFLOAT2{ 270 / 950.0f, 14 / 20.0f };
-		}
-			break;
-		case 'A':
-		{
-			tempUVs[0] = XMFLOAT2{ 330 / 950.0f, 4 / 20.0f };
-			tempUVs[1] = XMFLOAT2{ 340 / 950.0f, 4 / 20.0f };
-			tempUVs[2] = XMFLOAT2{ 330 / 950.0f, 14 / 20.0f };
-			tempUVs[3] = XMFLOAT2{ 340 / 950.0f, 14 / 20.0f };
-		}
-			break;
-		case 'B':
-		{
-			tempUVs[0] = XMFLOAT2{ 340 / 950.0f, 4 / 20.0f };
-			tempUVs[1] = XMFLOAT2{ 350 / 950.0f, 4 / 20.0f };
-			tempUVs[2] = XMFLOAT2{ 340 / 950.0f, 14 / 20.0f };
-			tempUVs[3] = XMFLOAT2{ 350 / 950.0f, 14 / 20.0f };
-		}
-			break;
-		case 'C':
-		{
-			tempUVs[0] = XMFLOAT2{ 350 / 950.0f, 4 / 20.0f };
-			tempUVs[1] = XMFLOAT2{ 360 / 950.0f, 4 / 20.0f };
-			tempUVs[2] = XMFLOAT2{ 350 / 950.0f, 14 / 20.0f };
-			tempUVs[3] = XMFLOAT2{ 360 / 950.0f, 14 / 20.0f };
-		}
-			break;
-		case 'D':
-		{
-			tempUVs[0] = XMFLOAT2{ 360 / 950.0f, 4 / 20.0f };
-			tempUVs[1] = XMFLOAT2{ 370 / 950.0f, 4 / 20.0f };
-			tempUVs[2] = XMFLOAT2{ 360 / 950.0f, 14 / 20.0f };
-			tempUVs[3] = XMFLOAT2{ 370 / 950.0f, 14 / 20.0f };
-		}
-			break;
-		case 'E':
-		{
-			tempUVs[0] = XMFLOAT2{ 370 / 950.0f, 4 / 20.0f };
-			tempUVs[1] = XMFLOAT2{ 380 / 950.0f, 4 / 20.0f };
-			tempUVs[2] = XMFLOAT2{ 370 / 950.0f, 14 / 20.0f };
-			tempUVs[3] = XMFLOAT2{ 380 / 950.0f, 14 / 20.0f };
-		}
-			break;
-		case 'F':
-		{
-			tempUVs[0] = XMFLOAT2{ 380 / 950.0f, 4 / 20.0f };
-			tempUVs[1] = XMFLOAT2{ 390 / 950.0f, 4 / 20.0f };
-			tempUVs[2] = XMFLOAT2{ 380 / 950.0f, 14 / 20.0f };
-			tempUVs[3] = XMFLOAT2{ 390 / 950.0f, 14 / 20.0f };
-		}
-			break;
-		case 'G':
-		{
-			tempUVs[0] = XMFLOAT2{ 390 / 950.0f, 4 / 20.0f };
-			tempUVs[1] = XMFLOAT2{ 400 / 950.0f, 4 / 20.0f };
-			tempUVs[2] = XMFLOAT2{ 390 / 950.0f, 14 / 20.0f };
-			tempUVs[3] = XMFLOAT2{ 400 / 950.0f, 14 / 20.0f };
-		}
-			break;
-		case 'H':
-		{
-			tempUVs[0] = XMFLOAT2{ 400 / 950.0f, 4 / 20.0f };
-			tempUVs[1] = XMFLOAT2{ 410 / 950.0f, 4 / 20.0f };
-			tempUVs[2] = XMFLOAT2{ 400 / 950.0f, 14 / 20.0f };
-			tempUVs[3] = XMFLOAT2{ 410 / 950.0f, 14 / 20.0f };
-		}
-			break;
-		case 'I':
-		{
-			tempUVs[0] = XMFLOAT2{ 410 / 950.0f, 4 / 20.0f };
-			tempUVs[1] = XMFLOAT2{ 420 / 950.0f, 4 / 20.0f };
-			tempUVs[2] = XMFLOAT2{ 410 / 950.0f, 14 / 20.0f };
-			tempUVs[3] = XMFLOAT2{ 420 / 950.0f, 14 / 20.0f };
-		}
-			break;
-		case 'J':
-		{
-			tempUVs[0] = XMFLOAT2{ 420 / 950.0f, 4 / 20.0f };
-			tempUVs[1] = XMFLOAT2{ 430 / 950.0f, 4 / 20.0f };
-			tempUVs[2] = XMFLOAT2{ 420 / 950.0f, 14 / 20.0f };
-			tempUVs[3] = XMFLOAT2{ 430 / 950.0f, 14 / 20.0f };
-		}
-			break;
-		case 'K':
-		{
-			tempUVs[0] = XMFLOAT2{ 430 / 950.0f, 4 / 20.0f };
-			tempUVs[1] = XMFLOAT2{ 440 / 950.0f, 4 / 20.0f };
-			tempUVs[2] = XMFLOAT2{ 430 / 950.0f, 14 / 20.0f };
-			tempUVs[3] = XMFLOAT2{ 440 / 950.0f, 14 / 20.0f };
-		}
-			break;
-		case 'L':
-		{
-			tempUVs[0] = XMFLOAT2{ 440 / 950.0f, 4 / 20.0f };
-			tempUVs[1] = XMFLOAT2{ 450 / 950.0f, 4 / 20.0f };
-			tempUVs[2] = XMFLOAT2{ 440 / 950.0f, 14 / 20.0f };
-			tempUVs[3] = XMFLOAT2{ 450 / 950.0f, 14 / 20.0f };
-		}
-			break;
-		case 'M':
-		{
-			tempUVs[0] = XMFLOAT2{ 450 / 950.0f, 4 / 20.0f };
-			tempUVs[1] = XMFLOAT2{ 460 / 950.0f, 4 / 20.0f };
-			tempUVs[2] = XMFLOAT2{ 450 / 950.0f, 14 / 20.0f };
-			tempUVs[3] = XMFLOAT2{ 460 / 950.0f, 14 / 20.0f };
-		}
-			break;
-		case 'N':
-		{
-			tempUVs[0] = XMFLOAT2{ 460 / 950.0f, 4 / 20.0f };
-			tempUVs[1] = XMFLOAT2{ 470 / 950.0f, 4 / 20.0f };
-			tempUVs[2] = XMFLOAT2{ 460 / 950.0f, 14 / 20.0f };
-			tempUVs[3] = XMFLOAT2{ 470 / 950.0f, 14 / 20.0f };
-		}
-			break;
-		case 'O':
-		{
-			tempUVs[0] = XMFLOAT2{ 470 / 950.0f, 4 / 20.0f };
-			tempUVs[1] = XMFLOAT2{ 480 / 950.0f, 4 / 20.0f };
-			tempUVs[2] = XMFLOAT2{ 470 / 950.0f, 14 / 20.0f };
-			tempUVs[3] = XMFLOAT2{ 480 / 950.0f, 14 / 20.0f };
-		}
-			break;
-		case 'P':
-		{
-			tempUVs[0] = XMFLOAT2{ 480 / 950.0f, 4 / 20.0f };
-			tempUVs[1] = XMFLOAT2{ 490 / 950.0f, 4 / 20.0f };
-			tempUVs[2] = XMFLOAT2{ 480 / 950.0f, 14 / 20.0f };
-			tempUVs[3] = XMFLOAT2{ 490 / 950.0f, 14 / 20.0f };
-		}
-			break;
-		case 'Q':
-		{
-			tempUVs[0] = XMFLOAT2{ 490 / 950.0f, 4 / 20.0f };
-			tempUVs[1] = XMFLOAT2{ 500 / 950.0f, 4 / 20.0f };
-			tempUVs[2] = XMFLOAT2{ 490 / 950.0f, 14 / 20.0f };
-			tempUVs[3] = XMFLOAT2{ 500 / 950.0f, 14 / 20.0f };
-		}
-			break;
-		case 'R':
-		{
-			tempUVs[0] = XMFLOAT2{ 500 / 950.0f, 4 / 20.0f };
-			tempUVs[1] = XMFLOAT2{ 510 / 950.0f, 4 / 20.0f };
-			tempUVs[2] = XMFLOAT2{ 500 / 950.0f, 14 / 20.0f };
-			tempUVs[3] = XMFLOAT2{ 510 / 950.0f, 14 / 20.0f };
-		}
-			break;
-		case 'S':
-		{
-			tempUVs[0] = XMFLOAT2{ 510 / 950.0f, 4 / 20.0f };
-			tempUVs[1] = XMFLOAT2{ 520 / 950.0f, 4 / 20.0f };
-			tempUVs[2] = XMFLOAT2{ 510 / 950.0f, 14 / 20.0f };
-			tempUVs[3] = XMFLOAT2{ 520 / 950.0f, 14 / 20.0f };
-		}
-			break;
-		case 'T':
-		{
-			tempUVs[0] = XMFLOAT2{ 520 / 950.0f, 4 / 20.0f };
-			tempUVs[1] = XMFLOAT2{ 530 / 950.0f, 4 / 20.0f };
-			tempUVs[2] = XMFLOAT2{ 520 / 950.0f, 14 / 20.0f };
-			tempUVs[3] = XMFLOAT2{ 530 / 950.0f, 14 / 20.0f };
-		}
-			break;
-		case 'U':
-		{
-			tempUVs[0] = XMFLOAT2{ 530 / 950.0f, 4 / 20.0f };
-			tempUVs[1] = XMFLOAT2{ 540 / 950.0f, 4 / 20.0f };
-			tempUVs[2] = XMFLOAT2{ 530 / 950.0f, 14 / 20.0f };
-			tempUVs[3] = XMFLOAT2{ 540 / 950.0f, 14 / 20.0f };
-		}
-			break;
-		case 'V':
-		{
-			tempUVs[0] = XMFLOAT2{ 540 / 950.0f, 4 / 20.0f };
-			tempUVs[1] = XMFLOAT2{ 550 / 950.0f, 4 / 20.0f };
-			tempUVs[2] = XMFLOAT2{ 540 / 950.0f, 14 / 20.0f };
-			tempUVs[3] = XMFLOAT2{ 550 / 950.0f, 14 / 20.0f };
-		}
-			break;
-		case 'W':
-		{
-			tempUVs[0] = XMFLOAT2{ 550 / 950.0f, 4 / 20.0f };
-			tempUVs[1] = XMFLOAT2{ 560 / 950.0f, 4 / 20.0f };
-			tempUVs[2] = XMFLOAT2{ 550 / 950.0f, 14 / 20.0f };
-			tempUVs[3] = XMFLOAT2{ 560 / 950.0f, 14 / 20.0f };
-		}
-			break;
-		case 'X':
-		{
-			tempUVs[0] = XMFLOAT2{ 560 / 950.0f, 4 / 20.0f };
-			tempUVs[1] = XMFLOAT2{ 570 / 950.0f, 4 / 20.0f };
-			tempUVs[2] = XMFLOAT2{ 560 / 950.0f, 14 / 20.0f };
-			tempUVs[3] = XMFLOAT2{ 570 / 950.0f, 14 / 20.0f };
-		}
-			break;
-		case 'Y':
-		{
-			tempUVs[0] = XMFLOAT2{ 570 / 950.0f, 4 / 20.0f };
-			tempUVs[1] = XMFLOAT2{ 580 / 950.0f, 4 / 20.0f };
-			tempUVs[2] = XMFLOAT2{ 570 / 950.0f, 14 / 20.0f };
-			tempUVs[3] = XMFLOAT2{ 580 / 950.0f, 14 / 20.0f };
-		}
-			break;
-		case 'Z':
-		{
-			tempUVs[0] = XMFLOAT2{ 580 / 950.0f, 4 / 20.0f };
-			tempUVs[1] = XMFLOAT2{ 590 / 950.0f, 4 / 20.0f };
-			tempUVs[2] = XMFLOAT2{ 580 / 950.0f, 14 / 20.0f };
-			tempUVs[3] = XMFLOAT2{ 590 / 950.0f, 14 / 20.0f };
-		}
-			break;
-		case 'a':
-		{
-			tempUVs[0] = XMFLOAT2{ 650 / 950.0f, 4 / 20.0f };
-			tempUVs[1] = XMFLOAT2{ 660 / 950.0f, 4 / 20.0f };
-			tempUVs[2] = XMFLOAT2{ 650 / 950.0f, 14 / 20.0f };
-			tempUVs[3] = XMFLOAT2{ 660 / 950.0f, 14 / 20.0f };
-		}
-			break;
-		case 'b':
-		{
-			tempUVs[0] = XMFLOAT2{ 660 / 950.0f, 4 / 20.0f };
-			tempUVs[1] = XMFLOAT2{ 670 / 950.0f, 4 / 20.0f };
-			tempUVs[2] = XMFLOAT2{ 660 / 950.0f, 14 / 20.0f };
-			tempUVs[3] = XMFLOAT2{ 670 / 950.0f, 14 / 20.0f };
-		}
-			break;
-		case 'c':
-		{
-			tempUVs[0] = XMFLOAT2{ 670 / 950.0f, 4 / 20.0f };
-			tempUVs[1] = XMFLOAT2{ 680 / 950.0f, 4 / 20.0f };
-			tempUVs[2] = XMFLOAT2{ 670 / 950.0f, 14 / 20.0f };
-			tempUVs[3] = XMFLOAT2{ 680 / 950.0f, 14 / 20.0f };
-		}
-			break;
-		case 'd':
-		{
-			tempUVs[0] = XMFLOAT2{ 680 / 950.0f, 4 / 20.0f };
-			tempUVs[1] = XMFLOAT2{ 690 / 950.0f, 4 / 20.0f };
-			tempUVs[2] = XMFLOAT2{ 680 / 950.0f, 14 / 20.0f };
-			tempUVs[3] = XMFLOAT2{ 690 / 950.0f, 14 / 20.0f };
-		}
-			break;
-		case 'e':
-		{
-			tempUVs[0] = XMFLOAT2{ 690 / 950.0f, 4 / 20.0f };
-			tempUVs[1] = XMFLOAT2{ 700 / 950.0f, 4 / 20.0f };
-			tempUVs[2] = XMFLOAT2{ 690 / 950.0f, 14 / 20.0f };
-			tempUVs[3] = XMFLOAT2{ 700 / 950.0f, 14 / 20.0f };
-		}
-			break;
-		case 'f':
-		{
-			tempUVs[0] = XMFLOAT2{ 700 / 950.0f, 4 / 20.0f };
-			tempUVs[1] = XMFLOAT2{ 710 / 950.0f, 4 / 20.0f };
-			tempUVs[2] = XMFLOAT2{ 700 / 950.0f, 14 / 20.0f };
-			tempUVs[3] = XMFLOAT2{ 710 / 950.0f, 14 / 20.0f };
-		}
-			break;
-		case 'g':
-		{
-			tempUVs[0] = XMFLOAT2{ 710 / 950.0f, 4 / 20.0f };
-			tempUVs[1] = XMFLOAT2{ 720 / 950.0f, 4 / 20.0f };
-			tempUVs[2] = XMFLOAT2{ 710 / 950.0f, 16 / 20.0f };
-			tempUVs[3] = XMFLOAT2{ 720 / 950.0f, 16 / 20.0f };
-		}
-			break;
-		case 'h':
-		{
-			tempUVs[0] = XMFLOAT2{ 720 / 950.0f, 4 / 20.0f };
-			tempUVs[1] = XMFLOAT2{ 730 / 950.0f, 4 / 20.0f };
-			tempUVs[2] = XMFLOAT2{ 720 / 950.0f, 14 / 20.0f };
-			tempUVs[3] = XMFLOAT2{ 730 / 950.0f, 14 / 20.0f };
-		}
-			break;
-		case 'i':
-		{
-			tempUVs[0] = XMFLOAT2{ 730 / 950.0f, 4 / 20.0f };
-			tempUVs[1] = XMFLOAT2{ 740 / 950.0f, 4 / 20.0f };
-			tempUVs[2] = XMFLOAT2{ 730 / 950.0f, 14 / 20.0f };
-			tempUVs[3] = XMFLOAT2{ 740 / 950.0f, 14 / 20.0f };
-		}
-			break;
-		case 'j':
-		{
-			tempUVs[0] = XMFLOAT2{ 740 / 950.0f, 4 / 20.0f };
-			tempUVs[1] = XMFLOAT2{ 750 / 950.0f, 4 / 20.0f };
-			tempUVs[2] = XMFLOAT2{ 740 / 950.0f, 16 / 20.0f };
-			tempUVs[3] = XMFLOAT2{ 750 / 950.0f, 16 / 20.0f };
-		}
-			break;
-		case 'k':
-		{
-			tempUVs[0] = XMFLOAT2{ 750 / 950.0f, 4 / 20.0f };
-			tempUVs[1] = XMFLOAT2{ 760 / 950.0f, 4 / 20.0f };
-			tempUVs[2] = XMFLOAT2{ 750 / 950.0f, 14 / 20.0f };
-			tempUVs[3] = XMFLOAT2{ 760 / 950.0f, 14 / 20.0f };
-		}
-			break;
-		case 'l':
-		{
-			tempUVs[0] = XMFLOAT2{ 760 / 950.0f, 4 / 20.0f };
-			tempUVs[1] = XMFLOAT2{ 770 / 950.0f, 4 / 20.0f };
-			tempUVs[2] = XMFLOAT2{ 760 / 950.0f, 14 / 20.0f };
-			tempUVs[3] = XMFLOAT2{ 770 / 950.0f, 14 / 20.0f };
-		}
-			break;
-		case 'm':
-		{
-			tempUVs[0] = XMFLOAT2{ 770 / 950.0f, 4 / 20.0f };
-			tempUVs[1] = XMFLOAT2{ 780 / 950.0f, 4 / 20.0f };
-			tempUVs[2] = XMFLOAT2{ 770 / 950.0f, 14 / 20.0f };
-			tempUVs[3] = XMFLOAT2{ 780 / 950.0f, 14 / 20.0f };
-		}
-			break;
-		case 'n':
-		{
-			tempUVs[0] = XMFLOAT2{ 780 / 950.0f, 4 / 20.0f };
-			tempUVs[1] = XMFLOAT2{ 790 / 950.0f, 4 / 20.0f };
-			tempUVs[2] = XMFLOAT2{ 780 / 950.0f, 14 / 20.0f };
-			tempUVs[3] = XMFLOAT2{ 790 / 950.0f, 14 / 20.0f };
-		}
-			break;
-		case 'o':
-		{
-			tempUVs[0] = XMFLOAT2{ 790 / 950.0f, 4 / 20.0f };
-			tempUVs[1] = XMFLOAT2{ 800 / 950.0f, 4 / 20.0f };
-			tempUVs[2] = XMFLOAT2{ 790 / 950.0f, 14 / 20.0f };
-			tempUVs[3] = XMFLOAT2{ 800 / 950.0f, 14 / 20.0f };
-		}
-			break;
-		case 'p':
-		{
-			tempUVs[0] = XMFLOAT2{ 800 / 950.0f, 4 / 20.0f };
-			tempUVs[1] = XMFLOAT2{ 810 / 950.0f, 4 / 20.0f };
-			tempUVs[2] = XMFLOAT2{ 800 / 950.0f, 16 / 20.0f };
-			tempUVs[3] = XMFLOAT2{ 810 / 950.0f, 16 / 20.0f };
-		}
-			break;
-		case 'q':
-		{
-			tempUVs[0] = XMFLOAT2{ 810 / 950.0f, 4 / 20.0f };
-			tempUVs[1] = XMFLOAT2{ 820 / 950.0f, 4 / 20.0f };
-			tempUVs[2] = XMFLOAT2{ 810 / 950.0f, 16 / 20.0f };
-			tempUVs[3] = XMFLOAT2{ 820 / 950.0f, 16 / 20.0f };
-		}
-			break;
-		case 'r':
-		{
-			tempUVs[0] = XMFLOAT2{ 820 / 950.0f, 4 / 20.0f };
-			tempUVs[1] = XMFLOAT2{ 830 / 950.0f, 4 / 20.0f };
-			tempUVs[2] = XMFLOAT2{ 820 / 950.0f, 14 / 20.0f };
-			tempUVs[3] = XMFLOAT2{ 830 / 950.0f, 14 / 20.0f };
-		}
-			break;
-		case 's':
-		{
-			tempUVs[0] = XMFLOAT2{ 830 / 950.0f, 4 / 20.0f };
-			tempUVs[1] = XMFLOAT2{ 840 / 950.0f, 4 / 20.0f };
-			tempUVs[2] = XMFLOAT2{ 830 / 950.0f, 14 / 20.0f };
-			tempUVs[3] = XMFLOAT2{ 840 / 950.0f, 14 / 20.0f };
-		}
-			break;
-		case 't':
-		{
-			tempUVs[0] = XMFLOAT2{ 840 / 950.0f, 4 / 20.0f };
-			tempUVs[1] = XMFLOAT2{ 850 / 950.0f, 4 / 20.0f };
-			tempUVs[2] = XMFLOAT2{ 840 / 950.0f, 14 / 20.0f };
-			tempUVs[3] = XMFLOAT2{ 850 / 950.0f, 14 / 20.0f };
-		}
-			break;
-		case 'u':
-		{
-			tempUVs[0] = XMFLOAT2{ 850 / 950.0f, 4 / 20.0f };
-			tempUVs[1] = XMFLOAT2{ 860 / 950.0f, 4 / 20.0f };
-			tempUVs[2] = XMFLOAT2{ 850 / 950.0f, 14 / 20.0f };
-			tempUVs[3] = XMFLOAT2{ 860 / 950.0f, 14 / 20.0f };
-		}
-			break;
-		case 'v':
-		{
-			tempUVs[0] = XMFLOAT2{ 860 / 950.0f, 4 / 20.0f };
-			tempUVs[1] = XMFLOAT2{ 870 / 950.0f, 4 / 20.0f };
-			tempUVs[2] = XMFLOAT2{ 860 / 950.0f, 14 / 20.0f };
-			tempUVs[3] = XMFLOAT2{ 870 / 950.0f, 14 / 20.0f };
-		}
-			break;
-		case 'w':
-		{
-			tempUVs[0] = XMFLOAT2{ 870 / 950.0f, 4 / 20.0f };
-			tempUVs[1] = XMFLOAT2{ 880 / 950.0f, 4 / 20.0f };
-			tempUVs[2] = XMFLOAT2{ 870 / 950.0f, 14 / 20.0f };
-			tempUVs[3] = XMFLOAT2{ 880 / 950.0f, 14 / 20.0f };
-		}
-			break;
-		case 'x':
-		{
-			tempUVs[0] = XMFLOAT2{ 880 / 950.0f, 4 / 20.0f };
-			tempUVs[1] = XMFLOAT2{ 890 / 950.0f, 4 / 20.0f };
-			tempUVs[2] = XMFLOAT2{ 880 / 950.0f, 14 / 20.0f };
-			tempUVs[3] = XMFLOAT2{ 890 / 950.0f, 14 / 20.0f };
-		}
-			break;
-		case 'y':
-		{
-			tempUVs[0] = XMFLOAT2{ 890 / 950.0f, 4 / 20.0f };
-			tempUVs[1] = XMFLOAT2{ 900 / 950.0f, 4 / 20.0f };
-			tempUVs[2] = XMFLOAT2{ 890 / 950.0f, 16 / 20.0f };
-			tempUVs[3] = XMFLOAT2{ 900 / 950.0f, 16 / 20.0f };
-		}
-			break;
-		case 'z':
-		{
-			tempUVs[0] = XMFLOAT2{ 900 / 950.0f, 4 / 20.0f };
-			tempUVs[1] = XMFLOAT2{ 910 / 950.0f, 4 / 20.0f };
-			tempUVs[2] = XMFLOAT2{ 900 / 950.0f, 14 / 20.0f };
-			tempUVs[3] = XMFLOAT2{ 910 / 950.0f, 14 / 20.0f };
-		}
-			break;
-		default:
-			break;
-		}
+		GetUVsForCharacter(&text[loopIndex], &tempUVs[0]);
 
 		rectVerts[i + 0].m_d3dfPosition = XMFLOAT3(topLeftPos.x + ((tWidth / textSize) * loopIndex), topLeftPos.y, topLeftPos.z);
 		rectVerts[i + 0].m_d3dfUVs = XMFLOAT2(tempUVs[0].x, tempUVs[0].y);
@@ -3966,8 +3529,8 @@ unsigned int CreateUILabelForText(TWorld* ptWorld, XMMATRIX SpawnPosition, float
 		++loopIndex;
 	}
 
-	atUIVertices.push_back(rectVerts);
-	ptWorld->atLabel[nThisEntity].vIndex = atUIVertices.size() - 1;
+	atUIVertices->push_back(rectVerts);
+	ptWorld->atLabel[nThisEntity].vIndex = atUIVertices->size() - 1;
 
 	ptWorld->atLabel[nThisEntity].width = width;
 	ptWorld->atLabel[nThisEntity].height = height;
@@ -3993,8 +3556,8 @@ unsigned int CreateUILabelForText(TWorld* ptWorld, XMMATRIX SpawnPosition, float
 		counterIndex += 4;
 	}
 
-	atUIIndices.push_back(rectIndices);
-	ptWorld->atLabel[nThisEntity].iIndex = atUIIndices.size() - 1;
+	atUIIndices->push_back(rectIndices);
+	ptWorld->atLabel[nThisEntity].iIndex = atUIIndices->size() - 1;
 
 	ptWorld->atMesh[nThisEntity].m_nIndexCount = 6 * textSize;
 	ptWorld->atMesh[nThisEntity].m_nVertexCount = 4 * textSize;
@@ -4016,9 +3579,8 @@ unsigned int CreateUILabelForText(TWorld* ptWorld, XMMATRIX SpawnPosition, float
 	ptWorld->atMesh[nThisEntity].m_d3dIndexBufferDesc.MiscFlags = 0;
 	ptWorld->atMesh[nThisEntity].m_d3dIndexBufferDesc.StructureByteStride = 0;
 
-
-	ptWorld->atMesh[nThisEntity].m_d3dVertexData.pSysMem = &atUIVertices[ptWorld->atLabel[nThisEntity].vIndex][0];
-	ptWorld->atMesh[nThisEntity].m_d3dIndexData.pSysMem = &atUIIndices[ptWorld->atLabel[nThisEntity].iIndex][0];
+	ptWorld->atMesh[nThisEntity].m_d3dVertexData.pSysMem = &atUIVertices->at(ptWorld->atLabel[nThisEntity].vIndex)[0];
+	ptWorld->atMesh[nThisEntity].m_d3dIndexData.pSysMem = &atUIIndices->at(ptWorld->atLabel[nThisEntity].iIndex)[0];
 
 	ptWorld->atMesh[nThisEntity].m_d3dVertexData.SysMemPitch = 0;
 	ptWorld->atMesh[nThisEntity].m_d3dVertexData.SysMemSlicePitch = 0;
@@ -4030,10 +3592,545 @@ unsigned int CreateUILabelForText(TWorld* ptWorld, XMMATRIX SpawnPosition, float
 
 	for (int i = 0; i < ptWorld->atMesh[nThisEntity].m_nVertexCount; ++i)
 	{
-		ptWorld->atMesh[nThisEntity].m_VertexData.push_back(atUIVertices[ptWorld->atLabel[nThisEntity].vIndex][i].m_d3dfPosition);
+		ptWorld->atMesh[nThisEntity].m_VertexData.push_back(atUIVertices->at(ptWorld->atLabel[nThisEntity].vIndex)[i].m_d3dfPosition);
 	}
 
 	ptWorld->atWorldMatrix[nThisEntity].worldMatrix = spawnMatrix;
 
 	return nThisEntity;
+}
+
+void GetUVsForCharacter(wchar_t* character, XMFLOAT2* UVs)
+{
+	switch (*character)
+	{
+	case ' ':
+	{
+		UVs[0] = XMFLOAT2{ 0 / 950.0f, 4 / 20.0f };
+		UVs[1] = XMFLOAT2{ 10 / 950.0f, 4 / 20.0f };
+		UVs[2] = XMFLOAT2{ 0 / 950.0f, 14 / 20.0f };
+		UVs[3] = XMFLOAT2{ 10 / 950.0f, 14 / 20.0f };
+	}
+	break;
+	case 0:
+	case '0':
+	{
+		UVs[0] = XMFLOAT2{ 160 / 950.0f, 3 / 20.0f };
+		UVs[1] = XMFLOAT2{ 170 / 950.0f, 3 / 20.0f };
+		UVs[2] = XMFLOAT2{ 160 / 950.0f, 15 / 20.0f };
+		UVs[3] = XMFLOAT2{ 170 / 950.0f, 15 / 20.0f };
+	}
+	break;
+	case 1:
+	case '1':
+	{
+		UVs[0] = XMFLOAT2{ 170 / 950.0f, 3 / 20.0f };
+		UVs[1] = XMFLOAT2{ 180 / 950.0f, 3 / 20.0f };
+		UVs[2] = XMFLOAT2{ 170 / 950.0f, 15 / 20.0f };
+		UVs[3] = XMFLOAT2{ 180 / 950.0f, 15 / 20.0f };
+	}
+	break;
+	case 2:
+	case '2':
+	{
+		UVs[0] = XMFLOAT2{ 180 / 950.0f, 3 / 20.0f };
+		UVs[1] = XMFLOAT2{ 190 / 950.0f, 3 / 20.0f };
+		UVs[2] = XMFLOAT2{ 180 / 950.0f, 15 / 20.0f };
+		UVs[3] = XMFLOAT2{ 190 / 950.0f, 15 / 20.0f };
+	}
+	break;
+	case 3:
+	case '3':
+	{
+		UVs[0] = XMFLOAT2{ 190 / 950.0f, 3 / 20.0f };
+		UVs[1] = XMFLOAT2{ 200 / 950.0f, 3 / 20.0f };
+		UVs[2] = XMFLOAT2{ 190 / 950.0f, 15 / 20.0f };
+		UVs[3] = XMFLOAT2{ 200 / 950.0f, 15 / 20.0f };
+	}
+	break;
+	case 4:
+	case '4':
+	{
+		UVs[0] = XMFLOAT2{ 200 / 950.0f, 3 / 20.0f };
+		UVs[1] = XMFLOAT2{ 210 / 950.0f, 3 / 20.0f };
+		UVs[2] = XMFLOAT2{ 200 / 950.0f, 15 / 20.0f };
+		UVs[3] = XMFLOAT2{ 210 / 950.0f, 15 / 20.0f };
+	}
+	break;
+	case 5:
+	case '5':
+	{
+		UVs[0] = XMFLOAT2{ 210 / 950.0f, 3 / 20.0f };
+		UVs[1] = XMFLOAT2{ 220 / 950.0f, 3 / 20.0f };
+		UVs[2] = XMFLOAT2{ 210 / 950.0f, 15 / 20.0f };
+		UVs[3] = XMFLOAT2{ 220 / 950.0f, 15 / 20.0f };
+	}
+	break;
+	case 6:
+	case '6':
+	{
+		UVs[0] = XMFLOAT2{ 220 / 950.0f, 3 / 20.0f };
+		UVs[1] = XMFLOAT2{ 230 / 950.0f, 3 / 20.0f };
+		UVs[2] = XMFLOAT2{ 220 / 950.0f, 15 / 20.0f };
+		UVs[3] = XMFLOAT2{ 230 / 950.0f, 15 / 20.0f };
+	}
+	break;
+	case 7:
+	case '7':
+	{
+		UVs[0] = XMFLOAT2{ 230 / 950.0f, 3 / 20.0f };
+		UVs[1] = XMFLOAT2{ 240 / 950.0f, 3 / 20.0f };
+		UVs[2] = XMFLOAT2{ 230 / 950.0f, 15 / 20.0f };
+		UVs[3] = XMFLOAT2{ 240 / 950.0f, 15 / 20.0f };
+	}
+	break;
+	case 8:
+	case '8':
+	{
+		UVs[0] = XMFLOAT2{ 240 / 950.0f, 3 / 20.0f };
+		UVs[1] = XMFLOAT2{ 250 / 950.0f, 3 / 20.0f };
+		UVs[2] = XMFLOAT2{ 240 / 950.0f, 15 / 20.0f };
+		UVs[3] = XMFLOAT2{ 250 / 950.0f, 15 / 20.0f };
+	}
+	break;
+	case 9:
+	case '9':
+	{
+		UVs[0] = XMFLOAT2{ 250 / 950.0f, 3 / 20.0f };
+		UVs[1] = XMFLOAT2{ 260 / 950.0f, 3 / 20.0f };
+		UVs[2] = XMFLOAT2{ 250 / 950.0f, 15 / 20.0f };
+		UVs[3] = XMFLOAT2{ 260 / 950.0f, 15 / 20.0f };
+	}
+	break;
+	case ':':
+	{
+		UVs[0] = XMFLOAT2{ 260 / 950.0f, 4 / 20.0f };
+		UVs[1] = XMFLOAT2{ 270 / 950.0f, 4 / 20.0f };
+		UVs[2] = XMFLOAT2{ 260 / 950.0f, 14 / 20.0f };
+		UVs[3] = XMFLOAT2{ 270 / 950.0f, 14 / 20.0f };
+	}
+	break;
+	case 'A':
+	{
+		UVs[0] = XMFLOAT2{ 330 / 950.0f, 3 / 20.0f };
+		UVs[1] = XMFLOAT2{ 340 / 950.0f, 3 / 20.0f };
+		UVs[2] = XMFLOAT2{ 330 / 950.0f, 15 / 20.0f };
+		UVs[3] = XMFLOAT2{ 340 / 950.0f, 15 / 20.0f };
+	}
+	break;
+	case 'B':
+	{
+		UVs[0] = XMFLOAT2{ 340 / 950.0f, 3 / 20.0f };
+		UVs[1] = XMFLOAT2{ 350 / 950.0f, 3 / 20.0f };
+		UVs[2] = XMFLOAT2{ 340 / 950.0f, 15 / 20.0f };
+		UVs[3] = XMFLOAT2{ 350 / 950.0f, 15 / 20.0f };
+	}
+	break;
+	case 'C':
+	{
+		UVs[0] = XMFLOAT2{ 350 / 950.0f, 3 / 20.0f };
+		UVs[1] = XMFLOAT2{ 360 / 950.0f, 3 / 20.0f };
+		UVs[2] = XMFLOAT2{ 350 / 950.0f, 15 / 20.0f };
+		UVs[3] = XMFLOAT2{ 360 / 950.0f, 15 / 20.0f };
+	}
+	break;
+	case 'D':
+	{
+		UVs[0] = XMFLOAT2{ 360 / 950.0f, 3 / 20.0f };
+		UVs[1] = XMFLOAT2{ 370 / 950.0f, 3 / 20.0f };
+		UVs[2] = XMFLOAT2{ 360 / 950.0f, 15 / 20.0f };
+		UVs[3] = XMFLOAT2{ 370 / 950.0f, 15 / 20.0f };
+	}
+	break;
+	case 'E':
+	{
+		UVs[0] = XMFLOAT2{ 370 / 950.0f, 3 / 20.0f };
+		UVs[1] = XMFLOAT2{ 380 / 950.0f, 3 / 20.0f };
+		UVs[2] = XMFLOAT2{ 370 / 950.0f, 15 / 20.0f };
+		UVs[3] = XMFLOAT2{ 380 / 950.0f, 15 / 20.0f };
+	}
+	break;
+	case 'F':
+	{
+		UVs[0] = XMFLOAT2{ 380 / 950.0f, 3 / 20.0f };
+		UVs[1] = XMFLOAT2{ 390 / 950.0f, 3 / 20.0f };
+		UVs[2] = XMFLOAT2{ 380 / 950.0f, 15 / 20.0f };
+		UVs[3] = XMFLOAT2{ 390 / 950.0f, 15 / 20.0f };
+	}
+	break;
+	case 'G':
+	{
+		UVs[0] = XMFLOAT2{ 390 / 950.0f, 3 / 20.0f };
+		UVs[1] = XMFLOAT2{ 400 / 950.0f, 3 / 20.0f };
+		UVs[2] = XMFLOAT2{ 390 / 950.0f, 15 / 20.0f };
+		UVs[3] = XMFLOAT2{ 400 / 950.0f, 15 / 20.0f };
+	}
+	break;
+	case 'H':
+	{
+		UVs[0] = XMFLOAT2{ 400 / 950.0f, 3 / 20.0f };
+		UVs[1] = XMFLOAT2{ 410 / 950.0f, 3 / 20.0f };
+		UVs[2] = XMFLOAT2{ 400 / 950.0f, 15 / 20.0f };
+		UVs[3] = XMFLOAT2{ 410 / 950.0f, 15 / 20.0f };
+	}
+	break;
+	case 'I':
+	{
+		UVs[0] = XMFLOAT2{ 410 / 950.0f, 3 / 20.0f };
+		UVs[1] = XMFLOAT2{ 420 / 950.0f, 3 / 20.0f };
+		UVs[2] = XMFLOAT2{ 410 / 950.0f, 15 / 20.0f };
+		UVs[3] = XMFLOAT2{ 420 / 950.0f, 15 / 20.0f };
+	}
+	break;
+	case 'J':
+	{
+		UVs[0] = XMFLOAT2{ 420 / 950.0f, 3 / 20.0f };
+		UVs[1] = XMFLOAT2{ 430 / 950.0f, 3 / 20.0f };
+		UVs[2] = XMFLOAT2{ 420 / 950.0f, 15 / 20.0f };
+		UVs[3] = XMFLOAT2{ 430 / 950.0f, 15 / 20.0f };
+	}
+	break;
+	case 'K':
+	{
+		UVs[0] = XMFLOAT2{ 430 / 950.0f, 3 / 20.0f };
+		UVs[1] = XMFLOAT2{ 440 / 950.0f, 3 / 20.0f };
+		UVs[2] = XMFLOAT2{ 430 / 950.0f, 15 / 20.0f };
+		UVs[3] = XMFLOAT2{ 440 / 950.0f, 15 / 20.0f };
+	}
+	break;
+	case 'L':
+	{
+		UVs[0] = XMFLOAT2{ 440 / 950.0f, 3 / 20.0f };
+		UVs[1] = XMFLOAT2{ 450 / 950.0f, 3 / 20.0f };
+		UVs[2] = XMFLOAT2{ 440 / 950.0f, 15 / 20.0f };
+		UVs[3] = XMFLOAT2{ 450 / 950.0f, 15 / 20.0f };
+	}
+	break;
+	case 'M':
+	{
+		UVs[0] = XMFLOAT2{ 450 / 950.0f, 3 / 20.0f };
+		UVs[1] = XMFLOAT2{ 460 / 950.0f, 3 / 20.0f };
+		UVs[2] = XMFLOAT2{ 450 / 950.0f, 15 / 20.0f };
+		UVs[3] = XMFLOAT2{ 460 / 950.0f, 15 / 20.0f };
+	}
+	break;
+	case 'N':
+	{
+		UVs[0] = XMFLOAT2{ 460 / 950.0f, 3 / 20.0f };
+		UVs[1] = XMFLOAT2{ 470 / 950.0f, 3 / 20.0f };
+		UVs[2] = XMFLOAT2{ 460 / 950.0f, 15 / 20.0f };
+		UVs[3] = XMFLOAT2{ 470 / 950.0f, 15 / 20.0f };
+	}
+	break;
+	case 'O':
+	{
+		UVs[0] = XMFLOAT2{ 470 / 950.0f, 3 / 20.0f };
+		UVs[1] = XMFLOAT2{ 480 / 950.0f, 3 / 20.0f };
+		UVs[2] = XMFLOAT2{ 470 / 950.0f, 15 / 20.0f };
+		UVs[3] = XMFLOAT2{ 480 / 950.0f, 15 / 20.0f };
+	}
+	break;
+	case 'P':
+	{
+		UVs[0] = XMFLOAT2{ 480 / 950.0f, 3 / 20.0f };
+		UVs[1] = XMFLOAT2{ 490 / 950.0f, 3 / 20.0f };
+		UVs[2] = XMFLOAT2{ 480 / 950.0f, 15 / 20.0f };
+		UVs[3] = XMFLOAT2{ 490 / 950.0f, 15 / 20.0f };
+	}
+	break;
+	case 'Q':
+	{
+		UVs[0] = XMFLOAT2{ 490 / 950.0f, 3 / 20.0f };
+		UVs[1] = XMFLOAT2{ 500 / 950.0f, 3 / 20.0f };
+		UVs[2] = XMFLOAT2{ 490 / 950.0f, 15 / 20.0f };
+		UVs[3] = XMFLOAT2{ 500 / 950.0f, 15 / 20.0f };
+	}
+	break;
+	case 'R':
+	{
+		UVs[0] = XMFLOAT2{ 500 / 950.0f, 3 / 20.0f };
+		UVs[1] = XMFLOAT2{ 510 / 950.0f, 3 / 20.0f };
+		UVs[2] = XMFLOAT2{ 500 / 950.0f, 15 / 20.0f };
+		UVs[3] = XMFLOAT2{ 510 / 950.0f, 15 / 20.0f };
+	}
+	break;
+	case 'S':
+	{
+		UVs[0] = XMFLOAT2{ 510 / 950.0f, 3 / 20.0f };
+		UVs[1] = XMFLOAT2{ 520 / 950.0f, 3 / 20.0f };
+		UVs[2] = XMFLOAT2{ 510 / 950.0f, 15 / 20.0f };
+		UVs[3] = XMFLOAT2{ 520 / 950.0f, 15 / 20.0f };
+	}
+	break;
+	case 'T':
+	{
+		UVs[0] = XMFLOAT2{ 520 / 950.0f, 3 / 20.0f };
+		UVs[1] = XMFLOAT2{ 530 / 950.0f, 3 / 20.0f };
+		UVs[2] = XMFLOAT2{ 520 / 950.0f, 15 / 20.0f };
+		UVs[3] = XMFLOAT2{ 530 / 950.0f, 15 / 20.0f };
+	}
+	break;
+	case 'U':
+	{
+		UVs[0] = XMFLOAT2{ 530 / 950.0f, 3 / 20.0f };
+		UVs[1] = XMFLOAT2{ 540 / 950.0f, 3 / 20.0f };
+		UVs[2] = XMFLOAT2{ 530 / 950.0f, 15 / 20.0f };
+		UVs[3] = XMFLOAT2{ 540 / 950.0f, 15 / 20.0f };
+	}
+	break;
+	case 'V':
+	{
+		UVs[0] = XMFLOAT2{ 540 / 950.0f, 3 / 20.0f };
+		UVs[1] = XMFLOAT2{ 550 / 950.0f, 3 / 20.0f };
+		UVs[2] = XMFLOAT2{ 540 / 950.0f, 15 / 20.0f };
+		UVs[3] = XMFLOAT2{ 550 / 950.0f, 15 / 20.0f };
+	}
+	break;
+	case 'W':
+	{
+		UVs[0] = XMFLOAT2{ 550 / 950.0f, 3 / 20.0f };
+		UVs[1] = XMFLOAT2{ 560 / 950.0f, 3 / 20.0f };
+		UVs[2] = XMFLOAT2{ 550 / 950.0f, 15 / 20.0f };
+		UVs[3] = XMFLOAT2{ 560 / 950.0f, 15 / 20.0f };
+	}
+	break;
+	case 'X':
+	{
+		UVs[0] = XMFLOAT2{ 560 / 950.0f, 3 / 20.0f };
+		UVs[1] = XMFLOAT2{ 570 / 950.0f, 3 / 20.0f };
+		UVs[2] = XMFLOAT2{ 560 / 950.0f, 15 / 20.0f };
+		UVs[3] = XMFLOAT2{ 570 / 950.0f, 15 / 20.0f };
+	}
+	break;
+	case 'Y':
+	{
+		UVs[0] = XMFLOAT2{ 570 / 950.0f, 3 / 20.0f };
+		UVs[1] = XMFLOAT2{ 580 / 950.0f, 3 / 20.0f };
+		UVs[2] = XMFLOAT2{ 570 / 950.0f, 15 / 20.0f };
+		UVs[3] = XMFLOAT2{ 580 / 950.0f, 15 / 20.0f };
+	}
+	break;
+	case 'Z':
+	{
+		UVs[0] = XMFLOAT2{ 580 / 950.0f, 3 / 20.0f };
+		UVs[1] = XMFLOAT2{ 590 / 950.0f, 3 / 20.0f };
+		UVs[2] = XMFLOAT2{ 580 / 950.0f, 15 / 20.0f };
+		UVs[3] = XMFLOAT2{ 590 / 950.0f, 15 / 20.0f };
+	}
+	break;
+	case 'a':
+	{
+		UVs[0] = XMFLOAT2{ 650 / 950.0f, 3 / 20.0f };
+		UVs[1] = XMFLOAT2{ 660 / 950.0f, 3 / 20.0f };
+		UVs[2] = XMFLOAT2{ 650 / 950.0f, 15 / 20.0f };
+		UVs[3] = XMFLOAT2{ 660 / 950.0f, 15 / 20.0f };
+	}
+	break;
+	case 'b':
+	{
+		UVs[0] = XMFLOAT2{ 660 / 950.0f, 3 / 20.0f };
+		UVs[1] = XMFLOAT2{ 670 / 950.0f, 3 / 20.0f };
+		UVs[2] = XMFLOAT2{ 660 / 950.0f, 15 / 20.0f };
+		UVs[3] = XMFLOAT2{ 670 / 950.0f, 15 / 20.0f };
+	}
+	break;
+	case 'c':
+	{
+		UVs[0] = XMFLOAT2{ 670 / 950.0f, 3 / 20.0f };
+		UVs[1] = XMFLOAT2{ 680 / 950.0f, 3 / 20.0f };
+		UVs[2] = XMFLOAT2{ 670 / 950.0f, 15 / 20.0f };
+		UVs[3] = XMFLOAT2{ 680 / 950.0f, 15 / 20.0f };
+	}
+	break;
+	case 'd':
+	{
+		UVs[0] = XMFLOAT2{ 680 / 950.0f, 3 / 20.0f };
+		UVs[1] = XMFLOAT2{ 690 / 950.0f, 3 / 20.0f };
+		UVs[2] = XMFLOAT2{ 680 / 950.0f, 15 / 20.0f };
+		UVs[3] = XMFLOAT2{ 690 / 950.0f, 15 / 20.0f };
+	}
+	break;
+	case 'e':
+	{
+		UVs[0] = XMFLOAT2{ 690 / 950.0f, 3 / 20.0f };
+		UVs[1] = XMFLOAT2{ 700 / 950.0f, 3 / 20.0f };
+		UVs[2] = XMFLOAT2{ 690 / 950.0f, 15 / 20.0f };
+		UVs[3] = XMFLOAT2{ 700 / 950.0f, 15 / 20.0f };
+	}
+	break;
+	case 'f':
+	{
+		UVs[0] = XMFLOAT2{ 700 / 950.0f, 3 / 20.0f };
+		UVs[1] = XMFLOAT2{ 710 / 950.0f, 3 / 20.0f };
+		UVs[2] = XMFLOAT2{ 700 / 950.0f, 15 / 20.0f };
+		UVs[3] = XMFLOAT2{ 710 / 950.0f, 15 / 20.0f };
+	}
+	break;
+	case 'g':
+	{
+		UVs[0] = XMFLOAT2{ 710 / 950.0f, 3 / 20.0f };
+		UVs[1] = XMFLOAT2{ 720 / 950.0f, 3 / 20.0f };
+		UVs[2] = XMFLOAT2{ 710 / 950.0f, 17 / 20.0f };
+		UVs[3] = XMFLOAT2{ 720 / 950.0f, 17 / 20.0f };
+	}
+	break;
+	case 'h':
+	{
+		UVs[0] = XMFLOAT2{ 720 / 950.0f, 3 / 20.0f };
+		UVs[1] = XMFLOAT2{ 730 / 950.0f, 3 / 20.0f };
+		UVs[2] = XMFLOAT2{ 720 / 950.0f, 15 / 20.0f };
+		UVs[3] = XMFLOAT2{ 730 / 950.0f, 15 / 20.0f };
+	}
+	break;
+	case 'i':
+	{
+		UVs[0] = XMFLOAT2{ 730 / 950.0f, 3 / 20.0f };
+		UVs[1] = XMFLOAT2{ 740 / 950.0f, 3 / 20.0f };
+		UVs[2] = XMFLOAT2{ 730 / 950.0f, 15 / 20.0f };
+		UVs[3] = XMFLOAT2{ 740 / 950.0f, 15 / 20.0f };
+	}
+	break;
+	case 'j':
+	{
+		UVs[0] = XMFLOAT2{ 740 / 950.0f, 3 / 20.0f };
+		UVs[1] = XMFLOAT2{ 750 / 950.0f, 3 / 20.0f };
+		UVs[2] = XMFLOAT2{ 740 / 950.0f, 17 / 20.0f };
+		UVs[3] = XMFLOAT2{ 750 / 950.0f, 17 / 20.0f };
+	}
+	break;
+	case 'k':
+	{
+		UVs[0] = XMFLOAT2{ 750 / 950.0f, 3 / 20.0f };
+		UVs[1] = XMFLOAT2{ 760 / 950.0f, 3 / 20.0f };
+		UVs[2] = XMFLOAT2{ 750 / 950.0f, 15 / 20.0f };
+		UVs[3] = XMFLOAT2{ 760 / 950.0f, 15 / 20.0f };
+	}
+	break;
+	case 'l':
+	{
+		UVs[0] = XMFLOAT2{ 760 / 950.0f, 3 / 20.0f };
+		UVs[1] = XMFLOAT2{ 770 / 950.0f, 3 / 20.0f };
+		UVs[2] = XMFLOAT2{ 760 / 950.0f, 15 / 20.0f };
+		UVs[3] = XMFLOAT2{ 770 / 950.0f, 15 / 20.0f };
+	}
+	break;
+	case 'm':
+	{
+		UVs[0] = XMFLOAT2{ 770 / 950.0f, 3 / 20.0f };
+		UVs[1] = XMFLOAT2{ 780 / 950.0f, 3 / 20.0f };
+		UVs[2] = XMFLOAT2{ 770 / 950.0f, 15 / 20.0f };
+		UVs[3] = XMFLOAT2{ 780 / 950.0f, 15 / 20.0f };
+	}
+	break;
+	case 'n':
+	{
+		UVs[0] = XMFLOAT2{ 780 / 950.0f, 3 / 20.0f };
+		UVs[1] = XMFLOAT2{ 790 / 950.0f, 3 / 20.0f };
+		UVs[2] = XMFLOAT2{ 780 / 950.0f, 15 / 20.0f };
+		UVs[3] = XMFLOAT2{ 790 / 950.0f, 15 / 20.0f };
+	}
+	break;
+	case 'o':
+	{
+		UVs[0] = XMFLOAT2{ 790 / 950.0f, 3 / 20.0f };
+		UVs[1] = XMFLOAT2{ 800 / 950.0f, 3 / 20.0f };
+		UVs[2] = XMFLOAT2{ 790 / 950.0f, 15 / 20.0f };
+		UVs[3] = XMFLOAT2{ 800 / 950.0f, 15 / 20.0f };
+	}
+	break;
+	case 'p':
+	{
+		UVs[0] = XMFLOAT2{ 800 / 950.0f, 3 / 20.0f };
+		UVs[1] = XMFLOAT2{ 810 / 950.0f, 3 / 20.0f };
+		UVs[2] = XMFLOAT2{ 800 / 950.0f, 17 / 20.0f };
+		UVs[3] = XMFLOAT2{ 810 / 950.0f, 17 / 20.0f };
+	}
+	break;
+	case 'q':
+	{
+		UVs[0] = XMFLOAT2{ 810 / 950.0f, 3 / 20.0f };
+		UVs[1] = XMFLOAT2{ 820 / 950.0f, 3 / 20.0f };
+		UVs[2] = XMFLOAT2{ 810 / 950.0f, 17 / 20.0f };
+		UVs[3] = XMFLOAT2{ 820 / 950.0f, 17 / 20.0f };
+	}
+	break;
+	case 'r':
+	{
+		UVs[0] = XMFLOAT2{ 820 / 950.0f, 3 / 20.0f };
+		UVs[1] = XMFLOAT2{ 830 / 950.0f, 3 / 20.0f };
+		UVs[2] = XMFLOAT2{ 820 / 950.0f, 15 / 20.0f };
+		UVs[3] = XMFLOAT2{ 830 / 950.0f, 15 / 20.0f };
+	}
+	break;
+	case 's':
+	{
+		UVs[0] = XMFLOAT2{ 830 / 950.0f, 3 / 20.0f };
+		UVs[1] = XMFLOAT2{ 840 / 950.0f, 3 / 20.0f };
+		UVs[2] = XMFLOAT2{ 830 / 950.0f, 15 / 20.0f };
+		UVs[3] = XMFLOAT2{ 840 / 950.0f, 15 / 20.0f };
+	}
+	break;
+	case 't':
+	{
+		UVs[0] = XMFLOAT2{ 840 / 950.0f, 3 / 20.0f };
+		UVs[1] = XMFLOAT2{ 850 / 950.0f, 3 / 20.0f };
+		UVs[2] = XMFLOAT2{ 840 / 950.0f, 15 / 20.0f };
+		UVs[3] = XMFLOAT2{ 850 / 950.0f, 15 / 20.0f };
+	}
+	break;
+	case 'u':
+	{
+		UVs[0] = XMFLOAT2{ 850 / 950.0f, 3 / 20.0f };
+		UVs[1] = XMFLOAT2{ 860 / 950.0f, 3 / 20.0f };
+		UVs[2] = XMFLOAT2{ 850 / 950.0f, 15 / 20.0f };
+		UVs[3] = XMFLOAT2{ 860 / 950.0f, 15 / 20.0f };
+	}
+	break;
+	case 'v':
+	{
+		UVs[0] = XMFLOAT2{ 860 / 950.0f, 3 / 20.0f };
+		UVs[1] = XMFLOAT2{ 870 / 950.0f, 3 / 20.0f };
+		UVs[2] = XMFLOAT2{ 860 / 950.0f, 15 / 20.0f };
+		UVs[3] = XMFLOAT2{ 870 / 950.0f, 15 / 20.0f };
+	}
+	break;
+	case 'w':
+	{
+		UVs[0] = XMFLOAT2{ 870 / 950.0f, 3 / 20.0f };
+		UVs[1] = XMFLOAT2{ 880 / 950.0f, 3 / 20.0f };
+		UVs[2] = XMFLOAT2{ 870 / 950.0f, 15 / 20.0f };
+		UVs[3] = XMFLOAT2{ 880 / 950.0f, 15 / 20.0f };
+	}
+	break;
+	case 'x':
+	{
+		UVs[0] = XMFLOAT2{ 880 / 950.0f, 3 / 20.0f };
+		UVs[1] = XMFLOAT2{ 890 / 950.0f, 3 / 20.0f };
+		UVs[2] = XMFLOAT2{ 880 / 950.0f, 15 / 20.0f };
+		UVs[3] = XMFLOAT2{ 890 / 950.0f, 15 / 20.0f };
+	}
+	break;
+	case 'y':
+	{
+		UVs[0] = XMFLOAT2{ 890 / 950.0f, 3 / 20.0f };
+		UVs[1] = XMFLOAT2{ 900 / 950.0f, 3 / 20.0f };
+		UVs[2] = XMFLOAT2{ 890 / 950.0f, 17 / 20.0f };
+		UVs[3] = XMFLOAT2{ 900 / 950.0f, 17 / 20.0f };
+	}
+	break;
+	case 'z':
+	{
+		UVs[0] = XMFLOAT2{ 900 / 950.0f, 3 / 20.0f };
+		UVs[1] = XMFLOAT2{ 910 / 950.0f, 3 / 20.0f };
+		UVs[2] = XMFLOAT2{ 900 / 950.0f, 15 / 20.0f };
+		UVs[3] = XMFLOAT2{ 910 / 950.0f, 15 / 20.0f };
+	}
+	break;
+	default:
+		UVs[0] = XMFLOAT2{ -1, -1 };
+		UVs[1] = XMFLOAT2{ -1, -1 };
+		UVs[2] = XMFLOAT2{ -1, -1 };
+		UVs[3] = XMFLOAT2{ -1, -1 };
+		break;
+	}
 }

@@ -34,13 +34,16 @@ public:
 	int SpacePirateGamePlay();
 	void LoadMikesGraphicsSandbox();
 	int MikesGraphicsSandbox();
-	bool GameOver = false;
-	bool GamePaused = false;
 	void LoadLevelWithMapInIt();
 	int RealLevelUpdate();
 
 	//ZB-Helper Methods
 	bool GetWalkCameraState();
+
+	bool GameOver = false;
+	bool GamePaused = false;
+	int nCurrentScene = 0;
+
 private:
 	TMaterialOptimized matOpt;
 

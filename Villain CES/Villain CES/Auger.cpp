@@ -31,7 +31,7 @@ void CAuger::Start()
 void CAuger::InitializeSystems()
 {
 	//pcGameMangerSystem->LoadLevel();
-	CurrentSpotInGame = 13;
+	pcGameMangerSystem->nCurrentScene = 0;
 	//pcGraphicsSystem->InitD3D(cApplicationWindow);
 	
 	//createDebugGrid(&tThisWorld);
@@ -72,30 +72,30 @@ void CAuger::Update(bool* loopgame)
 	//createDummyPlayer(&tThisWorld, m_d3dPlayerMatrix);
 	//d3d_ResultMatrix = 
 	RECT rect = { 0 };
-	switch (CurrentSpotInGame)
+	switch (pcGameMangerSystem->nCurrentScene)
 	{ 
 	case -1:
 		*loopgame = false;
 		break;
 	case 0:
 		pcGameMangerSystem->InitializeTitleScreen();
-		CurrentSpotInGame = 1;
+		pcGameMangerSystem->nCurrentScene = 1;
 		break;
 
 	case 1:
-		CurrentSpotInGame = pcGameMangerSystem->LoadTitleScreen();
+		pcGameMangerSystem->nCurrentScene = pcGameMangerSystem->LoadTitleScreen();
 		break;
 	case 2:
 		pcGameMangerSystem->InitializeMainMenu();
-		CurrentSpotInGame = 3;
+		pcGameMangerSystem->nCurrentScene = 3;
 
 	case 3:
-		CurrentSpotInGame = pcGameMangerSystem->LoadMainMenu();
+		pcGameMangerSystem->nCurrentScene = pcGameMangerSystem->LoadMainMenu();
 		
 		break;
 	case 4:
 		//pcGameMangerSystem->LoadLevel();
-		CurrentSpotInGame = 5;
+		pcGameMangerSystem->nCurrentScene = 5;
 		break;
 	case 5 :
 		//CurrentSpotInGame = pcGameMangerSystem->InGameUpdate();
@@ -112,17 +112,17 @@ void CAuger::Update(bool* loopgame)
 
 		break;
 	case 6 :
-		CurrentSpotInGame=pcGameMangerSystem->PathFindingExample();
+		pcGameMangerSystem->nCurrentScene =pcGameMangerSystem->PathFindingExample();
 
 		GetWindowRect(window2, &rect);
 		SetCursorPos((rect.right / 2.0f) + 20, (rect.bottom / 2.0f) + 64);
 		break;
 	case 7 :
 		  pcGameMangerSystem->FirstSkeltonAiTestLoad();
-		  CurrentSpotInGame = 8;
+		  pcGameMangerSystem->nCurrentScene = 8;
 		  break;
 	case 8 :
-		CurrentSpotInGame = pcGameMangerSystem->SpacePirateGamePlay();
+		pcGameMangerSystem->nCurrentScene = pcGameMangerSystem->SpacePirateGamePlay();
 	
 		GetWindowRect(window2, &rect);
 		SetCursorPos((rect.right / 2.0) + 20, (rect.bottom / 2.0) + 65);
@@ -133,21 +133,21 @@ void CAuger::Update(bool* loopgame)
 		break;
 	case 9:
 		pcGameMangerSystem->LoadMikesGraphicsSandbox();
-		CurrentSpotInGame = 10;
+		pcGameMangerSystem->nCurrentScene = 10;
 		break;
 	case 10:
-		CurrentSpotInGame = pcGameMangerSystem->MikesGraphicsSandbox();
+		pcGameMangerSystem->nCurrentScene = pcGameMangerSystem->MikesGraphicsSandbox();
 		break;
 	case 13: 
 		pcGameMangerSystem->LoadLevelWithMapInIt();
-		CurrentSpotInGame = 14;
+		pcGameMangerSystem->nCurrentScene = 14;
 		break;
 	case 14:
-		CurrentSpotInGame = pcGameMangerSystem->RealLevelUpdate();
+		pcGameMangerSystem->nCurrentScene = pcGameMangerSystem->RealLevelUpdate();
 		break;
 	case 15:
 		pcGameMangerSystem->LoadPathFindingTest();
-		CurrentSpotInGame = 6;
+		pcGameMangerSystem->nCurrentScene = 6;
 		break;
 	default:
 		break;

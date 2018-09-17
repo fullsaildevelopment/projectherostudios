@@ -11,6 +11,7 @@ CGraphicsSystem::CGraphicsSystem()
 
 CGraphicsSystem::~CGraphicsSystem()
 {
+	
 }
 
 void CGraphicsSystem::InitD3D(HWND cTheWindow)

@@ -13,8 +13,6 @@
 #include "DirectXTex-master\DDSTextureLoader\DDSTextureLoader.h"
 #include <array>
 
-//#include "UI_System.h"
-
 struct TWorld
 {
 	int				anComponentMask[ENTITYCOUNT];
@@ -80,26 +78,6 @@ struct TUIVert
 	XMFLOAT2 m_d3dfUVs;
 };
 
-//struct TUIVertices
-//{
-//	TUIVert* m_d3dfPositions;
-//
-//	TUIVertices(unsigned int size)
-//	{
-//		m_d3dfPositions = new TUIVert[size];
-//	}
-//};
-
-//struct TUIIndices
-//{
-//	short* m_d3dfIndices;
-//
-//	TUIIndices(unsigned int size)
-//	{
-//		m_d3dfIndices = new short[size];
-//	}
-//};
-
 unsigned int createEntity(TWorld *ptWorld);
 unsigned int createEntityReverse(TWorld * ptWorld);
 void destroyEntity(TWorld *ptWorld, unsigned int nEntity);
@@ -133,8 +111,9 @@ unsigned int CreateSimpleGunAi(TWorld * ptWorld, XMMATRIX SpawnPosition);
 unsigned int CreateSimpleSearchAi(TWorld* ptWorld, XMMATRIX SpawnPosition);
 unsigned int CreateAIVision(TWorld * ptWorld, XMMATRIX bulletSpawnLocation, float zDistance, int parentWorldMatrixIndex, float xoffset, float yoffset, float zoffset);
 unsigned int CreateRayBullet(TWorld * ptWorld, XMMATRIX bulletSpawnLocation, float zDistance, int parentWorldMatrixIndex, float xoffset, float yoffset, float zoffset);
-unsigned int CreateUILabel(TWorld * ptWorld, XMMATRIX SpawnPosition, float width, float height, float offsetX, float offsetY, std::vector<TUIVert*>& atUIVertices, int _nThisEntity = -1, float z = 0);
-unsigned int CreateUILabelForText(TWorld* ptWorld, XMMATRIX SpawnPosition, float width, float height, float offsetX, float offsetY, std::vector<TUIVert*> atUIVertices, std::vector<short*> atUIIndices, wchar_t* text, unsigned int textSize, int _nThisEntity = -1, float z = 0);
+unsigned int CreateUILabel(TWorld * ptWorld, XMMATRIX SpawnPosition, float width, float height, float offsetX, float offsetY, std::vector<TUIVert*>* atUIVertices, int _nThisEntity = -1, float z = 0);
+unsigned int CreateUILabelForText(TWorld* ptWorld, XMMATRIX SpawnPosition, float width, float height, float offsetX, float offsetY, std::vector<TUIVert*>* atUIVertices, std::vector<short*>* atUIIndices, wchar_t* text, unsigned int textSize, int _nThisEntity = -1, float z = 0);
+void GetUVsForCharacter(wchar_t* character, XMFLOAT2* UVs);
 //float zDistance = 0.5f;
 //	fartopleft, nearbottomleft, neartopright, nearbottomright, fartopright, farbottomleft, farbottomright, neartopleft;
 unsigned int CreateFrustumLines(TWorld * ptWorld,XMFLOAT3 fartopleft, XMFLOAT3 nearbottomleft, XMFLOAT3 neartopright, XMFLOAT3 nearbottomright, XMFLOAT3 fartopright, XMFLOAT3 farbottomleft, XMFLOAT3 farbottomright, XMFLOAT3 neartopleft, int parentWorldMatrixIndex, float xoffset, float yoffset, float zoffset,XMFLOAT3 normalLine1, XMFLOAT3 normalLine2);
