@@ -19,8 +19,6 @@ public:
 	CGameMangerSystem(HWND window, CInputSystem* pcInputSystem);
 	~CGameMangerSystem();
 	void LoadLevel();
-	int InGameUpdate();
-	void RestartLevel();
 	int LoadMainMenu();
 	void InitializeMainMenu();
 	int LoadTitleScreen();
@@ -50,8 +48,8 @@ private:
 	float scale = 0;
 	XMMATRIX CameraNewPosition;
 	XMMATRIX secondCam;
-	CCollisionSystem * pcCollisionSystem;
 	TWorld tThisWorld;
+	CCollisionSystem * pcCollisionSystem;
 	CGraphicsSystem	*pcGraphicsSystem;
 	CInputSystem	*pcInputSystem;
 	CAudioSystem    *pcAudioSystem;

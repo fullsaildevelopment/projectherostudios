@@ -94,11 +94,11 @@ void CAuger::Update(bool* loopgame)
 		
 		break;
 	case 4:
-		pcGameMangerSystem->LoadLevel();
+		//pcGameMangerSystem->LoadLevel();
 		CurrentSpotInGame = 5;
 		break;
 	case 5 :
-		CurrentSpotInGame = pcGameMangerSystem->InGameUpdate();
+		//CurrentSpotInGame = pcGameMangerSystem->InGameUpdate();
 
 		
 		if (!pcGameMangerSystem->GamePaused && !pcGameMangerSystem->GameOver)
