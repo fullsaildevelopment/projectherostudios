@@ -75,14 +75,14 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <LibraryPath>..\..\..\$(Platform)_vc150\$(Configuration)\lib;C:\Program Files %28x86%29\Audiokinetic\Wwise 2018.1.0.6714\SDK\x64_vc150\Debug\lib;$(LibraryPath)</LibraryPath>
+    <LibraryPath>..\..\..\$(Platform)_vc150\$(Configuration)\lib;C:\Program Files (x86)\Audiokinetic\Wwise 2018.1.0.6714\SDK\x64_vc150\Debug\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <LibraryPath>..\..\..\$(Platform)_vc150\$(Configuration)\lib;C:\Program Files %28x86%29\Audiokinetic\Wwise 2018.1.0.6714\SDK\x64_vc150\Release\lib;$(LibraryPath)</LibraryPath>
+    <LibraryPath>..\..\..\$(Platform)_vc150\$(Configuration)\lib;C:\Program Files (x86)\Audiokinetic\Wwise 2018.1.0.6714\SDK\x64_vc150\Release\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>

@@ -4609,8 +4609,8 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	vector<int> edges;
 	
 	pcAiSystem->AddNodeToPathFinding(nodeindex, nodePosition, 1);
-	nodeLocation.r[3].m128_f32[2] += 2;
-	nodeLocation.r[3].m128_f32[0] += 5;
+	nodeLocation.r[3].m128_f32[2] += 3;
+	//nodeLocation.r[3].m128_f32[0] += 5;
 	int nodeindex2 = CreateNodePoint(&tThisWorld, nodeLocation);
 	
 	nodePosition.x = nodeLocation.r[3].m128_f32[0];
@@ -4625,7 +4625,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 
 
 
-	nodeLocation.r[3].m128_f32[0] -= 5;
+	
 	/*int nodeindex3 = CreateNodePoint(&tThisWorld, nodeLocation);
 	nodePosition.x = nodeLocation.r[3].m128_f32[0];
 	nodePosition.y = nodeLocation.r[3].m128_f32[1];
@@ -4642,7 +4642,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 
 
 
-	int GunINdexai = CreateGun(&tThisWorld, m_d3dWorldMatrix, spacePirate, -1.1, 0.5, 11.5, 10, 70);
+	int GunINdexai = CreateGun(&tThisWorld, m_d3dWorldMatrix, spacePirate, -1.1, 0.5, 11.5, 10, 30);
 	tThisWorld.atAIMask[spacePirate].GunIndex = GunINdexai;
 
 	tThisWorld.atClip[GunINdexai].bulletSpeed = 0.01;//Frame Dependent
@@ -4726,7 +4726,33 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	tThisWorld.atAIVision[spacePirate2].normalAtBegining[3] = planes2[3].normal;
 	tThisWorld.atAIVision[spacePirate2].normalAtBegining[4] = planes2[4].normal;
 	tThisWorld.atAIVision[spacePirate2].normalAtBegining[5] = planes2[5].normal;
+	nodeLocation = AILocation;
+	nodeLocation.r[3].m128_f32[1] += -1;
 
+	int nodeindex3 = CreateNodePoint(&tThisWorld, nodeLocation);
+	 nodePosition;
+	nodePosition.x = nodeLocation.r[3].m128_f32[0];
+	nodePosition.y = nodeLocation.r[3].m128_f32[1];
+	nodePosition.z = nodeLocation.r[3].m128_f32[2];
+	
+
+	pcAiSystem->AddNodeToPathFinding(nodeindex3, nodePosition, 1);
+	nodeLocation.r[3].m128_f32[2] += 3;
+	//nodeLocation.r[3].m128_f32[0] += 5;
+	int nodeindex4 = CreateNodePoint(&tThisWorld, nodeLocation);
+	edges.clear();
+	nodePosition.x = nodeLocation.r[3].m128_f32[0];
+	nodePosition.y = nodeLocation.r[3].m128_f32[1];
+	nodePosition.z = nodeLocation.r[3].m128_f32[2];
+	pcAiSystem->AddNodeToPathFinding(nodeindex4, nodePosition, 1);
+	edges.push_back(nodeindex4);
+	pcAiSystem->AddEdgestoNode(nodeindex3, edges);
+	edges.clear();
+	edges.push_back(nodeindex3);
+	pcAiSystem->AddEdgestoNode(nodeindex4, edges);
+
+	tThisWorld.atPathPlanining[spacePirate2].Goal = nodeindex3;
+	tThisWorld.atPathPlanining[spacePirate2].startingNode = nodeindex4;
 	//int nodeindex2 = CreateNodePoint(&tThisWorld, nodeLocation);
 
 	//nodePosition.x = nodeLocation.r[3].m128_f32[0];
@@ -5593,7 +5619,7 @@ int CGameMangerSystem::RealLevelUpdate()
 
 	pcGraphicsSystem->m_pd3dSwapchain->Present(0, 0);
 	zValue += 0.001;
-	return 13;
+	return 14;
 
 }
 

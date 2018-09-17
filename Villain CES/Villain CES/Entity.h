@@ -11,6 +11,7 @@
 #include "DirectXTex-master\WICTextureLoader\WICTextureLoader.h"
 #include "DirectXTex-master\DDSTextureLoader\DDSTextureLoader.h"
 #include <array>
+
 //#include "UI_System.h"
 
 struct TWorld
