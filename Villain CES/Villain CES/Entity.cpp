@@ -402,7 +402,7 @@ unsigned int CreateSkybox(TWorld * ptWorld, ID3D11ShaderResourceView * srv)
 		XMFLOAT3(500.0f, -500.0f, 500.0f)
 	};
 
-	static short cubeIndices[]
+	static unsigned int cubeIndices[]
 	{
 		2,0,3,//0,2,3,
 		1,3,0,//3,1,0,
@@ -571,7 +571,7 @@ unsigned int CreateBullet(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMeshIm
 		break;
 	}
 	ptWorld->atCollisionMask[nThisEntity].m_tnCollisionMask = COMPONENT_COLLISIONMASK | COMPONENT_TRIGGER | COMPONENT_AABB | COMPONENT_NONSTATIC;
-	ptWorld->atGraphicsMask[nThisEntity].m_tnGraphicsMask = (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_SHADERID);
+	ptWorld->atGraphicsMask[nThisEntity].m_tnGraphicsMask = COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_SHADERID;
 	ptWorld->atAIMask[nThisEntity].m_tnAIMask = COMPONENT_AIMASK;
 	ptWorld->atUIMask[nThisEntity].m_tnUIMask = COMPONENT_UIMASK;
 	ptWorld->atPhysicsMask[nThisEntity].m_tnPhysicsMask = COMPONENT_PHYSICSMASK | COMPONENT_RIGIDBODY;
@@ -2149,7 +2149,6 @@ unsigned int CreateHealingAI(TWorld * ptWorld, XMMATRIX SpawnPosition, unsigned 
 	return nThisEntity;
 }
 
-
 unsigned int CreateAIVision(TWorld * ptWorld, XMMATRIX VisionSpawnLocation, float zDistance, int parentWorldMatrixIndex, float xoffset, float yoffset, float zoffset)
 {
 	unsigned int nThisEntity = createEntity(ptWorld);
@@ -2557,7 +2556,6 @@ unsigned int createMesh(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMeshImpo
 	ptWorld->atGraphicsMask[nThisEntity].m_tnGraphicsMask = COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_SHADERID;
 	ptWorld->atCollisionMask[nThisEntity].m_tnCollisionMask = COMPONENT_COLLISIONMASK | COMPONENT_AABB | COMPONENT_STATIC | COMPONENT_TRIGGER;
 
-	ptWorld->atCollisionMask[nThisEntity].m_tnCollisionMask = COMPONENT_COLLISIONMASK | COMPONENT_AABB | COMPONENT_STATIC | COMPONENT_NONTRIGGER;
 	//ptWorld->atAIMask[nThisEntity].m_tnAIMask = COMPONENT_AIMASK;
 	//ptWorld->atUIMask[nThisEntity].m_tnUIMask = COMPONENT_UIMASK;
 	//ptWorld->atPhysicsMask[nThisEntity].m_tnPhysicsMask = COMPONENT_PHYSICSMASK | COMPONENT_RIGIDBODY;
