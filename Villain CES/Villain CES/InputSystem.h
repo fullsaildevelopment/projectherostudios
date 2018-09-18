@@ -63,14 +63,15 @@ public:
 	* Mod. Date:              07/16/2018
 	* Mod. Initials:          ZFB
 	*/
-	XMMATRIX AimMode(XMMATRIX d3dplayerMatrix);
-
+	//XMMATRIX AimMode(XMMATRIX d3dplayerMatrix);
+	XMMATRIX AimMode(TCamera* in_AimCamera, XMMATRIX d3dplayerMatrix);
 	XMMATRIX WalkCameraControls(XMVECTOR U, XMMATRIX viewM, bool &_movement);
 	XMMATRIX CameraUpdate(TCamera* in_walkCamera, TCamera* in_aimMode, TCamera* in_debugCamera, XMMATRIX in_resultMatrix, XMMATRIX offsetMatrix);
 	XMMATRIX CameraBehaviorLerp(XMMATRIX m1, XMMATRIX m2, float scale);
 	XMMATRIX MyLookAt(XMVECTOR EyePos, XMVECTOR TargetPos, XMVECTOR Up);
-	void StoreInitCameraForwardV(XMMATRIX in_prevPos);
+	void StoreInitCameraForwardV(XMVECTOR in_prevPos);
 	void StorePreviousCameraPos(XMVECTOR in_Pos);
+	void GetMousePosition();
 	XMMATRIX CameraOrientationReset(XMMATRIX m1);
 	XMMATRIX MyTurnTo(XMMATRIX M, XMVECTOR T, float s, XMMATRIX world);
 	float ZoomSight(float fFov);
@@ -104,6 +105,10 @@ private:
 	float				m_fMouseRotationSpeed;
 	float				m_fMouseMovementSpeed;
 	float				m_fDistance;
+	float fXchange;
+	float fYchange;
+	float fXEnd;
+	float fYEnd;
 	XMVECTOR m_PlayerForwardV;
 	XMVECTOR m_CameraInitV;
 	XMMATRIX m_prevCameraPos;

@@ -1093,6 +1093,7 @@ ImporterData CGraphicsSystem::ReadMesh(const char * input_file_path)
 #pragma region ImportDataMemoryAllocations
 
 	ImporterData tImportMe;
+	// Has Vertex tyoe and Joints 
 	tImportMe.vtMeshes = new TMeshImport[meshCount];
 	tImportMe.vtMaterials = new TMaterialImport[meshCount];
 	tImportMe.vtAnimations = new TAnimationImport[meshCount];

@@ -147,7 +147,6 @@ void CAuger::Update(bool* loopgame)
 			//SetCursorPos((rect.right / 2.0f) + 20, (rect.bottom / 2.0f) + 64);
 			// sets mouse cursor to middle of screen ZB
 			SetCursorPos(((rect.right - rect.left) / 2.0f) + rect.left, ((rect.bottom - rect.top) / 2.0f) + rect.top);
-
 		}
 
 		break;

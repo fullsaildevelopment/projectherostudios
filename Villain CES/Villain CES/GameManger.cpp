@@ -486,7 +486,7 @@ int CGameMangerSystem::InGameUpdate()
 			}
 
 
-			m_d3dPlayerMatrix = pcInputSystem->AimMode(m_d3dPlayerMatrix);
+			m_d3dPlayerMatrix = pcInputSystem->AimMode(aimCamera,m_d3dPlayerMatrix);
 			//This is where the camera is put into the player's space
 			aimCamera->d3d_Position = XMMatrixMultiply(m_d3d_ResultMatrix, m_d3dPlayerMatrix);
 			//This is the camera offset executed
@@ -2608,7 +2608,7 @@ int CGameMangerSystem::PathFindingExample()
 		{
 			m_d3d_ResultMatrix = pcInputSystem->CameraOrientationReset(m_d3d_ResultMatrix);
 			//CameraNewPosition = pcInputSystem->CameraBehaviorLerp(m_d3d_ResultMatrix, m_d3dPlayerMatrix);
-			m_d3dPlayerMatrix = pcInputSystem->AimMode(m_d3dPlayerMatrix);
+			//m_d3dPlayerMatrix = pcInputSystem->AimMode(m_d3dPlayerMatrix);
 
 			CameraNewPosition = XMMatrixMultiply(m_d3d_ResultMatrix, m_d3dPlayerMatrix);
 
@@ -2628,7 +2628,7 @@ int CGameMangerSystem::PathFindingExample()
 
 
 
-			m_d3dPlayerMatrix = pcInputSystem->AimMode(m_d3dPlayerMatrix);
+//			m_d3dPlayerMatrix = pcInputSystem->AimMode(m_d3dPlayerMatrix);
 
 			aimCamera->d3d_Position = XMMatrixMultiply(m_d3d_ResultMatrix, m_d3dPlayerMatrix);
 
@@ -3693,7 +3693,7 @@ int CGameMangerSystem::SpacePirateGamePlay()
 		{
 			m_d3d_ResultMatrix = pcInputSystem->CameraOrientationReset(m_d3d_ResultMatrix);
 			//CameraNewPosition = pcInputSystem->CameraBehaviorLerp(m_d3d_ResultMatrix, m_d3dPlayerMatrix);
-			m_d3dPlayerMatrix = pcInputSystem->AimMode(m_d3dPlayerMatrix);
+//			m_d3dPlayerMatrix = pcInputSystem->AimMode(m_d3dPlayerMatrix);
 
 			CameraNewPosition = XMMatrixMultiply(m_d3d_ResultMatrix, m_d3dPlayerMatrix);
 
@@ -3711,7 +3711,7 @@ int CGameMangerSystem::SpacePirateGamePlay()
 			m_RealTimeFov = pcInputSystem->ZoomSight(m_RealTimeFov);
 
 
-			m_d3dPlayerMatrix = pcInputSystem->AimMode(m_d3dPlayerMatrix);
+//			m_d3dPlayerMatrix = pcInputSystem->AimMode(m_d3dPlayerMatrix);
 
 			aimCamera->d3d_Position = XMMatrixMultiply(m_d3d_ResultMatrix, m_d3dPlayerMatrix);
 
@@ -4579,6 +4579,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	m_d3dViewMatrix = pcGraphicsSystem->SetDefaultViewMatrix();//Call some sort of function from the graphics system to create this matrix
 	walkCamera->d3d_Position = pcGraphicsSystem->SetDefaultCameraMatrix();
 	aimCamera->d3d_Position = pcGraphicsSystem->SetDefaultCameraMatrix();
+	pcInputSystem->StoreInitCameraForwardV(aimCamera->d3d_Position.r[2]);
 	debugCamera->d3d_Position = pcGraphicsSystem->SetDefaultCameraMatrix();
 	m_d3dProjectionMatrix = pcGraphicsSystem->SetDefaultPerspective(m_RealTimeFov);
 	m_d3dPlayerMatrix = pcGraphicsSystem->SetDefaultWorldPosition();
@@ -4690,10 +4691,10 @@ int CGameMangerSystem::RealLevelUpdate()
 	_CrtSetBreakAlloc(-1); //Important!
 	m_d3dProjectionMatrix = pcGraphicsSystem->SetDefaultPerspective(m_RealTimeFov);
 
-	//tTimerInfo->applicationTime = tTimerInfo->GetTime(tAugerTimers->tAppTimer, tTimerInfo->applicationTime);
-	//tTimerInfo->sceneTime = tTimerInfo->GetTime(tAugerTimers->tSceneTimer, tTimerInfo->sceneTime);
-
+	// checks the camera bool variables & store mouse position at the beginning  
+	
 	tCameraMode = pcInputSystem->CameraModeListen(tCameraMode);
+	pcInputSystem->GetMousePosition();
 
 	static XMMATRIX m_d3d_ResultMatrix = pcGraphicsSystem->SetDefaultWorldPosition();
 	static XMMATRIX m_d3dOffsetMatrix = pcGraphicsSystem->SetDefaultOffset();
@@ -4758,9 +4759,10 @@ int CGameMangerSystem::RealLevelUpdate()
 				pcGraphicsSystem->CreateEntityBuffer(&tThisWorld, UIIndex.back());
 			}
 		}
+		//Camera Functions here will move to a system function when finalized - ZB
 		if (!GamePaused && !GameOver)
 		{
-
+			// Walk mode not needed in demo at the moment - ZFB
 			if (tCameraMode.bWalkMode == true)
 			{
 
@@ -4780,15 +4782,15 @@ int CGameMangerSystem::RealLevelUpdate()
 				tMyVertexBufferTemp.m_d3dViewMatrix = walkCamera->d3d_Position;
 				tTempVertexBuffer.m_d3dViewMatrix = walkCamera->d3d_Position;
 			}
+			//Aim Mode Functions are Here - ZFB 
 			else if (tCameraMode.bAimMode == true)
 			{
 				m_d3dOffsetMatrix = pcGraphicsSystem->ResetAimModeCameraOffset();
 				if (tCameraMode.bSwitch == true)
 				{
+					m_d3dOffsetMatrix = pcGraphicsSystem->ResetAimModeCameraOffset();
 					m_d3d_ResultMatrix = pcInputSystem->CameraOrientationReset(m_d3d_ResultMatrix);
 					//CameraNewPosition = pcInputSystem->CameraBehaviorLerp(m_d3d_ResultMatrix, m_d3dPlayerMatrix);
-					//
-
 					//CameraNewPosition = XMMatrixMultiply(m_d3d_ResultMatrix, m_d3dPlayerMatrix);
 
 					//CameraNewPosition = XMMatrixMultiply(m_d3dOffsetMatrix, CameraNewPosition);
@@ -4801,19 +4803,21 @@ int CGameMangerSystem::RealLevelUpdate()
 
 
 				}
-				else {
+				
 					m_RealTimeFov = pcInputSystem->ZoomSight(m_RealTimeFov);
 
-					aimCamera->d3d_Position = pcInputSystem->AimMode(m_d3d_ResultMatrix);
+					aimCamera->d3d_Position = pcInputSystem->AimMode(aimCamera,m_d3d_ResultMatrix);
+					m_d3dPlayerMatrix = pcInputSystem->CharacterMovement(m_d3dPlayerMatrix);
 
-					aimCamera->d3d_Position = XMMatrixMultiply(m_d3dPlayerMatrix,aimCamera->d3d_Position);
-
+					aimCamera->d3d_Position = XMMatrixMultiply(aimCamera->d3d_Position,m_d3dPlayerMatrix);
 					aimCamera->d3d_Position = XMMatrixMultiply(m_d3dOffsetMatrix, aimCamera->d3d_Position);
-				}
+					//aimCamera->d3d_Position = pcInputSystem->MyLookAt(aimCamera->d3d_Position.r[3], m_d3dPlayerMatrix.r[3], m_d3dPlayerMatrix.r[1]);
+				
 				tMyVertexBufferTemp.m_d3dViewMatrix = aimCamera->d3d_Position;
 				tTempVertexBuffer.m_d3dViewMatrix = aimCamera->d3d_Position;
 
 			}
+			//This is Debug Camera Function here - ZFB
 			else
 			{
 
@@ -4910,11 +4914,12 @@ int CGameMangerSystem::RealLevelUpdate()
 #pragma endregion
 
 	for (int nCurrentEntity = 0; nCurrentEntity < ENTITYCOUNT; nCurrentEntity++)
-	{
+	{   
 		tTempVertexBuffer.m_d3dWorldMatrix = tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix;
 		tMyVertexBufferTemp.m_d3dWorldMatrix = tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix;
 		tMyVertexBufferTemp.m_d3dProjectionMatrix = m_d3dProjectionMatrix;
 		tTempVertexBuffer.m_d3dProjectionMatrix = m_d3dProjectionMatrix;
+		
 		if (tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_SKYBOX | COMPONENT_TEXTURE | COMPONENT_SHADERID))
 		{
 			tMyVertexBufferTemp.m_d3dWorldMatrix = tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix;
@@ -4944,12 +4949,12 @@ int CGameMangerSystem::RealLevelUpdate()
 				tMyVertexBufferTemp.m_d3dViewMatrix = walkCamera->d3d_Position;
 				tTempVertexBuffer.m_d3dViewMatrix = walkCamera->d3d_Position;
 			}
-			else if (tCameraMode.bAimMode == true)
+			/*else if (tCameraMode.bAimMode == true)
 			{
 				tTempVertexBuffer.m_d3dViewMatrix = aimCamera->d3d_Position;
 				tMyVertexBufferTemp.m_d3dViewMatrix = aimCamera->d3d_Position;
 
-			}
+			}*/
 			else if (tCameraMode.bDebugMode == true)
 			{
 				tTempVertexBuffer.m_d3dWorldMatrix = m_d3dWorldMatrix;
@@ -4972,9 +4977,9 @@ int CGameMangerSystem::RealLevelUpdate()
 					tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = pcPhysicsSystem->ResolveForces(&tThisWorld.atRigidBody[nCurrentEntity], tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, false);
 					m_d3dPlayerMatrix = tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix;
 				}
+				//Aim Mode HLSL stuff
 				else if (tCameraMode.bAimMode == true)
 				{
-					m_d3dPlayerMatrix = pcInputSystem->CharacterMovement(m_d3dPlayerMatrix);
 					tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = m_d3dPlayerMatrix;
 					tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = pcPhysicsSystem->ResolveForces(&tThisWorld.atRigidBody[nCurrentEntity], tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, false);
 					m_d3dPlayerMatrix = tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix;
@@ -4984,6 +4989,7 @@ int CGameMangerSystem::RealLevelUpdate()
 			{
 				pcGraphicsSystem->InitMyShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tMyVertexBufferTemp, tThisWorld.atMesh[nCurrentEntity], walkCamera->d3d_Position);
 			}
+			//Calls Shader Function on Aim Camera If aim mode is active
 			else if (tCameraMode.bAimMode == true)
 			{
 				pcGraphicsSystem->InitMyShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tMyVertexBufferTemp, tThisWorld.atMesh[nCurrentEntity], aimCamera->d3d_Position);
@@ -5239,6 +5245,7 @@ int CGameMangerSystem::RealLevelUpdate()
 		if (nCurrentEntity == PlayerStartIndex) {
 			float x = 0;
 		}
+		
 		tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = pcPhysicsSystem->ResolveForces(&tThisWorld.atRigidBody[nCurrentEntity], tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, true);
 
 		if (tThisWorld.atProjectiles[nCurrentEntity].m_tnProjectileMask == (COMPONENT_PROJECTILESMASK | COMPONENT_RAYGUN)) {
