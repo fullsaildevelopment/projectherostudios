@@ -98,9 +98,7 @@ void CAuger::Update(bool* loopgame)
 		pcGameMangerSystem->nCurrentScene = 5;
 		break;
 	case 5 :
-		//CurrentSpotInGame = pcGameMangerSystem->InGameUpdate();
 
-		
 		if (!pcGameMangerSystem->GamePaused && !pcGameMangerSystem->GameOver)
 		{
 			GetWindowRect(window2, &rect);

@@ -3397,6 +3397,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	{
 		PlayerStartIndex = createClayton(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, tempImport.vtMeshes[meshIndex], tempImport.vtMaterials[meshIndex]);
 	}
+
 	GunIndexForPlayer = CreateGun(&tThisWorld, m_d3dWorldMatrix, PlayerStartIndex, -1, 1, 10.5, 3, 100);
 	tThisWorld.atClip[GunIndexForPlayer].bulletSpeed = 0.01;
 	tThisWorld.atClayton[PlayerStartIndex].health = 100;
@@ -3431,16 +3432,6 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	edges.clear();
 	edges.push_back(nodeindex);
 	pcAiSystem->AddEdgestoNode(nodeindex2, edges);
-
-
-
-	
-	/*int nodeindex3 = CreateNodePoint(&tThisWorld, nodeLocation);
-	nodePosition.x = nodeLocation.r[3].m128_f32[0];
-	nodePosition.y = nodeLocation.r[3].m128_f32[1];
-	nodePosition.z = nodeLocation.r[3].m128_f32[2];
-	pcAiSystem->AddNodeToPathFinding(nodeindex3, nodePosition, 1);
-*/
 
 	int spacePirate = CreateSpacePirate(&tThisWorld, AILocation);
 	tThisWorld.atAiHeath[spacePirate].heath = 100;
@@ -3631,7 +3622,6 @@ int CGameMangerSystem::RealLevelUpdate()
 	m_d3dProjectionMatrix = pcGraphicsSystem->SetDefaultPerspective(m_RealTimeFov);
 
 	tCameraMode = pcInputSystem->CameraModeListen(tCameraMode);
-
 	static XMMATRIX m_d3d_ResultMatrix = pcGraphicsSystem->SetDefaultWorldPosition();
 	static XMMATRIX m_d3dOffsetMatrix = pcGraphicsSystem->SetDefaultOffset();
 	CGraphicsSystem::TPrimalVertexBufferType tTempVertexBuffer;
@@ -3831,7 +3821,6 @@ int CGameMangerSystem::RealLevelUpdate()
 	}
 
 #pragma endregion
-
 	for (int nCurrentEntity = 0; nCurrentEntity < ENTITYCOUNT; nCurrentEntity++)
 	{
 		tTempVertexBuffer.m_d3dWorldMatrix = tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix;
@@ -4807,9 +4796,27 @@ int CGameMangerSystem::RealLevelUpdate()
 	}
 
 	clickTime += clickTimer.Delta();
+	//double samples = 0;
+	//try
+	//{
+	//	clickTimer.Throttle(64);
+	//	samples = clickTimer.SamplesPerSecond();
+	//	if (samples > 64)
+	//	{
+	//		throw samples;
+	//	}
+	//}
+	//catch(double e)
+	//{
+	//	if (samples > 64)
+	//	{
+	//		std::cout << "Exception Occurred:\t" << samples << " samples per second\n";
+	//	}
+	//}
 
 	pcGraphicsSystem->m_pd3dSwapchain->Present(0, 0);
 	zValue += 0.001;
+
 	return 14;
 
 }
