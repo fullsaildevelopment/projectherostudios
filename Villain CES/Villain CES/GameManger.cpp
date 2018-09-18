@@ -4589,14 +4589,14 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	tCameraMode.bSwitch = false;
 	bMoving = false;
 	m_RealTimeFov = 90.0f;
-	//m_d3dPlayerMatrix = XMMatrixMultiply(m_d3dPlayerMatrix, XMMatrixScaling(.01, .01, .01));
+	
 
 	m_d3dPlayerMatrix.r[3].m128_f32[2] -= 10;
 	m_d3dPlayerMatrix.r[3].m128_f32[0] -= 5;
 	m_d3dPlayerMatrix.r[3].m128_f32[1] += 0.2;
 
 
-
+	//Clayton Import Data - ZFB
 	tempImport = pcGraphicsSystem->ReadMesh("meshData_Pirate.txt");
 
 	for (int meshIndex = 0; meshIndex < tempImport.meshCount; meshIndex++)
@@ -4759,7 +4759,8 @@ int CGameMangerSystem::RealLevelUpdate()
 				pcGraphicsSystem->CreateEntityBuffer(&tThisWorld, UIIndex.back());
 			}
 		}
-		//Camera Functions here will move to a system function when finalized - ZB
+
+		//Camera Functions here will move to a input system function when all behaviors are finalized - ZFB
 		if (!GamePaused && !GameOver)
 		{
 			// Walk mode not needed in demo at the moment - ZFB
@@ -4805,13 +4806,16 @@ int CGameMangerSystem::RealLevelUpdate()
 				}
 				
 					m_RealTimeFov = pcInputSystem->ZoomSight(m_RealTimeFov);
-
+					// Camera rotation Done here
 					aimCamera->d3d_Position = pcInputSystem->AimMode(aimCamera,m_d3d_ResultMatrix);
+					//Does Character Rotation and Movement
 					m_d3dPlayerMatrix = pcInputSystem->CharacterMovement(m_d3dPlayerMatrix);
 
 					aimCamera->d3d_Position = XMMatrixMultiply(aimCamera->d3d_Position,m_d3dPlayerMatrix);
+					// for shoulder offset 
 					aimCamera->d3d_Position = XMMatrixMultiply(m_d3dOffsetMatrix, aimCamera->d3d_Position);
-					//aimCamera->d3d_Position = pcInputSystem->MyLookAt(aimCamera->d3d_Position.r[3], m_d3dPlayerMatrix.r[3], m_d3dPlayerMatrix.r[1]);
+
+					
 				
 				tMyVertexBufferTemp.m_d3dViewMatrix = aimCamera->d3d_Position;
 				tTempVertexBuffer.m_d3dViewMatrix = aimCamera->d3d_Position;
@@ -4967,7 +4971,7 @@ int CGameMangerSystem::RealLevelUpdate()
 				tTempVertexBuffer.m_d3dViewMatrix = m_d3dViewMatrix;
 				tMyVertexBufferTemp.m_d3dViewMatrix = m_d3dViewMatrix;
 			}
-
+			//Clayton input with Camera variables here
 			if (tThisWorld.atInputMask[nCurrentEntity].m_tnInputMask == (COMPONENT_CLAYTON | COMPONENT_INPUTMASK))
 			{
 				if (tCameraMode.bWalkMode == true)
@@ -5498,8 +5502,9 @@ int CGameMangerSystem::RealLevelUpdate()
 	}
 
 
-
+	SetCursorPos((screenWidth / 2.0f) + windowRect.left, (screenHeight / 2.0f) + windowRect.top);
 	pcGraphicsSystem->m_pd3dSwapchain->Present(0, 0);
+
 	zValue += 0.001;
 	return 14;
 

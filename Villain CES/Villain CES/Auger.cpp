@@ -140,7 +140,6 @@ void CAuger::Update(bool* loopgame)
 		CurrentSpotInGame = 14;
 		break;
 	case 14:
-		CurrentSpotInGame = pcGameMangerSystem->RealLevelUpdate();
 		if (!pcGameMangerSystem->GamePaused && !pcGameMangerSystem->GameOver)
 		{
 			GetWindowRect(window2, &rect);
@@ -148,6 +147,7 @@ void CAuger::Update(bool* loopgame)
 			// sets mouse cursor to middle of screen ZB
 			SetCursorPos(((rect.right - rect.left) / 2.0f) + rect.left, ((rect.bottom - rect.top) / 2.0f) + rect.top);
 		}
+		CurrentSpotInGame = pcGameMangerSystem->RealLevelUpdate();
 
 		break;
 	case 15:

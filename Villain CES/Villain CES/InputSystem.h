@@ -11,12 +11,11 @@ class CInputSystem
 public:
 	CInputSystem();
 	~CInputSystem();
-
+	/*
+	*/
 	GReturn InitializeGInput(HWND cTheWindow);
 
-	/*
-		Test Specific Functions
-	*/
+	
 
 	/*
 	* DebugCamera(): This fuction checks what keys are being pressed and modifing a camera's trasforms according to keys pressed.
@@ -49,21 +48,23 @@ public:
 	* Mod. Date:              07/18/2018
 	* Mod. Initials:          ZFB
 	*/
-	
+	//XMMATRIX AimMode(XMMATRIX d3dplayerMatrix);
+
 	/*
-	* AimMode(): This fuction makes a camera rotation locked to player rotation for combat.
+	* AimMode(): This fuction does camera rotation on Yaw (Y Axis) & Pitch(X Axis) for combat.
 	*
 	* Ins:
-	*              XMMATRIX  d3dplayerMatrix
+	*              TCamera* in_AimCamera
+	*              XMMATRIX  d3dplayerMatriX
 
-	* Outs:
+	* Outs: N/A
 	*
 	* Returns:          XMMATRIX
 	*
-	* Mod. Date:              07/16/2018
+	* Mod. Date:              09/18/2018
 	* Mod. Initials:          ZFB
 	*/
-	//XMMATRIX AimMode(XMMATRIX d3dplayerMatrix);
+	
 	XMMATRIX AimMode(TCamera* in_AimCamera, XMMATRIX d3dplayerMatrix);
 	XMMATRIX WalkCameraControls(XMVECTOR U, XMMATRIX viewM, bool &_movement);
 	XMMATRIX CameraUpdate(TCamera* in_walkCamera, TCamera* in_aimMode, TCamera* in_debugCamera, XMMATRIX in_resultMatrix, XMMATRIX offsetMatrix);
@@ -74,6 +75,20 @@ public:
 	void GetMousePosition();
 	XMMATRIX CameraOrientationReset(XMMATRIX m1);
 	XMMATRIX MyTurnTo(XMMATRIX M, XMVECTOR T, float s, XMMATRIX world);
+/*
+	*AimMode() : This fuction does camera rotation on Yaw(Y Axis) & Pitch(X Axis) for combat.
+		*
+		* Ins :
+		*float fFov
+
+		* Outs : N / A
+		*
+		* Returns : XMMATRIX
+		*
+		* Mod.Date : 09 / 18 / 2018
+		* Mod.Initials:          ZFB
+		
+*/
 	float ZoomSight(float fFov);
 	void MouseBoundryCheck(float _x, float _y, float &_outX,float &_outY);
 	void SendHWNDToInputSystem(HWND in_WindowHandle);
