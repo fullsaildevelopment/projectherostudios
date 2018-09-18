@@ -119,7 +119,7 @@ int CGameMangerSystem::LoadMainMenu()
 {
 	if (pcInputSystem->InputCheck(G_KEY_H) == 1)
 	{
-	pcAudioSystem->SendSoundsToEngine(AK::EVENTS::PLAY_FOOTSTEP,footSteps);
+		pcAudioSystem->SendSoundsToEngine(AK::EVENTS::PLAY_FOOTSTEP,footSteps);
 	}
 	
 	clickTimer.Signal();
@@ -2658,20 +2658,22 @@ int CGameMangerSystem::SpacePirateGamePlay()
 			if (pcCollisionSystem->AiVisionCheck(tThisWorld.atAIVision[nCurrentEntity].eyes0,&indicies) == true) {
 				float x = 0;
 				bool danger = false;
-				for (int i = 0; i < indicies.size(); ++i) {
-					if (PlayerStartIndex == indicies[i]) {
+				for (int i = 0; i < indicies.size(); ++i) 
+				{
+					if (PlayerStartIndex == indicies[i]) 
+					{
 						tThisWorld.atSimpleMesh[nCurrentEntity].m_nColor = XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f);
 						tThisWorld.atAIVision[nCurrentEntity].keepSearching = false;
 						tThisWorld.atActiveAI[nCurrentEntity].active = true;
 						danger = true;
-						if (tThisWorld.atClip[tThisWorld.atAIMask[nCurrentEntity].GunIndex].nBulletsAvailables.size() <= 0) {
+						if (tThisWorld.atClip[tThisWorld.atAIMask[nCurrentEntity].GunIndex].nBulletsAvailables.size() <= 0) 
+						{
 							tThisWorld.atClip[tThisWorld.atAIMask[nCurrentEntity].GunIndex].tryToReload = true;
 		
 						}
 						tThisWorld.atClip[tThisWorld.atAIMask[nCurrentEntity].GunIndex].tryToShoot = true;
 						
 						pcAiSystem->AddAiInCombat(nCurrentEntity);
-				//		tThisWorld.atAIMask[nCurrentEntity].m_tnAIMask = COMPONENT_AIMASK | COMPONENT_SEARCH | COMPONENT_PATHFINDTEST;
 					/*	if (tThisWorld.atPathPlanining[nCurrentEntity].foundDestination == true) {
 							int previousgoal = tThisWorld.atPathPlanining[nCurrentEntity].Goal;
 							int previousStartPosition = tThisWorld.atPathPlanining[nCurrentEntity].startingNode;
@@ -2683,15 +2685,17 @@ int CGameMangerSystem::SpacePirateGamePlay()
 						}*/
 						
 					}
-					else if (tThisWorld.atProjectiles[indicies[i]].m_tnProjectileMask == (COMPONENT_PROJECTILESMASK | COMPONENT_METAL)) {
+					else if (tThisWorld.atProjectiles[indicies[i]].m_tnProjectileMask == (COMPONENT_PROJECTILESMASK | COMPONENT_METAL)) 
+					{
 						danger = true;
-						tThisWorld.atSimpleMesh[nCurrentEntity].m_nColor = XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f);
-		
+						tThisWorld.atSimpleMesh[nCurrentEntity].m_nColor = XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f);		
 					}
-					else if(danger==false) {	
-				tThisWorld.atSimpleMesh[nCurrentEntity].m_nColor = XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f);
+					else if(danger==false) 
+					{	
+						tThisWorld.atSimpleMesh[nCurrentEntity].m_nColor = XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f);
 					}
-					else if (tThisWorld.atAIMask[indicies[i]].m_tnAIMask == COMPONENT_AIMASK | COMPONENT_FIGHTINGAI) {
+					else if (tThisWorld.atAIMask[indicies[i]].m_tnAIMask == (COMPONENT_AIMASK | COMPONENT_FIGHTINGAI))
+					{
 						float x = 0;
 					}
 				}
@@ -2862,7 +2866,7 @@ int CGameMangerSystem::SpacePirateGamePlay()
 		}
 			
 			
-	if ((tThisWorld.atCollisionMask[nCurrentEntity].m_tnCollisionMask == (COMPONENT_COLLISIONMASK | COMPONENT_AABB | COMPONENT_NONSTATIC | COMPONENT_TRIGGER) | tThisWorld.atCollisionMask[nCurrentEntity].m_tnCollisionMask == (COMPONENT_COLLISIONMASK | COMPONENT_NONTRIGGER | COMPONENT_AABB | COMPONENT_NONSTATIC)))
+	if ((tThisWorld.atCollisionMask[nCurrentEntity].m_tnCollisionMask == (COMPONENT_COLLISIONMASK | COMPONENT_AABB | COMPONENT_NONSTATIC | COMPONENT_TRIGGER) || tThisWorld.atCollisionMask[nCurrentEntity].m_tnCollisionMask == (COMPONENT_COLLISIONMASK | COMPONENT_NONTRIGGER | COMPONENT_AABB | COMPONENT_NONSTATIC)))
 	{
 
 		vector<int> otherCollisionsIndex;
@@ -2902,7 +2906,7 @@ int CGameMangerSystem::SpacePirateGamePlay()
 					tThisWorld.atCollisionMask[nCurrentEntity].m_tnCollisionMask == (COMPONENT_COLLISIONMASK |
 						COMPONENT_TRIGGER | COMPONENT_AABB | COMPONENT_NONSTATIC)
 					&& (tThisWorld.atCollisionMask[otherCollisionsIndex[i]].m_tnCollisionMask == (COMPONENT_COLLISIONMASK |
-						COMPONENT_NONTRIGGER | COMPONENT_AABB | COMPONENT_STATIC)) | tThisWorld.atCollisionMask[otherCollisionsIndex[i]].m_tnCollisionMask == (COMPONENT_COLLISIONMASK |
+						COMPONENT_NONTRIGGER | COMPONENT_AABB | COMPONENT_STATIC)) || tThisWorld.atCollisionMask[otherCollisionsIndex[i]].m_tnCollisionMask == (COMPONENT_COLLISIONMASK |
 							COMPONENT_NONTRIGGER | COMPONENT_AABB | COMPONENT_NONSTATIC))
 				{
 					
@@ -3364,7 +3368,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 
 #pragma endregion
 
-	tempImport = pcGraphicsSystem->ReadMesh("meshData_NoBrewery7.txt");
+	tempImport = pcGraphicsSystem->ReadMesh("meshData_NoBrewery8.txt");
 	matOpt = pcGraphicsSystem->CreateTexturesFromFile(tempImport.vtMaterials, tempImport.meshCount);
 	for (int meshIndex = 0; meshIndex < tempImport.meshCount; meshIndex++)
 	{	
@@ -3573,7 +3577,6 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 
 	for (int nCurrentEntity = 0; nCurrentEntity < ENTITYCOUNT; nCurrentEntity++)
 	{
-
 		if (tThisWorld.atCollisionMask[nCurrentEntity].m_tnCollisionMask > 1)
 		{
 
@@ -4064,7 +4067,7 @@ int CGameMangerSystem::RealLevelUpdate()
 #if AI_ON
 						tThisWorld.atClip[tThisWorld.atAIMask[nCurrentEntity].GunIndex].tryToShoot = true;
 #endif
-					}
+					}//
 					else if (tThisWorld.atProjectiles[indicies[i]].m_tnProjectileMask == (COMPONENT_PROJECTILESMASK | COMPONENT_METAL)) 
 					{
 						danger = true;
@@ -4490,7 +4493,7 @@ int CGameMangerSystem::RealLevelUpdate()
 		}
 		if (tThisWorld.atWorldMatrix[PlayerStartIndex].worldMatrix.r[3].m128_f32[1] < -30) 
 		{
-			return 13;
+			tThisWorld.atClayton[PlayerStartIndex].health *= 0;
 		}
 
 
