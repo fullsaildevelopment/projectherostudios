@@ -247,16 +247,22 @@ void CUISystem::AddBarToUI(HWND* cApplicationWindow, TWorld* tThisWorld, unsigne
 	tThisWorld->atUIMask[nThisEntity].m_tnUIMask = tThisWorld->atUIMask[nThisEntity].m_tnUIMask | COMPONENT_BAR;
 }
 
-void CUISystem::UpdateText(TWorld* tThisWorld, unsigned int nThisEntity, std::vector<TUIVert*>* atUIVertices, wchar_t* character, TUIVert* UVs)
+void CUISystem::UpdateText(TWorld* tThisWorld, unsigned int nThisEntity, std::vector<TUIVert*>* atUIVertices, wchar_t* character, int textSize, TUIVert* UVs)
 {
 	XMFLOAT2* tempfloats = new XMFLOAT2[4];
+	
+	int countIndex = 0;
+	for (int loopIndex = 0; loopIndex < textSize; ++loopIndex)
+	{
+		GetUVsForCharacter(&character[loopIndex], tempfloats);
 
-	GetUVsForCharacter(character, tempfloats);
+		atUIVertices->at(tThisWorld->atLabel[nThisEntity].vIndex)[countIndex].m_d3dfUVs = tempfloats[0];
+		atUIVertices->at(tThisWorld->atLabel[nThisEntity].vIndex)[countIndex + 1].m_d3dfUVs = tempfloats[1];
+		atUIVertices->at(tThisWorld->atLabel[nThisEntity].vIndex)[countIndex + 2].m_d3dfUVs = tempfloats[2];
+		atUIVertices->at(tThisWorld->atLabel[nThisEntity].vIndex)[countIndex + 3].m_d3dfUVs = tempfloats[3];
 
-	atUIVertices->at(tThisWorld->atLabel[nThisEntity].vIndex)[0].m_d3dfUVs = tempfloats[0];
-	atUIVertices->at(tThisWorld->atLabel[nThisEntity].vIndex)[1].m_d3dfUVs = tempfloats[1];
-	atUIVertices->at(tThisWorld->atLabel[nThisEntity].vIndex)[2].m_d3dfUVs = tempfloats[2];
-	atUIVertices->at(tThisWorld->atLabel[nThisEntity].vIndex)[3].m_d3dfUVs = tempfloats[3];
+		countIndex += 4;
+	}
 
 	tThisWorld->atMesh[nThisEntity].m_d3dVertexData.pSysMem = &atUIVertices->at(tThisWorld->atLabel[nThisEntity].vIndex)[0];
 

@@ -88,8 +88,12 @@ private:
 	ID3D11ShaderResourceView* fontTexture = nullptr;
 	std::vector<TUIVert*> atUIVertices;
 	std::vector<short*> atUIIndices;
+	CFPS fpsTimer;
 	XTime clickTimer;
 	float clickTime;
+	XTime fadeTimer;
+	float fadeTime;
+
 	XTime PausedTimer;
 	float pausedTimer;
 	TCamera *walkCamera;
