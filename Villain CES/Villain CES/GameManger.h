@@ -11,6 +11,7 @@
 #include "CAnimationSystem.h"
 #include"AudioSystem.h"
 #include <array>
+#include <exception>
 #pragma comment(lib, "MSIMG32.lib")
 
 class CGameMangerSystem {
@@ -35,9 +36,7 @@ public:
 	int MikesGraphicsSandbox();
 	void LoadLevelWithMapInIt();
 	int RealLevelUpdate();
-
-	//ZB-Helper Methods
-	bool GetWalkCameraState();
+	
 
 	bool GameOver = false;
 	bool GamePaused = false;
@@ -45,7 +44,6 @@ public:
 
 private:
 	TMaterialOptimized matOpt;
-
 	bool drawtext = true;
 	float scale = 0;
 	XMMATRIX CameraNewPosition;
@@ -78,7 +76,7 @@ private:
 	int screenHeight;
 	
 	bool options = false;
-
+	bool pauseInit = false;
 	//ZB Variables
 	TCameraToggle tCameraMode;
 	XMMATRIX m_d3dWorldMatrix;
@@ -95,19 +93,23 @@ private:
 	XTime fadeTimer;
 	float fadeTime;
 
+	XTime PausedTimer;
+	float pausedTimer;
 	TCamera *walkCamera;
 	TCamera *aimCamera;
 	TCamera *debugCamera;
 	TCamera * menuCamera;
 	System_Times * tAugerTimers;
 	System_Times *tTimerInfo;
-	AkGameObjectID footSteps;
+	AkGameObjectID m_AkMainMenuMusic;
 	AkGameObjectID Listener;
-	AkBankID footsteps_bnkID;
+	AkBankID MainMenu_bnkID;
 	AkBankID init_bnkID;
 	AKRESULT ErrorResult;
 	float m_RealTimeFov;
 	bool bMoving;
 	float Health = 1.0f;
 	bool click = false;
+	XTime frameLock;
+
 };

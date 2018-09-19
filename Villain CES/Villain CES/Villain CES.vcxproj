@@ -194,6 +194,7 @@
     <ClInclude Include="Win32\AkDefaultIOHookBlocking.h" />
     <ClInclude Include="Win32\AkFileHelpers.h" />
     <ClInclude Include="Win32\AkFilePackageLowLevelIOBlocking.h" />
+    <ClInclude Include="WwiseSounds\Wwise_IDs.h" />
     <ClInclude Include="XTime.h" />
   </ItemGroup>
   <ItemGroup>

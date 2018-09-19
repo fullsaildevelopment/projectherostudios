@@ -64,6 +64,7 @@ public:
 	double GetDelta();
 	void Throttle(double targetHz);
 
+	void StableFrameRate();
 private:
  int m_framesPassed;
  double m_startTime;

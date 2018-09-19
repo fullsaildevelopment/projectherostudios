@@ -98,9 +98,6 @@ void CAuger::Update(bool* loopgame)
 		pcGameMangerSystem->nCurrentScene = 5;
 		break;
 	case 5 :
-		//CurrentSpotInGame = pcGameMangerSystem->InGameUpdate();
-
-		
 		if (!pcGameMangerSystem->GamePaused && !pcGameMangerSystem->GameOver)
 		{
 			GetWindowRect(window2, &rect);
@@ -126,10 +123,8 @@ void CAuger::Update(bool* loopgame)
 	
 		GetWindowRect(window2, &rect);
 		SetCursorPos((rect.right / 2.0) + 20, (rect.bottom / 2.0) + 65);
-		
 			GetWindowRect(window2, &rect);
 			SetCursorPos((rect.right / 2.0)-40, (rect.bottom / 2.0) + rect.top);
-		
 		break;
 	case 9:
 		pcGameMangerSystem->LoadMikesGraphicsSandbox();
@@ -143,6 +138,13 @@ void CAuger::Update(bool* loopgame)
 		pcGameMangerSystem->nCurrentScene = 14;
 		break;
 	case 14:
+		if (!pcGameMangerSystem->GamePaused && !pcGameMangerSystem->GameOver)
+		{
+			GetWindowRect(window2, &rect);
+			//SetCursorPos((rect.right / 2.0f) + 20, (rect.bottom / 2.0f) + 64);
+			// sets mouse cursor to middle of screen ZB
+			SetCursorPos(((rect.right - rect.left) / 2.0f) + rect.left, ((rect.bottom - rect.top) / 2.0f) + rect.top);
+		}
 		pcGameMangerSystem->nCurrentScene = pcGameMangerSystem->RealLevelUpdate();
 		break;
 	case 15:
