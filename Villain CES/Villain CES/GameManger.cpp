@@ -1,5 +1,5 @@
 #include "GameManger.h"
-#define AI_ON false
+#define AI_ON true
 #define MIKES_SANDBOX_ON false
 #define SKELETON_LOAD_ON false
 #define MAIN_LEVEL_ON true
@@ -3449,7 +3449,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 
 
 
-	int GunINdexai = CreateGun(&tThisWorld, m_d3dWorldMatrix, spacePirate, -1.1, 0.5, 11.5, 10, 30);
+	int GunINdexai = CreateGun(&tThisWorld, m_d3dWorldMatrix, spacePirate, -1.1, 0.5, 11.5, 10, 130);
 	tThisWorld.atAIMask[spacePirate].GunIndex = GunINdexai;
 
 	tThisWorld.atClip[GunINdexai].bulletSpeed = 0.01;//Frame Dependent
@@ -3488,6 +3488,9 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	tThisWorld.atAIVision[spacePirate].normalAtBegining[5] = planes[5].normal;
 	AILocation.r[3].m128_f32[0] += 3;
 	int spacePirate2 = CreateSpacePirate(&tThisWorld, AILocation);
+	tThisWorld.atActiveAI[spacePirate].NoctifyOtherAi.push_back(spacePirate2);
+	tThisWorld.atActiveAI[spacePirate2].NoctifyOtherAi.push_back(spacePirate);
+
 	tThisWorld.atAiHeath[spacePirate2].heath = 100;
 	createGSQuad(&tThisWorld, XMFLOAT4(1, 0, 0, 1), spacePirate2);
 	createGSQuad(&tThisWorld, XMFLOAT4(0, 0, 0, 1), spacePirate2);
@@ -3497,7 +3500,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	tThisWorld.atPathPlanining[spacePirate].Goal = nodeindex2;*/
 
 
-	int GunINdexai2 = CreateGun(&tThisWorld, m_d3dWorldMatrix, spacePirate2, -1.1, 0.5, 11.5, 10, 70);
+	int GunINdexai2 = CreateGun(&tThisWorld, m_d3dWorldMatrix, spacePirate2, -1.1, 0.5, 11.5, 10, 130);
 	tThisWorld.atAIMask[spacePirate2].GunIndex = GunINdexai2;
 	tThisWorld.atAIVision[spacePirate2].keepRotatingRight = false;
 
@@ -3576,7 +3579,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	//edges.push_back(nodeindex);
 	//pcAiSystem->AddEdgestoNode(nodeindex2, edges);
 	AILocation.r[3].m128_f32[2] -= 20;
-	AILocation.r[3].m128_f32[0] -= 3;
+	AILocation.r[3].m128_f32[0] -= 10;
 
 	int spacePirate3 = CreateSpacePirate(&tThisWorld, AILocation);
 	tThisWorld.atAiHeath[spacePirate3].heath = 100;
@@ -3651,8 +3654,8 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	edges.push_back(nodeindex5);
 	pcAiSystem->AddEdgestoNode(nodeindex6, edges);
 
-	tThisWorld.atPathPlanining[spacePirate2].Goal = nodeindex5;
-	tThisWorld.atPathPlanining[spacePirate2].startingNode = nodeindex6;
+	tThisWorld.atPathPlanining[spacePirate3].Goal = nodeindex5;
+	tThisWorld.atPathPlanining[spacePirate3].startingNode = nodeindex6;
 
 
 	for (int nCurrentEntity = 0; nCurrentEntity < ENTITYCOUNT; nCurrentEntity++)
@@ -4151,8 +4154,21 @@ int CGameMangerSystem::RealLevelUpdate()
 								tThisWorld.atClip[tThisWorld.atAIMask[nCurrentEntity].GunIndex].tryToReload = true;
 
 							}
+							for (int CurrentAIINdex = 0; CurrentAIINdex < tThisWorld.atActiveAI[nCurrentEntity].NoctifyOtherAi.size(); ++CurrentAIINdex) {
+
+								tThisWorld.atSimpleMesh[CurrentAIINdex].m_nColor = XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f);
+								tThisWorld.atAIVision[CurrentAIINdex].keepSearching = false;
+								tThisWorld.atActiveAI[CurrentAIINdex].active = true;
+								
+								if (tThisWorld.atClip[tThisWorld.atAIMask[CurrentAIINdex].GunIndex].nBulletsAvailables.size() <= 0)
+								{
+									tThisWorld.atClip[tThisWorld.atAIMask[CurrentAIINdex].GunIndex].tryToReload = true;
+
+								}
+							}
 #if AI_ON
 							tThisWorld.atClip[tThisWorld.atAIMask[nCurrentEntity].GunIndex].tryToShoot = true;
+
 #endif
 						}//
 						else if (tThisWorld.atProjectiles[indicies[i]].m_tnProjectileMask == (COMPONENT_PROJECTILESMASK | COMPONENT_METAL))
