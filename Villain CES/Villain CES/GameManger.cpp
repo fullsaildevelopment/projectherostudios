@@ -3723,7 +3723,7 @@ int CGameMangerSystem::RealLevelUpdate()
 	clickTimer.Signal();
 	//Camera Functions here will move to a input system function when all behaviors are finalized - ZFB
 	if (GamePaused == false &&  GameOver == false) {
-		
+		ShowCursor(false);%
 		
 			// Walk mode not needed in demo at the moment - ZFB
 			if (tCameraMode.bWalkMode == true)
