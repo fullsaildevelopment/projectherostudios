@@ -119,7 +119,7 @@ int CGameMangerSystem::LoadMainMenu()
 {
 	if (pcInputSystem->InputCheck(G_KEY_H) == 1)
 	{
-	pcAudioSystem->SendSoundsToEngine(AK::EVENTS::PLAY_FOOTSTEP,footSteps);
+		pcAudioSystem->SendSoundsToEngine(AK::EVENTS::PLAY_FOOTSTEP,footSteps);
 	}
 	
 	clickTimer.Signal();
@@ -1775,7 +1775,7 @@ int CGameMangerSystem::PathFindingExample()
 		}
 
 
-		if ((tThisWorld.atCollisionMask[nCurrentEntity].m_tnCollisionMask == (COMPONENT_COLLISIONMASK | COMPONENT_AABB | COMPONENT_NONSTATIC | COMPONENT_TRIGGER) | tThisWorld.atCollisionMask[nCurrentEntity].m_tnCollisionMask == (COMPONENT_COLLISIONMASK | COMPONENT_NONTRIGGER | COMPONENT_AABB | COMPONENT_NONSTATIC)))
+		if ((tThisWorld.atCollisionMask[nCurrentEntity].m_tnCollisionMask == (COMPONENT_COLLISIONMASK | COMPONENT_AABB | COMPONENT_NONSTATIC | COMPONENT_TRIGGER) || tThisWorld.atCollisionMask[nCurrentEntity].m_tnCollisionMask == (COMPONENT_COLLISIONMASK | COMPONENT_NONTRIGGER | COMPONENT_AABB | COMPONENT_NONSTATIC)))
 		{
 
 			vector<int> otherCollisionsIndex;
@@ -1802,7 +1802,8 @@ int CGameMangerSystem::PathFindingExample()
 						tThisWorld.atCollisionMask[nCurrentEntity].m_tnCollisionMask == (COMPONENT_COLLISIONMASK |
 							COMPONENT_NONTRIGGER | COMPONENT_AABB | COMPONENT_NONSTATIC)
 						&& (tThisWorld.atCollisionMask[otherCollisionsIndex[i]].m_tnCollisionMask == (COMPONENT_COLLISIONMASK |
-							COMPONENT_NONTRIGGER | COMPONENT_AABB | COMPONENT_STATIC) || tThisWorld.atCollisionMask[otherCollisionsIndex[i]].m_tnCollisionMask == (COMPONENT_COLLISIONMASK |
+							COMPONENT_NONTRIGGER | COMPONENT_AABB | COMPONENT_STATIC) 
+							|| tThisWorld.atCollisionMask[otherCollisionsIndex[i]].m_tnCollisionMask == (COMPONENT_COLLISIONMASK |
 								COMPONENT_NONTRIGGER | COMPONENT_AABB | COMPONENT_NONSTATIC))) {
 						tTempVertexBuffer.m_d3dWorldMatrix = pcCollisionSystem->WalkingThrewObjectCheck(tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, tThisWorld.atAABB[otherCollisionsIndex[i]], tThisWorld.atAABB[nCurrentEntity]);
 						tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = tTempVertexBuffer.m_d3dWorldMatrix;
@@ -1815,7 +1816,7 @@ int CGameMangerSystem::PathFindingExample()
 						tThisWorld.atCollisionMask[nCurrentEntity].m_tnCollisionMask == (COMPONENT_COLLISIONMASK |
 							COMPONENT_TRIGGER | COMPONENT_AABB | COMPONENT_NONSTATIC)
 						&& (tThisWorld.atCollisionMask[otherCollisionsIndex[i]].m_tnCollisionMask == (COMPONENT_COLLISIONMASK |
-							COMPONENT_NONTRIGGER | COMPONENT_AABB | COMPONENT_STATIC)) | tThisWorld.atCollisionMask[otherCollisionsIndex[i]].m_tnCollisionMask == (COMPONENT_COLLISIONMASK |
+							COMPONENT_NONTRIGGER | COMPONENT_AABB | COMPONENT_STATIC)) || tThisWorld.atCollisionMask[otherCollisionsIndex[i]].m_tnCollisionMask == (COMPONENT_COLLISIONMASK |
 								COMPONENT_NONTRIGGER | COMPONENT_AABB | COMPONENT_NONSTATIC))
 					{
 
@@ -2657,20 +2658,22 @@ int CGameMangerSystem::SpacePirateGamePlay()
 			if (pcCollisionSystem->AiVisionCheck(tThisWorld.atAIVision[nCurrentEntity].eyes0,&indicies) == true) {
 				float x = 0;
 				bool danger = false;
-				for (int i = 0; i < indicies.size(); ++i) {
-					if (PlayerStartIndex == indicies[i]) {
+				for (int i = 0; i < indicies.size(); ++i) 
+				{
+					if (PlayerStartIndex == indicies[i]) 
+					{
 						tThisWorld.atSimpleMesh[nCurrentEntity].m_nColor = XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f);
 						tThisWorld.atAIVision[nCurrentEntity].keepSearching = false;
 						tThisWorld.atActiveAI[nCurrentEntity].active = true;
 						danger = true;
-						if (tThisWorld.atClip[tThisWorld.atAIMask[nCurrentEntity].GunIndex].nBulletsAvailables.size() <= 0) {
+						if (tThisWorld.atClip[tThisWorld.atAIMask[nCurrentEntity].GunIndex].nBulletsAvailables.size() <= 0) 
+						{
 							tThisWorld.atClip[tThisWorld.atAIMask[nCurrentEntity].GunIndex].tryToReload = true;
 		
 						}
 						tThisWorld.atClip[tThisWorld.atAIMask[nCurrentEntity].GunIndex].tryToShoot = true;
 						
 						pcAiSystem->AddAiInCombat(nCurrentEntity);
-				//		tThisWorld.atAIMask[nCurrentEntity].m_tnAIMask = COMPONENT_AIMASK | COMPONENT_SEARCH | COMPONENT_PATHFINDTEST;
 					/*	if (tThisWorld.atPathPlanining[nCurrentEntity].foundDestination == true) {
 							int previousgoal = tThisWorld.atPathPlanining[nCurrentEntity].Goal;
 							int previousStartPosition = tThisWorld.atPathPlanining[nCurrentEntity].startingNode;
@@ -2682,15 +2685,17 @@ int CGameMangerSystem::SpacePirateGamePlay()
 						}*/
 						
 					}
-					else if (tThisWorld.atProjectiles[indicies[i]].m_tnProjectileMask == (COMPONENT_PROJECTILESMASK | COMPONENT_METAL)) {
+					else if (tThisWorld.atProjectiles[indicies[i]].m_tnProjectileMask == (COMPONENT_PROJECTILESMASK | COMPONENT_METAL)) 
+					{
 						danger = true;
-						tThisWorld.atSimpleMesh[nCurrentEntity].m_nColor = XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f);
-		
+						tThisWorld.atSimpleMesh[nCurrentEntity].m_nColor = XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f);		
 					}
-					else if(danger==false) {	
-				tThisWorld.atSimpleMesh[nCurrentEntity].m_nColor = XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f);
+					else if(danger==false) 
+					{	
+						tThisWorld.atSimpleMesh[nCurrentEntity].m_nColor = XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f);
 					}
-					else if (tThisWorld.atAIMask[indicies[i]].m_tnAIMask == COMPONENT_AIMASK | COMPONENT_FIGHTINGAI) {
+					else if (tThisWorld.atAIMask[indicies[i]].m_tnAIMask == (COMPONENT_AIMASK | COMPONENT_FIGHTINGAI))
+					{
 						float x = 0;
 					}
 				}
@@ -2861,7 +2866,7 @@ int CGameMangerSystem::SpacePirateGamePlay()
 		}
 			
 			
-	if ((tThisWorld.atCollisionMask[nCurrentEntity].m_tnCollisionMask == (COMPONENT_COLLISIONMASK | COMPONENT_AABB | COMPONENT_NONSTATIC | COMPONENT_TRIGGER) | tThisWorld.atCollisionMask[nCurrentEntity].m_tnCollisionMask == (COMPONENT_COLLISIONMASK | COMPONENT_NONTRIGGER | COMPONENT_AABB | COMPONENT_NONSTATIC)))
+	if ((tThisWorld.atCollisionMask[nCurrentEntity].m_tnCollisionMask == (COMPONENT_COLLISIONMASK | COMPONENT_AABB | COMPONENT_NONSTATIC | COMPONENT_TRIGGER) || tThisWorld.atCollisionMask[nCurrentEntity].m_tnCollisionMask == (COMPONENT_COLLISIONMASK | COMPONENT_NONTRIGGER | COMPONENT_AABB | COMPONENT_NONSTATIC)))
 	{
 
 		vector<int> otherCollisionsIndex;
@@ -2901,7 +2906,7 @@ int CGameMangerSystem::SpacePirateGamePlay()
 					tThisWorld.atCollisionMask[nCurrentEntity].m_tnCollisionMask == (COMPONENT_COLLISIONMASK |
 						COMPONENT_TRIGGER | COMPONENT_AABB | COMPONENT_NONSTATIC)
 					&& (tThisWorld.atCollisionMask[otherCollisionsIndex[i]].m_tnCollisionMask == (COMPONENT_COLLISIONMASK |
-						COMPONENT_NONTRIGGER | COMPONENT_AABB | COMPONENT_STATIC)) | tThisWorld.atCollisionMask[otherCollisionsIndex[i]].m_tnCollisionMask == (COMPONENT_COLLISIONMASK |
+						COMPONENT_NONTRIGGER | COMPONENT_AABB | COMPONENT_STATIC)) || tThisWorld.atCollisionMask[otherCollisionsIndex[i]].m_tnCollisionMask == (COMPONENT_COLLISIONMASK |
 							COMPONENT_NONTRIGGER | COMPONENT_AABB | COMPONENT_NONSTATIC))
 				{
 					
@@ -3363,7 +3368,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 
 #pragma endregion
 
-	tempImport = pcGraphicsSystem->ReadMesh("meshData_NoBrewery7.txt");
+	tempImport = pcGraphicsSystem->ReadMesh("meshData_NoBrewery8.txt");
 	matOpt = pcGraphicsSystem->CreateTexturesFromFile(tempImport.vtMaterials, tempImport.meshCount);
 	for (int meshIndex = 0; meshIndex < tempImport.meshCount; meshIndex++)
 	{	
@@ -3397,6 +3402,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	{
 		PlayerStartIndex = createClayton(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, tempImport.vtMeshes[meshIndex], tempImport.vtMaterials[meshIndex]);
 	}
+
 	GunIndexForPlayer = CreateGun(&tThisWorld, m_d3dWorldMatrix, PlayerStartIndex, -1, 1, 10.5, 3, 100);
 	tThisWorld.atClip[GunIndexForPlayer].bulletSpeed = 0.01;
 	tThisWorld.atClayton[PlayerStartIndex].health = 100;
@@ -3431,16 +3437,6 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	edges.clear();
 	edges.push_back(nodeindex);
 	pcAiSystem->AddEdgestoNode(nodeindex2, edges);
-
-
-
-	
-	/*int nodeindex3 = CreateNodePoint(&tThisWorld, nodeLocation);
-	nodePosition.x = nodeLocation.r[3].m128_f32[0];
-	nodePosition.y = nodeLocation.r[3].m128_f32[1];
-	nodePosition.z = nodeLocation.r[3].m128_f32[2];
-	pcAiSystem->AddNodeToPathFinding(nodeindex3, nodePosition, 1);
-*/
 
 	int spacePirate = CreateSpacePirate(&tThisWorld, AILocation);
 	tThisWorld.atAiHeath[spacePirate].heath = 100;
@@ -3581,7 +3577,6 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 
 	for (int nCurrentEntity = 0; nCurrentEntity < ENTITYCOUNT; nCurrentEntity++)
 	{
-
 		if (tThisWorld.atCollisionMask[nCurrentEntity].m_tnCollisionMask > 1)
 		{
 
@@ -3615,7 +3610,6 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	{
 		if (tThisWorld.atCollisionMask[nCurrentEntity].m_tnCollisionMask > 1)
 		{
-
 			tThisWorld.atAABB[nCurrentEntity] = pcCollisionSystem->updateAABB(tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, tThisWorld.atAABB[nCurrentEntity]);
 		}
 	}
@@ -3631,7 +3625,6 @@ int CGameMangerSystem::RealLevelUpdate()
 	m_d3dProjectionMatrix = pcGraphicsSystem->SetDefaultPerspective(m_RealTimeFov);
 
 	tCameraMode = pcInputSystem->CameraModeListen(tCameraMode);
-
 	static XMMATRIX m_d3d_ResultMatrix = pcGraphicsSystem->SetDefaultWorldPosition();
 	static XMMATRIX m_d3dOffsetMatrix = pcGraphicsSystem->SetDefaultOffset();
 	CGraphicsSystem::TPrimalVertexBufferType tTempVertexBuffer;
@@ -3650,7 +3643,9 @@ int CGameMangerSystem::RealLevelUpdate()
 		ScreenToClient(cApplicationWindow, &clickPoint);
 
 		if (GameOver && tThisWorld.atClayton[PlayerStartIndex].health > 0)
+		{
 			return 2;
+		}
 	}
 
 	if (pcInputSystem->InputCheck(G_KEY_P) && !GameOver)
@@ -3666,7 +3661,6 @@ int CGameMangerSystem::RealLevelUpdate()
 
 	if (tCameraMode.bWalkMode == true)
 	{
-
 		if (tCameraMode.bSwitch == true)
 		{
 			m_d3d_ResultMatrix = pcInputSystem->CameraOrientationReset(m_d3d_ResultMatrix);
@@ -3692,13 +3686,15 @@ int CGameMangerSystem::RealLevelUpdate()
 			CameraNewPosition = XMMatrixMultiply(m_d3dOffsetMatrix, CameraNewPosition);
 			aimCamera->d3d_Position = pcInputSystem->CameraBehaviorLerp(walkCamera->d3d_Position, CameraNewPosition, scale);
 			scale += 0.001;
-			if (scale > 1) {
+			if (scale > 1) 
+			{
 				tCameraMode.bSwitch = false;
 				scale = 0;
 
 			}
 		}
-		else {
+		else 
+		{
 			m_RealTimeFov = pcInputSystem->ZoomSight(m_RealTimeFov);
 
 			m_d3dPlayerMatrix = pcInputSystem->AimMode(m_d3dPlayerMatrix);
@@ -3737,7 +3733,7 @@ int CGameMangerSystem::RealLevelUpdate()
 		tTempVertexBuffer.m_d3dWorldMatrix = tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix;
 		tTempVertexBuffer.m_d3dProjectionMatrix = m_d3dProjectionMatrix;
 
-		if (tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask == COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_SHADERID)
+		if (tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_SHADERID))
 		{
 			tTempVertexBuffer.m_d3dWorldMatrix = m_d3dWorldMatrix;
 			if (tCameraMode.bWalkMode == true)
@@ -3758,7 +3754,7 @@ int CGameMangerSystem::RealLevelUpdate()
 			pcGraphicsSystem->ExecutePipeline(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atMesh[nCurrentEntity].m_nIndexCount, tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask, tThisWorld.atShaderID[nCurrentEntity].m_nShaderID);
 		}
 
-		if (tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask == COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_SKYBOX | COMPONENT_TEXTURE | COMPONENT_SHADERID)
+		if (tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_SKYBOX | COMPONENT_TEXTURE | COMPONENT_SHADERID))
 		{
 			tMyVertexBufferTemp.m_d3dWorldMatrix = tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix;
 			tMyVertexBufferTemp.m_d3dProjectionMatrix = m_d3dProjectionMatrix;
@@ -3786,7 +3782,7 @@ int CGameMangerSystem::RealLevelUpdate()
 
 	for (int nCurrentEntity = 0; nCurrentEntity < ENTITYCOUNT; nCurrentEntity++)
 	{
-		if (tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask == COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_SHADERID)
+		if (tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_SHADERID))
 		{
 			if (tThisWorld.atShaderID[nCurrentEntity].m_nShaderID == 10)
 			{
@@ -3800,38 +3796,36 @@ int CGameMangerSystem::RealLevelUpdate()
 	pcGraphicsSystem->UpdateD3D();
 
 	#pragma region Input Garbage
-	// togle the modes that you are in
-	if (pcInputSystem->InputCheck(G_BUTTON_MIDDLE)) {
+	// toggle the modes that you are in
+	if (pcInputSystem->InputCheck(G_BUTTON_MIDDLE)) 
+	{
 		tThisWorld.atClip[GunIndexForPlayer].GunMode = !tThisWorld.atClip[GunIndexForPlayer].GunMode;
 	}
 	// shoot a bullet
-	if (pcInputSystem->InputCheck(G_BUTTON_LEFT) == 1 && tThisWorld.atClip[GunIndexForPlayer].GunMode == true) {
-
+	if (pcInputSystem->InputCheck(G_BUTTON_LEFT) == 1 
+		&& tThisWorld.atClip[GunIndexForPlayer].GunMode == true) 
+	{
 		tThisWorld.atClip[GunIndexForPlayer].tryToShoot = true;
-
-
 	}
 	// shoot a ray
-	else if (pcInputSystem->InputCheck(G_BUTTON_LEFT) == 1 && tThisWorld.atClip[GunIndexForPlayer].GunMode == false) {
+	else if (pcInputSystem->InputCheck(G_BUTTON_LEFT) == 1 
+		&& tThisWorld.atClip[GunIndexForPlayer].GunMode == false) 
+	{
 		tThisWorld.atClip[GunIndexForPlayer].tryToShoot = true;
-
 	}
 	// turn the ray off
 	else if (tThisWorld.atClip[GunIndexForPlayer].GunMode == false)
 	{
 		tThisWorld.atClip[GunIndexForPlayer].tryToShoot = false;
-
 	}
 
 	// reload
-	if (pcInputSystem->InputCheck(G_KEY_R) == 1) {
-
+	if (pcInputSystem->InputCheck(G_KEY_R) == 1) 
+	{
 		tThisWorld.atClip[GunIndexForPlayer].tryToReload = true;
-
 	}
 
 #pragma endregion
-
 	for (int nCurrentEntity = 0; nCurrentEntity < ENTITYCOUNT; nCurrentEntity++)
 	{
 		tTempVertexBuffer.m_d3dWorldMatrix = tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix;
@@ -3870,30 +3864,43 @@ int CGameMangerSystem::RealLevelUpdate()
 
 				tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix.r[3].m128_f32[1] += 2;
 
-				if (tThisWorld.atBar[nCurrentEntity].backgroundColor.x == 0 &&
-					tThisWorld.atBar[nCurrentEntity].backgroundColor.y == 0 &&
-					tThisWorld.atBar[nCurrentEntity].backgroundColor.z == 0)
+				if (tThisWorld.atBar[nCurrentEntity].backgroundColor.x == 0 
+					&& tThisWorld.atBar[nCurrentEntity].backgroundColor.y == 0 
+					&& tThisWorld.atBar[nCurrentEntity].backgroundColor.z == 0)
 				{
 					if (tCameraMode.bWalkMode == true)
+					{
 						pcGraphicsSystem->InitQuadShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, m_d3dViewMatrix, m_d3dProjectionMatrix, tThisWorld.atDebugMesh[nCurrentEntity], walkCamera->d3d_Position, tThisWorld.atBar[nCurrentEntity].backgroundColor, 1.0f);
+					}
 					else if (tCameraMode.bAimMode == true)
+					{
 						pcGraphicsSystem->InitQuadShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, m_d3dViewMatrix, m_d3dProjectionMatrix, tThisWorld.atDebugMesh[nCurrentEntity], aimCamera->d3d_Position, tThisWorld.atBar[nCurrentEntity].backgroundColor, 1.0f);
+					}
 					else if (tCameraMode.bDebugMode == true)
+					{
 						pcGraphicsSystem->InitQuadShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, m_d3dViewMatrix, m_d3dProjectionMatrix, tThisWorld.atDebugMesh[nCurrentEntity], debugCamera->d3d_Position, tThisWorld.atBar[nCurrentEntity].backgroundColor, 1.0f);
+					}
 				}
 				else
 				{
 					if (tCameraMode.bWalkMode == true)
+					{
 						pcGraphicsSystem->InitQuadShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, m_d3dViewMatrix, m_d3dProjectionMatrix, tThisWorld.atDebugMesh[nCurrentEntity], walkCamera->d3d_Position, tThisWorld.atBar[nCurrentEntity].backgroundColor, tThisWorld.atAiHeath[targetEntity].heath * .01);
+					}
 					else if (tCameraMode.bAimMode == true)
+					{
 						pcGraphicsSystem->InitQuadShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, m_d3dViewMatrix, m_d3dProjectionMatrix, tThisWorld.atDebugMesh[nCurrentEntity], aimCamera->d3d_Position, tThisWorld.atBar[nCurrentEntity].backgroundColor, tThisWorld.atAiHeath[targetEntity].heath * .01);
+					}
 					else if (tCameraMode.bDebugMode == true)
+					{
 						pcGraphicsSystem->InitQuadShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, m_d3dViewMatrix, m_d3dProjectionMatrix, tThisWorld.atDebugMesh[nCurrentEntity], debugCamera->d3d_Position, tThisWorld.atBar[nCurrentEntity].backgroundColor, tThisWorld.atAiHeath[targetEntity].heath * .01);
+					}
 				}
 			}
 			else
 			{
-				if (nCurrentEntity == rayindex) {
+				if (nCurrentEntity == rayindex) 
+				{
 					tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = tThisWorld.atWorldMatrix[PlayerStartIndex].worldMatrix;
 				}
 				pcGraphicsSystem->InitPrimalShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, debugCamera->d3d_Position, m_d3dProjectionMatrix, tThisWorld.atDebugMesh[nCurrentEntity], debugCamera->d3d_Position);
@@ -3967,37 +3974,47 @@ int CGameMangerSystem::RealLevelUpdate()
 		if (pcAiSystem->GetNumberOfAI() <= 0)
 		{
 			GameOver = true;
-			//return -1;
 		}
-		if (tThisWorld.atAIMask[nCurrentEntity].m_tnAIMask == (COMPONENT_AIMASK | COMPONENT_FOLLOW) || tThisWorld.atAIMask[nCurrentEntity].m_tnAIMask == (COMPONENT_SHOOT | COMPONENT_AIMASK | COMPONENT_FOLLOW) || (COMPONENT_AIMASK | COMPONENT_SEARCH | COMPONENT_PATHFINDTEST) == tThisWorld.atAIMask[nCurrentEntity].m_tnAIMask)
+		if (tThisWorld.atAIMask[nCurrentEntity].m_tnAIMask == (COMPONENT_AIMASK | COMPONENT_FOLLOW) 
+			|| tThisWorld.atAIMask[nCurrentEntity].m_tnAIMask == (COMPONENT_SHOOT | COMPONENT_AIMASK | COMPONENT_FOLLOW) 
+			|| tThisWorld.atAIMask[nCurrentEntity].m_tnAIMask == (COMPONENT_AIMASK | COMPONENT_SEARCH | COMPONENT_PATHFINDTEST))
 		{
 #if AI_ON				
-			if (tThisWorld.atActiveAI[nCurrentEntity].active == true) {
+			if (tThisWorld.atActiveAI[nCurrentEntity].active == true) 
+			{
 				pcAiSystem->LookAtObject(tThisWorld.atWorldMatrix[tThisWorld.atAIVision[nCurrentEntity].indexLookingAt].worldMatrix, &tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix);
 				pcAiSystem->ShootGun(&tThisWorld.atClip[tThisWorld.atAIMask[nCurrentEntity].GunIndex]);
 			}
 #endif // AI_ON
 		}
 
-		if (tThisWorld.atAIMask[nCurrentEntity].m_tnAIMask == (COMPONENT_AIMASK | COMPONENT_SEARCH) || tThisWorld.atAIMask[nCurrentEntity].m_tnAIMask == (COMPONENT_AIMASK | COMPONENT_SPOTEDPLAYER) || (COMPONENT_AIMASK | COMPONENT_SEARCH | COMPONENT_PATHFINDTEST) == tThisWorld.atAIMask[nCurrentEntity].m_tnAIMask) {
-
-
+		if (tThisWorld.atAIMask[nCurrentEntity].m_tnAIMask == (COMPONENT_AIMASK | COMPONENT_SEARCH) 
+			|| tThisWorld.atAIMask[nCurrentEntity].m_tnAIMask == (COMPONENT_AIMASK | COMPONENT_SPOTEDPLAYER) 
+			|| tThisWorld.atAIMask[nCurrentEntity].m_tnAIMask == (COMPONENT_AIMASK | COMPONENT_SEARCH | COMPONENT_PATHFINDTEST)) 
+		{
 #if AI_ON
-			if (tThisWorld.atAIVision[nCurrentEntity].keepSearching == true) {
-				if (tThisWorld.atAIVision[nCurrentEntity].visionRotation < 7 && tThisWorld.atAIVision[nCurrentEntity].keepRotatingRight == true) {
+			if (tThisWorld.atAIVision[nCurrentEntity].keepSearching == true) 
+			{
+				if (tThisWorld.atAIVision[nCurrentEntity].visionRotation < 7 
+					&& tThisWorld.atAIVision[nCurrentEntity].keepRotatingRight == true) 
+				{
 					tThisWorld.atAIVision[nCurrentEntity].visionRotation += 0.01;
 					tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = pcAiSystem->LookBackLeftToRight(tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix,
 						true);
 				}
-				else if (tThisWorld.atAIVision[nCurrentEntity].keepRotatingRight == true) {
+				else if (tThisWorld.atAIVision[nCurrentEntity].keepRotatingRight == true) 
+				{
 					tThisWorld.atAIVision[nCurrentEntity].keepRotatingRight = false;
 				}
-				else if (tThisWorld.atAIVision[nCurrentEntity].visionRotation > -7 && tThisWorld.atAIVision[nCurrentEntity].keepRotatingRight == false) {
+				else if (tThisWorld.atAIVision[nCurrentEntity].visionRotation > -7 
+					&& tThisWorld.atAIVision[nCurrentEntity].keepRotatingRight == false) 
+				{
 					tThisWorld.atAIVision[nCurrentEntity].visionRotation -= 0.01;
 					tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = pcAiSystem->LookBackLeftToRight(tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix,
 						false);
 				}
-				else if (tThisWorld.atAIVision[nCurrentEntity].keepRotatingRight == false) {
+				else if (tThisWorld.atAIVision[nCurrentEntity].keepRotatingRight == false) 
+				{
 					tThisWorld.atAIVision[nCurrentEntity].keepRotatingRight = true;
 				}
 			}
@@ -4030,7 +4047,8 @@ int CGameMangerSystem::RealLevelUpdate()
 			pcAiSystem->UpdateFrustum(tThisWorld.atAIVision[nCurrentEntity].eyes0, secondcamera, 70, 1, 0.1, 20);
 			//	 pcAiSystem->calculate_frustum(&tThisWorld,tThisWorld.atAIVision[nCurrentEntity].eyes0, secondcamera,70,1,0.1,20, nCurrentEntity, -2.1, 1.4, 19.6);
 			vector<int> indicies;
-			if (pcCollisionSystem->AiVisionCheck(tThisWorld.atAIVision[nCurrentEntity].eyes0, &indicies) == true) {
+			if (pcCollisionSystem->AiVisionCheck(tThisWorld.atAIVision[nCurrentEntity].eyes0, &indicies) == true) 
+			{
 				float x = 0;
 				bool danger = false;
 				for (int i = 0; i < indicies.size(); ++i) 
@@ -4048,74 +4066,44 @@ int CGameMangerSystem::RealLevelUpdate()
 						}
 #if AI_ON
 						tThisWorld.atClip[tThisWorld.atAIMask[nCurrentEntity].GunIndex].tryToShoot = true;
-
 #endif
-
-						//pcAiSystem->AddAiInCombat(nCurrentEntity);
-						//		tThisWorld.atAIMask[nCurrentEntity].m_tnAIMask = COMPONENT_AIMASK | COMPONENT_SEARCH | COMPONENT_PATHFINDTEST;
-						/*	if (tThisWorld.atPathPlanining[nCurrentEntity].foundDestination == true) {
-						int previousgoal = tThisWorld.atPathPlanining[nCurrentEntity].Goal;
-						int previousStartPosition = tThisWorld.atPathPlanining[nCurrentEntity].startingNode;
-						tThisWorld.atPathPlanining[nCurrentEntity].Goal = previousStartPosition;
-						tThisWorld.atPathPlanining[nCurrentEntity].startingNode = previousgoal;
-						tThisWorld.atPathPlanining[nCurrentEntity].foundDestination = false;
-						tThisWorld.atPathPlanining[nCurrentEntity].testingPathFinding = true;
-
-						}*/
-
-					}
+					}//
 					else if (tThisWorld.atProjectiles[indicies[i]].m_tnProjectileMask == (COMPONENT_PROJECTILESMASK | COMPONENT_METAL)) 
 					{
 						danger = true;
 						tThisWorld.atSimpleMesh[nCurrentEntity].m_nColor = XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f);
-
 					}
-					else if (danger == false) {
+					else if (danger == false) 
+					{
 						tThisWorld.atSimpleMesh[nCurrentEntity].m_nColor = XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f);
 					}
-					else if (tThisWorld.atAIMask[indicies[i]].m_tnAIMask == COMPONENT_AIMASK | COMPONENT_FIGHTINGAI) 
+					else if (tThisWorld.atAIMask[indicies[i]].m_tnAIMask == (COMPONENT_AIMASK | COMPONENT_FIGHTINGAI))
 					{
 						float x = 0;
 					}
 				}
 			}
-
-
-
-			/*	if (cloasestPlayer < closestWall) {
-			XMFLOAT4 red;
-			red.y = 0;
-			red.z = 0;
-			red.w = 1;
-			red.x = 1;
-			tThisWorld.atSimpleMesh[8].m_nColor = red;
-			spotedplayer = true;
-			tThisWorld.atAIMask[nCurrentEntity].m_tnAIMask = COMPONENT_AIMASK | COMPONENT_SPOTEDPLAYER;
-			tThisWorld.atAIVision[nCurrentEntity].playerLastKnownLocation = tThisWorld.atWorldMatrix[PlayerStartIndex].worldMatrix;
-			tThisWorld.atAIVision[nCurrentEntity].keepSearching = false;
-			}
-			else {
-			spotedplayer = false;
-			tThisWorld.atAIMask[nCurrentEntity].m_tnAIMask = COMPONENT_AIMASK | COMPONENT_SEARCH;
-			}*/
-
 		}
-		//else if(tThisWorld.atAIMask[nCurrentEntity].m_tnAIMask==())
-		if (tThisWorld.atAIMask[nCurrentEntity].m_tnAIMask == (COMPONENT_AIMASK | COMPONENT_PATHFINDTEST) || (COMPONENT_AIMASK | COMPONENT_SEARCH | COMPONENT_PATHFINDTEST) == tThisWorld.atAIMask[nCurrentEntity].m_tnAIMask) {
-			if (tThisWorld.atActiveAI[nCurrentEntity].active == true) {
-				if (tThisWorld.atPathPlanining[nCurrentEntity].testingPathFinding == true) {
-
+		if (tThisWorld.atAIMask[nCurrentEntity].m_tnAIMask == (COMPONENT_AIMASK | COMPONENT_PATHFINDTEST) 
+			|| tThisWorld.atAIMask[nCurrentEntity].m_tnAIMask == (COMPONENT_AIMASK | COMPONENT_SEARCH | COMPONENT_PATHFINDTEST))
+		{
+			if (tThisWorld.atActiveAI[nCurrentEntity].active == true) 
+			{
+				if (tThisWorld.atPathPlanining[nCurrentEntity].testingPathFinding == true) 
+				{
 					pcAiSystem->FindBestPath(tThisWorld.atPathPlanining[nCurrentEntity].startingNode,
 						tThisWorld.atPathPlanining[nCurrentEntity].Goal,
 						&tThisWorld.atPathPlanining[nCurrentEntity].directions);
-
 					tThisWorld.atPathPlanining[nCurrentEntity].testingPathFinding = false;
 				}
-				else {
-					if (tThisWorld.atPathPlanining[nCurrentEntity].DelayMovement <= 0) {
+				else 
+				{
+					if (tThisWorld.atPathPlanining[nCurrentEntity].DelayMovement <= 0) 
+					{
 						pcAiSystem->PathPlaningMovement(&tThisWorld.atPathPlanining[nCurrentEntity], &tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix);
 					}
-					else {
+					else 
+					{
 						tThisWorld.atPathPlanining[nCurrentEntity].DelayMovement -= 0.001;
 					}
 				}
@@ -4123,7 +4111,8 @@ int CGameMangerSystem::RealLevelUpdate()
 		}
 		if (tThisWorld.atProjectiles[nCurrentEntity].m_tnProjectileMask == (COMPONENT_PROJECTILESMASK | COMPONENT_CLIP))
 		{
-			if (tThisWorld.atClip[nCurrentEntity].GunMode == false && tThisWorld.atClip[nCurrentEntity].tryToShoot == true)
+			if (tThisWorld.atClip[nCurrentEntity].GunMode == false 
+				&& tThisWorld.atClip[nCurrentEntity].tryToShoot == true)
 			{
 				if (tThisWorld.atClip[nCurrentEntity].maderay == false)
 				{
@@ -4133,21 +4122,27 @@ int CGameMangerSystem::RealLevelUpdate()
 					pcGraphicsSystem->CreateEntityBuffer(&tThisWorld, rayindex);
 					tThisWorld.atClip[nCurrentEntity].maderay = true;
 				}
-
 			}
-			else if (tThisWorld.atClip[nCurrentEntity].GunMode == false && tThisWorld.atClip[nCurrentEntity].tryToShoot == false && tThisWorld.atClip[nCurrentEntity].maderay == true)
+			else if (tThisWorld.atClip[nCurrentEntity].GunMode == false 
+				&& tThisWorld.atClip[nCurrentEntity].tryToShoot == false 
+				&& tThisWorld.atClip[nCurrentEntity].maderay == true)
 			{
 				pcGraphicsSystem->CleanD3DObject(&tThisWorld, rayindex);
 				rayindex = -1;
 				tThisWorld.atClip[nCurrentEntity].maderay = false;
-
 			}
 			else
 			{
-				if (nCurrentEntity == 10 && tThisWorld.atClip[nCurrentEntity].tryToShoot == true && tThisWorld.atClip[nCurrentEntity].fShootingCoolDown >= 0) {
+				if (nCurrentEntity == 10 
+					&& tThisWorld.atClip[nCurrentEntity].tryToShoot == true 
+					&& tThisWorld.atClip[nCurrentEntity].fShootingCoolDown >= 0) 
+				{
 					float x = 0;
 				}
-				if (tThisWorld.atClip[nCurrentEntity].tryToShoot == true && tThisWorld.atClip[nCurrentEntity].nBulletsAvailables.size() > 0 && tThisWorld.atClip[nCurrentEntity].fShootingCoolDown <= 0)
+
+				if (tThisWorld.atClip[nCurrentEntity].tryToShoot == true 
+					&& tThisWorld.atClip[nCurrentEntity].nBulletsAvailables.size() > 0 
+					&& tThisWorld.atClip[nCurrentEntity].fShootingCoolDown <= 0)
 				{
 					if (nCurrentEntity == PlayerStartIndex)
 					{
@@ -4185,12 +4180,13 @@ int CGameMangerSystem::RealLevelUpdate()
 					pcGraphicsSystem->CreateEntityBuffer(&tThisWorld, newbullet);
 
 					tThisWorld.atClip[nCurrentEntity].tryToShoot = false;
-
 				}
-				else if (tThisWorld.atClip[nCurrentEntity].tryToShoot == true) {
+				else if (tThisWorld.atClip[nCurrentEntity].tryToShoot == true) 
+				{
 					tThisWorld.atClip[nCurrentEntity].tryToShoot = false;
 				}
-				if (tThisWorld.atClip[nCurrentEntity].tryToReload == true) {
+				if (tThisWorld.atClip[nCurrentEntity].tryToReload == true) 
+				{
 					pcProjectileSystem->Reload(&tThisWorld.atClip[nCurrentEntity]);
 					tThisWorld.atClip[nCurrentEntity].tryToReload = false;
 
@@ -4207,184 +4203,184 @@ int CGameMangerSystem::RealLevelUpdate()
 						delete[] textBuffer;
 					}
 				}
-				if (tThisWorld.atClip[nCurrentEntity].nBulletsFired.size() != 0) {
-					for (int i = 0; i < tThisWorld.atClip[nCurrentEntity].nBulletsFired.size(); ++i) {
-						if (tThisWorld.atClip[nCurrentEntity].fAliveTime[i] < tThisWorld.atClip[nCurrentEntity].FValueOfCoolDown) {
+				if (tThisWorld.atClip[nCurrentEntity].nBulletsFired.size() != 0) 
+				{
+					for (int i = 0; i < tThisWorld.atClip[nCurrentEntity].nBulletsFired.size(); ++i) 
+					{
+						if (tThisWorld.atClip[nCurrentEntity].fAliveTime[i] < tThisWorld.atClip[nCurrentEntity].FValueOfCoolDown) 
+						{
 							pcPhysicsSystem->AddBulletForce(&tThisWorld.atRigidBody[tThisWorld.atClip[nCurrentEntity].nBulletsFired[i]], tThisWorld.atClip[nCurrentEntity].bulletSpeed);
 							tThisWorld.atClip[nCurrentEntity].fAliveTime[i] += 0.1;
-
 						}
-						else {
+						else 
+						{
 							tThisWorld.atClip[nCurrentEntity].fAliveTime.erase(tThisWorld.atClip[nCurrentEntity].fAliveTime.begin() + i);
 							pcCollisionSystem->RemoveAABBCollider(tThisWorld.atClip[nCurrentEntity].nBulletsFired[i]);
 							pcGraphicsSystem->CleanD3DObject(&tThisWorld, tThisWorld.atClip[nCurrentEntity].nBulletsFired[i]);
 							tThisWorld.atClip[nCurrentEntity].nBulletsFired.erase(tThisWorld.atClip[nCurrentEntity].nBulletsFired.begin() + i);
-							for (int i = 0; i < tThisWorld.atClip[nCurrentEntity].fAliveTime.size(); ++i) {
-								if (tThisWorld.atClip[tThisWorld.atClip[nCurrentEntity].nBulletsFired[i]].indexInclip != 0) {
+							for (int i = 0; i < tThisWorld.atClip[nCurrentEntity].fAliveTime.size(); ++i) 
+							{
+								if (tThisWorld.atClip[tThisWorld.atClip[nCurrentEntity].nBulletsFired[i]].indexInclip != 0) 
+								{
 									tThisWorld.atClip[tThisWorld.atClip[nCurrentEntity].nBulletsFired[i]].indexInclip -= 1;
 								}
-
 							}
 						}
 					}
 
 				}
 				if (tThisWorld.atClip[nCurrentEntity].fShootingCoolDown > 0)
+				{
 					tThisWorld.atClip[nCurrentEntity].fShootingCoolDown -= 1.1;
+				}
 			}
-
-
 		}
 
 
-		if (nCurrentEntity == PlayerStartIndex) {
+		if (nCurrentEntity == PlayerStartIndex) 
+		{
 			float x = 0;
 		}
 		tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = pcPhysicsSystem->ResolveForces(&tThisWorld.atRigidBody[nCurrentEntity], tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, true);
 
-		if (tThisWorld.atProjectiles[nCurrentEntity].m_tnProjectileMask == (COMPONENT_PROJECTILESMASK | COMPONENT_RAYGUN)) {
+		if (tThisWorld.atProjectiles[nCurrentEntity].m_tnProjectileMask == (COMPONENT_PROJECTILESMASK | COMPONENT_RAYGUN)) 
+		{
 			float CloseEstObject = 10000000000000000000.0f;
 			float* distanceCalucaltion = new float();
-			for (list<TAABB>::iterator ptr = pcCollisionSystem->m_AAbb.begin(); ptr != pcCollisionSystem->m_AAbb.end(); ++ptr) {
+			for (list<TAABB>::iterator ptr = pcCollisionSystem->m_AAbb.begin(); ptr != pcCollisionSystem->m_AAbb.end(); ++ptr) 
+			{
 
 				if (ptr->m_IndexLocation != PlayerStartIndex && ptr->m_IndexLocation != GunIndexForPlayer)
-					if (pcCollisionSystem->intersectRayAABox2(XMVector3Transform(tThisWorld.atDebugMesh[nCurrentEntity].m_VertexData[0], tThisWorld.atWorldMatrix[PlayerStartIndex].worldMatrix)
-						, XMVector3Transform(tThisWorld.atDebugMesh[nCurrentEntity].m_VertexData[1], tThisWorld.atWorldMatrix[PlayerStartIndex].worldMatrix), *ptr
-					) == true) {
+				{
+					if (pcCollisionSystem->intersectRayAABox2(
+							XMVector3Transform(tThisWorld.atDebugMesh[nCurrentEntity].m_VertexData[0], 
+							tThisWorld.atWorldMatrix[PlayerStartIndex].worldMatrix), 
+							XMVector3Transform(tThisWorld.atDebugMesh[nCurrentEntity].m_VertexData[1], 
+							tThisWorld.atWorldMatrix[PlayerStartIndex].worldMatrix), *ptr
+					) == true) 
+					{
 						//CloseEstObject = *distanceCalucaltion;
 						tThisWorld.atClip[GunIndexForPlayer].currentMaterial = 0;
 						cout << "turtle" << '/n';
 						tThisWorld.atClip[GunIndexForPlayer].colorofBullets = tThisWorld.atSimpleMesh[ptr->m_IndexLocation].m_nColor;
 					}
+
+				}
 			}
 			delete distanceCalucaltion;
 		}
 
 
-		if (tThisWorld.atCollisionMask[nCurrentEntity].m_tnCollisionMask == (COMPONENT_COLLISIONMASK |
-			COMPONENT_TRIGGER | COMPONENT_AABB | COMPONENT_NONSTATIC) || tThisWorld.atCollisionMask[nCurrentEntity].m_tnCollisionMask == (COMPONENT_COLLISIONMASK |
-				COMPONENT_NONTRIGGER | COMPONENT_AABB | COMPONENT_NONSTATIC)) {
+		if (tThisWorld.atCollisionMask[nCurrentEntity].m_tnCollisionMask == (COMPONENT_COLLISIONMASK | COMPONENT_TRIGGER | COMPONENT_AABB | COMPONENT_NONSTATIC) 
+			|| tThisWorld.atCollisionMask[nCurrentEntity].m_tnCollisionMask == (COMPONENT_COLLISIONMASK | COMPONENT_NONTRIGGER | COMPONENT_AABB | COMPONENT_NONSTATIC)) 
+		{
 			tThisWorld.atAABB[nCurrentEntity] = pcCollisionSystem->updateAABB(tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, tThisWorld.atAABB[nCurrentEntity]);
 		}
 
 		
-		if ((tThisWorld.atCollisionMask[nCurrentEntity].m_tnCollisionMask == (COMPONENT_COLLISIONMASK | COMPONENT_AABB | COMPONENT_NONSTATIC | COMPONENT_TRIGGER) | tThisWorld.atCollisionMask[nCurrentEntity].m_tnCollisionMask == (COMPONENT_COLLISIONMASK | COMPONENT_NONTRIGGER | COMPONENT_AABB | COMPONENT_NONSTATIC)))
+		if ((tThisWorld.atCollisionMask[nCurrentEntity].m_tnCollisionMask == (COMPONENT_COLLISIONMASK | COMPONENT_AABB | COMPONENT_NONSTATIC | COMPONENT_TRIGGER) || tThisWorld.atCollisionMask[nCurrentEntity].m_tnCollisionMask == (COMPONENT_COLLISIONMASK | COMPONENT_NONTRIGGER | COMPONENT_AABB | COMPONENT_NONSTATIC)))
+		{
+			if (nCurrentEntity == PlayerStartIndex) 
 			{
-				if (nCurrentEntity == PlayerStartIndex) {
-					float x = 0;
-				}
-				vector<int> otherCollisionsIndex;
-				if (pcCollisionSystem->AABBtoAABBCollisionCheck(tThisWorld.atAABB[nCurrentEntity], &otherCollisionsIndex) == true)
-				{
+				float x = 0;
+			}
+			vector<int> otherCollisionsIndex;
+			if (pcCollisionSystem->AABBtoAABBCollisionCheck(tThisWorld.atAABB[nCurrentEntity], &otherCollisionsIndex) == true)
+			{
 					
-					for (int i = 0; i < otherCollisionsIndex.size(); ++i) {
-						/*if (otherCollisionsIndex[i] == 2 || otherCollisionsIndex[i] == 3) {
-							break;
-						}*/
-						if (tThisWorld.atRigidBody[otherCollisionsIndex[i]].ground == true && tThisWorld.atCollisionMask[nCurrentEntity].m_tnCollisionMask !=
-							(COMPONENT_COLLISIONMASK |
-								COMPONENT_TRIGGER | COMPONENT_AABB | COMPONENT_NONSTATIC)) {
-							if (nCurrentEntity == 8)
-							{
-								float x = 0;
-							}
-
-							tThisWorld.atRigidBody[nCurrentEntity].totalForce = -tThisWorld.atRigidBody[nCurrentEntity].velocity;
-
-
-							tTempVertexBuffer.m_d3dWorldMatrix = pcPhysicsSystem->ResolveForces(&tThisWorld.atRigidBody[nCurrentEntity], tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, false);
-							tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = pcCollisionSystem->WalkingThrewObjectCheck(tTempVertexBuffer.m_d3dWorldMatrix, tThisWorld.atAABB[otherCollisionsIndex[i]], tThisWorld.atAABB[nCurrentEntity]);
-							tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = tTempVertexBuffer.m_d3dWorldMatrix;
-
-						}
-						if (tThisWorld.atRigidBody[nCurrentEntity].ground == false && tThisWorld.atRigidBody[nCurrentEntity].wall == false &&
-							tThisWorld.atCollisionMask[nCurrentEntity].m_tnCollisionMask == (COMPONENT_COLLISIONMASK |
-								COMPONENT_NONTRIGGER | COMPONENT_AABB | COMPONENT_NONSTATIC)
-							&& (tThisWorld.atCollisionMask[otherCollisionsIndex[i]].m_tnCollisionMask == (COMPONENT_COLLISIONMASK |
-								COMPONENT_NONTRIGGER | COMPONENT_AABB | COMPONENT_STATIC) || tThisWorld.atCollisionMask[otherCollisionsIndex[i]].m_tnCollisionMask == (COMPONENT_COLLISIONMASK |
-									COMPONENT_NONTRIGGER | COMPONENT_AABB | COMPONENT_NONSTATIC))) {
-							tTempVertexBuffer.m_d3dWorldMatrix = pcCollisionSystem->WalkingThrewObjectCheck(tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, tThisWorld.atAABB[otherCollisionsIndex[i]], tThisWorld.atAABB[nCurrentEntity]);
-							tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = tTempVertexBuffer.m_d3dWorldMatrix;
-							if (tThisWorld.atInputMask[nCurrentEntity].m_tnInputMask == (COMPONENT_CLAYTON | COMPONENT_INPUTMASK)) {
-								m_d3dPlayerMatrix = tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix;
-							}
-
-						}
-						if (tThisWorld.atRigidBody[nCurrentEntity].ground == false && tThisWorld.atRigidBody[otherCollisionsIndex[i]].ground == false && tThisWorld.atRigidBody[nCurrentEntity].wall == false &&
-							tThisWorld.atCollisionMask[nCurrentEntity].m_tnCollisionMask == (COMPONENT_COLLISIONMASK |
-								COMPONENT_TRIGGER | COMPONENT_AABB | COMPONENT_NONSTATIC)
-							&& (tThisWorld.atCollisionMask[otherCollisionsIndex[i]].m_tnCollisionMask == (COMPONENT_COLLISIONMASK |
-								COMPONENT_NONTRIGGER | COMPONENT_AABB | COMPONENT_STATIC)) | tThisWorld.atCollisionMask[otherCollisionsIndex[i]].m_tnCollisionMask == (COMPONENT_COLLISIONMASK |
-									COMPONENT_NONTRIGGER | COMPONENT_AABB | COMPONENT_NONSTATIC))
+				for (int i = 0; i < otherCollisionsIndex.size(); ++i) 
+				{
+					if (tThisWorld.atRigidBody[otherCollisionsIndex[i]].ground == true 
+						&& tThisWorld.atCollisionMask[nCurrentEntity].m_tnCollisionMask != (COMPONENT_COLLISIONMASK | COMPONENT_TRIGGER | COMPONENT_AABB | COMPONENT_NONSTATIC)) 
+					{
+						if (nCurrentEntity == 8)
 						{
+							float x = 0;
+						}
 
-							if (tThisWorld.atAIMask[otherCollisionsIndex[i]].m_tnAIMask > 1) {
-								if (tThisWorld.atProjectiles[nCurrentEntity].m_tnProjectileMask == (COMPONENT_PROJECTILESMASK | COMPONENT_METAL)) {
-									if (tThisWorld.atAiHeath[otherCollisionsIndex[i]].heath <= 0) {
+						tThisWorld.atRigidBody[nCurrentEntity].totalForce = -tThisWorld.atRigidBody[nCurrentEntity].velocity;
+						tTempVertexBuffer.m_d3dWorldMatrix = pcPhysicsSystem->ResolveForces(&tThisWorld.atRigidBody[nCurrentEntity], tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, false);
+						tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = pcCollisionSystem->WalkingThrewObjectCheck(tTempVertexBuffer.m_d3dWorldMatrix, tThisWorld.atAABB[otherCollisionsIndex[i]], tThisWorld.atAABB[nCurrentEntity]);
+						tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = tTempVertexBuffer.m_d3dWorldMatrix;
+					}
+					if (tThisWorld.atRigidBody[nCurrentEntity].ground == false 
+						&& tThisWorld.atRigidBody[nCurrentEntity].wall == false 
+						&& tThisWorld.atCollisionMask[nCurrentEntity].m_tnCollisionMask == (COMPONENT_COLLISIONMASK | COMPONENT_NONTRIGGER | COMPONENT_AABB | COMPONENT_NONSTATIC)
+						&& (tThisWorld.atCollisionMask[otherCollisionsIndex[i]].m_tnCollisionMask == (COMPONENT_COLLISIONMASK | COMPONENT_NONTRIGGER | COMPONENT_AABB | COMPONENT_STATIC) 
+							|| (tThisWorld.atCollisionMask[otherCollisionsIndex[i]].m_tnCollisionMask == (COMPONENT_COLLISIONMASK | COMPONENT_NONTRIGGER | COMPONENT_AABB | COMPONENT_NONSTATIC)))) 
+					{
+						tTempVertexBuffer.m_d3dWorldMatrix = pcCollisionSystem->WalkingThrewObjectCheck(tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, tThisWorld.atAABB[otherCollisionsIndex[i]], tThisWorld.atAABB[nCurrentEntity]);
+						tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = tTempVertexBuffer.m_d3dWorldMatrix;
+						if (tThisWorld.atInputMask[nCurrentEntity].m_tnInputMask == (COMPONENT_CLAYTON | COMPONENT_INPUTMASK)) 
+						{
+							m_d3dPlayerMatrix = tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix;
+						}
+
+					}
+					if (tThisWorld.atRigidBody[nCurrentEntity].ground == false 
+						&& tThisWorld.atRigidBody[otherCollisionsIndex[i]].ground == false
+						&& tThisWorld.atRigidBody[nCurrentEntity].wall == false 
+						&& tThisWorld.atCollisionMask[nCurrentEntity].m_tnCollisionMask == (COMPONENT_COLLISIONMASK | COMPONENT_TRIGGER | COMPONENT_AABB | COMPONENT_NONSTATIC)
+						&& (tThisWorld.atCollisionMask[otherCollisionsIndex[i]].m_tnCollisionMask == (COMPONENT_COLLISIONMASK | COMPONENT_NONTRIGGER | COMPONENT_AABB | COMPONENT_STATIC)) 
+						|| tThisWorld.atCollisionMask[otherCollisionsIndex[i]].m_tnCollisionMask == (COMPONENT_COLLISIONMASK | COMPONENT_NONTRIGGER | COMPONENT_AABB | COMPONENT_NONSTATIC))
+					{
+
+						if (tThisWorld.atAIMask[otherCollisionsIndex[i]].m_tnAIMask > 1) {
+							if (tThisWorld.atProjectiles[nCurrentEntity].m_tnProjectileMask == (COMPONENT_PROJECTILESMASK | COMPONENT_METAL)) 
+							{
+								if (tThisWorld.atAiHeath[otherCollisionsIndex[i]].heath <= 0) 
+								{
+									pcAiSystem->SetNumberOfAI(pcAiSystem->GetNumberOfAI() - 1);
+									if (tThisWorld.atClip[nCurrentEntity].gunIndex != -1)
+									{
+										tThisWorld.atClip[tThisWorld.atClip[nCurrentEntity].gunIndex].fAliveTime.erase
+										(tThisWorld.atClip[tThisWorld.atClip[nCurrentEntity].gunIndex].fAliveTime.begin()
+											+ tThisWorld.atClip[nCurrentEntity].indexInclip);
+
+										pcCollisionSystem->RemoveAABBCollider(nCurrentEntity);
+										tThisWorld.atClip[tThisWorld.atClip[nCurrentEntity].gunIndex].nBulletsFired.erase(tThisWorld.atClip[tThisWorld.atClip[nCurrentEntity].gunIndex].nBulletsFired.begin()
+											+ tThisWorld.atClip[nCurrentEntity].indexInclip);
+
+
+										pcGraphicsSystem->CleanD3DObject(&tThisWorld, nCurrentEntity);
+
+									}
+									pcCollisionSystem->RemoveAABBCollider(otherCollisionsIndex[i]);
+									pcGraphicsSystem->CleanD3DObject(&tThisWorld, otherCollisionsIndex[i]);
+									pcGraphicsSystem->CleanD3DObject(&tThisWorld, tThisWorld.atAIMask[otherCollisionsIndex[i]].GunIndex);
+								}
+								else 
+								{
+									tThisWorld.atClip[tThisWorld.atClip[nCurrentEntity].gunIndex].fAliveTime.erase
+									(tThisWorld.atClip[tThisWorld.atClip[nCurrentEntity].gunIndex].fAliveTime.begin()
+										+ tThisWorld.atClip[nCurrentEntity].indexInclip);
+
+									pcCollisionSystem->RemoveAABBCollider(nCurrentEntity);
+									tThisWorld.atClip[tThisWorld.atClip[nCurrentEntity].gunIndex].nBulletsFired.erase(tThisWorld.atClip[tThisWorld.atClip[nCurrentEntity].gunIndex].nBulletsFired.begin()
+										+ tThisWorld.atClip[nCurrentEntity].indexInclip);
+
+
+									pcGraphicsSystem->CleanD3DObject(&tThisWorld, nCurrentEntity);
+									tThisWorld.atAiHeath[otherCollisionsIndex[i]].heath -= 50;
+									if (tThisWorld.atAiHeath[otherCollisionsIndex[i]].heath <= 0) 
+									{
 										pcAiSystem->SetNumberOfAI(pcAiSystem->GetNumberOfAI() - 1);
-										if (tThisWorld.atClip[nCurrentEntity].gunIndex != -1) {
-											tThisWorld.atClip[tThisWorld.atClip[nCurrentEntity].gunIndex].fAliveTime.erase
-											(tThisWorld.atClip[tThisWorld.atClip[nCurrentEntity].gunIndex].fAliveTime.begin()
-												+ tThisWorld.atClip[nCurrentEntity].indexInclip);
-
-											pcCollisionSystem->RemoveAABBCollider(nCurrentEntity);
-											tThisWorld.atClip[tThisWorld.atClip[nCurrentEntity].gunIndex].nBulletsFired.erase(tThisWorld.atClip[tThisWorld.atClip[nCurrentEntity].gunIndex].nBulletsFired.begin()
-												+ tThisWorld.atClip[nCurrentEntity].indexInclip);
-
-
-											pcGraphicsSystem->CleanD3DObject(&tThisWorld, nCurrentEntity);
-
-										}
 										pcCollisionSystem->RemoveAABBCollider(otherCollisionsIndex[i]);
 										pcGraphicsSystem->CleanD3DObject(&tThisWorld, otherCollisionsIndex[i]);
 										pcGraphicsSystem->CleanD3DObject(&tThisWorld, tThisWorld.atAIMask[otherCollisionsIndex[i]].GunIndex);
-									}
-									else {
-										tThisWorld.atClip[tThisWorld.atClip[nCurrentEntity].gunIndex].fAliveTime.erase
-										(tThisWorld.atClip[tThisWorld.atClip[nCurrentEntity].gunIndex].fAliveTime.begin()
-											+ tThisWorld.atClip[nCurrentEntity].indexInclip);
 
-										pcCollisionSystem->RemoveAABBCollider(nCurrentEntity);
-										tThisWorld.atClip[tThisWorld.atClip[nCurrentEntity].gunIndex].nBulletsFired.erase(tThisWorld.atClip[tThisWorld.atClip[nCurrentEntity].gunIndex].nBulletsFired.begin()
-											+ tThisWorld.atClip[nCurrentEntity].indexInclip);
-
-
-										pcGraphicsSystem->CleanD3DObject(&tThisWorld, nCurrentEntity);
-										tThisWorld.atAiHeath[otherCollisionsIndex[i]].heath -= 50;
-										if (tThisWorld.atAiHeath[otherCollisionsIndex[i]].heath <= 0) {
-											pcAiSystem->SetNumberOfAI(pcAiSystem->GetNumberOfAI() - 1);
-											pcCollisionSystem->RemoveAABBCollider(otherCollisionsIndex[i]);
-											pcGraphicsSystem->CleanD3DObject(&tThisWorld, otherCollisionsIndex[i]);
-											pcGraphicsSystem->CleanD3DObject(&tThisWorld, tThisWorld.atAIMask[otherCollisionsIndex[i]].GunIndex);
-
-											pcGraphicsSystem->CleanD3DObject(&tThisWorld, otherCollisionsIndex[i] + 1);
-											pcGraphicsSystem->CleanD3DObject(&tThisWorld, otherCollisionsIndex[i] + 2);
-										}
+										pcGraphicsSystem->CleanD3DObject(&tThisWorld, otherCollisionsIndex[i] + 1);
+										pcGraphicsSystem->CleanD3DObject(&tThisWorld, otherCollisionsIndex[i] + 2);
 									}
 								}
 							}
-							else if (tThisWorld.atInputMask[otherCollisionsIndex[i]].m_tnInputMask == (COMPONENT_CLAYTON | COMPONENT_INPUTMASK)) {
-								if (tThisWorld.atProjectiles[nCurrentEntity].m_tnProjectileMask == (COMPONENT_PROJECTILESMASK | COMPONENT_METAL)) {
-									if (tThisWorld.atClip[nCurrentEntity].gunIndex != -1) {
-										tThisWorld.atClip[tThisWorld.atClip[nCurrentEntity].gunIndex].fAliveTime.erase
-										(tThisWorld.atClip[tThisWorld.atClip[nCurrentEntity].gunIndex].fAliveTime.begin()
-											+ tThisWorld.atClip[nCurrentEntity].indexInclip);
-
-										pcCollisionSystem->RemoveAABBCollider(nCurrentEntity);
-										tThisWorld.atClip[tThisWorld.atClip[nCurrentEntity].gunIndex].nBulletsFired.erase(tThisWorld.atClip[tThisWorld.atClip[nCurrentEntity].gunIndex].nBulletsFired.begin()
-											+ tThisWorld.atClip[nCurrentEntity].indexInclip);
-
-										//pcGraphicsSystem->CleanD3DObject(&tThisWorld, tThisWorld.atAIMask[nCurrentEntity].GunIndex);
-										pcGraphicsSystem->CleanD3DObject(&tThisWorld, nCurrentEntity);
-
-									}
-									tThisWorld.atClayton[otherCollisionsIndex[i]].health -= 50;
-								}
-
-
-							}
-							if (tThisWorld.atProjectiles[nCurrentEntity].m_tnProjectileMask == (COMPONENT_PROJECTILESMASK | COMPONENT_METAL)) {
-								if (tThisWorld.atClip[nCurrentEntity].gunIndex != -1) {
+						}
+						else if (tThisWorld.atInputMask[otherCollisionsIndex[i]].m_tnInputMask == (COMPONENT_CLAYTON | COMPONENT_INPUTMASK)) 
+						{
+							if (tThisWorld.atProjectiles[nCurrentEntity].m_tnProjectileMask == (COMPONENT_PROJECTILESMASK | COMPONENT_METAL))
+							{
+								if (tThisWorld.atClip[nCurrentEntity].gunIndex != -1)
+								{
 									tThisWorld.atClip[tThisWorld.atClip[nCurrentEntity].gunIndex].fAliveTime.erase
 									(tThisWorld.atClip[tThisWorld.atClip[nCurrentEntity].gunIndex].fAliveTime.begin()
 										+ tThisWorld.atClip[nCurrentEntity].indexInclip);
@@ -4397,31 +4393,42 @@ int CGameMangerSystem::RealLevelUpdate()
 									pcGraphicsSystem->CleanD3DObject(&tThisWorld, nCurrentEntity);
 
 								}
+								tThisWorld.atClayton[otherCollisionsIndex[i]].health -= 50;
 							}
 
-						}
-						if (tThisWorld.atInputMask[nCurrentEntity].m_tnInputMask == (COMPONENT_CLAYTON | COMPONENT_INPUTMASK) && tThisWorld.atAIMask[otherCollisionsIndex[i]].m_tnAIMask == (COMPONENT_AIMASK | COMPONENT_COVERTRIGGER)) {
 
-							pcAiSystem->MoveAiToCoverLocation(tThisWorld.atCoverTrigger[otherCollisionsIndex[i]], &tThisWorld);
 						}
+						if (tThisWorld.atProjectiles[nCurrentEntity].m_tnProjectileMask == (COMPONENT_PROJECTILESMASK | COMPONENT_METAL)) 
+						{
+							if (tThisWorld.atClip[nCurrentEntity].gunIndex != -1) 
+							{
+								tThisWorld.atClip[tThisWorld.atClip[nCurrentEntity].gunIndex].fAliveTime.erase
+								(tThisWorld.atClip[tThisWorld.atClip[nCurrentEntity].gunIndex].fAliveTime.begin()
+									+ tThisWorld.atClip[nCurrentEntity].indexInclip);
+
+								pcCollisionSystem->RemoveAABBCollider(nCurrentEntity);
+								tThisWorld.atClip[tThisWorld.atClip[nCurrentEntity].gunIndex].nBulletsFired.erase(tThisWorld.atClip[tThisWorld.atClip[nCurrentEntity].gunIndex].nBulletsFired.begin()
+									+ tThisWorld.atClip[nCurrentEntity].indexInclip);
+
+								//pcGraphicsSystem->CleanD3DObject(&tThisWorld, tThisWorld.atAIMask[nCurrentEntity].GunIndex);
+								pcGraphicsSystem->CleanD3DObject(&tThisWorld, nCurrentEntity);
+
+							}
+						}
+
 					}
-					if (tThisWorld.atClayton[PlayerStartIndex].health <= 0)
+					if (tThisWorld.atInputMask[nCurrentEntity].m_tnInputMask == (COMPONENT_CLAYTON | COMPONENT_INPUTMASK) && tThisWorld.atAIMask[otherCollisionsIndex[i]].m_tnAIMask == (COMPONENT_AIMASK | COMPONENT_COVERTRIGGER)) 
 					{
-						GameOver = true;
-						//return -1;
+						pcAiSystem->MoveAiToCoverLocation(tThisWorld.atCoverTrigger[otherCollisionsIndex[i]], &tThisWorld);
 					}
-					//		tTempPixelBuffer.m_d3dCollisionColor = XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f);
-
-
 				}
-				else {
-
-					//tTempPixelBuffer.m_d3dCollisionColor = tThisWorld.atSimpleMesh[nCurrentEntity].m_nColor;
-
+				if (tThisWorld.atClayton[PlayerStartIndex].health <= 0)
+				{
+					GameOver = true;
 				}
+
 			}
-		
-		tTempPixelBuffer.m_d3dCollisionColor = tThisWorld.atSimpleMesh[nCurrentEntity].m_nColor;
+		}
 
 		if (tThisWorld.atParentWorldMatrix[nCurrentEntity] != -1)
 		{
@@ -4430,10 +4437,12 @@ int CGameMangerSystem::RealLevelUpdate()
 
 			tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = XMMatrixMultiply(tThisWorld.atOffSetMatrix[nCurrentEntity], tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix);
 
-			if (nCurrentEntity == rayindex) {
+			if (nCurrentEntity == rayindex) 
+			{
 				tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = tThisWorld.atWorldMatrix[PlayerStartIndex].worldMatrix;
 			}
-			if (nCurrentEntity == frustumIndex) {
+			if (nCurrentEntity == frustumIndex) 
+			{
 				XMMATRIX empty;
 				empty = pcGraphicsSystem->SetDefaultWorldPosition();
 				XMMATRIX rotation;
@@ -4471,12 +4480,10 @@ int CGameMangerSystem::RealLevelUpdate()
 			if (tCameraMode.bWalkMode == true)
 			{
 				pcGraphicsSystem->InitPrimalShaderData2(pcGraphicsSystem->m_pd3dDeviceContext, tTempVertexBuffer, tTempPixelBuffer, tThisWorld.atSimpleMesh[nCurrentEntity], walkCamera->d3d_Position);
-
 			}
 			else if (tCameraMode.bAimMode == true)
 			{
 				pcGraphicsSystem->InitPrimalShaderData2(pcGraphicsSystem->m_pd3dDeviceContext, tTempVertexBuffer, tTempPixelBuffer, tThisWorld.atSimpleMesh[nCurrentEntity], aimCamera->d3d_Position);
-
 			}
 			else
 			{
@@ -4486,7 +4493,7 @@ int CGameMangerSystem::RealLevelUpdate()
 		}
 		if (tThisWorld.atWorldMatrix[PlayerStartIndex].worldMatrix.r[3].m128_f32[1] < -30) 
 		{
-			return 13;
+			tThisWorld.atClayton[PlayerStartIndex].health *= 0;
 		}
 
 
@@ -4713,7 +4720,9 @@ int CGameMangerSystem::RealLevelUpdate()
 			}
 		}
 
-		if (GamePaused || GameOver || options)
+		if (GamePaused 
+			|| GameOver 
+			|| options)
 		{
 			if (tThisWorld.atUIMask[nCurrentEntity].m_tnUIMask == (COMPONENT_UIMASK | COMPONENT_LABEL | COMPONENT_PAUSESCREEN | COMPONENT_DEATHSCREEN | COMPONENT_OPTIONS))
 			{
@@ -4807,9 +4816,27 @@ int CGameMangerSystem::RealLevelUpdate()
 	}
 
 	clickTime += clickTimer.Delta();
+	//double samples = 0;
+	//try
+	//{
+	//	clickTimer.Throttle(64);
+	//	samples = clickTimer.SamplesPerSecond();
+	//	if (samples > 64)
+	//	{
+	//		throw samples;
+	//	}
+	//}
+	//catch(double e)
+	//{
+	//	if (samples > 64)
+	//	{
+	//		std::cout << "Exception Occurred:\t" << samples << " samples per second\n";
+	//	}
+	//}
 
 	pcGraphicsSystem->m_pd3dSwapchain->Present(0, 0);
 	zValue += 0.001;
+
 	return 14;
 
 }

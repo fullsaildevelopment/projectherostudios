@@ -11,6 +11,7 @@
 #include "CAnimationSystem.h"
 #include"AudioSystem.h"
 #include <array>
+#include <exception>
 #pragma comment(lib, "MSIMG32.lib")
 
 class CGameMangerSystem {
@@ -107,4 +108,6 @@ private:
 	bool bMoving;
 	float Health = 1.0f;
 	bool click = false;
+	XTime frameLock;
+
 };

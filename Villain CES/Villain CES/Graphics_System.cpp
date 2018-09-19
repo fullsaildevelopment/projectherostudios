@@ -243,7 +243,7 @@ void CGraphicsSystem::InitD3D(HWND cTheWindow)
 	m_pd3dDevice->CreateRenderTargetView(m_pd3dOutsideGlassRenderToTexture, NULL, &m_pd3dOutsideRenderTargetView);
 #pragma endregion
 
-#pragma region BlendState
+	#pragma region BlendState
 	D3D11_BLEND_DESC d3dBlendDescription;
 	d3dBlendDescription.AlphaToCoverageEnable = false;
 	d3dBlendDescription.IndependentBlendEnable = false;
@@ -626,7 +626,6 @@ void CGraphicsSystem::CreateShaders(ID3D11Device * device)
 	//Create the constant buffer pointer so we can access the vertex shader constant buffer from within this class.
 	device->CreateBuffer(&d3dAnimatedVertexBufferDesc, NULL, &m_pd3dAnimatedVertexBuffer);
 #pragma endregion
-
 }
 
 TMaterialOptimized CGraphicsSystem::CreateTexturesFromFile(TMaterialImport * arrayOfMaterials, int numberOfEntities)
@@ -887,7 +886,9 @@ void CGraphicsSystem::CreateBuffers(TWorld *ptPlanet)//init first frame
 				m_pd3dDevice->CreateBuffer(&ptPlanet->atSimpleMesh[nCurrentEntity].m_d3dIndexBufferDesc, &ptPlanet->atSimpleMesh[nCurrentEntity].m_d3dIndexData, &ptPlanet->atSimpleMesh[nCurrentEntity].m_pd3dIndexBuffer);
 			}
 		}
-		if ((ptPlanet->atGraphicsMask[nCurrentEntity].m_tnGraphicsMask == COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_SHADERID) || (ptPlanet->atGraphicsMask[nCurrentEntity].m_tnGraphicsMask == COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_SKYBOX | COMPONENT_TEXTURE | COMPONENT_SHADERID))
+		if ((ptPlanet->atGraphicsMask[nCurrentEntity].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_SHADERID))
+			|| (ptPlanet->atGraphicsMask[nCurrentEntity].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_SHADERID))
+			|| (ptPlanet->atGraphicsMask[nCurrentEntity].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_SKYBOX | COMPONENT_TEXTURE | COMPONENT_SHADERID)))
 		{
 			if (ptPlanet->atMesh[nCurrentEntity].m_nIndexCount && ptPlanet->atMesh[nCurrentEntity].m_nVertexCount)
 			{
@@ -895,7 +896,7 @@ void CGraphicsSystem::CreateBuffers(TWorld *ptPlanet)//init first frame
 				m_pd3dDevice->CreateBuffer(&ptPlanet->atMesh[nCurrentEntity].m_d3dIndexBufferDesc, &ptPlanet->atMesh[nCurrentEntity].m_d3dIndexData, &ptPlanet->atMesh[nCurrentEntity].m_pd3dIndexBuffer);
 			}
 		}
-		if (ptPlanet->atGraphicsMask[nCurrentEntity].m_tnGraphicsMask == COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_ANIMATION | COMPONENT_SHADERID)
+		if (ptPlanet->atGraphicsMask[nCurrentEntity].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_ANIMATION | COMPONENT_SHADERID))
 		{
 			if (ptPlanet->atMesh[nCurrentEntity].m_nIndexCount && ptPlanet->atMesh[nCurrentEntity].m_nVertexCount)
 			{
@@ -1936,7 +1937,7 @@ void CGraphicsSystem::ExecutePipeline(ID3D11DeviceContext *pd3dDeviceContext, in
 			pd3dDeviceContext->VSSetShader(m_pd3dMyVertexShader, NULL, 0);
 			pd3dDeviceContext->PSSetShader(m_pd3dMyPixelShader, NULL, 0);
 			////Draw
-			if (nGraphicsMask == COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_SHADERID)
+			if (nGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_SHADERID))
 			{
 				pd3dDeviceContext->DrawIndexed(m_nIndexCount, 0, 0);
 			}

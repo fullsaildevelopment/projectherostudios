@@ -61,7 +61,7 @@ public:
 	bool Init_FPSReader();
 	void UpdateFrameTime();
 	void Xtime_Signal();
-
+	void StableFrameRate();
 private:
  int m_framesPassed;
  double m_startTime;
