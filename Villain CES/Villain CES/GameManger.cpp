@@ -331,64 +331,18 @@ void CGameMangerSystem::InitializeTitleScreen()
 	pcAudioSystem->SetBanksFolderPath(AKTEXT("../Villain CES/GeneratedSoundBanks/Windows"));
 	pcAudioSystem->RegisterGameObj(Listener);
 	pcAudioSystem->RegisterGameObj(footSteps);
-	pcAudioSystem->LoadBankFile(INIT_BNK, init_bnkID,ErrorResult);
+	pcAudioSystem->LoadBankFile(INIT_BNK, init_bnkID, ErrorResult);
 	pcAudioSystem->LoadBankFile(FOOTSTEP_BNK, footsteps_bnkID, ErrorResult);
-	
-	pcGraphicsSystem->CleanD3DLevel(&tThisWorld);
-	atUIVertices.clear();
-	atUIIndices.clear();
 
-	options = false;
+	unsigned int nThisEntity;
 
-	int nThisEntity;
 	{
 		wchar_t wideChar[] =
-		{ L"UI_Textures.fbm/Auger_MainMenu.png" };
+		{ L"UI_Textures.fbm/Auger_TitleScreen.png" };
 
 		nThisEntity = CreateUILabel(&tThisWorld, menuCamera->d3d_Position, 20, 20, 0, 0, &atUIVertices, -1, .2);
 		pcUISystem->AddTextureToUI(&tThisWorld, nThisEntity, pcGraphicsSystem->m_pd3dDevice, wideChar);
 	}
-	{
-		wchar_t wideChar[] =
-		{ L"UI_Textures.fbm/play.png" };
-
-		nThisEntity = CreateUILabel(&tThisWorld, menuCamera->d3d_Position, 2, 1, .5, 0, &atUIVertices, -1, .1);
-		pcUISystem->AddTextureToUI(&tThisWorld, nThisEntity, pcGraphicsSystem->m_pd3dDevice, wideChar);
-		//                                                  modify this to switch testing levels in Augur.cpp
-	
-	//	pcUISystem->AddButtonToUI(&cApplicationWindow, &tThisWorld, nThisEntity, 1, true);
-
-#if MIKES_SANDBOX_ON
-		pcUISystem->AddButtonToUI(&cApplicationWindow, &tThisWorld, nThisEntity, 9, true);
-
-#endif
-#if SKELETON_LOAD_ON
-		pcUISystem->AddButtonToUI(&cApplicationWindow, &tThisWorld, nThisEntity, 7, true);
-
-#endif
-#if MAIN_LEVEL_ON
-		pcUISystem->AddButtonToUI(&cApplicationWindow, &tThisWorld, nThisEntity, 13, true);
-
-#endif
-	}
-	{
-		wchar_t wideChar[] =
-		{ L"UI_Textures.fbm/options.png" };
-
-		nThisEntity = CreateUILabel(&tThisWorld, menuCamera->d3d_Position, 2, 1, .5, -2.4, &atUIVertices, -1, .1);
-		pcUISystem->AddTextureToUI(&tThisWorld, nThisEntity, pcGraphicsSystem->m_pd3dDevice, wideChar);
-		pcUISystem->AddButtonToUI(&cApplicationWindow, &tThisWorld, nThisEntity, 98, true);
-	}
-	{
-		wchar_t wideChar[] =
-		{ L"UI_Textures.fbm/credits.png" }; 
-	
-		nThisEntity = CreateUILabel(&tThisWorld, menuCamera->d3d_Position, 2, 1, .5, -3.6, &atUIVertices, -1, .1);
-		pcUISystem->AddTextureToUI(&tThisWorld, nThisEntity, pcGraphicsSystem->m_pd3dDevice, wideChar);
-		pcUISystem->AddButtonToUI(&cApplicationWindow, &tThisWorld, nThisEntity, 99, true);
-	}
-
-	//pcUISystem->AddButtonToUI(&tThisWorld, nThisEntity, -3, cApplicationWindow);
 
 	pcGraphicsSystem->CreateBuffers(&tThisWorld);
 }
