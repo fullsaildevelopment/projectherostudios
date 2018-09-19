@@ -76,7 +76,7 @@ private:
 	int screenHeight;
 	
 	bool options = false;
-
+	bool pauseInit = false;
 	//ZB Variables
 	TCameraToggle tCameraMode;
 	XMMATRIX m_d3dWorldMatrix;

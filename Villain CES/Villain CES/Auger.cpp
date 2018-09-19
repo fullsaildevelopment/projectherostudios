@@ -145,9 +145,7 @@ void CAuger::Update(bool* loopgame)
 			// sets mouse cursor to middle of screen ZB
 			SetCursorPos(((rect.right - rect.left) / 2.0f) + rect.left, ((rect.bottom - rect.top) / 2.0f) + rect.top);
 		}
-		//CurrentSpotInGame = pcGameMangerSystem->RealLevelUpdate();
 		pcGameMangerSystem->nCurrentScene = pcGameMangerSystem->RealLevelUpdate();
-
 		break;
 	case 15:
 		pcGameMangerSystem->LoadPathFindingTest();

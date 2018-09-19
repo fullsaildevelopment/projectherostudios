@@ -433,7 +433,6 @@ int CGameMangerSystem::LoadTitleScreen()
 void CGameMangerSystem::InitializeEndScreen()
 {
 	unsigned int nThisEntity;
-
 	{
 		nThisEntity = createEntityReverse(&tThisWorld);
 
@@ -3301,6 +3300,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 {
 	pcGraphicsSystem->CleanD3DLevel(&tThisWorld);
 	//Stops Main Menu Music 
+	ShowCursor(false);
 	AK::SoundEngine::StopAll(m_AkMainMenuMusic);
 	InitializeHUD();
 	InitializePauseScreen();
@@ -3713,17 +3713,28 @@ int CGameMangerSystem::RealLevelUpdate()
 	if (pcInputSystem->InputCheck(G_KEY_P) && !GameOver)
 	{
 		GamePaused = true;
+		if (!pauseInit)
+		{
+			pauseInit = true;
+			ShowCursor(true);
+		}
 	}
 	if (pcInputSystem->InputCheck(G_KEY_U) && !options && !GameOver)
 	{
 		GamePaused = false;
+		if (pauseInit)
+		{
+			pauseInit = false;
+			ShowCursor(false);
+		}
 	}
 
 			
 	clickTimer.Signal();
+
 	//Camera Functions here will move to a input system function when all behaviors are finalized - ZFB
-	if (GamePaused == false &&  GameOver == false) {
-		ShowCursor(false);%
+	if (GamePaused == false &&  GameOver == false) 
+	{
 		
 			// Walk mode not needed in demo at the moment - ZFB
 			if (tCameraMode.bWalkMode == true)
@@ -3798,6 +3809,7 @@ int CGameMangerSystem::RealLevelUpdate()
 			}
 		
 	}
+
 	
 	tTempPixelBuffer.m_d3dCollisionColor = XMFLOAT4(1.0f, 0.0f, 0.0f, 0.0f);
 	
@@ -4624,15 +4636,26 @@ int CGameMangerSystem::RealLevelUpdate()
 							clickTime = 0;
 
 							if (tThisWorld.atButton[nCurrentEntity].sceneIndex == 98)
+							{
 								options = true;
+							}
 							else if (tThisWorld.atButton[nCurrentEntity].sceneIndex == nCurrentScene)
+							{
 								GamePaused = false;
+								if (pauseInit)
+								{
+									pauseInit = false;
+									ShowCursor(false);
+								}
+							}
 							else if (tThisWorld.atButton[nCurrentEntity].sceneIndex == 96 || tThisWorld.atButton[nCurrentEntity].sceneIndex == 97)
 							{
 
 							}
 							else
+							{
 								return tThisWorld.atButton[nCurrentEntity].sceneIndex;
+							}
 
 						}
 						else if (PtInRect(&tThisWorld.atButton[nCurrentEntity].boundingBox, hoverPoint))
@@ -4755,6 +4778,7 @@ int CGameMangerSystem::RealLevelUpdate()
 
 				if (tThisWorld.atUIMask[nCurrentEntity].m_tnUIMask == (COMPONENT_UIMASK | COMPONENT_DEATHSCREEN))
 				{
+
 					if (tThisWorld.atClayton[PlayerStartIndex].health > 0)
 					{
 						if (tThisWorld.atLabel[nCurrentEntity].addTexture && tThisWorld.atLabel[nCurrentEntity].lastUIElement)
@@ -4773,6 +4797,7 @@ int CGameMangerSystem::RealLevelUpdate()
 						{
 							wchar_t textBuffer[] =
 							{ L"You Completed The Objective" };
+							ShowCursor(true);
 
 							CreateUILabelForText(&tThisWorld, menuCamera->d3d_Position, 6, 1, 0, 2.4, &atUIVertices, &atUIIndices, textBuffer, ARRAYSIZE(textBuffer), nCurrentEntity, 0.1);
 
@@ -4788,7 +4813,7 @@ int CGameMangerSystem::RealLevelUpdate()
 						{
 							wchar_t textBuffer[] =
 							{ L"DEFEAT" };
-
+							ShowCursor(true);
 							CreateUILabelForText(&tThisWorld, menuCamera->d3d_Position, 2, 1, 0, 4.8, &atUIVertices, &atUIIndices, textBuffer, ARRAYSIZE(textBuffer), nCurrentEntity, 0.1);
 
 							pcUISystem->AddTextureToUI(&tThisWorld, nCurrentEntity, pcGraphicsSystem->m_pd3dDevice, nullptr, fontTexture);
@@ -4908,7 +4933,6 @@ int CGameMangerSystem::RealLevelUpdate()
 		tThisWorld.atClayton[PlayerStartIndex].health = 0;
 		GameOver = true;
 	}
-	SetCursorPos((screenWidth / 2.0f) + windowRect.left, (screenHeight / 2.0f) + windowRect.top);
 	pcGraphicsSystem->m_pd3dSwapchain->Present(0, 0);
 
 	if (GameOver && tThisWorld.atClayton[PlayerStartIndex].health > 0)
