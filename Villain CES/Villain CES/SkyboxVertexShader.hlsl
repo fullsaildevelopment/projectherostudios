@@ -17,7 +17,6 @@ struct TPixelInputType
 	float3 PosL : TEXCOORD0;
 };
 
-
 TPixelInputType SkyboxVertexShader(TVertexInputType vin)
 {
 	TPixelInputType vout;

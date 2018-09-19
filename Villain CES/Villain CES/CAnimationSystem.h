@@ -16,8 +16,10 @@ public:
 		joint data
 		forward or back
 	*/
-	XMFLOAT4X4* PlayAnimation(TClaytonAnim claytonsAnimation, TAnimation theAnimation, std::vector<XMMATRIX> inverseBindPoseJointMatrices, float realTime);
-	void CalculateFrameCount(TClaytonAnim claytonsAnimation, float realTime);
+	XMFLOAT4X4* PlayAnimation(TAnimationVariant claytonsAnimation, TAnimation theAnimation, float realTime);
+
+private:
+	void CalculateFrameCount(TAnimationVariant claytonsAnimation, TAnimation theAnimation, float realTime);
 	/*
 		int frameCount = myAnim.frames.size();
 		double animLength = myAnim.duration / 1000;
@@ -156,6 +158,7 @@ public:
 		worldMatrix = XMMatrixIdentity();
 	}
 		*/
+
 		/*
 
 	#pragma region Calculate FrameCount Time
@@ -166,23 +169,23 @@ public:
 		//If it's looping, add deltaTime
 		if (looping)
 		{
-		realTime += deltaTime;
+			realTime += deltaTime;
 		}
 		//If stepping forward, add delta time and set stepForward to false
 		if (stepForward)
 		{
-		realTime += deltaTime;
-		stepForward = false;
+			realTime += deltaTime;
+			stepForward = false;
 		}
 		//If stepping backward, add delta time and set stepBackto false
 		if (stepBack)
 		{
-		realTime -= deltaTime;
-		stepBack = false;
+			realTime -= deltaTime;
+			stepBack = false;
 		}
 		//If realTime is greater than the animation length, reset realTime
 		if (realTime > animLength)
-		realTime = 0;
+			realTime = 0;
 
 	#pragma endregion
 
@@ -191,51 +194,51 @@ public:
 		//and we are playing forward the animation
 		if (myAnim.frames[currentFrame].time <= realTime && playingForward && playing)
 		{
-		std::cout << "Real Time:\t" << realTime << "\n";
-		std::cout << "Current Frame:\t" << currentFrame << "\n";
-		std::cout << "Next Frame:\t" << nextFrame << "\n";
-		currentFrame++;
-		currentFrame %= frameCount;
-		if (currentFrame == 0)
-		{
-		currentFrame = 1;
-		realTime = myAnim.frames[currentFrame].time;
-		}
-		nextFrame = (currentFrame + 1) % frameCount;
+			std::cout << "Real Time:\t" << realTime << "\n";
+			std::cout << "Current Frame:\t" << currentFrame << "\n";
+			std::cout << "Next Frame:\t" << nextFrame << "\n";
+			currentFrame++;
+			currentFrame %= frameCount;
+			if (currentFrame == 0)
+			{
+				currentFrame = 1;
+				realTime = myAnim.frames[currentFrame].time;
+			}
+			nextFrame = (currentFrame + 1) % frameCount;
 
-		if (currentFrame == myAnim.frames.size()-1)
-		{
-		nextFrame = 1;
-		}
+			if (currentFrame == myAnim.frames.size()-1)
+			{
+				nextFrame = 1;
+			}
 
-		//nextFrame %= frameCount;
+			//nextFrame %= frameCount;
 		}
 		//Else If the end of the current frame's time is greater than the real time
 		//and we are reversing the animation
 		else if (myAnim.frames[currentFrame].time >= realTime && !playingForward && playing)
 		{
-		//clear thisFramesJointVector
-		//if cf = 0
-		// cf = end frame
-		// nf = end frame - 1
-		//else
-		// cf--;
-		// nf--;
-		std::cout << "Real Time:\t" << realTime << "\n";
-		std::cout << "Current Frame:\t" << currentFrame << "\n";
-		std::cout << "Next Frame:\t" << nextFrame << "\n";
-		if (currentFrame == 1)
-		{
-		currentFrame = frameCount - 1;
-		nextFrame = frameCount - 1;
-		realTime = animLength;
-		}
-		else
-		{
-		currentFrame--;
-		nextFrame = currentFrame - 1;
-		}
-		}
+			//clear thisFramesJointVector
+			//if cf = 0
+				// cf = end frame
+				// nf = end frame - 1
+			//else
+				// cf--;
+				// nf--;
+			std::cout << "Real Time:\t" << realTime << "\n";
+			std::cout << "Current Frame:\t" << currentFrame << "\n";
+			std::cout << "Next Frame:\t" << nextFrame << "\n";
+			if (currentFrame == 1)
+			{
+				currentFrame = frameCount - 1;
+				nextFrame = frameCount - 1;
+				realTime = animLength;
+			}
+			else
+			{
+				currentFrame--;
+				nextFrame = currentFrame - 1;
+			}
+	}
 
 	#pragma endregion
 	*/

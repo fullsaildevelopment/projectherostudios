@@ -39,17 +39,8 @@ struct TUIPixelInputType
 TUIPixelInputType UIVertexShader( TUIVertexInputType tInput )
 {
 	TUIPixelInputType tOutput;
-	//tOutput.d3dPosition.xy = tInput.d3dPosition.xy * rcpDim;
-	//tOutput.d3dPosition.zw = float2(0, 1);
 
-	//if (padding == -1)
-	//{
-		tOutput.d3dPosition = float4(tInput.d3dPosition.xyz, 1);
-	//}
-	//else
-	//{
-	//	tOutput.d3dPosition = float4(tInput.d3dPosition.xy, .1, 1);
-	//}
+	tOutput.d3dPosition = float4(tInput.d3dPosition.xyz, 1);
 
 	tOutput.d3dTexture = tInput.d3dTexture;
 
@@ -67,10 +58,6 @@ TUIPixelInputType UIVertexShader( TUIVertexInputType tInput )
 
 		if (barPosition < tOutput.d3dPosition.x)
 			tOutput.d3dPosition.x = barPosition;
-			/*tOutput.d3dColor = float4(1, 1, 1, 1);
-		else
-			tOutput.d3dColor = float4(0, 0, 0, 1);*/
-
 	}
 
 	

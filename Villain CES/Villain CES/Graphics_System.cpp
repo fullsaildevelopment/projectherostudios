@@ -11,6 +11,7 @@ CGraphicsSystem::CGraphicsSystem()
 
 CGraphicsSystem::~CGraphicsSystem()
 {
+	
 }
 
 void CGraphicsSystem::InitD3D(HWND cTheWindow)
@@ -242,7 +243,7 @@ void CGraphicsSystem::InitD3D(HWND cTheWindow)
 	m_pd3dDevice->CreateRenderTargetView(m_pd3dOutsideGlassRenderToTexture, NULL, &m_pd3dOutsideRenderTargetView);
 #pragma endregion
 
-#pragma region BlendState
+	#pragma region BlendState
 	D3D11_BLEND_DESC d3dBlendDescription;
 	d3dBlendDescription.AlphaToCoverageEnable = false;
 	d3dBlendDescription.IndependentBlendEnable = false;
@@ -323,6 +324,11 @@ void CGraphicsSystem::CleanD3D(TWorld *ptPlanet)
 	m_pd3dMyPixelShader->Release();
 	m_pd3dMyInputLayout->Release();
 	m_pd3dMyVertexBuffer->Release();
+
+	m_pd3dAnimatedVertexShader->Release();
+	m_pd3dAnimatedPixelShader->Release();
+	m_pd3dAnimatedInputLayout->Release();
+	m_pd3dAnimatedVertexBuffer->Release();
 
 	m_pd3dUIVertexShader->Release();
 	m_pd3dUIPixelShader->Release();
@@ -579,7 +585,7 @@ void CGraphicsSystem::CreateShaders(ID3D11Device * device)
 
 	//Setup the description of the dynamic matrix constant buffer that is in the vertex shader.
 	d3dSkyboxMatrixBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
-	d3dSkyboxMatrixBufferDesc.ByteWidth = sizeof(TUIVertexBufferType);
+	d3dSkyboxMatrixBufferDesc.ByteWidth = sizeof(TMyVertexBufferType);
 	d3dSkyboxMatrixBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
 	d3dSkyboxMatrixBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 	d3dSkyboxMatrixBufferDesc.MiscFlags = 0;
@@ -587,6 +593,38 @@ void CGraphicsSystem::CreateShaders(ID3D11Device * device)
 
 	//Create the constant buffer pointer so we can access the vertex shader constant buffer from within this class.
 	device->CreateBuffer(&d3dSkyboxMatrixBufferDesc, NULL, &m_pd3dSkyboxVertexBuffer);
+#pragma endregion
+
+	#pragma region AnimatedShaders
+	D3D11_BUFFER_DESC d3dAnimatedVertexBufferDesc;
+	device->CreateVertexShader(AnimatedVertexShader, sizeof(AnimatedVertexShader), NULL, &m_pd3dAnimatedVertexShader);
+	device->CreatePixelShader(AnimatedPixelShader, sizeof(AnimatedPixelShader), NULL, &m_pd3dAnimatedPixelShader);
+	//Input Layout Setup
+	//Now setup the layout of the data that goes into the shader.
+	D3D11_INPUT_ELEMENT_DESC m_d3dAnimatedLayoutDesc[] =
+	{
+		{ "POSITION", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "BLENDWEIGHT", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "BLENDINDICES", 0, DXGI_FORMAT_R32G32B32A32_UINT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+	};
+	//Get a count of the elements in the layout.
+	nElements = sizeof(m_d3dAnimatedLayoutDesc) / sizeof(m_d3dAnimatedLayoutDesc[0]);
+
+	//Create the input layout.
+	device->CreateInputLayout(m_d3dAnimatedLayoutDesc, nElements, AnimatedVertexShader,
+		sizeof(AnimatedVertexShader), &m_pd3dAnimatedInputLayout);
+
+	//Setup the description of the dynamic matrix constant buffer that is in the vertex shader.
+	d3dAnimatedVertexBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+	d3dAnimatedVertexBufferDesc.ByteWidth = sizeof(TAnimatedVertexBufferType);
+	d3dAnimatedVertexBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	d3dAnimatedVertexBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	d3dAnimatedVertexBufferDesc.MiscFlags = 0;
+	d3dAnimatedVertexBufferDesc.StructureByteStride = 0;
+
+	//Create the constant buffer pointer so we can access the vertex shader constant buffer from within this class.
+	device->CreateBuffer(&d3dAnimatedVertexBufferDesc, NULL, &m_pd3dAnimatedVertexBuffer);
 #pragma endregion
 }
 
@@ -596,6 +634,8 @@ TMaterialOptimized CGraphicsSystem::CreateTexturesFromFile(TMaterialImport * arr
 		map<int, string> Map_EntityIndex_FileName;
 		string x;
 		std::vector<int> materialIndex;
+		ID3D11ShaderResourceView **SRVWood = new ID3D11ShaderResourceView *[1];
+
 		bool insertFlag = true;
 		if (arrayOfMaterials[0].m_tPBRFileNames[0] != NULL)
 		{
@@ -648,7 +688,7 @@ TMaterialOptimized CGraphicsSystem::CreateTexturesFromFile(TMaterialImport * arr
 				}
 			}
 		}
-		else if(arrayOfMaterials[0].m_tFileNames[0] != NULL)
+		else if(arrayOfMaterials[0].m_tFileNames[0] != NULL && arrayOfMaterials[0].m_tFileNames[0][1] != '.')
 		{
 			x = arrayOfMaterials[0].m_tFileNames[0];
 			Map_EntityIndex_FileName.insert(pair<int, string>(0, x));
@@ -696,18 +736,17 @@ TMaterialOptimized CGraphicsSystem::CreateTexturesFromFile(TMaterialImport * arr
 		}
 		else//Apply a wood texture to the mesh
 		{
-			ID3D11ShaderResourceView **SRVArrayOfMaterials = new ID3D11ShaderResourceView * [1];
 			int* Map_SRVIndex_EntityIndexArray = new int[1];
 			Map_SRVIndex_EntityIndexArray[0] = 0;
 			for (int i = 0; i < numberOfEntities; i++)
 			{
 				materialIndex.push_back(0);
 			}
-			CreateWICTextureFromFile(m_pd3dDevice, L"TestScene_V1.fbm\\Wood01_col.jpg", NULL, &SRVArrayOfMaterials[0], NULL);
+			CreateWICTextureFromFile(m_pd3dDevice, L"TestScene_V1.fbm\\Wood01_col.jpg", NULL, &SRVWood[0], NULL);
 			TMaterialOptimized answer;
 			answer.Map_SRVIndex_EntityIndex = Map_SRVIndex_EntityIndexArray;
 			answer.materialIndex = materialIndex;
-			answer.SRVArrayOfMaterials = SRVArrayOfMaterials;
+			answer.SRVArrayOfMaterials = SRVWood;
 			answer.numberOfMaterials = 1;
 			return answer;
 		}
@@ -847,7 +886,9 @@ void CGraphicsSystem::CreateBuffers(TWorld *ptPlanet)//init first frame
 				m_pd3dDevice->CreateBuffer(&ptPlanet->atSimpleMesh[nCurrentEntity].m_d3dIndexBufferDesc, &ptPlanet->atSimpleMesh[nCurrentEntity].m_d3dIndexData, &ptPlanet->atSimpleMesh[nCurrentEntity].m_pd3dIndexBuffer);
 			}
 		}
-		if (ptPlanet->atGraphicsMask[nCurrentEntity].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_SHADERID) || ptPlanet->atGraphicsMask[nCurrentEntity].m_tnGraphicsMask == COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_SKYBOX | COMPONENT_TEXTURE | COMPONENT_SHADERID)
+		if ((ptPlanet->atGraphicsMask[nCurrentEntity].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_SHADERID))
+			|| (ptPlanet->atGraphicsMask[nCurrentEntity].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_SHADERID))
+			|| (ptPlanet->atGraphicsMask[nCurrentEntity].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_SKYBOX | COMPONENT_TEXTURE | COMPONENT_SHADERID)))
 		{
 			if (ptPlanet->atMesh[nCurrentEntity].m_nIndexCount && ptPlanet->atMesh[nCurrentEntity].m_nVertexCount)
 			{
@@ -855,8 +896,7 @@ void CGraphicsSystem::CreateBuffers(TWorld *ptPlanet)//init first frame
 				m_pd3dDevice->CreateBuffer(&ptPlanet->atMesh[nCurrentEntity].m_d3dIndexBufferDesc, &ptPlanet->atMesh[nCurrentEntity].m_d3dIndexData, &ptPlanet->atMesh[nCurrentEntity].m_pd3dIndexBuffer);
 			}
 		}
-
-		if (ptPlanet->atGraphicsMask[nCurrentEntity].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_SHADERID))
+		if (ptPlanet->atGraphicsMask[nCurrentEntity].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_ANIMATION | COMPONENT_SHADERID))
 		{
 			if (ptPlanet->atMesh[nCurrentEntity].m_nIndexCount && ptPlanet->atMesh[nCurrentEntity].m_nVertexCount)
 			{
@@ -1480,11 +1520,11 @@ void CGraphicsSystem::InitQuadShaderData(ID3D11DeviceContext * pd3dDeviceContext
 	// Position of the constant buffer in the vertex shader.
 	bufferNumber = 0;
 
+	pd3dDeviceContext->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_POINTLIST);
 	pd3dDeviceContext->PSSetConstantBuffers(bufferNumber, 1, &m_pd3dQuadPixelBuffer);
 
 	// Set the constant buffer in the Geometry shader with the updated values.
 	pd3dDeviceContext->GSSetConstantBuffers(0, 1, &m_pd3dQuadGeometryBuffer);
-	pd3dDeviceContext->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_POINTLIST);
 	pd3dDeviceContext->IASetVertexBuffers(0, 1, &tDebugMesh.m_pd3dVertexBuffer, &tDebugMesh.m_nVertexBufferStride, &tDebugMesh.m_nVertexBufferOffset);
 }
 
@@ -1641,7 +1681,50 @@ void CGraphicsSystem::InitSkyboxShaderData(ID3D11DeviceContext * pd3dDeviceConte
 	pd3dDeviceContext->VSSetConstantBuffers(bufferNumber, 1, &m_pd3dSkyboxVertexBuffer);
 	pd3dDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	pd3dDeviceContext->IASetVertexBuffers(0, 1, &tMesh.m_pd3dVertexBuffer, &tMesh.m_nVertexBufferStride, &tMesh.m_nVertexBufferOffset);
-	pd3dDeviceContext->IASetIndexBuffer(tMesh.m_pd3dIndexBuffer, DXGI_FORMAT_R16_UINT, 0);
+	pd3dDeviceContext->IASetIndexBuffer(tMesh.m_pd3dIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
+	if (&tMesh.m_d3dSRVDiffuse != NULL)
+	{
+		pd3dDeviceContext->PSSetShaderResources(0, 1, &tMesh.m_d3dSRVDiffuse);
+	}
+}
+
+void CGraphicsSystem::InitAnimShaderData(ID3D11DeviceContext * pd3dDeviceContext, TAnimatedVertexBufferType d3dVertexBuffer, TMesh tMesh, XMMATRIX CameraMatrix)
+{
+	D3D11_MAPPED_SUBRESOURCE d3dAnimatedVertexMappedResource;
+
+	TAnimatedVertexBufferType *ptAnimatedVertexBufferDataPointer = nullptr;
+
+	XMMATRIX d3dView;
+	d3dView = d3dVertexBuffer.m_d3dViewMatrix;
+	d3dView = XMMatrixInverse(nullptr, CameraMatrix);
+	unsigned int bufferNumber = 0;
+	m_fCameraXPosition = CameraMatrix.r[3].m128_f32[0];
+	m_fCameraYPosition = CameraMatrix.r[3].m128_f32[1];
+	m_fCameraZPosition = CameraMatrix.r[3].m128_f32[2];
+
+	XMMATRIX tempWorld = d3dVertexBuffer.m_d3dWorldMatrix;
+	XMMATRIX tempProj = d3dVertexBuffer.m_d3dProjectionMatrix;
+
+	#pragma region Map To Vertex Constant Buffer
+	pd3dDeviceContext->Map(m_pd3dAnimatedVertexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &d3dAnimatedVertexMappedResource);
+
+	// Get a pointer to the data in the constant buffer.
+	ptAnimatedVertexBufferDataPointer = (TAnimatedVertexBufferType*)d3dAnimatedVertexMappedResource.pData;
+
+	// Copy the matrices into the constant buffer.
+	ptAnimatedVertexBufferDataPointer->m_d3dWorldMatrix = tempWorld;
+	ptAnimatedVertexBufferDataPointer->m_d3dViewMatrix = d3dView;
+	ptAnimatedVertexBufferDataPointer->m_d3dProjectionMatrix = tempProj;
+	memcpy(&ptAnimatedVertexBufferDataPointer->m_d3dJointsForVS, &d3dVertexBuffer.m_d3dJointsForVS, sizeof(d3dVertexBuffer.m_d3dJointsForVS));
+	// Unlock the constant buffer.
+	pd3dDeviceContext->Unmap(m_pd3dAnimatedVertexBuffer, 0);
+
+#pragma endregion
+
+	pd3dDeviceContext->VSSetConstantBuffers(bufferNumber, 1, &m_pd3dAnimatedVertexBuffer);
+	pd3dDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	pd3dDeviceContext->IASetVertexBuffers(0, 1, &tMesh.m_pd3dVertexBuffer, &tMesh.m_nVertexBufferStride, &tMesh.m_nVertexBufferOffset);
+	pd3dDeviceContext->IASetIndexBuffer(tMesh.m_pd3dIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
 	if (&tMesh.m_d3dSRVDiffuse != NULL)
 	{
 		pd3dDeviceContext->PSSetShaderResources(0, 1, &tMesh.m_d3dSRVDiffuse);
@@ -1709,7 +1792,7 @@ void CGraphicsSystem::InitUIShaderData(ID3D11DeviceContext * pd3dDeviceContext, 
 	//XMMATRIX tempWorld = d3dVertexBuffer.m_d3dWorldMatrix;
 	//XMMATRIX tempProj = d3dVertexBuffer.m_d3dProjectionMatrix;
 
-#pragma region Map To Vertex Constant Buffer
+	#pragma region Map To Vertex Constant Buffer
 	pd3dDeviceContext->Map(m_pd3dUIVertexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &d3dUIVertexMappedResource);
 
 
@@ -1731,7 +1814,7 @@ void CGraphicsSystem::InitUIShaderData(ID3D11DeviceContext * pd3dDeviceContext, 
 
 #pragma endregion
 
-#pragma region Map To Pixel Constant Buffer
+	#pragma region Map To Pixel Constant Buffer
 	pd3dDeviceContext->Map(m_pd3dUIPixelBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &d3dUIPixelMappedResource);
 
 
@@ -1744,7 +1827,7 @@ void CGraphicsSystem::InitUIShaderData(ID3D11DeviceContext * pd3dDeviceContext, 
 	// Unlock the constant buffer.
 	pd3dDeviceContext->Unmap(m_pd3dUIPixelBuffer, 0);
 
-#pragma endregion
+#pragma endregion	
 
 	pd3dDeviceContext->VSSetConstantBuffers(vBufferNumber, 1, &m_pd3dUIVertexBuffer);
 	pd3dDeviceContext->PSSetConstantBuffers(pBufferNumber, 1, &m_pd3dUIPixelBuffer);
@@ -1758,11 +1841,26 @@ void CGraphicsSystem::InitUIShaderData(ID3D11DeviceContext * pd3dDeviceContext, 
 	}
 }
 
+enum
+{
+	Mesh = 1,
+	DebugMesh,
+	SimpleMesh,
+	PhongMesh,
+	LambertMesh,
+	PBRMesh,
+	UIMesh,
+	Quad,
+	Skybox,
+	Glass,
+	AnimatedMesh
+};
+
 void CGraphicsSystem::ExecutePipeline(ID3D11DeviceContext *pd3dDeviceContext, int m_nIndexCount, int nGraphicsMask, int nShaderID)
 {
 	switch (nShaderID)
 	{
-		case 1:
+		case Mesh:
 		{
 			//Set Input_Layout
 			pd3dDeviceContext->IASetInputLayout(m_pd3dMyInputLayout);
@@ -1776,7 +1874,7 @@ void CGraphicsSystem::ExecutePipeline(ID3D11DeviceContext *pd3dDeviceContext, in
 			}
 			break;
 		}
-		case 2:
+		case DebugMesh:
 		{
 			//Set Input_Layout
 			pd3dDeviceContext->IASetInputLayout(m_pd3dPrimalInputLayout);
@@ -1790,7 +1888,7 @@ void CGraphicsSystem::ExecutePipeline(ID3D11DeviceContext *pd3dDeviceContext, in
 			}
 			break;
 		}
-		case 3:
+		case SimpleMesh:
 		{
 			pd3dDeviceContext->IASetInputLayout(m_pd3dPrimalInputLayout);
 			//Set Shader
@@ -1804,7 +1902,7 @@ void CGraphicsSystem::ExecutePipeline(ID3D11DeviceContext *pd3dDeviceContext, in
 			}
 			break;
 		}
-		case 4:
+		case PhongMesh:
 		{
 			//Set Input_Layout
 			pd3dDeviceContext->IASetInputLayout(m_pd3dMyInputLayout);
@@ -1819,7 +1917,7 @@ void CGraphicsSystem::ExecutePipeline(ID3D11DeviceContext *pd3dDeviceContext, in
 			}
 			break;
 		}
-		case 5:
+		case LambertMesh:
 		{
 			//Set Input_Layout
 			pd3dDeviceContext->IASetInputLayout(m_pd3dMyInputLayout);
@@ -1834,7 +1932,7 @@ void CGraphicsSystem::ExecutePipeline(ID3D11DeviceContext *pd3dDeviceContext, in
 			}
 			break;
 		}
-		case 6:
+		case PBRMesh:
 		{
 			//Set Input_Layout
 			pd3dDeviceContext->IASetInputLayout(m_pd3dMyInputLayout);
@@ -1848,7 +1946,7 @@ void CGraphicsSystem::ExecutePipeline(ID3D11DeviceContext *pd3dDeviceContext, in
 			}
 			break;
 		}	
-		case 7:
+		case UIMesh:
 		{
 			//Set Input_Layout
 			pd3dDeviceContext->IASetInputLayout(m_pd3dUIInputLayout);
@@ -1864,7 +1962,7 @@ void CGraphicsSystem::ExecutePipeline(ID3D11DeviceContext *pd3dDeviceContext, in
 				pd3dDeviceContext->DrawIndexed(m_nIndexCount, 0, 0);
 			break;
 		}
-		case 8:
+		case Quad:
 		{
 			//Set Input_Layout
 			pd3dDeviceContext->IASetInputLayout(m_pd3dQuadInputLayout);
@@ -1877,10 +1975,10 @@ void CGraphicsSystem::ExecutePipeline(ID3D11DeviceContext *pd3dDeviceContext, in
 			{
 				pd3dDeviceContext->Draw(m_nIndexCount, 0);
 			}
-			pd3dDeviceContext->GSSetShader(NULL, NULL, 0);
+			pd3dDeviceContext->GSSetShader(nullptr, NULL, 0);
 			break;
 		}
-		case 9:
+		case Skybox:
 		{
 			pd3dDeviceContext->RSSetState(m_pd3dNoCullRasterizerState);
 			pd3dDeviceContext->PSSetSamplers(0, 1, &m_pd3dSamplerState);
@@ -1900,7 +1998,7 @@ void CGraphicsSystem::ExecutePipeline(ID3D11DeviceContext *pd3dDeviceContext, in
 
 			break;
 		}
-		case 10:
+		case Glass:
 		{
 			//Set Input_Layout
 			pd3dDeviceContext->IASetInputLayout(m_pd3dMyInputLayout);
@@ -1909,6 +2007,20 @@ void CGraphicsSystem::ExecutePipeline(ID3D11DeviceContext *pd3dDeviceContext, in
 			pd3dDeviceContext->PSSetShader(m_pd3dMyPixelShader, NULL, 0);
 			////Draw
 			if (nGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_SHADERID))
+			{
+				pd3dDeviceContext->DrawIndexed(m_nIndexCount, 0, 0);
+			}
+			break;
+		}
+		case AnimatedMesh:
+		{
+			//Set Input_Layout
+			pd3dDeviceContext->IASetInputLayout(m_pd3dAnimatedInputLayout);
+			//Set Shader
+			pd3dDeviceContext->VSSetShader(m_pd3dAnimatedVertexShader, NULL, 0);
+			pd3dDeviceContext->PSSetShader(m_pd3dAnimatedPixelShader, NULL, 0);
+			////Draw
+			if (nGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_ANIMATION | COMPONENT_SHADERID))
 			{
 				pd3dDeviceContext->DrawIndexed(m_nIndexCount, 0, 0);
 			}

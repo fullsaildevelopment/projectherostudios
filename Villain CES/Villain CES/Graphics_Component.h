@@ -1,4 +1,5 @@
 #pragma once
+#include "Timer.h"
 #ifndef CES_GRAPHICS_COMPONENT_H
 #define CES_GRAPHICS_COMPONENT_H
 enum eGraphicsComponent
@@ -242,14 +243,15 @@ struct TSimpleMesh
 	UINT					m_nVertexBufferStride = 0;
 	UINT					m_nVertexBufferOffset = 0;
 
-	std::vector<XMFLOAT3>		m_VertexData;
+	std::vector<XMFLOAT3>	m_VertexData;
 	XMFLOAT4                m_nColor;
 };
 
 struct TAnimation
 {
 	TAnimationClip m_tAnim;
-	std::vector<int> m_vnParentIndices;
+	std::vector<XMMATRIX> invBindPosesForJoints;
+	System_Times tTimer;
 };
 
 struct TMaterial

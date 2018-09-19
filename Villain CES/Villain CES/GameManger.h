@@ -8,8 +8,10 @@
 #include "ProjectileSystem.h"
 #include "AI_System.h"
 #include "UI_System.h"
+#include "CAnimationSystem.h"
 #include"AudioSystem.h"
 #include <array>
+#include <exception>
 #pragma comment(lib, "MSIMG32.lib")
 
 class CGameMangerSystem {
@@ -17,9 +19,6 @@ public:
 
 	CGameMangerSystem(HWND window, CInputSystem* pcInputSystem);
 	~CGameMangerSystem();
-	void LoadLevel();
-	int InGameUpdate();
-	void RestartLevel();
 	int LoadMainMenu();
 	void InitializeMainMenu();
 	int LoadTitleScreen();
@@ -35,24 +34,28 @@ public:
 	int SpacePirateGamePlay();
 	void LoadMikesGraphicsSandbox();
 	int MikesGraphicsSandbox();
-	bool GameOver = false;
-	bool GamePaused = false;
 	void LoadLevelWithMapInIt();
 	int RealLevelUpdate();
 	
+
+	bool GameOver = false;
+	bool GamePaused = false;
+	int nCurrentScene = 0;
+
 private:
 	TMaterialOptimized matOpt;
 	bool drawtext = true;
 	float scale = 0;
 	XMMATRIX CameraNewPosition;
 	XMMATRIX secondCam;
-	CCollisionSystem * pcCollisionSystem;
 	TWorld tThisWorld;
+	CCollisionSystem * pcCollisionSystem;
 	CGraphicsSystem	*pcGraphicsSystem;
 	CInputSystem	*pcInputSystem;
 	CAudioSystem    *pcAudioSystem;
 	CPhysicsSystem  *pcPhysicsSystem;
 	CProjectileSystem* pcProjectileSystem;
+	CAnimationSystem* pcAnimationSystem;
 	CAISystem		*pcAiSystem;
 	CUISystem		*pcUISystem;
 	HWND cApplicationWindow;
@@ -91,7 +94,7 @@ private:
 	TCamera *aimCamera;
 	TCamera *debugCamera;
 	TCamera * menuCamera;
-	//Timers * tAugerTimers;
+	System_Times * tAugerTimers;
 	System_Times *tTimerInfo;
 	AkGameObjectID m_AkMainMenuMusic;
 	AkGameObjectID Listener;
@@ -102,4 +105,6 @@ private:
 	bool bMoving;
 	float Health = 1.0f;
 	bool click = false;
+	XTime frameLock;
+
 };

@@ -108,7 +108,7 @@
 
 //PEMDAS
 #define G_KEY_ADD				0x57
-#define G_KEY_MULTIPLY			0x59
+#define G_KEY_MULTIPLY			0x28
 #define G_KEY_DIVIDE			0x5a
 
 //Button Keys

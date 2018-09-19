@@ -8,10 +8,10 @@
 #include "Collision_System.h"
 #include "Input_Component.h"
 #include "Projectile_Component.h"
+#include "Animation_Component.h"
 #include "DirectXTex-master\WICTextureLoader\WICTextureLoader.h"
 #include "DirectXTex-master\DDSTextureLoader\DDSTextureLoader.h"
 #include <array>
-//#include "UI_System.h"
 
 struct TWorld
 {
@@ -21,6 +21,8 @@ struct TWorld
 	TMesh			atMesh[ENTITYCOUNT];
 	TDebugMesh		atDebugMesh[ENTITYCOUNT];
 	TSimpleMesh		atSimpleMesh[ENTITYCOUNT];
+	TAnimationMask	atAnimationMask[ENTITYCOUNT];
+	TAnimationVariant atAnimationVariant[ENTITYCOUNT];
 	TAnimation		atAnimation[ENTITYCOUNT];
 	TMaterial		atMaterial[ENTITYCOUNT];
 	TTexture		atTexture[ENTITYCOUNT];
@@ -76,26 +78,6 @@ struct TUIVert
 	XMFLOAT2 m_d3dfUVs;
 };
 
-//struct TUIVertices
-//{
-//	TUIVert* m_d3dfPositions;
-//
-//	TUIVertices(unsigned int size)
-//	{
-//		m_d3dfPositions = new TUIVert[size];
-//	}
-//};
-
-//struct TUIIndices
-//{
-//	short* m_d3dfIndices;
-//
-//	TUIIndices(unsigned int size)
-//	{
-//		m_d3dfIndices = new short[size];
-//	}
-//};
-
 unsigned int createEntity(TWorld *ptWorld);
 unsigned int createEntityReverse(TWorld * ptWorld);
 void destroyEntity(TWorld *ptWorld, unsigned int nEntity);
@@ -123,14 +105,15 @@ unsigned int CreateCelling(TWorld* ptWorld, XMMATRIX SpawnPosition);
 unsigned int CreateGun(TWorld* ptWorld, XMMATRIX BulletSpawnLocation, int parentWorldMatrixIndex, float xoffset, float yoffset, float zoffset,int clipSize, float shootingCOooldown);
 unsigned int createMesh(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMeshImport tMesh, TMaterialOptimized tMaterial, int meshIndex);
 unsigned int createClayton(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMeshImport tMesh, TMaterialImport tMaterial);
-unsigned int createClaytonAnim(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMeshImport tMesh, TMaterialImport tMaterial, TAnimatedMesh tAnimation);
+unsigned int createClaytonAnim(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMeshImport tMesh, TMaterialOptimized tMaterial, TAnimationImport tAnim, int meshIndex);
 unsigned int CreateTemptUIBox(TWorld * ptWorld, XMMATRIX SpawnPosition);
 unsigned int CreateSimpleGunAi(TWorld * ptWorld, XMMATRIX SpawnPosition);
 unsigned int CreateSimpleSearchAi(TWorld* ptWorld, XMMATRIX SpawnPosition);
 unsigned int CreateAIVision(TWorld * ptWorld, XMMATRIX bulletSpawnLocation, float zDistance, int parentWorldMatrixIndex, float xoffset, float yoffset, float zoffset);
 unsigned int CreateRayBullet(TWorld * ptWorld, XMMATRIX bulletSpawnLocation, float zDistance, int parentWorldMatrixIndex, float xoffset, float yoffset, float zoffset);
-unsigned int CreateUILabel(TWorld * ptWorld, XMMATRIX SpawnPosition, float width, float height, float offsetX, float offsetY, std::vector<TUIVert*>& atUIVertices, int _nThisEntity = -1, float z = 0);
-unsigned int CreateUILabelForText(TWorld* ptWorld, XMMATRIX SpawnPosition, float width, float height, float offsetX, float offsetY, std::vector<TUIVert*> atUIVertices, std::vector<short*> atUIIndices, wchar_t* text, unsigned int textSize, int _nThisEntity = -1, float z = 0);
+unsigned int CreateUILabel(TWorld * ptWorld, XMMATRIX SpawnPosition, float width, float height, float offsetX, float offsetY, std::vector<TUIVert*>* atUIVertices, int _nThisEntity = -1, float z = 0);
+unsigned int CreateUILabelForText(TWorld* ptWorld, XMMATRIX SpawnPosition, float width, float height, float offsetX, float offsetY, std::vector<TUIVert*>* atUIVertices, std::vector<short*>* atUIIndices, wchar_t* text, unsigned int textSize, int _nThisEntity = -1, float z = 0);
+void GetUVsForCharacter(wchar_t* character, XMFLOAT2* UVs);
 //float zDistance = 0.5f;
 //	fartopleft, nearbottomleft, neartopright, nearbottomright, fartopright, farbottomleft, farbottomright, neartopleft;
 unsigned int CreateFrustumLines(TWorld * ptWorld,XMFLOAT3 fartopleft, XMFLOAT3 nearbottomleft, XMFLOAT3 neartopright, XMFLOAT3 nearbottomright, XMFLOAT3 fartopright, XMFLOAT3 farbottomleft, XMFLOAT3 farbottomright, XMFLOAT3 neartopleft, int parentWorldMatrixIndex, float xoffset, float yoffset, float zoffset,XMFLOAT3 normalLine1, XMFLOAT3 normalLine2);
