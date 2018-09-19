@@ -23,6 +23,7 @@ struct TAIMask
 };
 struct TAIActive {
 	bool active=false;
+	vector<int> NoctifyOtherAi;
 };
 struct TAIVision {
 	frustum_t eyes0;
