@@ -371,10 +371,6 @@ int CGameMangerSystem::LoadTitleScreen()
 	CGraphicsSystem::TUIVertexBufferType tTempVertexBuffer;
 	CGraphicsSystem::TUIPixelBufferType tTempPixelBuffer;
 
-	POINT hoverPoint;
-	GetCursorPos(&hoverPoint);
-	ScreenToClient(cApplicationWindow, &hoverPoint);
-
 	pcGraphicsSystem->UpdateD3D();
 
 	for (int nCurrentEntity = 0; nCurrentEntity < ENTITYCOUNT; nCurrentEntity++)
@@ -393,7 +389,6 @@ int CGameMangerSystem::LoadTitleScreen()
 				
 				if (opacity > 1)
 					return 2;
-					//opacity = 1;
 
 				tTempPixelBuffer.hoverColor = XMFLOAT4(0, 0, 0, opacity);
 			}
@@ -3441,7 +3436,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 
 
 
-	int GunINdexai = CreateGun(&tThisWorld, m_d3dWorldMatrix, spacePirate, -1.1, 0.5, 11.5, 10, 30);
+	int GunINdexai = CreateGun(&tThisWorld, m_d3dWorldMatrix, spacePirate, -1.1, 0.5, 12.5, 10, 30);
 	tThisWorld.atAIMask[spacePirate].GunIndex = GunINdexai;
 
 	tThisWorld.atClip[GunINdexai].bulletSpeed = 0.01;//Frame Dependent
@@ -3496,7 +3491,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	tThisWorld.atPathPlanining[spacePirate].Goal = nodeindex2;*/
 
 
-	int GunINdexai2 = CreateGun(&tThisWorld, m_d3dWorldMatrix, spacePirate2, -1.1, 0.5, 11.5, 10, 70);
+	int GunINdexai2 = CreateGun(&tThisWorld, m_d3dWorldMatrix, spacePirate2, -1.1, 0.5, 12.5, 10, 70);
 	tThisWorld.atAIMask[spacePirate2].GunIndex = GunINdexai2;
 	tThisWorld.atAIVision[spacePirate2].keepRotatingRight = false;
 
