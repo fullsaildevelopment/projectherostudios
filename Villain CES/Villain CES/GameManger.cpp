@@ -338,17 +338,29 @@ void CGameMangerSystem::InitializeTitleScreen()
 
 	{
 		wchar_t wideChar[] =
-		{ L"UI_Textures.fbm/Auger_TitleScreen.png" };
+		{ L"UI_Textures.fbm/Project_Hero_Studios_Logo.png" };
 
 		nThisEntity = CreateUILabel(&tThisWorld, menuCamera->d3d_Position, 20, 20, 0, 0, &atUIVertices, -1, .2);
 		pcUISystem->AddTextureToUI(&tThisWorld, nThisEntity, pcGraphicsSystem->m_pd3dDevice, wideChar);
 	}
+
+	{
+		wchar_t wideChar[] =
+		{ L"UI_Textures.fbm/transparentSquareB.png" };
+
+		nThisEntity = CreateUILabel(&tThisWorld, menuCamera->d3d_Position, 20, 20, 0, 0, &atUIVertices, -1, .1);
+		pcUISystem->AddTextureToUI(&tThisWorld, nThisEntity, pcGraphicsSystem->m_pd3dDevice, wideChar);
+	}
 	
 	pcGraphicsSystem->CreateBuffers(&tThisWorld);
+
+	fadeTime = 0;
 }
 
 int CGameMangerSystem::LoadTitleScreen()
 {
+	fadeTimer.Signal();
+
 	pcAudioSystem->SetListener(Listener, 1, ErrorResult);
 	//////////
 	m_d3dWorldMatrix = pcGraphicsSystem->SetDefaultWorldPosition();
@@ -363,37 +375,28 @@ int CGameMangerSystem::LoadTitleScreen()
 	GetCursorPos(&hoverPoint);
 	ScreenToClient(cApplicationWindow, &hoverPoint);
 
-	//POINT clickPoint = { -1, -1 };
-	//if (pcInputSystem->InputCheck(G_BUTTON_LEFT) == 1)
-	//{
-	//	GetCursorPos(&clickPoint);
-	//	ScreenToClient(cApplicationWindow, &clickPoint);
-	//}
-
 	pcGraphicsSystem->UpdateD3D();
 
 	for (int nCurrentEntity = 0; nCurrentEntity < ENTITYCOUNT; nCurrentEntity++)
 	{
 		if (tThisWorld.atUIMask[nCurrentEntity].m_tnUIMask == (COMPONENT_UIMASK | COMPONENT_LABEL))
 		{
-			//if (PtInRect(&tThisWorld.atButton[nCurrentEntity].boundingBox, clickPoint))
-			//{
-			//	return tThisWorld.atButton[nCurrentEntity].sceneIndex;
-			//}
-			//else if (PtInRect(&tThisWorld.atButton[nCurrentEntity].boundingBox, hoverPoint))
-			//{
-			//	tTempPixelBuffer.hoverColor = XMFLOAT4(0, 0, 0, 1);
-			//}
-			//else
-			//{
-			//	tTempPixelBuffer.hoverColor = XMFLOAT4(0, 0, 0, 1);
-			//}
-
 			tTempVertexBuffer.start = -1;
 			tTempVertexBuffer.end = -1;
 			tTempVertexBuffer.ratio = -1;
 
-			tTempPixelBuffer.hoverColor = XMFLOAT4(0, 0, 0, 1);
+			if (nCurrentEntity == 0)
+				tTempPixelBuffer.hoverColor = XMFLOAT4(0, 0, 0, 1);
+			else
+			{
+				float opacity = fadeTime / 5;
+				
+				if (opacity > 1)
+					return 2;
+					//opacity = 1;
+
+				tTempPixelBuffer.hoverColor = XMFLOAT4(0, 0, 0, opacity);
+			}
 
 			pcGraphicsSystem->InitUIShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tTempVertexBuffer, tTempPixelBuffer, tThisWorld.atMesh[nCurrentEntity], menuCamera->d3d_Position);
 			pcGraphicsSystem->ExecutePipeline(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atMesh[nCurrentEntity].m_nIndexCount, tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask, tThisWorld.atShaderID[nCurrentEntity].m_nShaderID);
@@ -415,6 +418,8 @@ int CGameMangerSystem::LoadTitleScreen()
 	
 	if (pcInputSystem->InputCheck(G_BUTTON_LEFT))
 		return 2;
+
+	fadeTime += fadeTimer.SmoothDelta();
 
 	return 1;
 }
@@ -680,7 +685,7 @@ void CGameMangerSystem::InitializePauseScreen()
 
 	{
 		wchar_t filePath[] =
-		{ L"../UI_Textures.fbm/transparentSquare.png" };
+		{ L"../UI_Textures.fbm/transparentSquareB.png" };
 
 		nThisEntity = createEntityReverse(&tThisWorld);
 		CreateUILabel(&tThisWorld, menuCamera->d3d_Position, 20, 20, 0, 0, &atUIVertices, nThisEntity);
@@ -3317,7 +3322,6 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	InitializeEndScreen();
 	GameOver = false;
 	GamePaused = false;
-	frames = 0;
 
 	pcAiSystem->SetNumberOfAI(2);
 //	tTimerInfo->StartClock(tAugerTimers->tSceneTimer);
@@ -3614,15 +3618,11 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 
 	pcGraphicsSystem->CreateBuffers(&tThisWorld);
 
-	frameTimer.Restart();
-	startTime = frameTimer.TotalTime();
-
 	fpsTimer.Init_FPSReader();
 }
 
 int CGameMangerSystem::RealLevelUpdate()
 {
-	//frameTimer.Signal();
 	fpsTimer.Xtime_Signal();
 
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
@@ -4854,66 +4854,46 @@ int CGameMangerSystem::RealLevelUpdate()
 	}
 
 	clickTime += clickTimer.Delta();
-	/*++frames;
 	
-	float delta = frameTimer.SmoothDelta();
-	float num = (1000 / 60) - (delta * .0001);
-	if (num > 0)
+	float fps = fpsTimer.UpdateFrameTime();
+
+	tUIVertexBuffer.start = -1;
+	tUIVertexBuffer.end = -1;
+	tUIVertexBuffer.ratio = -1;
+
+	tUIPixelBuffer.hoverColor = XMFLOAT4(0, 0, 0, 0);
+
+	wchar_t* textBuffer = new wchar_t[3];
+
+	if (fps < 10)
 	{
-		Sleep(num);
-		frameTimer.Signal();
+		textBuffer[0] = 0;
+		textBuffer[1] = 0;
+		textBuffer[2] = (int)fps % 10;
+	}
+	else if (fps < 100)
+	{
+		textBuffer[0] = 0;
+		textBuffer[1] = (int)fps / 10;
+		textBuffer[2] = (int)fps % 10;
 	}
 	else
-		frameTimer.Signal();
-	*/
-	float fps = fpsTimer.UpdateFrameTime();
 	{
-		tUIVertexBuffer.start = -1;
-		tUIVertexBuffer.end = -1;
-		tUIVertexBuffer.ratio = -1;
-
-		tUIPixelBuffer.hoverColor = XMFLOAT4(0, 0, 0, 0);
-
-		//float num = frames / (frameTimer.TotalTime());
-
-		wchar_t* textBuffer = new wchar_t[3];
-
-		if (fps < 10)
-		{
-			textBuffer[0] = 0;
-			textBuffer[1] = 0;
-			textBuffer[2] = (int)fps % 10;
-		}
-		else if (fps < 100)
-		{
-			textBuffer[0] = 0;
-			textBuffer[1] = (int)fps / 10;
-			textBuffer[2] = (int)fps % 10;
-		}
-		else
-		{
-			textBuffer[0] = (int)fps / 100;
-			textBuffer[1] = ((int)fps / 10) - ((int)fps / 100 * 10);
-			textBuffer[2] = (int)fps % 10;
-		}
-
-		pcUISystem->UpdateText(&tThisWorld, 1089, &atUIVertices, textBuffer, 3, atUIVertices.at(tThisWorld.atLabel[1089].vIndex));
-
-		pcGraphicsSystem->CreateEntityBuffer(&tThisWorld, 1089);
-
-		delete[] textBuffer;
-
-		pcGraphicsSystem->InitUIShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tUIVertexBuffer, tUIPixelBuffer, tThisWorld.atMesh[1089], menuCamera->d3d_Position);
-		pcGraphicsSystem->ExecutePipeline(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atMesh[1089].m_nIndexCount, tThisWorld.atGraphicsMask[1089].m_tnGraphicsMask, tThisWorld.atShaderID[1089].m_nShaderID);
-
+		textBuffer[0] = (int)fps / 100;
+		textBuffer[1] = ((int)fps / 10) - ((int)fps / 100 * 10);
+		textBuffer[2] = (int)fps % 10;
 	}
 
-	float timeToSleepThisFrame = (1000 / 60) - (fpsTimer.GetDelta());
+	pcUISystem->UpdateText(&tThisWorld, 1089, &atUIVertices, textBuffer, 3, atUIVertices.at(tThisWorld.atLabel[1089].vIndex));
 
-	if (timeToSleepThisFrame > 0)
-	{
-		Sleep(timeToSleepThisFrame / 2);
-	}
+	pcGraphicsSystem->CreateEntityBuffer(&tThisWorld, 1089);
+
+	delete[] textBuffer;
+
+	pcGraphicsSystem->InitUIShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tUIVertexBuffer, tUIPixelBuffer, tThisWorld.atMesh[1089], menuCamera->d3d_Position);
+	pcGraphicsSystem->ExecutePipeline(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atMesh[1089].m_nIndexCount, tThisWorld.atGraphicsMask[1089].m_tnGraphicsMask, tThisWorld.atShaderID[1089].m_nShaderID);
+
+	fpsTimer.Throttle(60);
 
 	pcGraphicsSystem->m_pd3dSwapchain->Present(0, 0);
 	zValue += 0.001;

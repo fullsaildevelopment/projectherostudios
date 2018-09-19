@@ -62,6 +62,7 @@ public:
 	float UpdateFrameTime();
 	void Xtime_Signal();
 	double GetDelta();
+	void Throttle(double targetHz);
 
 private:
  int m_framesPassed;
