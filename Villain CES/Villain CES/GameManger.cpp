@@ -1816,7 +1816,7 @@ int CGameMangerSystem::PathFindingExample()
 
 
 									pcGraphicsSystem->CleanD3DObject(&tThisWorld, nCurrentEntity);
-									tThisWorld.atAiHeath[otherCollisionsIndex[i]].heath -= 50;
+									tThisWorld.atAiHeath[otherCollisionsIndex[i]].heath -= playerDamage;
 									if (tThisWorld.atAiHeath[otherCollisionsIndex[i]].heath <= 0) {
 										pcAiSystem->SetNumberOfAI(pcAiSystem->GetNumberOfAI() - 1);
 										pcCollisionSystem->RemoveAABBCollider(otherCollisionsIndex[i]);
@@ -1841,7 +1841,7 @@ int CGameMangerSystem::PathFindingExample()
 									pcGraphicsSystem->CleanD3DObject(&tThisWorld, nCurrentEntity);
 
 								}
-								tThisWorld.atClayton[otherCollisionsIndex[i]].health -= 50;
+								tThisWorld.atClayton[otherCollisionsIndex[i]].health -= pirateDamage;
 							}
 
 
@@ -2906,7 +2906,7 @@ int CGameMangerSystem::SpacePirateGamePlay()
 
 
 								pcGraphicsSystem->CleanD3DObject(&tThisWorld, nCurrentEntity);
-								tThisWorld.atAiHeath[otherCollisionsIndex[i]].heath -= 50;
+								tThisWorld.atAiHeath[otherCollisionsIndex[i]].heath -= playerDamage;
 								if (tThisWorld.atAiHeath[otherCollisionsIndex[i]].heath <= 0) {
 									pcAiSystem->SetNumberOfAI(pcAiSystem->GetNumberOfAI() - 1);
 									pcCollisionSystem->RemoveAABBCollider(otherCollisionsIndex[i]);
@@ -2931,7 +2931,7 @@ int CGameMangerSystem::SpacePirateGamePlay()
 								pcGraphicsSystem->CleanD3DObject(&tThisWorld, nCurrentEntity);
 
 							}
-							tThisWorld.atClayton[otherCollisionsIndex[i]].health -= 50;
+							tThisWorld.atClayton[otherCollisionsIndex[i]].health -= pirateDamage;
 						}
 						
 						
@@ -4478,7 +4478,7 @@ int CGameMangerSystem::RealLevelUpdate()
 
 
 										pcGraphicsSystem->CleanD3DObject(&tThisWorld, nCurrentEntity);
-										tThisWorld.atAiHeath[otherCollisionsIndex[i]].heath -= 50;
+										tThisWorld.atAiHeath[otherCollisionsIndex[i]].heath -= playerDamage;
 										if (tThisWorld.atAiHeath[otherCollisionsIndex[i]].heath <= 0)
 										{
 											pcAiSystem->SetNumberOfAI(pcAiSystem->GetNumberOfAI() - 1);
@@ -4510,7 +4510,7 @@ int CGameMangerSystem::RealLevelUpdate()
 										pcGraphicsSystem->CleanD3DObject(&tThisWorld, nCurrentEntity);
 
 									}
-									tThisWorld.atClayton[otherCollisionsIndex[i]].health -= 50;
+									tThisWorld.atClayton[otherCollisionsIndex[i]].health -= pirateDamage;
 									if (tThisWorld.atClayton[otherCollisionsIndex[i]].health <= 0) {
 										GameOver = true;
 									}

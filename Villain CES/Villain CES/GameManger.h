@@ -74,7 +74,8 @@ private:
 	RECT windowRect;
 	int screenWidth;
 	int screenHeight;
-	
+	float playerDamage = 25;
+	float pirateDamage = 18;
 	bool options = false;
 	bool pauseInit = false;
 	//ZB Variables
