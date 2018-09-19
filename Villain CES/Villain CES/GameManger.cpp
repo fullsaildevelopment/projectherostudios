@@ -3658,7 +3658,7 @@ int CGameMangerSystem::RealLevelUpdate()
 	}
 
 	clickTimer.Signal();
-	if (GamePaused == false) {
+	if (GamePaused == false &&  GameOver == false) {
 		if (tCameraMode.bWalkMode == true)
 		{
 			if (tCameraMode.bSwitch == true)
@@ -3798,7 +3798,7 @@ int CGameMangerSystem::RealLevelUpdate()
 
 	#pragma region Input Garbage
 	// toggle the modes that you are in
-	if (GamePaused == false) {
+	if (GamePaused == false &&  GameOver == false) {
 		if (pcInputSystem->InputCheck(G_BUTTON_MIDDLE))
 		{
 			tThisWorld.atClip[GunIndexForPlayer].GunMode = !tThisWorld.atClip[GunIndexForPlayer].GunMode;
@@ -3942,7 +3942,7 @@ int CGameMangerSystem::RealLevelUpdate()
 				tMyVertexBufferTemp.m_d3dViewMatrix = m_d3dViewMatrix;
 			}
 
-			if (GamePaused == false) {
+			if (GamePaused == false &&  GameOver == false) {
 				if (tThisWorld.atInputMask[nCurrentEntity].m_tnInputMask == (COMPONENT_CLAYTON | COMPONENT_INPUTMASK))
 				{
 					if (tCameraMode.bWalkMode == true)
@@ -3980,7 +3980,7 @@ int CGameMangerSystem::RealLevelUpdate()
 		{
 			GameOver = true;
 		}
-		if (GamePaused == false) {
+		if (GamePaused == false &&  GameOver == false) {
 			if (tThisWorld.atAIMask[nCurrentEntity].m_tnAIMask == (COMPONENT_AIMASK | COMPONENT_FOLLOW)
 				|| tThisWorld.atAIMask[nCurrentEntity].m_tnAIMask == (COMPONENT_SHOOT | COMPONENT_AIMASK | COMPONENT_FOLLOW)
 				|| tThisWorld.atAIMask[nCurrentEntity].m_tnAIMask == (COMPONENT_AIMASK | COMPONENT_SEARCH | COMPONENT_PATHFINDTEST))
@@ -3994,7 +3994,7 @@ int CGameMangerSystem::RealLevelUpdate()
 #endif // AI_ON
 			}
 		}
-		if (GamePaused == false) {
+		if (GamePaused == false &&  GameOver == false) {
 			if (tThisWorld.atAIMask[nCurrentEntity].m_tnAIMask == (COMPONENT_AIMASK | COMPONENT_SEARCH)
 				|| tThisWorld.atAIMask[nCurrentEntity].m_tnAIMask == (COMPONENT_AIMASK | COMPONENT_SPOTEDPLAYER)
 				|| tThisWorld.atAIMask[nCurrentEntity].m_tnAIMask == (COMPONENT_AIMASK | COMPONENT_SEARCH | COMPONENT_PATHFINDTEST))
@@ -4092,7 +4092,7 @@ int CGameMangerSystem::RealLevelUpdate()
 				}
 			}
 		}
-		if (GamePaused == false) {
+		if (GamePaused == false &&  GameOver == false) {
 			if (tThisWorld.atAIMask[nCurrentEntity].m_tnAIMask == (COMPONENT_AIMASK | COMPONENT_PATHFINDTEST)
 				|| tThisWorld.atAIMask[nCurrentEntity].m_tnAIMask == (COMPONENT_AIMASK | COMPONENT_SEARCH | COMPONENT_PATHFINDTEST))
 			{
@@ -4119,7 +4119,7 @@ int CGameMangerSystem::RealLevelUpdate()
 				}
 			}
 		}
-		if (GamePaused == false) {
+		if (GamePaused == false &&  GameOver == false) {
 			if (tThisWorld.atProjectiles[nCurrentEntity].m_tnProjectileMask == (COMPONENT_PROJECTILESMASK | COMPONENT_CLIP))
 			{
 				if (tThisWorld.atClip[nCurrentEntity].GunMode == false
@@ -4252,9 +4252,9 @@ int CGameMangerSystem::RealLevelUpdate()
 		{
 			float x = 0;
 		}
-		if(GamePaused==false)
+		if(GamePaused==false&&GameOver==false)
 		tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = pcPhysicsSystem->ResolveForces(&tThisWorld.atRigidBody[nCurrentEntity], tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, true);
-		if (GamePaused == false) {
+		if (GamePaused == false &&  GameOver == false) {
 			if (tThisWorld.atProjectiles[nCurrentEntity].m_tnProjectileMask == (COMPONENT_PROJECTILESMASK | COMPONENT_RAYGUN))
 			{
 				float CloseEstObject = 10000000000000000000.0f;
@@ -4282,7 +4282,7 @@ int CGameMangerSystem::RealLevelUpdate()
 				delete distanceCalucaltion;
 			}
 		}
-		if (GamePaused == false) {
+		if (GamePaused == false &&  GameOver == false) {
 			if (tThisWorld.atCollisionMask[nCurrentEntity].m_tnCollisionMask == (COMPONENT_COLLISIONMASK | COMPONENT_TRIGGER | COMPONENT_AABB | COMPONENT_NONSTATIC)
 				|| tThisWorld.atCollisionMask[nCurrentEntity].m_tnCollisionMask == (COMPONENT_COLLISIONMASK | COMPONENT_NONTRIGGER | COMPONENT_AABB | COMPONENT_NONSTATIC))
 			{
@@ -4406,6 +4406,9 @@ int CGameMangerSystem::RealLevelUpdate()
 
 									}
 									tThisWorld.atClayton[otherCollisionsIndex[i]].health -= 50;
+									if (tThisWorld.atClayton[otherCollisionsIndex[i]].health <= 0) {
+										GameOver = true;
+									}
 								}
 
 

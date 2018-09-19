@@ -92,7 +92,8 @@ private:
 	std::vector<short*> atUIIndices;
 	XTime clickTimer;
 	float clickTime;
-
+	XTime PausedTimer;
+	float pausedTimer;
 	TCamera *walkCamera;
 	TCamera *aimCamera;
 	TCamera *debugCamera;
