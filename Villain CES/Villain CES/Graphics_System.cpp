@@ -585,7 +585,7 @@ void CGraphicsSystem::CreateShaders(ID3D11Device * device)
 
 	//Setup the description of the dynamic matrix constant buffer that is in the vertex shader.
 	d3dSkyboxMatrixBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
-	d3dSkyboxMatrixBufferDesc.ByteWidth = sizeof(TUIVertexBufferType);
+	d3dSkyboxMatrixBufferDesc.ByteWidth = sizeof(TMyVertexBufferType);
 	d3dSkyboxMatrixBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
 	d3dSkyboxMatrixBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 	d3dSkyboxMatrixBufferDesc.MiscFlags = 0;
