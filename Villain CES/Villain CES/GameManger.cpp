@@ -3474,7 +3474,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	tThisWorld.atPathPlanining[spacePirate].Goal = nodeindex2;*/
 
 
-	int GunINdexai2 = CreateGun(&tThisWorld, m_d3dWorldMatrix, spacePirate2, -1.1, 0.5, 11.5, 10,20);
+	int GunINdexai2 = CreateGun(&tThisWorld, m_d3dWorldMatrix, spacePirate2, -1.1, 0.5, 11.5, 10,130);
 	tThisWorld.atAIMask[spacePirate2].GunIndex = GunINdexai2;
 	tThisWorld.atAIVision[spacePirate2].keepRotatingRight = false;
 
