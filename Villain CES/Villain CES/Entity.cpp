@@ -3395,6 +3395,217 @@ unsigned int createClaytonAnim(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TM
 	return nThisEntity;
 }
 
+unsigned int CreateScyllian(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMeshImport tMesh, TMaterialImport tMaterial, XMMATRIX SpawnPosition)
+{
+	unsigned int nThisEntity = createEntity(ptWorld);
+
+	wchar_t fnPBR[9][260];
+	wchar_t fnTRAD[5][260];
+	size_t result = 0;
+	mbstate_t d;
+	TMaterialImport tTempMaterial = tMaterial;
+
+	for (unsigned int i = 0; i < 9; i++)
+	{
+		if (i < 5 && tTempMaterial.m_tFileNames[i])
+		{
+			tTempMaterial.m_tFileNames[i] = &tMaterial.m_tFileNames[i][1];
+			mbsrtowcs_s(&result, fnTRAD[i], 260, (const char **)(&tTempMaterial.m_tFileNames[i]), tTempMaterial.m_tFileNameSizes[i], &d);
+		}
+		if (tTempMaterial.m_tPBRFileNames[i])
+		{
+			tTempMaterial.m_tPBRFileNames[i] = &tMaterial.m_tPBRFileNames[i][1];
+			mbsrtowcs_s(&result, fnPBR[i], 260, (const char **)(&tTempMaterial.m_tPBRFileNames[i]), tTempMaterial.m_tPBRFileNameSizes[i], &d);
+		}
+	}
+
+	ID3D11Resource * defaultDiffuseTexture;
+
+	ID3D11Resource * ambientTexture;
+	ID3D11Resource * diffuseTexture;
+	ID3D11Resource * specularTexture;
+	ID3D11Resource * emissiveTexture;
+	ID3D11Resource * normalTexture;
+	ID3D11Resource * bumpTexture;
+
+	ID3D11Resource * d3dColorMap;
+	ID3D11Resource * d3dNormalMap;
+	ID3D11Resource * d3dEmissiveMap;
+	ID3D11Resource * d3dMetallicMap;
+	ID3D11Resource * d3dRoughnessMap;
+	ID3D11Resource * d3dAmbientOcclusionMap;
+	ID3D11Resource * d3dGlobalDiffuseCubeMap;
+	ID3D11Resource * d3dGlobalSpecularCubeMap;
+	ID3D11Resource * d3dIBLCubeMap;
+
+	ID3D11ShaderResourceView * srv;
+
+	for (unsigned int i = 0; i < 9; i++)
+	{
+		if (tMaterial.m_tPBRFileNames[i])
+		{
+			if (tMaterial.m_tPBRFileNames[i][0] == 'c')
+			{
+				result = CreateWICTextureFromFile(m_pd3dDevice, fnPBR[i], &d3dColorMap, &srv, NULL);
+				ptWorld->atMesh[nThisEntity].m_d3dSRVDiffuse = srv;
+			}
+			if (tMaterial.m_tPBRFileNames[i][0] == 'n')
+			{
+				result = CreateWICTextureFromFile(m_pd3dDevice, fnPBR[i], &d3dNormalMap, nullptr, NULL);
+			}
+			if (tMaterial.m_tPBRFileNames[i][0] == 'e')
+			{
+				result = CreateWICTextureFromFile(m_pd3dDevice, fnPBR[i], &d3dEmissiveMap, nullptr, NULL);
+			}
+			if (tMaterial.m_tPBRFileNames[i][0] == 'm')
+			{
+				result = CreateWICTextureFromFile(m_pd3dDevice, fnPBR[i], &d3dMetallicMap, nullptr, NULL);
+			}
+			if (tMaterial.m_tPBRFileNames[i][0] == 'r')
+			{
+				result = CreateWICTextureFromFile(m_pd3dDevice, fnPBR[i], &d3dRoughnessMap, nullptr, NULL);
+			}
+			if (tMaterial.m_tPBRFileNames[i][0] == 'a')
+			{
+				result = CreateWICTextureFromFile(m_pd3dDevice, fnPBR[i], &d3dAmbientOcclusionMap, nullptr, NULL);
+			}
+			if (tMaterial.m_tPBRFileNames[i][0] == 'd')
+			{
+				result = CreateDDSTextureFromFile(m_pd3dDevice, fnPBR[i], &d3dGlobalDiffuseCubeMap, nullptr, NULL);
+			}
+			if (tMaterial.m_tPBRFileNames[i][0] == 's')
+			{
+				result = CreateDDSTextureFromFile(m_pd3dDevice, fnPBR[i], &d3dGlobalSpecularCubeMap, nullptr, NULL);
+			}
+			if (tMaterial.m_tPBRFileNames[i][0] == 'l')
+			{
+				result = CreateDDSTextureFromFile(m_pd3dDevice, fnPBR[i], &d3dIBLCubeMap, nullptr, NULL);
+			}
+		}
+
+		if (tMaterial.m_tFileNames[i] && i < 5)
+		{
+			if (tMaterial.m_tFileNames[i][0] == 'a')
+			{
+				result = CreateWICTextureFromFile(m_pd3dDevice, fnTRAD[i], &ambientTexture, nullptr, NULL);
+			}
+			if (tMaterial.m_tFileNames[i][0] == 'b')
+			{
+				result = CreateWICTextureFromFile(m_pd3dDevice, fnTRAD[i], &bumpTexture, nullptr, NULL);
+			}
+			if (tMaterial.m_tFileNames[i][0] == 'd')
+			{
+				result = CreateWICTextureFromFile(m_pd3dDevice, fnTRAD[i], &diffuseTexture, &srv, NULL);
+				ptWorld->atMesh[nThisEntity].m_d3dSRVDiffuse = srv;
+			}
+			if (tMaterial.m_tFileNames[i][0] == 'e')
+			{
+				result = CreateWICTextureFromFile(m_pd3dDevice, fnTRAD[i], &emissiveTexture, nullptr, NULL);
+			}
+			if (tMaterial.m_tFileNames[i][0] == 'n')
+			{
+				result = CreateWICTextureFromFile(m_pd3dDevice, fnTRAD[i], &normalTexture, nullptr, NULL);
+			}
+			if (tMaterial.m_tFileNames[i][0] == 's')
+			{
+				result = CreateWICTextureFromFile(m_pd3dDevice, fnTRAD[i], &specularTexture, nullptr, NULL);
+			}
+		}
+	}
+#pragma endregion
+
+	if (tMaterial.m_tPBRFileNames[0] == NULL && tMaterial.m_tFileNames[0] == NULL)
+	{
+		result = CreateWICTextureFromFile(m_pd3dDevice, L"TestScene_V1.fbm\\Wood01_col.jpg", &diffuseTexture, &srv, NULL);
+		ptWorld->atMesh[nThisEntity].m_d3dSRVDiffuse = srv;
+	}
+	ptWorld->atGraphicsMask[nThisEntity].m_tnGraphicsMask = COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_SHADERID;
+	ptWorld->atCollisionMask[nThisEntity].m_tnCollisionMask = COMPONENT_COLLISIONMASK | COMPONENT_AABB | COMPONENT_NONSTATIC | COMPONENT_NONTRIGGER;
+	ptWorld->atAIMask[nThisEntity].m_tnAIMask = COMPONENT_AIMASK | COMPONENT_SEARCH | COMPONENT_PATHFINDTEST;
+	ptWorld->atUIMask[nThisEntity].m_tnUIMask = COMPONENT_UIMASK;
+	ptWorld->atPhysicsMask[nThisEntity].m_tnPhysicsMask = COMPONENT_PHYSICSMASK | COMPONENT_RIGIDBODY;
+	ptWorld->atInputMask[nThisEntity].m_tnInputMask = COMPONENT_INPUTMASK;
+	ptWorld->atActiveAI[nThisEntity].active = FALSE;
+
+	switch (tMaterial.lambert)
+	{
+	case 0:
+	{
+		ptWorld->atShaderID[nThisEntity].m_nShaderID = 4;
+		break;//Phong
+	}
+	case 1:
+	{
+		ptWorld->atShaderID[nThisEntity].m_nShaderID = 5;
+		break;//Lambert
+	}
+	case 2:
+	{
+		ptWorld->atShaderID[nThisEntity].m_nShaderID = 6;
+		break;//PBR
+	}
+	default:
+		break;
+	}
+	TPrimitiveMesh *pMesh = new TPrimitiveMesh[tMesh.nUniqueVertexCount];
+	for (int i = 0; i < tMesh.nUniqueVertexCount; i++)
+	{
+		TPrimitiveMesh tmp;
+		for (int j = 0; j < 4; j++)
+		{
+			tmp.pos[j] = tMesh.meshArrays[i].pos[j];
+			//tmp.pos[j] *= 0.01;
+			if (j < 2)
+			{
+				tmp.uv[j] = tMesh.meshArrays[i].uv[j];
+			}
+		}
+		pMesh[i] = tmp;
+		ptWorld->atMesh[nThisEntity].m_VertexData.push_back(XMFLOAT3(tmp.pos[0], tmp.pos[1], tmp.pos[2]));
+	}
+
+	XMVECTOR playerGravity;
+	playerGravity.m128_f32[1] = -0.0001;
+	playerGravity.m128_f32[0] = 0;
+	playerGravity.m128_f32[2] = 0;
+	playerGravity.m128_f32[3] = 0;
+	ptWorld->atRigidBody[nThisEntity].gravity = playerGravity;
+
+	ptWorld->atMesh[nThisEntity].m_nVertexCount = tMesh.nUniqueVertexCount;
+	ptWorld->atMesh[nThisEntity].m_nVertexBufferStride = sizeof(TPrimitiveMesh);
+	ptWorld->atMesh[nThisEntity].m_nVertexBufferOffset = 0;
+	ptWorld->atMesh[nThisEntity].m_d3dVertexBufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
+	ptWorld->atMesh[nThisEntity].m_d3dVertexBufferDesc.ByteWidth = sizeof(TPrimitiveMesh) * ptWorld->atMesh[nThisEntity].m_nVertexCount;
+	ptWorld->atMesh[nThisEntity].m_d3dVertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	ptWorld->atMesh[nThisEntity].m_d3dVertexBufferDesc.CPUAccessFlags = 0;
+	ptWorld->atMesh[nThisEntity].m_d3dVertexBufferDesc.MiscFlags = 0;
+	ptWorld->atMesh[nThisEntity].m_d3dVertexBufferDesc.StructureByteStride = 0;
+
+	ptWorld->atMesh[nThisEntity].m_d3dVertexData.pSysMem = pMesh;
+	ptWorld->atMesh[nThisEntity].m_d3dVertexData.SysMemPitch = 0;
+	ptWorld->atMesh[nThisEntity].m_d3dVertexData.SysMemSlicePitch = 0;
+
+	ptWorld->atMesh[nThisEntity].m_nIndexCount = tMesh.nPolygonVertexCount;
+	ptWorld->atMesh[nThisEntity].m_d3dIndexBufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
+	ptWorld->atMesh[nThisEntity].m_d3dIndexBufferDesc.ByteWidth = sizeof(unsigned int) * ptWorld->atMesh[nThisEntity].m_nIndexCount;
+	ptWorld->atMesh[nThisEntity].m_d3dIndexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+	ptWorld->atMesh[nThisEntity].m_d3dIndexBufferDesc.CPUAccessFlags = 0;
+	ptWorld->atMesh[nThisEntity].m_d3dIndexBufferDesc.MiscFlags = 0;
+	ptWorld->atMesh[nThisEntity].m_d3dIndexBufferDesc.StructureByteStride = 0;
+
+	ptWorld->atMesh[nThisEntity].m_d3dIndexData.pSysMem = tMesh.indexBuffer;
+	ptWorld->atMesh[nThisEntity].m_d3dIndexData.SysMemPitch = 0;
+	ptWorld->atMesh[nThisEntity].m_d3dIndexData.SysMemSlicePitch = 0;
+
+	ptWorld->atWorldMatrix[nThisEntity].worldMatrix = SpawnPosition;
+
+	//ptWorld->atWorldMatrix[nThisEntity].worldMatrix = XMMatrixMultiply(ptWorld->atWorldMatrix[nThisEntity].worldMatrix, XMMatrixTranslation(0, 0, 0));
+	//ptWorld->atWorldMatrix[nThisEntity].worldMatrix = XMMatrixMultiply(ptWorld->atWorldMatrix[nThisEntity].worldMatrix, XMMatrixRotationRollPitchYaw(tMesh.worldRotation[0], tMesh.worldRotation[1], tMesh.worldRotation[2]));
+	//ptWorld->atWorldMatrix[nThisEntity].worldMatrix = XMMatrixMultiply(ptWorld->atWorldMatrix[nThisEntity].worldMatrix, XMMatrixScaling(.01, .01, .01));
+
+	return nThisEntity;
+}
+
 unsigned int CreateUILabel(TWorld * ptWorld, XMMATRIX SpawnPosition, float width, float height, float offsetX, float offsetY, std::vector<TUIVert*>* atUIVertices, int _nThisEntity, float z)
 {
 	unsigned int nThisEntity;

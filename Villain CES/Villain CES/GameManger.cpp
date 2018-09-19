@@ -1004,6 +1004,18 @@ void CGameMangerSystem::InitializeHUD()
 
 		pcUISystem->AddMaskToUI(&tThisWorld, nThisEntity, COMPONENT_HUD);
 	}
+
+	{
+		wchar_t textBuffer[] =
+		{ L"000" };
+
+		nThisEntity = createEntityReverse(&tThisWorld);
+		CreateUILabelForText(&tThisWorld, menuCamera->d3d_Position, 1, 1, -6.625, 7.5, &atUIVertices, &atUIIndices, textBuffer, ARRAYSIZE(textBuffer), nThisEntity, .1);
+		pcUISystem->AddTextureToUI(&tThisWorld, nThisEntity, pcGraphicsSystem->m_pd3dDevice, nullptr, fontTexture);
+
+		pcUISystem->AddMaskToUI(&tThisWorld, nThisEntity, COMPONENT_HUD);
+		pcUISystem->AddMaskToUI(&tThisWorld, nThisEntity, COMPONENT_FPS);
+	}
 }
 
 void CGameMangerSystem::LoadPathFindingTest()
@@ -3305,6 +3317,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	InitializeEndScreen();
 	GameOver = false;
 	GamePaused = false;
+	frames = 0;
 
 	pcAiSystem->SetNumberOfAI(2);
 //	tTimerInfo->StartClock(tAugerTimers->tSceneTimer);
@@ -3406,14 +3419,14 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	pcAiSystem->AddNodeToPathFinding(nodeindex3, nodePosition, 1);
 */
 
-	/*tempImport = pcGraphicsSystem->ReadMesh("meshData_Pirate.txt");
-
-	for (int i = 0; i < tempImport.meshCount; ++i)
+	tempImport = pcGraphicsSystem->ReadMesh("meshData_Scyllian.txt");
+	int spacePirate;
+	for (int meshIndex = 0; meshIndex < tempImport.meshCount; ++meshIndex)
 	{
+		spacePirate = CreateScyllian(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, tempImport.vtMeshes[meshIndex], tempImport.vtMaterials[meshIndex], AILocation);
+	}
 
-	}*/
-
-	int spacePirate = CreateSpacePirate(&tThisWorld, AILocation);
+	//spacePirate = CreateSpacePirate(&tThisWorld, AILocation);
 	tThisWorld.atAiHeath[spacePirate].heath = 100;
 	createGSQuad(&tThisWorld, XMFLOAT4(1, 0, 0, 1), spacePirate);
 	createGSQuad(&tThisWorld, XMFLOAT4(0, 0, 0, 1), spacePirate);
@@ -3462,7 +3475,14 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	tThisWorld.atAIVision[spacePirate].normalAtBegining[4] = planes[4].normal;
 	tThisWorld.atAIVision[spacePirate].normalAtBegining[5] = planes[5].normal;
 	AILocation.r[3].m128_f32[0] += 3;
-	int spacePirate2 = CreateSpacePirate(&tThisWorld, AILocation);
+
+	int spacePirate2;
+	for (int meshIndex = 0; meshIndex < tempImport.meshCount; ++meshIndex)
+	{
+		spacePirate2 = CreateScyllian(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, tempImport.vtMeshes[meshIndex], tempImport.vtMaterials[meshIndex], AILocation);
+	}
+
+	//spacePirate2 = CreateSpacePirate(&tThisWorld, AILocation);
 	tThisWorld.atAiHeath[spacePirate2].heath = 100;
 	createGSQuad(&tThisWorld, XMFLOAT4(1, 0, 0, 1), spacePirate2);
 	createGSQuad(&tThisWorld, XMFLOAT4(0, 0, 0, 1), spacePirate2);
@@ -3593,10 +3613,18 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 
 
 	pcGraphicsSystem->CreateBuffers(&tThisWorld);
+
+	frameTimer.Restart();
+	startTime = frameTimer.TotalTime();
+
+	fpsTimer.Init_FPSReader();
 }
 
 int CGameMangerSystem::RealLevelUpdate()
 {
+	//frameTimer.Signal();
+	fpsTimer.Xtime_Signal();
+
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 	_CrtSetBreakAlloc(-1); //Important!
 	m_d3dProjectionMatrix = pcGraphicsSystem->SetDefaultPerspective(m_RealTimeFov);
@@ -3610,6 +3638,7 @@ int CGameMangerSystem::RealLevelUpdate()
 	CGraphicsSystem::TMyVertexBufferType tMyVertexBufferTemp;
 	CGraphicsSystem::TUIVertexBufferType tUIVertexBuffer;
 	CGraphicsSystem::TUIPixelBufferType tUIPixelBuffer;
+
 	POINT hoverPoint;
 	GetCursorPos(&hoverPoint);
 	ScreenToClient(cApplicationWindow, &hoverPoint);
@@ -4125,8 +4154,9 @@ int CGameMangerSystem::RealLevelUpdate()
 						wchar_t* textBuffer = new wchar_t[1];
 
 						textBuffer[0] = (tThisWorld.atClip[nCurrentEntity].nBulletsAvailables.size() - 1);
+						//textBuffer[1] = (tThisWorld.atClip[nCurrentEntity].nBulletsAvailables.size() - 2);
 
-						pcUISystem->UpdateText(&tThisWorld, 1094, &atUIVertices, textBuffer, atUIVertices.at(tThisWorld.atLabel[1094].vIndex));
+						pcUISystem->UpdateText(&tThisWorld, 1094, &atUIVertices, textBuffer, 1, atUIVertices.at(tThisWorld.atLabel[1094].vIndex));
 
 						pcGraphicsSystem->CreateEntityBuffer(&tThisWorld, 1094);
 
@@ -4171,7 +4201,7 @@ int CGameMangerSystem::RealLevelUpdate()
 
 						textBuffer[0] = (tThisWorld.atClip[nCurrentEntity].nBulletsAvailables.size());
 
-						pcUISystem->UpdateText(&tThisWorld, 1094, &atUIVertices, textBuffer, atUIVertices.at(tThisWorld.atLabel[1094].vIndex));
+						pcUISystem->UpdateText(&tThisWorld, 1094, &atUIVertices, textBuffer, 1, atUIVertices.at(tThisWorld.atLabel[1094].vIndex));
 
 						pcGraphicsSystem->CreateEntityBuffer(&tThisWorld, 1094);
 
@@ -4719,6 +4749,48 @@ int CGameMangerSystem::RealLevelUpdate()
 
 		}
 
+		/*if (tThisWorld.atUIMask[nCurrentEntity].m_tnUIMask == (COMPONENT_UIMASK | COMPONENT_LABEL | COMPONENT_HUD | COMPONENT_FPS))
+		{
+			tUIVertexBuffer.start = -1;
+			tUIVertexBuffer.end = -1;
+			tUIVertexBuffer.ratio = -1;
+
+			tUIPixelBuffer.hoverColor = XMFLOAT4(0, 0, 0, 0);
+
+			float num = frames / (frameTimer.TotalTime());
+
+			wchar_t* textBuffer = new wchar_t[3];
+
+			if (num < 10)
+			{
+				textBuffer[0] = 0;
+				textBuffer[1] = 0;
+				textBuffer[2] = (int)num % 10;
+			}
+			else if (num < 100)
+			{
+				textBuffer[0] = 0;
+				textBuffer[1] = (int)num / 10;
+				textBuffer[2] = (int)num % 10;
+			}
+			else
+			{
+				textBuffer[0] = (int)num / 100;
+				textBuffer[1] = ((int)num / 10) - ((int)num / 100 * 10);
+				textBuffer[2] = (int)num % 10;
+			}
+
+			pcUISystem->UpdateText(&tThisWorld, nCurrentEntity, &atUIVertices, textBuffer, 3, atUIVertices.at(tThisWorld.atLabel[nCurrentEntity].vIndex));
+
+			pcGraphicsSystem->CreateEntityBuffer(&tThisWorld, nCurrentEntity);
+
+			delete[] textBuffer;
+
+			pcGraphicsSystem->InitUIShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tUIVertexBuffer, tUIPixelBuffer, tThisWorld.atMesh[nCurrentEntity], menuCamera->d3d_Position);
+			pcGraphicsSystem->ExecutePipeline(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atMesh[nCurrentEntity].m_nIndexCount, tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask, tThisWorld.atShaderID[nCurrentEntity].m_nShaderID);
+
+		}*/
+
 		if (tThisWorld.atUIMask[nCurrentEntity].m_tnUIMask == (COMPONENT_UIMASK | COMPONENT_LABEL | COMPONENT_BAR | COMPONENT_HUD))
 		{
 			if (tThisWorld.atBar[nCurrentEntity].backgroundColor.x == 0 &&
@@ -4782,6 +4854,66 @@ int CGameMangerSystem::RealLevelUpdate()
 	}
 
 	clickTime += clickTimer.Delta();
+	/*++frames;
+	
+	float delta = frameTimer.SmoothDelta();
+	float num = (1000 / 60) - (delta * .0001);
+	if (num > 0)
+	{
+		Sleep(num);
+		frameTimer.Signal();
+	}
+	else
+		frameTimer.Signal();
+	*/
+	float fps = fpsTimer.UpdateFrameTime();
+	{
+		tUIVertexBuffer.start = -1;
+		tUIVertexBuffer.end = -1;
+		tUIVertexBuffer.ratio = -1;
+
+		tUIPixelBuffer.hoverColor = XMFLOAT4(0, 0, 0, 0);
+
+		//float num = frames / (frameTimer.TotalTime());
+
+		wchar_t* textBuffer = new wchar_t[3];
+
+		if (fps < 10)
+		{
+			textBuffer[0] = 0;
+			textBuffer[1] = 0;
+			textBuffer[2] = (int)fps % 10;
+		}
+		else if (fps < 100)
+		{
+			textBuffer[0] = 0;
+			textBuffer[1] = (int)fps / 10;
+			textBuffer[2] = (int)fps % 10;
+		}
+		else
+		{
+			textBuffer[0] = (int)fps / 100;
+			textBuffer[1] = ((int)fps / 10) - ((int)fps / 100 * 10);
+			textBuffer[2] = (int)fps % 10;
+		}
+
+		pcUISystem->UpdateText(&tThisWorld, 1089, &atUIVertices, textBuffer, 3, atUIVertices.at(tThisWorld.atLabel[1089].vIndex));
+
+		pcGraphicsSystem->CreateEntityBuffer(&tThisWorld, 1089);
+
+		delete[] textBuffer;
+
+		pcGraphicsSystem->InitUIShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tUIVertexBuffer, tUIPixelBuffer, tThisWorld.atMesh[1089], menuCamera->d3d_Position);
+		pcGraphicsSystem->ExecutePipeline(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atMesh[1089].m_nIndexCount, tThisWorld.atGraphicsMask[1089].m_tnGraphicsMask, tThisWorld.atShaderID[1089].m_nShaderID);
+
+	}
+
+	float timeToSleepThisFrame = (1000 / 60) - (fpsTimer.GetDelta());
+
+	if (timeToSleepThisFrame > 0)
+	{
+		Sleep(timeToSleepThisFrame / 2);
+	}
 
 	pcGraphicsSystem->m_pd3dSwapchain->Present(0, 0);
 	zValue += 0.001;

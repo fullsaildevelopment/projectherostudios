@@ -20,7 +20,7 @@ bool CFPS::Init_FPSReader()
 	return m_Init;
 }
 
-void CFPS::UpdateFrameTime()
+float CFPS::UpdateFrameTime()
 {
 	double tmp_dTime = m_frameRate->TotalTime();
 	if (m_Init == true)
@@ -28,7 +28,7 @@ void CFPS::UpdateFrameTime()
 		m_framesPassed = 0;
 		m_startTime = tmp_dTime;
 		m_Init = false;
-		return;
+		return 0;
 	}
 
 	m_framesPassed++;
@@ -40,10 +40,17 @@ void CFPS::UpdateFrameTime()
 		m_framesPassed = 0;
 	}
 	std::cout << "FPS:" << m_fpsCounter << endl;
+	return m_fpsCounter;
 }
 
 void CFPS::Xtime_Signal()
 {
 	m_frameRate->Signal();
 }
+
+double CFPS::GetDelta()
+{
+	return m_frameRate->SmoothDelta();
+}
+
 
