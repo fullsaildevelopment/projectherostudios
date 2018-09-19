@@ -4573,10 +4573,7 @@ int CGameMangerSystem::RealLevelUpdate()
 											(tThisWorld.atClip[tThisWorld.atClip[nCurrentEntity].gunIndex].fAliveTime.begin()
 												+ tThisWorld.atClip[nCurrentEntity].indexInclip);
 
-										pcCollisionSystem->RemoveAABBCollider(nCurrentEntity);
-										if (tThisWorld.atClip[nCurrentEntity].indexInclip < tThisWorld.atClip[tThisWorld.atClip[nCurrentEntity].gunIndex].nBulletsFired.size()) {
-											tThisWorld.atClip[tThisWorld.atClip[nCurrentEntity].gunIndex].nBulletsFired.erase(tThisWorld.atClip[tThisWorld.atClip[nCurrentEntity].gunIndex].nBulletsFired.begin()
-												+ tThisWorld.atClip[nCurrentEntity].indexInclip);
+											pcCollisionSystem->RemoveAABBCollider(nCurrentEntity);
 										}
 										else {
 											tThisWorld.atClip[tThisWorld.atClip[nCurrentEntity].gunIndex].nBulletsFired.erase(tThisWorld.atClip[tThisWorld.atClip[nCurrentEntity].gunIndex].nBulletsFired.begin()
