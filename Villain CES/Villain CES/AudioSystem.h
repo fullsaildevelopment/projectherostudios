@@ -11,7 +11,7 @@
 #include"AK/SoundEngine/Common/AkSoundEngine.h"
 #include"AK/SpatialAudio/Common/AkSpatialAudio.h"
 #include"AK/Tools/Win32/AkPlatformFuncs.h"
-#include"GeneratedSoundBanks/Wwise_IDs.h"
+#include"WwiseSounds/Wwise_IDs.h"
 //File Package
 #include"Win32/AkDefaultIOHookBlocking.h"
 #include"Common/AkFilePackageLowLevelIO.h"
@@ -22,7 +22,7 @@
 #include"Common/AkFilePackageLUT.h"
 
 #define INIT_BNK L"Init.bnk"
-#define FOOTSTEP_BNK L"Bus3d_Demo.bnk"
+#define MAINMENU_BNK L"Augur_MusicBank.bnk"
 //#define AK_OPTIMIZED
 //#ifndef AK_OPTIMIZED
 //// Only needed for debug mode

@@ -36,9 +36,7 @@ public:
 	int MikesGraphicsSandbox();
 	void LoadLevelWithMapInIt();
 	int RealLevelUpdate();
-
-	//ZB-Helper Methods
-	bool GetWalkCameraState();
+	
 
 	bool GameOver = false;
 	bool GamePaused = false;
@@ -46,7 +44,6 @@ public:
 
 private:
 	TMaterialOptimized matOpt;
-
 	bool drawtext = true;
 	float scale = 0;
 	XMMATRIX CameraNewPosition;
@@ -77,9 +74,10 @@ private:
 	RECT windowRect;
 	int screenWidth;
 	int screenHeight;
-	
+	float playerDamage = 25;
+	float pirateDamage = 18;
 	bool options = false;
-
+	bool pauseInit = false;
 	//ZB Variables
 	TCameraToggle tCameraMode;
 	XMMATRIX m_d3dWorldMatrix;
@@ -100,9 +98,9 @@ private:
 	TCamera * menuCamera;
 	System_Times * tAugerTimers;
 	System_Times *tTimerInfo;
-	AkGameObjectID footSteps;
+	AkGameObjectID m_AkMainMenuMusic;
 	AkGameObjectID Listener;
-	AkBankID footsteps_bnkID;
+	AkBankID MainMenu_bnkID;
 	AkBankID init_bnkID;
 	AKRESULT ErrorResult;
 	float m_RealTimeFov;

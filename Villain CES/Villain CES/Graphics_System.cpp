@@ -1133,6 +1133,7 @@ ImporterData CGraphicsSystem::ReadMesh(const char * input_file_path)
 #pragma region ImportDataMemoryAllocations
 
 	ImporterData tImportMe;
+	// Has Vertex tyoe and Joints 
 	tImportMe.vtMeshes = new TMeshImport[meshCount];
 	tImportMe.vtMaterials = new TMaterialImport[meshCount];
 	tImportMe.vtAnimations = new TAnimationImport[meshCount];
@@ -1170,6 +1171,7 @@ ImporterData CGraphicsSystem::ReadMesh(const char * input_file_path)
 
 				//myKey.joints = XMLoadFloat4x4(&temp);
 				myKey.dTime = curTime / 1000;
+				//Holds Joints
 				myAnim.m_vtKeyFrames.push_back(myKey);
 			}
 			for (int i = 0; i < nodeCount; i++)
@@ -1195,6 +1197,7 @@ ImporterData CGraphicsSystem::ReadMesh(const char * input_file_path)
 #pragma endregion
 		}
 		tImportMe.vtAnimations[meshIndex].hasPose = hasPose;
+		//Container of Anim Clips
 		tImportMe.vtAnimations[meshIndex].animClip = myAnim;
 		matFile.read((char*)&hasMaterial, sizeof(int));
 
