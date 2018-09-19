@@ -3357,7 +3357,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 		PlayerStartIndex = createClayton(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, tempImport.vtMeshes[meshIndex], tempImport.vtMaterials[meshIndex]);
 	}
 
-	GunIndexForPlayer = CreateGun(&tThisWorld, m_d3dWorldMatrix, PlayerStartIndex, -1, 1, 10.5, 3, 100);
+	GunIndexForPlayer = CreateGun(&tThisWorld, m_d3dWorldMatrix, PlayerStartIndex, -1, 1, 10.5, 3, 130);
 	tThisWorld.atClip[GunIndexForPlayer].bulletSpeed = 0.01;
 	tThisWorld.atClayton[PlayerStartIndex].health = 100;
 	XMMATRIX AILocation= pcGraphicsSystem->SetDefaultWorldPosition();
@@ -3454,7 +3454,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	tThisWorld.atPathPlanining[spacePirate].Goal = nodeindex2;*/
 
 
-	int GunINdexai2 = CreateGun(&tThisWorld, m_d3dWorldMatrix, spacePirate2, -1.1, 0.5, 11.5, 10, 130);
+	int GunINdexai2 = CreateGun(&tThisWorld, m_d3dWorldMatrix, spacePirate2, -1.1, 0.5, 11.5, 10,20);
 	tThisWorld.atAIMask[spacePirate2].GunIndex = GunINdexai2;
 	tThisWorld.atAIVision[spacePirate2].keepRotatingRight = false;
 
@@ -4406,10 +4406,18 @@ int CGameMangerSystem::RealLevelUpdate()
 
 											pcGraphicsSystem->CleanD3DObject(&tThisWorld, nCurrentEntity);
 
+
 										}
 										pcCollisionSystem->RemoveAABBCollider(otherCollisionsIndex[i]);
 										pcGraphicsSystem->CleanD3DObject(&tThisWorld, otherCollisionsIndex[i]);
 										pcGraphicsSystem->CleanD3DObject(&tThisWorld, tThisWorld.atAIMask[otherCollisionsIndex[i]].GunIndex);
+										for (int i = 0; i < tThisWorld.atClip[nCurrentEntity].fAliveTime.size(); ++i)
+										{
+											if (tThisWorld.atClip[tThisWorld.atClip[nCurrentEntity].nBulletsFired[i]].indexInclip != 0)
+											{
+												tThisWorld.atClip[tThisWorld.atClip[nCurrentEntity].nBulletsFired[i]].indexInclip -= 1;
+											}
+										}
 									}
 									else
 									{
@@ -4434,6 +4442,13 @@ int CGameMangerSystem::RealLevelUpdate()
 											pcGraphicsSystem->CleanD3DObject(&tThisWorld, otherCollisionsIndex[i] + 1);
 											pcGraphicsSystem->CleanD3DObject(&tThisWorld, otherCollisionsIndex[i] + 2);
 										}
+										for (int i = 0; i < tThisWorld.atClip[nCurrentEntity].fAliveTime.size(); ++i)
+										{
+											if (tThisWorld.atClip[tThisWorld.atClip[nCurrentEntity].nBulletsFired[i]].indexInclip != 0)
+											{
+												tThisWorld.atClip[tThisWorld.atClip[nCurrentEntity].nBulletsFired[i]].indexInclip -= 1;
+											}
+										}
 									}
 								}
 							}
@@ -4443,14 +4458,33 @@ int CGameMangerSystem::RealLevelUpdate()
 								{
 									if (tThisWorld.atClip[nCurrentEntity].gunIndex != -1)
 									{
-										tThisWorld.atClip[tThisWorld.atClip[nCurrentEntity].gunIndex].fAliveTime.erase
-										(tThisWorld.atClip[tThisWorld.atClip[nCurrentEntity].gunIndex].fAliveTime.begin()
-											+ tThisWorld.atClip[nCurrentEntity].indexInclip);
+										if (tThisWorld.atClip[nCurrentEntity].indexInclip<tThisWorld.atClip[tThisWorld.atClip[nCurrentEntity].gunIndex].fAliveTime.size()) {
+											tThisWorld.atClip[tThisWorld.atClip[nCurrentEntity].gunIndex].fAliveTime.erase
+											(tThisWorld.atClip[tThisWorld.atClip[nCurrentEntity].gunIndex].fAliveTime.begin()
+												+ tThisWorld.atClip[nCurrentEntity].indexInclip);
+										}
+										else {
+											tThisWorld.atClip[tThisWorld.atClip[nCurrentEntity].gunIndex].fAliveTime.erase
+											(tThisWorld.atClip[tThisWorld.atClip[nCurrentEntity].gunIndex].fAliveTime.begin()
+												+ (tThisWorld.atClip[nCurrentEntity].indexInclip-1)-(tThisWorld.atClip[nCurrentEntity].indexInclip -tThisWorld.atClip[tThisWorld.atClip[nCurrentEntity].gunIndex].fAliveTime.size()));
+										}
 
 										pcCollisionSystem->RemoveAABBCollider(nCurrentEntity);
-										tThisWorld.atClip[tThisWorld.atClip[nCurrentEntity].gunIndex].nBulletsFired.erase(tThisWorld.atClip[tThisWorld.atClip[nCurrentEntity].gunIndex].nBulletsFired.begin()
-											+ tThisWorld.atClip[nCurrentEntity].indexInclip);
-
+										if (tThisWorld.atClip[nCurrentEntity].indexInclip < tThisWorld.atClip[tThisWorld.atClip[nCurrentEntity].gunIndex].nBulletsFired.size()) {
+											tThisWorld.atClip[tThisWorld.atClip[nCurrentEntity].gunIndex].nBulletsFired.erase(tThisWorld.atClip[tThisWorld.atClip[nCurrentEntity].gunIndex].nBulletsFired.begin()
+												+ tThisWorld.atClip[nCurrentEntity].indexInclip);
+										}
+										else {
+											tThisWorld.atClip[tThisWorld.atClip[nCurrentEntity].gunIndex].nBulletsFired.erase(tThisWorld.atClip[tThisWorld.atClip[nCurrentEntity].gunIndex].nBulletsFired.begin()
+												+ tThisWorld.atClip[nCurrentEntity].indexInclip-1-((tThisWorld.atClip[nCurrentEntity].indexInclip - tThisWorld.atClip[tThisWorld.atClip[nCurrentEntity].gunIndex].nBulletsFired.size())));
+										}
+										for (int i = 0; i < tThisWorld.atClip[nCurrentEntity].fAliveTime.size(); ++i)
+										{
+											if (tThisWorld.atClip[tThisWorld.atClip[nCurrentEntity].nBulletsFired[i]].indexInclip != 0)
+											{
+												tThisWorld.atClip[tThisWorld.atClip[nCurrentEntity].nBulletsFired[i]].indexInclip -= 1;
+											}
+										}
 										//pcGraphicsSystem->CleanD3DObject(&tThisWorld, tThisWorld.atAIMask[nCurrentEntity].GunIndex);
 										pcGraphicsSystem->CleanD3DObject(&tThisWorld, nCurrentEntity);
 
