@@ -47,3 +47,23 @@ void CFPS::Xtime_Signal()
 	m_frameRate->Signal();
 }
 
+void CFPS::StableFrameRate()
+{
+	if (m_fpsCounter >= 60)
+	{
+		m_frameRate->Throttle(60);
+	}
+	else if (m_fpsCounter >= 30)
+	{
+		m_frameRate->Throttle(30);
+	}
+	else if (m_fpsCounter >= 15)
+	{
+		m_frameRate->Throttle(15);
+	}
+	else if (m_fpsCounter >= 7)
+	{
+		m_frameRate->Throttle(7);
+	}
+}
+
