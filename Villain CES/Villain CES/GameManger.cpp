@@ -56,6 +56,7 @@ CGameMangerSystem::~CGameMangerSystem()
 
 void CGameMangerSystem::InitializeMainMenu()
 {
+	pcAudioSystem->SendSoundsToEngine(AK::EVENTS::PLAY_XURIOUS___LIFTWAFFE, m_AkMainMenuMusic);
 	pcGraphicsSystem->CleanD3DLevel(&tThisWorld);
 	atUIVertices.clear();
 	atUIIndices.clear();
