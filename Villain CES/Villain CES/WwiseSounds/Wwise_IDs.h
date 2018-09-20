@@ -13,6 +13,8 @@ namespace AK
 {
     namespace EVENTS
     {
+        static const AkUniqueID PLAY_HALLWAY_MUSIC = 2804017732U;
+        static const AkUniqueID PLAY_MAIN_MENU_MUSIC = 2895168921U;
         static const AkUniqueID PLAY_METAL_FIRED = 372592918U;
         static const AkUniqueID PLAY_METAL_RELOAD = 4261380785U;
         static const AkUniqueID PLAY_XURIOUS___LIFTWAFFE = 1838748612U;

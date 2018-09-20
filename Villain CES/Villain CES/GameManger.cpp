@@ -33,6 +33,7 @@ CGameMangerSystem::CGameMangerSystem(HWND window,CInputSystem* _pcInputSystem)
 CGameMangerSystem::~CGameMangerSystem()
 {
 	pcGraphicsSystem->CleanD3D(&tThisWorld);
+	//Terminate Audio System Function
 	pcAudioSystem->TermSoundEngine();
 	delete pcGraphicsSystem;
 	delete pcInputSystem;
@@ -56,7 +57,8 @@ CGameMangerSystem::~CGameMangerSystem()
 
 void CGameMangerSystem::InitializeMainMenu()
 {
-	pcAudioSystem->SendSoundsToEngine(AK::EVENTS::PLAY_XURIOUS___LIFTWAFFE, m_AkMainMenuMusic);
+	AK::SoundEngine::StopAll();
+	pcAudioSystem->SendSoundsToEngine(AK::EVENTS::PLAY_MAIN_MENU_MUSIC, m_AkMainMenuMusic);
 	pcGraphicsSystem->CleanD3DLevel(&tThisWorld);
 	atUIVertices.clear();
 	atUIIndices.clear();
@@ -332,10 +334,12 @@ void CGameMangerSystem::InitializeTitleScreen()
 	pcAudioSystem->SetBanksFolderPath(AKTEXT("../Villain CES/WwiseSounds/Windows"));
 	pcAudioSystem->RegisterGameObj(Listener);
 	pcAudioSystem->RegisterGameObj(m_AkMainMenuMusic);
+	pcAudioSystem->RegisterGameObj(m_AkHallwayBattle);
 	pcAudioSystem->RegisterGameObj(m_MetalReload);
+	pcAudioSystem->RegisterGameObj(m_AkMetalFired);
 	pcAudioSystem->LoadBankFile(INIT_BNK, init_bnkID, ErrorResult);
 	pcAudioSystem->LoadBankFile(MAINMENU_BNK, MainMenu_bnkID, ErrorResult);
-	pcAudioSystem->LoadBankFile(METAL_RELOAD, Metal_Reload_bnkID, ErrorResult);
+	pcAudioSystem->LoadBankFile(SFX, m_SFX_bnkID, ErrorResult);
 
 	pcGraphicsSystem->CleanD3DLevel(&tThisWorld);
 	atUIVertices.clear();
@@ -2726,6 +2730,7 @@ int CGameMangerSystem::SpacePirateGamePlay()
 				}
 			}
 		}
+
 		if (tThisWorld.atProjectiles[nCurrentEntity].m_tnProjectileMask == (COMPONENT_PROJECTILESMASK | COMPONENT_CLIP))
 		{
 			if (tThisWorld.atClip[nCurrentEntity].GunMode == false && tThisWorld.atClip[nCurrentEntity].tryToShoot == true)
@@ -2747,6 +2752,7 @@ int CGameMangerSystem::SpacePirateGamePlay()
 				tThisWorld.atClip[nCurrentEntity].maderay = false;
 
 			}
+
 			else
 			{
 				if (nCurrentEntity == 10 && tThisWorld.atClip[nCurrentEntity].tryToShoot == true && tThisWorld.atClip[nCurrentEntity].fShootingCoolDown >= 0) {
@@ -2767,6 +2773,7 @@ int CGameMangerSystem::SpacePirateGamePlay()
 					XMMATRIX gunMatrix = tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix;
 					gunMatrix = XMMatrixMultiply(localMatrix2, gunMatrix);
 
+
 					int newbullet = CreateBullet(&tThisWorld, gunMatrix,
 						tThisWorld.atClip[nCurrentEntity].currentMaterial);
 					tThisWorld.atClip[newbullet].gunIndex = nCurrentEntity;
@@ -2777,13 +2784,14 @@ int CGameMangerSystem::SpacePirateGamePlay()
 
 					pcCollisionSystem->AddAABBCollider(tThisWorld.atAABB[newbullet], newbullet);
 					pcGraphicsSystem->CreateEntityBuffer(&tThisWorld, newbullet);
-
 					tThisWorld.atClip[nCurrentEntity].tryToShoot = false;
+
 
 				}
 				else if (tThisWorld.atClip[nCurrentEntity].tryToShoot == true) {
 					tThisWorld.atClip[nCurrentEntity].tryToShoot = false;
 				}
+
 				if (tThisWorld.atClip[nCurrentEntity].tryToReload == true) {
 					pcProjectileSystem->Reload(&tThisWorld.atClip[nCurrentEntity]);
 					tThisWorld.atClip[nCurrentEntity].tryToReload = false;
@@ -3320,8 +3328,9 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 {
 	pcGraphicsSystem->CleanD3DLevel(&tThisWorld);
 	//Stops Main Menu Music 
+	AK::SoundEngine::StopAll();
+	pcAudioSystem->SendSoundsToEngine(AK::EVENTS::PLAY_HALLWAY_MUSIC, m_AkHallwayBattle);
 	ShowCursor(false);
-	AK::SoundEngine::StopAll(m_AkMainMenuMusic);
 	InitializeHUD();
 	InitializePauseScreen();
 	InitializeEndScreen();
@@ -4305,7 +4314,7 @@ int CGameMangerSystem::RealLevelUpdate()
 					{
 						float x = 0;
 					}
-
+					// Metal Fired Sound in Here -ZFB
 					if (tThisWorld.atClip[nCurrentEntity].tryToShoot == true
 						&& tThisWorld.atClip[nCurrentEntity].nBulletsAvailables.size() > 0
 						&& tThisWorld.atClip[nCurrentEntity].fShootingCoolDown <= 0)
@@ -4333,6 +4342,7 @@ int CGameMangerSystem::RealLevelUpdate()
 						XMMATRIX localMatrix2 = XMMatrixTranslationFromVector(foward);
 						XMMATRIX gunMatrix = tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix;
 						gunMatrix = XMMatrixMultiply(localMatrix2, gunMatrix);
+						pcAudioSystem->SendSoundsToEngine(AK::EVENTS::PLAY_METAL_FIRED, m_AkMetalFired);
 
 						int newbullet = CreateBullet(&tThisWorld, gunMatrix,
 							tThisWorld.atClip[nCurrentEntity].currentMaterial);
