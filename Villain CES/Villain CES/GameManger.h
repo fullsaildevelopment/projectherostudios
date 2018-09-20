@@ -101,6 +101,8 @@ private:
 	AkGameObjectID Listener;
 	AkBankID MainMenu_bnkID;
 	AkBankID init_bnkID;
+	AkGameObjectID m_MetalReload;
+	AkBankID Metal_Reload_bnkID;
 	AKRESULT ErrorResult;
 	float m_RealTimeFov;
 	bool bMoving;

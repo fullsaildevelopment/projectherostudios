@@ -13,6 +13,8 @@ namespace AK
 {
     namespace EVENTS
     {
+        static const AkUniqueID PLAY_METAL_FIRED = 372592918U;
+        static const AkUniqueID PLAY_METAL_RELOAD = 4261380785U;
         static const AkUniqueID PLAY_XURIOUS___LIFTWAFFE = 1838748612U;
     } // namespace EVENTS
 
@@ -36,6 +38,7 @@ namespace AK
     {
         static const AkUniqueID INIT = 1355168291U;
         static const AkUniqueID AUGUR_MUSICBANK = 1527088201U;
+        static const AkUniqueID AUGUR_SFX = 2726633543U;
     } // namespace BANKS
 
     namespace BUSSES

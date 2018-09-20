@@ -1,0 +1,8 @@
+Event	ID	Name			Wwise Object Path	Notes
+	372592918	Play_Metal_Fired			\Default Work Unit\Play_Metal_Fired	
+	4261380785	Play_Metal_Reload			\Default Work Unit\Play_Metal_Reload	
+
+In Memory Audio	ID	Name	Audio source file		Wwise Object Path	Notes	Data Size
+	898242165	Metal Reload	C:\Users\world\Documents\WwiseProjects\Augur_Sounds\.cache\Windows\SFX\Metal Reload_56D34C19.wem		\Actor-Mixer Hierarchy\Default Work Unit\Metal Reload		98624
+	1021916076	Steel Fired	C:\Users\world\Documents\WwiseProjects\Augur_Sounds\.cache\Windows\SFX\Steel Fired_56D34C19.wem		\Actor-Mixer Hierarchy\Default Work Unit\Steel Fired		85976
+

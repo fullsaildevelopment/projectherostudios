@@ -30,5 +30,24 @@
 				</File>
 			</IncludedMemoryFiles>
 		</SoundBank>
+		<SoundBank Id="2726633543" Language="SFX">
+			<ObjectPath>\SoundBanks\Default Work Unit\Augur_SFX</ObjectPath>
+			<ShortName>Augur_SFX</ShortName>
+			<Path>Augur_SFX.bnk</Path>
+			<IncludedEvents>
+				<Event Id="372592918" Name="Play_Metal_Fired" ObjectPath="\Events\Default Work Unit\Play_Metal_Fired"/>
+				<Event Id="4261380785" Name="Play_Metal_Reload" ObjectPath="\Events\Default Work Unit\Play_Metal_Reload"/>
+			</IncludedEvents>
+			<IncludedMemoryFiles>
+				<File Id="898242165" Language="SFX">
+					<ShortName>Metal Reload.wav</ShortName>
+					<Path>SFX\Metal Reload_56D34C19.wem</Path>
+				</File>
+				<File Id="1021916076" Language="SFX">
+					<ShortName>Steel Fired.wav</ShortName>
+					<Path>SFX\Steel Fired_56D34C19.wem</Path>
+				</File>
+			</IncludedMemoryFiles>
+		</SoundBank>
 	</SoundBanks>
 </SoundBanksInfo>

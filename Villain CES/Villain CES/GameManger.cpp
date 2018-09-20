@@ -331,8 +331,10 @@ void CGameMangerSystem::InitializeTitleScreen()
 	pcAudioSystem->SetBanksFolderPath(AKTEXT("../Villain CES/WwiseSounds/Windows"));
 	pcAudioSystem->RegisterGameObj(Listener);
 	pcAudioSystem->RegisterGameObj(m_AkMainMenuMusic);
+	pcAudioSystem->RegisterGameObj(m_MetalReload);
 	pcAudioSystem->LoadBankFile(INIT_BNK, init_bnkID, ErrorResult);
 	pcAudioSystem->LoadBankFile(MAINMENU_BNK, MainMenu_bnkID, ErrorResult);
+	pcAudioSystem->LoadBankFile(METAL_RELOAD, Metal_Reload_bnkID, ErrorResult);
 
 	pcGraphicsSystem->CleanD3DLevel(&tThisWorld);
 	atUIVertices.clear();
@@ -4303,6 +4305,11 @@ int CGameMangerSystem::RealLevelUpdate()
 					}
 					if (tThisWorld.atClip[nCurrentEntity].tryToReload == true)
 					{
+						//Reload Metal Sound - ZFB
+						if (tThisWorld.atClip[nCurrentEntity].nBulletsAvailables.size() < 3)
+						{
+							pcAudioSystem->SendSoundsToEngine(AK::EVENTS::PLAY_METAL_RELOAD, m_MetalReload);
+						}
 						pcProjectileSystem->Reload(&tThisWorld.atClip[nCurrentEntity]);
 						tThisWorld.atClip[nCurrentEntity].tryToReload = false;
 
