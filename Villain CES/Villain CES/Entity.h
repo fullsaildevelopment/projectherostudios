@@ -106,6 +106,7 @@ unsigned int CreateGun(TWorld* ptWorld, XMMATRIX BulletSpawnLocation, int parent
 unsigned int createMesh(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMeshImport tMesh, TMaterialOptimized tMaterial, int meshIndex);
 unsigned int createClayton(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMeshImport tMesh, TMaterialImport tMaterial);
 unsigned int createClaytonAnim(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMeshImport tMesh, TMaterialOptimized tMaterial, TAnimationImport tAnim, int meshIndex);
+unsigned int CreateScyllian(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMeshImport tMesh, TMaterialImport tMaterial, XMMATRIX SpawnPosition);
 unsigned int CreateTemptUIBox(TWorld * ptWorld, XMMATRIX SpawnPosition);
 unsigned int CreateSimpleGunAi(TWorld * ptWorld, XMMATRIX SpawnPosition);
 unsigned int CreateSimpleSearchAi(TWorld* ptWorld, XMMATRIX SpawnPosition);

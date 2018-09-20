@@ -59,8 +59,11 @@ public:
 	CFPS();
 	~CFPS();
 	bool Init_FPSReader();
-	void UpdateFrameTime();
+	float UpdateFrameTime();
 	void Xtime_Signal();
+	double GetDelta();
+	void Throttle(double targetHz);
+
 	void StableFrameRate();
 private:
  int m_framesPassed;
