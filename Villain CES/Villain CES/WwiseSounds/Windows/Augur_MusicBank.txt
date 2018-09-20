@@ -1,6 +1,10 @@
 Event	ID	Name			Wwise Object Path	Notes
 	1838748612	Play_Xurious___Liftwaffe			\Default Work Unit\Play_Xurious___Liftwaffe	
+	2804017732	Play_Hallway_Music			\Default Work Unit\Play_Hallway_Music	
+	2895168921	Play_Main_Menu_Music			\Default Work Unit\Play_Main_Menu_Music	
 
 In Memory Audio	ID	Name	Audio source file		Wwise Object Path	Notes	Data Size
 	725541947	Xurious - Liftwaffe	C:\Users\world\Documents\WwiseProjects\Augur_Sounds\.cache\Windows\SFX\Xurious - Liftwaffe_BED56AEF.wem		\Actor-Mixer Hierarchy\Default Work Unit\Xurious - Liftwaffe		45531264
+	782416426	Menu Music	C:\Users\world\Documents\WwiseProjects\Augur_Sounds\.cache\Windows\SFX\Menu Music_8956FC97.wem		\Actor-Mixer Hierarchy\Default Work Unit\Menu Music		47441152
+	1036587164	Xurious - The Future Belongs To Us - Main Hallway Music	C:\Users\world\Documents\WwiseProjects\Augur_Sounds\.cache\Windows\SFX\Xurious - The Future Belongs To Us - Main Hallway Music_8956FC97.wem		\Actor-Mixer Hierarchy\Default Work Unit\Xurious - The Future Belongs To Us - Main Hallway Music		60698688
 

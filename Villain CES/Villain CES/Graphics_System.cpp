@@ -1645,6 +1645,70 @@ void CGraphicsSystem::InitPrimalShaderData2(ID3D11DeviceContext * pd3dDeviceCont
 	pd3dDeviceContext->IASetIndexBuffer(tSimpleMesh.m_pd3dIndexBuffer, DXGI_FORMAT_R16_UINT, 0);
 }
 
+void CGraphicsSystem::InitPrimalShaderData3(ID3D11DeviceContext * pd3dDeviceContext, TPrimalVertexBufferType d3dVertexBuffer, TPrimalPixelBufferType d3dPixelBuffer, TMesh tMesh, XMMATRIX CameraMatrix)
+{
+	D3D11_MAPPED_SUBRESOURCE d3dPrimalVertexMappedResource;
+	D3D11_MAPPED_SUBRESOURCE d3dPrimalPixelMappedResource;
+
+	TPrimalVertexBufferType	*ptPrimalVertexBufferDataPointer = nullptr;
+	TPrimalPixelBufferType	*ptPrimalPixelBufferDataPointer = nullptr;
+
+	d3dVertexBuffer.m_d3dViewMatrix = XMMatrixInverse(nullptr, CameraMatrix);
+	unsigned int bufferNumber;
+	//XMMATRIX d3dTmpViewM;
+
+	//d3dTmpViewM = XMMatrixInverse(NULL, );
+	m_fCameraXPosition = CameraMatrix.r[3].m128_f32[0];// d3dTmpViewM.r[3].m128_f32[0];
+	m_fCameraYPosition = CameraMatrix.r[3].m128_f32[1];//d3dTmpViewM.r[3].m128_f32[1];
+	m_fCameraZPosition = CameraMatrix.r[3].m128_f32[2];//d3dTmpViewM.r[3].m128_f32[2];
+
+	XMMATRIX d3dView;
+	XMMATRIX tempWorld = d3dVertexBuffer.m_d3dWorldMatrix;
+	XMMATRIX tempProj = d3dVertexBuffer.m_d3dProjectionMatrix;
+	d3dView = d3dVertexBuffer.m_d3dViewMatrix;
+
+#pragma region Map To Vertex Constant Buffer
+	pd3dDeviceContext->Map(m_pd3dPrimalVertexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &d3dPrimalVertexMappedResource);
+
+	// Get a pointer to the data in the constant buffer.
+	ptPrimalVertexBufferDataPointer = (TPrimalVertexBufferType*)d3dPrimalVertexMappedResource.pData;
+
+	// Copy the matrices into the constant buffer.
+	ptPrimalVertexBufferDataPointer->m_d3dWorldMatrix = tempWorld;
+	ptPrimalVertexBufferDataPointer->m_d3dViewMatrix = d3dView;
+	ptPrimalVertexBufferDataPointer->m_d3dProjectionMatrix = tempProj;;
+
+	// Unlock the constant buffer.
+	pd3dDeviceContext->Unmap(m_pd3dPrimalVertexBuffer, 0);
+
+#pragma endregion
+
+#pragma region Map To Pixel Constant Buffer
+	pd3dDeviceContext->Map(m_pd3dPrimalPixelBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &d3dPrimalPixelMappedResource);
+
+	// Get a pointer to the data in the constant buffer.
+	ptPrimalPixelBufferDataPointer = (TPrimalPixelBufferType*)d3dPrimalPixelMappedResource.pData;
+
+	// Copy the matrices into the constant buffer.
+	ptPrimalPixelBufferDataPointer->m_d3dCollisionColor = d3dPixelBuffer.m_d3dCollisionColor;
+
+	// Unlock the constant buffer.
+	pd3dDeviceContext->Unmap(m_pd3dPrimalPixelBuffer, 0);
+
+#pragma endregion
+
+	// Position of the constant buffer in the vertex shader.
+	bufferNumber = 0;
+
+	pd3dDeviceContext->PSSetConstantBuffers(bufferNumber, 1, &m_pd3dPrimalPixelBuffer);
+	// Set the constant buffer in the vertex shader with the updated values.
+	pd3dDeviceContext->VSSetConstantBuffers(bufferNumber, 1, &m_pd3dPrimalVertexBuffer);
+
+	pd3dDeviceContext->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	pd3dDeviceContext->IASetVertexBuffers(0, 1, &tMesh.m_pd3dVertexBuffer, &tMesh.m_nVertexBufferStride, &tMesh.m_nVertexBufferOffset);
+	pd3dDeviceContext->IASetIndexBuffer(tMesh.m_pd3dIndexBuffer, DXGI_FORMAT_R16_UINT, 0);
+}
+
 void CGraphicsSystem::InitSkyboxShaderData(ID3D11DeviceContext * pd3dDeviceContext, TMyVertexBufferType d3dVertexBuffer, TMesh tMesh, XMMATRIX CameraMatrix)
 {
 	D3D11_MAPPED_SUBRESOURCE d3dSkyboxVertexMappedResource;
@@ -1927,6 +1991,10 @@ void CGraphicsSystem::ExecutePipeline(ID3D11DeviceContext *pd3dDeviceContext, in
 			pd3dDeviceContext->PSSetShader(m_pd3dMyPixelShader, NULL, 0);
 			////Draw
 			if (nGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_SHADERID))
+			{
+				pd3dDeviceContext->DrawIndexed(m_nIndexCount, 0, 0);
+			}
+			else if (nGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_SIMPLEMESH | COMPONENT_SHADERID))
 			{
 				pd3dDeviceContext->DrawIndexed(m_nIndexCount, 0, 0);
 			}

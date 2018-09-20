@@ -138,7 +138,7 @@ void CAuger::Update(bool* loopgame)
 		pcGameMangerSystem->nCurrentScene = 14;
 		break;
 	case 14:
-		if (!pcGameMangerSystem->GamePaused && !pcGameMangerSystem->GameOver)
+		if (!pcGameMangerSystem->GamePaused && !pcGameMangerSystem->GameOver && GetFocus())
 		{
 			GetWindowRect(window2, &rect);
 			//SetCursorPos((rect.right / 2.0f) + 20, (rect.bottom / 2.0f) + 64);

@@ -10,10 +10,11 @@ enum eUIComponent
 	COMPONENT_BUTTON		= 1 << 4,
 	COMPONENT_PAUSESCREEN	= 1 << 5,
 	COMPONENT_OPTIONS		= 1 << 6,
-	COMPONENT_DEATHSCREEN	= 1 << 7,
-	COMPONENT_BACKGROUND	= 1 << 8,
-	COMPONENT_HUD			= 1 << 9,
-	COMPONENT_FPS			= 1 << 10
+	COMPONENT_CREDITS		= 1 << 7,
+	COMPONENT_DEATHSCREEN	= 1 << 8,
+	COMPONENT_BACKGROUND	= 1 << 9,
+	COMPONENT_HUD			= 1 << 10,
+	COMPONENT_FPS			= 1 << 11
 };
 
 struct TUIMask
@@ -46,10 +47,9 @@ struct TText
 struct TLabel
 {
 	float width, height, x, y;
-	bool addText = false;
-	bool addTexture = false;
 	bool lastUIElement = false;
 	int vIndex = -1, iIndex = -1;
+	XMFLOAT4 color;
 };
 
 struct TButton

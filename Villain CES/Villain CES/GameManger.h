@@ -24,8 +24,9 @@ public:
 	int LoadTitleScreen();
 	void InitializeTitleScreen();
 	void InitializePauseScreen();
-	void InitializeEndScreen();
+	void InitializeEndScreen(bool playerWin);
 	void InitializeOptionsMenu();
+	void InitializeCredits();
 	void InitializeHUD();
 
 	void LoadPathFindingTest();
@@ -77,6 +78,7 @@ private:
 	float playerDamage = 25;
 	float pirateDamage = 18;
 	bool options = false;
+	bool credits = false;
 	bool pauseInit = false;
 	//ZB Variables
 	TCameraToggle tCameraMode;
