@@ -102,13 +102,22 @@ private:
 	TCamera *aimCamera;
 	TCamera *debugCamera;
 	TCamera * menuCamera;
+
 	System_Times * tAugerTimers;
 	System_Times *tTimerInfo;
-	AkGameObjectID m_AkMainMenuMusic;
-	AkGameObjectID Listener;
-	AkBankID MainMenu_bnkID;
+
 	AkBankID init_bnkID;
+	AkGameObjectID Listener;
+	AkGameObjectID m_AkMainMenuMusic;
+	AkBankID MainMenu_bnkID;
+	AkGameObjectID m_AkHallwayBattle;
+	//SFX Objects
+	AkGameObjectID m_MetalReload;
+	AkBankID m_SFX_bnkID;
+	AkGameObjectID m_AkMetalFired;
+	
 	AKRESULT ErrorResult;
+
 	float m_RealTimeFov;
 	bool bMoving;
 	float Health = 1.0f;

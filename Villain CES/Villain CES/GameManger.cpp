@@ -3,6 +3,8 @@
 #define MIKES_SANDBOX_ON false
 #define SKELETON_LOAD_ON false
 #define MAIN_LEVEL_ON true
+#define MUSIC_ON true
+//Don't forget to comment out PlaySoundInBank() call in VillCES.cpp if MUSIC_ON is False - ZFB
 CGameMangerSystem::CGameMangerSystem(HWND window,CInputSystem* _pcInputSystem)
 {
 	cApplicationWindow = window;
@@ -21,7 +23,9 @@ CGameMangerSystem::CGameMangerSystem(HWND window,CInputSystem* _pcInputSystem)
 	walkCamera = new TCamera();
 	debugCamera = new TCamera();
 	menuCamera = new TCamera();
+#if MUSIC_ON
 	pcAudioSystem = new CAudioSystem();
+#endif
 	//srand(time(NULL));
 
 	GetWindowRect(cApplicationWindow, &windowRect);
@@ -33,7 +37,11 @@ CGameMangerSystem::CGameMangerSystem(HWND window,CInputSystem* _pcInputSystem)
 CGameMangerSystem::~CGameMangerSystem()
 {
 	pcGraphicsSystem->CleanD3D(&tThisWorld);
+#if MUSIC_ON
+	//Terminate Audio System Function
 	pcAudioSystem->TermSoundEngine();
+	delete pcAudioSystem;
+#endif
 	delete pcGraphicsSystem;
 	delete pcInputSystem;
 	delete pcCollisionSystem;
@@ -46,7 +54,6 @@ CGameMangerSystem::~CGameMangerSystem()
 	delete debugCamera;
 	delete walkCamera;
 	delete menuCamera;
-	delete pcAudioSystem;
 	delete pcUISystem;
 
 	fontTexture->Release();
@@ -55,7 +62,11 @@ CGameMangerSystem::~CGameMangerSystem()
 }
 
 void CGameMangerSystem::InitializeMainMenu()
-{
+{ // Music Stuff 
+#if MUSIC_ON
+	AK::SoundEngine::StopAll();
+	pcAudioSystem->SendSoundsToEngine(AK::EVENTS::PLAY_MAIN_MENU_MUSIC, m_AkMainMenuMusic);
+#endif
 	pcGraphicsSystem->CleanD3DLevel(&tThisWorld);
 	atUIVertices.clear();
 	atUIIndices.clear();
@@ -395,13 +406,18 @@ int CGameMangerSystem::LoadMainMenu()
 
 void CGameMangerSystem::InitializeTitleScreen()
 {
+#if MUSIC_ON
 	pcAudioSystem->IntiializeSystem(ErrorResult);
 	pcAudioSystem->SetBanksFolderPath(AKTEXT("../Villain CES/WwiseSounds/Windows"));
 	pcAudioSystem->RegisterGameObj(Listener);
 	pcAudioSystem->RegisterGameObj(m_AkMainMenuMusic);
+	pcAudioSystem->RegisterGameObj(m_AkHallwayBattle);
+	pcAudioSystem->RegisterGameObj(m_MetalReload);
+	pcAudioSystem->RegisterGameObj(m_AkMetalFired);
 	pcAudioSystem->LoadBankFile(INIT_BNK, init_bnkID, ErrorResult);
 	pcAudioSystem->LoadBankFile(MAINMENU_BNK, MainMenu_bnkID, ErrorResult);
-
+	pcAudioSystem->LoadBankFile(SFX, m_SFX_bnkID, ErrorResult);
+#endif 
 	pcGraphicsSystem->CleanD3DLevel(&tThisWorld);
 	atUIVertices.clear();
 	atUIIndices.clear();
@@ -432,8 +448,9 @@ void CGameMangerSystem::InitializeTitleScreen()
 int CGameMangerSystem::LoadTitleScreen()
 {
 	fadeTimer.Signal();
-
+#if MUSIC_ON
 	pcAudioSystem->SetListener(Listener, 1, ErrorResult);
+#endif
 	//////////
 	m_d3dWorldMatrix = pcGraphicsSystem->SetDefaultWorldPosition();
 	m_d3dViewMatrix = pcGraphicsSystem->SetDefaultViewMatrix();
@@ -2944,6 +2961,7 @@ int CGameMangerSystem::SpacePirateGamePlay()
 				}
 			}
 		}
+
 		if (tThisWorld.atProjectiles[nCurrentEntity].m_tnProjectileMask == (COMPONENT_PROJECTILESMASK | COMPONENT_CLIP))
 		{
 			if (tThisWorld.atClip[nCurrentEntity].GunMode == false && tThisWorld.atClip[nCurrentEntity].tryToShoot == true)
@@ -2965,6 +2983,7 @@ int CGameMangerSystem::SpacePirateGamePlay()
 				tThisWorld.atClip[nCurrentEntity].maderay = false;
 
 			}
+
 			else
 			{
 				if (nCurrentEntity == 10 && tThisWorld.atClip[nCurrentEntity].tryToShoot == true && tThisWorld.atClip[nCurrentEntity].fShootingCoolDown >= 0) {
@@ -2985,6 +3004,7 @@ int CGameMangerSystem::SpacePirateGamePlay()
 					XMMATRIX gunMatrix = tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix;
 					gunMatrix = XMMatrixMultiply(localMatrix2, gunMatrix);
 
+
 					int newbullet = CreateBullet(&tThisWorld, gunMatrix,
 						tThisWorld.atClip[nCurrentEntity].currentMaterial);
 					tThisWorld.atClip[newbullet].gunIndex = nCurrentEntity;
@@ -2995,13 +3015,14 @@ int CGameMangerSystem::SpacePirateGamePlay()
 
 					pcCollisionSystem->AddAABBCollider(tThisWorld.atAABB[newbullet], newbullet);
 					pcGraphicsSystem->CreateEntityBuffer(&tThisWorld, newbullet);
-
 					tThisWorld.atClip[nCurrentEntity].tryToShoot = false;
+
 
 				}
 				else if (tThisWorld.atClip[nCurrentEntity].tryToShoot == true) {
 					tThisWorld.atClip[nCurrentEntity].tryToShoot = false;
 				}
+
 				if (tThisWorld.atClip[nCurrentEntity].tryToReload == true) {
 					pcProjectileSystem->Reload(&tThisWorld.atClip[nCurrentEntity]);
 					tThisWorld.atClip[nCurrentEntity].tryToReload = false;
@@ -3538,8 +3559,11 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 {
 	pcGraphicsSystem->CleanD3DLevel(&tThisWorld);
 	//Stops Main Menu Music 
+#if MUSIC_ON
+	AK::SoundEngine::StopAll();
+	pcAudioSystem->SendSoundsToEngine(AK::EVENTS::PLAY_HALLWAY_MUSIC, m_AkHallwayBattle);
+#endif
 	ShowCursor(false);
-	AK::SoundEngine::StopAll(m_AkMainMenuMusic);
 	InitializeHUD();
 	InitializePauseScreen();
 	//InitializeEndScreen();
@@ -4531,7 +4555,7 @@ int CGameMangerSystem::RealLevelUpdate()
 					{
 						float x = 0;
 					}
-
+					// Metal Fired Sound in Here -ZFB
 					if (tThisWorld.atClip[nCurrentEntity].tryToShoot == true
 						&& tThisWorld.atClip[nCurrentEntity].nBulletsAvailables.size() > 0
 						&& tThisWorld.atClip[nCurrentEntity].fShootingCoolDown <= 0)
@@ -4559,7 +4583,9 @@ int CGameMangerSystem::RealLevelUpdate()
 						XMMATRIX localMatrix2 = XMMatrixTranslationFromVector(foward);
 						XMMATRIX gunMatrix = tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix;
 						gunMatrix = XMMatrixMultiply(localMatrix2, gunMatrix);
-
+#if MUSIC_ON
+						pcAudioSystem->SendSoundsToEngine(AK::EVENTS::PLAY_METAL_FIRED, m_AkMetalFired);
+#endif
 						int newbullet = CreateBullet(&tThisWorld, gunMatrix,
 							tThisWorld.atClip[nCurrentEntity].currentMaterial);
 						tThisWorld.atClip[newbullet].gunIndex = nCurrentEntity;
@@ -4578,6 +4604,13 @@ int CGameMangerSystem::RealLevelUpdate()
 					}
 					if (tThisWorld.atClip[nCurrentEntity].tryToReload == true)
 					{
+						//Reload Metal Sound - ZFB
+#if MUSIC_ON
+						if (tThisWorld.atClip[nCurrentEntity].nBulletsAvailables.size() < 3)
+						{
+							pcAudioSystem->SendSoundsToEngine(AK::EVENTS::PLAY_METAL_RELOAD, m_MetalReload);
+						}
+#endif
 						pcProjectileSystem->Reload(&tThisWorld.atClip[nCurrentEntity]);
 						tThisWorld.atClip[nCurrentEntity].tryToReload = false;
 

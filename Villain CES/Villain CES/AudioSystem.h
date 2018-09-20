@@ -23,6 +23,7 @@
 
 #define INIT_BNK L"Init.bnk"
 #define MAINMENU_BNK L"Augur_MusicBank.bnk"
+#define SFX L"Augur_SFX.bnk"
 //#define AK_OPTIMIZED
 //#ifndef AK_OPTIMIZED
 //// Only needed for debug mode
