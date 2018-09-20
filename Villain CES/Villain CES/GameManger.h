@@ -37,7 +37,7 @@ public:
 	int MikesGraphicsSandbox();
 	void LoadLevelWithMapInIt();
 	int RealLevelUpdate();
-	
+
 
 	bool GameOver = false;
 	bool GamePaused = false;
@@ -80,13 +80,14 @@ private:
 	bool options = false;
 	bool credits = false;
 	bool pauseInit = false;
+	bool endInit = false;
 	//ZB Variables
 	TCameraToggle tCameraMode;
 	XMMATRIX m_d3dWorldMatrix;
 	XMMATRIX m_d3dViewMatrix;
 	XMMATRIX m_d3dProjectionMatrix;
 	XMMATRIX m_d3dPlayerMatrix;
-	
+
 	ID3D11ShaderResourceView* fontTexture = nullptr;
 	std::vector<TUIVert*> atUIVertices;
 	std::vector<short*> atUIIndices;
@@ -115,7 +116,7 @@ private:
 	AkGameObjectID m_MetalReload;
 	AkBankID m_SFX_bnkID;
 	AkGameObjectID m_AkMetalFired;
-	
+
 	AKRESULT ErrorResult;
 
 	float m_RealTimeFov;
