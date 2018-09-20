@@ -56,7 +56,7 @@ CGameMangerSystem::~CGameMangerSystem()
 }
 
 void CGameMangerSystem::InitializeMainMenu()
-{
+{ // Music Stuff 
 	AK::SoundEngine::StopAll();
 	pcAudioSystem->SendSoundsToEngine(AK::EVENTS::PLAY_MAIN_MENU_MUSIC, m_AkMainMenuMusic);
 	pcGraphicsSystem->CleanD3DLevel(&tThisWorld);
