@@ -3555,6 +3555,9 @@ int CGameMangerSystem::MikesGraphicsSandbox()
 	return 10;
 }
 
+
+
+
 void CGameMangerSystem::LoadLevelWithMapInIt()
 {
 	pcGraphicsSystem->CleanD3DLevel(&tThisWorld);
@@ -4618,6 +4621,32 @@ int CGameMangerSystem::RealLevelUpdate()
 #if MUSIC_ON
 						pcAudioSystem->SendSoundsToEngine(AK::EVENTS::PLAY_METAL_FIRED, m_AkMetalFired);
 #endif
+						POINT cursorLocation;
+						GetCursorPos(&cursorLocation);
+						GetWindowRect(cApplicationWindow, &windowRect);
+						float pointX = (float)((2.0 * ((float)cursorLocation.x) / (float)windowRect.right) - 1.0f);
+						float pointY = (float)((2.0 * (((float)cursorLocation.y) / (float)windowRect.bottom)) - 1.0f) * -1.0f;
+						XMVECTOR Orig;
+						Orig.m128_f32[0] = pointX;
+						Orig.m128_f32[1] = pointY;
+						Orig.m128_f32[2] = 0;
+						Orig.m128_f32[3] = 1;
+						XMVECTOR Far;
+						Far.m128_f32[0] = pointX;
+						Far.m128_f32[1] = pointY;
+						Far.m128_f32[2] = 1;
+						Far.m128_f32[3] = 1;
+						XMMATRIX worldview = XMMatrixMultiply(XMMatrixIdentity(), aimCamera->d3d_Position);
+						XMMATRIX worldviewprojection = XMMatrixMultiply(worldview, m_d3dProjectionMatrix);
+						XMVECTOR orgin = XMVector3Transform(Far, worldviewprojection);
+						float x = 0;
+
+
+
+
+
+
+
 						int newbullet = CreateBullet(&tThisWorld, gunMatrix, tThisWorld.atClip[nCurrentEntity].currentMaterial);
 						tThisWorld.atClip[newbullet].gunIndex = nCurrentEntity;
 						tThisWorld.atSimpleMesh[newbullet].m_nColor = tThisWorld.atClip[nCurrentEntity].colorofBullets;
@@ -4668,7 +4697,29 @@ int CGameMangerSystem::RealLevelUpdate()
 			}
 		}
 		if (tThisWorld.atProjectiles[nCurrentEntity].m_tnProjectileMask == (COMPONENT_PROJECTILESMASK | COMPONENT_METAL)) {
-			pcPhysicsSystem->AddBulletForce(&tThisWorld.atRigidBody[nCurrentEntity], 0.1f);
+		//	pcPhysicsSystem->AddBulletForce(&tThisWorld.atRigidBody[nCurrentEntity], 0.1f);
+			POINT cursorLocation;
+			GetCursorPos(&cursorLocation);
+			GetWindowRect(cApplicationWindow, &windowRect);
+			float pointX = (float)((2.0 * ((float)cursorLocation.x) / (float)windowRect.right) - 1.0f);
+			float pointY = (float)((2.0 * (((float)cursorLocation.y) / (float)windowRect.bottom)) - 1.0f) * -1.0f;
+			XMVECTOR Orig;
+			Orig.m128_f32[0] = pointX;
+			Orig.m128_f32[1] = pointY;
+			Orig.m128_f32[2] = 0;
+			Orig.m128_f32[3] = 1;
+			XMVECTOR Far;
+			Far.m128_f32[0] = pointX;
+			Far.m128_f32[1] = pointY;
+			Far.m128_f32[2] = 1;
+			Far.m128_f32[3] = 1;
+			XMMATRIX worldview = XMMatrixMultiply(XMMatrixIdentity(), aimCamera->d3d_Position);
+			XMMATRIX worldviewprojection = XMMatrixMultiply(worldview, m_d3dProjectionMatrix);
+			XMVECTOR orgin = XMVector3Transform(Far, worldviewprojection);
+			orgin.m128_f32[2] = -8000;
+			
+			
+			tThisWorld.atRigidBody[nCurrentEntity].totalForce += XMVector3Normalize(-orgin)*0.01f;
 		}
 		if (nCurrentEntity == PlayerStartIndex)
 		{
@@ -4732,11 +4783,13 @@ int CGameMangerSystem::RealLevelUpdate()
 							&& tThisWorld.atCollisionMask[nCurrentEntity].m_tnCollisionMask == (COMPONENT_COLLISIONMASK | COMPONENT_TRIGGER | COMPONENT_AABB | COMPONENT_NONSTATIC))
 						{
 							if (tThisWorld.atProjectiles[nCurrentEntity].m_tnProjectileMask == (COMPONENT_PROJECTILESMASK | COMPONENT_METAL)) {
-								pcCollisionSystem->RemoveAABBCollider(nCurrentEntity);
+								thread removeABB(&CCollisionSystem::RemoveAABBCollider,pcCollisionSystem,nCurrentEntity);
+								removeABB.join();
 
 
 
 								pcGraphicsSystem->CleanD3DObject(&tThisWorld, nCurrentEntity);
+								break;
 							}
 						}
 						if (tThisWorld.atRigidBody[otherCollisionsIndex[i]].ground == true
