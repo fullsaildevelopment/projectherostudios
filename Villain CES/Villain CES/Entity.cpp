@@ -227,9 +227,9 @@ void destroyEntity(TWorld * ptWorld, unsigned int nThisEntity)
 	ptWorld->atSimpleMesh[nThisEntity].m_VertexData.clear();
 	ptWorld->atAABB[nThisEntity].m_SceneChange = -30;
 	ptWorld->atAABB[nThisEntity].m_MaterialType = MATERIAL_METAL;
-	ptWorld->atClip[nThisEntity].fAliveTime.clear();
+
 	ptWorld->atClip[nThisEntity].nBulletsAvailables.clear();
-	ptWorld->atClip[nThisEntity].nBulletsFired.clear();
+
 	ptWorld->atClip[nThisEntity].tryToShoot = false;
 	ptWorld->atClip[nThisEntity].tryToReload = false;
 	ptWorld->atClip[nThisEntity].maderay = false;
