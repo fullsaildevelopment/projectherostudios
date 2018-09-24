@@ -646,7 +646,7 @@ unsigned int CreateBullet(TWorld * ptWorld, XMMATRIX BulletSpawnLocation, int Ma
 	default:
 		break;
 	}
-//	ptWorld->atCollisionMask[nThisEntity].m_tnCollisionMask = (COMPONENT_COLLISIONMASK | COMPONENT_TRIGGER | COMPONENT_AABB | COMPONENT_NONSTATIC);
+	ptWorld->atCollisionMask[nThisEntity].m_tnCollisionMask = (COMPONENT_COLLISIONMASK | COMPONENT_TRIGGER | COMPONENT_AABB | COMPONENT_NONSTATIC);
 	ptWorld->atGraphicsMask[nThisEntity].m_tnGraphicsMask = (COMPONENT_GRAPHICSMASK | COMPONENT_SIMPLEMESH | COMPONENT_SHADERID);
 	ptWorld->atAIMask[nThisEntity].m_tnAIMask = (COMPONENT_AIMASK);
 	ptWorld->atUIMask[nThisEntity].m_tnUIMask = (COMPONENT_UIMASK);

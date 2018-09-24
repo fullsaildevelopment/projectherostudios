@@ -4910,11 +4910,23 @@ int CGameMangerSystem::RealLevelUpdate()
 		}
 		if (tThisWorld.atParentWorldMatrix[nCurrentEntity] != -1)
 		{
-			tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = XMMatrixMultiply(pcGraphicsSystem->SetDefaultWorldPosition(),
-				tThisWorld.atWorldMatrix[tThisWorld.atParentWorldMatrix[nCurrentEntity]].worldMatrix);
+			if (nCurrentEntity != GunIndexForPlayer) {
+				tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = XMMatrixMultiply(pcGraphicsSystem->SetDefaultWorldPosition(),
+					tThisWorld.atWorldMatrix[tThisWorld.atParentWorldMatrix[nCurrentEntity]].worldMatrix);
+			}
+			else {
+				XMMATRIX CamandPlayer;
+				CamandPlayer.r[0] = aimCamera->d3d_Position.r[0];
+				CamandPlayer.r[1] = aimCamera->d3d_Position.r[1];
+				CamandPlayer.r[2] = aimCamera->d3d_Position.r[2];
+
+				CamandPlayer.r[3] = tThisWorld.atWorldMatrix[tThisWorld.atParentWorldMatrix[nCurrentEntity]].worldMatrix.r[3];
+				tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = XMMatrixMultiply(pcGraphicsSystem->SetDefaultWorldPosition(),
+					CamandPlayer);
+			}
 
 			tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = XMMatrixMultiply(tThisWorld.atOffSetMatrix[nCurrentEntity], tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix);
-
+			
 			if (nCurrentEntity != GunIndexForPlayer)
 			{
 				tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = XMMatrixMultiply(XMMatrixRotationY(XMConvertToRadians(-90)), tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix);
