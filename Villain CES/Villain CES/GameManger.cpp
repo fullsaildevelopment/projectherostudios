@@ -4259,7 +4259,7 @@ int CGameMangerSystem::RealLevelUpdate()
 
 		if (tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_DEBUGMESH | COMPONENT_SHADERID))
 		{
-			if (tThisWorld.atBar[nCurrentEntity].entityToFollow != -1)
+			if (tThisWorld.atBar[nCurrentEntity].entityToFollow != -1&&tThisWorld.atActiveAI[tThisWorld.atBar[nCurrentEntity].entityToFollow].active==true)
 			{
 				unsigned int targetEntity = tThisWorld.atBar[nCurrentEntity].entityToFollow;
 
@@ -4668,7 +4668,7 @@ int CGameMangerSystem::RealLevelUpdate()
 			}
 		}
 		if (tThisWorld.atProjectiles[nCurrentEntity].m_tnProjectileMask == (COMPONENT_PROJECTILESMASK | COMPONENT_METAL)) {
-			pcPhysicsSystem->AddBulletForce(&tThisWorld.atRigidBody[nCurrentEntity], 0.001f);
+			pcPhysicsSystem->AddBulletForce(&tThisWorld.atRigidBody[nCurrentEntity], 0.1f);
 		}
 		if (nCurrentEntity == PlayerStartIndex)
 		{
@@ -4729,12 +4729,20 @@ int CGameMangerSystem::RealLevelUpdate()
 					for (int i = 0; i < otherCollisionsIndex.size(); ++i)
 					{
 						if (tThisWorld.atRigidBody[otherCollisionsIndex[i]].ground == true
+							&& tThisWorld.atCollisionMask[nCurrentEntity].m_tnCollisionMask == (COMPONENT_COLLISIONMASK | COMPONENT_TRIGGER | COMPONENT_AABB | COMPONENT_NONSTATIC))
+						{
+							if (tThisWorld.atProjectiles[nCurrentEntity].m_tnProjectileMask == (COMPONENT_PROJECTILESMASK | COMPONENT_METAL)) {
+								pcCollisionSystem->RemoveAABBCollider(nCurrentEntity);
+
+
+
+								pcGraphicsSystem->CleanD3DObject(&tThisWorld, nCurrentEntity);
+							}
+						}
+						if (tThisWorld.atRigidBody[otherCollisionsIndex[i]].ground == true
 							&& tThisWorld.atCollisionMask[nCurrentEntity].m_tnCollisionMask != (COMPONENT_COLLISIONMASK | COMPONENT_TRIGGER | COMPONENT_AABB | COMPONENT_NONSTATIC))
 						{
-							if (nCurrentEntity == 8)
-							{
-								float x = 0;
-							}
+						
 
 							tThisWorld.atRigidBody[nCurrentEntity].totalForce = -tThisWorld.atRigidBody[nCurrentEntity].velocity;
 							tTempVertexBuffer.m_d3dWorldMatrix = pcPhysicsSystem->ResolveForces(&tThisWorld.atRigidBody[nCurrentEntity], tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, false);
@@ -4798,6 +4806,7 @@ int CGameMangerSystem::RealLevelUpdate()
 
 										pcGraphicsSystem->CleanD3DObject(&tThisWorld, nCurrentEntity);
 										tThisWorld.atAiHeath[otherCollisionsIndex[i]].heath -= playerDamage;
+										tThisWorld.atActiveAI[otherCollisionsIndex[i]].active = true;
 										if (tThisWorld.atAiHeath[otherCollisionsIndex[i]].heath <= 0)
 										{
 											pcAiSystem->SetNumberOfAI(pcAiSystem->GetNumberOfAI() - 1);
