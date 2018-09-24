@@ -4697,29 +4697,8 @@ int CGameMangerSystem::RealLevelUpdate()
 			}
 		}
 		if (tThisWorld.atProjectiles[nCurrentEntity].m_tnProjectileMask == (COMPONENT_PROJECTILESMASK | COMPONENT_METAL)) {
-		//	pcPhysicsSystem->AddBulletForce(&tThisWorld.atRigidBody[nCurrentEntity], 0.1f);
-			POINT cursorLocation;
-			GetCursorPos(&cursorLocation);
-			GetWindowRect(cApplicationWindow, &windowRect);
-			float pointX = (float)((2.0 * ((float)cursorLocation.x) / (float)windowRect.right) - 1.0f);
-			float pointY = (float)((2.0 * (((float)cursorLocation.y) / (float)windowRect.bottom)) - 1.0f) * -1.0f;
-			XMVECTOR Orig;
-			Orig.m128_f32[0] = pointX;
-			Orig.m128_f32[1] = pointY;
-			Orig.m128_f32[2] = 0;
-			Orig.m128_f32[3] = 1;
-			XMVECTOR Far;
-			Far.m128_f32[0] = pointX;
-			Far.m128_f32[1] = pointY;
-			Far.m128_f32[2] = 1;
-			Far.m128_f32[3] = 1;
-			XMMATRIX worldview = XMMatrixMultiply(XMMatrixIdentity(), aimCamera->d3d_Position);
-			XMMATRIX worldviewprojection = XMMatrixMultiply(worldview, m_d3dProjectionMatrix);
-			XMVECTOR orgin = XMVector3Transform(Far, worldviewprojection);
-			orgin.m128_f32[2] = -8000;
-			
-			
-			tThisWorld.atRigidBody[nCurrentEntity].totalForce += XMVector3Normalize(-orgin)*0.01f;
+			pcPhysicsSystem->AddBulletForce(&tThisWorld.atRigidBody[nCurrentEntity], 0.1f);
+		
 		}
 		if (nCurrentEntity == PlayerStartIndex)
 		{

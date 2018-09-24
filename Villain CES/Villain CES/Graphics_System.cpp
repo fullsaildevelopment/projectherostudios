@@ -990,7 +990,7 @@ XMMATRIX CGraphicsSystem::SetDefaultCameraMatrix()
 XMMATRIX CGraphicsSystem::ResetAimModeCameraOffset()
 {
 
-	return XMMatrixTranslationFromVector(XMVectorSet(0, 1.7f, 8.5f, 1.0f));
+	return XMMatrixTranslationFromVector(XMVectorSet(-0.5, 1.7f, 8.5f, 1.0f));
 }
 
 XMMATRIX CGraphicsSystem::SetDefaultViewMatrix()
