@@ -23,13 +23,11 @@ struct Clips
 	bool GunMode = false;
 	float fShootingCoolDown;
 	list<bool> nBulletsAvailables;
-	vector<int> nBulletsFired;
-	vector<float> fAliveTime;
 	int nSizeofClipl;
 	bool tryToShoot = false;
 	bool tryToReload;
 	float FValueOfCoolDown;
-	int currentMaterial;
+	int currentMaterial=0;
 	XMFLOAT4 colorofBullets;
 	float bulletSpeed;
 	int gunIndex;
