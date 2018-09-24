@@ -183,12 +183,7 @@ void CGameMangerSystem::InitializeMainMenu()
 
 int CGameMangerSystem::LoadMainMenu()
 {
-	//if (pcInputSystem->InputCheck(G_KEY_H) == 1)
-	//{
-	////pcAudioSystem->SendSoundsToEngine(AK::EVENTS::PLAY_FOOTSTEP,m_AkMainMenuMusic);
-	//}
-
-	clickTimer.Signal();
+	fpsTimer.Xtime_Signal();
 
 	//////////
 	m_d3dWorldMatrix = pcGraphicsSystem->SetDefaultWorldPosition();
@@ -201,20 +196,41 @@ int CGameMangerSystem::LoadMainMenu()
 	CGraphicsSystem::TUIVertexBufferType tTempVertexBuffer;
 	CGraphicsSystem::TUIPixelBufferType tTempPixelBuffer;
 
-	POINT hoverPoint;
+	hoverPoint = { -1, -1 };
+	//POINT hoverPoint;
 	GetCursorPos(&hoverPoint);
 	ScreenToClient(cApplicationWindow, &hoverPoint);
 
-	POINT clickPoint = { -1, -1 };
-	if (pcInputSystem->InputCheck(G_BUTTON_LEFT) == 1)
+	//POINT
+	clickPoint = { -1, -1 };
+	if (pcInputSystem->InputCheck(G_BUTTON_LEFT) == 1 && mouseUp)
+	{
+		GetCursorPos(&startDragPoint);
+		ScreenToClient(cApplicationWindow, &startDragPoint);
+
+		GetCursorPos(&dragPoint);
+		ScreenToClient(cApplicationWindow, &dragPoint);
+
+		mouseUp = false;
+		mouseDown = true;
+	}
+	else if (pcInputSystem->InputCheck(G_BUTTON_LEFT) == 1 && mouseDown)
+	{
+		GetCursorPos(&dragPoint);
+		ScreenToClient(cApplicationWindow, &dragPoint);
+	}
+	else if (pcInputSystem->InputCheck(G_BUTTON_LEFT) == 0 && mouseDown)
 	{
 		GetCursorPos(&clickPoint);
 		ScreenToClient(cApplicationWindow, &clickPoint);
+
+		mouseUp = true;
+		mouseDown = false;
+
+		click = true;
 	}
 
 	pcGraphicsSystem->UpdateD3D();
-
-	GetWindowRect(cApplicationWindow, &windowRect);
 
 	for (int nCurrentEntity = 0; nCurrentEntity < ENTITYCOUNT; nCurrentEntity++)
 	{
@@ -320,7 +336,13 @@ int CGameMangerSystem::LoadMainMenu()
 			if (tThisWorld.atUIMask[nCurrentEntity].m_tnUIMask == (COMPONENT_UIMASK | COMPONENT_LABEL | COMPONENT_BAR | COMPONENT_OPTIONS))
 			{
 				if (PtInRect(&tThisWorld.atBar[nCurrentEntity].barBoundingBox, clickPoint))
+				{
 					tThisWorld.atBar[nCurrentEntity].ratio = (clickPoint.x - tThisWorld.atBar[nCurrentEntity].barBoundingBox.left - 5.0) / (tThisWorld.atBar[nCurrentEntity].barBoundingBox.right - tThisWorld.atBar[nCurrentEntity].barBoundingBox.left - 10);
+				}
+				else if (PtInRect(&tThisWorld.atBar[nCurrentEntity].barBoundingBox, dragPoint))
+				{
+					tThisWorld.atBar[nCurrentEntity].ratio = (dragPoint.x - tThisWorld.atBar[nCurrentEntity].barBoundingBox.left - 5.0) / (tThisWorld.atBar[nCurrentEntity].barBoundingBox.right - tThisWorld.atBar[nCurrentEntity].barBoundingBox.left - 10);
+				}
 
 				if (tThisWorld.atBar[nCurrentEntity].backgroundColor.x == 1 &&
 					tThisWorld.atBar[nCurrentEntity].backgroundColor.y == 0 &&
@@ -394,9 +416,11 @@ int CGameMangerSystem::LoadMainMenu()
 	pcGraphicsSystem->m_pd3dSwapchain->Present(0, 0);
 
 	if (pcInputSystem->InputCheck(G_KEY_ESCAPE) == 1)
+	{
 		return -1;
+	}
 
-	clickTime += clickTimer.Delta();
+	clickTime += fpsTimer.GetDelta();
 
 #if MIKES_SANDBOX_ON
 	return 9;
@@ -447,7 +471,8 @@ void CGameMangerSystem::InitializeTitleScreen()
 
 int CGameMangerSystem::LoadTitleScreen()
 {
-	fadeTimer.Signal();
+	fpsTimer.Xtime_Signal();
+
 #if MUSIC_ON
 	pcAudioSystem->SetListener(Listener, 1, ErrorResult);
 #endif
@@ -503,7 +528,7 @@ int CGameMangerSystem::LoadTitleScreen()
 	if (pcInputSystem->InputCheck(G_BUTTON_LEFT))
 		return 2;
 
-	fadeTime += fadeTimer.SmoothDelta();
+	fadeTime += fpsTimer.GetDelta();
 
 	return 1;
 }
@@ -3572,6 +3597,12 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	InitializePauseScreen();
 	GameOver = false;
 	GamePaused = false;
+	endInit = false;
+	pauseInit = false;
+
+	mouseDown = false;
+	mouseUp = true;
+	click = false;
 
 	pcAiSystem->SetNumberOfAI(3);
 	//	tTimerInfo->StartClock(tAugerTimers->tSceneTimer);
@@ -4001,20 +4032,42 @@ int CGameMangerSystem::RealLevelUpdate()
 	CGraphicsSystem::TUIVertexBufferType tUIVertexBuffer;
 	CGraphicsSystem::TUIPixelBufferType tUIPixelBuffer;
 
-	POINT hoverPoint;
+	hoverPoint = { -1, -1 };
+	//POINT hoverPoint;
 	GetCursorPos(&hoverPoint);
 	ScreenToClient(cApplicationWindow, &hoverPoint);
 
-	POINT clickPoint = { -1, -1 };
-	if (pcInputSystem->InputCheck(G_BUTTON_LEFT) == 1)
+	//POINT 
+	clickPoint = { -1, -1 };
+	if (pcInputSystem->InputCheck(G_BUTTON_LEFT) == 1 && mouseUp)
+	{
+
+		GetCursorPos(&startDragPoint);
+		ScreenToClient(cApplicationWindow, &startDragPoint);
+
+		GetCursorPos(&dragPoint);
+		ScreenToClient(cApplicationWindow, &dragPoint);
+
+		mouseUp = false;
+		mouseDown = true;
+	}
+	else if (pcInputSystem->InputCheck(G_BUTTON_LEFT) == 1 && mouseDown)
+	{
+		GetCursorPos(&dragPoint);
+		ScreenToClient(cApplicationWindow, &dragPoint);
+	}
+	else if (pcInputSystem->InputCheck(G_BUTTON_LEFT) == 0 && mouseDown)
 	{
 		GetCursorPos(&clickPoint);
 		ScreenToClient(cApplicationWindow, &clickPoint);
 
-		//if (GameOver && tThisWorld.atClayton[PlayerStartIndex].health > 0)
-		//{
-		//	return 2;
-		//}
+		mouseUp = true;
+		mouseDown = false;
+
+		click = true;
+
+		startDragPoint = { -1, -1 };
+		dragPoint = { -1, -1 };
 	}
 
 	if (pcInputSystem->InputCheck(G_KEY_P) && !GameOver)
@@ -4035,9 +4088,6 @@ int CGameMangerSystem::RealLevelUpdate()
 			ShowCursor(false);
 		}
 	}
-
-
-	clickTimer.Signal();
 
 	//Camera Functions here will move to a input system function when all behaviors are finalized - ZFB
 	if (GamePaused == false && GameOver == false)
@@ -4689,7 +4739,7 @@ int CGameMangerSystem::RealLevelUpdate()
 					}
 					if (tThisWorld.atClip[nCurrentEntity].fShootingCoolDown > 0)
 					{
-						tThisWorld.atClip[nCurrentEntity].fShootingCoolDown -= 2.5;
+						tThisWorld.atClip[nCurrentEntity].fShootingCoolDown -= fpsTimer.GetDelta() * 50;
 					}
 
 				}
@@ -5145,8 +5195,6 @@ int CGameMangerSystem::RealLevelUpdate()
 			{
 				if (tThisWorld.atUIMask[nCurrentEntity].m_tnUIMask == (COMPONENT_UIMASK | COMPONENT_LABEL | COMPONENT_BUTTON | COMPONENT_DEATHSCREEN))
 				{
-					//if (tThisWorld.atClayton[PlayerStartIndex].health <= 0)
-					//{
 					tUIVertexBuffer.start = -1;
 					tUIVertexBuffer.end = -1;
 					tUIVertexBuffer.ratio = -1;
@@ -5170,7 +5218,6 @@ int CGameMangerSystem::RealLevelUpdate()
 
 					pcGraphicsSystem->InitUIShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tUIVertexBuffer, tUIPixelBuffer, tThisWorld.atMesh[nCurrentEntity], menuCamera->d3d_Position);
 					pcGraphicsSystem->ExecutePipeline(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atMesh[nCurrentEntity].m_nIndexCount, tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask, tThisWorld.atShaderID[nCurrentEntity].m_nShaderID);
-					//}
 				}
 
 				if (tThisWorld.atUIMask[nCurrentEntity].m_tnUIMask == (COMPONENT_UIMASK | COMPONENT_LABEL | COMPONENT_DEATHSCREEN))
@@ -5227,9 +5274,9 @@ int CGameMangerSystem::RealLevelUpdate()
 				tUIVertexBuffer.ratio = (100 - tThisWorld.atClip[GunIndexForPlayer].fShootingCoolDown) * .01;
 			}
 			else if (tThisWorld.atBar[nCurrentEntity].backgroundColor.x == 1 &&
-				tThisWorld.atBar[nCurrentEntity].backgroundColor.y == 0 &&
-				tThisWorld.atBar[nCurrentEntity].backgroundColor.z == 0 &&
-				tThisWorld.atBar[nCurrentEntity].backgroundColor.w == 1)
+					 tThisWorld.atBar[nCurrentEntity].backgroundColor.y == 0 &&
+					 tThisWorld.atBar[nCurrentEntity].backgroundColor.z == 0 &&
+					 tThisWorld.atBar[nCurrentEntity].backgroundColor.w == 1)
 			{
 				tUIVertexBuffer.start = (tThisWorld.atBar[nCurrentEntity].barBoundingBox.left + 14 - (screenWidth / 2.0)) / (screenWidth / 2);
 				tUIVertexBuffer.end = (tThisWorld.atBar[nCurrentEntity].barBoundingBox.right + 4 - (screenWidth / 2.0)) / (screenWidth / 2);
@@ -5265,21 +5312,7 @@ int CGameMangerSystem::RealLevelUpdate()
 		InitializeEndScreen(false);
 	}
 
-	/*if (GameOver && tThisWorld.atClayton[PlayerStartIndex].health > 0)
-	{
-	for (auto i = G_KEY_UNKNOWN; i <= G_KEY_9; ++i)
-	{
-	if (pcInputSystem->InputCheck(i) == 1)
-	{
-	if (i == G_KEY_V)
-	continue;
-
-	return 2;
-	}
-	}
-	}*/
-
-	clickTime += clickTimer.Delta();
+	clickTime += fpsTimer.GetDelta();
 	//double samples = 0;
 	//try
 	//{
