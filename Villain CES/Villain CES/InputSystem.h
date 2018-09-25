@@ -93,7 +93,8 @@ public:
 	void MouseBoundryCheck(float _x, float _y, float &_outX,float &_outY);
 	void SendHWNDToInputSystem(HWND in_WindowHandle);
 	
-
+	float GetMouseRotationSpeed();
+	void SetMouseRotationSpeed(float newSpeed);
 			/*
 		Seth Specific Functions
 	*/
