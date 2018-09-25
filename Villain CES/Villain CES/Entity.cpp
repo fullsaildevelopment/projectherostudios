@@ -182,7 +182,6 @@ unsigned int createEntity(TWorld * ptWorld)
 	return(ENTITYCOUNT);
 }
 
-
 unsigned int createEntityReverse(TWorld * ptWorld)
 {
 	unsigned int nCurrentEntity;
@@ -437,7 +436,7 @@ unsigned int CreateSkybox(TWorld * ptWorld, ID3D11ShaderResourceView * srv)
 	ptWorld->atMesh[nThisEntity].m_d3dVertexBufferDesc.StructureByteStride = 0;
 
 	ptWorld->atMesh[nThisEntity].m_d3dIndexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-	ptWorld->atMesh[nThisEntity].m_d3dIndexBufferDesc.ByteWidth = sizeof(short) * ptWorld->atMesh[nThisEntity].m_nIndexCount;
+	ptWorld->atMesh[nThisEntity].m_d3dIndexBufferDesc.ByteWidth = sizeof(unsigned int) * ptWorld->atMesh[nThisEntity].m_nIndexCount;
 	ptWorld->atMesh[nThisEntity].m_d3dIndexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
 	ptWorld->atMesh[nThisEntity].m_d3dIndexBufferDesc.CPUAccessFlags = 0;
 	ptWorld->atMesh[nThisEntity].m_d3dIndexBufferDesc.MiscFlags = 0;
@@ -2622,6 +2621,7 @@ unsigned int createMesh(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMeshImpo
 	int srvIndex = 1;
 	if (entityMatIndex == -2)
 	{
+		//glass
 		ptWorld->atShaderID[nThisEntity].m_nShaderID = 10;
 	}
 	else
@@ -2634,6 +2634,10 @@ unsigned int createMesh(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMeshImpo
 			}
 		}
 		ptWorld->atMesh[nThisEntity].m_d3dSRVDiffuse = temp.SRVArrayOfMaterials[srvIndex];
+		if (entityMatIndex == -3)//Material Gun Projectile
+		{
+			ptWorld->atShaderID[nThisEntity].m_nShaderID = 11;
+		}
 		ptWorld->atShaderID[nThisEntity].m_nShaderID = 6;
 
 	}
