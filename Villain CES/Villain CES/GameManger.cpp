@@ -3658,7 +3658,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 
 	ImporterData gunImport;
 
-#pragma region Create Skybox
+	#pragma region Create Skybox
 	ID3D11Resource * spaceMap[6];
 
 	CreateWICTextureFromFile(pcGraphicsSystem->m_pd3dDevice, L"Cubemap_SpaceLightBlue/left.png", &spaceMap[0], NULL, NULL);
@@ -3674,6 +3674,12 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 
 #pragma endregion
 
+	tempImport = pcGraphicsSystem->ReadMesh("meshData_ProjectileMatGun.txt");
+	matOpt = pcGraphicsSystem->CreateTexturesFromFile(tempImport.vtMaterials, tempImport.meshCount);
+	for (int meshIndex = 0; meshIndex < tempImport.meshCount; meshIndex++)
+	{
+		int myMesh = createMesh(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, tempImport.vtMeshes[meshIndex], matOpt, meshIndex);
+	}
 	tempImport = pcGraphicsSystem->ReadMesh("meshData_NoBrewery.txt");
 	matOpt = pcGraphicsSystem->CreateTexturesFromFile(tempImport.vtMaterials, tempImport.meshCount);
 	for (int meshIndex = 0; meshIndex < tempImport.meshCount; meshIndex++)
@@ -3681,6 +3687,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 		int myMesh = createMesh(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, tempImport.vtMeshes[meshIndex], matOpt, meshIndex);
 	}
 
+	#pragma region Matrix Init
 	//Current World Matrix Init
 	m_d3dWorldMatrix = pcGraphicsSystem->SetDefaultWorldPosition();//Call some sort of function from the graphics system to create this matrix
 																   //Current View matrix Init
@@ -3709,10 +3716,11 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 
 
 
-	m_d3dPlayerMatrix.r[3].m128_f32[2] -= 10;
+	m_d3dPlayerMatrix.r[3].m128_f32[2] += 20;
 	m_d3dPlayerMatrix.r[3].m128_f32[0] -= 5;
 	m_d3dPlayerMatrix.r[3].m128_f32[1] += 0.2;
 
+#pragma endregion
 
 	//Clayton Import Data - ZFB
 	tempImport = pcGraphicsSystem->ReadMesh("meshData_Pirate.txt");
@@ -3722,6 +3730,8 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 		PlayerStartIndex = createClayton(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, tempImport.vtMeshes[meshIndex], tempImport.vtMaterials[meshIndex]);
 	}
 
+
+	#pragma region AI and Gun INIT
 	GunIndexForPlayer = CreateGun(&tThisWorld, m_d3dWorldMatrix, PlayerStartIndex, -1, 1, 10.5, 3, 130);
 	tThisWorld.atClip[GunIndexForPlayer].bulletSpeed = 0.01;
 	tThisWorld.atClayton[PlayerStartIndex].health = 100;
@@ -3757,6 +3767,9 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	edges.push_back(nodeindex);
 	pcAiSystem->AddEdgestoNode(nodeindex2, edges);
 
+
+#pragma endregion
+
 	tempImport = pcGraphicsSystem->ReadMesh("meshData_Scyllian.txt");
 	gunImport = pcGraphicsSystem->ReadMesh("meshData_LaserFlintlockTextured.txt");
 	int spacePirate;
@@ -3781,6 +3794,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	{
 		GunINdexai = CreateScyllianGun(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, m_d3dWorldMatrix, spacePirate, -0.5, 1, 11.5, 10, 30, gunImport.vtMeshes[meshIndex], gunImport.vtMaterials[meshIndex]);
 	}
+	#pragma region MORE AI Init
 	tThisWorld.atAIMask[spacePirate].GunIndex = GunINdexai;
 
 	tThisWorld.atClip[GunINdexai].bulletSpeed = 0.01;//Frame Dependent
@@ -3819,12 +3833,14 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	tThisWorld.atAIVision[spacePirate].normalAtBegining[5] = planes[5].normal;
 	AILocation.r[3].m128_f32[0] += 3;
 
+#pragma endregion
+
 	int spacePirate2;
 	for (int meshIndex = 0; meshIndex < tempImport.meshCount; ++meshIndex)
 	{
 		spacePirate2 = CreateScyllian(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, tempImport.vtMeshes[meshIndex], tempImport.vtMaterials[meshIndex], AILocation);
 	}
-
+	#pragma region More AI Init
 	//spacePirate2 = CreateSpacePirate(&tThisWorld, AILocation);
 	tThisWorld.atActiveAI[spacePirate].NoctifyOtherAi.push_back(spacePirate2);
 	tThisWorld.atActiveAI[spacePirate2].NoctifyOtherAi.push_back(spacePirate);
@@ -3837,6 +3853,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	/*tThisWorld.atPathPlanining[spacePirate].startingNode = nodeindex3;
 	tThisWorld.atPathPlanining[spacePirate].Goal = nodeindex2;*/
 
+#pragma endregion
 
 	//int GunINdexai2 = CreateGun(&tThisWorld, m_d3dWorldMatrix, spacePirate2, -1.1, 0.5, 11.5, 10,130);
 	int GunINdexai2;
@@ -3844,6 +3861,8 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	{
 		GunINdexai2 = CreateScyllianGun(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, m_d3dWorldMatrix, spacePirate2, -0.5, 1, 11.5, 10, 30, gunImport.vtMeshes[meshIndex], gunImport.vtMaterials[meshIndex]);
 	}
+
+	#pragma region EVEN MORE AI INIT
 	tThisWorld.atAIMask[spacePirate2].GunIndex = GunINdexai2;
 	tThisWorld.atAIVision[spacePirate2].keepRotatingRight = false;
 
@@ -3909,7 +3928,6 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	tThisWorld.atPathPlanining[spacePirate2].Goal = nodeindex3;
 	tThisWorld.atPathPlanining[spacePirate2].startingNode = nodeindex4;
 
-
 	//int nodeindex2 = CreateNodePoint(&tThisWorld, nodeLocation);
 
 	//nodePosition.x = nodeLocation.r[3].m128_f32[0];
@@ -3924,6 +3942,10 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	AILocation.r[3].m128_f32[2] -= 20;
 	AILocation.r[3].m128_f32[0] -= 10;
 
+#pragma endregion
+
+
+
 	int spacePirate3;
 	for (int meshIndex = 0; meshIndex < tempImport.meshCount; ++meshIndex)
 	{
@@ -3934,6 +3956,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	tThisWorld.atAiHeath[spacePirate3].heath = 100;
 	createGSQuad(&tThisWorld, XMFLOAT4(1, 0, 0, 1), spacePirate3);
 	createGSQuad(&tThisWorld, XMFLOAT4(0, 0, 0, 1), spacePirate3);
+
 
 	//tThisWorld.atPathPlanining[spacePirate].Goal = nodeindex;
 	/*tThisWorld.atPathPlanining[spacePirate].startingNode = nodeindex3;
@@ -3946,6 +3969,8 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	{
 		GunINdexai3 = CreateScyllianGun(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, m_d3dWorldMatrix, spacePirate3, -0.5, 1, 11.5, 10, 30, gunImport.vtMeshes[meshIndex], gunImport.vtMaterials[meshIndex]);
 	}
+
+	#pragma region RIDICULOUS AMOUNT OF AI INIT
 	tThisWorld.atAIMask[spacePirate3].GunIndex = GunINdexai3;
 	tThisWorld.atAIVision[spacePirate3].keepRotatingRight = false;
 
@@ -4011,7 +4036,9 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	tThisWorld.atPathPlanining[spacePirate3].Goal = nodeindex5;
 	tThisWorld.atPathPlanining[spacePirate3].startingNode = nodeindex6;
 
+#pragma endregion
 
+	#pragma region COLLISION INIT
 	for (int nCurrentEntity = 0; nCurrentEntity < ENTITYCOUNT; nCurrentEntity++)
 	{
 		if (tThisWorld.atCollisionMask[nCurrentEntity].m_tnCollisionMask > 1)
@@ -4050,6 +4077,9 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 			tThisWorld.atAABB[nCurrentEntity] = pcCollisionSystem->updateAABB(tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, tThisWorld.atAABB[nCurrentEntity]);
 		}
 	}
+
+#pragma endregion
+
 
 
 	pcGraphicsSystem->CreateBuffers(&tThisWorld);
@@ -4411,10 +4441,6 @@ int CGameMangerSystem::RealLevelUpdate()
 		}
 		if (tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_SHADERID))
 		{
-
-			/*if (nCurrentEntity == 2 || nCurrentEntity == 3) {
-			continue;
-			}*/
 			if (tCameraMode.bWalkMode == true)
 			{
 				tMyVertexBufferTemp.m_d3dViewMatrix = walkCamera->d3d_Position;
@@ -5308,6 +5334,7 @@ int CGameMangerSystem::RealLevelUpdate()
 		}
 	}
 
+	pcGraphicsSystem->m_pd3dOutsideGlassSRV->Release();
 	if (pcInputSystem->InputCheck(G_KEY_V))
 	{
 		GameOver = true;
