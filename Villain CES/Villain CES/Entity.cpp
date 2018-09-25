@@ -632,20 +632,36 @@ unsigned int CreateBullet(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMeshIm
 * Mod. Initials:          AP
 */
 
-unsigned int CreateBullet(TWorld * ptWorld, XMMATRIX BulletSpawnLocation, int MaterialID)
+unsigned int CreateBullet(TWorld * ptWorld, XMMATRIX BulletSpawnLocation, int MaterialID, int bulletType)
 {
 	unsigned int nThisEntity = createEntity(ptWorld);
+
 	switch (MaterialID)
 	{
 	case 0:
-		ptWorld->atProjectiles[nThisEntity].m_tnProjectileMask = (COMPONENT_PROJECTILESMASK | COMPONENT_METAL);
+		if (bulletType == 0)
+		{
+			ptWorld->atProjectiles[nThisEntity].m_tnProjectileMask = (COMPONENT_PROJECTILESMASK | COMPONENT_METAL | COMPONENT_FRIENDLY);
+		}
+		else if (bulletType == 1)
+		{
+			ptWorld->atProjectiles[nThisEntity].m_tnProjectileMask = (COMPONENT_PROJECTILESMASK | COMPONENT_METAL | COMPONENT_ENEMY);
+		}
 		break;
 	case 1:
-		ptWorld->atProjectiles[nThisEntity].m_tnProjectileMask = (COMPONENT_METAL | COMPONENT_WOOD);
+		if (bulletType == 0)
+		{
+			ptWorld->atProjectiles[nThisEntity].m_tnProjectileMask = (COMPONENT_METAL | COMPONENT_WOOD | COMPONENT_FRIENDLY);
+		}
+		else if (bulletType == 1)
+		{
+			ptWorld->atProjectiles[nThisEntity].m_tnProjectileMask = (COMPONENT_METAL | COMPONENT_WOOD | COMPONENT_ENEMY);
+		}
 		break;
 	default:
 		break;
 	}
+
 	ptWorld->atCollisionMask[nThisEntity].m_tnCollisionMask = (COMPONENT_COLLISIONMASK | COMPONENT_TRIGGER | COMPONENT_AABB | COMPONENT_NONSTATIC);
 	ptWorld->atGraphicsMask[nThisEntity].m_tnGraphicsMask = (COMPONENT_GRAPHICSMASK | COMPONENT_SIMPLEMESH | COMPONENT_SHADERID);
 	ptWorld->atAIMask[nThisEntity].m_tnAIMask = (COMPONENT_AIMASK);
