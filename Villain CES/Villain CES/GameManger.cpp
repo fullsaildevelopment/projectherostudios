@@ -175,6 +175,18 @@ void CGameMangerSystem::InitializeMainMenu()
 		tThisWorld.atLabel[nThisEntity].color = XMFLOAT4(1, 0, 0, 0);
 	}
 
+	//{
+	//	wchar_t textBuffer[] =
+	//	//{ L"New Game\n Start Game\n Pleaase Work" };
+	//	{ L"Alteris: “Dark Matter Gates possess the unique ability \nto open passages to their twins when a sufficient \ncharge is run through them both, this passage allows for \ninstantaneous transport between the two gates.”" };
+	//
+	//	nThisEntity = CreateUILabelForText(&tThisWorld, menuCamera->d3d_Position, 15, 6, 0, -7, &atUIVertices, &atUIIndices, textBuffer, ARRAYSIZE(textBuffer), -1, .1);
+	//	pcUISystem->AddTextureToUI(&tThisWorld, nThisEntity, pcGraphicsSystem->m_pd3dDevice, nullptr, fontTexture);
+	//	//pcUISystem->AddButtonToUI(&cApplicationWindow, &tThisWorld, nThisEntity, -1, true);
+	//
+	//	tThisWorld.atLabel[nThisEntity].color = XMFLOAT4(1, 0, 0, 0);
+	//}
+
 	InitializeOptionsMenu();
 	InitializeCredits();
 
@@ -183,12 +195,7 @@ void CGameMangerSystem::InitializeMainMenu()
 
 int CGameMangerSystem::LoadMainMenu()
 {
-	//if (pcInputSystem->InputCheck(G_KEY_H) == 1)
-	//{
-	////pcAudioSystem->SendSoundsToEngine(AK::EVENTS::PLAY_FOOTSTEP,m_AkMainMenuMusic);
-	//}
-
-	clickTimer.Signal();
+	fpsTimer.Xtime_Signal();
 
 	//////////
 	m_d3dWorldMatrix = pcGraphicsSystem->SetDefaultWorldPosition();
@@ -201,20 +208,41 @@ int CGameMangerSystem::LoadMainMenu()
 	CGraphicsSystem::TUIVertexBufferType tTempVertexBuffer;
 	CGraphicsSystem::TUIPixelBufferType tTempPixelBuffer;
 
-	POINT hoverPoint;
+	hoverPoint = { -1, -1 };
+	//POINT hoverPoint;
 	GetCursorPos(&hoverPoint);
 	ScreenToClient(cApplicationWindow, &hoverPoint);
 
-	POINT clickPoint = { -1, -1 };
-	if (pcInputSystem->InputCheck(G_BUTTON_LEFT) == 1)
+	//POINT
+	clickPoint = { -1, -1 };
+	if (pcInputSystem->InputCheck(G_BUTTON_LEFT) == 1 && mouseUp)
+	{
+		GetCursorPos(&startDragPoint);
+		ScreenToClient(cApplicationWindow, &startDragPoint);
+
+		GetCursorPos(&dragPoint);
+		ScreenToClient(cApplicationWindow, &dragPoint);
+
+		mouseUp = false;
+		mouseDown = true;
+	}
+	else if (pcInputSystem->InputCheck(G_BUTTON_LEFT) == 1 && mouseDown)
+	{
+		GetCursorPos(&dragPoint);
+		ScreenToClient(cApplicationWindow, &dragPoint);
+	}
+	else if (pcInputSystem->InputCheck(G_BUTTON_LEFT) == 0 && mouseDown)
 	{
 		GetCursorPos(&clickPoint);
 		ScreenToClient(cApplicationWindow, &clickPoint);
+
+		mouseUp = true;
+		mouseDown = false;
+
+		click = true;
 	}
 
 	pcGraphicsSystem->UpdateD3D();
-
-	GetWindowRect(cApplicationWindow, &windowRect);
 
 	for (int nCurrentEntity = 0; nCurrentEntity < ENTITYCOUNT; nCurrentEntity++)
 	{
@@ -320,7 +348,13 @@ int CGameMangerSystem::LoadMainMenu()
 			if (tThisWorld.atUIMask[nCurrentEntity].m_tnUIMask == (COMPONENT_UIMASK | COMPONENT_LABEL | COMPONENT_BAR | COMPONENT_OPTIONS))
 			{
 				if (PtInRect(&tThisWorld.atBar[nCurrentEntity].barBoundingBox, clickPoint))
+				{
 					tThisWorld.atBar[nCurrentEntity].ratio = (clickPoint.x - tThisWorld.atBar[nCurrentEntity].barBoundingBox.left - 5.0) / (tThisWorld.atBar[nCurrentEntity].barBoundingBox.right - tThisWorld.atBar[nCurrentEntity].barBoundingBox.left - 10);
+				}
+				else if (PtInRect(&tThisWorld.atBar[nCurrentEntity].barBoundingBox, dragPoint))
+				{
+					tThisWorld.atBar[nCurrentEntity].ratio = (dragPoint.x - tThisWorld.atBar[nCurrentEntity].barBoundingBox.left - 5.0) / (tThisWorld.atBar[nCurrentEntity].barBoundingBox.right - tThisWorld.atBar[nCurrentEntity].barBoundingBox.left - 10);
+				}
 
 				if (tThisWorld.atBar[nCurrentEntity].backgroundColor.x == 1 &&
 					tThisWorld.atBar[nCurrentEntity].backgroundColor.y == 0 &&
@@ -394,9 +428,11 @@ int CGameMangerSystem::LoadMainMenu()
 	pcGraphicsSystem->m_pd3dSwapchain->Present(0, 0);
 
 	if (pcInputSystem->InputCheck(G_KEY_ESCAPE) == 1)
+	{
 		return -1;
+	}
 
-	clickTime += clickTimer.Delta();
+	clickTime += fpsTimer.GetDelta();
 
 #if MIKES_SANDBOX_ON
 	return 9;
@@ -447,7 +483,8 @@ void CGameMangerSystem::InitializeTitleScreen()
 
 int CGameMangerSystem::LoadTitleScreen()
 {
-	fadeTimer.Signal();
+	fpsTimer.Xtime_Signal();
+
 #if MUSIC_ON
 	pcAudioSystem->SetListener(Listener, 1, ErrorResult);
 #endif
@@ -503,7 +540,7 @@ int CGameMangerSystem::LoadTitleScreen()
 	if (pcInputSystem->InputCheck(G_BUTTON_LEFT))
 		return 2;
 
-	fadeTime += fadeTimer.SmoothDelta();
+	fadeTime += fpsTimer.GetDelta();
 
 	return 1;
 }
@@ -1257,6 +1294,32 @@ void CGameMangerSystem::InitializeHUD()
 
 		tThisWorld.atLabel[nThisEntity].color = XMFLOAT4(0, 0, 0, 0);
 	}
+
+	/*{
+		wchar_t textBuffer[] =
+		{ L"3" };
+
+		nThisEntity = createEntityReverse(&tThisWorld);
+		CreateUILabelForText(&tThisWorld, menuCamera->d3d_Position, .4, 1, 9.2, 8.4, &atUIVertices, &atUIIndices, textBuffer, ARRAYSIZE(textBuffer), nThisEntity, .1);
+		pcUISystem->AddTextureToUI(&tThisWorld, nThisEntity, pcGraphicsSystem->m_pd3dDevice, nullptr, fontTexture);
+
+		pcUISystem->AddMaskToUI(&tThisWorld, nThisEntity, COMPONENT_HUD);
+
+		tThisWorld.atLabel[nThisEntity].color = XMFLOAT4(0, 0, 0, 0);
+	}*/
+
+	{
+		wchar_t textBuffer[] =
+		{ L"Kill The Enemies" };
+
+		nThisEntity = createEntityReverse(&tThisWorld);
+		CreateUILabelForText(&tThisWorld, menuCamera->d3d_Position, 4, 1, 7, 8.5, &atUIVertices, &atUIIndices, textBuffer, ARRAYSIZE(textBuffer), nThisEntity, .1);
+		pcUISystem->AddTextureToUI(&tThisWorld, nThisEntity, pcGraphicsSystem->m_pd3dDevice, nullptr, fontTexture);
+
+		pcUISystem->AddMaskToUI(&tThisWorld, nThisEntity, COMPONENT_HUD);
+
+		tThisWorld.atLabel[nThisEntity].color = XMFLOAT4(0, 0, 0, 0);
+	}
 }
 
 void CGameMangerSystem::LoadPathFindingTest()
@@ -1912,7 +1975,7 @@ int CGameMangerSystem::PathFindingExample()
 					gunMatrix = XMMatrixMultiply(localMatrix2, gunMatrix);
 
 					int newbullet = CreateBullet(&tThisWorld, gunMatrix,
-						tThisWorld.atClip[nCurrentEntity].currentMaterial);
+						tThisWorld.atClip[nCurrentEntity].currentMaterial, 0); // Last zero is bulletType - 0 for friend, 1 for enemy
 					tThisWorld.atClip[newbullet].gunIndex = nCurrentEntity;
 					tThisWorld.atSimpleMesh[newbullet].m_nColor = tThisWorld.atClip[nCurrentEntity].colorofBullets;
 					tThisWorld.atClip[newbullet].indexInclip = pcProjectileSystem->CreateBulletProjectile(newbullet, &tThisWorld.atClip[nCurrentEntity]);
@@ -3006,7 +3069,7 @@ int CGameMangerSystem::SpacePirateGamePlay()
 
 
 					int newbullet = CreateBullet(&tThisWorld, gunMatrix,
-						tThisWorld.atClip[nCurrentEntity].currentMaterial);
+						tThisWorld.atClip[nCurrentEntity].currentMaterial, 0); // Last zero is bulletType - 0 for friend, 1 for enemy
 					tThisWorld.atClip[newbullet].gunIndex = nCurrentEntity;
 					tThisWorld.atSimpleMesh[newbullet].m_nColor = tThisWorld.atClip[nCurrentEntity].colorofBullets;
 					tThisWorld.atClip[newbullet].indexInclip = pcProjectileSystem->CreateBulletProjectile(newbullet, &tThisWorld.atClip[nCurrentEntity]);
@@ -3572,6 +3635,11 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	InitializePauseScreen();
 	GameOver = false;
 	GamePaused = false;
+	endInit = false;
+	pauseInit = false;
+	mouseDown = false;
+	mouseUp = true;
+	click = false;
 
 	pcAiSystem->SetNumberOfAI(3);
 	//	tTimerInfo->StartClock(tAugerTimers->tSceneTimer);
@@ -3714,7 +3782,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	//int GunINdexai = CreateGun(&tThisWorld, m_d3dWorldMatrix, spacePirate, -1.1, 0.5, 12.5, 10, 30);
 	for (int meshIndex = 0; meshIndex < tempImport.meshCount; ++meshIndex)
 	{
-		GunINdexai = CreateScyllianGun(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, m_d3dWorldMatrix, spacePirate, -0.5, 1, 13.5, 10, 30, gunImport.vtMeshes[meshIndex], gunImport.vtMaterials[meshIndex]);
+		GunINdexai = CreateScyllianGun(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, m_d3dWorldMatrix, spacePirate, -0.5, 1, 11.5, 10, 30, gunImport.vtMeshes[meshIndex], gunImport.vtMaterials[meshIndex]);
 	}
 	#pragma region MORE AI Init
 	tThisWorld.atAIMask[spacePirate].GunIndex = GunINdexai;
@@ -3781,7 +3849,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	int GunINdexai2;
 	for (int meshIndex = 0; meshIndex < tempImport.meshCount; ++meshIndex)
 	{
-		GunINdexai2 = CreateScyllianGun(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, m_d3dWorldMatrix, spacePirate2, -0.5, 1, 13.5, 10, 30, gunImport.vtMeshes[meshIndex], gunImport.vtMaterials[meshIndex]);
+		GunINdexai2 = CreateScyllianGun(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, m_d3dWorldMatrix, spacePirate2, -0.5, 1, 11.5, 10, 30, gunImport.vtMeshes[meshIndex], gunImport.vtMaterials[meshIndex]);
 	}
 
 	#pragma region EVEN MORE AI INIT
@@ -3889,7 +3957,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	int GunINdexai3;
 	for (int meshIndex = 0; meshIndex < tempImport.meshCount; ++meshIndex)
 	{
-		GunINdexai3 = CreateScyllianGun(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, m_d3dWorldMatrix, spacePirate3, -0.5, 1, 13.5, 10, 30, gunImport.vtMeshes[meshIndex], gunImport.vtMaterials[meshIndex]);
+		GunINdexai3 = CreateScyllianGun(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, m_d3dWorldMatrix, spacePirate3, -0.5, 1, 11.5, 10, 30, gunImport.vtMeshes[meshIndex], gunImport.vtMaterials[meshIndex]);
 	}
 
 	#pragma region RIDICULOUS AMOUNT OF AI INIT
@@ -4031,20 +4099,42 @@ int CGameMangerSystem::RealLevelUpdate()
 	CGraphicsSystem::TUIVertexBufferType tUIVertexBuffer;
 	CGraphicsSystem::TUIPixelBufferType tUIPixelBuffer;
 
-	POINT hoverPoint;
+	hoverPoint = { -1, -1 };
+	//POINT hoverPoint;
 	GetCursorPos(&hoverPoint);
 	ScreenToClient(cApplicationWindow, &hoverPoint);
 
-	POINT clickPoint = { -1, -1 };
-	if (pcInputSystem->InputCheck(G_BUTTON_LEFT) == 1)
+	//POINT 
+	clickPoint = { -1, -1 };
+	if (pcInputSystem->InputCheck(G_BUTTON_LEFT) == 1 && mouseUp)
+	{
+
+		GetCursorPos(&startDragPoint);
+		ScreenToClient(cApplicationWindow, &startDragPoint);
+
+		GetCursorPos(&dragPoint);
+		ScreenToClient(cApplicationWindow, &dragPoint);
+
+		mouseUp = false;
+		mouseDown = true;
+	}
+	else if (pcInputSystem->InputCheck(G_BUTTON_LEFT) == 1 && mouseDown)
+	{
+		GetCursorPos(&dragPoint);
+		ScreenToClient(cApplicationWindow, &dragPoint);
+	}
+	else if (pcInputSystem->InputCheck(G_BUTTON_LEFT) == 0 && mouseDown)
 	{
 		GetCursorPos(&clickPoint);
 		ScreenToClient(cApplicationWindow, &clickPoint);
 
-		//if (GameOver && tThisWorld.atClayton[PlayerStartIndex].health > 0)
-		//{
-		//	return 2;
-		//}
+		mouseUp = true;
+		mouseDown = false;
+
+		click = true;
+
+		startDragPoint = { -1, -1 };
+		dragPoint = { -1, -1 };
 	}
 
 	if (pcInputSystem->InputCheck(G_KEY_P) && !GameOver)
@@ -4065,8 +4155,6 @@ int CGameMangerSystem::RealLevelUpdate()
 			ShowCursor(false);
 		}
 	}
-
-	clickTimer.Signal();
 
 	//Camera Functions here will move to a input system function when all behaviors are finalized - ZFB
 	if (GamePaused == false && GameOver == false)
@@ -4486,7 +4574,6 @@ int CGameMangerSystem::RealLevelUpdate()
 				vector<int> indicies;
 				if (pcCollisionSystem->AiVisionCheck(tThisWorld.atAIVision[nCurrentEntity].eyes0, &indicies) == true)
 				{
-					float x = 0;
 					bool danger = false;
 					for (int i = 0; i < indicies.size(); ++i)
 					{
@@ -4530,7 +4617,6 @@ int CGameMangerSystem::RealLevelUpdate()
 						}
 						else if (tThisWorld.atAIMask[indicies[i]].m_tnAIMask == (COMPONENT_AIMASK | COMPONENT_FIGHTINGAI))
 						{
-							float x = 0;
 						}
 					}
 				}
@@ -4590,10 +4676,6 @@ int CGameMangerSystem::RealLevelUpdate()
 				}
 				else
 				{
-					if (nCurrentEntity == GunIndexForPlayer)
-					{
-						float x = 0;
-					}
 					// Metal Fired Sound in Here -ZFB
 					if (tThisWorld.atClip[nCurrentEntity].tryToShoot == true
 						&& tThisWorld.atClip[nCurrentEntity].nBulletsAvailables.size() > 0
@@ -4619,6 +4701,8 @@ int CGameMangerSystem::RealLevelUpdate()
 
 						XMMATRIX localMatrix2;
 						XMMATRIX gunMatrix;
+
+						int bulletType = -1;
 						if (nCurrentEntity == GunIndexForPlayer)
 						{
 							foward.m128_f32[0] = 0;
@@ -4628,6 +4712,8 @@ int CGameMangerSystem::RealLevelUpdate()
 							localMatrix2 = XMMatrixTranslationFromVector(foward);
 							gunMatrix = tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix;
 							gunMatrix = XMMatrixMultiply(localMatrix2, gunMatrix);
+
+							bulletType = 0;
 						}
 						else
 						{
@@ -4639,11 +4725,13 @@ int CGameMangerSystem::RealLevelUpdate()
 							gunMatrix = tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix;
 							gunMatrix = XMMatrixMultiply(XMMatrixRotationY(XMConvertToRadians(90)), gunMatrix);
 							gunMatrix = XMMatrixMultiply(localMatrix2, gunMatrix);
+
+							bulletType = 1;
 						}
 #if MUSIC_ON
 						pcAudioSystem->SendSoundsToEngine(AK::EVENTS::PLAY_METAL_FIRED, m_AkMetalFired);
 #endif
-						int newbullet = CreateBullet(&tThisWorld, gunMatrix, tThisWorld.atClip[nCurrentEntity].currentMaterial);
+						int newbullet = CreateBullet(&tThisWorld, gunMatrix, tThisWorld.atClip[nCurrentEntity].currentMaterial, bulletType);
 						tThisWorld.atClip[newbullet].gunIndex = nCurrentEntity;
 						tThisWorld.atSimpleMesh[newbullet].m_nColor = tThisWorld.atClip[nCurrentEntity].colorofBullets;
 						tThisWorld.atClip[newbullet].indexInclip = pcProjectileSystem->CreateBulletProjectile(newbullet, &tThisWorld.atClip[nCurrentEntity]);
@@ -4686,18 +4774,17 @@ int CGameMangerSystem::RealLevelUpdate()
 					
 					if (tThisWorld.atClip[nCurrentEntity].fShootingCoolDown > 0)
 					{
-						tThisWorld.atClip[nCurrentEntity].fShootingCoolDown -= 2.5;
+						tThisWorld.atClip[nCurrentEntity].fShootingCoolDown -= fpsTimer.GetDelta() * 50;
 					}
 
 				}
 			}
 		}
-		if (tThisWorld.atProjectiles[nCurrentEntity].m_tnProjectileMask == (COMPONENT_PROJECTILESMASK | COMPONENT_METAL)) {
-			pcPhysicsSystem->AddBulletForce(&tThisWorld.atRigidBody[nCurrentEntity], 0.1f);
-		}
-		if (nCurrentEntity == PlayerStartIndex)
+		if (tThisWorld.atProjectiles[nCurrentEntity].m_tnProjectileMask == (COMPONENT_PROJECTILESMASK | COMPONENT_METAL | COMPONENT_FRIENDLY) ||
+			tThisWorld.atProjectiles[nCurrentEntity].m_tnProjectileMask == (COMPONENT_PROJECTILESMASK | COMPONENT_METAL | COMPONENT_ENEMY))
 		{
-			float x = 0;
+			//ADD FORCE TO EVERY BULLET
+			pcPhysicsSystem->AddBulletForce(&tThisWorld.atRigidBody[nCurrentEntity], fpsTimer.GetDelta() * 2);
 		}
 		if (GamePaused == false && GameOver == false)
 		{
@@ -4743,10 +4830,6 @@ int CGameMangerSystem::RealLevelUpdate()
 
 			if ((tThisWorld.atCollisionMask[nCurrentEntity].m_tnCollisionMask == (COMPONENT_COLLISIONMASK | COMPONENT_AABB | COMPONENT_NONSTATIC | COMPONENT_TRIGGER) || tThisWorld.atCollisionMask[nCurrentEntity].m_tnCollisionMask == (COMPONENT_COLLISIONMASK | COMPONENT_NONTRIGGER | COMPONENT_AABB | COMPONENT_NONSTATIC)))
 			{
-				if (nCurrentEntity == PlayerStartIndex)
-				{
-					float x = 0;
-				}
 				vector<int> otherCollisionsIndex;
 				if (pcCollisionSystem->AABBtoAABBCollisionCheck(tThisWorld.atAABB[nCurrentEntity], &otherCollisionsIndex) == true)
 				{
@@ -4756,7 +4839,10 @@ int CGameMangerSystem::RealLevelUpdate()
 						if (tThisWorld.atRigidBody[otherCollisionsIndex[i]].ground == true
 							&& tThisWorld.atCollisionMask[nCurrentEntity].m_tnCollisionMask == (COMPONENT_COLLISIONMASK | COMPONENT_TRIGGER | COMPONENT_AABB | COMPONENT_NONSTATIC))
 						{
-							if (tThisWorld.atProjectiles[nCurrentEntity].m_tnProjectileMask == (COMPONENT_PROJECTILESMASK | COMPONENT_METAL)) {
+							//SHOOTING A WALL OR ANYTHING ELSE
+							if (tThisWorld.atProjectiles[nCurrentEntity].m_tnProjectileMask == (COMPONENT_PROJECTILESMASK | COMPONENT_METAL | COMPONENT_FRIENDLY) ||
+								tThisWorld.atProjectiles[nCurrentEntity].m_tnProjectileMask == (COMPONENT_PROJECTILESMASK | COMPONENT_METAL | COMPONENT_ENEMY))
+							{
 								pcCollisionSystem->RemoveAABBCollider(nCurrentEntity);
 
 
@@ -4796,8 +4882,10 @@ int CGameMangerSystem::RealLevelUpdate()
 							|| tThisWorld.atCollisionMask[otherCollisionsIndex[i]].m_tnCollisionMask == (COMPONENT_COLLISIONMASK | COMPONENT_NONTRIGGER | COMPONENT_AABB | COMPONENT_NONSTATIC))
 						{
 
-							if (tThisWorld.atAIMask[otherCollisionsIndex[i]].m_tnAIMask > 1) {
-								if (tThisWorld.atProjectiles[nCurrentEntity].m_tnProjectileMask == (COMPONENT_PROJECTILESMASK | COMPONENT_METAL))
+							if (tThisWorld.atAIMask[otherCollisionsIndex[i]].m_tnAIMask > 1) 
+							{
+								// SHOOTING AN AI ONLY
+								if (tThisWorld.atProjectiles[nCurrentEntity].m_tnProjectileMask == (COMPONENT_PROJECTILESMASK | COMPONENT_METAL | COMPONENT_FRIENDLY))
 								{
 									if (tThisWorld.atAiHeath[otherCollisionsIndex[i]].heath <= 0)
 									{
@@ -4848,7 +4936,8 @@ int CGameMangerSystem::RealLevelUpdate()
 							}
 							else if (tThisWorld.atInputMask[otherCollisionsIndex[i]].m_tnInputMask == (COMPONENT_CLAYTON | COMPONENT_INPUTMASK))
 							{
-								if (tThisWorld.atProjectiles[nCurrentEntity].m_tnProjectileMask == (COMPONENT_PROJECTILESMASK | COMPONENT_METAL))
+								//SHOOTING THE PLAYER ONLY
+								if (tThisWorld.atProjectiles[nCurrentEntity].m_tnProjectileMask == (COMPONENT_PROJECTILESMASK | COMPONENT_METAL | COMPONENT_ENEMY))
 								{
 									if (tThisWorld.atClip[nCurrentEntity].gunIndex != -1)
 									{
@@ -4871,7 +4960,8 @@ int CGameMangerSystem::RealLevelUpdate()
 
 
 							}
-							if (tThisWorld.atProjectiles[nCurrentEntity].m_tnProjectileMask == (COMPONENT_PROJECTILESMASK | COMPONENT_METAL))
+							//Wasn't being hit at all so it's been commented.
+							/*if (tThisWorld.atProjectiles[nCurrentEntity].m_tnProjectileMask == (COMPONENT_PROJECTILESMASK | COMPONENT_METAL))
 							{
 								if (tThisWorld.atClip[nCurrentEntity].gunIndex != -1)
 								{
@@ -4884,7 +4974,7 @@ int CGameMangerSystem::RealLevelUpdate()
 									pcGraphicsSystem->CleanD3DObject(&tThisWorld, nCurrentEntity);
 
 								}
-							}
+							}*/
 
 						}
 						if (tThisWorld.atInputMask[nCurrentEntity].m_tnInputMask == (COMPONENT_CLAYTON | COMPONENT_INPUTMASK) && tThisWorld.atAIMask[otherCollisionsIndex[i]].m_tnAIMask == (COMPONENT_AIMASK | COMPONENT_COVERTRIGGER))
@@ -5117,8 +5207,6 @@ int CGameMangerSystem::RealLevelUpdate()
 			{
 				if (tThisWorld.atUIMask[nCurrentEntity].m_tnUIMask == (COMPONENT_UIMASK | COMPONENT_LABEL | COMPONENT_BUTTON | COMPONENT_DEATHSCREEN))
 				{
-					//if (tThisWorld.atClayton[PlayerStartIndex].health <= 0)
-					//{
 					tUIVertexBuffer.start = -1;
 					tUIVertexBuffer.end = -1;
 					tUIVertexBuffer.ratio = -1;
@@ -5142,7 +5230,6 @@ int CGameMangerSystem::RealLevelUpdate()
 
 					pcGraphicsSystem->InitUIShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tUIVertexBuffer, tUIPixelBuffer, tThisWorld.atMesh[nCurrentEntity], menuCamera->d3d_Position);
 					pcGraphicsSystem->ExecutePipeline(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atMesh[nCurrentEntity].m_nIndexCount, tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask, tThisWorld.atShaderID[nCurrentEntity].m_nShaderID);
-					//}
 				}
 
 				if (tThisWorld.atUIMask[nCurrentEntity].m_tnUIMask == (COMPONENT_UIMASK | COMPONENT_LABEL | COMPONENT_DEATHSCREEN))
@@ -5199,9 +5286,9 @@ int CGameMangerSystem::RealLevelUpdate()
 				tUIVertexBuffer.ratio = (100 - tThisWorld.atClip[GunIndexForPlayer].fShootingCoolDown) * .01;
 			}
 			else if (tThisWorld.atBar[nCurrentEntity].backgroundColor.x == 1 &&
-				tThisWorld.atBar[nCurrentEntity].backgroundColor.y == 0 &&
-				tThisWorld.atBar[nCurrentEntity].backgroundColor.z == 0 &&
-				tThisWorld.atBar[nCurrentEntity].backgroundColor.w == 1)
+					 tThisWorld.atBar[nCurrentEntity].backgroundColor.y == 0 &&
+					 tThisWorld.atBar[nCurrentEntity].backgroundColor.z == 0 &&
+					 tThisWorld.atBar[nCurrentEntity].backgroundColor.w == 1)
 			{
 				tUIVertexBuffer.start = (tThisWorld.atBar[nCurrentEntity].barBoundingBox.left + 14 - (screenWidth / 2.0)) / (screenWidth / 2);
 				tUIVertexBuffer.end = (tThisWorld.atBar[nCurrentEntity].barBoundingBox.right + 4 - (screenWidth / 2.0)) / (screenWidth / 2);
@@ -5238,21 +5325,7 @@ int CGameMangerSystem::RealLevelUpdate()
 		InitializeEndScreen(false);
 	}
 
-	/*if (GameOver && tThisWorld.atClayton[PlayerStartIndex].health > 0)
-	{
-	for (auto i = G_KEY_UNKNOWN; i <= G_KEY_9; ++i)
-	{
-	if (pcInputSystem->InputCheck(i) == 1)
-	{
-	if (i == G_KEY_V)
-	continue;
-
-	return 2;
-	}
-	}
-	}*/
-
-	clickTime += clickTimer.Delta();
+	clickTime += fpsTimer.GetDelta();
 	//double samples = 0;
 	//try
 	//{
