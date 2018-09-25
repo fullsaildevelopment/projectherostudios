@@ -11,12 +11,12 @@ CProjectileSystem::~CProjectileSystem()
 int CProjectileSystem::CreateBulletProjectile(int indexofBullet, Clips* Gun)
 {
 	Gun->fShootingCoolDown = Gun->FValueOfCoolDown;
-	Gun->nBulletsFired.push_back(indexofBullet);
+
 	Gun->nBulletsAvailables.pop_front();
-	Gun->fAliveTime.push_back(0);
+	
 	cout << Gun->nBulletsAvailables.size();
 
-	return Gun->fAliveTime.size() - 1;
+	return 1;
 }
 
 bool CProjectileSystem::Reload(Clips * Gun)
