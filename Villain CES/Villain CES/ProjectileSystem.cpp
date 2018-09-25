@@ -29,3 +29,24 @@ bool CProjectileSystem::Reload(Clips * Gun)
 	}
 	return false;
 }
+
+int CProjectileSystem::ExtractMaterial(TWorld *tThisWorld, Clips* Gun, int currentEntity)
+{
+	int tmp_Material = Gun->currentMaterial;
+//	int extracted_Material = tThisWorld->atMesh[currentEntity].m_d3dSRVDiffuse;
+
+	switch (tmp_Material)
+	{
+	case COMPONENT_WOOD:
+		//Wood
+		break;
+
+	case COMPONENT_METAL:
+		//Metal
+	default:
+		break;
+	}
+
+
+	return tmp_Material;
+}

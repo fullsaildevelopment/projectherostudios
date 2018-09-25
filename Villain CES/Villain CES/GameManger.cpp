@@ -273,6 +273,7 @@ int CGameMangerSystem::LoadMainMenu()
 				{
 					if (PtInRect(&tThisWorld.atButton[nCurrentEntity].boundingBox, clickPoint))
 					{
+						pcAudioSystem->SendSoundsToEngine(AK::EVENTS::PLAY_MENU_CLICK, m_MenuClick);
 						clickTime = 0;
 
 						if (tThisWorld.atButton[nCurrentEntity].sceneIndex < 96)
@@ -296,6 +297,7 @@ int CGameMangerSystem::LoadMainMenu()
 						tTempPixelBuffer.hoverColor = XMFLOAT4(1, .6, .6, 0);
 					}
 
+
 					pcGraphicsSystem->InitUIShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tTempVertexBuffer, tTempPixelBuffer, tThisWorld.atMesh[nCurrentEntity], menuCamera->d3d_Position);
 					pcGraphicsSystem->ExecutePipeline(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atMesh[nCurrentEntity].m_nIndexCount, tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask, tThisWorld.atShaderID[nCurrentEntity].m_nShaderID);
 				}
@@ -317,7 +319,8 @@ int CGameMangerSystem::LoadMainMenu()
 					if (PtInRect(&tThisWorld.atButton[nCurrentEntity].boundingBox, clickPoint))
 					{
 						clickTime = 0;
-
+						//Click soud for menus here - ZFB
+						pcAudioSystem->SendSoundsToEngine(AK::EVENTS::PLAY_MENU_CLICK, m_MenuClick);
 						if (tThisWorld.atButton[nCurrentEntity].sceneIndex == 3)
 						{
 							options = false;
@@ -327,6 +330,7 @@ int CGameMangerSystem::LoadMainMenu()
 					{
 						tTempPixelBuffer.hoverColor = XMFLOAT4(1, .6, .6, 0);
 					}
+					
 				}
 
 				pcGraphicsSystem->InitUIShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tTempVertexBuffer, tTempPixelBuffer, tThisWorld.atMesh[nCurrentEntity], menuCamera->d3d_Position);
@@ -408,7 +412,8 @@ int CGameMangerSystem::LoadMainMenu()
 					if (PtInRect(&tThisWorld.atButton[nCurrentEntity].boundingBox, clickPoint))
 					{
 						clickTime = 0;
-
+						//Click soud for menus here - ZFB
+						pcAudioSystem->SendSoundsToEngine(AK::EVENTS::PLAY_MENU_CLICK, m_MenuClick);
 						if (tThisWorld.atButton[nCurrentEntity].sceneIndex == 3)
 						{
 							credits = false;
@@ -418,6 +423,7 @@ int CGameMangerSystem::LoadMainMenu()
 					{
 						tTempPixelBuffer.hoverColor = XMFLOAT4(1, .6, .6, 0);
 					}
+					
 				}
 
 				pcGraphicsSystem->InitUIShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tTempVertexBuffer, tTempPixelBuffer, tThisWorld.atMesh[nCurrentEntity], menuCamera->d3d_Position);
@@ -450,6 +456,10 @@ void CGameMangerSystem::InitializeTitleScreen()
 	pcAudioSystem->RegisterGameObj(m_AkHallwayBattle);
 	pcAudioSystem->RegisterGameObj(m_MetalReload);
 	pcAudioSystem->RegisterGameObj(m_AkMetalFired);
+	pcAudioSystem->RegisterGameObj(m_Laser_Fire);
+	pcAudioSystem->RegisterGameObj(m_Human_Hurt);
+	pcAudioSystem->RegisterGameObj(m_Scylian_Hurt);
+	pcAudioSystem->RegisterGameObj(m_MenuClick);
 	pcAudioSystem->LoadBankFile(INIT_BNK, init_bnkID, ErrorResult);
 	pcAudioSystem->LoadBankFile(MAINMENU_BNK, MainMenu_bnkID, ErrorResult);
 	pcAudioSystem->LoadBankFile(SFX, m_SFX_bnkID, ErrorResult);
@@ -4399,7 +4409,6 @@ int CGameMangerSystem::RealLevelUpdate()
 			pcGraphicsSystem->ExecutePipeline(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atDebugMesh[nCurrentEntity].m_nVertexCount, tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask, tThisWorld.atShaderID[nCurrentEntity].m_nShaderID);
 
 		}
-		// ai code would run here
 		if (tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_SHADERID))
 		{
 
@@ -4464,6 +4473,7 @@ int CGameMangerSystem::RealLevelUpdate()
 			pcGraphicsSystem->ExecutePipeline(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atMesh[nCurrentEntity].m_nIndexCount, tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask, tThisWorld.atShaderID[nCurrentEntity].m_nShaderID);
 		}
 
+		// ai code would run here
 		if (pcAiSystem->GetNumberOfAI() <= 0 && !endInit)
 		{
 			GameOver = true;
@@ -4476,6 +4486,7 @@ int CGameMangerSystem::RealLevelUpdate()
 				|| tThisWorld.atAIMask[nCurrentEntity].m_tnAIMask == (COMPONENT_SHOOT | COMPONENT_AIMASK | COMPONENT_FOLLOW)
 				|| tThisWorld.atAIMask[nCurrentEntity].m_tnAIMask == (COMPONENT_AIMASK | COMPONENT_SEARCH | COMPONENT_PATHFINDTEST))
 			{
+			
 #if AI_ON				
 				if (tThisWorld.atActiveAI[nCurrentEntity].active == true)
 				{
@@ -4624,6 +4635,7 @@ int CGameMangerSystem::RealLevelUpdate()
 				}
 			}
 		}
+		//Gun Clips here for player - ZFB
 		if (GamePaused == false && GameOver == false)
 		{
 			if (tThisWorld.atProjectiles[nCurrentEntity].m_tnProjectileMask == (COMPONENT_PROJECTILESMASK | COMPONENT_CLIP))
@@ -4677,6 +4689,7 @@ int CGameMangerSystem::RealLevelUpdate()
 						XMMATRIX gunMatrix;
 
 						int bulletType = -1;
+						// Metal Fired Sound in Here -ZFB
 						if (nCurrentEntity == GunIndexForPlayer)
 						{
 							foward.m128_f32[0] = 0;
@@ -4686,7 +4699,9 @@ int CGameMangerSystem::RealLevelUpdate()
 							localMatrix2 = XMMatrixTranslationFromVector(foward);
 							gunMatrix = tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix;
 							gunMatrix = XMMatrixMultiply(localMatrix2, gunMatrix);
-
+#if MUSIC_ON
+							pcAudioSystem->SendSoundsToEngine(AK::EVENTS::PLAY_METAL_FIRED, m_AkMetalFired);
+#endif
 							bulletType = 0;
 						}
 						else
@@ -4699,12 +4714,11 @@ int CGameMangerSystem::RealLevelUpdate()
 							gunMatrix = tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix;
 							gunMatrix = XMMatrixMultiply(XMMatrixRotationY(XMConvertToRadians(90)), gunMatrix);
 							gunMatrix = XMMatrixMultiply(localMatrix2, gunMatrix);
-
+							//Laser Fire sound is here - ZFB
+							pcAudioSystem->SendSoundsToEngine(AK::EVENTS::PLAY_LASER_FIRE, m_Laser_Fire);
 							bulletType = 1;
 						}
-#if MUSIC_ON
-						pcAudioSystem->SendSoundsToEngine(AK::EVENTS::PLAY_METAL_FIRED, m_AkMetalFired);
-#endif
+
 						int newbullet = CreateBullet(&tThisWorld, gunMatrix, tThisWorld.atClip[nCurrentEntity].currentMaterial, bulletType);
 						tThisWorld.atClip[newbullet].gunIndex = nCurrentEntity;
 						tThisWorld.atSimpleMesh[newbullet].m_nColor = tThisWorld.atClip[nCurrentEntity].colorofBullets;
@@ -4750,7 +4764,12 @@ int CGameMangerSystem::RealLevelUpdate()
 					{
 						tThisWorld.atClip[nCurrentEntity].fShootingCoolDown -= fpsTimer.GetDelta() * 50;
 					}
-
+					//Extract Material Method called here - ZFB
+					if (pcInputSystem->InputCheck(G_KEY_5) == 1)
+					{
+						tThisWorld.atClip[nCurrentEntity].currentMaterial = pcProjectileSystem->ExtractMaterial(&tThisWorld, &tThisWorld.atClip[nCurrentEntity], nCurrentEntity);
+						//switch textures depending on material extracted
+					}
 				}
 			}
 		}
@@ -5075,7 +5094,8 @@ int CGameMangerSystem::RealLevelUpdate()
 						if (PtInRect(&tThisWorld.atButton[nCurrentEntity].boundingBox, clickPoint))
 						{
 							clickTime = 0;
-
+							//Click soud for menus here - ZFB
+							pcAudioSystem->SendSoundsToEngine(AK::EVENTS::PLAY_MENU_CLICK, m_MenuClick);
 							if (tThisWorld.atButton[nCurrentEntity].sceneIndex == 98)
 							{
 								options = true;
@@ -5124,7 +5144,8 @@ int CGameMangerSystem::RealLevelUpdate()
 						if (PtInRect(&tThisWorld.atButton[nCurrentEntity].boundingBox, clickPoint))
 						{
 							clickTime = 0;
-
+							//Click soud for menus here - ZFB
+							pcAudioSystem->SendSoundsToEngine(AK::EVENTS::PLAY_MENU_CLICK, m_MenuClick);
 							if (tThisWorld.atButton[nCurrentEntity].sceneIndex == nCurrentScene)
 								options = false;
 						}
@@ -5192,6 +5213,8 @@ int CGameMangerSystem::RealLevelUpdate()
 						if (PtInRect(&tThisWorld.atButton[nCurrentEntity].boundingBox, clickPoint))
 						{
 							clickTime = 0;
+							//Click soud for menus here - ZFB
+							pcAudioSystem->SendSoundsToEngine(AK::EVENTS::PLAY_MENU_CLICK, m_MenuClick);
 
 							if (tThisWorld.atButton[nCurrentEntity].sceneIndex < 96)
 								return tThisWorld.atButton[nCurrentEntity].sceneIndex;
