@@ -85,6 +85,11 @@ private:
 	bool pauseInit = false;
 	bool endInit = false;
 	bool fadeOut = false;
+
+	float damage = 0;
+	float prevHealth = 0;
+	float fallingHealth = 0;
+
 	//ZB Variables
 	TCameraToggle tCameraMode;
 	XMMATRIX m_d3dWorldMatrix;
@@ -98,6 +103,7 @@ private:
 	CFPS fpsTimer;
 	float clickTime;
 	float fadeTime;
+	float lerpTime;
 
 	POINT startDragPoint;
 	POINT dragPoint;
