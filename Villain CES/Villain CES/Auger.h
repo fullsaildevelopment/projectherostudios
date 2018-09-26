@@ -37,5 +37,4 @@ private:
 
 	
 	bool tempt = true;
-	
 };

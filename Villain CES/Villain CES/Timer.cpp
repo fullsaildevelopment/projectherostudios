@@ -53,6 +53,11 @@ double CFPS::GetDelta()
 	return m_frameRate->SmoothDelta();
 }
 
+void CFPS::Restart()
+{
+	m_frameRate->Restart();
+}
+
 void CFPS::Throttle(double targetHz)
 {
 	m_frameRate->Throttle(targetHz);

@@ -23,6 +23,8 @@ public:
 	void InitializeMainMenu();
 	int LoadTitleScreen();
 	void InitializeTitleScreen();
+	int LoadLoadingScreen(bool _continue);
+	void InitializeLoadingScreen();
 	void InitializePauseScreen();
 	void InitializeEndScreen(bool playerWin);
 	void InitializeOptionsMenu();
@@ -41,6 +43,7 @@ public:
 
 	bool GameOver = false;
 	bool GamePaused = false;
+	bool loading = false;
 	int nCurrentScene = 0;
 
 private:
@@ -81,6 +84,7 @@ private:
 	bool credits = false;
 	bool pauseInit = false;
 	bool endInit = false;
+	bool fadeOut = false;
 	//ZB Variables
 	TCameraToggle tCameraMode;
 	XMMATRIX m_d3dWorldMatrix;
@@ -129,5 +133,4 @@ private:
 	bool mouseUp = true;
 	bool click = false;
 	XTime frameLock;
-
 };
