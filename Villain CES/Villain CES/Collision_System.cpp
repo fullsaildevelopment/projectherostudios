@@ -643,7 +643,7 @@ bool CCollisionSystem::RemoveAABBCollider(int nIndex)
 
 bool CCollisionSystem::AABBtoAABBCollisionCheck(TAABB m_AABB2, vector<int>* m_OtherColision)
 {
-	if (m_AABB2.m_IndexLocation == 1) 
+	if (m_AABB2.m_IndexLocation == 928) 
 	{
 		float x = 0;
 	}
@@ -652,12 +652,13 @@ bool CCollisionSystem::AABBtoAABBCollisionCheck(TAABB m_AABB2, vector<int>* m_Ot
 	{
 		if (m_AABB2.m_IndexLocation != ptr->m_IndexLocation) 
 		{
+			if (ptr->m_IndexLocation == 933)
+			{
+				float x = 0;
+			}
 			if (classify_aabb_to_aabb(m_AABB2, *ptr) == true) 
 			{
-				if (m_AABB2.m_IndexLocation == 8) 
-				{
-					float x = 0;
-				}
+				
 				m_OtherColision->push_back(ptr->m_IndexLocation);
 			}
 		}

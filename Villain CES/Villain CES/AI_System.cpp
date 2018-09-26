@@ -528,14 +528,15 @@ void CAISystem::MoveAiToCoverLocation(TCoverTrigger Cover,TWorld * ptWorld)
 {
 	
 	int index=0;
-	for (int i = 0; i < AIInCombat.size(); ++i) {
-		if (ptWorld->atPathPlanining[AIInCombat[i]].InterRuptPathPlanning == true) {
-			if (ptWorld->atPathPlanining[AIInCombat[i]].Goal != Cover.coverAiCanGoTo[0].CoverPositions[index]) {
-				ptWorld->atAIMask[AIInCombat[i]].m_tnAIMask = COMPONENT_AIMASK | COMPONENT_SEARCH | COMPONENT_PATHFINDTEST;
-				ptWorld->atPathPlanining[AIInCombat[i]].Goal = Cover.coverAiCanGoTo[0].CoverPositions[index];
-				ptWorld->atPathPlanining[AIInCombat[i]].testingPathFinding = true;
-				ptWorld->atPathPlanining[AIInCombat[i]].DelayMovement = rand() % 1000 + 50;
-				ptWorld->atPathPlanining[AIInCombat[i]].InterRuptPathPlanning = false;
+	for (int i = 0; i < Cover.AItoMove.size(); ++i) {
+		if (ptWorld->atPathPlanining[Cover.AItoMove[i]].InterRuptPathPlanning == true) {
+			if (ptWorld->atPathPlanining[Cover.AItoMove[i]].DelayMovement <= 0) {
+				ptWorld->atAIMask[Cover.AItoMove[i]].m_tnAIMask = COMPONENT_AIMASK | COMPONENT_SEARCH | COMPONENT_PATHFINDTEST;
+				ptWorld->atPathPlanining[Cover.AItoMove[i]].Goal = Cover.coverAiCanGoTo[0].CoverPositions[index];
+				ptWorld->atPathPlanining[Cover.AItoMove[i]].testingPathFinding = true;
+				ptWorld->atPathPlanining[Cover.AItoMove[i]].DelayMovement = rand() % 1000 + 50;
+				ptWorld->atPathPlanining[Cover.AItoMove[i]].InterRuptPathPlanning = false;
+				ptWorld->atActiveAI[Cover.AItoMove[i]].active = true;
 			}
 		}
 	}
@@ -544,10 +545,10 @@ void CAISystem::MoveAiToCoverLocation(TCoverTrigger Cover,TWorld * ptWorld)
 void CAISystem::AddAiInCombat(int aiEnitity)
 {
 	
-	for (int i = 0; AIInCombat.size(); ++i) {
+	/*for (int i = 0; AIInCombat.size(); ++i) {
 		if (AIInCombat[i] == aiEnitity) {
 			return;
 		}
 	}
-	AIInCombat.push_back(aiEnitity);
+	AIInCombat.push_back(aiEnitity);*/
 }
