@@ -2,7 +2,7 @@
 #include<string>
 CInputSystem::CInputSystem()
 {
-	m_fMouseRotationSpeed = .003f;//Frame Dependent
+	m_fMouseRotationSpeed = .0055f;//Frame Dependent
 	m_fMouseMovementSpeed = .1f;//Frame Dependent
 	m_YRotationLimit = 0;
 	 fXchange = 0, fYchange = 0, fXEnd = 0, fYEnd = 0;
@@ -616,4 +616,14 @@ void CInputSystem::MouseBoundryCheck(float _x, float _y, float &_outX, float &_o
 void CInputSystem::SendHWNDToInputSystem(HWND in_WindowHandle)
 {
 	m_GameWindow = in_WindowHandle;
+}
+
+float CInputSystem::GetMouseRotationSpeed()
+{
+	return m_fMouseRotationSpeed;
+}
+
+void CInputSystem::SetMouseRotationSpeed(float newSpeed)
+{
+	m_fMouseRotationSpeed = newSpeed;
 }

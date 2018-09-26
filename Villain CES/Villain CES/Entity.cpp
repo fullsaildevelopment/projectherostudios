@@ -182,7 +182,6 @@ unsigned int createEntity(TWorld * ptWorld)
 	return(ENTITYCOUNT);
 }
 
-
 unsigned int createEntityReverse(TWorld * ptWorld)
 {
 	unsigned int nCurrentEntity;
@@ -437,7 +436,7 @@ unsigned int CreateSkybox(TWorld * ptWorld, ID3D11ShaderResourceView * srv)
 	ptWorld->atMesh[nThisEntity].m_d3dVertexBufferDesc.StructureByteStride = 0;
 
 	ptWorld->atMesh[nThisEntity].m_d3dIndexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-	ptWorld->atMesh[nThisEntity].m_d3dIndexBufferDesc.ByteWidth = sizeof(short) * ptWorld->atMesh[nThisEntity].m_nIndexCount;
+	ptWorld->atMesh[nThisEntity].m_d3dIndexBufferDesc.ByteWidth = sizeof(unsigned int) * ptWorld->atMesh[nThisEntity].m_nIndexCount;
 	ptWorld->atMesh[nThisEntity].m_d3dIndexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
 	ptWorld->atMesh[nThisEntity].m_d3dIndexBufferDesc.CPUAccessFlags = 0;
 	ptWorld->atMesh[nThisEntity].m_d3dIndexBufferDesc.MiscFlags = 0;
@@ -632,20 +631,36 @@ unsigned int CreateBullet(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMeshIm
 * Mod. Initials:          AP
 */
 
-unsigned int CreateBullet(TWorld * ptWorld, XMMATRIX BulletSpawnLocation, int MaterialID)
+unsigned int CreateBullet(TWorld * ptWorld, XMMATRIX BulletSpawnLocation, int MaterialID, int bulletType)
 {
 	unsigned int nThisEntity = createEntity(ptWorld);
+
 	switch (MaterialID)
 	{
 	case 0:
-		ptWorld->atProjectiles[nThisEntity].m_tnProjectileMask = (COMPONENT_PROJECTILESMASK | COMPONENT_METAL);
+		if (bulletType == 0)
+		{
+			ptWorld->atProjectiles[nThisEntity].m_tnProjectileMask = (COMPONENT_PROJECTILESMASK | COMPONENT_METAL | COMPONENT_FRIENDLY);
+		}
+		else if (bulletType == 1)
+		{
+			ptWorld->atProjectiles[nThisEntity].m_tnProjectileMask = (COMPONENT_PROJECTILESMASK | COMPONENT_METAL | COMPONENT_ENEMY);
+		}
 		break;
 	case 1:
-		ptWorld->atProjectiles[nThisEntity].m_tnProjectileMask = (COMPONENT_METAL | COMPONENT_WOOD);
+		if (bulletType == 0)
+		{
+			ptWorld->atProjectiles[nThisEntity].m_tnProjectileMask = (COMPONENT_METAL | COMPONENT_WOOD | COMPONENT_FRIENDLY);
+		}
+		else if (bulletType == 1)
+		{
+			ptWorld->atProjectiles[nThisEntity].m_tnProjectileMask = (COMPONENT_METAL | COMPONENT_WOOD | COMPONENT_ENEMY);
+		}
 		break;
 	default:
 		break;
 	}
+
 	ptWorld->atCollisionMask[nThisEntity].m_tnCollisionMask = (COMPONENT_COLLISIONMASK | COMPONENT_TRIGGER | COMPONENT_AABB | COMPONENT_NONSTATIC);
 	ptWorld->atGraphicsMask[nThisEntity].m_tnGraphicsMask = (COMPONENT_GRAPHICSMASK | COMPONENT_SIMPLEMESH | COMPONENT_SHADERID);
 	ptWorld->atAIMask[nThisEntity].m_tnAIMask = (COMPONENT_AIMASK);
@@ -2622,6 +2637,7 @@ unsigned int createMesh(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMeshImpo
 	int srvIndex = 1;
 	if (entityMatIndex == -2)
 	{
+		//glass
 		ptWorld->atShaderID[nThisEntity].m_nShaderID = 10;
 	}
 	else
@@ -2634,6 +2650,10 @@ unsigned int createMesh(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMeshImpo
 			}
 		}
 		ptWorld->atMesh[nThisEntity].m_d3dSRVDiffuse = temp.SRVArrayOfMaterials[srvIndex];
+		if (entityMatIndex == -3)//Material Gun Projectile
+		{
+			ptWorld->atShaderID[nThisEntity].m_nShaderID = 11;
+		}
 		ptWorld->atShaderID[nThisEntity].m_nShaderID = 6;
 
 	}
@@ -3901,12 +3921,35 @@ unsigned int CreateUILabel(TWorld * ptWorld, XMMATRIX SpawnPosition, float width
 unsigned int CreateUILabelForText(TWorld* ptWorld, XMMATRIX SpawnPosition, float width, float height, float offsetX, float offsetY, std::vector<TUIVert*>* atUIVertices, std::vector<short*>* atUIIndices, wchar_t* text, unsigned int _textSize, int _nThisEntity, float z)
 {
 	unsigned int nThisEntity;
-	unsigned int textSize = _textSize - 1;
+	unsigned int totalTextSize = 0;
+	unsigned int textSize = 0;
+	unsigned int lines = 1;
+
+	std::vector<unsigned int> textSizes;
 
 	if (_nThisEntity == -1)
 		nThisEntity = createEntity(ptWorld);
 	else
 		nThisEntity = _nThisEntity;
+
+	for (int i = 0; i < _textSize - 1; ++i)
+	{
+		if (text[i] == '\n')
+		{
+			textSizes.push_back(textSize);
+
+			textSize = 0;
+			//++textSize;
+			++lines;
+
+			continue;
+		}
+
+		++textSize;
+		++totalTextSize;
+	}
+	
+	textSizes.push_back(textSize);
 
 	ptWorld->atCollisionMask[nThisEntity].m_tnCollisionMask = (COMPONENT_COLLISIONMASK);
 	ptWorld->atGraphicsMask[nThisEntity].m_tnGraphicsMask = (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_SHADERID);
@@ -3922,25 +3965,39 @@ unsigned int CreateUILabelForText(TWorld* ptWorld, XMMATRIX SpawnPosition, float
 	float tWidth = topRightPos.x - topLeftPos.x;
 	float tHeight = bottomLeftPos.y - topLeftPos.y;
 
-	TUIVert* rectVerts = new TUIVert[4 * textSize];
+	TUIVert* rectVerts = new TUIVert[4 * totalTextSize];
 
 	XMFLOAT2 tempUVs[4];
 
+	int lineIndex = 0;
 	int loopIndex = 0;
-	for (int i = 0; loopIndex < textSize; i+=4)
+	int countIndex = 0;
+	for (int i = 0; countIndex < _textSize - 1; i+=4)
 	{
-		GetUVsForCharacter(&text[loopIndex], &tempUVs[0]);
+		if (text[countIndex] == '\n')
+		{
+			i -= 4;
 
-		rectVerts[i + 0].m_d3dfPosition = XMFLOAT3(topLeftPos.x + ((tWidth / textSize) * loopIndex), topLeftPos.y, topLeftPos.z);
+			loopIndex = 0;
+			++lineIndex;
+			++countIndex;
+
+			continue;
+		}
+
+		GetUVsForCharacter(&text[countIndex], &tempUVs[0]);
+
+		rectVerts[i + 0].m_d3dfPosition = XMFLOAT3(topLeftPos.x + ((tWidth / textSizes[lineIndex]) * loopIndex), topLeftPos.y + ((tHeight / lines) * lineIndex), topLeftPos.z);
 		rectVerts[i + 0].m_d3dfUVs = XMFLOAT2(tempUVs[0].x, tempUVs[0].y);
-		rectVerts[i + 1].m_d3dfPosition = XMFLOAT3(topLeftPos.x + ((tWidth / textSize) * (loopIndex + 1)), topLeftPos.y, topLeftPos.z);
+		rectVerts[i + 1].m_d3dfPosition = XMFLOAT3(topLeftPos.x + ((tWidth / textSizes[lineIndex]) * (loopIndex + 1)), topLeftPos.y + ((tHeight / lines) * lineIndex), topLeftPos.z);
 		rectVerts[i + 1].m_d3dfUVs = XMFLOAT2(tempUVs[1].x, tempUVs[1].y);
-		rectVerts[i + 2].m_d3dfPosition = XMFLOAT3(topLeftPos.x + ((tWidth / textSize) * loopIndex), bottomLeftPos.y, topLeftPos.z);
+		rectVerts[i + 2].m_d3dfPosition = XMFLOAT3(topLeftPos.x + ((tWidth / textSizes[lineIndex]) * loopIndex), topLeftPos.y + ((tHeight / lines) * (lineIndex + 1)), topLeftPos.z);
 		rectVerts[i + 2].m_d3dfUVs = XMFLOAT2(tempUVs[2].x, tempUVs[2].y);
-		rectVerts[i + 3].m_d3dfPosition = XMFLOAT3(topLeftPos.x + ((tWidth / textSize) * (loopIndex + 1)), bottomLeftPos.y, topLeftPos.z);
+		rectVerts[i + 3].m_d3dfPosition = XMFLOAT3(topLeftPos.x + ((tWidth / textSizes[lineIndex]) * (loopIndex + 1)), topLeftPos.y + ((tHeight / lines) * (lineIndex + 1)), topLeftPos.z);
 		rectVerts[i + 3].m_d3dfUVs = XMFLOAT2(tempUVs[3].x, tempUVs[3].y);
 
 		++loopIndex;
+		++countIndex;
 	}
 
 	atUIVertices->push_back(rectVerts);
@@ -3953,11 +4010,11 @@ unsigned int CreateUILabelForText(TWorld* ptWorld, XMMATRIX SpawnPosition, float
 
 	XMMATRIX spawnMatrix = SpawnPosition;
 
-	short* rectIndices = new short[6 * textSize];
+	short* rectIndices = new short[6 * totalTextSize];
 
 	loopIndex = 0;
 	int counterIndex = 0;
-	for (int i = 0; loopIndex < textSize; i+=6)
+	for (int i = 0; loopIndex < totalTextSize; i+=6)
 	{
 		rectIndices[i] = counterIndex;
 		rectIndices[i + 1] = counterIndex + 1;
@@ -3973,8 +4030,8 @@ unsigned int CreateUILabelForText(TWorld* ptWorld, XMMATRIX SpawnPosition, float
 	atUIIndices->push_back(rectIndices);
 	ptWorld->atLabel[nThisEntity].iIndex = atUIIndices->size() - 1;
 
-	ptWorld->atMesh[nThisEntity].m_nIndexCount = 6 * textSize;
-	ptWorld->atMesh[nThisEntity].m_nVertexCount = 4 * textSize;
+	ptWorld->atMesh[nThisEntity].m_nIndexCount = 6 * totalTextSize;
+	ptWorld->atMesh[nThisEntity].m_nVertexCount = 4 * totalTextSize;
 
 	ptWorld->atMesh[nThisEntity].m_nVertexBufferStride = sizeof(TUIVert);
 	ptWorld->atMesh[nThisEntity].m_nVertexBufferOffset = 0;
@@ -4004,6 +4061,7 @@ unsigned int CreateUILabelForText(TWorld* ptWorld, XMMATRIX SpawnPosition, float
 
 	ptWorld->atShaderID[nThisEntity].m_nShaderID = 7;	//Shader that supports UIShaders
 
+	ptWorld->atMesh[nThisEntity].m_VertexData.resize(ptWorld->atMesh[nThisEntity].m_nVertexCount);
 	for (int i = 0; i < ptWorld->atMesh[nThisEntity].m_nVertexCount; ++i)
 	{
 		ptWorld->atMesh[nThisEntity].m_VertexData.push_back(atUIVertices->at(ptWorld->atLabel[nThisEntity].vIndex)[i].m_d3dfPosition);
@@ -4024,6 +4082,30 @@ void GetUVsForCharacter(wchar_t* character, XMFLOAT2* UVs)
 		UVs[1] = XMFLOAT2{ 10 / 950.0f, 4 / 20.0f };
 		UVs[2] = XMFLOAT2{ 0 / 950.0f, 14 / 20.0f };
 		UVs[3] = XMFLOAT2{ 10 / 950.0f, 14 / 20.0f };
+	}
+	break;
+	case '!':
+	{
+		UVs[0] = XMFLOAT2{ 10 / 950.0f, 4 / 20.0f };
+		UVs[1] = XMFLOAT2{ 20 / 950.0f, 4 / 20.0f };
+		UVs[2] = XMFLOAT2{ 10 / 950.0f, 14 / 20.0f };
+		UVs[3] = XMFLOAT2{ 20 / 950.0f, 14 / 20.0f };
+	}
+	break;
+	case '\'':
+	{
+		UVs[0] = XMFLOAT2{ 70 / 950.0f, 4 / 20.0f };
+		UVs[1] = XMFLOAT2{ 80 / 950.0f, 4 / 20.0f };
+		UVs[2] = XMFLOAT2{ 70 / 950.0f, 14 / 20.0f };
+		UVs[3] = XMFLOAT2{ 80 / 950.0f, 14 / 20.0f };
+	}
+	break;
+	case '.':
+	{
+		UVs[0] = XMFLOAT2{ 140 / 950.0f, 4 / 20.0f };
+		UVs[1] = XMFLOAT2{ 150 / 950.0f, 4 / 20.0f };
+		UVs[2] = XMFLOAT2{ 140 / 950.0f, 14 / 20.0f };
+		UVs[3] = XMFLOAT2{ 150 / 950.0f, 14 / 20.0f };
 	}
 	break;
 	case 0:
@@ -4382,10 +4464,10 @@ void GetUVsForCharacter(wchar_t* character, XMFLOAT2* UVs)
 	break;
 	case 'g':
 	{
-		UVs[0] = XMFLOAT2{ 710 / 950.0f, 3 / 20.0f };
-		UVs[1] = XMFLOAT2{ 720 / 950.0f, 3 / 20.0f };
-		UVs[2] = XMFLOAT2{ 710 / 950.0f, 17 / 20.0f };
-		UVs[3] = XMFLOAT2{ 720 / 950.0f, 17 / 20.0f };
+		UVs[0] = XMFLOAT2{ 710 / 950.0f, 2.5 / 20.0f };
+		UVs[1] = XMFLOAT2{ 720 / 950.0f, 2.5 / 20.0f };
+		UVs[2] = XMFLOAT2{ 710 / 950.0f, 16 / 20.0f };
+		UVs[3] = XMFLOAT2{ 720 / 950.0f, 16 / 20.0f };
 	}
 	break;
 	case 'h':
@@ -4406,10 +4488,10 @@ void GetUVsForCharacter(wchar_t* character, XMFLOAT2* UVs)
 	break;
 	case 'j':
 	{
-		UVs[0] = XMFLOAT2{ 740 / 950.0f, 3 / 20.0f };
-		UVs[1] = XMFLOAT2{ 750 / 950.0f, 3 / 20.0f };
-		UVs[2] = XMFLOAT2{ 740 / 950.0f, 17 / 20.0f };
-		UVs[3] = XMFLOAT2{ 750 / 950.0f, 17 / 20.0f };
+		UVs[0] = XMFLOAT2{ 740 / 950.0f, 2.5 / 20.0f };
+		UVs[1] = XMFLOAT2{ 750 / 950.0f, 2.5 / 20.0f };
+		UVs[2] = XMFLOAT2{ 740 / 950.0f, 16 / 20.0f };
+		UVs[3] = XMFLOAT2{ 750 / 950.0f, 16 / 20.0f };
 	}
 	break;
 	case 'k':
@@ -4454,18 +4536,18 @@ void GetUVsForCharacter(wchar_t* character, XMFLOAT2* UVs)
 	break;
 	case 'p':
 	{
-		UVs[0] = XMFLOAT2{ 800 / 950.0f, 3 / 20.0f };
-		UVs[1] = XMFLOAT2{ 810 / 950.0f, 3 / 20.0f };
-		UVs[2] = XMFLOAT2{ 800 / 950.0f, 17 / 20.0f };
-		UVs[3] = XMFLOAT2{ 810 / 950.0f, 17 / 20.0f };
+		UVs[0] = XMFLOAT2{ 800 / 950.0f, 2.5 / 20.0f };
+		UVs[1] = XMFLOAT2{ 810 / 950.0f, 2.5 / 20.0f };
+		UVs[2] = XMFLOAT2{ 800 / 950.0f, 16 / 20.0f };
+		UVs[3] = XMFLOAT2{ 810 / 950.0f, 16 / 20.0f };
 	}
 	break;
 	case 'q':
 	{
-		UVs[0] = XMFLOAT2{ 810 / 950.0f, 3 / 20.0f };
-		UVs[1] = XMFLOAT2{ 820 / 950.0f, 3 / 20.0f };
-		UVs[2] = XMFLOAT2{ 810 / 950.0f, 17 / 20.0f };
-		UVs[3] = XMFLOAT2{ 820 / 950.0f, 17 / 20.0f };
+		UVs[0] = XMFLOAT2{ 810 / 950.0f, 2.5 / 20.0f };
+		UVs[1] = XMFLOAT2{ 820 / 950.0f, 2.5 / 20.0f };
+		UVs[2] = XMFLOAT2{ 810 / 950.0f, 16 / 20.0f };
+		UVs[3] = XMFLOAT2{ 820 / 950.0f, 16 / 20.0f };
 	}
 	break;
 	case 'r':

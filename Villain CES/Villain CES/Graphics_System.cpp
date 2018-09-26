@@ -634,7 +634,7 @@ TMaterialOptimized CGraphicsSystem::CreateTexturesFromFile(TMaterialImport * arr
 		map<int, string> Map_EntityIndex_FileName;
 		string x;
 		std::vector<int> materialIndex;
-		ID3D11ShaderResourceView **SRVWood = new ID3D11ShaderResourceView *[1];
+		ID3D11ShaderResourceView **SRVDefault = new ID3D11ShaderResourceView *[1];
 
 		bool insertFlag = true;
 		if (arrayOfMaterials[0].m_tPBRFileNames[0] != NULL)
@@ -734,22 +734,42 @@ TMaterialOptimized CGraphicsSystem::CreateTexturesFromFile(TMaterialImport * arr
 				}
 			}
 		}
-		else//Apply a wood texture to the mesh
+		else//Apply a wood texture to the mesh or if it's a material gun projectile
 		{
 			int* Map_SRVIndex_EntityIndexArray = new int[1];
-			Map_SRVIndex_EntityIndexArray[0] = 0;
-			for (int i = 0; i < numberOfEntities; i++)
+			Map_SRVIndex_EntityIndexArray[0] = -3;
+			if (arrayOfMaterials[0].lambert == 4)
 			{
-				materialIndex.push_back(0);
+				for (int i = 0; i < numberOfEntities; i++)
+				{
+					materialIndex.push_back(-3);
+				}				
+				CreateWICTextureFromFile(m_pd3dDevice, L"TestScene_V1.fbm\\PaintedMetal04_col.jpg", NULL, &SRVDefault[0], NULL);
+				TMaterialOptimized answer;
+				answer.Map_SRVIndex_EntityIndex = Map_SRVIndex_EntityIndexArray;
+				answer.materialIndex = materialIndex;
+				answer.SRVArrayOfMaterials = SRVDefault;
+				answer.numberOfMaterials = 1;
+				return answer;
 			}
-			CreateWICTextureFromFile(m_pd3dDevice, L"TestScene_V1.fbm\\Wood01_col.jpg", NULL, &SRVWood[0], NULL);
-			TMaterialOptimized answer;
-			answer.Map_SRVIndex_EntityIndex = Map_SRVIndex_EntityIndexArray;
-			answer.materialIndex = materialIndex;
-			answer.SRVArrayOfMaterials = SRVWood;
-			answer.numberOfMaterials = 1;
-			return answer;
+			else
+			{
+				int* Map_SRVIndex_EntityIndexArray = new int[1];
+				Map_SRVIndex_EntityIndexArray[0] = 0;
+				for (int i = 0; i < numberOfEntities; i++)
+				{
+					materialIndex.push_back(0);
+				}
+				CreateWICTextureFromFile(m_pd3dDevice, L"TestScene_V1.fbm\\Wood01_col.jpg", NULL, &SRVDefault[0], NULL);
+				TMaterialOptimized answer;
+				answer.Map_SRVIndex_EntityIndex = Map_SRVIndex_EntityIndexArray;
+				answer.materialIndex = materialIndex;
+				answer.SRVArrayOfMaterials = SRVDefault;
+				answer.numberOfMaterials = 1;
+				return answer;
+			}
 		}
+
 		std::map<int, string>::iterator mapItr;
 		wchar_t fnPBR[260];
 		size_t result = 0;
@@ -1235,7 +1255,7 @@ ImporterData CGraphicsSystem::ReadMesh(const char * input_file_path)
 				{
 					bufferSize = sizeof(fMetallicness[materialIndex]) + sizeof(fRoughness[materialIndex]);
 				}
-				else if (lamberts[materialIndex] == 1 || lamberts[materialIndex] == 3)
+				else if (lamberts[materialIndex] == 1 || lamberts[materialIndex] == 3 || lamberts[materialIndex] == 4)
 				{
 					bufferSize = sizeof(ambientColor[materialIndex]) + sizeof(diffuseColor[materialIndex]) + sizeof(emmissiveColor[materialIndex]) + sizeof(dTransparencyOrShininess[materialIndex]);
 				}
@@ -1290,7 +1310,7 @@ ImporterData CGraphicsSystem::ReadMesh(const char * input_file_path)
 						}
 					}
 				}
-				else if (lamberts[materialIndex] == 1 || lamberts[materialIndex] == 3)
+				else if (lamberts[materialIndex] == 1 || lamberts[materialIndex] == 3 || lamberts[materialIndex] == 4)
 				{
 					memcpy(&ambientColor[materialIndex], &matBuffer[0], sizeof(ambientColor));
 
@@ -1917,7 +1937,9 @@ enum
 	Quad,
 	Skybox,
 	Glass,
-	AnimatedMesh
+	Projectile,
+	AnimatedMesh,
+
 };
 
 void CGraphicsSystem::ExecutePipeline(ID3D11DeviceContext *pd3dDeviceContext, int m_nIndexCount, int nGraphicsMask, int nShaderID)
@@ -2067,6 +2089,20 @@ void CGraphicsSystem::ExecutePipeline(ID3D11DeviceContext *pd3dDeviceContext, in
 			break;
 		}
 		case Glass:
+		{
+			//Set Input_Layout
+			pd3dDeviceContext->IASetInputLayout(m_pd3dMyInputLayout);
+			//Set Shader
+			pd3dDeviceContext->VSSetShader(m_pd3dMyVertexShader, NULL, 0);
+			pd3dDeviceContext->PSSetShader(m_pd3dMyPixelShader, NULL, 0);
+			////Draw
+			if (nGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_SHADERID))
+			{
+				pd3dDeviceContext->DrawIndexed(m_nIndexCount, 0, 0);
+			}
+			break;
+		}
+		case Projectile:
 		{
 			//Set Input_Layout
 			pd3dDeviceContext->IASetInputLayout(m_pd3dMyInputLayout);

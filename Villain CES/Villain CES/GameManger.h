@@ -102,10 +102,13 @@ private:
 	std::vector<TUIVert*> atUIVertices;
 	std::vector<short*> atUIIndices;
 	CFPS fpsTimer;
-	XTime clickTimer;
 	float clickTime;
-	XTime fadeTimer;
 	float fadeTime;
+
+	POINT startDragPoint;
+	POINT dragPoint;
+	POINT hoverPoint;
+	POINT clickPoint = { -1, -1 };
 
 	XTime PausedTimer;
 	float pausedTimer;
@@ -132,6 +135,8 @@ private:
 	float m_RealTimeFov;
 	bool bMoving;
 	float Health = 1.0f;
+	bool mouseDown = false;
+	bool mouseUp = true;
 	bool click = false;
 	XTime frameLock;
 

@@ -213,8 +213,18 @@ void CUISystem::AdjustBoundingBox(HWND* cApplicationWindow, TWorld* tThisWorld, 
 	ReleaseDC(*cApplicationWindow, tHDC);
 }
 
-void CUISystem::AddBarToUI(HWND* cApplicationWindow, TWorld* tThisWorld, unsigned int nThisEntity, XMFLOAT4* backgroundColor)
+void CUISystem::AddBarToUI(HWND* cApplicationWindow, TWorld* tThisWorld, unsigned int nThisEntity, XMFLOAT4* backgroundColor, char* function, unsigned int textSize, float ratio)
 {
+	if (function != nullptr)
+	{
+		tThisWorld->atBar[nThisEntity].valueToChange = new char[textSize];
+
+		for (int i = 0; i < textSize; ++i)
+		{
+			tThisWorld->atBar[nThisEntity].valueToChange[i] = function[i];
+		}
+	}
+
 	RECT window;
 	GetWindowRect(*cApplicationWindow, &window);
 
@@ -239,10 +249,12 @@ void CUISystem::AddBarToUI(HWND* cApplicationWindow, TWorld* tThisWorld, unsigne
 	ClientToScreen(*cApplicationWindow, &tThisWorld->atBar[nThisEntity].start);
 	ClientToScreen(*cApplicationWindow, &tThisWorld->atBar[nThisEntity].end);
 
-	tThisWorld->atBar[nThisEntity].ratio = 1;
+	tThisWorld->atBar[nThisEntity].ratio = ratio;
 
 	if (backgroundColor != nullptr)
 		tThisWorld->atBar[nThisEntity].backgroundColor = *backgroundColor;
+
+	tThisWorld->atBar[nThisEntity].valueToChangeSize = textSize;
 
 	tThisWorld->atUIMask[nThisEntity].m_tnUIMask = tThisWorld->atUIMask[nThisEntity].m_tnUIMask | COMPONENT_BAR;
 }
@@ -272,6 +284,30 @@ void CUISystem::UpdateText(TWorld* tThisWorld, unsigned int nThisEntity, std::ve
 		tThisWorld->atMesh[nThisEntity].m_VertexData.push_back(atUIVertices->at(tThisWorld->atLabel[nThisEntity].vIndex)[i].m_d3dfPosition);
 	}
 
+}
+
+bool CUISystem::CheckIfStringsAreTheSame(char* string1, unsigned int textSize1, const char* string2)
+{
+	if (string1 == nullptr)
+	{
+		return false;
+	}
+	else
+	{
+		for (int i = 0; i < textSize1; ++i)
+		{
+			if (string1[i] == string2[i])
+			{
+				continue;
+			}
+			else
+			{
+				return false;
+			}
+		}
+
+		return true;
+	}
 }
 
 void CUISystem::CreateEnemyHealthBar(HWND* cApplicationWindow, TWorld * tThisWorld, unsigned int &nThisEntity, XMFLOAT4 in_EnemyPos)

@@ -29,7 +29,10 @@ struct TBar
 	RECT barBoundingBox;
 	//value that fills bar from 0-1 ratio
 	float ratio;
-	 
+	
+	char* valueToChange = nullptr;
+	int valueToChangeSize = -1;
+
 	XMFLOAT4 backgroundColor;
 	int entityToFollow = -1;
 };
