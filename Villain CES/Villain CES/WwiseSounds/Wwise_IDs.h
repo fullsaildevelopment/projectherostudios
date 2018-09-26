@@ -14,9 +14,13 @@ namespace AK
     namespace EVENTS
     {
         static const AkUniqueID PLAY_HALLWAY_MUSIC = 2804017732U;
+        static const AkUniqueID PLAY_HURT_HUMAN = 2189107751U;
+        static const AkUniqueID PLAY_LASER_FIRE = 532216254U;
         static const AkUniqueID PLAY_MAIN_MENU_MUSIC = 2895168921U;
+        static const AkUniqueID PLAY_MENU_CLICK = 1357778998U;
         static const AkUniqueID PLAY_METAL_FIRED = 372592918U;
         static const AkUniqueID PLAY_METAL_RELOAD = 4261380785U;
+        static const AkUniqueID PLAY_SCYLIAN_DEATH = 3744242630U;
         static const AkUniqueID PLAY_XURIOUS___LIFTWAFFE = 1838748612U;
     } // namespace EVENTS
 

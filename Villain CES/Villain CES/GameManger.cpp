@@ -26,7 +26,6 @@ CGameMangerSystem::CGameMangerSystem(HWND window, CInputSystem* _pcInputSystem)
 #if MUSIC_ON
 	pcAudioSystem = new CAudioSystem();
 #endif
-	//srand(time(NULL));
 
 	GetWindowRect(cApplicationWindow, &windowRect);
 
@@ -3670,6 +3669,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	{
 		int myMesh = createMesh(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, tempImport.vtMeshes[meshIndex], matOpt, meshIndex);
 	}
+
 	tempImport = pcGraphicsSystem->ReadMesh("meshData_NoBrewery.txt");
 	matOpt = pcGraphicsSystem->CreateTexturesFromFile(tempImport.vtMaterials, tempImport.meshCount);
 	for (int meshIndex = 0; meshIndex < tempImport.meshCount; meshIndex++)
@@ -3719,7 +3719,6 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	{
 		PlayerStartIndex = createClayton(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, tempImport.vtMeshes[meshIndex], tempImport.vtMaterials[meshIndex]);
 	}
-
 
 	#pragma region AI and Gun INIT
 	GunIndexForPlayer = CreateGun(&tThisWorld, m_d3dWorldMatrix, PlayerStartIndex, -1, 1, 10.5, 3, 130);
@@ -3776,15 +3775,14 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	tThisWorld.atPathPlanining[spacePirate].Goal = nodeindex2;
 	tThisWorld.atPathPlanining[spacePirate].startingNode = nodeindex;
 
-
-
 	int GunINdexai;
 	//int GunINdexai = CreateGun(&tThisWorld, m_d3dWorldMatrix, spacePirate, -1.1, 0.5, 12.5, 10, 30);
 	for (int meshIndex = 0; meshIndex < tempImport.meshCount; ++meshIndex)
 	{
 		GunINdexai = CreateScyllianGun(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, m_d3dWorldMatrix, spacePirate, -0.5, 1, 11.5, 10, 30, gunImport.vtMeshes[meshIndex], gunImport.vtMaterials[meshIndex]);
 	}
-	#pragma region MORE AI Init
+
+	#pragma region More AI Init
 	tThisWorld.atAIMask[spacePirate].GunIndex = GunINdexai;
 
 	tThisWorld.atClip[GunINdexai].bulletSpeed = 0.01;//Frame Dependent
@@ -3830,7 +3828,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	{
 		spacePirate2 = CreateScyllian(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, tempImport.vtMeshes[meshIndex], tempImport.vtMaterials[meshIndex], AILocation);
 	}
-	#pragma region More AI Init
+	#pragma region MORE AI Init
 	//spacePirate2 = CreateSpacePirate(&tThisWorld, AILocation);
 	tThisWorld.atActiveAI[spacePirate].NoctifyOtherAi.push_back(spacePirate2);
 	tThisWorld.atActiveAI[spacePirate2].NoctifyOtherAi.push_back(spacePirate);
@@ -3933,8 +3931,6 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	AILocation.r[3].m128_f32[0] -= 10;
 
 #pragma endregion
-
-
 
 	int spacePirate3;
 	for (int meshIndex = 0; meshIndex < tempImport.meshCount; ++meshIndex)
@@ -4069,8 +4065,6 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	}
 
 #pragma endregion
-
-
 
 	pcGraphicsSystem->CreateBuffers(&tThisWorld);
 
