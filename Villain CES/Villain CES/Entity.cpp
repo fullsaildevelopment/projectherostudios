@@ -237,20 +237,32 @@ void destroyEntity(TWorld * ptWorld, unsigned int nThisEntity)
 	ptWorld->atLabel[nThisEntity].width = 0;
 	ptWorld->atLabel[nThisEntity].x = 0;
 	ptWorld->atLabel[nThisEntity].y = 0;
+	ptWorld->atLabel[nThisEntity].vIndex = -1;
+	ptWorld->atLabel[nThisEntity].iIndex = -1;
+	ptWorld->atLabel[nThisEntity].lastUIElement = false;
+	ptWorld->atLabel[nThisEntity].color = XMFLOAT4(0, 0, 0, 0);
 
 	ptWorld->atButton[nThisEntity].boundingBox = { 0, 0, 0, 0 };
 	ptWorld->atButton[nThisEntity].sceneIndex = 0;
 	ptWorld->atButton[nThisEntity].enabled = false;
 
-	ptWorld->atText[nThisEntity].textBoundingBox = { 0, 0, 0, 0 };
-	ptWorld->atText[nThisEntity].textBuffer = nullptr;
-	ptWorld->atText[nThisEntity].textColor[0] = 0;
-	ptWorld->atText[nThisEntity].textColor[1] = 0;
-	ptWorld->atText[nThisEntity].textColor[2] = 0;
-	ptWorld->atText[nThisEntity].textSize = -1;
-	ptWorld->atText[nThisEntity].justification = 0;
+	ptWorld->atBar[nThisEntity].start = { -1, -1 };
+	ptWorld->atBar[nThisEntity].end = { -1, -1 };
+	ptWorld->atBar[nThisEntity].ratio = -1;
+	ptWorld->atBar[nThisEntity].entityToFollow = -1;
+	delete[] ptWorld->atBar[nThisEntity].valueToChange;
+	ptWorld->atBar[nThisEntity].valueToChange = nullptr;
+	ptWorld->atBar[nThisEntity].valueToChangeSize = -1;
+	ptWorld->atBar[nThisEntity].barBoundingBox = { 0, 0, 0, 0 };
+	ptWorld->atBar[nThisEntity].backgroundColor = XMFLOAT4(0, 0, 0, 0);
 
-	//ptWorld->atMesh[nThisEntity].m_d3dSRVDiffuse = NULL;
+	//ptWorld->atText[nThisEntity].textBoundingBox = { 0, 0, 0, 0 };
+	//ptWorld->atText[nThisEntity].textBuffer = nullptr;
+	//ptWorld->atText[nThisEntity].textColor[0] = 0;
+	//ptWorld->atText[nThisEntity].textColor[1] = 0;
+	//ptWorld->atText[nThisEntity].textColor[2] = 0;
+	//ptWorld->atText[nThisEntity].textSize = -1;
+	//ptWorld->atText[nThisEntity].justification = 0;
 }
 
 unsigned int createDebugTransformLines(TWorld * ptWorld)

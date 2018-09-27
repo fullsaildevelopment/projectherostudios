@@ -95,6 +95,7 @@ private:
 	bool pauseInit = false;
 	bool endInit = false;
 	bool fadeOut = false;
+	bool fadeIn = true;
 
 	float prevHealth = 0;
 	float fallingHealth = 0;
@@ -113,6 +114,7 @@ private:
 	float clickTime;
 	float fadeTime;
 	float lerpTime;
+	float blinkTime;
 
 	POINT startDragPoint;
 	POINT dragPoint;
