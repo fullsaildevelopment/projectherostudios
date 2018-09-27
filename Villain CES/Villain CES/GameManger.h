@@ -12,6 +12,15 @@
 #include"AudioSystem.h"
 #include <array>
 #include <exception>
+#include<thread>
+#include<mutex>
+#include <iostream>
+#include <utility>
+#include <thread>
+#include <chrono>
+using namespace std;
+
+
 #pragma comment(lib, "MSIMG32.lib")
 
 class CGameMangerSystem {
@@ -37,6 +46,7 @@ public:
 	int SpacePirateGamePlay();
 	void LoadMikesGraphicsSandbox();
 	int MikesGraphicsSandbox();
+	
 	void LoadLevelWithMapInIt();
 	int RealLevelUpdate();
 

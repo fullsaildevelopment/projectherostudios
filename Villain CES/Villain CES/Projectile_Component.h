@@ -18,6 +18,7 @@ enum eProjectileComponent
 struct TProjectileMask
 {
 	int m_tnProjectileMask = 0;
+	XMVECTOR Direction;
 };
 struct Clips
 {

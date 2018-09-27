@@ -942,7 +942,6 @@ void CGraphicsSystem::CreateEntityBuffer(TWorld * ptWorld, int nEnityIndex)
 			m_pd3dDevice->CreateBuffer(&ptWorld->atSimpleMesh[nEnityIndex].m_d3dIndexBufferDesc, &ptWorld->atSimpleMesh[nEnityIndex].m_d3dIndexData, &ptWorld->atSimpleMesh[nEnityIndex].m_pd3dIndexBuffer);
 		}
 	}
-
 	if (ptWorld->atGraphicsMask[nEnityIndex].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_SHADERID))
 	{
 		if (ptWorld->atMesh[nEnityIndex].m_nIndexCount && ptWorld->atMesh[nEnityIndex].m_nVertexCount)
@@ -1010,7 +1009,7 @@ XMMATRIX CGraphicsSystem::SetDefaultCameraMatrix()
 XMMATRIX CGraphicsSystem::ResetAimModeCameraOffset()
 {
 
-	return XMMatrixTranslationFromVector(XMVectorSet(0, 1.7f, 8.5f, 1.0f));
+	return XMMatrixTranslationFromVector(XMVectorSet(-0.5, 1.7f, 8.5f, 1.0f));
 }
 
 XMMATRIX CGraphicsSystem::SetDefaultViewMatrix()

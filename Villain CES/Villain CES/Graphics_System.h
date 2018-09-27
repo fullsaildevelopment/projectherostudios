@@ -37,7 +37,6 @@ public:
 	ID3D11Texture2D* m_pd3dDepthStencil;
 	D3D11_VIEWPORT m_d3dViewport;
 
-
 	struct TQuadGeometryBufferType
 	{
 		XMMATRIX m_d3dWorldMatrix;
