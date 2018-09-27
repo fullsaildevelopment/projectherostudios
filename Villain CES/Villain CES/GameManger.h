@@ -86,7 +86,6 @@ private:
 	bool endInit = false;
 	bool fadeOut = false;
 
-	float damage = 0;
 	float prevHealth = 0;
 	float fallingHealth = 0;
 

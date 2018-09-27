@@ -1567,7 +1567,7 @@ void CGameMangerSystem::InitializeHUD()
 	{
 		nThisEntity = createEntityReverse(&tThisWorld);
 		CreateUILabel(&tThisWorld, menuCamera->d3d_Position, 3, 1, -7, -8, &atUIVertices, nThisEntity, .05);
-		pcUISystem->AddBarToUI(&cApplicationWindow, &tThisWorld, nThisEntity, &XMFLOAT4(1, 1, 0, 1), nullptr);
+		pcUISystem->AddBarToUI(&cApplicationWindow, &tThisWorld, nThisEntity, &XMFLOAT4(1, 1, 1, 1), nullptr);
 
 		pcUISystem->AddMaskToUI(&tThisWorld, nThisEntity, COMPONENT_HUD);
 		pcUISystem->AddMaskToUI(&tThisWorld, nThisEntity, COMPONENT_BACKGROUND);
@@ -5309,7 +5309,6 @@ int CGameMangerSystem::RealLevelUpdate()
 
 									tThisWorld.atClayton[otherCollisionsIndex[i]].health -= pirateDamage;
 
-									damage += pirateDamage;
 									lerpTime = 0;
 
 									if (tThisWorld.atClayton[otherCollisionsIndex[i]].health <= 0)
