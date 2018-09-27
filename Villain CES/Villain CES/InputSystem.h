@@ -13,8 +13,22 @@ public:
 	~CInputSystem();
 	/*
 	*/
-	GReturn InitializeGInput(HWND cTheWindow);
 
+	void gameManagerCodeAbstracted(
+		const int nButtonLeft, const int nButtonMiddle, const int nKeyP, const int nKeyU, const int nKeyR,
+		const HWND cApplicationWindow, const XMMATRIX d3dResetAimModeCameraOffset,
+		bool &bGunMode, bool &bTryToShoot, bool &bTryToReload,
+		bool &bMouseUp, bool &bMouseDown, bool &bClick,
+		bool &bGamePaused, bool &bGameOver, bool &bPauseInit, bool &bOptions,
+		bool &bMoving,
+		float &fRealTimeFov,
+		POINT &cStartDragPoint, POINT &cDragPoint, POINT &cHoverPoint, POINT &cClickPoint,
+		TCameraToggle &tCameraMode,
+		TCamera* tWalkCamera, TCamera* tAimCamera, TCamera* tDebugCamera,
+		XMMATRIX &d3dResultMatrix, XMMATRIX &d3dPlayerMatrix, XMMATRIX &d3dOffsetMatrix, XMMATRIX &d3dWorldMatrix,
+		XMMATRIX &tMyViewMatrix, XMMATRIX &tTempViewMatrix,
+		XMFLOAT4 &d3dCollisionColor);
+	GReturn InitializeGInput(HWND cTheWindow);																																																													
 	
 
 	/*
