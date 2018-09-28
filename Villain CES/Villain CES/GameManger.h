@@ -108,6 +108,11 @@ private:
 	int objLogoIndex = -1;
 	int ammoIndex = -1;
 
+#define SAVE_INDEX 96
+#define LOAD_INDEX 97
+#define OPTIONS_INDEX 98
+#define CREDITS_INDEX 99
+
 	//ZB Variables
 	TCameraToggle tCameraMode;
 	XMMATRIX m_d3dWorldMatrix;
