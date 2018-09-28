@@ -12,6 +12,15 @@
 #include"AudioSystem.h"
 #include <array>
 #include <exception>
+#include<thread>
+#include<mutex>
+#include <iostream>
+#include <utility>
+#include <thread>
+#include <chrono>
+using namespace std;
+
+
 #pragma comment(lib, "MSIMG32.lib")
 
 class CGameMangerSystem {
@@ -23,6 +32,8 @@ public:
 	void InitializeMainMenu();
 	int LoadTitleScreen();
 	void InitializeTitleScreen();
+	int LoadLoadingScreen(bool _continue);
+	void InitializeLoadingScreen();
 	void InitializePauseScreen();
 	void InitializeEndScreen(bool playerWin);
 	void InitializeOptionsMenu();
@@ -35,12 +46,14 @@ public:
 	int SpacePirateGamePlay();
 	void LoadMikesGraphicsSandbox();
 	int MikesGraphicsSandbox();
+	
 	void LoadLevelWithMapInIt();
 	int RealLevelUpdate();
 
 
 	bool GameOver = false;
 	bool GamePaused = false;
+	bool loading = false;
 	int nCurrentScene = 0;
 
 private:
@@ -81,6 +94,11 @@ private:
 	bool credits = false;
 	bool pauseInit = false;
 	bool endInit = false;
+	bool fadeOut = false;
+
+	float prevHealth = 0;
+	float fallingHealth = 0;
+
 	//ZB Variables
 	TCameraToggle tCameraMode;
 	XMMATRIX m_d3dWorldMatrix;
@@ -94,6 +112,7 @@ private:
 	CFPS fpsTimer;
 	float clickTime;
 	float fadeTime;
+	float lerpTime;
 
 	POINT startDragPoint;
 	POINT dragPoint;
@@ -136,5 +155,4 @@ private:
 	bool mouseUp = true;
 	bool click = false;
 	XTime frameLock;
-
 };

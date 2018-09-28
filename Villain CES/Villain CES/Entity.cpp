@@ -2717,9 +2717,8 @@ unsigned int createMesh(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMeshImpo
 		}
 		else
 		{
-		ptWorld->atShaderID[nThisEntity].m_nShaderID = 6;
+			ptWorld->atShaderID[nThisEntity].m_nShaderID = 6;
 		}
-
 	}
 
 	// Dont' use its Obsolete - 9/25/18
@@ -2880,8 +2879,6 @@ unsigned int createMesh(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMeshImpo
 
 	for (int i = 0; i < tMesh.nUniqueVertexCount; i++)
 	{
-	
-
 		TPrimitiveMesh tmp;
 		for (int j = 0; j < 4; j++)
 		{

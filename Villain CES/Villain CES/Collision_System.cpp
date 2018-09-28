@@ -634,6 +634,7 @@ bool CCollisionSystem::RemoveAABBCollider(int nIndex)
 		if (ptr->m_IndexLocation == nIndex) 
 		{
 			m_AAbb.erase(ptr);
+			cout << "cat";
 			return true;
 		}
 	}

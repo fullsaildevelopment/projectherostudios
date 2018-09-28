@@ -58,6 +58,9 @@ TUIPixelInputType UIVertexShader( TUIVertexInputType tInput )
 
 		if (barPosition < tOutput.d3dPosition.x)
 			tOutput.d3dPosition.x = barPosition;
+		
+		if (tOutput.d3dPosition.x < start)
+			tOutput.d3dPosition.x = start;
 	}
 
 	
