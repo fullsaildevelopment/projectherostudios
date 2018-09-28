@@ -71,7 +71,7 @@ private:
 	int renderToTexturePassIndex = 0;
 	float*xPos = new float();
 	float*yPos = new float();
-	TMeshImport bulletMesh;
+	ImporterData bulletMesh;
 	RECT windowRect;
 	int screenWidth;
 	int screenHeight;
@@ -128,6 +128,7 @@ private:
 
 	AKRESULT ErrorResult;
 
+	int ExtractionBeamIndex;
 	float m_RealTimeFov;
 	bool bMoving;
 	float Health = 1.0f;

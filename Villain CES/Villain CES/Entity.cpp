@@ -542,15 +542,34 @@ unsigned int CreateClayTon(TWorld * ptWorld)
 }
 
 //Mesh Bullet
-unsigned int CreateBullet(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMeshImport tMesh, TMaterialImport tMaterial, XMMATRIX BulletSpawnLocation, int MaterialID)
+unsigned int CreateMaterialBullet(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMeshImport tMesh, TMaterialOptimized tMaterial, XMMATRIX BulletSpawnLocation, int meshIndex, int bulletType)
 {
 	unsigned int nThisEntity = createEntity(ptWorld);
 
 	size_t result = 0;
 	mbstate_t d;
-	ID3D11ShaderResourceView * srv;
+	//ID3D11ShaderResourceView * srv;
+	TMaterialOptimized temp = tMaterial;
+	int entityMatIndex = temp.materialIndex[meshIndex];
+	int srvIndex = 1;
+	for (int i = 0; i < temp.numberOfMaterials; i++)
+	{
+		if (temp.Map_SRVIndex_EntityIndex[i] == entityMatIndex)
+		{
+			srvIndex = i;
+		}
+	}
+	ptWorld->atMesh[nThisEntity].m_d3dSRVDiffuse = temp.SRVArrayOfMaterials[srvIndex];
 
-	switch (MaterialID)
+	if (bulletType == 0)
+	{
+		ptWorld->atProjectiles[nThisEntity].m_tnProjectileMask = (COMPONENT_PROJECTILESMASK | COMPONENT_FRIENDLY);
+	}
+	else if (bulletType == 1)
+	{
+		ptWorld->atProjectiles[nThisEntity].m_tnProjectileMask = (COMPONENT_PROJECTILESMASK | COMPONENT_ENEMY);
+	}
+	/*switch (MaterialID)
 	{
 	case 0:
 	{
@@ -568,7 +587,9 @@ unsigned int CreateBullet(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMeshIm
 	}
 	default:
 		break;
-	}
+	}*/
+
+
 	ptWorld->atCollisionMask[nThisEntity].m_tnCollisionMask = (COMPONENT_COLLISIONMASK | COMPONENT_TRIGGER | COMPONENT_AABB | COMPONENT_NONSTATIC);
 	ptWorld->atGraphicsMask[nThisEntity].m_tnGraphicsMask = (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_SHADERID);
 	ptWorld->atAIMask[nThisEntity].m_tnAIMask = (COMPONENT_AIMASK);
@@ -596,9 +617,10 @@ unsigned int CreateBullet(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMeshIm
 	ptWorld->atMesh[nThisEntity].m_d3dIndexBufferDesc.StructureByteStride = 0;
 
 	ptWorld->atMesh[nThisEntity].m_d3dVertexData.pSysMem = tMesh.meshArrays;
-	ptWorld->atMesh[nThisEntity].m_d3dIndexData.pSysMem = tMesh.indexBuffer;
 	ptWorld->atMesh[nThisEntity].m_d3dVertexData.SysMemPitch = 0;
 	ptWorld->atMesh[nThisEntity].m_d3dVertexData.SysMemSlicePitch = 0;
+
+	ptWorld->atMesh[nThisEntity].m_d3dIndexData.pSysMem = tMesh.indexBuffer;
 	ptWorld->atMesh[nThisEntity].m_d3dIndexData.SysMemPitch = 0;
 	ptWorld->atMesh[nThisEntity].m_d3dIndexData.SysMemSlicePitch = 0;
 
@@ -611,11 +633,49 @@ unsigned int CreateBullet(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMeshIm
 
 	ptWorld->atWorldMatrix[nThisEntity].worldMatrix = BulletSpawnLocation;
 
-	ptWorld->atShaderID[nThisEntity].m_nShaderID = 5;
+	ptWorld->atShaderID[nThisEntity].m_nShaderID = 11;
 
 	return nThisEntity;
 }
 
+unsigned int CreateExtractionBeam(TWorld * ptWorld, XMMATRIX BulletSpawnLocation, int parentWorldMatrixIndex)
+{
+	unsigned int nThisEntity = createEntity(ptWorld);
+	ptWorld->atGraphicsMask[nThisEntity].m_tnGraphicsMask = (COMPONENT_GRAPHICSMASK | COMPONENT_DEBUGMESH | COMPONENT_SHADERID);
+	ptWorld->atCollisionMask[nThisEntity].m_tnCollisionMask = (COMPONENT_COLLISIONMASK);
+	ptWorld->atAIMask[nThisEntity].m_tnAIMask = (COMPONENT_AIMASK);
+	ptWorld->atUIMask[nThisEntity].m_tnUIMask = (COMPONENT_UIMASK);
+	ptWorld->atPhysicsMask[nThisEntity].m_tnPhysicsMask = (COMPONENT_PHYSICSMASK);
+	ptWorld->atProjectiles[nThisEntity].m_tnProjectileMask = (COMPONENT_PROJECTILESMASK);
+	static TPrimalVert atPointVertex[]
+	{
+		TPrimalVert{ XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT4(0,1,1,1)}
+	};
+	ptWorld->atDebugMesh[nThisEntity].m_nVertexCount = 1;
+
+	ptWorld->atDebugMesh[nThisEntity].m_nVertexBufferStride = sizeof(TPrimalVert);
+	ptWorld->atDebugMesh[nThisEntity].m_nVertexBufferOffset = 0;
+	ptWorld->atDebugMesh[nThisEntity].m_d3dVertexBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+	ptWorld->atDebugMesh[nThisEntity].m_d3dVertexBufferDesc.ByteWidth = sizeof(TPrimalVert) * ptWorld->atDebugMesh[nThisEntity].m_nVertexCount;
+	ptWorld->atDebugMesh[nThisEntity].m_d3dVertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	ptWorld->atDebugMesh[nThisEntity].m_d3dVertexBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	ptWorld->atDebugMesh[nThisEntity].m_d3dVertexBufferDesc.MiscFlags = 0;
+	ptWorld->atDebugMesh[nThisEntity].m_d3dVertexBufferDesc.StructureByteStride = 0;
+
+	ptWorld->atDebugMesh[nThisEntity].m_d3dVertexData.pSysMem = atPointVertex;
+
+	ptWorld->atDebugMesh[nThisEntity].m_d3dVertexData.SysMemPitch = 0;
+	ptWorld->atDebugMesh[nThisEntity].m_d3dVertexData.SysMemSlicePitch = 0;
+
+
+	ptWorld->atWorldMatrix[nThisEntity].worldMatrix = BulletSpawnLocation;
+	ptWorld->atParentWorldMatrix[nThisEntity] = parentWorldMatrixIndex;
+
+	ptWorld->atShaderID[nThisEntity].m_nShaderID = 13;// Line Geometry Shader
+
+
+	return nThisEntity;
+}
 /*
 * CreateBullet():  This function creates a inactivebullet
 *
@@ -2650,15 +2710,19 @@ unsigned int createMesh(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMeshImpo
 			}
 		}
 		ptWorld->atMesh[nThisEntity].m_d3dSRVDiffuse = temp.SRVArrayOfMaterials[srvIndex];
+
 		if (entityMatIndex == -3)//Material Gun Projectile
 		{
 			ptWorld->atShaderID[nThisEntity].m_nShaderID = 11;
 		}
+		else
+		{
 		ptWorld->atShaderID[nThisEntity].m_nShaderID = 6;
+		}
 
 	}
 
-
+	// Dont' use its Obsolete - 9/25/18
 #if TEXTURELOADING
 	for (unsigned int i = 0; i < 9; i++)
 	{

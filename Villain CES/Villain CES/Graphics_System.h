@@ -10,6 +10,7 @@
 #include "QuadGeometryShader.csh"
 #include "QuadVertexShader.csh"
 #include "QuadPixelShader.csh"
+//#include "LineGeometryShader.csh"
 #include "SkyboxVertexShader.csh"
 #include "SkyboxPixelShader.csh"
 #include "AnimatedVertexShader.csh"
@@ -27,7 +28,7 @@ public:
 	ID3D11RenderTargetView *m_pd3dOutsideRenderTargetView;
 	ID3D11Texture2D		*m_pd3dOutsideGlassRenderToTexture;
 	ID3D11ShaderResourceView * m_pd3dOutsideGlassSRV;
-
+	ID3D11ShaderResourceView * m_pd3dCurrentBulletTexture;
 	ID3D11DepthStencilState* m_pd3dDepthStencilState;
 	ID3D11DepthStencilView * m_pd3dDepthStencilView;
 	ID3D11RasterizerState* m_pd3dNoCullRasterizerState;
@@ -37,7 +38,14 @@ public:
 	ID3D11Texture2D* m_pd3dDepthStencil;
 	D3D11_VIEWPORT m_d3dViewport;
 
-
+	struct TLineGeometryBufferType
+	{
+		XMMATRIX m_d3dWorldMatrix;
+		XMMATRIX m_d3dViewMatrix;
+		XMMATRIX m_d3dProjectionMatrix;
+		XMFLOAT4 endPoint;
+	};
+	
 	struct TQuadGeometryBufferType
 	{
 		XMMATRIX m_d3dWorldMatrix;
@@ -45,7 +53,7 @@ public:
 		XMMATRIX m_d3dProjectionMatrix;
 		float m_fHealth;
 	};
-
+	
 	struct TQuadPixelBufferType
 	{
 		/*Nothing*/
@@ -139,6 +147,7 @@ public:
 	XMMATRIX SetDefaultOffset();
 	//Every Frame
 	void UpdateD3D();
+	
 	void InitQuadShaderData(ID3D11DeviceContext * pd3dDeviceContext, XMMATRIX d3dWorldMatrix, XMMATRIX d3dViewMatrix, XMMATRIX d3dProjectionMatrix, TDebugMesh tDebugMesh, XMMATRIX CameraMatrix, XMFLOAT4 BackgroundColor, float fHealth);
 
 	void InitPrimalShaderData(ID3D11DeviceContext * pd3dDeviceContext, XMMATRIX d3dWorldMatrix, XMMATRIX d3dViewMatrix, XMMATRIX d3dProjectionMatrix, TDebugMesh tDebugMesh, XMMATRIX CameraMatrix);
@@ -148,6 +157,7 @@ public:
 	void InitAnimShaderData(ID3D11DeviceContext * pd3dDeviceContext, TAnimatedVertexBufferType d3dVertexBuffer, TMesh tSimpleMesh, XMMATRIX CameraMatrix);
 	void InitMyShaderData(ID3D11DeviceContext * pd3dDeviceContext, TMyVertexBufferType d3dVertexBuffer, TMesh tSimpleMesh, XMMATRIX CameraMatrix);
 	void InitUIShaderData(ID3D11DeviceContext * pd3dDeviceContext, TUIVertexBufferType d3dVertexBuffer, TUIPixelBufferType d3dPixelBuffer, TMesh tMesh, XMMATRIX CameraMatrix);
+	void InitLineShaderData(ID3D11DeviceContext * pd3dDeviceContext, XMMATRIX d3dWorldMatrix, XMMATRIX d3dViewMatrix, XMMATRIX d3dProjectionMatrix, TDebugMesh tDebugMesh, XMMATRIX CameraMatrix, float colorAlpha, XMFLOAT4 endPoint);
 	void ExecutePipeline(ID3D11DeviceContext *pd3dDeviceContext, int m_nIndexCount, int nGraphicsMask, int nShaderID);
 	void UpdateBuffer(TWorld * ptWorld, std::vector<TSimpleMesh> vtVertexVector, int nEntity, int nMask);
 
@@ -169,9 +179,14 @@ private:
 	ID3D11PixelShader	*m_pd3dQuadPixelShader;
 	ID3D11GeometryShader*m_pd3dQuadGeometryShader;
 	ID3D11InputLayout	*m_pd3dQuadInputLayout;
-	ID3D11Buffer		*m_pd3dQuadVertexBuffer;
+//	ID3D11Buffer		*m_pd3dQuadVertexBuffer;
 	ID3D11Buffer		*m_pd3dQuadGeometryBuffer;
 	ID3D11Buffer		*m_pd3dQuadPixelBuffer;
+
+	ID3D11GeometryShader*m_pd3dLineGeometryShader;
+	//ID3D11Buffer		*m_pd3dQuadVertexBuffer;
+	ID3D11Buffer		*m_pd3dLineGeometryBuffer;
+	//ID3D11Buffer		*m_pd3dLinePixelBuffer;
 
 	ID3D11VertexShader	*m_pd3dMyVertexShader;
 	ID3D11PixelShader	*m_pd3dMyPixelShader;

@@ -55,7 +55,6 @@ CGameMangerSystem::~CGameMangerSystem()
 	delete walkCamera;
 	delete menuCamera;
 	delete pcUISystem;
-
 	fontTexture->Release();
 	atUIVertices.clear();
 	atUIIndices.clear();
@@ -1984,8 +1983,8 @@ int CGameMangerSystem::PathFindingExample()
 					XMMATRIX gunMatrix = tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix;
 					gunMatrix = XMMatrixMultiply(localMatrix2, gunMatrix);
 
-					int newbullet = CreateBullet(&tThisWorld, gunMatrix,
-						tThisWorld.atClip[nCurrentEntity].currentMaterial, 0); // Last zero is bulletType - 0 for friend, 1 for enemy
+					int newbullet = CreateBullet(&tThisWorld, gunMatrix,tThisWorld.atClip[nCurrentEntity].currentMaterial, 0); // Last zero is bulletType - 0 for friend, 1 for enemy
+
 					tThisWorld.atClip[newbullet].gunIndex = nCurrentEntity;
 					tThisWorld.atSimpleMesh[newbullet].m_nColor = tThisWorld.atClip[nCurrentEntity].colorofBullets;
 					tThisWorld.atClip[newbullet].indexInclip = pcProjectileSystem->CreateBulletProjectile(newbullet, &tThisWorld.atClip[nCurrentEntity]);
@@ -3640,7 +3639,6 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	{
 		continue;
 	}
-
 	InitializeHUD();
 	InitializePauseScreen();
 	GameOver = false;
@@ -3655,7 +3653,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	//	tTimerInfo->StartClock(tAugerTimers->tSceneTimer);
 	ImporterData tempImport;
 	TMaterialOptimized matOpt;
-
+	
 	ImporterData gunImport;
 
 	#pragma region Create Skybox
@@ -3673,13 +3671,16 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	renderToTexturePassIndex = CreateSkybox(&tThisWorld, tempSrv);
 
 #pragma endregion
-
-	tempImport = pcGraphicsSystem->ReadMesh("meshData_ProjectileMatGun.txt");
-	matOpt = pcGraphicsSystem->CreateTexturesFromFile(tempImport.vtMaterials, tempImport.meshCount);
+	//
+	bulletMesh = pcGraphicsSystem->ReadMesh("meshData_ProjectileMatGun.txt");
+	matOpt = pcGraphicsSystem->CreateTexturesFromFile(bulletMesh.vtMaterials, bulletMesh.meshCount);
+	int BulletTexted;
 	for (int meshIndex = 0; meshIndex < tempImport.meshCount; meshIndex++)
 	{
-		int myMesh = createMesh(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, tempImport.vtMeshes[meshIndex], matOpt, meshIndex);
+		BulletTexted = createMesh(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, bulletMesh.vtMeshes[meshIndex], matOpt, meshIndex);
+		
 	}
+
 	tempImport = pcGraphicsSystem->ReadMesh("meshData_NoBrewery.txt");
 	matOpt = pcGraphicsSystem->CreateTexturesFromFile(tempImport.vtMaterials, tempImport.meshCount);
 	for (int meshIndex = 0; meshIndex < tempImport.meshCount; meshIndex++)
@@ -3777,6 +3778,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	{
 		spacePirate = CreateScyllian(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, tempImport.vtMeshes[meshIndex], tempImport.vtMaterials[meshIndex], AILocation);
 	}
+	
 
 	//spacePirate = CreateSpacePirate(&tThisWorld, AILocation);
 	tThisWorld.atAiHeath[spacePirate].heath = 100;
@@ -3962,6 +3964,8 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	/*tThisWorld.atPathPlanining[spacePirate].startingNode = nodeindex3;
 	tThisWorld.atPathPlanining[spacePirate].Goal = nodeindex2;*/
 
+	
+	 
 
 	//int GunINdexai3 = CreateGun(&tThisWorld, m_d3dWorldMatrix, spacePirate3, -1.1, 0.5, 12.5, 10, 70);
 	int GunINdexai3;
@@ -4426,6 +4430,8 @@ int CGameMangerSystem::RealLevelUpdate()
 						pcGraphicsSystem->InitQuadShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, m_d3dViewMatrix, m_d3dProjectionMatrix, tThisWorld.atDebugMesh[nCurrentEntity], debugCamera->d3d_Position, tThisWorld.atBar[nCurrentEntity].backgroundColor, tThisWorld.atAiHeath[targetEntity].heath * .01);
 					}
 				}
+
+
 			}
 			else
 			{
@@ -4434,6 +4440,30 @@ int CGameMangerSystem::RealLevelUpdate()
 					tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = tThisWorld.atWorldMatrix[PlayerStartIndex].worldMatrix;
 				}
 				pcGraphicsSystem->InitPrimalShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, debugCamera->d3d_Position, m_d3dProjectionMatrix, tThisWorld.atDebugMesh[nCurrentEntity], debugCamera->d3d_Position);
+			}
+			//Extraction Beam & related functions are here - ZFB
+			if (pcInputSystem->InputCheck(G_KEY_Q) == 1 && tCameraMode.bAimMode == true)
+			{
+				//Get Gun Matrix position 
+				XMVECTOR startPoint = tThisWorld.atWorldMatrix[GunIndexForPlayer].worldMatrix.r[3];
+				XMVECTOR endPoint;
+				// Create the start of the Beam and put it in a vertex buffer & other intilized values
+				ExtractionBeamIndex = CreateExtractionBeam(&tThisWorld, m_d3dPlayerMatrix, PlayerStartIndex);
+				//Calculates the end point when it collides with something
+				endPoint = pcProjectileSystem->FindBeamEndPoint( m_d3dViewMatrix, m_d3dProjectionMatrix, cApplicationWindow);
+				// updateing the next frame should delete itself 
+				XMFLOAT4 toGeoShaderPoint;
+				toGeoShaderPoint.x = endPoint.m128_f32[0];
+				toGeoShaderPoint.y = endPoint.m128_f32[1];
+				toGeoShaderPoint.z = endPoint.m128_f32[2];
+				toGeoShaderPoint.w = endPoint.m128_f32[3];
+				for (size_t i = 0; i < 4; i++)
+				{
+					std::cout << endPoint.m128_f32[i] << endl;
+				}
+			
+				//pcGraphicsSystem->InitLineShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, m_d3dViewMatrix, m_d3dProjectionMatrix, tThisWorld.atDebugMesh[nCurrentEntity], aimCamera->d3d_Position, 1.0f, toGeoShaderPoint);
+				
 			}
 
 			pcGraphicsSystem->ExecutePipeline(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atDebugMesh[nCurrentEntity].m_nVertexCount, tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask, tThisWorld.atShaderID[nCurrentEntity].m_nShaderID);
@@ -4678,6 +4708,7 @@ int CGameMangerSystem::RealLevelUpdate()
 						tThisWorld.atClip[nCurrentEntity].maderay = true;
 					}
 				}
+
 				else if (tThisWorld.atClip[nCurrentEntity].GunMode == false
 					&& tThisWorld.atClip[nCurrentEntity].tryToShoot == false
 					&& tThisWorld.atClip[nCurrentEntity].maderay == true)
@@ -4686,6 +4717,7 @@ int CGameMangerSystem::RealLevelUpdate()
 					rayindex = -1;
 					tThisWorld.atClip[nCurrentEntity].maderay = false;
 				}
+
 				else
 				{
 					// Metal Fired Sound in Here -ZFB
@@ -4728,7 +4760,28 @@ int CGameMangerSystem::RealLevelUpdate()
 #if MUSIC_ON
 							pcAudioSystem->SendSoundsToEngine(AK::EVENTS::PLAY_METAL_FIRED, m_AkMetalFired);
 #endif
+
 							bulletType = 0;
+#pragma region Mesh Bullet For Player
+							//TMaterialOptimized matOpt;
+							/*
+							Notes on Material gun Concept:
+							1. save srv value or material to keep a constant texture and then in extract method you can update the value
+							2. create the bullet 
+							*/
+							/*int newbullet;
+							matOpt = pcGraphicsSystem->CreateTexturesFromFile(bulletMesh.vtMaterials, bulletMesh.meshCount);
+							for (int meshIndex = 0; meshIndex < bulletMesh.meshCount; meshIndex++)
+							{
+								 newbullet = CreateMaterialBullet(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, bulletMesh.vtMeshes[meshIndex], matOpt,gunMatrix, meshIndex, bulletType);
+							}
+							tThisWorld.atClip[newbullet].gunIndex = nCurrentEntity;
+							tThisWorld.atClip[newbullet].indexInclip = pcProjectileSystem->CreateBulletProjectile(newbullet, &tThisWorld.atClip[nCurrentEntity]);
+							tThisWorld.atAABB[newbullet] = pcCollisionSystem->createAABBS(tThisWorld.atMesh[newbullet].m_VertexData, tThisWorld.atAABB[newbullet]);
+							tThisWorld.atAABB[newbullet].m_IndexLocation = newbullet;
+							pcCollisionSystem->AddAABBCollider(tThisWorld.atAABB[newbullet], newbullet);
+							pcGraphicsSystem->CreateEntityBuffer(&tThisWorld, newbullet);*/
+#pragma endregion        
 						}
 						else
 						{
@@ -4741,10 +4794,13 @@ int CGameMangerSystem::RealLevelUpdate()
 							gunMatrix = XMMatrixMultiply(XMMatrixRotationY(XMConvertToRadians(90)), gunMatrix);
 							gunMatrix = XMMatrixMultiply(localMatrix2, gunMatrix);
 							//Laser Fire sound is here - ZFB
+						#if MUSIC_ON
 							pcAudioSystem->SendSoundsToEngine(AK::EVENTS::PLAY_LASER_FIRE, m_Laser_Fire);
+						#endif
 							bulletType = 1;
-						}
 
+							
+						}
 						int newbullet = CreateBullet(&tThisWorld, gunMatrix, tThisWorld.atClip[nCurrentEntity].currentMaterial, bulletType);
 						tThisWorld.atClip[newbullet].gunIndex = nCurrentEntity;
 						tThisWorld.atSimpleMesh[newbullet].m_nColor = tThisWorld.atClip[nCurrentEntity].colorofBullets;
@@ -4754,6 +4810,7 @@ int CGameMangerSystem::RealLevelUpdate()
 
 						pcCollisionSystem->AddAABBCollider(tThisWorld.atAABB[newbullet], newbullet);
 						pcGraphicsSystem->CreateEntityBuffer(&tThisWorld, newbullet);
+						
 
 					}
 					else if (tThisWorld.atClip[nCurrentEntity].tryToShoot == true)
@@ -4790,12 +4847,7 @@ int CGameMangerSystem::RealLevelUpdate()
 					{
 						tThisWorld.atClip[nCurrentEntity].fShootingCoolDown -= fpsTimer.GetDelta() * 50;
 					}
-					//Extract Material Method called here - ZFB
-					if (pcInputSystem->InputCheck(G_KEY_5) == 1)
-					{
-						tThisWorld.atClip[nCurrentEntity].currentMaterial = pcProjectileSystem->ExtractMaterial(&tThisWorld, &tThisWorld.atClip[nCurrentEntity], nCurrentEntity);
-						//switch textures depending on material extracted
-					}
+					
 				}
 			}
 		}
@@ -4811,10 +4863,12 @@ int CGameMangerSystem::RealLevelUpdate()
 		}
 		if (GamePaused == false && GameOver == false)
 		{
+			// bullet check 
 			if (tThisWorld.atProjectiles[nCurrentEntity].m_tnProjectileMask == (COMPONENT_PROJECTILESMASK | COMPONENT_RAYGUN))
 			{
 				float CloseEstObject = 10000000000000000000.0f;
 				float* distanceCalucaltion = new float();
+				//ptr is the collided entity index compared to current entit index. - ZFB
 				for (list<TAABB>::iterator ptr = pcCollisionSystem->m_AAbb.begin(); ptr != pcCollisionSystem->m_AAbb.end(); ++ptr)
 				{
 
@@ -4970,6 +5024,9 @@ int CGameMangerSystem::RealLevelUpdate()
 
 									}
 									tThisWorld.atClayton[otherCollisionsIndex[i]].health -= pirateDamage;
+								#if MUSIC_ON
+									pcAudioSystem->SendSoundsToEngine(AK::EVENTS::PLAY_HURT_HUMAN, m_Human_Hurt);
+								#endif
 									if (tThisWorld.atClayton[otherCollisionsIndex[i]].health <= 0)
 									{
 										GameOver = true;
