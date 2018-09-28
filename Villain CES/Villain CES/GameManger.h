@@ -90,15 +90,23 @@ private:
 	int screenHeight;
 	float playerDamage = 25;
 	float pirateDamage = 18;
+
 	bool options = false;
 	bool credits = false;
 	bool pauseInit = false;
 	bool endInit = false;
 	bool fadeOut = false;
 	bool fadeIn = true;
+	bool mouseDown = false;
+	bool mouseUp = true;
+	bool click = false;
 
 	float prevHealth = 0;
 	float fallingHealth = 0;
+
+	int fpsIndex = -1;
+	int objLogoIndex = -1;
+	int ammoIndex = -1;
 
 	//ZB Variables
 	TCameraToggle tCameraMode;
@@ -146,8 +154,5 @@ private:
 	float m_RealTimeFov;
 	bool bMoving;
 	float Health = 1.0f;
-	bool mouseDown = false;
-	bool mouseUp = true;
-	bool click = false;
 	XTime frameLock;
 };
