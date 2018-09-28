@@ -4,6 +4,7 @@
 #define SKELETON_LOAD_ON false
 #define MAIN_LEVEL_ON true
 #define MUSIC_ON true
+#define INPUT_ABSTRACTED_ON true
 //Don't forget to comment out PlaySoundInBank() call in VillCES.cpp if MUSIC_ON is False - ZFB
 CGameMangerSystem::CGameMangerSystem(HWND window, CInputSystem* _pcInputSystem)
 {
@@ -4484,6 +4485,7 @@ int CGameMangerSystem::RealLevelUpdate()
 	CGraphicsSystem::TUIVertexBufferType tUIVertexBuffer;
 	CGraphicsSystem::TUIPixelBufferType tUIPixelBuffer;
 
+#if !INPUT_ABSTRACTED_ON
 	hoverPoint = { -1, -1 };
 	//POINT hoverPoint;
 	GetCursorPos(&hoverPoint);
@@ -4491,6 +4493,7 @@ int CGameMangerSystem::RealLevelUpdate()
 
 	//POINT 
 	clickPoint = { -1, -1 };
+
 	if (pcInputSystem->InputCheck(G_BUTTON_LEFT) == 1 && mouseUp)
 	{
 
@@ -4542,10 +4545,11 @@ int CGameMangerSystem::RealLevelUpdate()
 		}
 	}
 
+
+
 	//Camera Functions here will move to a input system function when all behaviors are finalized - ZFB
 	if (GamePaused == false && GameOver == false)
 	{
-
 		// Walk mode not needed in demo at the moment - ZFB
 		if (tCameraMode.bWalkMode == true)
 		{
@@ -4583,9 +4587,6 @@ int CGameMangerSystem::RealLevelUpdate()
 				//if (scale > 1) {
 				tCameraMode.bSwitch = false;
 				scale = 0;
-
-
-
 			}
 
 			m_RealTimeFov = pcInputSystem->ZoomSight(m_RealTimeFov);
@@ -4597,8 +4598,6 @@ int CGameMangerSystem::RealLevelUpdate()
 			aimCamera->d3d_Position = XMMatrixMultiply(aimCamera->d3d_Position, m_d3dPlayerMatrix);
 			// for shoulder offset 
 			aimCamera->d3d_Position = XMMatrixMultiply(m_d3dOffsetMatrix, aimCamera->d3d_Position);
-
-
 
 			tMyVertexBufferTemp.m_d3dViewMatrix = aimCamera->d3d_Position;
 			tTempVertexBuffer.m_d3dViewMatrix = aimCamera->d3d_Position;
@@ -4617,13 +4616,12 @@ int CGameMangerSystem::RealLevelUpdate()
 			tMyVertexBufferTemp.m_d3dViewMatrix = debugCamera->d3d_Position;
 			tTempVertexBuffer.m_d3dViewMatrix = debugCamera->d3d_Position;
 		}
-
 	}
-
-
 	tTempPixelBuffer.m_d3dCollisionColor = XMFLOAT4(1.0f, 0.0f, 0.0f, 0.0f);
+#endif // !INPUT_ABSTRACTED_ON
+	
 
-#pragma region Render To Texture Pass
+	#pragma region Render To Texture Pass
 	pcGraphicsSystem->UpdateD3D();
 	pcGraphicsSystem->UpdateD3D_RenderToTexture();
 
@@ -4693,10 +4691,27 @@ int CGameMangerSystem::RealLevelUpdate()
 	}
 
 #pragma endregion
-
+	//This abstraction is 12 lines formatted and 1 line unformatted. Not abstracted is 169 lines.
+#if INPUT_ABSTRACTED_ON
+	pcInputSystem->gameManagerCodeAbstracted(pcInputSystem->InputCheck(G_BUTTON_LEFT), pcInputSystem->InputCheck(G_BUTTON_MIDDLE), pcInputSystem->InputCheck(G_KEY_P), pcInputSystem->InputCheck(G_KEY_U), pcInputSystem->InputCheck(G_KEY_R), 
+		cApplicationWindow, pcGraphicsSystem->ResetAimModeCameraOffset(),
+		tThisWorld.atClip[GunIndexForPlayer].GunMode, tThisWorld.atClip[GunIndexForPlayer].tryToShoot, tThisWorld.atClip[GunIndexForPlayer].tryToReload,
+		mouseUp, mouseDown, click,
+		GamePaused, GameOver, pauseInit, options,
+		bMoving,
+		m_RealTimeFov,
+		startDragPoint, dragPoint, hoverPoint, clickPoint,
+		tCameraMode,
+		walkCamera, aimCamera, debugCamera,
+		m_d3d_ResultMatrix, m_d3dPlayerMatrix, m_d3dOffsetMatrix, m_d3dWorldMatrix,
+		tMyVertexBufferTemp.m_d3dViewMatrix, tTempVertexBuffer.m_d3dViewMatrix,
+		tTempPixelBuffer.m_d3dCollisionColor);
+#endif // INPUT_ABSTRACTED_ON
 	pcGraphicsSystem->UpdateD3D();
 
-#pragma region Input Garbage
+#if !INPUT_ABSTRACTED_ON
+	
+	#pragma region Input Garbage
 	// toggle the modes that you are in
 	if (GamePaused == false && GameOver == false)
 	{
@@ -4730,6 +4745,9 @@ int CGameMangerSystem::RealLevelUpdate()
 	}
 
 #pragma endregion
+
+#endif // !INPUT_ABSTRACTED_ON
+
 
 	for (int nCurrentEntity = 0; nCurrentEntity < ENTITYCOUNT; nCurrentEntity++)
 	{
@@ -4859,6 +4877,7 @@ int CGameMangerSystem::RealLevelUpdate()
 					}
 					else if (tCameraMode.bAimMode == true)
 					{
+						m_d3dPlayerMatrix = pcInputSystem->CharacterMovement(m_d3dPlayerMatrix);
 						tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = m_d3dPlayerMatrix;
 						tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = pcPhysicsSystem->ResolveForces(&tThisWorld.atRigidBody[nCurrentEntity], tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, false);
 						m_d3dPlayerMatrix = tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix;
