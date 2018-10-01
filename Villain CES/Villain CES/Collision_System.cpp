@@ -135,7 +135,7 @@ bool CCollisionSystem::AiVisionCheck(frustum_t eyeSight,vector<int>* index)
 	return seesomething;
 }
 
-void CCollisionSystem::TestThreading(TWorld * ptWorld, int nCurrentEntity, CGraphicsSystem* pcGraphicsSystem, CGraphicsSystem::TPrimalVertexBufferType* tTempVertexBuffer,XMMATRIX* m_d3dPlayerMatrix, CPhysicsSystem* pcPhysicsSystem)
+void CCollisionSystem::TestThreading(TWorld * ptWorld, int nCurrentEntity, CGraphicsSystem* pcGraphicsSystem, CGraphicsSystem::TPrimalVertexBufferType* tTempVertexBuffer,XMMATRIX* m_d3dPlayerMatrix, CPhysicsSystem* pcPhysicsSystem, CAISystem* pcAiSystem)
 {
 	ptWorld->atAABB[nCurrentEntity].theeadmade = true;
 	//ptWorld->atClayton[nCurrentEntity].health = 10;
@@ -195,9 +195,9 @@ void CCollisionSystem::TestThreading(TWorld * ptWorld, int nCurrentEntity, CGrap
 					|| ptWorld->atCollisionMask[otherCollisionsIndex[i]].m_tnCollisionMask == (COMPONENT_COLLISIONMASK | COMPONENT_NONTRIGGER | COMPONENT_AABB | COMPONENT_NONSTATIC))
 				{
 
-					/*if (ptWorld->atAIMask[otherCollisionsIndex[i]].m_tnAIMask > 1)
+					if (ptWorld->atAIMask[otherCollisionsIndex[i]].m_tnAIMask > 1)
 					{
-						 SHOOTING AN AI ONLY
+						// SHOOTING AN AI ONLY
 						if (ptWorld->atProjectiles[nCurrentEntity].m_tnProjectileMask == (COMPONENT_PROJECTILESMASK | COMPONENT_METAL | COMPONENT_FRIENDLY))
 						{
 							if (ptWorld->atAiHeath[otherCollisionsIndex[i]].heath <= 0)
@@ -207,17 +207,17 @@ void CCollisionSystem::TestThreading(TWorld * ptWorld, int nCurrentEntity, CGrap
 								{
 
 
-									pcCollisionSystem->RemoveAABBCollider(nCurrentEntity);
+									RemoveAABBCollider(nCurrentEntity);
 
 
 
-									pcGraphicsSystem->CleanD3DObject(&tThisWorld, nCurrentEntity);
+									pcGraphicsSystem->CleanD3DObject(ptWorld, nCurrentEntity);
 
 
 								}
-								pcCollisionSystem->RemoveAABBCollider(otherCollisionsIndex[i]);
-								pcGraphicsSystem->CleanD3DObject(&tThisWorld, otherCollisionsIndex[i]);
-								pcGraphicsSystem->CleanD3DObject(&tThisWorld, ptWorld->atAIMask[otherCollisionsIndex[i]].GunIndex);
+								RemoveAABBCollider(otherCollisionsIndex[i]);
+								pcGraphicsSystem->CleanD3DObject(ptWorld, otherCollisionsIndex[i]);
+								pcGraphicsSystem->CleanD3DObject(ptWorld, ptWorld->atAIMask[otherCollisionsIndex[i]].GunIndex);
 
 							}
 							else
@@ -225,24 +225,24 @@ void CCollisionSystem::TestThreading(TWorld * ptWorld, int nCurrentEntity, CGrap
 
 
 
-								pcCollisionSystem->RemoveAABBCollider(nCurrentEntity);
+								RemoveAABBCollider(nCurrentEntity);
 
 
 
 
-								pcGraphicsSystem->CleanD3DObject(&tThisWorld, nCurrentEntity);
-								ptWorld->atAiHeath[otherCollisionsIndex[i]].heath -= playerDamage;
+								pcGraphicsSystem->CleanD3DObject(ptWorld, nCurrentEntity);
+							//	ptWorld->atAiHeath[otherCollisionsIndex[i]].heath -= playerDamage;
 								pcAiSystem->AddAiInCombat(nCurrentEntity);
 								ptWorld->atActiveAI[otherCollisionsIndex[i]].active = true;
 								if (ptWorld->atAiHeath[otherCollisionsIndex[i]].heath <= 0)
 								{
 									pcAiSystem->SetNumberOfAI(pcAiSystem->GetNumberOfAI() - 1);
-									pcCollisionSystem->RemoveAABBCollider(otherCollisionsIndex[i]);
-									pcGraphicsSystem->CleanD3DObject(&tThisWorld, otherCollisionsIndex[i]);
-									pcGraphicsSystem->CleanD3DObject(&tThisWorld, ptWorld->atAIMask[otherCollisionsIndex[i]].GunIndex);
+									RemoveAABBCollider(otherCollisionsIndex[i]);
+									pcGraphicsSystem->CleanD3DObject(ptWorld, otherCollisionsIndex[i]);
+									pcGraphicsSystem->CleanD3DObject(ptWorld, ptWorld->atAIMask[otherCollisionsIndex[i]].GunIndex);
 
-									pcGraphicsSystem->CleanD3DObject(&tThisWorld, otherCollisionsIndex[i] + 1);
-									pcGraphicsSystem->CleanD3DObject(&tThisWorld, otherCollisionsIndex[i] + 2);
+									pcGraphicsSystem->CleanD3DObject(ptWorld, otherCollisionsIndex[i] + 1);
+									pcGraphicsSystem->CleanD3DObject(ptWorld, otherCollisionsIndex[i] + 2);
 								}
 
 							}
@@ -250,45 +250,47 @@ void CCollisionSystem::TestThreading(TWorld * ptWorld, int nCurrentEntity, CGrap
 					}
 					else if (ptWorld->atInputMask[otherCollisionsIndex[i]].m_tnInputMask == (COMPONENT_CLAYTON | COMPONENT_INPUTMASK))
 					{
-						SHOOTING THE PLAYER ONLY
+					//	SHOOTING THE PLAYER ONLY
 						if (ptWorld->atProjectiles[nCurrentEntity].m_tnProjectileMask == (COMPONENT_PROJECTILESMASK | COMPONENT_METAL | COMPONENT_ENEMY))
 						{
 							if (ptWorld->atClip[nCurrentEntity].gunIndex != -1)
 							{
 
 
-								pcCollisionSystem->RemoveAABBCollider(nCurrentEntity);
+								RemoveAABBCollider(nCurrentEntity);
 
 
-								pcGraphicsSystem->CleanD3DObject(&tThisWorld, ptWorld->atAIMask[nCurrentEntity].GunIndex);
-								pcGraphicsSystem->CleanD3DObject(&tThisWorld, nCurrentEntity);
+								pcGraphicsSystem->CleanD3DObject(ptWorld, ptWorld->atAIMask[nCurrentEntity].GunIndex);
+								pcGraphicsSystem->CleanD3DObject(ptWorld, nCurrentEntity);
 
 							}
-							ptWorld->atClayton[otherCollisionsIndex[i]].health -= pirateDamage;
+						//	ptWorld->atClayton[otherCollisionsIndex[i]].health -= pirateDamage;
+							ptWorld->atClayton[otherCollisionsIndex[i]].health -= 10;
+
 							if (ptWorld->atClayton[otherCollisionsIndex[i]].health <= 0)
 							{
-								GameOver = true;
-								InitializeEndScreen(false);
+							/*	GameOver = true;
+								InitializeEndScreen(false);*/
 							}
 						}
 
 
 					}
-					Wasn't being hit at all so it's been commented.*/
-					/*if (ptWorld->atProjectiles[nCurrentEntity].m_tnProjectileMask == (COMPONENT_PROJECTILESMASK | COMPONENT_METAL))
+				//	Wasn't being hit at all so it's been commented.
+					if (ptWorld->atProjectiles[nCurrentEntity].m_tnProjectileMask == (COMPONENT_PROJECTILESMASK | COMPONENT_METAL))
 					{
 					if (ptWorld->atClip[nCurrentEntity].gunIndex != -1)
 					{
 
 
-					pcCollisionSystem->RemoveAABBCollider(nCurrentEntity);
+					RemoveAABBCollider(nCurrentEntity);
 
 
-					pcGraphicsSystem->CleanD3DObject(&tThisWorld, ptWorld->atAIMask[nCurrentEntity].GunIndex);
-					pcGraphicsSystem->CleanD3DObject(&tThisWorld, nCurrentEntity);
+					pcGraphicsSystem->CleanD3DObject(ptWorld, ptWorld->atAIMask[nCurrentEntity].GunIndex);
+					pcGraphicsSystem->CleanD3DObject(ptWorld, nCurrentEntity);
 
 					}
-					}*/
+					}
 
 				}
 				if (otherCollisionsIndex[i] == 933) {

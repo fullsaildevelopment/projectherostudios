@@ -5,6 +5,7 @@
 #include"Entity.h"
 #include"Graphics_System.h"
 #include"Physics_System.h"
+#include"AI_System.h"
 #include <thread>
 #include<mutex>
 
@@ -41,7 +42,7 @@ public:
 	vector<TAABB> AiFrustumCheck;
 	bool aabb_to_frustum(TAABB& aabb, frustum_t& frustum);
 	bool AiVisionCheck(frustum_t eyeSight, vector<int>* index);
-	void TestThreading(TWorld * ptWorld, int nCurrentEntity, CGraphicsSystem* pcGraphicsSystem, CGraphicsSystem::TPrimalVertexBufferType* tTempVertexBuffer, XMMATRIX* m_d3dPlayerMatrix, CPhysicsSystem* pcPhysicsSystem);
+	void TestThreading(TWorld * ptWorld, int nCurrentEntity, CGraphicsSystem* pcGraphicsSystem, CGraphicsSystem::TPrimalVertexBufferType* tTempVertexBuffer, XMMATRIX* m_d3dPlayerMatrix, CPhysicsSystem* pcPhysicsSystem, CAISystem* pcAiSystem);
 	
 	
 		
