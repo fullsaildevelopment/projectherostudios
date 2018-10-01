@@ -3996,7 +3996,6 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 #if MUSIC_ON
 	AK::SoundEngine::StopAll();
 	pcAudioSystem->SendSoundsToEngine(AK::EVENTS::PLAY_HALLWAY_MUSIC, m_AkHallwayBattle);
-	pcAudioSystem->SetRTPCVolume(AK::GAME_PARAMETERS::MUSIC_VOLUME, m_fMusicVolume);
 #endif
 
 	/*while (ShowCursor(false) > -1)
@@ -4485,6 +4484,8 @@ int CGameMangerSystem::RealLevelUpdate()
 	{
 		m_fMusicVolume -= 1.0f;
 	}
+	pcAudioSystem->SetRTPCVolume(AK::GAME_PARAMETERS::MUSIC_VOLUME, m_fMusicVolume);
+
 #endif
 #if !INPUT_ABSTRACTED_ON
 	hoverPoint = { -1, -1 };
