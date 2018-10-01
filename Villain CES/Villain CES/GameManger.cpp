@@ -2577,11 +2577,8 @@ int CGameMangerSystem::PathFindingExample()
 
 
 									pcGraphicsSystem->CleanD3DObject(&tThisWorld, nCurrentEntity);
+								
 									tThisWorld.atAiHeath[otherCollisionsIndex[i]].heath -= playerDamage;
-								#if MUSIC_ON                                   
-									pcAudioSystem->SendSoundsToEngine(AK::EVENTS::PLAY_HURT_SCYLIAN, m_Scylian_Hurt);
-									pcAudioSystem->SetRTPCVolume(AK::GAME_PARAMETERS::SFX_VOLUME, m_fSFXVolume);
-								#endif
 									if (tThisWorld.atAiHeath[otherCollisionsIndex[i]].heath <= 0) {
 										pcAiSystem->SetNumberOfAI(pcAiSystem->GetNumberOfAI() - 1);
 										pcCollisionSystem->RemoveAABBCollider(otherCollisionsIndex[i]);
@@ -5473,6 +5470,10 @@ int CGameMangerSystem::RealLevelUpdate()
 
 
 										pcGraphicsSystem->CleanD3DObject(&tThisWorld, nCurrentEntity);
+#if MUSIC_ON                                   
+										pcAudioSystem->SendSoundsToEngine(AK::EVENTS::PLAY_HURT_SCYLIAN, m_Scylian_Hurt);
+										pcAudioSystem->SetRTPCVolume(AK::GAME_PARAMETERS::SFX_VOLUME, m_fSFXVolume);
+#endif
 										tThisWorld.atAiHeath[otherCollisionsIndex[i]].heath -= playerDamage;
 										tThisWorld.atActiveAI[otherCollisionsIndex[i]].active = true;
 										if (tThisWorld.atAiHeath[otherCollisionsIndex[i]].heath <= 0)
