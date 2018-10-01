@@ -134,8 +134,24 @@ void CAuger::Update(bool* loopgame)
 		pcGameMangerSystem->nCurrentScene = pcGameMangerSystem->MikesGraphicsSandbox();
 		break;
 	case 13: 
-		pcGameMangerSystem->LoadLevelWithMapInIt();
-		pcGameMangerSystem->nCurrentScene = 14;
+		if (!pcGameMangerSystem->loading)
+		{
+			pcGameMangerSystem->LoadLevelWithMapInIt();
+		}
+		else
+		{
+			pcGameMangerSystem->nCurrentScene = pcGameMangerSystem->LoadLoadingScreen(true);
+
+			if (pcGameMangerSystem->nCurrentScene == 14)
+			{
+				while (ShowCursor(false) > -1)
+				{
+					continue;
+				}
+			}
+		}
+
+		//pcGameMangerSystem->nCurrentScene = 14;
 		break;
 	case 14:
 		if (!pcGameMangerSystem->GamePaused && !pcGameMangerSystem->GameOver && GetFocus())

@@ -529,15 +529,14 @@ void CGraphicsSystem::CreateShaders(ID3D11Device * device)
 	//Now setup the layout of the data that goes into the shader.
 	D3D11_INPUT_ELEMENT_DESC m_d3dQuadLayoutDesc[] =
 	{
-		{ "POSITION", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 		{ "POSITION", 1, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 	};
 	//Get a count of the elements in the layout.
 	int nQuadElements = sizeof(m_d3dQuadLayoutDesc) / sizeof(m_d3dQuadLayoutDesc[0]);
 
 	//Create the vertex input layout.
-	device->CreateInputLayout(m_d3dQuadLayoutDesc, nQuadElements, QuadVertexShader,
-		sizeof(QuadVertexShader), &m_pd3dQuadInputLayout);
+	device->CreateInputLayout(m_d3dQuadLayoutDesc, nQuadElements, QuadVertexShader,sizeof(QuadVertexShader), &m_pd3dQuadInputLayout);
 
 	//Setup the description of the dynamic matrix constant buffer that is in the vertex shader.
 	d3dQuadMatrixBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
@@ -562,6 +561,27 @@ void CGraphicsSystem::CreateShaders(ID3D11Device * device)
 	//Create the constant buffer pointer so we can access the vertex shader constant buffer from within this class.
 	device->CreateBuffer(&d3dQuadPixelBufferDesc, NULL, &m_pd3dQuadPixelBuffer);
 #pragma endregion
+#if 0
+#pragma region Line Geometry Shaders
+	D3D11_BUFFER_DESC d3dLineMatrixBufferDesc;
+	
+
+	device->CreateGeometryShader(LineGeometryShader, sizeof(LineGeometryShader), NULL, &m_pd3dLineGeometryShader);
+	// Use Quad Layout Desc, Quad vertex shader, and Quad Pixel Shader
+	d3dLineMatrixBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+	d3dLineMatrixBufferDesc.ByteWidth = sizeof(TLineGeometryBufferType);
+	d3dLineMatrixBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	d3dLineMatrixBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	d3dLineMatrixBufferDesc.MiscFlags = 0;
+	d3dLineMatrixBufferDesc.StructureByteStride = 0;
+	// create buffer
+	device->CreateBuffer(&d3dLineMatrixBufferDesc, NULL, &m_pd3dLineGeometryBuffer);
+
+
+#pragma endregion 
+#endif // 0
+
+	
 
 	#pragma region SkyboxShaders
 	D3D11_BUFFER_DESC d3dSkyboxMatrixBufferDesc;
@@ -942,7 +962,6 @@ void CGraphicsSystem::CreateEntityBuffer(TWorld * ptWorld, int nEnityIndex)
 			m_pd3dDevice->CreateBuffer(&ptWorld->atSimpleMesh[nEnityIndex].m_d3dIndexBufferDesc, &ptWorld->atSimpleMesh[nEnityIndex].m_d3dIndexData, &ptWorld->atSimpleMesh[nEnityIndex].m_pd3dIndexBuffer);
 		}
 	}
-
 	if (ptWorld->atGraphicsMask[nEnityIndex].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_SHADERID))
 	{
 		if (ptWorld->atMesh[nEnityIndex].m_nIndexCount && ptWorld->atMesh[nEnityIndex].m_nVertexCount)
@@ -1489,64 +1508,7 @@ XMVECTOR CGraphicsSystem::GetCameraPos()
 	return campos;
 }
 
-void CGraphicsSystem::InitQuadShaderData(ID3D11DeviceContext * pd3dDeviceContext, XMMATRIX d3dWorldMatrix, XMMATRIX d3dViewMatrix, XMMATRIX d3dProjectionMatrix, TDebugMesh tDebugMesh, XMMATRIX CameraMatrix, XMFLOAT4 BackgroundColor, float fHealth)
-{
-	D3D11_MAPPED_SUBRESOURCE d3dQuadMappedResource;
-	D3D11_MAPPED_SUBRESOURCE d3dQuadPixelMappedResource;
 
-	TQuadGeometryBufferType* ptQuadMatrixBufferDataPointer = nullptr;
-	TQuadPixelBufferType* ptQuadPixelBufferDataPointer = nullptr;
-
-
-	unsigned int bufferNumber;
-
-	d3dViewMatrix = XMMatrixInverse(nullptr, CameraMatrix);
-
-	XMMATRIX d3dView;
-
-	d3dView = d3dViewMatrix;
-
-	#pragma region Map To Geometry Constant Buffer
-
-	pd3dDeviceContext->Map(m_pd3dQuadGeometryBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &d3dQuadMappedResource);
-
-	// Get a pointer to the data in the constant buffer.
-	ptQuadMatrixBufferDataPointer = (TQuadGeometryBufferType*)d3dQuadMappedResource.pData;
-
-	// Copy the matrices into the constant buffer.
-	ptQuadMatrixBufferDataPointer->m_d3dWorldMatrix = d3dWorldMatrix;
-	ptQuadMatrixBufferDataPointer->m_d3dViewMatrix = d3dView;
-	ptQuadMatrixBufferDataPointer->m_d3dProjectionMatrix = d3dProjectionMatrix;
-	ptQuadMatrixBufferDataPointer->m_fHealth = fHealth;
-	// Unlock the constant buffer.
-	pd3dDeviceContext->Unmap(m_pd3dQuadGeometryBuffer, 0);
-
-#pragma endregion
-
-	#pragma region Map To Pixel Constant Buffer
-	pd3dDeviceContext->Map(m_pd3dQuadPixelBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &d3dQuadPixelMappedResource);
-
-	// Get a pointer to the data in the constant buffer.
-	ptQuadPixelBufferDataPointer = (TQuadPixelBufferType*)d3dQuadPixelMappedResource.pData;
-
-	// Copy the matrices into the constant buffer.
-	ptQuadPixelBufferDataPointer->m_d3dBackgroundColor = BackgroundColor;
-
-	// Unlock the constant buffer.
-	pd3dDeviceContext->Unmap(m_pd3dQuadPixelBuffer, 0);
-
-#pragma endregion
-
-	// Position of the constant buffer in the vertex shader.
-	bufferNumber = 0;
-
-	pd3dDeviceContext->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_POINTLIST);
-	pd3dDeviceContext->PSSetConstantBuffers(bufferNumber, 1, &m_pd3dQuadPixelBuffer);
-
-	// Set the constant buffer in the Geometry shader with the updated values.
-	pd3dDeviceContext->GSSetConstantBuffers(0, 1, &m_pd3dQuadGeometryBuffer);
-	pd3dDeviceContext->IASetVertexBuffers(0, 1, &tDebugMesh.m_pd3dVertexBuffer, &tDebugMesh.m_nVertexBufferStride, &tDebugMesh.m_nVertexBufferOffset);
-}
 
 void CGraphicsSystem::InitPrimalShaderData(ID3D11DeviceContext * pd3dDeviceContext, XMMATRIX d3dWorldMatrix, XMMATRIX d3dViewMatrix, XMMATRIX d3dProjectionMatrix, TDebugMesh tDebugMesh, XMMATRIX CameraMatrix)
 {
@@ -1925,6 +1887,124 @@ void CGraphicsSystem::InitUIShaderData(ID3D11DeviceContext * pd3dDeviceContext, 
 	}
 }
 
+void CGraphicsSystem::InitQuadShaderData(ID3D11DeviceContext * pd3dDeviceContext, XMMATRIX d3dWorldMatrix, XMMATRIX d3dViewMatrix, XMMATRIX d3dProjectionMatrix, TDebugMesh tDebugMesh, XMMATRIX CameraMatrix, XMFLOAT4 BackgroundColor, float fHealth)
+{
+	D3D11_MAPPED_SUBRESOURCE d3dQuadMappedResource;
+	D3D11_MAPPED_SUBRESOURCE d3dQuadPixelMappedResource;
+
+	TQuadGeometryBufferType* ptQuadMatrixBufferDataPointer = nullptr;
+	TQuadPixelBufferType* ptQuadPixelBufferDataPointer = nullptr;
+
+
+	unsigned int bufferNumber;
+
+	d3dViewMatrix = XMMatrixInverse(nullptr, CameraMatrix);
+
+	XMMATRIX d3dView;
+
+	d3dView = d3dViewMatrix;
+
+	#pragma region Map To Geometry Constant Buffer
+
+	pd3dDeviceContext->Map(m_pd3dQuadGeometryBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &d3dQuadMappedResource);
+
+	// Get a pointer to the data in the constant buffer.
+	ptQuadMatrixBufferDataPointer = (TQuadGeometryBufferType*)d3dQuadMappedResource.pData;
+
+	// Copy the matrices into the constant buffer.
+	ptQuadMatrixBufferDataPointer->m_d3dWorldMatrix = d3dWorldMatrix;
+	ptQuadMatrixBufferDataPointer->m_d3dViewMatrix = d3dView;
+	ptQuadMatrixBufferDataPointer->m_d3dProjectionMatrix = d3dProjectionMatrix;
+	ptQuadMatrixBufferDataPointer->m_fHealth = fHealth;
+	// Unlock the constant buffer.
+	pd3dDeviceContext->Unmap(m_pd3dQuadGeometryBuffer, 0);
+
+#pragma endregion
+
+	#pragma region Map To Pixel Constant Buffer
+	pd3dDeviceContext->Map(m_pd3dQuadPixelBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &d3dQuadPixelMappedResource);
+
+	// Get a pointer to the data in the constant buffer.
+	ptQuadPixelBufferDataPointer = (TQuadPixelBufferType*)d3dQuadPixelMappedResource.pData;
+
+	// Copy the matrices into the constant buffer.
+	ptQuadPixelBufferDataPointer->m_d3dBackgroundColor = BackgroundColor;
+
+	// Unlock the constant buffer.
+	pd3dDeviceContext->Unmap(m_pd3dQuadPixelBuffer, 0);
+
+#pragma endregion
+
+	// Position of the constant buffer in the vertex shader.
+	bufferNumber = 0;
+
+	pd3dDeviceContext->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_POINTLIST);
+	pd3dDeviceContext->PSSetConstantBuffers(bufferNumber, 1, &m_pd3dQuadPixelBuffer);
+
+	// Set the constant buffer in the Geometry shader with the updated values.
+	pd3dDeviceContext->GSSetConstantBuffers(0, 1, &m_pd3dQuadGeometryBuffer);
+	pd3dDeviceContext->IASetVertexBuffers(0, 1, &tDebugMesh.m_pd3dVertexBuffer, &tDebugMesh.m_nVertexBufferStride, &tDebugMesh.m_nVertexBufferOffset);
+}
+
+void CGraphicsSystem::InitLineShaderData(ID3D11DeviceContext * pd3dDeviceContext, XMMATRIX d3dWorldMatrix, XMMATRIX d3dViewMatrix, XMMATRIX d3dProjectionMatrix, TDebugMesh tDebugMesh, XMMATRIX CameraMatrix, float colorAlpha, XMFLOAT4 endPoint)
+{
+	D3D11_MAPPED_SUBRESOURCE d3dLineMappedResource;
+	D3D11_MAPPED_SUBRESOURCE d3dLinePixelMappedResource;
+
+	TLineGeometryBufferType* ptLineMatrixBufferDataPointer = nullptr;
+	TQuadPixelBufferType* ptLinePixelBufferDataPointer = nullptr;
+
+
+	unsigned int bufferNumber;
+
+	d3dViewMatrix = XMMatrixInverse(nullptr, CameraMatrix);
+
+	XMMATRIX d3dView;
+
+	d3dView = d3dViewMatrix;
+
+#pragma region Map To Geometry Constant Buffer
+
+	pd3dDeviceContext->Map(m_pd3dQuadGeometryBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &d3dLineMappedResource);
+
+	// Get a pointer to the data in the constant buffer.
+	ptLineMatrixBufferDataPointer = (TLineGeometryBufferType*)d3dLineMappedResource.pData;
+
+	// Copy the matrices into the constant buffer.
+	ptLineMatrixBufferDataPointer->m_d3dWorldMatrix = d3dWorldMatrix;
+	ptLineMatrixBufferDataPointer->m_d3dViewMatrix = d3dView;
+	ptLineMatrixBufferDataPointer->m_d3dProjectionMatrix = d3dProjectionMatrix;
+	ptLineMatrixBufferDataPointer->endPoint = endPoint;
+	// Unlock the constant buffer.
+	pd3dDeviceContext->Unmap(m_pd3dQuadGeometryBuffer, 0);
+
+#pragma endregion
+
+#pragma region Map To Pixel Constant Buffer
+	pd3dDeviceContext->Map(m_pd3dQuadPixelBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &d3dLinePixelMappedResource);
+
+	// Get a pointer to the data in the constant buffer.
+	ptLinePixelBufferDataPointer = (TQuadPixelBufferType*)d3dLinePixelMappedResource.pData;
+
+	// Copy the matrices into the constant buffer.
+	ptLinePixelBufferDataPointer->m_d3dBackgroundColor = XMFLOAT4(0,1,1,colorAlpha);
+
+	// Unlock the constant buffer.
+	pd3dDeviceContext->Unmap(m_pd3dQuadPixelBuffer, 0);
+
+#pragma endregion
+
+	// Position of the constant buffer in the vertex shader.
+	bufferNumber = 0;
+
+	pd3dDeviceContext->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_POINTLIST);
+	pd3dDeviceContext->PSSetConstantBuffers(bufferNumber, 1, &m_pd3dQuadPixelBuffer);
+
+	// Set the constant buffer in the Geometry shader with the updated values.
+	pd3dDeviceContext->GSSetConstantBuffers(0, 1, &m_pd3dLineGeometryBuffer);
+	pd3dDeviceContext->IASetVertexBuffers(0, 1, &tDebugMesh.m_pd3dVertexBuffer, &tDebugMesh.m_nVertexBufferStride, &tDebugMesh.m_nVertexBufferOffset);
+}
+
 enum
 {
 	Mesh = 1,
@@ -1939,6 +2019,7 @@ enum
 	Glass,
 	Projectile,
 	AnimatedMesh,
+	Line,
 
 };
 
@@ -2130,6 +2211,23 @@ void CGraphicsSystem::ExecutePipeline(ID3D11DeviceContext *pd3dDeviceContext, in
 			}
 			break;
 		}
+		//case Line:
+		//{
+		//	pd3dDeviceContext->IASetInputLayout(m_pd3dQuadInputLayout);
+		//	//Set Shader
+		//	pd3dDeviceContext->VSSetShader(m_pd3dQuadVertexShader, NULL, 0);
+		//	pd3dDeviceContext->GSSetShader(m_pd3dLineGeometryShader, NULL, 0);
+
+		//	pd3dDeviceContext->PSSetShader(m_pd3dQuadPixelShader, NULL, 0);
+		//	//Draw
+		//	if (nGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_DEBUGMESH | COMPONENT_SHADERID))
+		//	{
+		//		pd3dDeviceContext->Draw(m_nIndexCount, 0);
+		//	}
+		//	//Don't want every object to go through geometry shader
+		//	pd3dDeviceContext->GSSetShader(nullptr, NULL, 0);
+		//	break;
+		//}
 		default:
 			break;
 	}

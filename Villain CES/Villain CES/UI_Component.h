@@ -14,7 +14,8 @@ enum eUIComponent
 	COMPONENT_DEATHSCREEN	= 1 << 8,
 	COMPONENT_BACKGROUND	= 1 << 9,
 	COMPONENT_HUD			= 1 << 10,
-	COMPONENT_FPS			= 1 << 11
+	COMPONENT_FPS			= 1 << 11,
+	COMPONENT_LOADING		= 1 << 12
 };
 
 struct TUIMask

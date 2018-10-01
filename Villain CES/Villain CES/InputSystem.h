@@ -13,8 +13,22 @@ public:
 	~CInputSystem();
 	/*
 	*/
-	GReturn InitializeGInput(HWND cTheWindow);
 
+	void gameManagerCodeAbstracted(
+		const int nButtonLeft, const int nButtonMiddle, const int nKeyP, const int nKeyU, const int nKeyR,
+		const HWND cApplicationWindow, const XMMATRIX d3dResetAimModeCameraOffset,
+		bool &bGunMode, bool &bTryToShoot, bool &bTryToReload,
+		bool &bMouseUp, bool &bMouseDown, bool &bClick,
+		bool &bGamePaused, bool &bGameOver, bool &bPauseInit, bool &bOptions,
+		bool &bMoving,
+		float &fRealTimeFov,
+		POINT &cStartDragPoint, POINT &cDragPoint, POINT &cHoverPoint, POINT &cClickPoint,
+		TCameraToggle &tCameraMode,
+		TCamera* tWalkCamera, TCamera* tAimCamera, TCamera* tDebugCamera,
+		XMMATRIX &d3dResultMatrix, XMMATRIX &d3dPlayerMatrix, XMMATRIX &d3dOffsetMatrix, XMMATRIX &d3dWorldMatrix,
+		XMMATRIX &tMyViewMatrix, XMMATRIX &tTempViewMatrix,
+		XMFLOAT4 &d3dCollisionColor, double &delta);
+	GReturn InitializeGInput(HWND cTheWindow);																																																													
 	
 
 	/*
@@ -33,7 +47,7 @@ public:
 
 	XMMATRIX DebugCamera(XMMATRIX d3d_ViewM, XMMATRIX d3d_WorldM);
 
-	XMMATRIX CharacterMovement(XMMATRIX d3dplayerMatrix);
+	XMMATRIX CharacterMovement(XMMATRIX d3dplayerMatrix, double delta);
 
 	/*
 	* WalkCamera(): This fuction makes a camera follow an in-game object.
@@ -65,7 +79,7 @@ public:
 	* Mod. Initials:          ZFB
 	*/
 	
-	XMMATRIX AimMode(TCamera* in_AimCamera, XMMATRIX d3dplayerMatrix);
+	XMMATRIX AimMode(TCamera* in_AimCamera, XMMATRIX d3dplayerMatrix, double delta);
 	XMMATRIX WalkCameraControls(XMVECTOR U, XMMATRIX viewM, bool &_movement);
 	XMMATRIX CameraUpdate(TCamera* in_walkCamera, TCamera* in_aimMode, TCamera* in_debugCamera, XMMATRIX in_resultMatrix, XMMATRIX offsetMatrix);
 	XMMATRIX CameraBehaviorLerp(XMMATRIX m1, XMMATRIX m2, float scale);

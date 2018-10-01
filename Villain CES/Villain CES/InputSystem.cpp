@@ -3,7 +3,7 @@
 CInputSystem::CInputSystem()
 {
 	m_fMouseRotationSpeed = .0055f;//Frame Dependent
-	m_fMouseMovementSpeed = .1f;//Frame Dependent
+	m_fMouseMovementSpeed = 3.0f;//Frame Dependent
 	m_YRotationLimit = 0;
 	 fXchange = 0, fYchange = 0, fXEnd = 0, fYEnd = 0;
 
@@ -34,15 +34,15 @@ TCameraToggle CInputSystem::CameraModeListen(TCameraToggle tMyCam)
 
 	}
 
-	if (InputCheck(G_KEY_8) == 1)
+	/*if (InputCheck(G_KEY_8) == 1)
 	{
 		tTempCamMode.bWalkMode = true;
 		tTempCamMode.bDebugMode = false;
 		tTempCamMode.bAimMode = false;
 		tTempCamMode.bSwitch = true;
 
-	}
-	if (InputCheck(G_BUTTON_RIGHT) == 1)
+	}*/
+	 if (InputCheck(G_BUTTON_MIDDLE) == 1)
 	{
 		if (tTempCamMode.bAimMode == false) {
 			tTempCamMode.bAimMode = true;
@@ -54,6 +54,173 @@ TCameraToggle CInputSystem::CameraModeListen(TCameraToggle tMyCam)
 	}
 
 	return tTempCamMode;
+}
+
+void CInputSystem::gameManagerCodeAbstracted(
+	const int nButtonLeft, const int nButtonMiddle, const int nKeyP, const int nKeyU, const int nKeyR,
+	const HWND cApplicationWindow, const XMMATRIX d3dResetAimModeCameraOffset,
+	bool &bGunMode, bool &bTryToShoot, bool &bTryToReload,
+	bool &bMouseUp, bool &bMouseDown, bool &bClick,
+	bool &bGamePaused, bool &bGameOver, bool &bPauseInit, bool &bOptions, 
+	bool &bMoving,
+	float &fRealTimeFov,
+	POINT &cStartDragPoint, POINT &cDragPoint, POINT &cHoverPoint, POINT &cClickPoint,
+	TCameraToggle &tCameraMode,
+	TCamera* tWalkCamera, TCamera* tAimCamera, TCamera* tDebugCamera,
+	XMMATRIX &d3dResultMatrix, XMMATRIX &d3dPlayerMatrix, XMMATRIX &d3dOffsetMatrix, XMMATRIX &d3dWorldMatrix,
+	XMMATRIX &tMyViewMatrix, XMMATRIX &tTempViewMatrix,
+	XMFLOAT4 &d3dCollisionColor, double &delta)
+{
+	cHoverPoint = { -1, -1 };
+	//POINT hoverPoint;
+	GetCursorPos(&cHoverPoint);
+	ScreenToClient(cApplicationWindow, &cHoverPoint);
+
+	//POINT 
+	cClickPoint = { -1, -1 };
+	if (nButtonLeft == 1 && bMouseUp)
+	{
+		GetCursorPos(&cStartDragPoint);
+		ScreenToClient(cApplicationWindow, &cStartDragPoint);
+
+		GetCursorPos(&cDragPoint);
+		ScreenToClient(cApplicationWindow, &cDragPoint);
+
+		bMouseUp = false;
+		bMouseDown = true;
+	}
+	else if (nButtonLeft == 1 && bMouseDown)
+	{
+		GetCursorPos(&cDragPoint);
+		ScreenToClient(cApplicationWindow, &cDragPoint);
+	}
+	else if (nButtonLeft == 0 && bMouseDown)
+	{
+		GetCursorPos(&cClickPoint);
+		ScreenToClient(cApplicationWindow, &cClickPoint);
+
+		bMouseUp = true;
+		bMouseDown = false;
+
+		bClick = true;
+
+		cStartDragPoint = { -1, -1 };
+		cDragPoint = { -1, -1 };
+	}
+
+	if (nKeyP && !bGameOver)
+	{
+		bGamePaused = true;
+		if (!bPauseInit)
+		{
+			bPauseInit = true;
+			ShowCursor(true);
+		}
+	}
+	if (nKeyU && !bGameOver)
+	{
+		bGamePaused = false;
+		bOptions = false;
+		if (bPauseInit)
+		{
+			bPauseInit = false;
+			ShowCursor(false);
+		}
+	}
+
+	d3dCollisionColor = XMFLOAT4(1.0f, 0.0f, 0.0f, 0.0f);
+
+	//Camera Functions here will move to a input system function when all behaviors are finalized - ZFB
+	if (bGamePaused == false && bGameOver == false)
+	{
+		// Walk mode not needed in demo at the moment - ZFB
+		if (tCameraMode.bWalkMode == true)
+		{
+			if (tCameraMode.bSwitch == true)
+			{
+				d3dResultMatrix = this->CameraOrientationReset(d3dResultMatrix);
+				tCameraMode.bSwitch = false;
+			}
+
+			d3dResultMatrix = this->WalkCameraControls(XMVectorSet(0, 1.0f, 0, 0), d3dResultMatrix, bMoving);
+
+			tWalkCamera->d3d_Position = XMMatrixMultiply(d3dResultMatrix, d3dPlayerMatrix);
+			tWalkCamera->d3d_Position = XMMatrixMultiply(d3dOffsetMatrix, tWalkCamera->d3d_Position);
+
+			tMyViewMatrix = tWalkCamera->d3d_Position;
+			tTempViewMatrix = tWalkCamera->d3d_Position;
+		}
+		//Aim Mode Functions are Here - ZFB 
+		else if (tCameraMode.bAimMode == true)
+		{
+			d3dOffsetMatrix = d3dResetAimModeCameraOffset;
+			if (tCameraMode.bSwitch == true)
+			{
+				d3dResultMatrix = this->CameraOrientationReset(d3dResultMatrix);
+
+				tCameraMode.bSwitch = false;
+			}
+
+			fRealTimeFov = this->ZoomSight(fRealTimeFov);
+			// Camera rotation Done here
+			tAimCamera->d3d_Position = this->AimMode(tAimCamera, d3dResultMatrix, delta);
+			//Does Character Rotation and Movement
+			d3dPlayerMatrix = this->CharacterMovement(d3dPlayerMatrix, delta);
+
+			tAimCamera->d3d_Position = XMMatrixMultiply(tAimCamera->d3d_Position, d3dPlayerMatrix);
+			// for shoulder offset 
+			tAimCamera->d3d_Position = XMMatrixMultiply(d3dOffsetMatrix, tAimCamera->d3d_Position);
+
+			tMyViewMatrix = tAimCamera->d3d_Position;
+			tTempViewMatrix = tAimCamera->d3d_Position;
+		}
+		//This is Debug Camera Function here - ZFB
+		else
+		{
+			if (tCameraMode.bSwitch == true)
+			{
+				d3dResultMatrix = this->CameraOrientationReset(d3dResultMatrix);
+				tCameraMode.bSwitch = false;
+			}
+			d3dResultMatrix = this->DebugCamera(d3dResultMatrix, d3dWorldMatrix);
+
+			tDebugCamera->d3d_Position = XMMatrixMultiply(d3dResultMatrix, d3dWorldMatrix);
+			tMyViewMatrix = tDebugCamera->d3d_Position;
+			tTempViewMatrix = tDebugCamera->d3d_Position;
+		}
+	}
+
+	// toggle the modes that you are in
+	if (bGamePaused == false && bGameOver == false)
+	{
+		if (nButtonMiddle)
+		{
+			bGunMode = !bGunMode;
+		}
+		// shoot a bullet
+		if (nButtonLeft == 1
+			&& bGunMode == true)
+		{
+			bTryToShoot = true;
+		}
+		// shoot a ray
+		else if (nButtonLeft == 1
+			&& bGunMode == false)
+		{
+			bTryToShoot = true;
+		}
+		// turn the ray off
+		else if (bGunMode == false)
+		{
+			bTryToShoot = false;
+		}
+
+		// reload
+		if (nKeyR == 1)
+		{
+			bTryToReload = true;
+		}
+	}
 }
 
 GReturn CInputSystem::InitializeGInput(HWND cTheWindow)
@@ -164,7 +331,7 @@ XMMATRIX CInputSystem::DebugCamera(XMMATRIX d3d_ViewM, XMMATRIX d3d_WorldM)
 	return d3dTmpViewM;
 }
 
-XMMATRIX CInputSystem::CharacterMovement(XMMATRIX d3dplayerMatrix)
+XMMATRIX CInputSystem::CharacterMovement(XMMATRIX d3dplayerMatrix, double delta)
 {
 
 	XMMATRIX d3dTmpViewM, d3dMovementM, d3dRotation;
@@ -195,31 +362,31 @@ XMMATRIX CInputSystem::CharacterMovement(XMMATRIX d3dplayerMatrix)
 	// up key movement
 
 	if (InputCheck(G_KEY_W) == 1) {
-		d3dMovementM = XMMatrixTranslation(0, 0, m_fMouseMovementSpeed);
+		d3dMovementM = XMMatrixTranslation(0, 0, m_fMouseMovementSpeed * delta);
 		d3dTmpViewM = XMMatrixMultiply(d3dMovementM, d3dTmpViewM);
 
 	}
 	// down key movement
 	if (InputCheck(G_KEY_S) == 1) {
-		d3dMovementM = XMMatrixTranslation(0, 0, -m_fMouseMovementSpeed);
+		d3dMovementM = XMMatrixTranslation(0, 0, -m_fMouseMovementSpeed * delta);
 
 		d3dTmpViewM = XMMatrixMultiply(d3dMovementM, d3dTmpViewM);
 
 	}
 	// left key movement
 	if (InputCheck(G_KEY_A) == 1) {
-		d3dMovementM = XMMatrixTranslation(-m_fMouseMovementSpeed, 0, 0);
+		d3dMovementM = XMMatrixTranslation(-m_fMouseMovementSpeed * delta, 0, 0);
 		d3dTmpViewM = XMMatrixMultiply(d3dMovementM, d3dTmpViewM);
 
 	}
 	// right key movement
 	if (InputCheck(G_KEY_D) == 1) {
-		d3dMovementM = XMMatrixTranslation(m_fMouseMovementSpeed, 0, 0);
+		d3dMovementM = XMMatrixTranslation(m_fMouseMovementSpeed * delta, 0, 0);
 		d3dTmpViewM = XMMatrixMultiply(d3dMovementM, d3dTmpViewM);
 
 	}
 	if (InputCheck(G_KEY_SPACE) == 1) {
-		d3dMovementM = XMMatrixTranslation(0, m_fMouseMovementSpeed, 0);
+		d3dMovementM = XMMatrixTranslation(0, m_fMouseMovementSpeed * delta, 0);
 		d3dTmpViewM = XMMatrixMultiply(d3dMovementM, d3dTmpViewM);
 
 	}
@@ -289,7 +456,7 @@ void CInputSystem::GetMousePosition()
 	m_pcMyInput->GetMousePosition(fXEnd, fYEnd);
 }
 
-XMMATRIX CInputSystem::AimMode(TCamera * in_AimCamera, XMMATRIX d3dplayerMatrix)
+XMMATRIX CInputSystem::AimMode(TCamera * in_AimCamera, XMMATRIX d3dplayerMatrix, double delta)
 {
 	XMMATRIX d3dTmpViewM, d3dMovementM, d3dRotation;
 
@@ -334,7 +501,7 @@ XMMATRIX CInputSystem::AimMode(TCamera * in_AimCamera, XMMATRIX d3dplayerMatrix)
 		//d3dTmpViewM = XMMatrixMultiply(d3dTmpViewM, d3dRotation);
 
 		// see if you can lerp fxchange or end to get a lerped value
-		d3dRotation = XMMatrixRotationY(fXchange * m_fMouseRotationSpeed);
+		d3dRotation = XMMatrixRotationY(fXchange * m_fMouseRotationSpeed * delta);
 		d3dTmpViewM = XMMatrixMultiply(d3dRotation, d3dTmpViewM);
 		//d3dTmpViewM = XMMatrixMultiply(d3dRotation, d3dTmpViewM); 
 

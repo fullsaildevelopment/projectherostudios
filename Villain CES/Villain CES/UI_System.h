@@ -16,8 +16,5 @@ public:
 	void AddBarToUI(HWND* cApplicationWindow, TWorld* tThisWorld, unsigned int nThisEntity, XMFLOAT4* backgroundColor, char* function, unsigned int textSize = 0, float ratio = 1);
 	void UpdateText(TWorld* tThisWorld, unsigned int nThisEntity, std::vector<TUIVert*>* atUIVertices, wchar_t* character, int textSize, TUIVert* UVs);
 	bool CheckIfStringsAreTheSame(char* string1, unsigned int textSize1, const char* string2);
-	void CreateEnemyHealthBar(HWND* cApplicationWindow, TWorld* tThisWorld, unsigned int &nThisEntity, XMFLOAT4 in_EnemyPos);
-	void UpdateEnemyHealthBar(TWorld* tThisWorld, unsigned int nThisEntity, XMFLOAT4 &out_EnemyPos);
-	float GetEnemyHealth(TWorld* tThisWorld, unsigned int nThisEntity);
-	//HFONT myFont = nullptr;
+	void CheckOptionsBars(TWorld* tThisWorld, CInputSystem* pcInputSystem, unsigned int nThisEntity, char* valueToChange, unsigned int valueToChangeSize, float& m_fMasterVolume, float& m_fMusicVolume, float& m_fSFXVolume, int& masterIndex, int& musicIndex, int& fxIndex);
 };

@@ -84,6 +84,7 @@ public:
 	void LoadBankFile(const wchar_t* inBankname, AkBankID &bnkId, AKRESULT &out_ErrorCheck);
 	void UnloadBankFile(const wchar_t* inBankname, AkBankID &bnkId, AKRESULT &out_ErrorCheck);
 	void SetListener(AkGameObjectID in_ListenerID, AkUInt32 _instanceNumb, AKRESULT &out_ErrorCheck);
+	void SetRTPCVolume(const AkUniqueID uID, float volumeIn);
 	void ClearAllActiveBnks();
 private:
 	CAkFilePackageLowLevelIOBlocking * m_LowIOHook;

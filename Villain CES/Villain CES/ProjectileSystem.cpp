@@ -1,5 +1,4 @@
 #include "ProjectileSystem.h"
-
 CProjectileSystem::CProjectileSystem()
 {
 }
@@ -28,4 +27,39 @@ bool CProjectileSystem::Reload(Clips * Gun)
 		return true;
 	}
 	return false;
+}
+
+int CProjectileSystem::ExtractMaterial(TWorld *tThisWorld, Clips* Gun, int currentEntity)
+{
+	int tmp_Material = Gun->currentMaterial;
+//	int extracted_Material = tThisWorld->atMesh[currentEntity].m_d3dSRVDiffuse;
+
+	switch (tmp_Material)
+	{
+	case COMPONENT_WOOD:
+		//Wood
+		break;
+
+	case COMPONENT_METAL:
+		//Metal
+	default:
+		break;
+	}
+
+
+	return tmp_Material;
+}
+
+XMVECTOR CProjectileSystem::FindBeamEndPoint(XMMATRIX in_ViewMatrix, XMMATRIX in_ProjectionMatrix, HWND in_WindowHandle ,D3D11_VIEWPORT m_d3dViewport)
+{   //Vecotr of Position in the middle of screen in screen space
+	XMVECTOR pointInScreenSpace = XMVectorSet(0, 0, 1.0f, 0);
+
+	XMVECTOR endPoint;
+	// puts screen space into object space  & the reason i pass a identity matrix is that way this coordinate stays in world space because if you pass it your changed world matrix then it would usually output the point in object space
+	endPoint = XMVector3Unproject(pointInScreenSpace, m_d3dViewport.TopLeftX, m_d3dViewport.TopLeftY, m_d3dViewport.Width / 2, m_d3dViewport.Height / 2, m_d3dViewport.MinDepth, m_d3dViewport.MaxDepth, in_ProjectionMatrix, in_ViewMatrix, XMMatrixIdentity());
+	//additional notes:
+	//next step is to draw from start point from gun matrix to this returned point and check out directx intersect method to see if it hits a drawn triangle
+	// next would be to run through abbs to try and get entity's srv texture
+
+	return endPoint;
 }

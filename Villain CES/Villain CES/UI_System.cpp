@@ -310,44 +310,46 @@ bool CUISystem::CheckIfStringsAreTheSame(char* string1, unsigned int textSize1, 
 	}
 }
 
-void CUISystem::CreateEnemyHealthBar(HWND* cApplicationWindow, TWorld * tThisWorld, unsigned int &nThisEntity, XMFLOAT4 in_EnemyPos)
+void CUISystem::CheckOptionsBars(TWorld* tThisWorld, CInputSystem* pcInputSystem, unsigned int nThisEntity, char* valueToChange, unsigned int valueToChangeSize, float& m_fMasterVolume, float& m_fMusicVolume, float& m_fSFXVolume, int& masterIndex, int& musicIndex, int& fxIndex)
 {
-	RECT window;
-	GetWindowRect(*cApplicationWindow, &window);
+	if (this->CheckIfStringsAreTheSame(valueToChange, valueToChangeSize, "Sensitivity"))
+	{
+		pcInputSystem->SetMouseRotationSpeed(tThisWorld->atBar[nThisEntity].ratio * 0.005 + 0.003);
+	}
+	else if (this->CheckIfStringsAreTheSame(valueToChange, valueToChangeSize, "Master Volume"))
+	{
+		m_fMasterVolume = tThisWorld->atBar[nThisEntity].ratio * 100;
 
-	float screenWidth = window.right - window.left;
-	float screenHeight = window.bottom - window.top;
+		if (m_fMasterVolume < m_fMusicVolume)
+		{
+			m_fMusicVolume = m_fMasterVolume;
+			tThisWorld->atBar[musicIndex].ratio = m_fMasterVolume * .01;
+		}
 
-	float ratioLeftX = (screenWidth / 2) * ((tThisWorld->atLabel[nThisEntity].x - (tThisWorld->atLabel[nThisEntity].width / 2)) * .1);
-	float ratioTopY = (screenHeight / 2) * ((tThisWorld->atLabel[nThisEntity].y + (tThisWorld->atLabel[nThisEntity].height / 2)) * .1);
-	float ratioRightX = (screenWidth / 2) * ((tThisWorld->atLabel[nThisEntity].x + (tThisWorld->atLabel[nThisEntity].width / 2)) * .1);
-	float ratioBottomY = (screenHeight / 2) * ((tThisWorld->atLabel[nThisEntity].y - (tThisWorld->atLabel[nThisEntity].height / 2)) * .1);
+		if (m_fMasterVolume < m_fSFXVolume)
+		{
+			m_fSFXVolume = m_fMasterVolume;
+			tThisWorld->atBar[fxIndex].ratio = m_fMasterVolume * .01;
+		}
+	}
+	else if (this->CheckIfStringsAreTheSame(valueToChange, valueToChangeSize, "Music Volume"))
+	{
+		m_fMusicVolume = tThisWorld->atBar[nThisEntity].ratio * 100;
 
-	//tThisWorld->atBar[nThisEntity].start.x = (screenWidth / 2) * 0.1;
-	//tThisWorld->atBar[nThisEntity].start.y = (screenHeight / 2) * 0.1;
+		if (m_fMusicVolume > m_fMasterVolume)
+		{
+			m_fMusicVolume = m_fMasterVolume;
+			tThisWorld->atBar[musicIndex].ratio = m_fMasterVolume * .01;
+		}
+	}
+	else if (this->CheckIfStringsAreTheSame(valueToChange, valueToChangeSize, "FX Volume"))
+	{
+		m_fSFXVolume = tThisWorld->atBar[nThisEntity].ratio * 100;
 
-	//
-
-	//ClientToScreen(*cApplicationWindow, &tThisWorld->atBar[nThisEntity].start);
-	//ClientToScreen(*cApplicationWindow, &tThisWorld->atBar[nThisEntity].end);
-
-
-	//tThisWorld->atBar[nThisEntity].ratio = 1.0f / tThisWorld->atAiHeath[nThisEntity].heath;
-	//tThisWorld->atBar[nThisEntity].backgroundColor = XMFLOAT4(1,0,0,1);
-
-	tThisWorld->atUIMask[nThisEntity].m_tnUIMask = tThisWorld->atUIMask[nThisEntity].m_tnUIMask | COMPONENT_BAR;
-
-	nThisEntity = createGSQuad(tThisWorld, tThisWorld->atBar[nThisEntity].backgroundColor);
+		if (m_fSFXVolume > m_fMasterVolume)
+		{
+			m_fSFXVolume = m_fMasterVolume;
+			tThisWorld->atBar[fxIndex].ratio = m_fMasterVolume * .01;
+		}
+	}
 }
-
-void CUISystem::UpdateEnemyHealthBar(TWorld * tThisWorld, unsigned int nThisEntity, XMFLOAT4 &out_EnemyPos)
-{
-	
-}
-
-float CUISystem::GetEnemyHealth(TWorld * tThisWorld, unsigned int nThisEntity)
-{
-	return tThisWorld->atAiHeath[nThisEntity].heath;
-}
-
-

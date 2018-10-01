@@ -135,7 +135,7 @@ bool CCollisionSystem::AiVisionCheck(frustum_t eyeSight,vector<int>* index)
 	return seesomething;
 }
 
-void CCollisionSystem::TestThreading(TWorld * ptWorld, int nCurrentEntity, CGraphicsSystem* pcGraphicsSystem, CGraphicsSystem::TPrimalVertexBufferType* tTempVertexBuffer,XMMATRIX* m_d3dPlayerMatrix, CPhysicsSystem* pcPhysicsSystem, CAISystem* pcAiSystem, CAudioSystem*)
+void CCollisionSystem::TestThreading(TWorld * ptWorld, int nCurrentEntity, CGraphicsSystem* pcGraphicsSystem, CGraphicsSystem::TPrimalVertexBufferType* tTempVertexBuffer,XMMATRIX* m_d3dPlayerMatrix, CPhysicsSystem* pcPhysicsSystem, CAISystem* pcAiSystem)
 {
 	ptWorld->atAABB[nCurrentEntity].theeadmade = true;
 	//ptWorld->atClayton[nCurrentEntity].health = 10;
@@ -232,8 +232,16 @@ void CCollisionSystem::TestThreading(TWorld * ptWorld, int nCurrentEntity, CGrap
 
 								pcGraphicsSystem->CleanD3DObject(ptWorld, nCurrentEntity);
 							//	ptWorld->atAiHeath[otherCollisionsIndex[i]].heath -= playerDamage;
+
+							/*	pcAudioSystem->SendSoundsToEngine(AK::EVENTS::PLAY_HURT_HUMAN, m_Human_Hurt);
+								pcAudioSystem->SetRTPCVolume(AK::GAME_PARAMETERS::SFX_VOLUME, m_fSFXVolume);*/
+
 								pcAiSystem->AddAiInCombat(nCurrentEntity);
 								ptWorld->atActiveAI[otherCollisionsIndex[i]].active = true;
+#if MUSIC_ON
+								pcAudioSystem->SendSoundsToEngine(AK::EVENTS::PLAY_HURT_HUMAN, m_Human_Hurt);
+								pcAudioSystem->SetRTPCVolume(AK::GAME_PARAMETERS::SFX_VOLUME, m_fSFXVolume);
+#endif
 								if (ptWorld->atAiHeath[otherCollisionsIndex[i]].heath <= 0)
 								{
 									pcAiSystem->SetNumberOfAI(pcAiSystem->GetNumberOfAI() - 1);
@@ -255,6 +263,7 @@ void CCollisionSystem::TestThreading(TWorld * ptWorld, int nCurrentEntity, CGrap
 						{
 							if (ptWorld->atClip[nCurrentEntity].gunIndex != -1)
 							{
+
 
 
 								RemoveAABBCollider(nCurrentEntity);

@@ -33,6 +33,8 @@ public:
 	void InitializeMainMenu();
 	int LoadTitleScreen();
 	void InitializeTitleScreen();
+	int LoadLoadingScreen(bool _continue);
+	void InitializeLoadingScreen();
 	void InitializePauseScreen();
 	void InitializeEndScreen(bool playerWin);
 	void InitializeOptionsMenu();
@@ -52,6 +54,7 @@ public:
 
 	bool GameOver = false;
 	bool GamePaused = false;
+	bool loading = false;
 	int nCurrentScene = 0;
 
 
@@ -84,16 +87,39 @@ private:
 	int renderToTexturePassIndex = 0;
 	float*xPos = new float();
 	float*yPos = new float();
-	TMeshImport bulletMesh;
+	ImporterData bulletMesh;
 	RECT windowRect;
 	int screenWidth;
 	int screenHeight;
 	float playerDamage = 25;
 	float pirateDamage = 18;
+
 	bool options = false;
 	bool credits = false;
 	bool pauseInit = false;
 	bool endInit = false;
+	bool fadeOut = false;
+	bool fadeIn = true;
+	bool mouseDown = false;
+	bool mouseUp = true;
+	bool click = false;
+
+	float prevHealth = 0;
+	float fallingHealth = 0;
+
+	int fpsIndex = -1;
+	int objLogoIndex = -1;
+	int ammoIndex = -1;
+	int masterIndex = -1;
+	int musicIndex = -1;
+	int fxIndex = -1;
+
+#define SAVE_INDEX 96
+#define LOAD_INDEX 97
+#define OPTIONS_INDEX 98
+#define CREDITS_INDEX 99
+#define TIMEUNTILCLICK 0.25
+
 	//ZB Variables
 	TCameraToggle tCameraMode;
 	XMMATRIX m_d3dWorldMatrix;
@@ -107,6 +133,8 @@ private:
 	CFPS fpsTimer;
 	float clickTime;
 	float fadeTime;
+	float lerpTime;
+	float blinkTime;
 
 	POINT startDragPoint;
 	POINT dragPoint;
@@ -125,22 +153,27 @@ private:
 
 	AkBankID init_bnkID;
 	AkGameObjectID Listener;
+	//Music Objects
 	AkGameObjectID m_AkMainMenuMusic;
-	AkBankID MainMenu_bnkID;
 	AkGameObjectID m_AkHallwayBattle;
+	AkBankID MainMenu_bnkID;
 	//SFX Objects
+	AkGameObjectID m_MenuClick;
 	AkGameObjectID m_MetalReload;
-	AkBankID m_SFX_bnkID;
 	AkGameObjectID m_AkMetalFired;
-
+	AkGameObjectID m_Laser_Fire;
+	AkGameObjectID m_Human_Hurt;
+	AkGameObjectID m_Syclian_Death;
+	AkGameObjectID m_Scylian_Hurt;
+	AkBankID m_SFX_bnkID;
+	float m_fMasterVolume;
+	float m_fMusicVolume;
+	float m_fSFXVolume;
 	AKRESULT ErrorResult;
 
+	int ExtractionBeamIndex;
 	float m_RealTimeFov;
 	bool bMoving;
 	float Health = 1.0f;
-	bool mouseDown = false;
-	bool mouseUp = true;
-	bool click = false;
 	XTime frameLock;
-
 };

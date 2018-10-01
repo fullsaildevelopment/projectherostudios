@@ -63,6 +63,7 @@ public:
 	void Xtime_Signal();
 	double GetDelta();
 	void Throttle(double targetHz);
+	void Restart();
 
 	void StableFrameRate();
 private:
