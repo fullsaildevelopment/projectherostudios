@@ -26,6 +26,7 @@ CGameMangerSystem::CGameMangerSystem(HWND window, CInputSystem* _pcInputSystem)
 	menuCamera = new TCamera();
 #if MUSIC_ON
 	pcAudioSystem = new CAudioSystem();
+	m_fMusicVolume = m_fSFXVolume = 100;
 #endif
 
 	GetWindowRect(cApplicationWindow, &windowRect);
@@ -63,7 +64,18 @@ CGameMangerSystem::~CGameMangerSystem()
 int CGameMangerSystem::LoadMainMenu()
 {
 	fpsTimer.Xtime_Signal();
+#if MUSIC_ON
+	if (pcInputSystem->InputCheck(G_KEY_F9) == 1)
+	{
+		m_fMusicVolume += 1.0f;
 
+	}
+	else if (pcInputSystem->InputCheck(G_KEY_F8) == 1)
+	{
+		m_fMusicVolume -= 1.0f;
+	}
+	pcAudioSystem->SetRTPCVolume(AK::GAME_PARAMETERS::MUSIC_VOLUME, m_fMusicVolume);
+#endif
 	//////////
 	m_d3dWorldMatrix = pcGraphicsSystem->SetDefaultWorldPosition();
 	m_d3dViewMatrix = pcGraphicsSystem->SetDefaultViewMatrix();
@@ -140,7 +152,10 @@ int CGameMangerSystem::LoadMainMenu()
 				{
 					if (PtInRect(&tThisWorld.atButton[nCurrentEntity].boundingBox, clickPoint))
 					{
+#if MUSIC_ON
 						pcAudioSystem->SendSoundsToEngine(AK::EVENTS::PLAY_MENU_CLICK, m_MenuClick);
+						pcAudioSystem->SetRTPCVolume(AK::GAME_PARAMETERS::SFX_VOLUME, m_fSFXVolume);
+#endif
 						clickTime = 0;
 
 						if (tThisWorld.atButton[nCurrentEntity].sceneIndex < 96)
@@ -196,7 +211,10 @@ int CGameMangerSystem::LoadMainMenu()
 					{
 						clickTime = 0;
 						//Click soud for menus here - ZFB
+#if MUSIC_ON
 						pcAudioSystem->SendSoundsToEngine(AK::EVENTS::PLAY_MENU_CLICK, m_MenuClick);
+						pcAudioSystem->SetRTPCVolume(AK::GAME_PARAMETERS::SFX_VOLUME, m_fSFXVolume);
+#endif
 						if (tThisWorld.atButton[nCurrentEntity].sceneIndex == 3)
 						{
 							clickPoint = { -1, -1 };
@@ -302,7 +320,10 @@ int CGameMangerSystem::LoadMainMenu()
 					{
 						clickTime = 0;
 						//Click soud for menus here - ZFB
+#if MUSIC_ON
 						pcAudioSystem->SendSoundsToEngine(AK::EVENTS::PLAY_MENU_CLICK, m_MenuClick);
+						pcAudioSystem->SetRTPCVolume(AK::GAME_PARAMETERS::SFX_VOLUME, m_fSFXVolume);
+#endif
 						if (tThisWorld.atButton[nCurrentEntity].sceneIndex == 3)
 						{
 							clickPoint = { -1, -1 };
@@ -344,9 +365,7 @@ void CGameMangerSystem::InitializeMainMenu()
 	AK::SoundEngine::StopAll();
 	pcAudioSystem->SendSoundsToEngine(AK::EVENTS::PLAY_MAIN_MENU_MUSIC, m_AkMainMenuMusic);
 #endif
-	pcAudioSystem->RegisterGameObj(m_Laser_Fire);
-	pcAudioSystem->RegisterGameObj(m_Human_Hurt);
-	pcAudioSystem->RegisterGameObj(m_Scylian_Hurt);
+	
 	pcGraphicsSystem->CleanD3DLevel(&tThisWorld);
 	atUIVertices.clear();
 	atUIIndices.clear();
@@ -742,6 +761,9 @@ void CGameMangerSystem::InitializeTitleScreen()
 	pcAudioSystem->RegisterGameObj(m_AkHallwayBattle);
 	pcAudioSystem->RegisterGameObj(m_MetalReload);
 	pcAudioSystem->RegisterGameObj(m_AkMetalFired);
+	pcAudioSystem->RegisterGameObj(m_Laser_Fire);
+	pcAudioSystem->RegisterGameObj(m_Human_Hurt);
+	pcAudioSystem->RegisterGameObj(m_Scylian_Hurt);
 	pcAudioSystem->LoadBankFile(INIT_BNK, init_bnkID, ErrorResult);
 	pcAudioSystem->LoadBankFile(MAINMENU_BNK, MainMenu_bnkID, ErrorResult);
 	pcAudioSystem->LoadBankFile(SFX, m_SFX_bnkID, ErrorResult);
@@ -2480,6 +2502,10 @@ int CGameMangerSystem::PathFindingExample()
 
 									pcGraphicsSystem->CleanD3DObject(&tThisWorld, nCurrentEntity);
 									tThisWorld.atAiHeath[otherCollisionsIndex[i]].heath -= playerDamage;
+								#if MUSIC_ON                                   
+									pcAudioSystem->SendSoundsToEngine(AK::EVENTS::PLAY_HURT_SCYLIAN, m_Scylian_Hurt);
+									pcAudioSystem->SetRTPCVolume(AK::GAME_PARAMETERS::SFX_VOLUME, m_fSFXVolume);
+								#endif
 									if (tThisWorld.atAiHeath[otherCollisionsIndex[i]].heath <= 0) {
 										pcAiSystem->SetNumberOfAI(pcAiSystem->GetNumberOfAI() - 1);
 										pcCollisionSystem->RemoveAABBCollider(otherCollisionsIndex[i]);
@@ -3970,6 +3996,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 #if MUSIC_ON
 	AK::SoundEngine::StopAll();
 	pcAudioSystem->SendSoundsToEngine(AK::EVENTS::PLAY_HALLWAY_MUSIC, m_AkHallwayBattle);
+	pcAudioSystem->SetRTPCVolume(AK::GAME_PARAMETERS::MUSIC_VOLUME, m_fMusicVolume);
 #endif
 
 	/*while (ShowCursor(false) > -1)
@@ -4448,7 +4475,17 @@ int CGameMangerSystem::RealLevelUpdate()
 	CGraphicsSystem::TMyVertexBufferType tMyVertexBufferTemp;
 	CGraphicsSystem::TUIVertexBufferType tUIVertexBuffer;
 	CGraphicsSystem::TUIPixelBufferType tUIPixelBuffer;
+#if MUSIC_ON
+	if (pcInputSystem->InputCheck(G_KEY_F9) == 1)
+	{
+		m_fMusicVolume += 1.0f;
 
+	}
+	else if (pcInputSystem->InputCheck(G_KEY_F8) == 1)
+	{
+		m_fMusicVolume -= 1.0f;
+	}
+#endif
 #if !INPUT_ABSTRACTED_ON
 	hoverPoint = { -1, -1 };
 	//POINT hoverPoint;
@@ -4810,7 +4847,7 @@ int CGameMangerSystem::RealLevelUpdate()
 				// Create the start of the Beam and put it in a vertex buffer & other intilized values
 				ExtractionBeamIndex = CreateExtractionBeam(&tThisWorld, m_d3dPlayerMatrix, PlayerStartIndex);
 				//Calculates the end point when it collides with something
-				endPoint = pcProjectileSystem->FindBeamEndPoint( m_d3dViewMatrix, m_d3dProjectionMatrix, cApplicationWindow);
+				endPoint = pcProjectileSystem->FindBeamEndPoint( m_d3dViewMatrix, m_d3dProjectionMatrix, cApplicationWindow, pcGraphicsSystem->m_d3dViewport);
 				// updateing the next frame should delete itself 
 				XMFLOAT4 toGeoShaderPoint;
 				toGeoShaderPoint.x = endPoint.m128_f32[0];
@@ -5119,6 +5156,7 @@ int CGameMangerSystem::RealLevelUpdate()
 							gunMatrix = XMMatrixMultiply(localMatrix2, gunMatrix);
 #if MUSIC_ON
 							pcAudioSystem->SendSoundsToEngine(AK::EVENTS::PLAY_METAL_FIRED, m_AkMetalFired);
+							pcAudioSystem->SetRTPCVolume(AK::GAME_PARAMETERS::SFX_VOLUME, m_fSFXVolume);
 #endif
 
 							bulletType = 0;
@@ -5156,6 +5194,7 @@ int CGameMangerSystem::RealLevelUpdate()
 							//Laser Fire sound is here - ZFB
 						#if MUSIC_ON
 							pcAudioSystem->SendSoundsToEngine(AK::EVENTS::PLAY_LASER_FIRE, m_Laser_Fire);
+							pcAudioSystem->SetRTPCVolume(AK::GAME_PARAMETERS::SFX_VOLUME, m_fSFXVolume);
 						#endif
 							bulletType = 1;
 
@@ -5181,9 +5220,10 @@ int CGameMangerSystem::RealLevelUpdate()
 					{
 						//Reload Metal Sound - ZFB
 #if MUSIC_ON
-						if (tThisWorld.atClip[nCurrentEntity].nBulletsAvailables.size() < 3)
+						if (tThisWorld.atClip[GunIndexForPlayer].nBulletsAvailables.size() < 3)
 						{
 							pcAudioSystem->SendSoundsToEngine(AK::EVENTS::PLAY_METAL_RELOAD, m_MetalReload);
+							pcAudioSystem->SetRTPCVolume(AK::GAME_PARAMETERS::SFX_VOLUME, m_fSFXVolume);
 						}
 #endif
 						pcProjectileSystem->Reload(&tThisWorld.atClip[nCurrentEntity]);
@@ -5401,6 +5441,7 @@ int CGameMangerSystem::RealLevelUpdate()
 
 								#if MUSIC_ON
 									pcAudioSystem->SendSoundsToEngine(AK::EVENTS::PLAY_HURT_HUMAN, m_Human_Hurt);
+									pcAudioSystem->SetRTPCVolume(AK::GAME_PARAMETERS::SFX_VOLUME, m_fSFXVolume);
 								#endif
 									if (tThisWorld.atClayton[otherCollisionsIndex[i]].health <= 0)
 									{
@@ -5565,7 +5606,10 @@ int CGameMangerSystem::RealLevelUpdate()
 						{
 							clickTime = 0;
 							//Click soud for menus here - ZFB
+#if MUSIC_ON
 							pcAudioSystem->SendSoundsToEngine(AK::EVENTS::PLAY_MENU_CLICK, m_MenuClick);
+							pcAudioSystem->SetRTPCVolume(AK::GAME_PARAMETERS::SFX_VOLUME, m_fSFXVolume);
+#endif
 							if (tThisWorld.atButton[nCurrentEntity].sceneIndex == 98)
 							{
 								clickPoint = { -1, -1 };
@@ -5620,7 +5664,10 @@ int CGameMangerSystem::RealLevelUpdate()
 						{
 							clickTime = 0;
 							//Click soud for menus here - ZFB
+#if MUSIC_ON
 							pcAudioSystem->SendSoundsToEngine(AK::EVENTS::PLAY_MENU_CLICK, m_MenuClick);
+							pcAudioSystem->SetRTPCVolume(AK::GAME_PARAMETERS::SFX_VOLUME, m_fSFXVolume);
+#endif
 							if (tThisWorld.atButton[nCurrentEntity].sceneIndex == nCurrentScene)
 							{
 								clickPoint = { -1, -1 };
@@ -5709,7 +5756,10 @@ int CGameMangerSystem::RealLevelUpdate()
 						{
 							clickTime = 0;
 							//Click soud for menus here - ZFB
+#if MUSIC_ON
 							pcAudioSystem->SendSoundsToEngine(AK::EVENTS::PLAY_MENU_CLICK, m_MenuClick);
+							pcAudioSystem->SetRTPCVolume(AK::GAME_PARAMETERS::SFX_VOLUME, m_fSFXVolume);
+#endif
 
 							if (tThisWorld.atButton[nCurrentEntity].sceneIndex < 96)
 							{

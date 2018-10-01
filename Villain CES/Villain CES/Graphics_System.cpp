@@ -564,7 +564,7 @@ void CGraphicsSystem::CreateShaders(ID3D11Device * device)
 #if 0
 #pragma region Line Geometry Shaders
 	D3D11_BUFFER_DESC d3dLineMatrixBufferDesc;
-	D3D11_BUFFER_DESC d3dLinePixelBufferDesc;
+	
 
 	device->CreateGeometryShader(LineGeometryShader, sizeof(LineGeometryShader), NULL, &m_pd3dLineGeometryShader);
 	// Use Quad Layout Desc, Quad vertex shader, and Quad Pixel Shader

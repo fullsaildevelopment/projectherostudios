@@ -50,34 +50,16 @@ int CProjectileSystem::ExtractMaterial(TWorld *tThisWorld, Clips* Gun, int curre
 	return tmp_Material;
 }
 
-XMVECTOR CProjectileSystem::FindBeamEndPoint( XMMATRIX in_ViewMatrix, XMMATRIX in_ProjectionMatrix, HWND in_WindowHandle)
-{
-	// Get Current Mouse Position
-	
-	RECT tempRect;
-	GetWindowRect(in_WindowHandle, &tempRect);
-	// Make a temp projection matrix to put point in
-	XMMATRIX tempProjection_Matrix = XMMatrixMultiply(in_ViewMatrix, in_ProjectionMatrix);
-	tempProjection_Matrix = XMMatrixInverse(NULL ,tempProjection_Matrix);
+XMVECTOR CProjectileSystem::FindBeamEndPoint(XMMATRIX in_ViewMatrix, XMMATRIX in_ProjectionMatrix, HWND in_WindowHandle ,D3D11_VIEWPORT m_d3dViewport)
+{   //Vecotr of Position in the middle of screen in screen space
+	XMVECTOR pointInScreenSpace = XMVectorSet(0, 0, 1.0f, 0);
 
-	float currentZDepth = in_ProjectionMatrix.r[2].m128_f32[2];
-	// put points into respective spots 
-	XMFLOAT4 nonClippedEndPoint;
-	nonClippedEndPoint.x = ((2.0f * ((tempRect.right - tempRect.left) / 2.0f) / ((tempRect.right - tempRect.left) / 2.0f)) - 1.0f) / tempProjection_Matrix.r[0].m128_f32[0];
-	nonClippedEndPoint.y = (2.0f * ((tempRect.bottom - tempRect.top) / 2) / ((tempRect.bottom - tempRect.top) / 2) - 1.0f) / tempProjection_Matrix.r[1].m128_f32[1];
-	nonClippedEndPoint.z = 2.0f * currentZDepth - 1.0f;
-	nonClippedEndPoint.w = 1.0f;
-
-	XMVECTOR clipPoint = XMVectorSet(nonClippedEndPoint.x, nonClippedEndPoint.y, nonClippedEndPoint.z, nonClippedEndPoint.w);
-	// puts points into world space
-	XMVECTOR endPoint = XMVector4Transform(clipPoint, tempProjection_Matrix);
-	
-	endPoint.m128_f32[3] = 1.0f / endPoint.m128_f32[3];
-
-	endPoint.m128_f32[0] /= endPoint.m128_f32[3];
-	endPoint.m128_f32[1] /= endPoint.m128_f32[3];
-	endPoint.m128_f32[2] /= endPoint.m128_f32[3];
-
+	XMVECTOR endPoint;
+	// puts screen space into object space  & the reason i pass a identity matrix is that way this coordinate stays in world space because if you pass it your changed world matrix then it would usually output the point in object space
+	endPoint = XMVector3Unproject(pointInScreenSpace, m_d3dViewport.TopLeftX, m_d3dViewport.TopLeftY, m_d3dViewport.Width / 2, m_d3dViewport.Height / 2, m_d3dViewport.MinDepth, m_d3dViewport.MaxDepth, in_ProjectionMatrix, in_ViewMatrix, XMMatrixIdentity());
+	//additional notes:
+	//next step is to draw from start point from gun matrix to this returned point and check out directx intersect method to see if it hits a drawn triangle
+	// next would be to run through abbs to try and get entity's srv texture
 
 	return endPoint;
 }

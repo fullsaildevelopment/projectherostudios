@@ -144,7 +144,8 @@ private:
 	AkGameObjectID m_Syclian_Death;
 	AkGameObjectID m_Scylian_Hurt;
 	AkBankID m_SFX_bnkID;
-
+	float m_fMusicVolume;
+	float m_fSFXVolume;
 	AKRESULT ErrorResult;
 
 	int ExtractionBeamIndex;
