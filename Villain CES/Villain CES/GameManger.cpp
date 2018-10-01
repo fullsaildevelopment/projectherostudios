@@ -292,91 +292,13 @@ int CGameMangerSystem::LoadMainMenu()
 				{
 					tThisWorld.atBar[nCurrentEntity].ratio = (clickPoint.x - tThisWorld.atBar[nCurrentEntity].barBoundingBox.left - 5.0) / (tThisWorld.atBar[nCurrentEntity].barBoundingBox.right - tThisWorld.atBar[nCurrentEntity].barBoundingBox.left - 10);
 				
-					if (pcUISystem->CheckIfStringsAreTheSame(tThisWorld.atBar[nCurrentEntity].valueToChange, tThisWorld.atBar[nCurrentEntity].valueToChangeSize, "Sensitivity"))
-					{
-						pcInputSystem->SetMouseRotationSpeed(tThisWorld.atBar[nCurrentEntity].ratio * 0.005 + 0.003);
-					}
-					else if (pcUISystem->CheckIfStringsAreTheSame(tThisWorld.atBar[nCurrentEntity].valueToChange, tThisWorld.atBar[nCurrentEntity].valueToChangeSize, "Master Volume"))
-					{
-						m_fMasterVolume = tThisWorld.atBar[nCurrentEntity].ratio * 100;
-
-						if (m_fMasterVolume < m_fMusicVolume)
-						{
-							m_fMusicVolume = m_fMasterVolume;
-							tThisWorld.atBar[musicIndex].ratio = m_fMasterVolume * .01;
-						}
-
-						if (m_fMasterVolume < m_fSFXVolume)
-						{
-							m_fSFXVolume = m_fMasterVolume;
-							tThisWorld.atBar[fxIndex].ratio = m_fMasterVolume * .01;
-						}
-					}
-					else if (pcUISystem->CheckIfStringsAreTheSame(tThisWorld.atBar[nCurrentEntity].valueToChange, tThisWorld.atBar[nCurrentEntity].valueToChangeSize, "Music Volume"))
-					{
-						m_fMusicVolume = tThisWorld.atBar[nCurrentEntity].ratio * 100;
-
-						if (m_fMusicVolume > m_fMasterVolume)
-						{
-							m_fMusicVolume = m_fMasterVolume;
-							tThisWorld.atBar[musicIndex].ratio = m_fMasterVolume * .01;
-						}
-					}
-					else if (pcUISystem->CheckIfStringsAreTheSame(tThisWorld.atBar[nCurrentEntity].valueToChange, tThisWorld.atBar[nCurrentEntity].valueToChangeSize, "FX Volume"))
-					{
-						m_fSFXVolume = tThisWorld.atBar[nCurrentEntity].ratio * 100;
-
-						if (m_fSFXVolume > m_fMasterVolume)
-						{
-							m_fSFXVolume = m_fMasterVolume;
-							tThisWorld.atBar[fxIndex].ratio = m_fMasterVolume * .01;
-						}
-					}
+					pcUISystem->CheckOptionsBars(&tThisWorld, pcInputSystem, nCurrentEntity, tThisWorld.atBar[nCurrentEntity].valueToChange, tThisWorld.atBar[nCurrentEntity].valueToChangeSize, m_fMasterVolume, m_fMusicVolume, m_fSFXVolume, masterIndex, musicIndex, fxIndex);
 				}
 				else if (PtInRect(&tThisWorld.atBar[nCurrentEntity].barBoundingBox, dragPoint))
 				{
 					tThisWorld.atBar[nCurrentEntity].ratio = (dragPoint.x - tThisWorld.atBar[nCurrentEntity].barBoundingBox.left - 5.0) / (tThisWorld.atBar[nCurrentEntity].barBoundingBox.right - tThisWorld.atBar[nCurrentEntity].barBoundingBox.left - 10);
 				
-					if (pcUISystem->CheckIfStringsAreTheSame(tThisWorld.atBar[nCurrentEntity].valueToChange, tThisWorld.atBar[nCurrentEntity].valueToChangeSize, "Sensitivity"))
-					{
-						pcInputSystem->SetMouseRotationSpeed(tThisWorld.atBar[nCurrentEntity].ratio * 0.005 + 0.003);
-					}
-					else if (pcUISystem->CheckIfStringsAreTheSame(tThisWorld.atBar[nCurrentEntity].valueToChange, tThisWorld.atBar[nCurrentEntity].valueToChangeSize, "Master Volume"))
-					{
-						m_fMasterVolume = tThisWorld.atBar[nCurrentEntity].ratio * 100;
-
-						if (m_fMasterVolume < m_fMusicVolume)
-						{
-							m_fMusicVolume = m_fMasterVolume;
-							tThisWorld.atBar[musicIndex].ratio = m_fMasterVolume * .01;
-						}
-
-						if (m_fMasterVolume < m_fSFXVolume)
-						{
-							m_fSFXVolume = m_fMasterVolume;
-							tThisWorld.atBar[fxIndex].ratio = m_fMasterVolume * .01;
-						}
-					}
-					else if (pcUISystem->CheckIfStringsAreTheSame(tThisWorld.atBar[nCurrentEntity].valueToChange, tThisWorld.atBar[nCurrentEntity].valueToChangeSize, "Music Volume"))
-					{
-						m_fMusicVolume = tThisWorld.atBar[nCurrentEntity].ratio * 100;
-
-						if (m_fMusicVolume > m_fMasterVolume)
-						{
-							m_fMusicVolume = m_fMasterVolume;
-							tThisWorld.atBar[musicIndex].ratio = m_fMasterVolume * .01;
-						}
-					}
-					else if (pcUISystem->CheckIfStringsAreTheSame(tThisWorld.atBar[nCurrentEntity].valueToChange, tThisWorld.atBar[nCurrentEntity].valueToChangeSize, "FX Volume"))
-					{
-						m_fSFXVolume = tThisWorld.atBar[nCurrentEntity].ratio * 100;
-
-						if (m_fSFXVolume > m_fMasterVolume)
-						{
-							m_fSFXVolume = m_fMasterVolume;
-							tThisWorld.atBar[fxIndex].ratio = m_fMasterVolume * .01;
-						}
-					}
+					pcUISystem->CheckOptionsBars(&tThisWorld, pcInputSystem, nCurrentEntity, tThisWorld.atBar[nCurrentEntity].valueToChange, tThisWorld.atBar[nCurrentEntity].valueToChangeSize, m_fMasterVolume, m_fMusicVolume, m_fSFXVolume, masterIndex, musicIndex, fxIndex);
 				}
 
 				if (tThisWorld.atBar[nCurrentEntity].backgroundColor.x == 1 &&
@@ -595,6 +517,16 @@ void CGameMangerSystem::InitializeMainMenu()
 		nThisEntity = CreateUILabelForText(&tThisWorld, menuCamera->d3d_Position, 1.5, 1, .5, -4.8, &atUIVertices, &atUIIndices, textBuffer, ARRAYSIZE(textBuffer), -1, .1);
 		pcUISystem->AddTextureToUI(&tThisWorld, nThisEntity, pcGraphicsSystem->m_pd3dDevice, nullptr, fontTexture);
 		pcUISystem->AddButtonToUI(&cApplicationWindow, &tThisWorld, nThisEntity, -1, true);
+
+		tThisWorld.atLabel[nThisEntity].color = XMFLOAT4(1, 0, 0, 0);
+	}
+
+	{
+		wchar_t textBuffer[] =
+		{ L"Press 'NEW GAME' to start" };
+
+		nThisEntity = CreateUILabelForText(&tThisWorld, menuCamera->d3d_Position, 4, 1, 7.2, -8.4, &atUIVertices, &atUIIndices, textBuffer, ARRAYSIZE(textBuffer), -1, .1);
+		pcUISystem->AddTextureToUI(&tThisWorld, nThisEntity, pcGraphicsSystem->m_pd3dDevice, nullptr, fontTexture);
 
 		tThisWorld.atLabel[nThisEntity].color = XMFLOAT4(1, 0, 0, 0);
 	}
@@ -1315,6 +1247,18 @@ void CGameMangerSystem::InitializeOptionsMenu()
 
 		tThisWorld.atLabel[nThisEntity].color = XMFLOAT4(1, 0, 0, 0);
 	}
+
+	{
+		wchar_t textBuffer[] =
+		{ L"Press 'BACK' to return\nto the main menu" };
+
+		nThisEntity = CreateUILabelForText(&tThisWorld, menuCamera->d3d_Position, 4, 2, 7.2, -8.4, &atUIVertices, &atUIIndices, textBuffer, ARRAYSIZE(textBuffer), -1, 0.1);
+		pcUISystem->AddTextureToUI(&tThisWorld, nThisEntity, pcGraphicsSystem->m_pd3dDevice, nullptr, fontTexture);
+
+		pcUISystem->AddMaskToUI(&tThisWorld, nThisEntity, COMPONENT_OPTIONS);
+
+		tThisWorld.atLabel[nThisEntity].color = XMFLOAT4(1, 0, 0, 0);
+	}
 }
 
 void CGameMangerSystem::InitializeCredits()
@@ -1351,6 +1295,18 @@ void CGameMangerSystem::InitializeCredits()
 		nThisEntity = CreateUILabelForText(&tThisWorld, menuCamera->d3d_Position, 1, 1, 0, -2.4, &atUIVertices, &atUIIndices, textBuffer, ARRAYSIZE(textBuffer), -1, 0.1);
 		pcUISystem->AddTextureToUI(&tThisWorld, nThisEntity, pcGraphicsSystem->m_pd3dDevice, nullptr, fontTexture);
 		pcUISystem->AddButtonToUI(&cApplicationWindow, &tThisWorld, nThisEntity, nCurrentScene + 1, true);
+
+		pcUISystem->AddMaskToUI(&tThisWorld, nThisEntity, COMPONENT_CREDITS);
+
+		tThisWorld.atLabel[nThisEntity].color = XMFLOAT4(1, 0, 0, 0);
+	}
+
+	{
+		wchar_t textBuffer[] =
+		{ L"Press 'BACK' to return\nto the main menu" };
+
+		nThisEntity = CreateUILabelForText(&tThisWorld, menuCamera->d3d_Position, 4, 2, 7.2, -8.4, &atUIVertices, &atUIIndices, textBuffer, ARRAYSIZE(textBuffer), -1, 0.1);
+		pcUISystem->AddTextureToUI(&tThisWorld, nThisEntity, pcGraphicsSystem->m_pd3dDevice, nullptr, fontTexture);
 
 		pcUISystem->AddMaskToUI(&tThisWorld, nThisEntity, COMPONENT_CREDITS);
 
@@ -1441,6 +1397,20 @@ void CGameMangerSystem::InitializePauseScreen()
 		CreateUILabelForText(&tThisWorld, menuCamera->d3d_Position, 1, 1, 0, 0, &atUIVertices, &atUIIndices, textBuffer, ARRAYSIZE(textBuffer), nThisEntity, .1);
 		pcUISystem->AddTextureToUI(&tThisWorld, nThisEntity, pcGraphicsSystem->m_pd3dDevice, nullptr, fontTexture);
 		pcUISystem->AddButtonToUI(&cApplicationWindow, &tThisWorld, nThisEntity, 2, true);
+
+		pcUISystem->AddMaskToUI(&tThisWorld, nThisEntity, COMPONENT_PAUSESCREEN);
+
+		tThisWorld.atLabel[nThisEntity].color = XMFLOAT4(0, 0, 0, 0);
+	}
+
+	{
+		wchar_t textBuffer[] =
+		{ L"Press 'U' or 'CONTINUE' to unpause" };
+
+		nThisEntity = createEntityReverse(&tThisWorld);
+		CreateUILabelForText(&tThisWorld, menuCamera->d3d_Position, 4, 1, 7.2, -8.4, &atUIVertices, &atUIIndices, textBuffer, ARRAYSIZE(textBuffer), nThisEntity, 0.1);
+		pcUISystem->AddTextureToUI(&tThisWorld, nThisEntity, pcGraphicsSystem->m_pd3dDevice, nullptr, fontTexture);
+		pcUISystem->AddButtonToUI(&cApplicationWindow, &tThisWorld, nThisEntity, -1, false);
 
 		pcUISystem->AddMaskToUI(&tThisWorld, nThisEntity, COMPONENT_PAUSESCREEN);
 
@@ -1679,6 +1649,20 @@ void CGameMangerSystem::InitializePauseScreen()
 		CreateUILabelForText(&tThisWorld, menuCamera->d3d_Position, 1, 1, 0, -3.6, &atUIVertices, &atUIIndices, textBuffer, ARRAYSIZE(textBuffer), nThisEntity, .1);
 		pcUISystem->AddTextureToUI(&tThisWorld, nThisEntity, pcGraphicsSystem->m_pd3dDevice, nullptr, fontTexture);
 		pcUISystem->AddButtonToUI(&cApplicationWindow, &tThisWorld, nThisEntity, nCurrentScene + 1, true);
+
+		pcUISystem->AddMaskToUI(&tThisWorld, nThisEntity, COMPONENT_OPTIONS);
+
+		tThisWorld.atLabel[nThisEntity].color = XMFLOAT4(0, 0, 0, 0);
+	}
+
+	{
+		wchar_t textBuffer[] =
+		{ L"Press 'U' to unpause or 'BACK'\nto return to the pause menu" };
+
+		nThisEntity = createEntityReverse(&tThisWorld);
+		CreateUILabelForText(&tThisWorld, menuCamera->d3d_Position, 4, 2, 7.2, -8.4, &atUIVertices, &atUIIndices, textBuffer, ARRAYSIZE(textBuffer), nThisEntity, 0.1);
+		pcUISystem->AddTextureToUI(&tThisWorld, nThisEntity, pcGraphicsSystem->m_pd3dDevice, nullptr, fontTexture);
+		pcUISystem->AddButtonToUI(&cApplicationWindow, &tThisWorld, nThisEntity, -1, false);
 
 		pcUISystem->AddMaskToUI(&tThisWorld, nThisEntity, COMPONENT_OPTIONS);
 
@@ -5855,94 +5839,14 @@ int CGameMangerSystem::RealLevelUpdate()
 					{
 						tThisWorld.atBar[nCurrentEntity].ratio = (clickPoint.x - tThisWorld.atBar[nCurrentEntity].barBoundingBox.left - 5.0) / (tThisWorld.atBar[nCurrentEntity].barBoundingBox.right - tThisWorld.atBar[nCurrentEntity].barBoundingBox.left - 10);
 
-						if (pcUISystem->CheckIfStringsAreTheSame(tThisWorld.atBar[nCurrentEntity].valueToChange, tThisWorld.atBar[nCurrentEntity].valueToChangeSize, "Sensitivity"))
-						{
-							// formula to convert the ratio from 0-1 to 0.003-0.008
-							pcInputSystem->SetMouseRotationSpeed(tThisWorld.atBar[nCurrentEntity].ratio * 0.005 + 0.003);
-						}
-						else if (pcUISystem->CheckIfStringsAreTheSame(tThisWorld.atBar[nCurrentEntity].valueToChange, tThisWorld.atBar[nCurrentEntity].valueToChangeSize, "Master Volume"))
-						{
-							m_fMasterVolume = tThisWorld.atBar[nCurrentEntity].ratio * 100;
-
-							if (m_fMasterVolume < m_fMusicVolume)
-							{
-								m_fMusicVolume = m_fMasterVolume;
-								tThisWorld.atBar[musicIndex].ratio = m_fMasterVolume * .01;
-							}
-
-							if (m_fMasterVolume < m_fSFXVolume)
-							{
-								m_fSFXVolume = m_fMasterVolume;
-								tThisWorld.atBar[fxIndex].ratio = m_fMasterVolume * .01;
-							}
-						}
-						else if (pcUISystem->CheckIfStringsAreTheSame(tThisWorld.atBar[nCurrentEntity].valueToChange, tThisWorld.atBar[nCurrentEntity].valueToChangeSize, "Music Volume"))
-						{
-							m_fMusicVolume = tThisWorld.atBar[nCurrentEntity].ratio * 100;
-
-							if (m_fMusicVolume > m_fMasterVolume)
-							{
-								m_fMusicVolume = m_fMasterVolume;
-								tThisWorld.atBar[musicIndex].ratio = m_fMasterVolume * .01;
-							}
-						}
-						else if (pcUISystem->CheckIfStringsAreTheSame(tThisWorld.atBar[nCurrentEntity].valueToChange, tThisWorld.atBar[nCurrentEntity].valueToChangeSize, "FX Volume"))
-						{
-							m_fSFXVolume = tThisWorld.atBar[nCurrentEntity].ratio * 100;
-
-							if (m_fSFXVolume > m_fMasterVolume)
-							{
-								m_fSFXVolume = m_fMasterVolume;
-								tThisWorld.atBar[fxIndex].ratio = m_fMasterVolume * .01;
-							}
-						}
+						pcUISystem->CheckOptionsBars(&tThisWorld, pcInputSystem, nCurrentEntity, tThisWorld.atBar[nCurrentEntity].valueToChange, tThisWorld.atBar[nCurrentEntity].valueToChangeSize, m_fMasterVolume, m_fMusicVolume, m_fSFXVolume, masterIndex, musicIndex, fxIndex);
 					}
 					else if (PtInRect(&tThisWorld.atBar[nCurrentEntity].barBoundingBox, dragPoint) && clickTime > TIMEUNTILCLICK)
 					{
 						// bar manipulation with mouse click try and use for enemy health bar - ZB                   
 						tThisWorld.atBar[nCurrentEntity].ratio = (dragPoint.x - tThisWorld.atBar[nCurrentEntity].barBoundingBox.left - 5.0) / (tThisWorld.atBar[nCurrentEntity].barBoundingBox.right - tThisWorld.atBar[nCurrentEntity].barBoundingBox.left - 10);
 					
-						if (pcUISystem->CheckIfStringsAreTheSame(tThisWorld.atBar[nCurrentEntity].valueToChange, tThisWorld.atBar[nCurrentEntity].valueToChangeSize, "Sensitivity"))
-						{
-							// formula to convert the ratio from 0-1 to 0.003-0.008
-							pcInputSystem->SetMouseRotationSpeed(tThisWorld.atBar[nCurrentEntity].ratio * 0.005 + 0.003);
-						}
-						else if (pcUISystem->CheckIfStringsAreTheSame(tThisWorld.atBar[nCurrentEntity].valueToChange, tThisWorld.atBar[nCurrentEntity].valueToChangeSize, "Master Volume"))
-						{
-							m_fMasterVolume = tThisWorld.atBar[nCurrentEntity].ratio * 100;
-
-							if (m_fMasterVolume < m_fMusicVolume)
-							{
-								m_fMusicVolume = m_fMasterVolume;
-								tThisWorld.atBar[musicIndex].ratio = m_fMasterVolume * .01;
-							}
-
-							if (m_fMasterVolume < m_fSFXVolume)
-							{
-								m_fSFXVolume = m_fMasterVolume;
-								tThisWorld.atBar[fxIndex].ratio = m_fMasterVolume * .01;
-							}
-						}
-						else if (pcUISystem->CheckIfStringsAreTheSame(tThisWorld.atBar[nCurrentEntity].valueToChange, tThisWorld.atBar[nCurrentEntity].valueToChangeSize, "Music Volume"))
-						{
-							m_fMusicVolume = tThisWorld.atBar[nCurrentEntity].ratio * 100;
-
-							if (m_fMusicVolume > m_fMasterVolume)
-							{
-								m_fMusicVolume = m_fMasterVolume;
-								tThisWorld.atBar[musicIndex].ratio = m_fMasterVolume * .01;
-							}
-						}
-						else if (pcUISystem->CheckIfStringsAreTheSame(tThisWorld.atBar[nCurrentEntity].valueToChange, tThisWorld.atBar[nCurrentEntity].valueToChangeSize, "FX Volume"))
-						{
-							m_fSFXVolume = tThisWorld.atBar[nCurrentEntity].ratio * 100;
-
-							if (m_fSFXVolume > m_fMasterVolume)
-							{
-								m_fSFXVolume = m_fMasterVolume;
-								tThisWorld.atBar[fxIndex].ratio = m_fMasterVolume * .01;
-							}
-						}
+						pcUISystem->CheckOptionsBars(&tThisWorld, pcInputSystem, nCurrentEntity, tThisWorld.atBar[nCurrentEntity].valueToChange, tThisWorld.atBar[nCurrentEntity].valueToChangeSize, m_fMasterVolume, m_fMusicVolume, m_fSFXVolume, masterIndex, musicIndex, fxIndex);
 					}
 
 					if (tThisWorld.atBar[nCurrentEntity].backgroundColor.x == 1 &&

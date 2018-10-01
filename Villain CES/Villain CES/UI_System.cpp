@@ -309,3 +309,47 @@ bool CUISystem::CheckIfStringsAreTheSame(char* string1, unsigned int textSize1, 
 		return true;
 	}
 }
+
+void CUISystem::CheckOptionsBars(TWorld* tThisWorld, CInputSystem* pcInputSystem, unsigned int nThisEntity, char* valueToChange, unsigned int valueToChangeSize, float& m_fMasterVolume, float& m_fMusicVolume, float& m_fSFXVolume, int& masterIndex, int& musicIndex, int& fxIndex)
+{
+	if (this->CheckIfStringsAreTheSame(valueToChange, valueToChangeSize, "Sensitivity"))
+	{
+		pcInputSystem->SetMouseRotationSpeed(tThisWorld->atBar[nThisEntity].ratio * 0.005 + 0.003);
+	}
+	else if (this->CheckIfStringsAreTheSame(valueToChange, valueToChangeSize, "Master Volume"))
+	{
+		m_fMasterVolume = tThisWorld->atBar[nThisEntity].ratio * 100;
+
+		if (m_fMasterVolume < m_fMusicVolume)
+		{
+			m_fMusicVolume = m_fMasterVolume;
+			tThisWorld->atBar[musicIndex].ratio = m_fMasterVolume * .01;
+		}
+
+		if (m_fMasterVolume < m_fSFXVolume)
+		{
+			m_fSFXVolume = m_fMasterVolume;
+			tThisWorld->atBar[fxIndex].ratio = m_fMasterVolume * .01;
+		}
+	}
+	else if (this->CheckIfStringsAreTheSame(valueToChange, valueToChangeSize, "Music Volume"))
+	{
+		m_fMusicVolume = tThisWorld->atBar[nThisEntity].ratio * 100;
+
+		if (m_fMusicVolume > m_fMasterVolume)
+		{
+			m_fMusicVolume = m_fMasterVolume;
+			tThisWorld->atBar[musicIndex].ratio = m_fMasterVolume * .01;
+		}
+	}
+	else if (this->CheckIfStringsAreTheSame(valueToChange, valueToChangeSize, "FX Volume"))
+	{
+		m_fSFXVolume = tThisWorld->atBar[nThisEntity].ratio * 100;
+
+		if (m_fSFXVolume > m_fMasterVolume)
+		{
+			m_fSFXVolume = m_fMasterVolume;
+			tThisWorld->atBar[fxIndex].ratio = m_fMasterVolume * .01;
+		}
+	}
+}

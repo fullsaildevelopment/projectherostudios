@@ -117,9 +117,10 @@ void CInputSystem::gameManagerCodeAbstracted(
 			ShowCursor(true);
 		}
 	}
-	if (nKeyU && !bOptions && !bGameOver)
+	if (nKeyU && !bGameOver)
 	{
 		bGamePaused = false;
+		bOptions = false;
 		if (bPauseInit)
 		{
 			bPauseInit = false;
