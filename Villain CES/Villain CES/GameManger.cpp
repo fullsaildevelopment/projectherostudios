@@ -27,7 +27,7 @@ CGameMangerSystem::CGameMangerSystem(HWND window, CInputSystem* _pcInputSystem)
 	menuCamera = new TCamera();
 #if MUSIC_ON
 	pcAudioSystem = new CAudioSystem();
-	m_fMusicVolume = m_fSFXVolume = 100;
+	m_fMasterVolume = m_fMusicVolume = m_fSFXVolume = 100;
 #endif
 
 	GetWindowRect(cApplicationWindow, &windowRect);
@@ -137,7 +137,7 @@ int CGameMangerSystem::LoadMainMenu()
 
 				if (fadeOut)
 				{
-					opacity = fadeTime;// / .5;
+					opacity = fadeTime;
 
 					if (opacity > 1)
 					{
@@ -250,7 +250,7 @@ int CGameMangerSystem::LoadMainMenu()
 					if (PtInRect(&tThisWorld.atButton[nCurrentEntity].boundingBox, clickPoint))
 					{
 						clickTime = 0;
-						//Click soud for menus here - ZFB
+						//Click sound for menus here - ZFB
 #if MUSIC_ON
 						pcAudioSystem->SendSoundsToEngine(AK::EVENTS::PLAY_MENU_CLICK, m_MenuClick);
 						pcAudioSystem->SetRTPCVolume(AK::GAME_PARAMETERS::SFX_VOLUME, m_fSFXVolume);
@@ -296,10 +296,70 @@ int CGameMangerSystem::LoadMainMenu()
 					{
 						pcInputSystem->SetMouseRotationSpeed(tThisWorld.atBar[nCurrentEntity].ratio * 0.005 + 0.003);
 					}
-					//else if (pcUISystem->CheckIfStringsAreTheSame(tThisWorld.atBar[nCurrentEntity].valueToChange, tThisWorld.atBar[nCurrentEntity].valueToChangeSize, "Master Volume"))
-					//{
-					//	AK::SoundEngine::SetRTPCValue(m_AkMainMenuMusic, (AkRtpcValue)(tThisWorld.atBar[nCurrentEntity].ratio * 10));
-					//}
+					else if (pcUISystem->CheckIfStringsAreTheSame(tThisWorld.atBar[nCurrentEntity].valueToChange, tThisWorld.atBar[nCurrentEntity].valueToChangeSize, "Master Volume"))
+					{
+						m_fMasterVolume = tThisWorld.atBar[nCurrentEntity].ratio * 100;
+
+						if (m_fMasterVolume < m_fMusicVolume)
+						{
+							m_fMusicVolume = m_fMasterVolume;
+							tThisWorld.atBar[musicIndex].ratio = m_fMasterVolume * .01;
+						}
+						//else
+						//{
+						//	m_fMusicVolume = m_fMasterVolume;
+						//	tThisWorld.atBar[musicIndex].ratio = m_fMasterVolume * .01;
+						//
+						//	//if (tThisWorld.atBar[musicIndex].ratio * 100 > m_fMasterVolume)
+						//	//{
+						//	//	m_fMusicVolume = m_fMasterVolume;
+						//	//}
+						//	//else
+						//	//{
+						//	//	m_fMusicVolume = tThisWorld.atBar[musicIndex].ratio * 100;
+						//	//}
+						//}
+
+						if (m_fMasterVolume < m_fSFXVolume)
+						{
+							m_fSFXVolume = m_fMasterVolume;
+							tThisWorld.atBar[fxIndex].ratio = m_fMasterVolume * .01;
+						}
+						//else
+						//{
+						//	m_fSFXVolume = m_fMasterVolume;
+						//	tThisWorld.atBar[fxIndex].ratio = m_fMasterVolume * .01;
+						//
+						//	//if (tThisWorld.atBar[fxIndex].ratio * 100 > m_fMasterVolume)
+						//	//{
+						//	//	m_fSFXVolume = m_fMasterVolume;
+						//	//}
+						//	//else
+						//	//{
+						//	//	m_fSFXVolume = tThisWorld.atBar[fxIndex].ratio * 100;
+						//	//}
+						//}
+					}
+					else if (pcUISystem->CheckIfStringsAreTheSame(tThisWorld.atBar[nCurrentEntity].valueToChange, tThisWorld.atBar[nCurrentEntity].valueToChangeSize, "Music Volume"))
+					{
+						m_fMusicVolume = tThisWorld.atBar[nCurrentEntity].ratio * 100;
+
+						if (m_fMusicVolume > m_fMasterVolume)
+						{
+							m_fMusicVolume = m_fMasterVolume;
+							tThisWorld.atBar[musicIndex].ratio = m_fMasterVolume * .01;
+						}
+					}
+					else if (pcUISystem->CheckIfStringsAreTheSame(tThisWorld.atBar[nCurrentEntity].valueToChange, tThisWorld.atBar[nCurrentEntity].valueToChangeSize, "FX Volume"))
+					{
+						m_fSFXVolume = tThisWorld.atBar[nCurrentEntity].ratio * 100;
+
+						if (m_fSFXVolume > m_fMasterVolume)
+						{
+							m_fSFXVolume = m_fMasterVolume;
+							tThisWorld.atBar[fxIndex].ratio = m_fMasterVolume * .01;
+						}
+					}
 				}
 				else if (PtInRect(&tThisWorld.atBar[nCurrentEntity].barBoundingBox, dragPoint))
 				{
@@ -309,10 +369,70 @@ int CGameMangerSystem::LoadMainMenu()
 					{
 						pcInputSystem->SetMouseRotationSpeed(tThisWorld.atBar[nCurrentEntity].ratio * 0.005 + 0.003);
 					}
-					//else if (pcUISystem->CheckIfStringsAreTheSame(tThisWorld.atBar[nCurrentEntity].valueToChange, tThisWorld.atBar[nCurrentEntity].valueToChangeSize, "Master Volume"))
-					//{
-					//	AK::SoundEngine::SetRTPCValue(m_AkMainMenuMusic, (AkRtpcValue)(tThisWorld.atBar[nCurrentEntity].ratio * 10));
-					//}
+					else if (pcUISystem->CheckIfStringsAreTheSame(tThisWorld.atBar[nCurrentEntity].valueToChange, tThisWorld.atBar[nCurrentEntity].valueToChangeSize, "Master Volume"))
+					{
+						m_fMasterVolume = tThisWorld.atBar[nCurrentEntity].ratio * 100;
+
+						if (m_fMasterVolume < m_fMusicVolume)
+						{
+							m_fMusicVolume = m_fMasterVolume;
+							tThisWorld.atBar[musicIndex].ratio = m_fMasterVolume * .01;
+						}
+						//else
+						//{
+						//	m_fMusicVolume = m_fMasterVolume;
+						//	tThisWorld.atBar[musicIndex].ratio = m_fMasterVolume * .01;
+						//
+						//	//if (tThisWorld.atBar[musicIndex].ratio * 100 > m_fMasterVolume)
+						//	//{
+						//	//	m_fMusicVolume = m_fMasterVolume;
+						//	//}
+						//	//else
+						//	//{
+						//	//	m_fMusicVolume = tThisWorld.atBar[musicIndex].ratio * 100;
+						//	//}
+						//}
+
+						if (m_fMasterVolume < m_fSFXVolume)
+						{
+							m_fSFXVolume = m_fMasterVolume;
+							tThisWorld.atBar[fxIndex].ratio = m_fMasterVolume * .01;
+						}
+						//else
+						//{
+						//	m_fSFXVolume = m_fMasterVolume;
+						//	tThisWorld.atBar[fxIndex].ratio = m_fMasterVolume * .01;
+						//
+						//	//if (tThisWorld.atBar[fxIndex].ratio * 100 > m_fMasterVolume)
+						//	//{
+						//	//	m_fSFXVolume = m_fMasterVolume;
+						//	//}
+						//	//else
+						//	//{
+						//	//	m_fSFXVolume = tThisWorld.atBar[fxIndex].ratio * 100;
+						//	//}
+						//}
+					}
+					else if (pcUISystem->CheckIfStringsAreTheSame(tThisWorld.atBar[nCurrentEntity].valueToChange, tThisWorld.atBar[nCurrentEntity].valueToChangeSize, "Music Volume"))
+					{
+						m_fMusicVolume = tThisWorld.atBar[nCurrentEntity].ratio * 100;
+
+						if (m_fMusicVolume > m_fMasterVolume)
+						{
+							m_fMusicVolume = m_fMasterVolume;
+							tThisWorld.atBar[musicIndex].ratio = m_fMasterVolume * .01;
+						}
+					}
+					else if (pcUISystem->CheckIfStringsAreTheSame(tThisWorld.atBar[nCurrentEntity].valueToChange, tThisWorld.atBar[nCurrentEntity].valueToChangeSize, "FX Volume"))
+					{
+						m_fSFXVolume = tThisWorld.atBar[nCurrentEntity].ratio * 100;
+
+						if (m_fSFXVolume > m_fMasterVolume)
+						{
+							m_fSFXVolume = m_fMasterVolume;
+							tThisWorld.atBar[fxIndex].ratio = m_fMasterVolume * .01;
+						}
+					}
 				}
 
 				if (tThisWorld.atBar[nCurrentEntity].backgroundColor.x == 1 &&
@@ -1057,6 +1177,9 @@ void CGameMangerSystem::InitializeOptionsMenu()
 		pcUISystem->AddBarToUI(&cApplicationWindow, &tThisWorld, nThisEntity, &XMFLOAT4(1, 0, 0, 1), valueToChange, ARRAYSIZE(valueToChange));
 
 		pcUISystem->AddMaskToUI(&tThisWorld, nThisEntity, COMPONENT_OPTIONS);
+
+		tThisWorld.atBar[nThisEntity].ratio = m_fMasterVolume * .01;
+		masterIndex = nThisEntity;
 	}
 
 	{
@@ -1117,6 +1240,9 @@ void CGameMangerSystem::InitializeOptionsMenu()
 		pcUISystem->AddBarToUI(&cApplicationWindow, &tThisWorld, nThisEntity, &XMFLOAT4(1, 0, 0, 1), valueToChange, ARRAYSIZE(valueToChange));
 
 		pcUISystem->AddMaskToUI(&tThisWorld, nThisEntity, COMPONENT_OPTIONS);
+
+		tThisWorld.atBar[nThisEntity].ratio = m_fMusicVolume * .01;
+		musicIndex = nThisEntity;
 	}
 
 	{
@@ -1147,6 +1273,9 @@ void CGameMangerSystem::InitializeOptionsMenu()
 		pcUISystem->AddBarToUI(&cApplicationWindow, &tThisWorld, nThisEntity, &XMFLOAT4(1, 0, 0, 1), valueToChange, ARRAYSIZE(valueToChange));
 
 		pcUISystem->AddMaskToUI(&tThisWorld, nThisEntity, COMPONENT_OPTIONS);
+
+		tThisWorld.atBar[nThisEntity].ratio = m_fSFXVolume * .01;
+		fxIndex = nThisEntity;
 	}
 
 	{
@@ -1410,6 +1539,9 @@ void CGameMangerSystem::InitializePauseScreen()
 		pcUISystem->AddBarToUI(&cApplicationWindow, &tThisWorld, nThisEntity, &XMFLOAT4(1, 0, 0, 1), valueToChange, ARRAYSIZE(valueToChange));
 
 		pcUISystem->AddMaskToUI(&tThisWorld, nThisEntity, COMPONENT_OPTIONS);
+
+		tThisWorld.atBar[nThisEntity].ratio = m_fMasterVolume * .01;
+		masterIndex = nThisEntity;
 	}
 
 	{
@@ -1472,6 +1604,9 @@ void CGameMangerSystem::InitializePauseScreen()
 		pcUISystem->AddBarToUI(&cApplicationWindow, &tThisWorld, nThisEntity, &XMFLOAT4(1, 0, 0, 1), valueToChange, ARRAYSIZE(valueToChange));
 
 		pcUISystem->AddMaskToUI(&tThisWorld, nThisEntity, COMPONENT_OPTIONS);
+
+		tThisWorld.atBar[nThisEntity].ratio = m_fMusicVolume * .01;
+		musicIndex = nThisEntity;
 	}
 
 	{
@@ -1503,6 +1638,9 @@ void CGameMangerSystem::InitializePauseScreen()
 		pcUISystem->AddBarToUI(&cApplicationWindow, &tThisWorld, nThisEntity, &XMFLOAT4(1, 0, 0, 1), valueToChange, ARRAYSIZE(valueToChange));
 
 		pcUISystem->AddMaskToUI(&tThisWorld, nThisEntity, COMPONENT_OPTIONS);
+
+		tThisWorld.atBar[nThisEntity].ratio = m_fSFXVolume * .01;
+		fxIndex = nThisEntity;
 	}
 
 	{
@@ -5778,10 +5916,42 @@ int CGameMangerSystem::RealLevelUpdate()
 							// formula to convert the ratio from 0-1 to 0.003-0.008
 							pcInputSystem->SetMouseRotationSpeed(tThisWorld.atBar[nCurrentEntity].ratio * 0.005 + 0.003);
 						}
-						//else if (pcUISystem->CheckIfStringsAreTheSame(tThisWorld.atBar[nCurrentEntity].valueToChange, tThisWorld.atBar[nCurrentEntity].valueToChangeSize, "Master Volume"))
-						//{
-						//	AK::SoundEngine::SetRTPCValue(AK::BUSSES::MASTER_AUDIO_BUS, (AkRtpcValue)(tThisWorld.atBar[nCurrentEntity].ratio * 10));
-						//}
+						else if (pcUISystem->CheckIfStringsAreTheSame(tThisWorld.atBar[nCurrentEntity].valueToChange, tThisWorld.atBar[nCurrentEntity].valueToChangeSize, "Master Volume"))
+						{
+							m_fMasterVolume = tThisWorld.atBar[nCurrentEntity].ratio * 100;
+
+							if (m_fMasterVolume < m_fMusicVolume)
+							{
+								m_fMusicVolume = m_fMasterVolume;
+								tThisWorld.atBar[musicIndex].ratio = m_fMasterVolume * .01;
+							}
+
+							if (m_fMasterVolume < m_fSFXVolume)
+							{
+								m_fSFXVolume = m_fMasterVolume;
+								tThisWorld.atBar[fxIndex].ratio = m_fMasterVolume * .01;
+							}
+						}
+						else if (pcUISystem->CheckIfStringsAreTheSame(tThisWorld.atBar[nCurrentEntity].valueToChange, tThisWorld.atBar[nCurrentEntity].valueToChangeSize, "Music Volume"))
+						{
+							m_fMusicVolume = tThisWorld.atBar[nCurrentEntity].ratio * 100;
+
+							if (m_fMusicVolume > m_fMasterVolume)
+							{
+								m_fMusicVolume = m_fMasterVolume;
+								tThisWorld.atBar[musicIndex].ratio = m_fMasterVolume * .01;
+							}
+						}
+						else if (pcUISystem->CheckIfStringsAreTheSame(tThisWorld.atBar[nCurrentEntity].valueToChange, tThisWorld.atBar[nCurrentEntity].valueToChangeSize, "FX Volume"))
+						{
+							m_fSFXVolume = tThisWorld.atBar[nCurrentEntity].ratio * 100;
+
+							if (m_fSFXVolume > m_fMasterVolume)
+							{
+								m_fSFXVolume = m_fMasterVolume;
+								tThisWorld.atBar[fxIndex].ratio = m_fMasterVolume * .01;
+							}
+						}
 					}
 					else if (PtInRect(&tThisWorld.atBar[nCurrentEntity].barBoundingBox, dragPoint) && clickTime > TIMEUNTILCLICK)
 					{
@@ -5793,10 +5963,42 @@ int CGameMangerSystem::RealLevelUpdate()
 							// formula to convert the ratio from 0-1 to 0.003-0.008
 							pcInputSystem->SetMouseRotationSpeed(tThisWorld.atBar[nCurrentEntity].ratio * 0.005 + 0.003);
 						}
-						//else if (pcUISystem->CheckIfStringsAreTheSame(tThisWorld.atBar[nCurrentEntity].valueToChange, tThisWorld.atBar[nCurrentEntity].valueToChangeSize, "Master Volume"))
-						//{
-						//	AK::SoundEngine::SetRTPCValue(AK::BUSSES::MASTER_AUDIO_BUS, (AkRtpcValue)(tThisWorld.atBar[nCurrentEntity].ratio * 10));
-						//}
+						else if (pcUISystem->CheckIfStringsAreTheSame(tThisWorld.atBar[nCurrentEntity].valueToChange, tThisWorld.atBar[nCurrentEntity].valueToChangeSize, "Master Volume"))
+						{
+							m_fMasterVolume = tThisWorld.atBar[nCurrentEntity].ratio * 100;
+
+							if (m_fMasterVolume < m_fMusicVolume)
+							{
+								m_fMusicVolume = m_fMasterVolume;
+								tThisWorld.atBar[musicIndex].ratio = m_fMasterVolume * .01;
+							}
+
+							if (m_fMasterVolume < m_fSFXVolume)
+							{
+								m_fSFXVolume = m_fMasterVolume;
+								tThisWorld.atBar[fxIndex].ratio = m_fMasterVolume * .01;
+							}
+						}
+						else if (pcUISystem->CheckIfStringsAreTheSame(tThisWorld.atBar[nCurrentEntity].valueToChange, tThisWorld.atBar[nCurrentEntity].valueToChangeSize, "Music Volume"))
+						{
+							m_fMusicVolume = tThisWorld.atBar[nCurrentEntity].ratio * 100;
+
+							if (m_fMusicVolume > m_fMasterVolume)
+							{
+								m_fMusicVolume = m_fMasterVolume;
+								tThisWorld.atBar[musicIndex].ratio = m_fMasterVolume * .01;
+							}
+						}
+						else if (pcUISystem->CheckIfStringsAreTheSame(tThisWorld.atBar[nCurrentEntity].valueToChange, tThisWorld.atBar[nCurrentEntity].valueToChangeSize, "FX Volume"))
+						{
+							m_fSFXVolume = tThisWorld.atBar[nCurrentEntity].ratio * 100;
+
+							if (m_fSFXVolume > m_fMasterVolume)
+							{
+								m_fSFXVolume = m_fMasterVolume;
+								tThisWorld.atBar[fxIndex].ratio = m_fMasterVolume * .01;
+							}
+						}
 					}
 
 					if (tThisWorld.atBar[nCurrentEntity].backgroundColor.x == 1 &&
