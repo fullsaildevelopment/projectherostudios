@@ -84,7 +84,7 @@ private:
 	int renderToTexturePassIndex = 0;
 	float*xPos = new float();
 	float*yPos = new float();
-	TMeshImport bulletMesh;
+	ImporterData bulletMesh;
 	RECT windowRect;
 	int screenWidth;
 	int screenHeight;
@@ -147,16 +147,24 @@ private:
 
 	AkBankID init_bnkID;
 	AkGameObjectID Listener;
+	//Music Objects
 	AkGameObjectID m_AkMainMenuMusic;
-	AkBankID MainMenu_bnkID;
 	AkGameObjectID m_AkHallwayBattle;
+	AkBankID MainMenu_bnkID;
 	//SFX Objects
+	AkGameObjectID m_MenuClick;
 	AkGameObjectID m_MetalReload;
-	AkBankID m_SFX_bnkID;
 	AkGameObjectID m_AkMetalFired;
-
+	AkGameObjectID m_Laser_Fire;
+	AkGameObjectID m_Human_Hurt;
+	AkGameObjectID m_Syclian_Death;
+	AkGameObjectID m_Scylian_Hurt;
+	AkBankID m_SFX_bnkID;
+	float m_fMusicVolume;
+	float m_fSFXVolume;
 	AKRESULT ErrorResult;
 
+	int ExtractionBeamIndex;
 	float m_RealTimeFov;
 	bool bMoving;
 	float Health = 1.0f;

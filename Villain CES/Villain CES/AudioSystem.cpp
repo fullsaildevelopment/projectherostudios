@@ -137,6 +137,11 @@ void CAudioSystem::SetListener(AkGameObjectID in_ListenerID, AkUInt32 _instanceN
 	out_ErrorCheck = AK::SoundEngine::SetDefaultListeners(&in_ListenerID,  _instanceNumb);
 }
 
+void CAudioSystem::SetRTPCVolume(const AkUniqueID uID, float volumeIn)
+{
+	AK::SoundEngine::SetRTPCValue(uID, (AkRtpcValue)volumeIn);
+}
+
 
 void CAudioSystem::ClearAllActiveBnks()
 {
