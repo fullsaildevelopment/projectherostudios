@@ -2,6 +2,12 @@
 #include"Collision_Component.h"
 #include <list>
 #include"stdafx.h"
+#include"Entity.h"
+#include"Graphics_System.h"
+#include"Physics_System.h"
+#include <thread>
+#include<mutex>
+
 using namespace std;
 //File header :
 /***
@@ -35,12 +41,18 @@ public:
 	vector<TAABB> AiFrustumCheck;
 	bool aabb_to_frustum(TAABB& aabb, frustum_t& frustum);
 	bool AiVisionCheck(frustum_t eyeSight, vector<int>* index);
-
+	void TestThreading(TWorld * ptWorld, int nCurrentEntity, CGraphicsSystem* pcGraphicsSystem, CGraphicsSystem::TPrimalVertexBufferType* tTempVertexBuffer, XMMATRIX* m_d3dPlayerMatrix, CPhysicsSystem* pcPhysicsSystem);
+	
+	
+		
+		
+	
 private:
 	bool ContainAABB(int nIndex);
 	int classify_aabb_to_plane(TAABB& aabb, plane_t& plane);
 	bool spehreCollison(sphere_t a, sphere_t b);
 	int classify_sphere_to_plane(sphere_t& sphere, plane_t& plane);
+	mutex mylock;
 	
 
 

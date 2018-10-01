@@ -67,7 +67,7 @@ public:
 	void PathPlaningMovement(TAIPathFinding* path, XMMATRIX* worldMatrix);
 	void LookAtObject(XMMATRIX thingToLookAt, XMMATRIX* AIMatrix);
 	void Strafe(XMMATRIX* AiMatrix);
-	void MoveAiToCoverLocation(TCoverTrigger Cover, TWorld * ptWorld);
+	void MoveAiToCoverLocation(TCoverTrigger Cover, TWorld * ptWorld,int PlayerStartIndex);
 	void AddAiInCombat(int aiEnitity);
 private:
 	vector<int> AIInCombat;

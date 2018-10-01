@@ -524,7 +524,7 @@ void CAISystem::MakeDirections(vector<XMVECTOR>* directions, PlannerNode* curren
 
 
 
-void CAISystem::MoveAiToCoverLocation(TCoverTrigger Cover,TWorld * ptWorld)
+void CAISystem::MoveAiToCoverLocation(TCoverTrigger Cover,TWorld * ptWorld,int PlayerStartIndex)
 {
 	
 	int index=0;
@@ -537,6 +537,8 @@ void CAISystem::MoveAiToCoverLocation(TCoverTrigger Cover,TWorld * ptWorld)
 				ptWorld->atPathPlanining[Cover.AItoMove[i]].DelayMovement = rand() % 1000 + 50;
 				ptWorld->atPathPlanining[Cover.AItoMove[i]].InterRuptPathPlanning = false;
 				ptWorld->atActiveAI[Cover.AItoMove[i]].active = true;
+				ptWorld ->atAIVision[Cover.AItoMove[i]].keepSearching = false;
+				ptWorld->atAIVision[Cover.AItoMove[i]].indexLookingAt = PlayerStartIndex;
 			}
 		}
 	}
