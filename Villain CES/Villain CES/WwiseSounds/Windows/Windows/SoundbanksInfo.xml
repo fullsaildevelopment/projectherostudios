@@ -46,7 +46,6 @@
 			<Path>Augur_SFX.bnk</Path>
 			<IncludedEvents>
 				<Event Id="2189107751" Name="Play_Hurt_Human" ObjectPath="\Events\Default Work Unit\Play_Hurt_Human"/>
-				<Event Id="3600088999" Name="Play_Hurt_Scylian" ObjectPath="\Events\Default Work Unit\Play_Hurt_Scylian"/>
 				<Event Id="532216254" Name="Play_Laser_Fire" ObjectPath="\Events\Default Work Unit\Play_Laser_Fire"/>
 				<Event Id="1357778998" Name="Play_Menu_Click" ObjectPath="\Events\Default Work Unit\Play_Menu_Click"/>
 				<Event Id="372592918" Name="Play_Metal_Fired" ObjectPath="\Events\Default Work Unit\Play_Metal_Fired"/>
@@ -57,10 +56,6 @@
 				<File Id="214970038" Language="SFX">
 					<ShortName>Scyllian Death Cry.wav</ShortName>
 					<Path>SFX\Scyllian Death Cry_56D34C19.wem</Path>
-				</File>
-				<File Id="245692687" Language="SFX">
-					<ShortName>Scyllian Growl 2 (Deeper).wav</ShortName>
-					<Path>SFX\Scyllian Growl 2 (Deeper)_56D34C19.wem</Path>
 				</File>
 				<File Id="654863545" Language="SFX">
 					<ShortName>Menu Tick.wav</ShortName>

@@ -3,7 +3,6 @@ Event	ID	Name			Wwise Object Path	Notes
 	532216254	Play_Laser_Fire			\Default Work Unit\Play_Laser_Fire	
 	1357778998	Play_Menu_Click			\Default Work Unit\Play_Menu_Click	
 	2189107751	Play_Hurt_Human			\Default Work Unit\Play_Hurt_Human	
-	3600088999	Play_Hurt_Scylian			\Default Work Unit\Play_Hurt_Scylian	
 	3744242630	Play_Scylian_Death			\Default Work Unit\Play_Scylian_Death	
 	4261380785	Play_Metal_Reload			\Default Work Unit\Play_Metal_Reload	
 
@@ -12,7 +11,6 @@ Game Parameter	ID	Name			Wwise Object Path	Notes
 
 In Memory Audio	ID	Name	Audio source file		Wwise Object Path	Notes	Data Size
 	214970038	Scyllian Death Cry	C:\Users\world\Documents\WwiseProjects\Augur_Sounds\.cache\Windows\SFX\Scyllian Death Cry_56D34C19.wem		\Actor-Mixer Hierarchy\Default Work Unit\Scyllian Death Cry		526400
-	245692687	Scyllian Growl 2 (Deeper)	C:\Users\world\Documents\WwiseProjects\Augur_Sounds\.cache\Windows\SFX\Scyllian Growl 2 (Deeper)_56D34C19.wem		\Actor-Mixer Hierarchy\Default Work Unit\Scyllian Growl 2 (Deeper)		332352
 	654863545	Menu Tick	C:\Users\world\Documents\WwiseProjects\Augur_Sounds\.cache\Windows\SFX\Menu Tick_56D34C19.wem		\Actor-Mixer Hierarchy\Default Work Unit\Menu Tick		7796
 	709819371	Flintlock Fired	C:\Users\world\Documents\WwiseProjects\Augur_Sounds\.cache\Windows\SFX\Flintlock Fired_56D34C19.wem		\Actor-Mixer Hierarchy\Default Work Unit\Flintlock Fired		416720
 	728176999	Grunt-Human Male	C:\Users\world\Documents\WwiseProjects\Augur_Sounds\.cache\Windows\SFX\Grunt-Human Male_56D34C19.wem		\Actor-Mixer Hierarchy\Default Work Unit\Grunt-Human Male		57352
