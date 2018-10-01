@@ -27,7 +27,7 @@ public:
 		TCamera* tWalkCamera, TCamera* tAimCamera, TCamera* tDebugCamera,
 		XMMATRIX &d3dResultMatrix, XMMATRIX &d3dPlayerMatrix, XMMATRIX &d3dOffsetMatrix, XMMATRIX &d3dWorldMatrix,
 		XMMATRIX &tMyViewMatrix, XMMATRIX &tTempViewMatrix,
-		XMFLOAT4 &d3dCollisionColor);
+		XMFLOAT4 &d3dCollisionColor, double &delta);
 	GReturn InitializeGInput(HWND cTheWindow);																																																													
 	
 
@@ -47,7 +47,7 @@ public:
 
 	XMMATRIX DebugCamera(XMMATRIX d3d_ViewM, XMMATRIX d3d_WorldM);
 
-	XMMATRIX CharacterMovement(XMMATRIX d3dplayerMatrix);
+	XMMATRIX CharacterMovement(XMMATRIX d3dplayerMatrix, double delta);
 
 	/*
 	* WalkCamera(): This fuction makes a camera follow an in-game object.
@@ -79,7 +79,7 @@ public:
 	* Mod. Initials:          ZFB
 	*/
 	
-	XMMATRIX AimMode(TCamera* in_AimCamera, XMMATRIX d3dplayerMatrix);
+	XMMATRIX AimMode(TCamera* in_AimCamera, XMMATRIX d3dplayerMatrix, double delta);
 	XMMATRIX WalkCameraControls(XMVECTOR U, XMMATRIX viewM, bool &_movement);
 	XMMATRIX CameraUpdate(TCamera* in_walkCamera, TCamera* in_aimMode, TCamera* in_debugCamera, XMMATRIX in_resultMatrix, XMMATRIX offsetMatrix);
 	XMMATRIX CameraBehaviorLerp(XMMATRIX m1, XMMATRIX m2, float scale);

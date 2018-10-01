@@ -2171,7 +2171,7 @@ int CGameMangerSystem::PathFindingExample()
 			{
 				if (tCameraMode.bWalkMode == true)
 				{
-					m_d3dPlayerMatrix = pcInputSystem->CharacterMovement(m_d3dPlayerMatrix);
+					m_d3dPlayerMatrix = pcInputSystem->CharacterMovement(m_d3dPlayerMatrix, 1);
 					tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = m_d3dPlayerMatrix;
 					tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = pcPhysicsSystem->ResolveForces(&tThisWorld.atRigidBody[nCurrentEntity], tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, false);
 					m_d3dPlayerMatrix = tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix;
@@ -3259,7 +3259,7 @@ int CGameMangerSystem::SpacePirateGamePlay()
 			{
 				if (tCameraMode.bWalkMode == true)
 				{
-					m_d3dPlayerMatrix = pcInputSystem->CharacterMovement(m_d3dPlayerMatrix);
+					m_d3dPlayerMatrix = pcInputSystem->CharacterMovement(m_d3dPlayerMatrix, 1);
 					tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = m_d3dPlayerMatrix;
 					tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = pcPhysicsSystem->ResolveForces(&tThisWorld.atRigidBody[nCurrentEntity], tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, false);
 					m_d3dPlayerMatrix = tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix;
@@ -4722,6 +4722,8 @@ int CGameMangerSystem::RealLevelUpdate()
 #pragma endregion
 	//This abstraction is 12 lines formatted and 1 line unformatted. Not abstracted is 169 lines.
 #if INPUT_ABSTRACTED_ON
+	double delta = fpsTimer.GetDelta();
+
 	pcInputSystem->gameManagerCodeAbstracted(pcInputSystem->InputCheck(G_BUTTON_LEFT), pcInputSystem->InputCheck(G_BUTTON_MIDDLE), pcInputSystem->InputCheck(G_KEY_P), pcInputSystem->InputCheck(G_KEY_U), pcInputSystem->InputCheck(G_KEY_R), 
 		cApplicationWindow, pcGraphicsSystem->ResetAimModeCameraOffset(),
 		tThisWorld.atClip[GunIndexForPlayer].GunMode, tThisWorld.atClip[GunIndexForPlayer].tryToShoot, tThisWorld.atClip[GunIndexForPlayer].tryToReload,
@@ -4734,7 +4736,7 @@ int CGameMangerSystem::RealLevelUpdate()
 		walkCamera, aimCamera, debugCamera,
 		m_d3d_ResultMatrix, m_d3dPlayerMatrix, m_d3dOffsetMatrix, m_d3dWorldMatrix,
 		tMyVertexBufferTemp.m_d3dViewMatrix, tTempVertexBuffer.m_d3dViewMatrix,
-		tTempPixelBuffer.m_d3dCollisionColor);
+		tTempPixelBuffer.m_d3dCollisionColor, delta);
 #endif // INPUT_ABSTRACTED_ON
 	pcGraphicsSystem->UpdateD3D();
 
@@ -4899,14 +4901,14 @@ int CGameMangerSystem::RealLevelUpdate()
 				{
 					if (tCameraMode.bWalkMode == true)
 					{
-						m_d3dPlayerMatrix = pcInputSystem->CharacterMovement(m_d3dPlayerMatrix);
+						m_d3dPlayerMatrix = pcInputSystem->CharacterMovement(m_d3dPlayerMatrix, fpsTimer.GetDelta());
 						tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = m_d3dPlayerMatrix;
 						tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = pcPhysicsSystem->ResolveForces(&tThisWorld.atRigidBody[nCurrentEntity], tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, false);
 						m_d3dPlayerMatrix = tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix;
 					}
 					else if (tCameraMode.bAimMode == true)
 					{
-						m_d3dPlayerMatrix = pcInputSystem->CharacterMovement(m_d3dPlayerMatrix);
+						m_d3dPlayerMatrix = pcInputSystem->CharacterMovement(m_d3dPlayerMatrix, fpsTimer.GetDelta());
 						tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = m_d3dPlayerMatrix;
 						tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = pcPhysicsSystem->ResolveForces(&tThisWorld.atRigidBody[nCurrentEntity], tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, false);
 						m_d3dPlayerMatrix = tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix;
@@ -5563,7 +5565,7 @@ int CGameMangerSystem::RealLevelUpdate()
 
 					tUIPixelBuffer.hoverColor = tThisWorld.atLabel[nCurrentEntity].color;
 
-					if (tThisWorld.atButton[nCurrentEntity].enabled && clickTime > .2)
+					if (tThisWorld.atButton[nCurrentEntity].enabled && clickTime > TIMEUNTILCLICK)
 					{
 						if (PtInRect(&tThisWorld.atButton[nCurrentEntity].boundingBox, clickPoint))
 						{
@@ -5617,7 +5619,7 @@ int CGameMangerSystem::RealLevelUpdate()
 
 					tUIPixelBuffer.hoverColor = tThisWorld.atLabel[nCurrentEntity].color;
 
-					if (tThisWorld.atButton[nCurrentEntity].enabled && clickTime > .2)
+					if (tThisWorld.atButton[nCurrentEntity].enabled && clickTime > TIMEUNTILCLICK)
 					{
 						if (PtInRect(&tThisWorld.atButton[nCurrentEntity].boundingBox, clickPoint))
 						{
@@ -5644,7 +5646,7 @@ int CGameMangerSystem::RealLevelUpdate()
 
 				if (tThisWorld.atUIMask[nCurrentEntity].m_tnUIMask == (COMPONENT_UIMASK | COMPONENT_LABEL | COMPONENT_BAR | COMPONENT_OPTIONS))
 				{
-					if (PtInRect(&tThisWorld.atBar[nCurrentEntity].barBoundingBox, clickPoint) && clickTime > .2)
+					if (PtInRect(&tThisWorld.atBar[nCurrentEntity].barBoundingBox, clickPoint) && clickTime > TIMEUNTILCLICK)
 					{
 						tThisWorld.atBar[nCurrentEntity].ratio = (clickPoint.x - tThisWorld.atBar[nCurrentEntity].barBoundingBox.left - 5.0) / (tThisWorld.atBar[nCurrentEntity].barBoundingBox.right - tThisWorld.atBar[nCurrentEntity].barBoundingBox.left - 10);
 
@@ -5658,7 +5660,7 @@ int CGameMangerSystem::RealLevelUpdate()
 						//	AK::SoundEngine::SetRTPCValue(AK::BUSSES::MASTER_AUDIO_BUS, (AkRtpcValue)(tThisWorld.atBar[nCurrentEntity].ratio * 10));
 						//}
 					}
-					else if (PtInRect(&tThisWorld.atBar[nCurrentEntity].barBoundingBox, dragPoint) && clickTime > .2)
+					else if (PtInRect(&tThisWorld.atBar[nCurrentEntity].barBoundingBox, dragPoint) && clickTime > TIMEUNTILCLICK)
 					{
 						// bar manipulation with mouse click try and use for enemy health bar - ZB                   
 						tThisWorld.atBar[nCurrentEntity].ratio = (dragPoint.x - tThisWorld.atBar[nCurrentEntity].barBoundingBox.left - 5.0) / (tThisWorld.atBar[nCurrentEntity].barBoundingBox.right - tThisWorld.atBar[nCurrentEntity].barBoundingBox.left - 10);
@@ -5712,7 +5714,7 @@ int CGameMangerSystem::RealLevelUpdate()
 
 					tUIPixelBuffer.hoverColor = tThisWorld.atLabel[nCurrentEntity].color;
 
-					if (tThisWorld.atButton[nCurrentEntity].enabled && clickTime > .2)
+					if (tThisWorld.atButton[nCurrentEntity].enabled && clickTime > TIMEUNTILCLICK)
 					{
 						if (PtInRect(&tThisWorld.atButton[nCurrentEntity].boundingBox, clickPoint))
 						{
@@ -5776,13 +5778,8 @@ int CGameMangerSystem::RealLevelUpdate()
 
 				if (nCurrentEntity == objLogoIndex)
 				{
-					float degrees = XMConvertToDegrees(fadeTime * (fadeTime * .25) * .05);
+					float degrees = XMConvertToDegrees(fadeTime * .025);
 					float opacity = (cos(degrees) * .5) - .5;
-
-					if (fadeTime > 3)
-					{
-						fadeTime = 0;
-					}
 
 					tUIPixelBuffer.hoverColor = XMFLOAT4(0, 0, 0, opacity);
 				}

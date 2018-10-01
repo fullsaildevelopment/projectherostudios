@@ -112,6 +112,7 @@ private:
 #define LOAD_INDEX 97
 #define OPTIONS_INDEX 98
 #define CREDITS_INDEX 99
+#define TIMEUNTILCLICK 0.25
 
 	//ZB Variables
 	TCameraToggle tCameraMode;

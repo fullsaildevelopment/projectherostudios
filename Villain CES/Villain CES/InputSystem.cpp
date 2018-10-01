@@ -3,7 +3,7 @@
 CInputSystem::CInputSystem()
 {
 	m_fMouseRotationSpeed = .0055f;//Frame Dependent
-	m_fMouseMovementSpeed = .1f;//Frame Dependent
+	m_fMouseMovementSpeed = 3.0f;//Frame Dependent
 	m_YRotationLimit = 0;
 	 fXchange = 0, fYchange = 0, fXEnd = 0, fYEnd = 0;
 
@@ -69,7 +69,7 @@ void CInputSystem::gameManagerCodeAbstracted(
 	TCamera* tWalkCamera, TCamera* tAimCamera, TCamera* tDebugCamera,
 	XMMATRIX &d3dResultMatrix, XMMATRIX &d3dPlayerMatrix, XMMATRIX &d3dOffsetMatrix, XMMATRIX &d3dWorldMatrix,
 	XMMATRIX &tMyViewMatrix, XMMATRIX &tTempViewMatrix,
-	XMFLOAT4 &d3dCollisionColor)
+	XMFLOAT4 &d3dCollisionColor, double &delta)
 {
 	cHoverPoint = { -1, -1 };
 	//POINT hoverPoint;
@@ -162,9 +162,9 @@ void CInputSystem::gameManagerCodeAbstracted(
 
 			fRealTimeFov = this->ZoomSight(fRealTimeFov);
 			// Camera rotation Done here
-			tAimCamera->d3d_Position = this->AimMode(tAimCamera, d3dResultMatrix);
+			tAimCamera->d3d_Position = this->AimMode(tAimCamera, d3dResultMatrix, delta);
 			//Does Character Rotation and Movement
-			d3dPlayerMatrix = this->CharacterMovement(d3dPlayerMatrix);
+			d3dPlayerMatrix = this->CharacterMovement(d3dPlayerMatrix, delta);
 
 			tAimCamera->d3d_Position = XMMatrixMultiply(tAimCamera->d3d_Position, d3dPlayerMatrix);
 			// for shoulder offset 
@@ -330,7 +330,7 @@ XMMATRIX CInputSystem::DebugCamera(XMMATRIX d3d_ViewM, XMMATRIX d3d_WorldM)
 	return d3dTmpViewM;
 }
 
-XMMATRIX CInputSystem::CharacterMovement(XMMATRIX d3dplayerMatrix)
+XMMATRIX CInputSystem::CharacterMovement(XMMATRIX d3dplayerMatrix, double delta)
 {
 
 	XMMATRIX d3dTmpViewM, d3dMovementM, d3dRotation;
@@ -361,31 +361,31 @@ XMMATRIX CInputSystem::CharacterMovement(XMMATRIX d3dplayerMatrix)
 	// up key movement
 
 	if (InputCheck(G_KEY_W) == 1) {
-		d3dMovementM = XMMatrixTranslation(0, 0, m_fMouseMovementSpeed);
+		d3dMovementM = XMMatrixTranslation(0, 0, m_fMouseMovementSpeed * delta);
 		d3dTmpViewM = XMMatrixMultiply(d3dMovementM, d3dTmpViewM);
 
 	}
 	// down key movement
 	if (InputCheck(G_KEY_S) == 1) {
-		d3dMovementM = XMMatrixTranslation(0, 0, -m_fMouseMovementSpeed);
+		d3dMovementM = XMMatrixTranslation(0, 0, -m_fMouseMovementSpeed * delta);
 
 		d3dTmpViewM = XMMatrixMultiply(d3dMovementM, d3dTmpViewM);
 
 	}
 	// left key movement
 	if (InputCheck(G_KEY_A) == 1) {
-		d3dMovementM = XMMatrixTranslation(-m_fMouseMovementSpeed, 0, 0);
+		d3dMovementM = XMMatrixTranslation(-m_fMouseMovementSpeed * delta, 0, 0);
 		d3dTmpViewM = XMMatrixMultiply(d3dMovementM, d3dTmpViewM);
 
 	}
 	// right key movement
 	if (InputCheck(G_KEY_D) == 1) {
-		d3dMovementM = XMMatrixTranslation(m_fMouseMovementSpeed, 0, 0);
+		d3dMovementM = XMMatrixTranslation(m_fMouseMovementSpeed * delta, 0, 0);
 		d3dTmpViewM = XMMatrixMultiply(d3dMovementM, d3dTmpViewM);
 
 	}
 	if (InputCheck(G_KEY_SPACE) == 1) {
-		d3dMovementM = XMMatrixTranslation(0, m_fMouseMovementSpeed, 0);
+		d3dMovementM = XMMatrixTranslation(0, m_fMouseMovementSpeed * delta, 0);
 		d3dTmpViewM = XMMatrixMultiply(d3dMovementM, d3dTmpViewM);
 
 	}
@@ -455,7 +455,7 @@ void CInputSystem::GetMousePosition()
 	m_pcMyInput->GetMousePosition(fXEnd, fYEnd);
 }
 
-XMMATRIX CInputSystem::AimMode(TCamera * in_AimCamera, XMMATRIX d3dplayerMatrix)
+XMMATRIX CInputSystem::AimMode(TCamera * in_AimCamera, XMMATRIX d3dplayerMatrix, double delta)
 {
 	XMMATRIX d3dTmpViewM, d3dMovementM, d3dRotation;
 
@@ -500,7 +500,7 @@ XMMATRIX CInputSystem::AimMode(TCamera * in_AimCamera, XMMATRIX d3dplayerMatrix)
 		//d3dTmpViewM = XMMatrixMultiply(d3dTmpViewM, d3dRotation);
 
 		// see if you can lerp fxchange or end to get a lerped value
-		d3dRotation = XMMatrixRotationY(fXchange * m_fMouseRotationSpeed);
+		d3dRotation = XMMatrixRotationY(fXchange * m_fMouseRotationSpeed * delta);
 		d3dTmpViewM = XMMatrixMultiply(d3dRotation, d3dTmpViewM);
 		//d3dTmpViewM = XMMatrixMultiply(d3dRotation, d3dTmpViewM); 
 
