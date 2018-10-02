@@ -561,7 +561,7 @@ void CGraphicsSystem::CreateShaders(ID3D11Device * device)
 	//Create the constant buffer pointer so we can access the vertex shader constant buffer from within this class.
 	device->CreateBuffer(&d3dQuadPixelBufferDesc, NULL, &m_pd3dQuadPixelBuffer);
 #pragma endregion
-#if 0
+#if 1
 #pragma region Line Geometry Shaders
 	D3D11_BUFFER_DESC d3dLineMatrixBufferDesc;
 	
@@ -987,7 +987,6 @@ void CGraphicsSystem::UpdateBuffer(TWorld * ptWorld, std::vector<TSimpleMesh> vt
 	if (bIsVertexBufferSet)
 	{
 		// This is where it copies the new vertices to the buffer.
-		// but it's causing flickering in the entire screen...
 		D3D11_MAPPED_SUBRESOURCE d3dMappedBufferResource;
 		if (nMask == COMPONENT_DEBUGMESH)
 		{
@@ -1015,6 +1014,17 @@ void CGraphicsSystem::UpdateBuffer(TWorld * ptWorld, std::vector<TSimpleMesh> vt
 			m_pd3dDeviceContext->IASetVertexBuffers(0, 1, &ptWorld->atDebugMesh[nEntity].m_pd3dVertexBuffer, &nVertexBufferStride, &nVertexBufferOffset);
 		}
 		bIsVertexBufferSet = true;
+	}
+}
+
+void CGraphicsSystem::UpdateLineVTBuffer(TWorld * ptWorld, TDebugMesh debugMesh, int nEntity, int nMask)
+{
+	D3D11_MAPPED_SUBRESOURCE d3dMappedBufferResource;
+	if (nMask == COMPONENT_DEBUGMESH)
+	{
+		m_pd3dDeviceContext->Map(ptWorld->atDebugMesh[nEntity].m_pd3dVertexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &d3dMappedBufferResource);
+		memcpy(d3dMappedBufferResource.pData, &debugMesh, sizeof() * 2);
+		m_pd3dDeviceContext->Unmap(ptWorld->atDebugMesh[nEntity].m_pd3dVertexBuffer, 0);
 	}
 }
 
@@ -1946,12 +1956,12 @@ void CGraphicsSystem::InitQuadShaderData(ID3D11DeviceContext * pd3dDeviceContext
 	pd3dDeviceContext->IASetVertexBuffers(0, 1, &tDebugMesh.m_pd3dVertexBuffer, &tDebugMesh.m_nVertexBufferStride, &tDebugMesh.m_nVertexBufferOffset);
 }
 
-void CGraphicsSystem::InitLineShaderData(ID3D11DeviceContext * pd3dDeviceContext, XMMATRIX d3dWorldMatrix, XMMATRIX d3dViewMatrix, XMMATRIX d3dProjectionMatrix, TDebugMesh tDebugMesh, XMMATRIX CameraMatrix, float colorAlpha, XMFLOAT4 endPoint)
+void CGraphicsSystem::InitLineShaderData(ID3D11DeviceContext * pd3dDeviceContext, XMMATRIX d3dWorldMatrix, XMMATRIX d3dViewMatrix, XMMATRIX d3dProjectionMatrix,  TDebugMesh tDebugMesh, XMMATRIX CameraMatrix, std::vector<TPrimalVert> m_verts)
 {
 	D3D11_MAPPED_SUBRESOURCE d3dLineMappedResource;
 	D3D11_MAPPED_SUBRESOURCE d3dLinePixelMappedResource;
 
-	TLineGeometryBufferType* ptLineMatrixBufferDataPointer = nullptr;
+	TLineVertexBufferType* ptLineMatrixBufferDataPointer = nullptr;
 	TQuadPixelBufferType* ptLinePixelBufferDataPointer = nullptr;
 
 
@@ -1963,45 +1973,42 @@ void CGraphicsSystem::InitLineShaderData(ID3D11DeviceContext * pd3dDeviceContext
 
 	d3dView = d3dViewMatrix;
 
-#pragma region Map To Geometry Constant Buffer
+#pragma region Map To Vertex Constant Buffer
 
-	pd3dDeviceContext->Map(m_pd3dQuadGeometryBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &d3dLineMappedResource);
+	pd3dDeviceContext->Map(tDebugMesh.m_pd3dVertexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &d3dLineMappedResource);
 
 	// Get a pointer to the data in the constant buffer.
-	ptLineMatrixBufferDataPointer = (TLineGeometryBufferType*)d3dLineMappedResource.pData;
+	ptLineMatrixBufferDataPointer = (TLineVertexBufferType*)d3dLineMappedResource.pData;
 
 	// Copy the matrices into the constant buffer.
-	ptLineMatrixBufferDataPointer->m_d3dWorldMatrix = d3dWorldMatrix;
-	ptLineMatrixBufferDataPointer->m_d3dViewMatrix = d3dView;
-	ptLineMatrixBufferDataPointer->m_d3dProjectionMatrix = d3dProjectionMatrix;
-	ptLineMatrixBufferDataPointer->endPoint = endPoint;
+	memcpy(tDebugMesh.m_pd3dVertexBuffer, &m_verts, sizeof(TPrimalVert) * 2);
 	// Unlock the constant buffer.
-	pd3dDeviceContext->Unmap(m_pd3dQuadGeometryBuffer, 0);
+	pd3dDeviceContext->Unmap(tDebugMesh.m_pd3dVertexBuffer, 0);
 
 #pragma endregion
 
-#pragma region Map To Pixel Constant Buffer
-	pd3dDeviceContext->Map(m_pd3dQuadPixelBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &d3dLinePixelMappedResource);
-
-	// Get a pointer to the data in the constant buffer.
-	ptLinePixelBufferDataPointer = (TQuadPixelBufferType*)d3dLinePixelMappedResource.pData;
-
-	// Copy the matrices into the constant buffer.
-	ptLinePixelBufferDataPointer->m_d3dBackgroundColor = XMFLOAT4(0,1,1,colorAlpha);
-
-	// Unlock the constant buffer.
-	pd3dDeviceContext->Unmap(m_pd3dQuadPixelBuffer, 0);
-
-#pragma endregion
+//#pragma region Map To Pixel Constant Buffer
+//	pd3dDeviceContext->Map(m_pd3dQuadPixelBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &d3dLinePixelMappedResource);
+//
+//	// Get a pointer to the data in the constant buffer.
+//	ptLinePixelBufferDataPointer = (TQuadPixelBufferType*)d3dLinePixelMappedResource.pData;
+//
+//	// Copy the matrices into the constant buffer.
+//	ptLinePixelBufferDataPointer->m_d3dBackgroundColor = XMFLOAT4(0,1,1,colorAlpha);
+//
+//	// Unlock the constant buffer.
+//	pd3dDeviceContext->Unmap(m_pd3dQuadPixelBuffer, 0);
+//
+//#pragma endregion
 
 	// Position of the constant buffer in the vertex shader.
 	bufferNumber = 0;
 
-	pd3dDeviceContext->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_POINTLIST);
+	pd3dDeviceContext->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_LINELIST);
 	pd3dDeviceContext->PSSetConstantBuffers(bufferNumber, 1, &m_pd3dQuadPixelBuffer);
 
 	// Set the constant buffer in the Geometry shader with the updated values.
-	pd3dDeviceContext->GSSetConstantBuffers(0, 1, &m_pd3dLineGeometryBuffer);
+	//pd3dDeviceContext->GSSetConstantBuffers(0, 1, &m_pd3dLineGeometryBuffer);
 	pd3dDeviceContext->IASetVertexBuffers(0, 1, &tDebugMesh.m_pd3dVertexBuffer, &tDebugMesh.m_nVertexBufferStride, &tDebugMesh.m_nVertexBufferOffset);
 }
 
@@ -2211,23 +2218,23 @@ void CGraphicsSystem::ExecutePipeline(ID3D11DeviceContext *pd3dDeviceContext, in
 			}
 			break;
 		}
-		//case Line:
-		//{
-		//	pd3dDeviceContext->IASetInputLayout(m_pd3dQuadInputLayout);
-		//	//Set Shader
-		//	pd3dDeviceContext->VSSetShader(m_pd3dQuadVertexShader, NULL, 0);
-		//	pd3dDeviceContext->GSSetShader(m_pd3dLineGeometryShader, NULL, 0);
+		case Line:
+		{
+			pd3dDeviceContext->IASetInputLayout(m_pd3dQuadInputLayout);
+			//Set Shader
+			pd3dDeviceContext->VSSetShader(m_pd3dQuadVertexShader, NULL, 0);
+			pd3dDeviceContext->GSSetShader(m_pd3dLineGeometryShader, NULL, 0);
 
-		//	pd3dDeviceContext->PSSetShader(m_pd3dQuadPixelShader, NULL, 0);
-		//	//Draw
-		//	if (nGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_DEBUGMESH | COMPONENT_SHADERID))
-		//	{
-		//		pd3dDeviceContext->Draw(m_nIndexCount, 0);
-		//	}
-		//	//Don't want every object to go through geometry shader
-		//	pd3dDeviceContext->GSSetShader(nullptr, NULL, 0);
-		//	break;
-		//}
+			pd3dDeviceContext->PSSetShader(m_pd3dQuadPixelShader, NULL, 0);
+			//Draw
+			if (nGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_DEBUGMESH | COMPONENT_SHADERID))
+			{
+				pd3dDeviceContext->Draw(m_nIndexCount, 0);
+			}
+			//Don't want every object to go through geometry shader
+			pd3dDeviceContext->GSSetShader(nullptr, NULL, 0);
+			break;
+		}
 		default:
 			break;
 	}

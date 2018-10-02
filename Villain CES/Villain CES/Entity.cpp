@@ -659,11 +659,11 @@ unsigned int CreateExtractionBeam(TWorld * ptWorld, XMMATRIX BulletSpawnLocation
 	ptWorld->atUIMask[nThisEntity].m_tnUIMask = (COMPONENT_UIMASK);
 	ptWorld->atPhysicsMask[nThisEntity].m_tnPhysicsMask = (COMPONENT_PHYSICSMASK);
 	ptWorld->atProjectiles[nThisEntity].m_tnProjectileMask = (COMPONENT_PROJECTILESMASK);
-	static TPrimalVert atPointVertex[]
+	/*static TPrimalVert atPointVertex[]
 	{
 		TPrimalVert{ XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT4(0,1,1,1)}
-	};
-	ptWorld->atDebugMesh[nThisEntity].m_nVertexCount = 1;
+	};*/
+	ptWorld->atDebugMesh[nThisEntity].m_nVertexCount = 2;
 
 	ptWorld->atDebugMesh[nThisEntity].m_nVertexBufferStride = sizeof(TPrimalVert);
 	ptWorld->atDebugMesh[nThisEntity].m_nVertexBufferOffset = 0;
@@ -674,7 +674,7 @@ unsigned int CreateExtractionBeam(TWorld * ptWorld, XMMATRIX BulletSpawnLocation
 	ptWorld->atDebugMesh[nThisEntity].m_d3dVertexBufferDesc.MiscFlags = 0;
 	ptWorld->atDebugMesh[nThisEntity].m_d3dVertexBufferDesc.StructureByteStride = 0;
 
-	ptWorld->atDebugMesh[nThisEntity].m_d3dVertexData.pSysMem = atPointVertex;
+	ptWorld->atDebugMesh[nThisEntity].m_d3dVertexData.pSysMem = NULL;
 
 	ptWorld->atDebugMesh[nThisEntity].m_d3dVertexData.SysMemPitch = 0;
 	ptWorld->atDebugMesh[nThisEntity].m_d3dVertexData.SysMemSlicePitch = 0;
