@@ -107,6 +107,9 @@ private:
 	int fpsIndex = -1;
 	int objLogoIndex = -1;
 	int ammoIndex = -1;
+	int masterIndex = -1;
+	int musicIndex = -1;
+	int fxIndex = -1;
 
 #define SAVE_INDEX 96
 #define LOAD_INDEX 97
@@ -160,6 +163,7 @@ private:
 	AkGameObjectID m_Syclian_Death;
 	AkGameObjectID m_Scylian_Hurt;
 	AkBankID m_SFX_bnkID;
+	float m_fMasterVolume;
 	float m_fMusicVolume;
 	float m_fSFXVolume;
 	AKRESULT ErrorResult;
