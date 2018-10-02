@@ -11,7 +11,7 @@ CUISystem::~CUISystem()
 {
 }
 
-void CUISystem::AddTextureToUI(TWorld* tThisWorld, unsigned int nThisEntity, ID3D11Device* device, wchar_t* filepath, ID3D11ShaderResourceView* srvDiffuse)
+void CUISystem::AddTextureToUI(TWorld* tThisWorld, unsigned int& nThisEntity, ID3D11Device* device, wchar_t* filepath, ID3D11ShaderResourceView* srvDiffuse)
 {
 	if (srvDiffuse == nullptr)
 	{
@@ -30,7 +30,7 @@ void CUISystem::AddTextureToUI(TWorld* tThisWorld, unsigned int nThisEntity, ID3
 	}
 }
 
-void CUISystem::AddButtonToUI(HWND* cApplicationWindow, TWorld* tThisWorld, unsigned int nThisEntity, int sceneIndex, bool enabled)
+void CUISystem::AddButtonToUI(HWND* cApplicationWindow, TWorld* tThisWorld, unsigned int& nThisEntity, int sceneIndex, bool enabled)
 {
 	RECT window;
 	GetWindowRect(*cApplicationWindow, &window);
@@ -55,7 +55,7 @@ void CUISystem::AddButtonToUI(HWND* cApplicationWindow, TWorld* tThisWorld, unsi
 	tThisWorld->atUIMask[nThisEntity].m_tnUIMask = tThisWorld->atUIMask[nThisEntity].m_tnUIMask | COMPONENT_BUTTON;
 }
 
-void CUISystem::AddTextToUI(HWND* cApplicationWindow, TWorld* tThisWorld, unsigned int nThisEntity, wchar_t* text, unsigned int textSize, int* textColor, int justification)
+void CUISystem::AddTextToUI(HWND* cApplicationWindow, TWorld* tThisWorld, unsigned int& nThisEntity, wchar_t* text, unsigned int& textSize, int* textColor, int justification)
 {
 	tThisWorld->atText[nThisEntity].textBuffer = new wchar_t[textSize]; 
 
@@ -81,12 +81,12 @@ void CUISystem::AddTextToUI(HWND* cApplicationWindow, TWorld* tThisWorld, unsign
 	tThisWorld->atUIMask[nThisEntity].m_tnUIMask = tThisWorld->atUIMask[nThisEntity].m_tnUIMask | COMPONENT_TEXT;
 }
 
-void CUISystem::AddMaskToUI(TWorld* tThisWorld, unsigned int nThisEntity, eUIComponent mask)
+void CUISystem::AddMaskToUI(TWorld* tThisWorld, unsigned int& nThisEntity, eUIComponent mask)
 {
 	tThisWorld->atUIMask[nThisEntity].m_tnUIMask = tThisWorld->atUIMask[nThisEntity].m_tnUIMask | mask;
 }
 
-void CUISystem::AdjustBoundingBox(HWND* cApplicationWindow, TWorld* tThisWorld, unsigned int nThisEntity)
+void CUISystem::AdjustBoundingBox(HWND* cApplicationWindow, TWorld* tThisWorld, unsigned int& nThisEntity)
 {
 	HDC tHDC = GetDC(0);
 	//HGDIOBJ oldFont = SelectObject(tHDC, (HGDIOBJ)myFont);
@@ -213,7 +213,7 @@ void CUISystem::AdjustBoundingBox(HWND* cApplicationWindow, TWorld* tThisWorld, 
 	ReleaseDC(*cApplicationWindow, tHDC);
 }
 
-void CUISystem::AddBarToUI(HWND* cApplicationWindow, TWorld* tThisWorld, unsigned int nThisEntity, XMFLOAT4* backgroundColor, char* function, unsigned int textSize, float ratio)
+void CUISystem::AddBarToUI(HWND* cApplicationWindow, TWorld* tThisWorld, unsigned int& nThisEntity, XMFLOAT4* backgroundColor, char* function, unsigned int textSize, float ratio)
 {
 	if (function != nullptr)
 	{
@@ -259,7 +259,7 @@ void CUISystem::AddBarToUI(HWND* cApplicationWindow, TWorld* tThisWorld, unsigne
 	tThisWorld->atUIMask[nThisEntity].m_tnUIMask = tThisWorld->atUIMask[nThisEntity].m_tnUIMask | COMPONENT_BAR;
 }
 
-void CUISystem::UpdateText(TWorld* tThisWorld, unsigned int nThisEntity, std::vector<TUIVert*>* atUIVertices, wchar_t* character, int textSize, TUIVert* UVs)
+void CUISystem::UpdateText(TWorld* tThisWorld, CGraphicsSystem* pcGraphicsSystem, int& nThisEntity, std::vector<TUIVert*>* atUIVertices, wchar_t* character, int& textSize, TUIVert* UVs)
 {
 	XMFLOAT2* tempfloats = new XMFLOAT2[4];
 	
@@ -284,9 +284,10 @@ void CUISystem::UpdateText(TWorld* tThisWorld, unsigned int nThisEntity, std::ve
 		tThisWorld->atMesh[nThisEntity].m_VertexData.push_back(atUIVertices->at(tThisWorld->atLabel[nThisEntity].vIndex)[i].m_d3dfPosition);
 	}
 
+	pcGraphicsSystem->CreateEntityBuffer(tThisWorld, nThisEntity);
 }
 
-bool CUISystem::CheckIfStringsAreTheSame(char* string1, unsigned int textSize1, const char* string2)
+bool CUISystem::CheckIfStringsAreTheSame(char* string1, int& textSize1, const char* string2)
 {
 	if (string1 == nullptr)
 	{
@@ -310,7 +311,7 @@ bool CUISystem::CheckIfStringsAreTheSame(char* string1, unsigned int textSize1, 
 	}
 }
 
-void CUISystem::CheckOptionsBars(TWorld* tThisWorld, CInputSystem* pcInputSystem, unsigned int nThisEntity, char* valueToChange, unsigned int valueToChangeSize, float& m_fMasterVolume, float& m_fMusicVolume, float& m_fSFXVolume, int& masterIndex, int& musicIndex, int& fxIndex)
+void CUISystem::CheckOptionsBars(TWorld* tThisWorld, CInputSystem* pcInputSystem, int& nThisEntity, char* valueToChange, int& valueToChangeSize, float& m_fMasterVolume, float& m_fMusicVolume, float& m_fSFXVolume, int& masterIndex, int& musicIndex, int& fxIndex)
 {
 	if (this->CheckIfStringsAreTheSame(valueToChange, valueToChangeSize, "Sensitivity"))
 	{
@@ -352,4 +353,76 @@ void CUISystem::CheckOptionsBars(TWorld* tThisWorld, CInputSystem* pcInputSystem
 			tThisWorld->atBar[fxIndex].ratio = m_fMasterVolume * .01;
 		}
 	}
+}
+
+void CUISystem::UpdateFPS(TWorld* tThisWorld, CGraphicsSystem* pcGraphicsSystem, CFPS& fpsTimer, int& fpsIndex, CGraphicsSystem::TUIVertexBufferType& tUIVertexBuffer, CGraphicsSystem::TUIPixelBufferType& tUIPixelBuffer, std::vector<TUIVert*>& atUIVertices, TCamera* menuCamera, bool HUD)
+{
+	float fps = fpsTimer.UpdateFrameTime();
+
+	if (HUD)
+	{
+		tUIVertexBuffer.start = -1;
+		tUIVertexBuffer.end = -1;
+		tUIVertexBuffer.ratio = -1;
+
+		tUIPixelBuffer.hoverColor = tThisWorld->atLabel[fpsIndex].color;
+
+		int textSize = 3;
+		wchar_t* textBuffer = new wchar_t[textSize];
+
+		if (fps < 10)
+		{
+			textBuffer[0] = 0;
+			textBuffer[1] = 0;
+			textBuffer[2] = (int)fps % 10;
+		}
+		else if (fps < 100)
+		{
+			textBuffer[0] = 0;
+			textBuffer[1] = (int)fps / 10;
+			textBuffer[2] = (int)fps % 10;
+		}
+		else
+		{
+			textBuffer[0] = (int)fps / 100;
+			textBuffer[1] = ((int)fps / 10) - ((int)fps / 100 * 10);
+			textBuffer[2] = (int)fps % 10;
+		}
+
+		this->UpdateText(tThisWorld, pcGraphicsSystem, fpsIndex, &atUIVertices, textBuffer, textSize, atUIVertices.at(tThisWorld->atLabel[fpsIndex].vIndex));
+
+		delete[] textBuffer;
+
+		pcGraphicsSystem->InitUIShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tUIVertexBuffer, tUIPixelBuffer, tThisWorld->atMesh[fpsIndex], menuCamera->d3d_Position);
+		pcGraphicsSystem->ExecutePipeline(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld->atMesh[fpsIndex].m_nIndexCount, tThisWorld->atGraphicsMask[fpsIndex].m_tnGraphicsMask, tThisWorld->atShaderID[fpsIndex].m_nShaderID);
+	}
+
+	fpsTimer.Throttle(60);
+}
+
+void CUISystem::ScrollText(TWorld* tThisWorld, CGraphicsSystem* pcGraphicsSystem, int& nThisEntity, std::vector<TUIVert*>* atUIVertices, double delta)
+{
+	XMFLOAT3* tempPos = new XMFLOAT3[tThisWorld->atMesh[nThisEntity].m_VertexData.size()];
+
+	int counter = 0;
+	for (int i = 0; i < tThisWorld->atMesh[nThisEntity].m_VertexData.size(); ++i)
+	{
+		tempPos[i] = atUIVertices->at(tThisWorld->atLabel[nThisEntity].vIndex)[i].m_d3dfPosition;
+
+		tempPos[i].y += .1 * delta;
+
+		atUIVertices->at(tThisWorld->atLabel[nThisEntity].vIndex)[i].m_d3dfPosition.y = tempPos[i].y;
+
+		++counter;
+	}
+
+	tThisWorld->atMesh[nThisEntity].m_d3dVertexData.pSysMem = &atUIVertices->at(tThisWorld->atLabel[nThisEntity].vIndex)[0];
+
+	tThisWorld->atMesh[nThisEntity].m_VertexData.clear();
+	for (int i = 0; i < counter; ++i)
+	{
+		tThisWorld->atMesh[nThisEntity].m_VertexData.push_back(atUIVertices->at(tThisWorld->atLabel[nThisEntity].vIndex)[i].m_d3dfPosition);
+	}
+
+	pcGraphicsSystem->CreateEntityBuffer(tThisWorld, nThisEntity);
 }

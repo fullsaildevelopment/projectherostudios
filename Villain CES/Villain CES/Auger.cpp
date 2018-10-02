@@ -133,6 +133,14 @@ void CAuger::Update(bool* loopgame)
 	case 10:
 		pcGameMangerSystem->nCurrentScene = pcGameMangerSystem->MikesGraphicsSandbox();
 		break;
+	case 11:
+		pcGameMangerSystem->InitializeStory();
+
+		pcGameMangerSystem->nCurrentScene = 12;
+		break;
+	case 12:
+		pcGameMangerSystem->nCurrentScene = pcGameMangerSystem->LoadStory();
+		break;
 	case 13: 
 		if (!pcGameMangerSystem->loading)
 		{

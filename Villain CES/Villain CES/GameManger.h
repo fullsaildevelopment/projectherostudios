@@ -32,6 +32,8 @@ public:
 	void InitializeMainMenu();
 	int LoadTitleScreen();
 	void InitializeTitleScreen();
+	int LoadStory();
+	void InitializeStory();
 	int LoadLoadingScreen(bool _continue);
 	void InitializeLoadingScreen();
 	void InitializePauseScreen();

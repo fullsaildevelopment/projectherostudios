@@ -118,6 +118,7 @@ unsigned int CreateAIVision(TWorld * ptWorld, XMMATRIX bulletSpawnLocation, floa
 unsigned int CreateRayBullet(TWorld * ptWorld, XMMATRIX bulletSpawnLocation, float zDistance, int parentWorldMatrixIndex, float xoffset, float yoffset, float zoffset);
 unsigned int CreateUILabel(TWorld * ptWorld, XMMATRIX SpawnPosition, float width, float height, float offsetX, float offsetY, std::vector<TUIVert*>* atUIVertices, int _nThisEntity = -1, float z = 0);
 unsigned int CreateUILabelForText(TWorld* ptWorld, XMMATRIX SpawnPosition, float width, float height, float offsetX, float offsetY, std::vector<TUIVert*>* atUIVertices, std::vector<short*>* atUIIndices, wchar_t* text, unsigned int textSize, int _nThisEntity = -1, float z = 0);
+unsigned int CreateUILabelForText2(TWorld* ptWorld, XMMATRIX SpawnPosition, float width, float height, float offsetX, float offsetY, std::vector<TUIVert*>* atUIVertices, std::vector<short*>* atUIIndices, wchar_t* text, unsigned int textSize, LPRECT window, int fontSize = 10, int _nThisEntity = -1, float z = 0);
 void GetUVsForCharacter(wchar_t* character, XMFLOAT2* UVs);
 //float zDistance = 0.5f;
 //	fartopleft, nearbottomleft, neartopright, nearbottomright, fartopright, farbottomleft, farbottomright, neartopleft;

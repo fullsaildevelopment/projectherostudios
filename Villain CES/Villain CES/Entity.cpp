@@ -4134,7 +4134,178 @@ unsigned int CreateUILabelForText(TWorld* ptWorld, XMMATRIX SpawnPosition, float
 
 	ptWorld->atShaderID[nThisEntity].m_nShaderID = 7;	//Shader that supports UIShaders
 
-	ptWorld->atMesh[nThisEntity].m_VertexData.resize(ptWorld->atMesh[nThisEntity].m_nVertexCount);
+	for (int i = 0; i < ptWorld->atMesh[nThisEntity].m_nVertexCount; ++i)
+	{
+		ptWorld->atMesh[nThisEntity].m_VertexData.push_back(atUIVertices->at(ptWorld->atLabel[nThisEntity].vIndex)[i].m_d3dfPosition);
+	}
+
+	ptWorld->atWorldMatrix[nThisEntity].worldMatrix = spawnMatrix;
+
+	return nThisEntity;
+}
+
+unsigned int CreateUILabelForText2(TWorld* ptWorld, XMMATRIX SpawnPosition, float width, float height, float offsetX, float offsetY, std::vector<TUIVert*>* atUIVertices, std::vector<short*>* atUIIndices, wchar_t* text, unsigned int _textSize, LPRECT window, int fontSize, int _nThisEntity, float z)
+{
+	unsigned int nThisEntity;
+	unsigned int totalTextSize = 0;
+	unsigned int textSize = 0;
+	unsigned int lines = 1;
+
+	int pixelsPerWidth = (window->right - window->left) / 20;
+	float widthInNDCSpace = (float)fontSize / (pixelsPerWidth * 10);
+	int maxWidth = pixelsPerWidth * width;
+	int currentWidth = 0;
+
+	std::vector<unsigned int> textSizes;
+
+	if (_nThisEntity == -1)
+		nThisEntity = createEntity(ptWorld);
+	else
+		nThisEntity = _nThisEntity;
+
+	for (int i = 0; i < _textSize - 1; ++i)
+	{
+		if (text[i] == ' ' && currentWidth + (pixelsPerWidth) > maxWidth)
+		{
+			textSizes.push_back(textSize);
+
+			currentWidth = 0;
+
+			textSize = 0;
+			//++textSize;
+			++lines;
+
+			continue;
+		}
+
+		++textSize;
+		++totalTextSize;
+
+		currentWidth += fontSize;
+	}
+
+	textSizes.push_back(textSize);
+
+	ptWorld->atCollisionMask[nThisEntity].m_tnCollisionMask = (COMPONENT_COLLISIONMASK);
+	ptWorld->atGraphicsMask[nThisEntity].m_tnGraphicsMask = (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_SHADERID);
+	ptWorld->atAIMask[nThisEntity].m_tnAIMask = (COMPONENT_AIMASK);
+	ptWorld->atUIMask[nThisEntity].m_tnUIMask = (COMPONENT_UIMASK | COMPONENT_LABEL);
+	ptWorld->atPhysicsMask[nThisEntity].m_tnPhysicsMask = (COMPONENT_PHYSICSMASK);
+
+	XMFLOAT3 topLeftPos = XMFLOAT3{ (offsetX - (width / 2)) * .1f, (offsetY + (height / 2)) * .1f, z };
+	XMFLOAT3 topRightPos = XMFLOAT3{ (offsetX + (width / 2)) * .1f, (offsetY + (height / 2)) * .1f, z };
+	XMFLOAT3 bottomLeftPos = XMFLOAT3{ (offsetX - (width / 2)) * .1f, (offsetY - (height / 2)) * .1f, z };
+	//XMFLOAT3 ratioPos4 = XMVectorSet((offsetX + (width / 2)) * .1, (offsetY - (height / 2)) * .1, z);
+
+	float tWidth = topRightPos.x - topLeftPos.x;
+	float tHeight = bottomLeftPos.y - topLeftPos.y;
+
+	TUIVert* rectVerts = new TUIVert[4 * totalTextSize];
+
+	XMFLOAT2 tempUVs[4];
+
+	int lineIndex = 0;
+	int loopIndex = 0;
+	int countIndex = 0;
+	currentWidth = 0;
+	for (int i = 0; countIndex < _textSize - 1; i += 4)
+	{
+		if (text[countIndex] == ' ' && currentWidth + (pixelsPerWidth) > maxWidth)
+		{
+			i -= 4;
+
+			currentWidth = 0;
+
+			loopIndex = 0;
+			++lineIndex;
+			++countIndex;
+
+			if (lineIndex == textSizes.size())
+			{
+				--lineIndex;
+			}
+
+			continue;
+		}
+
+		GetUVsForCharacter(&text[countIndex], &tempUVs[0]);
+
+		rectVerts[i + 0].m_d3dfPosition = XMFLOAT3(topLeftPos.x + (widthInNDCSpace * loopIndex), topLeftPos.y + ((tHeight / lines) * lineIndex), topLeftPos.z);
+		rectVerts[i + 0].m_d3dfUVs = XMFLOAT2(tempUVs[0].x, tempUVs[0].y);
+		rectVerts[i + 1].m_d3dfPosition = XMFLOAT3(topLeftPos.x + (widthInNDCSpace * (loopIndex + 1)), topLeftPos.y + ((tHeight / lines) * lineIndex), topLeftPos.z);
+		rectVerts[i + 1].m_d3dfUVs = XMFLOAT2(tempUVs[1].x, tempUVs[1].y);
+		rectVerts[i + 2].m_d3dfPosition = XMFLOAT3(topLeftPos.x + (widthInNDCSpace * loopIndex), topLeftPos.y + ((tHeight / lines) * (lineIndex + 1)), topLeftPos.z);
+		rectVerts[i + 2].m_d3dfUVs = XMFLOAT2(tempUVs[2].x, tempUVs[2].y);
+		rectVerts[i + 3].m_d3dfPosition = XMFLOAT3(topLeftPos.x + (widthInNDCSpace * (loopIndex + 1)), topLeftPos.y + ((tHeight / lines) * (lineIndex + 1)), topLeftPos.z);
+		rectVerts[i + 3].m_d3dfUVs = XMFLOAT2(tempUVs[3].x, tempUVs[3].y);
+
+		++loopIndex;
+		++countIndex;
+	
+		currentWidth += fontSize;
+	}
+
+	atUIVertices->push_back(rectVerts);
+	ptWorld->atLabel[nThisEntity].vIndex = atUIVertices->size() - 1;
+
+	ptWorld->atLabel[nThisEntity].width = width;
+	ptWorld->atLabel[nThisEntity].height = height;
+	ptWorld->atLabel[nThisEntity].x = offsetX;
+	ptWorld->atLabel[nThisEntity].y = offsetY;
+
+	XMMATRIX spawnMatrix = SpawnPosition;
+
+	short* rectIndices = new short[6 * totalTextSize];
+
+	loopIndex = 0;
+	int counterIndex = 0;
+	for (int i = 0; loopIndex < totalTextSize; i += 6)
+	{
+		rectIndices[i] = counterIndex;
+		rectIndices[i + 1] = counterIndex + 1;
+		rectIndices[i + 2] = counterIndex + 3;	//tl->tr->br
+		rectIndices[i + 3] = counterIndex + 3;	//br->bl->tl
+		rectIndices[i + 4] = counterIndex + 2;
+		rectIndices[i + 5] = counterIndex;
+
+		++loopIndex;
+		counterIndex += 4;
+	}
+
+	atUIIndices->push_back(rectIndices);
+	ptWorld->atLabel[nThisEntity].iIndex = atUIIndices->size() - 1;
+
+	ptWorld->atMesh[nThisEntity].m_nIndexCount = 6 * totalTextSize;
+	ptWorld->atMesh[nThisEntity].m_nVertexCount = 4 * totalTextSize;
+
+	ptWorld->atMesh[nThisEntity].m_nVertexBufferStride = sizeof(TUIVert);
+	ptWorld->atMesh[nThisEntity].m_nVertexBufferOffset = 0;
+
+	ptWorld->atMesh[nThisEntity].m_d3dVertexBufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
+	ptWorld->atMesh[nThisEntity].m_d3dVertexBufferDesc.ByteWidth = sizeof(TUIVert) * ptWorld->atMesh[nThisEntity].m_nVertexCount;
+	ptWorld->atMesh[nThisEntity].m_d3dVertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	ptWorld->atMesh[nThisEntity].m_d3dVertexBufferDesc.CPUAccessFlags = 0;
+	ptWorld->atMesh[nThisEntity].m_d3dVertexBufferDesc.MiscFlags = 0;
+	ptWorld->atMesh[nThisEntity].m_d3dVertexBufferDesc.StructureByteStride = 0;
+
+	ptWorld->atMesh[nThisEntity].m_d3dIndexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
+	ptWorld->atMesh[nThisEntity].m_d3dIndexBufferDesc.ByteWidth = sizeof(short) * ptWorld->atMesh[nThisEntity].m_nIndexCount;
+	ptWorld->atMesh[nThisEntity].m_d3dIndexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+	ptWorld->atMesh[nThisEntity].m_d3dIndexBufferDesc.CPUAccessFlags = 0;
+	ptWorld->atMesh[nThisEntity].m_d3dIndexBufferDesc.MiscFlags = 0;
+	ptWorld->atMesh[nThisEntity].m_d3dIndexBufferDesc.StructureByteStride = 0;
+
+	ptWorld->atMesh[nThisEntity].m_d3dVertexData.pSysMem = &atUIVertices->at(ptWorld->atLabel[nThisEntity].vIndex)[0];
+	ptWorld->atMesh[nThisEntity].m_d3dIndexData.pSysMem = &atUIIndices->at(ptWorld->atLabel[nThisEntity].iIndex)[0];
+
+	ptWorld->atMesh[nThisEntity].m_d3dVertexData.SysMemPitch = 0;
+	ptWorld->atMesh[nThisEntity].m_d3dVertexData.SysMemSlicePitch = 0;
+
+	ptWorld->atMesh[nThisEntity].m_d3dIndexData.SysMemPitch = 0;
+	ptWorld->atMesh[nThisEntity].m_d3dIndexData.SysMemSlicePitch = 0;
+
+	ptWorld->atShaderID[nThisEntity].m_nShaderID = 7;	//Shader that supports UIShaders
+
 	for (int i = 0; i < ptWorld->atMesh[nThisEntity].m_nVertexCount; ++i)
 	{
 		ptWorld->atMesh[nThisEntity].m_VertexData.push_back(atUIVertices->at(ptWorld->atLabel[nThisEntity].vIndex)[i].m_d3dfPosition);
@@ -4171,6 +4342,30 @@ void GetUVsForCharacter(wchar_t* character, XMFLOAT2* UVs)
 		UVs[1] = XMFLOAT2{ 80 / 950.0f, 4 / 20.0f };
 		UVs[2] = XMFLOAT2{ 70 / 950.0f, 14 / 20.0f };
 		UVs[3] = XMFLOAT2{ 80 / 950.0f, 14 / 20.0f };
+	}
+	break;
+	case '(':
+	{
+		UVs[0] = XMFLOAT2{ 80 / 950.0f, 4 / 20.0f };
+		UVs[1] = XMFLOAT2{ 90 / 950.0f, 4 / 20.0f };
+		UVs[2] = XMFLOAT2{ 80 / 950.0f, 14 / 20.0f };
+		UVs[3] = XMFLOAT2{ 90 / 950.0f, 14 / 20.0f };
+	}
+	break;
+	case ')':
+	{
+		UVs[0] = XMFLOAT2{ 90 / 950.0f, 4 / 20.0f };
+		UVs[1] = XMFLOAT2{ 100 / 950.0f, 4 / 20.0f };
+		UVs[2] = XMFLOAT2{ 90 / 950.0f, 14 / 20.0f };
+		UVs[3] = XMFLOAT2{ 100 / 950.0f, 14 / 20.0f };
+	}
+	break;
+	case ',':
+	{
+		UVs[0] = XMFLOAT2{ 120 / 950.0f, 6 / 20.0f };
+		UVs[1] = XMFLOAT2{ 130 / 950.0f, 6 / 20.0f };
+		UVs[2] = XMFLOAT2{ 120 / 950.0f, 16 / 20.0f };
+		UVs[3] = XMFLOAT2{ 130 / 950.0f, 16 / 20.0f };
 	}
 	break;
 	case '.':
@@ -4681,10 +4876,10 @@ void GetUVsForCharacter(wchar_t* character, XMFLOAT2* UVs)
 	break;
 	case 'y':
 	{
-		UVs[0] = XMFLOAT2{ 890 / 950.0f, 3 / 20.0f };
-		UVs[1] = XMFLOAT2{ 900 / 950.0f, 3 / 20.0f };
-		UVs[2] = XMFLOAT2{ 890 / 950.0f, 17 / 20.0f };
-		UVs[3] = XMFLOAT2{ 900 / 950.0f, 17 / 20.0f };
+		UVs[0] = XMFLOAT2{ 890 / 950.0f, 2.5 / 20.0f };
+		UVs[1] = XMFLOAT2{ 900 / 950.0f, 2.5 / 20.0f };
+		UVs[2] = XMFLOAT2{ 890 / 950.0f, 16 / 20.0f };
+		UVs[3] = XMFLOAT2{ 900 / 950.0f, 16 / 20.0f };
 	}
 	break;
 	case 'z':

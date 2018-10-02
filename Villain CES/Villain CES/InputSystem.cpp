@@ -142,7 +142,7 @@ void CInputSystem::gameManagerCodeAbstracted(
 				tCameraMode.bSwitch = false;
 			}
 
-			d3dResultMatrix = this->WalkCameraControls(XMVectorSet(0, 1.0f, 0, 0), d3dResultMatrix, bMoving);
+			d3dResultMatrix = this->WalkCameraControls(XMVectorSet(0, 1.0f, 0, 0), d3dResultMatrix, bMoving, delta);
 
 			tWalkCamera->d3d_Position = XMMatrixMultiply(d3dResultMatrix, d3dPlayerMatrix);
 			tWalkCamera->d3d_Position = XMMatrixMultiply(d3dOffsetMatrix, tWalkCamera->d3d_Position);
@@ -182,7 +182,7 @@ void CInputSystem::gameManagerCodeAbstracted(
 				d3dResultMatrix = this->CameraOrientationReset(d3dResultMatrix);
 				tCameraMode.bSwitch = false;
 			}
-			d3dResultMatrix = this->DebugCamera(d3dResultMatrix, d3dWorldMatrix);
+			d3dResultMatrix = this->DebugCamera(d3dResultMatrix, d3dWorldMatrix, delta);
 
 			tDebugCamera->d3d_Position = XMMatrixMultiply(d3dResultMatrix, d3dWorldMatrix);
 			tMyViewMatrix = tDebugCamera->d3d_Position;
@@ -229,7 +229,7 @@ GReturn CInputSystem::InitializeGInput(HWND cTheWindow)
 	return CreateGInput(cTheWindow, sizeof(cTheWindow), &m_pcMyInput);
 }
 
-XMMATRIX CInputSystem::DebugCamera(XMMATRIX d3d_ViewM, XMMATRIX d3d_WorldM)
+XMMATRIX CInputSystem::DebugCamera(XMMATRIX d3d_ViewM, XMMATRIX d3d_WorldM, double delta)
 {
 	XMMATRIX d3dTmpViewM, d3dMovementM, d3dRotation;
 	float fXchange = 0, fYchange = 0, fXEnd = 0, fYEnd = 0;
@@ -250,36 +250,36 @@ XMMATRIX CInputSystem::DebugCamera(XMMATRIX d3d_ViewM, XMMATRIX d3d_WorldM)
 	// up key movement
 
 	if (InputCheck(G_KEY_W) == 1) {
-		d3dMovementM = XMMatrixTranslation(0, 0, m_fMouseMovementSpeed);
+		d3dMovementM = XMMatrixTranslation(0, 0, m_fMouseMovementSpeed * delta);
 		d3dTmpViewM = XMMatrixMultiply(d3dMovementM, d3dTmpViewM);
 
 	}
 	// down key movement
 	if (InputCheck(G_KEY_S) == 1) {
-		d3dMovementM = XMMatrixTranslation(0, 0, -m_fMouseMovementSpeed);
+		d3dMovementM = XMMatrixTranslation(0, 0, -m_fMouseMovementSpeed * delta);
 
 		d3dTmpViewM = XMMatrixMultiply(d3dMovementM, d3dTmpViewM);
 
 	}
 	// left key movement
 	if (InputCheck(G_KEY_A) == 1) {
-		d3dMovementM = XMMatrixTranslation(-m_fMouseMovementSpeed, 0, 0);
+		d3dMovementM = XMMatrixTranslation(-m_fMouseMovementSpeed * delta, 0, 0);
 		d3dTmpViewM = XMMatrixMultiply(d3dMovementM, d3dTmpViewM);
 
 	}
 	// right key movement
 	if (InputCheck(G_KEY_D) == 1) {
-		d3dMovementM = XMMatrixTranslation(m_fMouseMovementSpeed, 0, 0);
+		d3dMovementM = XMMatrixTranslation(m_fMouseMovementSpeed * delta, 0, 0);
 		d3dTmpViewM = XMMatrixMultiply(d3dMovementM, d3dTmpViewM);
 
 	}
 	if (InputCheck(G_KEY_SPACE) == 1) {
-		d3dMovementM = XMMatrixTranslation(0, m_fMouseMovementSpeed, 0);
+		d3dMovementM = XMMatrixTranslation(0, m_fMouseMovementSpeed * delta, 0);
 		d3dTmpViewM = XMMatrixMultiply(d3dMovementM, d3dTmpViewM);
 
 	}
 	if (InputCheck(G_KEY_LEFTSHIFT) == 1) {
-		d3dMovementM = XMMatrixTranslation(0, -m_fMouseMovementSpeed, 0);
+		d3dMovementM = XMMatrixTranslation(0, -m_fMouseMovementSpeed * delta, 0);
 		d3dTmpViewM = XMMatrixMultiply(d3dMovementM, d3dTmpViewM);
 	}
 
@@ -538,7 +538,7 @@ XMMATRIX CInputSystem::AimMode(TCamera * in_AimCamera, XMMATRIX d3dplayerMatrix,
 		return d3dTmpViewM;
 }
 
-XMMATRIX CInputSystem::WalkCameraControls(XMVECTOR U, XMMATRIX viewM, bool &_movement) {
+XMMATRIX CInputSystem::WalkCameraControls(XMVECTOR U, XMMATRIX viewM, bool &_movement, double delta) {
 	//Orbit Camera 
 	//XMVECTOR X, Y, Z, X2, Y2, Z2, W;
 	XMVECTOR d3d_newX, d3d_newY, d3d_existingZ;
@@ -579,7 +579,7 @@ XMMATRIX CInputSystem::WalkCameraControls(XMVECTOR U, XMMATRIX viewM, bool &_mov
 		//XMMatrixRotationY(fXchange * m_fMouseRotationSpeed);
 		//d3dTmpViewM = XMMatrixMultiply(d3dTmpViewM, d3dRotation);
 	
-		d3dRotation = XMMatrixRotationRollPitchYaw(fYchange * m_fMouseRotationSpeed, fXchange * m_fMouseRotationSpeed, 0);        //XMMatrixRotationX(fYchange * m_fMouseRotationSpeed);
+		d3dRotation = XMMatrixRotationRollPitchYaw(fYchange * m_fMouseRotationSpeed * delta, fXchange * m_fMouseRotationSpeed * delta, 0);        //XMMatrixRotationX(fYchange * m_fMouseRotationSpeed);
 
 		d3dTmpViewM = XMMatrixMultiply(d3dTmpViewM, d3dRotation);
 		
