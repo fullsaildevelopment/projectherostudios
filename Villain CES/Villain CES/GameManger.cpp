@@ -3370,6 +3370,7 @@ int CGameMangerSystem::SpacePirateGamePlay()
 					m_d3dPlayerMatrix = tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix;
 				}
 			}
+			DoorEventListener(tThisWorld.atShaderID[nCurrentEntity].m_nShaderID);
 			if (tCameraMode.bWalkMode == true)
 			{
 				pcGraphicsSystem->InitMyShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tMyVertexBufferTemp, tThisWorld.atMesh[nCurrentEntity], walkCamera->d3d_Position);
@@ -3939,7 +3940,7 @@ void CGameMangerSystem::LoadMikesGraphicsSandbox()
 	//	int myMesh = createMesh(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, tempImport.vtMeshes[meshIndex], matOpt, meshIndex);
 	//}
 
-	tempImport = pcGraphicsSystem->ReadMesh("meshData_NoBrewery7.txt");
+	tempImport = pcGraphicsSystem->ReadMesh("meshData_DemoDoors.txt");
 	matOpt = pcGraphicsSystem->CreateTexturesFromFile(tempImport.vtMaterials, tempImport.meshCount);
 	for (int meshIndex = 0; meshIndex < tempImport.meshCount; meshIndex++)
 	{
@@ -4126,7 +4127,6 @@ int CGameMangerSystem::MikesGraphicsSandbox()
 	tThisWorld.atAnimation[0].tTimer.GetLocalTime(tThisWorld.atAnimation[0].tTimer.tSceneTimer, tThisWorld.atAnimation[0].tTimer.localTime);
 	tThisWorld.atAnimation[0].tTimer.DisplayTimes(pcInputSystem);
 
-
 	//End Time
 	return 10;
 }
@@ -4189,11 +4189,12 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 		
 	}
 
-	tempImport = pcGraphicsSystem->ReadMesh("meshData_NoBrewery.txt");
+	tempImport = pcGraphicsSystem->ReadMesh("meshData_DemoDoors.txt");
 	matOpt = pcGraphicsSystem->CreateTexturesFromFile(tempImport.vtMaterials, tempImport.meshCount);
 	for (int meshIndex = 0; meshIndex < tempImport.meshCount; meshIndex++)
 	{
-		int myMesh = createMesh(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, tempImport.vtMeshes[meshIndex], matOpt, meshIndex);
+		tempImport.vtMaterials[meshIndex].lambert;
+		int myMesh = createMesh(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, tempImport.vtMeshes[meshIndex], matOpt, meshIndex, tempImport.vtMaterials[meshIndex].lambert);
 	}
 
 	#pragma region Matrix Init
@@ -5011,6 +5012,7 @@ int CGameMangerSystem::RealLevelUpdate()
 
 
 		}
+
 		if (tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_SHADERID))
 		{
 			if (tCameraMode.bWalkMode == true)
@@ -5055,6 +5057,10 @@ int CGameMangerSystem::RealLevelUpdate()
 					}
 				}
 			}
+
+			//Door Event Check
+			tMyVertexBufferTemp.m_d3dWorldMatrix = XMMatrixMultiply(tMyVertexBufferTemp.m_d3dWorldMatrix, DoorEventListener(tThisWorld.atShaderID[nCurrentEntity].m_nShaderID));
+			//DoorEventChanger(tThisWorld.atShaderID[nCurrentEntity].m_nShaderID);
 			if (tCameraMode.bWalkMode == true)
 			{
 				pcGraphicsSystem->InitMyShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tMyVertexBufferTemp, tThisWorld.atMesh[nCurrentEntity], walkCamera->d3d_Position);
@@ -5447,7 +5453,9 @@ int CGameMangerSystem::RealLevelUpdate()
 			}
 
 
-			if ((tThisWorld.atCollisionMask[nCurrentEntity].m_tnCollisionMask == (COMPONENT_COLLISIONMASK | COMPONENT_AABB | COMPONENT_NONSTATIC | COMPONENT_TRIGGER) || tThisWorld.atCollisionMask[nCurrentEntity].m_tnCollisionMask == (COMPONENT_COLLISIONMASK | COMPONENT_NONTRIGGER | COMPONENT_AABB | COMPONENT_NONSTATIC)))
+			if ((tThisWorld.atCollisionMask[nCurrentEntity].m_tnCollisionMask == (COMPONENT_COLLISIONMASK | COMPONENT_AABB | COMPONENT_NONSTATIC | COMPONENT_TRIGGER) 
+				|| tThisWorld.atCollisionMask[nCurrentEntity].m_tnCollisionMask == (COMPONENT_COLLISIONMASK | COMPONENT_NONTRIGGER | COMPONENT_AABB | COMPONENT_NONSTATIC)) 
+				|| tThisWorld.atCollisionMask[nCurrentEntity].m_tnCollisionMask == (COMPONENT_COLLISIONMASK | COMPONENT_NONTRIGGER | COMPONENT_AABB | COMPONENT_STATIC))
 			{
 				vector<int> otherCollisionsIndex;
 				if (pcCollisionSystem->AABBtoAABBCollisionCheck(tThisWorld.atAABB[nCurrentEntity], &otherCollisionsIndex) == true)
@@ -5455,6 +5463,14 @@ int CGameMangerSystem::RealLevelUpdate()
 
 					for (int i = 0; i < otherCollisionsIndex.size(); ++i)
 					{
+						if (tThisWorld.atInputMask[nCurrentEntity].m_tnInputMask == (COMPONENT_CLAYTON | COMPONENT_INPUTMASK))
+						{
+							if (tThisWorld.atCollisionMask[otherCollisionsIndex[i]].m_tnCollisionMask == (COMPONENT_COLLISIONMASK | COMPONENT_NONTRIGGER | COMPONENT_AABB | COMPONENT_STATIC) 
+								&& tThisWorld.atShaderID[otherCollisionsIndex[i]].m_nShaderID >= 20)
+							{
+								//DoorEventChanger(tThisWorld.atShaderID[otherCollisionsIndex[i]].m_nShaderID);
+							}
+						}
 						if (tThisWorld.atRigidBody[otherCollisionsIndex[i]].ground == true
 							&& tThisWorld.atCollisionMask[nCurrentEntity].m_tnCollisionMask == (COMPONENT_COLLISIONMASK | COMPONENT_TRIGGER | COMPONENT_AABB | COMPONENT_NONSTATIC))
 						{
@@ -5513,15 +5529,9 @@ int CGameMangerSystem::RealLevelUpdate()
 										pcAiSystem->SetNumberOfAI(pcAiSystem->GetNumberOfAI() - 1);
 										if (tThisWorld.atClip[nCurrentEntity].gunIndex != -1)
 										{
-											
-
 											pcCollisionSystem->RemoveAABBCollider(nCurrentEntity);
-										
-
 
 											pcGraphicsSystem->CleanD3DObject(&tThisWorld, nCurrentEntity);
-
-
 										}
 										pcCollisionSystem->RemoveAABBCollider(otherCollisionsIndex[i]);
 										pcGraphicsSystem->CleanD3DObject(&tThisWorld, otherCollisionsIndex[i]);
@@ -5530,13 +5540,7 @@ int CGameMangerSystem::RealLevelUpdate()
 									}
 									else
 									{
-										
-										
-
-											pcCollisionSystem->RemoveAABBCollider(nCurrentEntity);
-										
-										
-
+										pcCollisionSystem->RemoveAABBCollider(nCurrentEntity);
 
 										pcGraphicsSystem->CleanD3DObject(&tThisWorld, nCurrentEntity);
 										tThisWorld.atAiHeath[otherCollisionsIndex[i]].heath -= playerDamage;
@@ -5562,14 +5566,11 @@ int CGameMangerSystem::RealLevelUpdate()
 								{
 									if (tThisWorld.atClip[nCurrentEntity].gunIndex != -1)
 									{
-											
 
-											pcCollisionSystem->RemoveAABBCollider(nCurrentEntity);
-										
-										
+										pcCollisionSystem->RemoveAABBCollider(nCurrentEntity);
+
 										//pcGraphicsSystem->CleanD3DObject(&tThisWorld, tThisWorld.atAIMask[nCurrentEntity].GunIndex);
 										pcGraphicsSystem->CleanD3DObject(&tThisWorld, nCurrentEntity);
-
 									}
 
 									if (prevHealth == 0)
@@ -5595,7 +5596,6 @@ int CGameMangerSystem::RealLevelUpdate()
 										InitializeEndScreen(false);
 									}
 								}
-
 
 							}
 							//Wasn't being hit at all so it's been commented.
@@ -5732,7 +5732,6 @@ int CGameMangerSystem::RealLevelUpdate()
 		{
 			tThisWorld.atClayton[PlayerStartIndex].health *= 0;
 		}
-
 
 		if (GamePaused)
 		{
@@ -6097,3 +6096,557 @@ int CGameMangerSystem::RealLevelUpdate()
 
 	return 14;
 }
+
+enum
+	{
+		DoorPiece1_FRAME = 20,
+		DoorPiece1_UP,
+		DoorPiece1_DOWN,
+		DoorPiece1_LEFT,
+		DoorPiece1_RIGHT,
+		DoorPiece2_FRAME = 30,
+		DoorPiece2_UP,
+		DoorPiece2_DOWN,
+		DoorPiece2_LEFT,
+		DoorPiece2_RIGHT,
+		DoorPiece3_FRAME = 40,
+		DoorPiece3_UP,
+		DoorPiece3_DOWN,
+		DoorPiece3_LEFT,
+		DoorPiece3_RIGHT,
+		DoorPiece4_FRAME = 50,
+		DoorPiece4_UP,
+		DoorPiece4_DOWN,
+		DoorPiece4_LEFT,
+		DoorPiece4_RIGHT,
+		DoorPiece5_FRAME = 60,
+		DoorPiece5_UP,
+		DoorPiece5_DOWN,
+		DoorPiece5_LEFT,
+		DoorPiece5_RIGHT,
+		DoorPiece6_FRAME = 70,
+		DoorPiece6_UP,
+		DoorPiece6_DOWN,
+		DoorPiece6_LEFT,
+		DoorPiece6_RIGHT,
+	};
+
+
+/*
+If door[i] == 1
+	open door
+If door[i] == -1
+	close door
+If door[i] == 0
+	Something is wrong
+If door[i] == 2
+	door is open, do nothing
+If door[i] == -2
+	door is closed, do nothing
+*/
+XMMATRIX CGameMangerSystem::DoorEventListener(int shaderID)
+{
+	switch (shaderID)
+	{
+		case DoorPiece1_FRAME:
+		{
+			if (doors[0] == 1)
+			{
+				doors[0] = 2;
+				return XMMatrixTranslation(0, 0, 0);
+			}
+			else if (doors[0] == -1)
+			{
+				doors[0] = -2;
+				return XMMatrixTranslation(0, 0, 0);
+			}
+			break;
+		}
+		case DoorPiece1_UP:
+		{
+			if (doors[0] == 1)
+			{
+				doors[0] = 2;
+				return XMMatrixTranslation(0, 1, 0);
+			}
+			else if (doors[0] == -1)
+			{
+				doors[0] = -2;
+				return XMMatrixTranslation(0, -1, 0);
+			}
+			break;
+		}
+		case DoorPiece1_DOWN:
+		{
+			if (doors[0] == 1)
+			{
+				doors[0] = 2;
+				return XMMatrixTranslation(0, -1, 0);
+			}
+			else if (doors[0] == -1)
+			{
+				doors[0] = -2;
+				return XMMatrixTranslation(0, 1, 0);
+			}
+			break;
+		}
+		case DoorPiece1_LEFT:
+		{
+			if (doors[0] == 1)
+			{
+				doors[0] = 2;
+				return XMMatrixTranslation(-1, 0, 0);
+			}
+			else if (doors[0] == -1)
+			{
+				doors[0] = -2;
+				return XMMatrixTranslation(1, 0, 0);
+			}
+			break;
+		}
+		case DoorPiece1_RIGHT:
+		{
+			if (doors[0] == 1)
+			{
+				doors[0] = 2;
+				return XMMatrixTranslation(1, 0, 0);
+			}
+			else if (doors[0] == -1)
+			{
+				doors[0] = -2;
+				return XMMatrixTranslation(-1, 0, 0);
+			}
+			break;
+		}
+		case DoorPiece2_FRAME:
+		{
+			if (doors[1] == 1)
+			{
+				doors[1] = 2;
+				return XMMatrixTranslation(0, 0, 0);
+			}
+			else if (doors[1] == -1)
+			{
+				doors[1] = -2;
+				return XMMatrixTranslation(0, 0, 0);
+			}
+			break;
+		}
+		case DoorPiece2_UP:
+		{
+			if (doors[1] == 1)
+			{
+				doors[1] = 2;
+				return XMMatrixTranslation(0, 1, 0);
+			}
+			else if (doors[1] == -1)
+			{
+				doors[1] = -2;
+				return XMMatrixTranslation(0, -1, 0);
+			}
+			break;
+		}
+		case DoorPiece2_DOWN:
+		{
+			if (doors[1] == 1)
+			{
+				doors[1] = 2;
+				return XMMatrixTranslation(0, -1, 0);
+			}
+			else if (doors[1] == -1)
+			{
+				doors[1] = -2;
+				return XMMatrixTranslation(0, 1, 0);
+			}
+			break;
+		}
+		case DoorPiece2_LEFT:
+		{
+			if (doors[1] == 1)
+			{
+				doors[1] = 2;
+				return XMMatrixTranslation(-1, 0, 0);
+			}
+			else if (doors[1] == -1)
+			{
+				doors[1] = -2;
+				return XMMatrixTranslation(1, 0, 0);
+			}
+			break;
+		}
+		case DoorPiece2_RIGHT:
+		{
+			if (doors[1] == 1)
+			{
+				doors[1] = 2;
+				return XMMatrixTranslation(1, 0, 0);
+			}
+			else if (doors[1] == -1)
+			{
+				doors[1] = -2;
+				return XMMatrixTranslation(-1, 0, 0);
+			}
+			break;
+		}
+		case DoorPiece3_FRAME:
+		{
+			if (doors[2] == 1)
+			{
+				doors[2] = 2;
+				return XMMatrixTranslation(0, 0, 0);
+			}
+			else if (doors[2] == -1)
+			{
+				doors[2] = -2;
+				return XMMatrixTranslation(0, 0, 0);
+			}
+			break;
+		}
+		case DoorPiece3_UP:
+		{
+			if (doors[2] == 1)
+			{
+				doors[2] = 2;
+				return XMMatrixTranslation(0, 1, 0);
+			}
+			else if (doors[2] == -1)
+			{
+				doors[2] = -2;
+				return XMMatrixTranslation(0, -1, 0);
+			}
+			break;
+		}
+		case DoorPiece3_DOWN:
+		{
+			if (doors[2] == 1)
+			{
+				doors[2] = 2;
+				return XMMatrixTranslation(0, -1, 0);
+			}
+			else if (doors[2] == -1)
+			{
+				doors[2] = -2;
+				return XMMatrixTranslation(0, 1, 0);
+			}
+			break;
+		}
+		case DoorPiece3_LEFT:
+		{
+			if (doors[2] == 1)
+			{
+				doors[2] = 2;
+				return XMMatrixTranslation(-1, 0, 0);
+			}
+			else if (doors[2] == -1)
+			{
+				doors[2] = -2;
+				return XMMatrixTranslation(1, 0, 0);
+			}
+			break;
+		}
+		case DoorPiece3_RIGHT:
+		{
+			if (doors[2] == 1)
+			{
+				doors[2] = 2;
+				return XMMatrixTranslation(1, 0, 0);
+			}
+			else if (doors[2] == -1)
+			{
+				doors[2] = -2;
+				return XMMatrixTranslation(-1, 0, 0);
+			}
+			break;
+		}
+		case DoorPiece4_FRAME:
+		{
+			if (doors[3] == 1)
+			{
+				doors[3] = 2;
+				return XMMatrixTranslation(0, 0, 0);
+			}
+			else if (doors[3] == -1)
+			{
+				doors[3] = -2;
+				return XMMatrixTranslation(0, 0, 0);
+			}
+			break;
+		}
+		case DoorPiece4_UP:
+		{
+			if (doors[3] == 1)
+			{
+				doors[3] = 2;
+				return XMMatrixTranslation(0, 1, 0);
+			}
+			else if (doors[3] == -1)
+			{
+				doors[3] = -2;
+				return XMMatrixTranslation(0, -1, 0);
+			}
+			break;
+		}
+		case DoorPiece4_DOWN:
+		{
+			if (doors[3] == 1)
+			{
+				doors[3] = 2;
+				return XMMatrixTranslation(0, -1, 0);
+			}
+			else if (doors[3] == -1)
+			{
+				doors[3] = -2;
+				return XMMatrixTranslation(0, 1, 0);
+			}
+			break;
+		}
+		case DoorPiece4_LEFT:
+		{
+			if (doors[3] == 1)
+			{
+				doors[3] = 2;
+				return XMMatrixTranslation(-1, 0, 0);
+			}
+			else if (doors[3] == -1)
+			{
+				doors[3] = -2;
+				return XMMatrixTranslation(1, 0, 0);
+			}
+			break;
+		}
+		case DoorPiece4_RIGHT:
+		{
+			if (doors[3] == 1)
+			{
+				doors[3] = 2;
+				return XMMatrixTranslation(1, 0, 0);
+			}
+			else if (doors[3] == -1)
+			{
+				doors[3] = -2;
+				return XMMatrixTranslation(-1, 0, 0);
+			}
+			break;
+		}
+		case DoorPiece5_FRAME:
+		{
+			if (doors[4] == 1)
+			{
+				doors[4] = 2;
+				return XMMatrixTranslation(0, 0, 0);
+			}
+			else if (doors[4] == -1)
+			{
+				doors[4] = -2;
+				return XMMatrixTranslation(0, 0, 0);
+			}
+			break;
+		}
+		case DoorPiece5_UP:
+		{
+			if (doors[4] == 1)
+			{
+				doors[4] = 2;
+				return XMMatrixTranslation(0, 1, 0);
+			}
+			else if (doors[4] == -1)
+			{
+				doors[4] = -2;
+				return XMMatrixTranslation(0, -1, 0);
+			}
+			break;
+		}
+		case DoorPiece5_DOWN:
+		{
+			if (doors[4] == 1)
+			{
+				doors[4] = 2;
+				return XMMatrixTranslation(0, -1, 0);
+			}
+			else if (doors[4] == -1)
+			{
+				doors[4] = -2;
+				return XMMatrixTranslation(0, 1, 0);
+			}
+			break;
+		}
+		case DoorPiece5_LEFT:
+		{
+			if (doors[4] == 1)
+			{
+				doors[4] = 2;
+				return XMMatrixTranslation(-1, 0, 0);
+			}
+			else if (doors[4] == -1)
+			{
+				doors[4] = -2;
+				return XMMatrixTranslation(1, 0, 0);
+			}
+			break;
+		}
+		case DoorPiece5_RIGHT:
+		{
+			if (doors[4] == 1)
+			{
+				doors[4] = 2;
+				return XMMatrixTranslation(1, 0, 0);
+			}
+			else if (doors[4] == -1)
+			{
+				doors[4] = -2;
+				return XMMatrixTranslation(-1, 0, 0);
+			}
+			break;
+		}
+		case DoorPiece6_FRAME:
+		{
+			if (doors[5] == 1)
+			{
+				doors[5] = 2;
+				return XMMatrixTranslation(0, 0, 0);
+			}
+			else if (doors[5] == -1)
+			{
+				doors[5] = -2;
+				return XMMatrixTranslation(0, 0, 0);
+			}
+			break;
+		}
+		case DoorPiece6_UP:
+		{
+			if (doors[5] == 1)
+			{
+				doors[5] = 2;
+				return XMMatrixTranslation(0, 1, 0);
+			}
+			else if (doors[5] == -1)
+			{
+				doors[5] = -2;
+				return XMMatrixTranslation(0, -1, 0);
+			}
+			break;
+		}
+		case DoorPiece6_DOWN:
+		{
+			if (doors[5] == 1)
+			{
+				doors[5] = 2;
+				return XMMatrixTranslation(0, -1, 0);
+			}
+			else if (doors[5] == -1)
+			{
+				doors[5] = -2;
+				return XMMatrixTranslation(0, 1, 0);
+			}
+			break;
+		}
+		case DoorPiece6_LEFT:
+		{
+			if (doors[5] == 1)
+			{
+				doors[5] = 2;
+				return XMMatrixTranslation(-1, 0, 0);
+			}
+			else if (doors[5] == -1)
+			{
+				doors[5] = -2;
+				return XMMatrixTranslation(1, 0, 0);
+			}
+			break;
+		}
+		case DoorPiece6_RIGHT:
+		{
+			if (doors[5] == 1)
+			{
+				doors[5] = 2;
+				return XMMatrixTranslation(1, 0, 0);
+			}
+			else if (doors[5] == -1)
+			{
+				doors[5] = -2;
+				return XMMatrixTranslation(-1, 0, 0);
+			}
+			break;
+		}
+		default:
+		{
+			return XMMatrixIdentity();
+			break;
+		}
+	}
+	return XMMatrixIdentity();
+}
+
+void CGameMangerSystem::DoorEventChanger(int shaderID)
+{
+	if (shaderID >= 20)
+	{
+		if (shaderID < 25)
+		{
+			if (doors[0] == -2)
+			{
+				doors[0] = 1;
+			}
+			else if (doors[0] == 2)
+			{
+				doors[0] = -1;
+			}
+		}
+		else if (shaderID < 35)
+		{
+			if (doors[1] == -2)
+			{
+				doors[1] = 1;
+			}
+			else if (doors[1] == 2)
+			{
+				doors[1] = -1;
+			}
+		}
+		else if (shaderID < 45)
+		{
+			if (doors[2] == -2)
+			{
+				doors[2] = 1;
+			}
+			else if (doors[2] == 2)
+			{
+				doors[2] = -1;
+			}
+		}
+		else if (shaderID < 55)
+		{
+			if (doors[3] == -2)
+			{
+				doors[3] = 1;
+			}
+			else if (doors[3] == 2)
+			{
+				doors[3] = -1;
+			}
+		}
+		else if (shaderID < 65)
+		{
+			if (doors[4] == -2)
+			{
+				doors[4] = 1;
+			}
+			else if (doors[4] == 2)
+			{
+				doors[4] = -1;
+			}
+		}
+		else if (shaderID < 75)
+		{
+			if (doors[5] == -2)
+			{
+				doors[5] = 1;
+			}
+			else if (doors[5] == 2)
+			{
+				doors[5] = -1;
+			}
+		}
+	}
+}
+
