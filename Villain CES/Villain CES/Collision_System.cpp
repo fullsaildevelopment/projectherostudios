@@ -231,7 +231,7 @@ void CCollisionSystem::TestThreading(TWorld * ptWorld, int nCurrentEntity, CGrap
 
 
 								pcGraphicsSystem->CleanD3DObject(ptWorld, nCurrentEntity);
-							//	ptWorld->atAiHeath[otherCollisionsIndex[i]].heath -= playerDamage;
+								ptWorld->atAiHeath[otherCollisionsIndex[i]].heath -= 100;
 
 							/*	pcAudioSystem->SendSoundsToEngine(AK::EVENTS::PLAY_HURT_HUMAN, m_Human_Hurt);
 								pcAudioSystem->SetRTPCVolume(AK::GAME_PARAMETERS::SFX_VOLUME, m_fSFXVolume);*/

@@ -4478,7 +4478,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 
 
 
-
+	// ai in the back left
 
 	AILocation = pcGraphicsSystem->SetDefaultWorldPosition();
 	AILocation.r[3].m128_f32[2] -= 80;
@@ -4515,10 +4515,10 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	tThisWorld.atCover[cover1].CoverPositions.push_back(nodeindex);
 	pcAiSystem->LookAtObject(AILocation, &m_d3dPlayerMatrix);
 	TriggerZone = m_d3dPlayerMatrix;
-	TriggerZone.r[3].m128_f32[2] -= 60;
+	TriggerZone.r[3].m128_f32[2] -= 80;
 	TriggerZone.r[3].m128_f32[0] -= 2;
 
-	CoverTriggerIndex = CreateCoverTriggerZone(&tThisWorld, TriggerZone);
+	//CoverTriggerIndex = CreateCoverTriggerZone(&tThisWorld, TriggerZone);
 
 	edges.clear();
 	edges.push_back(nodeindex);
@@ -4593,20 +4593,73 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	tThisWorld.atAIVision[spacePirate].normalAtBegining[5] = planes[5].normal;
 	//AILocation.r[3].m128_f32[0] += 8;
 	tThisWorld.atPathPlanining[spacePirate].startingNode = nodeindex2;
-	tThisWorld.atPathPlanining[spacePirate].Goal = nodeindex;
+
 
 	tThisWorld.atAIVision[spacePirate].keepSearching = false;
+	TriggerZone = m_d3dPlayerMatrix;
+	TriggerZone.r[3].m128_f32[2] -= 90;
+	TriggerZone.r[3].m128_f32[0] -= 2;
+
+	CoverTriggerIndex = CreateCoverTriggerZone(&tThisWorld, TriggerZone);
+
+	CoverLocation = AILocation;
+	coverPosition.clear();
+	CoverLocation.r[3].m128_f32[2] -= 4;
+	cover1 = CreateCover(&tThisWorld, CoverLocation, coverPosition);
+	nodeLocation = CoverLocation;
+	nodeLocation.r[3].m128_f32[0] += 0;
+	//nodeLocation.r[3].m128_f32[1] -= 1;
+	nodeLocation.r[3].m128_f32[2] += -2;
+
+	//pcAiSystem->AddNodeToPathFinding(nodeLocation, nodePosition, 1);
+	int nodeindexBackleft = CreateNodePoint(&tThisWorld, nodeLocation);
+	nodePosition;
+	nodePosition.x = nodeLocation.r[3].m128_f32[0];
+	nodePosition.y = nodeLocation.r[3].m128_f32[1];
+	nodePosition.z = nodeLocation.r[3].m128_f32[2];
+	pcAiSystem->AddNodeToPathFinding(nodeindexBackleft, nodePosition, 1);
+	nodeLocation = AILocation;
+	int backleftFrontnodeindex2 = CreateNodePoint(&tThisWorld, nodeLocation);
+
+	nodePosition.x = nodeLocation.r[3].m128_f32[0];
+	nodePosition.y = nodeLocation.r[3].m128_f32[1];
+	nodePosition.z = nodeLocation.r[3].m128_f32[2];
+	pcAiSystem->AddNodeToPathFinding(backleftFrontnodeindex2, nodePosition, 1);
+	tThisWorld.atCover[cover1].CoverPositions.push_back(backleftFrontnodeindex2);
+	//	pcAiSystem->LookAtObject(AILocation, &m_d3dPlayerMatrix);
+
+
+	//CoverTriggerIndex = CreateCoverTriggerZone(&tThisWorld, TriggerZone);
+
+	edges.clear();
+	edges.push_back(nodeindexBackleft);
+	edges.push_back(backleftFrontnodeindex2);
+
+	pcAiSystem->AddEdgestoNode(nodeindex2, edges);
+	//pcAiSystem->AddEdgestoNode(nodeindex3, edges);
+	edges.clear();
+	edges.push_back(nodeindexBackleft);
+	edges.push_back(backleftFrontnodeindex2);
+	pcAiSystem->AddEdgestoNode(nodeindex, edges);
+	edges.clear();
+	edges.push_back(nodeindexBackleft);
+	pcAiSystem->AddEdgestoNode(backleftFrontnodeindex2, edges);
+
 	tThisWorld.atCoverTrigger[CoverTriggerIndex].AItoMove.push_back(spacePirate);
 
 	tThisWorld.atCoverTrigger[CoverTriggerIndex].coverAiCanGoTo.push_back(tThisWorld.atCover[cover1]);
+	tThisWorld.atPathPlanining[spacePirate].Goal = nodeindexBackleft;
+	//tThisWorld.atCoverTrigger[CoverTriggerIndex].AItoMove.push_back(spacePirate);
+
+	//tThisWorld.atCoverTrigger[CoverTriggerIndex].coverAiCanGoTo.push_back(tThisWorld.atCover[cover1]);
 #pragma endregion
 
-	// ai in back left
+	// ai in back right
 
 
 	AILocation = pcGraphicsSystem->SetDefaultWorldPosition();
 	AILocation.r[3].m128_f32[2] -= 80;
-	AILocation.r[3].m128_f32[0] += 0;
+	AILocation.r[3].m128_f32[0] -= 16;
 	AILocation.r[3].m128_f32[1] += 0.2;
 	 AiLookPosition = AILocation;
 	AiLookPosition.r[3].m128_f32[0] -= 12;
@@ -4638,11 +4691,9 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	pcAiSystem->AddNodeToPathFinding(nodeindex2, nodePosition, 1);
 	tThisWorld.atCover[cover1].CoverPositions.push_back(nodeindex);
 	pcAiSystem->LookAtObject(AILocation, &m_d3dPlayerMatrix);
-	TriggerZone = m_d3dPlayerMatrix;
-	TriggerZone.r[3].m128_f32[2] -= 60;
-	TriggerZone.r[3].m128_f32[0] -= 2;
 
-	CoverTriggerIndex = CreateCoverTriggerZone(&tThisWorld, TriggerZone);
+
+	//CoverTriggerIndex = CreateCoverTriggerZone(&tThisWorld, TriggerZone);
 
 	edges.clear();
 	edges.push_back(nodeindex);
@@ -4718,10 +4769,64 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	tThisWorld.atPathPlanining[spacePirate].Goal = nodeindex;
 
 	tThisWorld.atAIVision[spacePirate].keepSearching = false;
+//	tThisWorld.atCoverTrigger[CoverTriggerIndex].AItoMove.push_back(spacePirate);
+//
+//	tThisWorld.atCoverTrigger[CoverTriggerIndex].coverAiCanGoTo.push_back(tThisWorld.atCover[cover1]);
+//#pragma endregion
+	// This is my AIMovementTrigger for backleft ai and back right
+	TriggerZone = m_d3dPlayerMatrix;
+	TriggerZone.r[3].m128_f32[2] -= 90;
+	TriggerZone.r[3].m128_f32[0] -= 2;
+
+	CoverTriggerIndex = CreateCoverTriggerZone(&tThisWorld, TriggerZone);
+
+	CoverLocation = AILocation;
+	coverPosition.clear();
+	CoverLocation.r[3].m128_f32[2] -= 4;
+	cover1 = CreateCover(&tThisWorld, CoverLocation, coverPosition);
+	nodeLocation = CoverLocation;
+	nodeLocation.r[3].m128_f32[0] += 0;
+	//nodeLocation.r[3].m128_f32[1] -= 1;
+	nodeLocation.r[3].m128_f32[2] += -2;
+
+	//pcAiSystem->AddNodeToPathFinding(nodeLocation, nodePosition, 1);
+	int nodeindexBackRight = CreateNodePoint(&tThisWorld, nodeLocation);
+	nodePosition;
+	nodePosition.x = nodeLocation.r[3].m128_f32[0];
+	nodePosition.y = nodeLocation.r[3].m128_f32[1];
+	nodePosition.z = nodeLocation.r[3].m128_f32[2];
+	pcAiSystem->AddNodeToPathFinding(nodeindexBackRight, nodePosition, 1);
+	nodeLocation = AILocation;
+	int backrightFrontnodeindex2 = CreateNodePoint(&tThisWorld, nodeLocation);
+
+	nodePosition.x = nodeLocation.r[3].m128_f32[0];
+	nodePosition.y = nodeLocation.r[3].m128_f32[1];
+	nodePosition.z = nodeLocation.r[3].m128_f32[2];
+	pcAiSystem->AddNodeToPathFinding(backrightFrontnodeindex2, nodePosition, 1);
+	tThisWorld.atCover[cover1].CoverPositions.push_back(nodeindexBackRight);
+//	pcAiSystem->LookAtObject(AILocation, &m_d3dPlayerMatrix);
+
+
+	//CoverTriggerIndex = CreateCoverTriggerZone(&tThisWorld, TriggerZone);
+
+	edges.clear();
+	edges.push_back(nodeindexBackRight);
+	edges.push_back(backrightFrontnodeindex2);
+
+	pcAiSystem->AddEdgestoNode(nodeindex2, edges);
+	//pcAiSystem->AddEdgestoNode(nodeindex3, edges);
+	edges.clear();
+	edges.push_back(nodeindexBackRight);
+	edges.push_back(backrightFrontnodeindex2);
+	pcAiSystem->AddEdgestoNode(nodeindex, edges);
+	edges.clear();
+	edges.push_back(nodeindexBackRight);
+	pcAiSystem->AddEdgestoNode(backrightFrontnodeindex2, edges);
+
 	tThisWorld.atCoverTrigger[CoverTriggerIndex].AItoMove.push_back(spacePirate);
 
 	tThisWorld.atCoverTrigger[CoverTriggerIndex].coverAiCanGoTo.push_back(tThisWorld.atCover[cover1]);
-#pragma endregion
+	tThisWorld.atPathPlanining[spacePirate].Goal = nodeindexBackRight;
 
 
 	#pragma region COLLISION INIT

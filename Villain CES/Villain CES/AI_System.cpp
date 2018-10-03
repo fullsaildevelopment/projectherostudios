@@ -534,7 +534,7 @@ void CAISystem::MoveAiToCoverLocation(TCoverTrigger Cover,TWorld * ptWorld,int P
 				ptWorld->atAIMask[Cover.AItoMove[i]].m_tnAIMask = COMPONENT_AIMASK | COMPONENT_SEARCH | COMPONENT_PATHFINDTEST;
 				ptWorld->atPathPlanining[Cover.AItoMove[i]].Goal = Cover.coverAiCanGoTo[0].CoverPositions[index];
 				ptWorld->atPathPlanining[Cover.AItoMove[i]].testingPathFinding = true;
-				ptWorld->atPathPlanining[Cover.AItoMove[i]].DelayMovement = rand() % 1000 + 50;
+				ptWorld->atPathPlanining[Cover.AItoMove[i]].DelayMovement = 0;//rand() % 100 + 50;
 				ptWorld->atPathPlanining[Cover.AItoMove[i]].InterRuptPathPlanning = false;
 				ptWorld->atActiveAI[Cover.AItoMove[i]].active = true;
 				ptWorld ->atAIVision[Cover.AItoMove[i]].keepSearching = false;

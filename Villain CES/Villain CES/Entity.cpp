@@ -2088,7 +2088,7 @@ unsigned int CreateCover(TWorld * ptWorld, XMMATRIX SpawnPosition,vector<int> co
 {
 	unsigned int nThisEntity = createEntity(ptWorld);
 
-	ptWorld->atCollisionMask[nThisEntity].m_tnCollisionMask = (COMPONENT_COLLISIONMASK | COMPONENT_AABB | COMPONENT_NONSTATIC | COMPONENT_NONTRIGGER);
+	ptWorld->atCollisionMask[nThisEntity].m_tnCollisionMask = (COMPONENT_COLLISIONMASK | COMPONENT_AABB | COMPONENT_STATIC | COMPONENT_TRIGGER);
 	ptWorld->atGraphicsMask[nThisEntity].m_tnGraphicsMask = (COMPONENT_GRAPHICSMASK | COMPONENT_SIMPLEMESH | COMPONENT_SHADERID);
 	ptWorld->atAIMask[nThisEntity].m_tnAIMask = (COMPONENT_AIMASK);
 	ptWorld->atUIMask[nThisEntity].m_tnUIMask = (COMPONENT_UIMASK);
@@ -2133,12 +2133,7 @@ unsigned int CreateCover(TWorld * ptWorld, XMMATRIX SpawnPosition,vector<int> co
 		12,13,4,4,6,12,
 		14,7,5,14,15,7
 	};
-	XMVECTOR AIGravity;
-	AIGravity.m128_f32[1] = -0.000001;
-	AIGravity.m128_f32[0] = 0;
-	AIGravity.m128_f32[2] = 0;
-	AIGravity.m128_f32[3] = 0;
-	ptWorld->atRigidBody[nThisEntity].gravity = AIGravity;
+
 
 	ptWorld->atSimpleMesh[nThisEntity].m_nIndexCount = 36;
 	ptWorld->atSimpleMesh[nThisEntity].m_nVertexCount = 16;
@@ -2200,21 +2195,21 @@ unsigned int CreateCoverTriggerZone(TWorld * ptWorld, XMMATRIX SpawnPosition)
 
 	static TPrimalVert atCubeVertices[]
 	{
-		TPrimalVert{ XMFLOAT3(-2, 0.5f, 0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//0 Top F Left
+		TPrimalVert{ XMFLOAT3(-6, 0.5f, 0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//0 Top F Left
 		TPrimalVert{ XMFLOAT3(7, 0.5f, 0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//1 Top F Right
-		TPrimalVert{ XMFLOAT3(-2, -0, 0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//2 Bottom F Left
+		TPrimalVert{ XMFLOAT3(-6, -0, 0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//2 Bottom F Left
 		TPrimalVert{ XMFLOAT3(7, -0, 0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//3 Bottom F Right
-		TPrimalVert{ XMFLOAT3(-2, 0.5f, -0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//4 Top B Left
+		TPrimalVert{ XMFLOAT3(-6, 0.5f, -0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//4 Top B Left
 		TPrimalVert{ XMFLOAT3(7, 0.5f, -0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//5 Top B Right
-		TPrimalVert{ XMFLOAT3(-2, -0, -0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//6 Bottom B Left
+		TPrimalVert{ XMFLOAT3(-6, -0, -0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//6 Bottom B Left
 		TPrimalVert{ XMFLOAT3(7, -0, -0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//7 Bottom B Right
 
 		TPrimalVert{ XMFLOAT3(7, 0.5f, 0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//8 //Top F Right
-		TPrimalVert{ XMFLOAT3(-2, 0.5f, 0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//9 // Top F Left
-		TPrimalVert{ XMFLOAT3(-2, -0, -0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//10 Bottom B Left
+		TPrimalVert{ XMFLOAT3(-6, 0.5f, 0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//9 // Top F Left
+		TPrimalVert{ XMFLOAT3(-6, -0, -0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//10 Bottom B Left
 		TPrimalVert{ XMFLOAT3(7, -0, -0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//11 Bottom B Right
-		TPrimalVert{ XMFLOAT3(-2, -0, 0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//12 Bottom F Left
-		TPrimalVert{ XMFLOAT3(-2, 0.5f, 0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//13 Top F Left
+		TPrimalVert{ XMFLOAT3(-6, -0, 0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//12 Bottom F Left
+		TPrimalVert{ XMFLOAT3(-6, 0.5f, 0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//13 Top F Left
 		TPrimalVert{ XMFLOAT3(7, 0.5f, 0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//14 Top F Right
 		TPrimalVert{ XMFLOAT3(7, -0, 0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) }//15 Bottm F Right
 	};
