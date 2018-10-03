@@ -650,7 +650,7 @@ unsigned int CreateMaterialBullet(TWorld * ptWorld, ID3D11Device * m_pd3dDevice,
 	return nThisEntity;
 }
 
-unsigned int CreateExtractionBeam(TWorld * ptWorld, XMMATRIX BulletSpawnLocation, int parentWorldMatrixIndex)
+unsigned int CreateExtractionBeam(TWorld * ptWorld, XMMATRIX BulletSpawnLocation, int parentWorldMatrixIndex, std::vector<TPrimalVert> atBeamVerts)
 {
 	unsigned int nThisEntity = createEntity(ptWorld);
 	ptWorld->atGraphicsMask[nThisEntity].m_tnGraphicsMask = (COMPONENT_GRAPHICSMASK | COMPONENT_DEBUGMESH | COMPONENT_SHADERID);
@@ -659,22 +659,22 @@ unsigned int CreateExtractionBeam(TWorld * ptWorld, XMMATRIX BulletSpawnLocation
 	ptWorld->atUIMask[nThisEntity].m_tnUIMask = (COMPONENT_UIMASK);
 	ptWorld->atPhysicsMask[nThisEntity].m_tnPhysicsMask = (COMPONENT_PHYSICSMASK);
 	ptWorld->atProjectiles[nThisEntity].m_tnProjectileMask = (COMPONENT_PROJECTILESMASK);
-	static TPrimalVert atPointVertex[]
+	/*static TPrimalVert atPointVertex[]
 	{
 		TPrimalVert{ XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT4(0,1,1,1)}
-	};
-	ptWorld->atDebugMesh[nThisEntity].m_nVertexCount = 1;
+	};*/
+	ptWorld->atDebugMesh[nThisEntity].m_nVertexCount = 2;
 
 	ptWorld->atDebugMesh[nThisEntity].m_nVertexBufferStride = sizeof(TPrimalVert);
 	ptWorld->atDebugMesh[nThisEntity].m_nVertexBufferOffset = 0;
 	ptWorld->atDebugMesh[nThisEntity].m_d3dVertexBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
-	ptWorld->atDebugMesh[nThisEntity].m_d3dVertexBufferDesc.ByteWidth = sizeof(TPrimalVert) * ptWorld->atDebugMesh[nThisEntity].m_nVertexCount;
+	ptWorld->atDebugMesh[nThisEntity].m_d3dVertexBufferDesc.ByteWidth = sizeof(TPrimalVert) * 2;
 	ptWorld->atDebugMesh[nThisEntity].m_d3dVertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	ptWorld->atDebugMesh[nThisEntity].m_d3dVertexBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 	ptWorld->atDebugMesh[nThisEntity].m_d3dVertexBufferDesc.MiscFlags = 0;
 	ptWorld->atDebugMesh[nThisEntity].m_d3dVertexBufferDesc.StructureByteStride = 0;
 
-	ptWorld->atDebugMesh[nThisEntity].m_d3dVertexData.pSysMem = atPointVertex;
+	ptWorld->atDebugMesh[nThisEntity].m_d3dVertexData.pSysMem = &atBeamVerts;
 
 	ptWorld->atDebugMesh[nThisEntity].m_d3dVertexData.SysMemPitch = 0;
 	ptWorld->atDebugMesh[nThisEntity].m_d3dVertexData.SysMemSlicePitch = 0;
@@ -683,8 +683,7 @@ unsigned int CreateExtractionBeam(TWorld * ptWorld, XMMATRIX BulletSpawnLocation
 	ptWorld->atWorldMatrix[nThisEntity].worldMatrix = BulletSpawnLocation;
 	ptWorld->atParentWorldMatrix[nThisEntity] = parentWorldMatrixIndex;
 
-	ptWorld->atShaderID[nThisEntity].m_nShaderID = 13;// Line Geometry Shader
-
+	ptWorld->atShaderID[nThisEntity].m_nShaderID = 13;// Line Shaders
 
 	return nThisEntity;
 }
