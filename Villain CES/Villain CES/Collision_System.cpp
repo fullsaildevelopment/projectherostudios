@@ -239,7 +239,7 @@ void CCollisionSystem::TestThreading(TWorld * ptWorld, int nCurrentEntity, CGrap
 								lerpTime = 0;
 
 								pcGraphicsSystem->CleanD3DObject(ptWorld, nCurrentEntity);
-								ptWorld->atAiHeath[otherCollisionsIndex[i]].heath -= pirateDamage;
+								ptWorld->atAiHeath[otherCollisionsIndex[i]].heath -= playerDamage;
 
 							/*	pcAudioSystem->SendSoundsToEngine(AK::EVENTS::PLAY_HURT_HUMAN, m_Human_Hurt);
 								pcAudioSystem->SetRTPCVolume(AK::GAME_PARAMETERS::SFX_VOLUME, m_fSFXVolume);*/

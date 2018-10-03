@@ -5281,7 +5281,7 @@ int CGameMangerSystem::RealLevelUpdate()
 {
 	if (tThisWorld.atClayton[PlayerStartIndex].health <= 0 && !endInit)
 	{
-			GameOver = true;
+		GameOver = true;
 		InitializeEndScreen(false);
 		endInit = true;
 	}
