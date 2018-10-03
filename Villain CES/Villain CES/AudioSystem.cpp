@@ -89,6 +89,7 @@ void CAudioSystem::IntiializeSystem(AKRESULT &out_ErrorCheck)
 
 void CAudioSystem::TermSoundEngine()
 {
+	//AK::SoundEngine::StopAll();
 	ClearAllActiveBnks();
 	ClearActiveGameObjs();
 	AK::MusicEngine::Term();
