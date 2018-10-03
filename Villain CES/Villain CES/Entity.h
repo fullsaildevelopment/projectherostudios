@@ -129,7 +129,10 @@ unsigned int CreateSpacePirate(TWorld * ptWorld, XMMATRIX SpawnPosition);
 unsigned int CreateCover(TWorld * ptWorld, XMMATRIX SpawnPosition, vector<int> coverNodes);
 
 unsigned int CreateHealingAI(TWorld * ptWorld, XMMATRIX SpawnPosition, unsigned int playerIndex);
-unsigned int CreateFriendlySwordsMan(TWorld * ptWorld, XMMATRIX SpawnPosition, unsigned int playerIndex);unsigned int CreateCoverTriggerZone(TWorld * ptWorld, XMMATRIX SpawnPosition);
+unsigned int CreateFriendlySwordsMan(TWorld * ptWorld, XMMATRIX SpawnPosition, unsigned int playerIndex);
+unsigned int CreateCoverTriggerZone(TWorld * ptWorld, XMMATRIX SpawnPosition);
+unsigned int CreateCoverTriggerZone(TWorld * ptWorld, XMMATRIX SpawnPosition,int longway);
+
 unsigned int createGSQuad(TWorld * ptWorld, XMFLOAT4 BackgroundColor, int target = -1);
 unsigned int CreateStoneObstacle(TWorld * ptWorld, XMMATRIX SpawnPosition);
 unsigned int CreateStoneObstacleHorizontal(TWorld * ptWorld, XMMATRIX SpawnPosition);

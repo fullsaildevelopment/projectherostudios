@@ -231,13 +231,14 @@ void CCollisionSystem::TestThreading(TWorld * ptWorld, int nCurrentEntity, CGrap
 
 
 								pcGraphicsSystem->CleanD3DObject(ptWorld, nCurrentEntity);
-								ptWorld->atAiHeath[otherCollisionsIndex[i]].heath -= 100;
+								ptWorld->atAiHeath[otherCollisionsIndex[i]].heath -= 30;
 
 							/*	pcAudioSystem->SendSoundsToEngine(AK::EVENTS::PLAY_HURT_HUMAN, m_Human_Hurt);
 								pcAudioSystem->SetRTPCVolume(AK::GAME_PARAMETERS::SFX_VOLUME, m_fSFXVolume);*/
 
-								pcAiSystem->AddAiInCombat(nCurrentEntity);
+								//pcAiSystem->AddAiInCombat(nCurrentEntity);
 								ptWorld->atActiveAI[otherCollisionsIndex[i]].active = true;
+								ptWorld->atAIVision[otherCollisionsIndex[i]].indexLookingAt = PlayerStartIndex;
 #if MUSIC_ON
 								pcAudioSystem->SendSoundsToEngine(AK::EVENTS::PLAY_HURT_HUMAN, m_Human_Hurt);
 								pcAudioSystem->SetRTPCVolume(AK::GAME_PARAMETERS::SFX_VOLUME, m_fSFXVolume);
@@ -261,20 +262,21 @@ void CCollisionSystem::TestThreading(TWorld * ptWorld, int nCurrentEntity, CGrap
 					//	SHOOTING THE PLAYER ONLY
 						if (ptWorld->atProjectiles[nCurrentEntity].m_tnProjectileMask == (COMPONENT_PROJECTILESMASK | COMPONENT_METAL | COMPONENT_ENEMY))
 						{
-							if (ptWorld->atClip[nCurrentEntity].gunIndex != -1)
-							{
+							
 
 
 
 								RemoveAABBCollider(nCurrentEntity);
 
 
-								pcGraphicsSystem->CleanD3DObject(ptWorld, ptWorld->atAIMask[nCurrentEntity].GunIndex);
+
+
 								pcGraphicsSystem->CleanD3DObject(ptWorld, nCurrentEntity);
 
-							}
+							
 						//	ptWorld->atClayton[otherCollisionsIndex[i]].health -= pirateDamage;
-							ptWorld->atClayton[otherCollisionsIndex[i]].health -= 10;
+							ptWorld->atClayton[otherCollisionsIndex[i]].health -= 30;
+							cout << "turtle";
 
 							if (ptWorld->atClayton[otherCollisionsIndex[i]].health <= 0)
 							{
@@ -285,6 +287,32 @@ void CCollisionSystem::TestThreading(TWorld * ptWorld, int nCurrentEntity, CGrap
 
 
 					}
+					if (ptWorld->atInputMask[nCurrentEntity].m_tnInputMask == (COMPONENT_CLAYTON | COMPONENT_INPUTMASK)) {
+						if (ptWorld->atProjectiles[otherCollisionsIndex[i]].m_tnProjectileMask == (COMPONENT_PROJECTILESMASK | COMPONENT_METAL | COMPONENT_ENEMY))
+						{
+
+
+
+
+							RemoveAABBCollider(otherCollisionsIndex[i]);
+
+
+
+
+							pcGraphicsSystem->CleanD3DObject(ptWorld, otherCollisionsIndex[i]);
+
+
+							//	ptWorld->atClayton[otherCollisionsIndex[i]].health -= pirateDamage;
+							ptWorld->atClayton[nCurrentEntity].health -= 10;
+							cout << "turtle";
+
+							if (ptWorld->atClayton[nCurrentEntity].health <= 0)
+							{
+								/*	GameOver = true;
+								InitializeEndScreen(false);*/
+							}
+						}
+					 }
 				//	Wasn't being hit at all so it's been commented.
 					if (ptWorld->atProjectiles[nCurrentEntity].m_tnProjectileMask == (COMPONENT_PROJECTILESMASK | COMPONENT_METAL))
 					{
