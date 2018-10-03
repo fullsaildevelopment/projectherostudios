@@ -39,7 +39,7 @@ float CFPS::UpdateFrameTime()
 		m_startTime = tmp_dTime;
 		m_framesPassed = 0;
 	}
-	//std::cout << "FPS:" << m_fpsCounter << endl;
+//	std::cout << "FPS:" << m_fpsCounter << endl;
 	return m_fpsCounter;
 }
 
