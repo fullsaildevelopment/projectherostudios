@@ -554,3 +554,11 @@ void CAISystem::AddAiInCombat(int aiEnitity)
 	}
 	AIInCombat.push_back(aiEnitity);*/
 }
+
+void CAISystem::CLeanPathPlaning()
+{
+	for (int i = 0; i < open.size(); ++i) {
+		delete open.front();
+		open.pop();
+	}
+}

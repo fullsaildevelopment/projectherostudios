@@ -238,6 +238,11 @@ void CCollisionSystem::TestThreading(TWorld * ptWorld, int nCurrentEntity, CGrap
 
 								//pcAiSystem->AddAiInCombat(nCurrentEntity);
 								ptWorld->atActiveAI[otherCollisionsIndex[i]].active = true;
+								for (int activate = 0; activate < ptWorld->atActiveAI[otherCollisionsIndex[i]].NoctifyOtherAi.size(); ++activate) {
+									ptWorld->atActiveAI[ptWorld->atActiveAI[otherCollisionsIndex[i]].NoctifyOtherAi[activate]].active = true;
+									ptWorld->atAIVision[ptWorld->atActiveAI[otherCollisionsIndex[i]].NoctifyOtherAi[activate]].indexLookingAt = PlayerStartIndex;
+
+								}
 								ptWorld->atAIVision[otherCollisionsIndex[i]].indexLookingAt = PlayerStartIndex;
 #if MUSIC_ON
 								pcAudioSystem->SendSoundsToEngine(AK::EVENTS::PLAY_HURT_HUMAN, m_Human_Hurt);

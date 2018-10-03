@@ -564,6 +564,7 @@ void CGameMangerSystem::InitializeMainMenu()
 
 int CGameMangerSystem::LoadLoadingScreen(bool _continue)
 {
+
 	if (_continue)
 	{
 		fpsTimer.Xtime_Signal();
@@ -882,6 +883,7 @@ void CGameMangerSystem::InitializeTitleScreen()
 
 void CGameMangerSystem::InitializeEndScreen(bool playerWin)
 {
+	
 	unsigned int nThisEntity;
 
 	if (playerWin)
@@ -4133,6 +4135,7 @@ int CGameMangerSystem::MikesGraphicsSandbox()
 
 void CGameMangerSystem::LoadLevelWithMapInIt()
 {
+	pcAiSystem->CLeanPathPlaning();
 	pcGraphicsSystem->CleanD3DLevel(&tThisWorld);
 	//Stops Main Menu Music 
 #if MUSIC_ON
@@ -4408,11 +4411,13 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 
 	tempImport = pcGraphicsSystem->ReadMesh("meshData_Scyllian.txt");
 	gunImport = pcGraphicsSystem->ReadMesh("meshData_LaserFlintlockTextured.txt");
-	
+	int previousai = spacePirate;
 	for (int meshIndex = 0; meshIndex < tempImport.meshCount; ++meshIndex)
 	{
 		spacePirate = CreateScyllian(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, tempImport.vtMeshes[meshIndex], tempImport.vtMaterials[meshIndex], AILocation);
 	}
+	tThisWorld.atActiveAI[previousai].NoctifyOtherAi.push_back(spacePirate);
+	tThisWorld.atActiveAI[spacePirate].NoctifyOtherAi.push_back(previousai);
 
 	//spacePirate = CreateSpacePirate(&tThisWorld, AILocation);
 	tThisWorld.atAiHeath[spacePirate].heath = 100;
@@ -4533,11 +4538,13 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	tempImport = pcGraphicsSystem->ReadMesh("meshData_Scyllian.txt");
 	gunImport = pcGraphicsSystem->ReadMesh("meshData_LaserFlintlockTextured.txt");
 	//AILocation.r[3].m128_f32[0] += 7;
-
+	
 	for (int meshIndex = 0; meshIndex < tempImport.meshCount; ++meshIndex)
 	{
 		spacePirate = CreateScyllian(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, tempImport.vtMeshes[meshIndex], tempImport.vtMaterials[meshIndex], AILocation);
 	}
+	
+
 	pcAiSystem->LookAtObject(AiLookPosition, &tThisWorld.atWorldMatrix[spacePirate].worldMatrix);
 	//spacePirate = CreateSpacePirate(&tThisWorld, AILocation);
 	tThisWorld.atAiHeath[spacePirate].heath = 100;
@@ -5087,10 +5094,12 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 
 int CGameMangerSystem::RealLevelUpdate()
 {
-	if (tThisWorld.atClayton[PlayerStartIndex].health <= 0)
+	
+	if (tThisWorld.atClayton[PlayerStartIndex].health <= 0&&endInit==false)
 	{
 			GameOver = true;
 		InitializeEndScreen(false);
+		endInit = true;
 	}
 	fpsTimer.Xtime_Signal();
 
@@ -6430,4 +6439,9 @@ int CGameMangerSystem::RealLevelUpdate()
 	zValue += 0.001;
 
 	return 14;
+}
+
+void CGameMangerSystem::ResetLevel()
+{
+	pcGraphicsSystem->CleanD3DLevel(&tThisWorld);
 }

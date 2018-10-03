@@ -50,7 +50,7 @@ public:
 	
 	void LoadLevelWithMapInIt();
 	int RealLevelUpdate();
-
+	void ResetLevel();
 
 	bool GameOver = false;
 	bool GamePaused = false;

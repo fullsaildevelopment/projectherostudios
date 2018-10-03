@@ -69,6 +69,7 @@ public:
 	void Strafe(XMMATRIX* AiMatrix);
 	void MoveAiToCoverLocation(TCoverTrigger Cover, TWorld * ptWorld,int PlayerStartIndex);
 	void AddAiInCombat(int aiEnitity);
+	void CLeanPathPlaning();
 private:
 	vector<int> AIInCombat;
 
