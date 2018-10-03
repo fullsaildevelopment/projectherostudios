@@ -65,6 +65,7 @@ struct Tcover {
 };
 struct TCoverTrigger {
 	vector<Tcover> coverAiCanGoTo;
+	vector<int>    AItoMove;
 	bool inCover;
 };
 

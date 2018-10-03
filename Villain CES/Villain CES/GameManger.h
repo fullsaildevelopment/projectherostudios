@@ -18,6 +18,7 @@
 #include <utility>
 #include <thread>
 #include <chrono>
+
 using namespace std;
 
 
@@ -58,7 +59,9 @@ public:
 	bool loading = false;
 	int nCurrentScene = 0;
 
+
 private:
+	std::vector<std::thread> workers;
 	TMaterialOptimized matOpt;
 	bool drawtext = true;
 	float scale = 0;
