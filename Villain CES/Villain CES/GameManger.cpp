@@ -27,7 +27,7 @@ CGameMangerSystem::CGameMangerSystem(HWND window, CInputSystem* _pcInputSystem)
 	menuCamera = new TCamera();
 #if MUSIC_ON
 	pcAudioSystem = new CAudioSystem();
-	m_fMasterVolume = m_fMusicVolume = m_fSFXVolume = 100;
+	m_fMasterVolume = m_fMusicVolume = m_fSFXVolume = 0;
 #endif
 
 	GetWindowRect(cApplicationWindow, &windowRect);
@@ -1925,7 +1925,7 @@ void CGameMangerSystem::InitializeHUD()
 		{ L"3" };
 
 		nThisEntity = createEntityReverse(&tThisWorld);
-		CreateUILabelForText(&tThisWorld, menuCamera->d3d_Position, .75, 1, 6.69, -7.5, &atUIVertices, &atUIIndices, textBuffer, ARRAYSIZE(textBuffer), nThisEntity, .075);
+		CreateUILabelForText2(&tThisWorld, menuCamera->d3d_Position, .5, 1, 6.75, -7.5, &atUIVertices, &atUIIndices, textBuffer, ARRAYSIZE(textBuffer), &windowRect, 24, nThisEntity, .075);
 		pcUISystem->AddTextureToUI(&tThisWorld, nThisEntity, pcGraphicsSystem->m_pd3dDevice, nullptr, fontTexture);
 
 		pcUISystem->AddMaskToUI(&tThisWorld, nThisEntity, COMPONENT_HUD);
@@ -1981,7 +1981,7 @@ void CGameMangerSystem::InitializeHUD()
 		{ L"000" };
 
 		nThisEntity = createEntityReverse(&tThisWorld);
-		CreateUILabelForText(&tThisWorld, menuCamera->d3d_Position, 1, 1, -6.625, 7.5, &atUIVertices, &atUIIndices, textBuffer, ARRAYSIZE(textBuffer), nThisEntity, .1);
+		CreateUILabelForText2(&tThisWorld, menuCamera->d3d_Position, 1, 1, -6.625, 7.5, &atUIVertices, &atUIIndices, textBuffer, ARRAYSIZE(textBuffer), &windowRect, 20, nThisEntity, .1);
 		pcUISystem->AddTextureToUI(&tThisWorld, nThisEntity, pcGraphicsSystem->m_pd3dDevice, nullptr, fontTexture);
 
 		pcUISystem->AddMaskToUI(&tThisWorld, nThisEntity, COMPONENT_HUD);
@@ -2012,7 +2012,7 @@ void CGameMangerSystem::InitializeHUD()
 		{ L"Kill The Enemies" };
 
 		nThisEntity = createEntityReverse(&tThisWorld);
-		CreateUILabelForText(&tThisWorld, menuCamera->d3d_Position, 4, 1, 7, 8.5, &atUIVertices, &atUIIndices, textBuffer, ARRAYSIZE(textBuffer), nThisEntity, .1);
+		CreateUILabelForText2(&tThisWorld, menuCamera->d3d_Position, 4, 1, 7, 8.5, &atUIVertices, &atUIIndices, textBuffer, ARRAYSIZE(textBuffer), &windowRect, 16, nThisEntity, .1);
 		pcUISystem->AddTextureToUI(&tThisWorld, nThisEntity, pcGraphicsSystem->m_pd3dDevice, nullptr, fontTexture);
 
 		pcUISystem->AddMaskToUI(&tThisWorld, nThisEntity, COMPONENT_HUD);
