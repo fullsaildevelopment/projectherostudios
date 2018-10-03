@@ -14,9 +14,10 @@
 #include "SkyboxPixelShader.csh"
 #include "AnimatedVertexShader.csh"
 #include "AnimatedPixelShader.csh"
+#include"LinePixelShader.csh"
 #include <vector>
 #include <string.h>
-class CGraphicsSystemMA
+class CGraphicsSystem
 {
 public:
 	// global declarations
@@ -42,7 +43,7 @@ public:
 		XMMATRIX m_d3dWorldMatrix;
 		XMMATRIX m_d3dViewMatrix;
 		XMMATRIX m_d3dProjectionMatrix;
-		XMFLOAT4 endPoint;
+		//XMFLOAT4 endPoint;
 	};
 	
 	struct TQuadGeometryBufferType
@@ -160,6 +161,7 @@ public:
 	void ExecutePipeline(ID3D11DeviceContext *pd3dDeviceContext, int m_nIndexCount, int nGraphicsMask, int nShaderID);
 	void UpdateBuffer(TWorld * ptWorld, std::vector<TSimpleMesh> vtVertexVector, int nEntity, int nMask);
 	void UpdateLineVTBuffer(TWorld * ptWorld, TDebugMesh debugMesh, int nEntity, int nMask);
+	void StoreBeamPoints(XMFLOAT3 startPoint, XMFLOAT4 endPoint, std::vector<TPrimalVert> &BeamPoints);
 	ImporterData ReadMesh(const char * input_file_path);
 	XMVECTOR GetCameraPos();
 	XMMATRIX SetDefaultCameraMatrix();
@@ -178,13 +180,16 @@ private:
 	ID3D11PixelShader	*m_pd3dQuadPixelShader;
 	ID3D11GeometryShader*m_pd3dQuadGeometryShader;
 	ID3D11InputLayout	*m_pd3dQuadInputLayout;
-//	ID3D11Buffer		*m_pd3dQuadVertexBuffer;
+	ID3D11Buffer		*m_pd3dQuadVertexBuffer;
 	ID3D11Buffer		*m_pd3dQuadGeometryBuffer;
 	ID3D11Buffer		*m_pd3dQuadPixelBuffer;
 
-	ID3D11GeometryShader*m_pd3dLineGeometryShader;
-	//ID3D11Buffer		*m_pd3dQuadVertexBuffer;
-	ID3D11Buffer		*m_pd3dLineGeometryBuffer;
+	//ID3D11VertexShader  *m_pd3dLineVertexShader;
+	//ID3D11GeometryShader*m_pd3dLineGeometryShader;
+	ID3D11Buffer		*m_pd3dLineVTConstantBuffer;
+	ID3D11InputLayout	*m_pd3dLineInputLayout;
+	ID3D11PixelShader	*m_pd3dLinePixelShader;
+
 	//ID3D11Buffer		*m_pd3dLinePixelBuffer;
 
 	ID3D11VertexShader	*m_pd3dMyVertexShader;

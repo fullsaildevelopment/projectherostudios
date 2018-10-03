@@ -4150,7 +4150,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	mouseDown = false;
 	mouseUp = true;
 	click = false;
-
+	makeBeamBuffer = true;
 	InitializeLoadingScreen();
 	LoadLoadingScreen(false);
 
@@ -4240,6 +4240,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	GunIndexForPlayer = CreateGun(&tThisWorld, m_d3dWorldMatrix, PlayerStartIndex, -1, 1, 10.5, 3, 130);
 	tThisWorld.atClip[GunIndexForPlayer].bulletSpeed = 0.01;
 	tThisWorld.atClayton[PlayerStartIndex].health = 100;
+
 	XMMATRIX AILocation = pcGraphicsSystem->SetDefaultWorldPosition();
 	AILocation.r[3].m128_f32[2] -= 60;
 	AILocation.r[3].m128_f32[0] -= 8;
@@ -4585,6 +4586,10 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 
 #pragma endregion
 
+
+	ExtractionBeamIndex = CreateExtractionBeam(&tThisWorld, m_d3dWorldMatrix, PlayerStartIndex, atBeamVerts);
+	
+
 	pcGraphicsSystem->CreateBuffers(&tThisWorld);
 
 	loading = true;
@@ -4595,7 +4600,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 int CGameMangerSystem::RealLevelUpdate()
 {
 	fpsTimer.Xtime_Signal();
-
+	
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 	_CrtSetBreakAlloc(-1); //Important!
 	m_d3dProjectionMatrix = pcGraphicsSystem->SetDefaultPerspective(m_RealTimeFov);
@@ -4982,39 +4987,56 @@ int CGameMangerSystem::RealLevelUpdate()
 				pcGraphicsSystem->ExecutePipeline(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atDebugMesh[nCurrentEntity].m_nVertexCount, tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask, tThisWorld.atShaderID[nCurrentEntity].m_nShaderID);
 			}
 			//Extraction Beam & related functions are here - ZFB
-			ExtractionBeamIndex = CreateExtractionBeam(&tThisWorld, m_d3dPlayerMatrix, PlayerStartIndex);
-			bool draw = false;
 			if (pcInputSystem->InputCheck(G_KEY_Q) == 1 && tCameraMode.bAimMode == true)
 			{
 				//Get Gun Matrix position 
-				XMVECTOR startPoint = tThisWorld.atWorldMatrix[GunIndexForPlayer].worldMatrix.r[3];
+				atBeamVerts.clear();
+				XMVECTOR startPoint = XMVectorSet(0,0,0,1);
 				XMVECTOR endPoint;
 				
 				// Create the start of the Beam and put it in a vertex buffer & other intilized values
-				//Calculates the end point when it collides with something
+			
+				//Creates the end point an infinite ray to farthest point of frustum and need to now find a way to intersect with objects
 				endPoint = pcProjectileSystem->FindBeamEndPoint(aimCamera->d3d_Position, m_d3dProjectionMatrix, cApplicationWindow, pcGraphicsSystem->m_d3dViewport);
 				// updateing the next frame should delete itself 
+				XMVECTOR BeamDirection = endPoint - startPoint; 
 				XMFLOAT4 toGeoShaderPoint;
-				toGeoShaderPoint.x = endPoint.m128_f32[0];
+				XMStoreFloat4(&toGeoShaderPoint, endPoint);
+				/*toGeoShaderPoint.x = endPoint.m128_f32[0];
 				toGeoShaderPoint.y = endPoint.m128_f32[1];
 				toGeoShaderPoint.z = endPoint.m128_f32[2];
-				toGeoShaderPoint.w = endPoint.m128_f32[3];
+				toGeoShaderPoint.w = endPoint.m128_f32[3];*/
 				
 				pcGraphicsSystem->UpdateLineVTBuffer(&tThisWorld, tThisWorld.atDebugMesh[ExtractionBeamIndex], ExtractionBeamIndex, tThisWorld.atGraphicsMask[ExtractionBeamIndex].m_tnGraphicsMask);
 				
-				pcGraphicsSystem->InitLineShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, m_d3dViewMatrix, m_d3dProjectionMatrix, tThisWorld.atDebugMesh[nCurrentEntity], aimCamera->d3d_Position, 1.0f, toGeoShaderPoint);
-				draw = true;
+				pcGraphicsSystem->InitLineShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, m_d3dViewMatrix, m_d3dProjectionMatrix, tThisWorld.atDebugMesh[nCurrentEntity], aimCamera->d3d_Position, atBeamVerts);
+				
 			}
-			else if (draw == false)
+			else 
 			{
-				XMVECTOR startPoint = tThisWorld.atWorldMatrix[GunIndexForPlayer].worldMatrix.r[3];
+				atBeamVerts.clear();
+				XMVECTOR startPoint = XMVectorSet(0, 0, 0,1);
+				XMVECTOR endPoint;
+				endPoint = startPoint;//pcProjectileSystem->FindBeamEndPoint(aimCamera->d3d_Position, m_d3dProjectionMatrix, cApplicationWindow, pcGraphicsSystem->m_d3dViewport);
+				//endPoint.m128_f32[2] += 20.0f;
+				XMVECTOR BeamDirection = endPoint - startPoint;
+				
 
-				XMFLOAT4 toGeoShaderPoint;
+				XMFLOAT4 Points, Point2;
+				XMFLOAT3 Point1;
+				//XMStoreFloat4(&Points, startPoint);
+				XMStoreFloat3(&Point1, startPoint);
+				XMStoreFloat4(&Point2, endPoint);
+			/*	XMFLOAT4 toGeoShaderPoint;
 				toGeoShaderPoint.x = startPoint.m128_f32[0];
 				toGeoShaderPoint.y = startPoint.m128_f32[1];
 				toGeoShaderPoint.z = startPoint.m128_f32[2];
 				toGeoShaderPoint.w = startPoint.m128_f32[3];
-				pcGraphicsSystem->InitLineShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, m_d3dViewMatrix, m_d3dProjectionMatrix, tThisWorld.atDebugMesh[nCurrentEntity], aimCamera->d3d_Position, 1.0f, toGeoShaderPoint);
+*/
+				//Stores points into vector of primal vert types
+				pcGraphicsSystem->StoreBeamPoints(Point1, Point2, atBeamVerts);
+				pcGraphicsSystem->InitLineShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atWorldMatrix[ExtractionBeamIndex].worldMatrix, m_d3dViewMatrix, m_d3dProjectionMatrix, tThisWorld.atDebugMesh[ExtractionBeamIndex], aimCamera->d3d_Position, atBeamVerts);
+				pcGraphicsSystem->ExecutePipeline(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atDebugMesh[ExtractionBeamIndex].m_nVertexCount, tThisWorld.atGraphicsMask[ExtractionBeamIndex].m_tnGraphicsMask, tThisWorld.atShaderID[ExtractionBeamIndex].m_nShaderID);
 			}
 
 
