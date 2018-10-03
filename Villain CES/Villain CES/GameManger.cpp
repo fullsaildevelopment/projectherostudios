@@ -27,7 +27,7 @@ CGameMangerSystem::CGameMangerSystem(HWND window, CInputSystem* _pcInputSystem)
 	menuCamera = new TCamera();
 #if MUSIC_ON
 	pcAudioSystem = new CAudioSystem();
-	m_fMasterVolume = m_fMusicVolume = m_fSFXVolume = 0;
+	m_fMasterVolume = m_fMusicVolume = m_fSFXVolume = 100;
 #endif
 
 	GetWindowRect(cApplicationWindow, &windowRect);
@@ -144,7 +144,7 @@ int CGameMangerSystem::LoadMainMenu()
 						fadeTime = 0;
 						fadeOut = false;
 
-						return 11;
+						return 13;
 					}
 
 					tUIPixelBuffer.hoverColor = XMFLOAT4(0, 0, 0, opacity);
@@ -166,11 +166,6 @@ int CGameMangerSystem::LoadMainMenu()
 				tUIVertexBuffer.padding = -1;
 
 				tUIPixelBuffer.hoverColor = tThisWorld.atLabel[nCurrentEntity].color;
-
-				if (nCurrentEntity == 12 && pcInputSystem->InputCheck(G_KEY_H))
-				{
-					pcUISystem->ScrollText(&tThisWorld, pcGraphicsSystem, nCurrentEntity, &atUIVertices, fpsTimer.GetDelta());
-				}
 
 				pcGraphicsSystem->InitUIShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tUIVertexBuffer, tUIPixelBuffer, tThisWorld.atMesh[nCurrentEntity], menuCamera->d3d_Position);
 				pcGraphicsSystem->ExecutePipeline(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atMesh[nCurrentEntity].m_nIndexCount, tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask, tThisWorld.atShaderID[nCurrentEntity].m_nShaderID);
@@ -4429,8 +4424,15 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 		PlayerStartIndex = createClayton(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, tempImport.vtMeshes[meshIndex], tempImport.vtMaterials[meshIndex]);
 	}
 
+	gunImport = pcGraphicsSystem->ReadMesh("meshData_MaterialGun.txt");
+
+	for (int meshIndex = 0; meshIndex < gunImport.meshCount; ++meshIndex)
+	{
+		GunIndexForPlayer = CreateClaytonGun(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, m_d3dWorldMatrix, PlayerStartIndex, -.7, 1, 10.4, 3, 130, gunImport.vtMeshes[meshIndex], gunImport.vtMaterials[meshIndex]);
+	}
+
 	#pragma region AI and Gun INIT
-	GunIndexForPlayer = CreateGun(&tThisWorld, m_d3dWorldMatrix, PlayerStartIndex, -1, 1, 10.5, 3, 130);
+	//GunIndexForPlayer = CreateGun(&tThisWorld, m_d3dWorldMatrix, PlayerStartIndex, -1, 1, 10.5, 3, 130);
 	tThisWorld.atClip[GunIndexForPlayer].bulletSpeed = 0.01;
 	tThisWorld.atClayton[PlayerStartIndex].health = 100;
 	XMMATRIX AILocation = pcGraphicsSystem->SetDefaultWorldPosition();
@@ -4487,7 +4489,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 
 	int GunINdexai;
 	//int GunINdexai = CreateGun(&tThisWorld, m_d3dWorldMatrix, spacePirate, -1.1, 0.5, 12.5, 10, 30);
-	for (int meshIndex = 0; meshIndex < tempImport.meshCount; ++meshIndex)
+	for (int meshIndex = 0; meshIndex < gunImport.meshCount; ++meshIndex)
 	{
 		GunINdexai = CreateScyllianGun(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, m_d3dWorldMatrix, spacePirate, -0.5, 1, 11.5, 10, 30, gunImport.vtMeshes[meshIndex], gunImport.vtMaterials[meshIndex]);
 	}
@@ -4555,7 +4557,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 
 	//int GunINdexai2 = CreateGun(&tThisWorld, m_d3dWorldMatrix, spacePirate2, -1.1, 0.5, 11.5, 10,130);
 	int GunINdexai2;
-	for (int meshIndex = 0; meshIndex < tempImport.meshCount; ++meshIndex)
+	for (int meshIndex = 0; meshIndex < gunImport.meshCount; ++meshIndex)
 	{
 		GunINdexai2 = CreateScyllianGun(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, m_d3dWorldMatrix, spacePirate2, -0.5, 1, 11.5, 10, 30, gunImport.vtMeshes[meshIndex], gunImport.vtMaterials[meshIndex]);
 	}
@@ -4663,7 +4665,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 
 	//int GunINdexai3 = CreateGun(&tThisWorld, m_d3dWorldMatrix, spacePirate3, -1.1, 0.5, 12.5, 10, 70);
 	int GunINdexai3;
-	for (int meshIndex = 0; meshIndex < tempImport.meshCount; ++meshIndex)
+	for (int meshIndex = 0; meshIndex < gunImport.meshCount; ++meshIndex)
 	{
 		GunINdexai3 = CreateScyllianGun(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, m_d3dWorldMatrix, spacePirate3, -0.5, 1, 11.5, 10, 30, gunImport.vtMeshes[meshIndex], gunImport.vtMaterials[meshIndex]);
 	}
@@ -5484,10 +5486,11 @@ int CGameMangerSystem::RealLevelUpdate()
 						{
 							foward.m128_f32[0] = 0;
 							foward.m128_f32[1] = 0;
-							foward.m128_f32[2] = 1;
+							foward.m128_f32[2] = .75;
 
 							localMatrix2 = XMMatrixTranslationFromVector(foward);
 							gunMatrix = tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix;
+							gunMatrix = XMMatrixMultiply(XMMatrixRotationY(XMConvertToRadians(-90)), gunMatrix);
 							gunMatrix = XMMatrixMultiply(localMatrix2, gunMatrix);
 #if MUSIC_ON
 							pcAudioSystem->SendSoundsToEngine(AK::EVENTS::PLAY_METAL_FIRED, m_AkMetalFired);
@@ -5496,6 +5499,20 @@ int CGameMangerSystem::RealLevelUpdate()
 
 							bulletType = 0;
 #pragma region Mesh Bullet For Player
+							int newbullet = -1;
+							for (int meshIndex = 0; meshIndex < bulletMesh.meshCount; ++meshIndex)
+							{
+								newbullet = CreateBulletMesh(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, gunMatrix, tThisWorld.atClip[nCurrentEntity].currentMaterial, bulletType, bulletMesh.vtMeshes[meshIndex], bulletMesh.vtMaterials[meshIndex]);
+							}
+							tThisWorld.atClip[newbullet].gunIndex = nCurrentEntity;
+							tThisWorld.atSimpleMesh[newbullet].m_nColor = tThisWorld.atClip[nCurrentEntity].colorofBullets;
+							tThisWorld.atClip[newbullet].indexInclip = pcProjectileSystem->CreateBulletProjectile(newbullet, &tThisWorld.atClip[nCurrentEntity]);
+							tThisWorld.atAABB[newbullet] = pcCollisionSystem->createAABBS(tThisWorld.atMesh[newbullet].m_VertexData, tThisWorld.atAABB[newbullet]);
+							tThisWorld.atAABB[newbullet].m_IndexLocation = newbullet;
+
+							pcCollisionSystem->AddAABBCollider(tThisWorld.atAABB[newbullet], newbullet);
+							pcGraphicsSystem->CreateEntityBuffer(&tThisWorld, newbullet);
+
 							//TMaterialOptimized matOpt;
 							/*
 							Notes on Material gun Concept:
@@ -5533,19 +5550,16 @@ int CGameMangerSystem::RealLevelUpdate()
 						#endif
 							bulletType = 1;
 
-							
+							int newbullet = CreateBullet(&tThisWorld, gunMatrix, tThisWorld.atClip[nCurrentEntity].currentMaterial, bulletType);
+							tThisWorld.atClip[newbullet].gunIndex = nCurrentEntity;
+							tThisWorld.atSimpleMesh[newbullet].m_nColor = tThisWorld.atClip[nCurrentEntity].colorofBullets;
+							tThisWorld.atClip[newbullet].indexInclip = pcProjectileSystem->CreateBulletProjectile(newbullet, &tThisWorld.atClip[nCurrentEntity]);
+							tThisWorld.atAABB[newbullet] = pcCollisionSystem->createAABBS(tThisWorld.atSimpleMesh[newbullet].m_VertexData, tThisWorld.atAABB[newbullet]);
+							tThisWorld.atAABB[newbullet].m_IndexLocation = newbullet;
+
+							pcCollisionSystem->AddAABBCollider(tThisWorld.atAABB[newbullet], newbullet);
+							pcGraphicsSystem->CreateEntityBuffer(&tThisWorld, newbullet);
 						}
-						int newbullet = CreateBullet(&tThisWorld, gunMatrix, tThisWorld.atClip[nCurrentEntity].currentMaterial, bulletType);
-						tThisWorld.atClip[newbullet].gunIndex = nCurrentEntity;
-						tThisWorld.atSimpleMesh[newbullet].m_nColor = tThisWorld.atClip[nCurrentEntity].colorofBullets;
-						tThisWorld.atClip[newbullet].indexInclip = pcProjectileSystem->CreateBulletProjectile(newbullet, &tThisWorld.atClip[nCurrentEntity]);
-						tThisWorld.atAABB[newbullet] = pcCollisionSystem->createAABBS(tThisWorld.atSimpleMesh[newbullet].m_VertexData, tThisWorld.atAABB[newbullet]);
-						tThisWorld.atAABB[newbullet].m_IndexLocation = newbullet;
-
-						pcCollisionSystem->AddAABBCollider(tThisWorld.atAABB[newbullet], newbullet);
-						pcGraphicsSystem->CreateEntityBuffer(&tThisWorld, newbullet);
-						
-
 					}
 					else if (tThisWorld.atClip[nCurrentEntity].tryToShoot == true)
 					{
@@ -5840,6 +5854,10 @@ int CGameMangerSystem::RealLevelUpdate()
 			{
 				tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = XMMatrixMultiply(XMMatrixRotationY(XMConvertToRadians(-90)), tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix);
 			}
+			else
+			{
+				tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = XMMatrixMultiply(XMMatrixRotationY(XMConvertToRadians(90)), tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix);
+			}
 
 			if (nCurrentEntity == rayindex)
 			{
@@ -5911,6 +5929,23 @@ int CGameMangerSystem::RealLevelUpdate()
 				else
 				{
 					pcGraphicsSystem->InitPrimalShaderData3(pcGraphicsSystem->m_pd3dDeviceContext, tTempVertexBuffer, tTempPixelBuffer, tThisWorld.atMesh[nCurrentEntity], debugCamera->d3d_Position);
+				}
+				pcGraphicsSystem->ExecutePipeline(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atMesh[nCurrentEntity].m_nIndexCount, tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask, tThisWorld.atShaderID[nCurrentEntity].m_nShaderID);
+			}
+			else if (tThisWorld.atProjectiles[nCurrentEntity].m_tnProjectileMask == (COMPONENT_PROJECTILESMASK | COMPONENT_METAL | COMPONENT_FRIENDLY) ||
+					 tThisWorld.atProjectiles[nCurrentEntity].m_tnProjectileMask == (COMPONENT_PROJECTILESMASK | COMPONENT_METAL | COMPONENT_ENEMY))
+			{
+				if (tCameraMode.bWalkMode == true)
+				{
+					pcGraphicsSystem->InitMyShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tMyVertexBufferTemp, tThisWorld.atMesh[nCurrentEntity], walkCamera->d3d_Position);
+				}
+				else if (tCameraMode.bAimMode == true)
+				{
+					pcGraphicsSystem->InitMyShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tMyVertexBufferTemp, tThisWorld.atMesh[nCurrentEntity], aimCamera->d3d_Position);
+				}
+				else
+				{
+					pcGraphicsSystem->InitMyShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tMyVertexBufferTemp, tThisWorld.atMesh[nCurrentEntity], debugCamera->d3d_Position);
 				}
 				pcGraphicsSystem->ExecutePipeline(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atMesh[nCurrentEntity].m_nIndexCount, tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask, tThisWorld.atShaderID[nCurrentEntity].m_nShaderID);
 			}
