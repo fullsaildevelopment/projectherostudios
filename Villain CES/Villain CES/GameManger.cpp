@@ -5087,10 +5087,11 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 
 int CGameMangerSystem::RealLevelUpdate()
 {
-	if (tThisWorld.atClayton[PlayerStartIndex].health <= 0)
+	if (tThisWorld.atClayton[PlayerStartIndex].health <= 0 && !endInit)
 	{
 			GameOver = true;
 		InitializeEndScreen(false);
+		endInit = true;
 	}
 	fpsTimer.Xtime_Signal();
 
@@ -5950,7 +5951,7 @@ int CGameMangerSystem::RealLevelUpdate()
 			if (tThisWorld.atAABB[nCurrentEntity].theeadmade == false &&( nCurrentEntity == PlayerStartIndex||tThisWorld.atAIMask[nCurrentEntity].m_tnAIMask>1||tThisWorld.atProjectiles[nCurrentEntity].m_tnProjectileMask>1)) {
 				/*thread newthread(&CCollisionSystem::TestThreading, pcCollisionSystem, &tThisWorld, nCurrentEntity, pcGraphicsSystem, &tTempVertexBuffer, &m_d3dPlayerMatrix, pcPhysicsSystem);
 				newthread.detach();*/
-				workers.push_back(thread(&CCollisionSystem::TestThreading, pcCollisionSystem,&tThisWorld,nCurrentEntity,pcGraphicsSystem, &tTempVertexBuffer,&m_d3dPlayerMatrix,pcPhysicsSystem,pcAiSystem, PlayerStartIndex));
+				workers.push_back(thread(&CCollisionSystem::TestThreading, pcCollisionSystem,&tThisWorld,nCurrentEntity,pcGraphicsSystem, &tTempVertexBuffer,&m_d3dPlayerMatrix,pcPhysicsSystem,pcAiSystem, PlayerStartIndex, std::ref(playerDamage), std::ref(pirateDamage), std::ref(prevHealth), std::ref(fallingHealth), std::ref(lerpTime)));
 		
 			//	tThisWorld.atAABB[nCurrentEntity].myThread = workers.begin() + workers.size() - 1;
 			}
