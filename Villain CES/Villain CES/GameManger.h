@@ -131,6 +131,7 @@ private:
 
 	ID3D11ShaderResourceView* fontTexture = nullptr;
 	std::vector<TUIVert*> atUIVertices;
+	std::vector<TPrimalVert> atBeamVerts;
 	std::vector<short*> atUIIndices;
 	CFPS fpsTimer;
 	float clickTime;
@@ -173,6 +174,7 @@ private:
 	float m_fSFXVolume;
 	AKRESULT ErrorResult;
 
+	bool makeBeamBuffer;
 	int ExtractionBeamIndex;
 	float m_RealTimeFov;
 	bool bMoving;
