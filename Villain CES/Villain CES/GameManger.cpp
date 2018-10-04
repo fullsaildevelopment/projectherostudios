@@ -182,7 +182,7 @@ int CGameMangerSystem::LoadMainMenu()
 					if (PtInRect(&tThisWorld.atButton[nCurrentEntity].boundingBox, clickPoint))
 					{
 #if MUSIC_ON
-						pcAudioSystem->SendSoundsToEngine(AK::EVENTS::PLAY_MENU_CLICK, m_MenuClick);
+						pcAudioSystem->SendSoundsToEngine(AK::EVENTS::PLAY_MENU_CLICK, pcAudioSystem->m_MenuClick);
 						pcAudioSystem->SetRTPCVolume(AK::GAME_PARAMETERS::SFX_VOLUME, m_fSFXVolume);
 #endif
 						clickTime = 0;
@@ -250,7 +250,7 @@ int CGameMangerSystem::LoadMainMenu()
 						clickTime = 0;
 						//Click sound for menus here - ZFB
 #if MUSIC_ON
-						pcAudioSystem->SendSoundsToEngine(AK::EVENTS::PLAY_MENU_CLICK, m_MenuClick);
+						pcAudioSystem->SendSoundsToEngine(AK::EVENTS::PLAY_MENU_CLICK, pcAudioSystem->m_MenuClick);
 						pcAudioSystem->SetRTPCVolume(AK::GAME_PARAMETERS::SFX_VOLUME, m_fSFXVolume);
 #endif
 						if (tThisWorld.atButton[nCurrentEntity].sceneIndex == 3)
@@ -354,7 +354,7 @@ int CGameMangerSystem::LoadMainMenu()
 						clickTime = 0;
 						//Click soud for menus here - ZFB
 #if MUSIC_ON
-						pcAudioSystem->SendSoundsToEngine(AK::EVENTS::PLAY_MENU_CLICK, m_MenuClick);
+						pcAudioSystem->SendSoundsToEngine(AK::EVENTS::PLAY_MENU_CLICK, pcAudioSystem->m_MenuClick);
 						pcAudioSystem->SetRTPCVolume(AK::GAME_PARAMETERS::SFX_VOLUME, m_fSFXVolume);
 #endif
 						if (tThisWorld.atButton[nCurrentEntity].sceneIndex == 3)
@@ -402,7 +402,7 @@ void CGameMangerSystem::InitializeMainMenu()
 	// Music Stuff 
 #if MUSIC_ON
 	AK::SoundEngine::StopAll();
-	pcAudioSystem->SendSoundsToEngine(AK::EVENTS::PLAY_MAIN_MENU_MUSIC, m_AkMainMenuMusic);
+	pcAudioSystem->SendSoundsToEngine(AK::EVENTS::PLAY_MAIN_MENU_MUSIC, pcAudioSystem->m_AkMainMenuMusic);
 #endif
 	
 	pcGraphicsSystem->CleanD3DLevel(&tThisWorld);
@@ -915,7 +915,7 @@ int CGameMangerSystem::LoadTitleScreen()
 	fpsTimer.Xtime_Signal();
 
 #if MUSIC_ON
-	pcAudioSystem->SetListener(Listener, 1, ErrorResult);
+	pcAudioSystem->SetListener(pcAudioSystem->Listener, 1, ErrorResult);
 #endif
 	//////////
 	m_d3dWorldMatrix = pcGraphicsSystem->SetDefaultWorldPosition();
@@ -1024,17 +1024,17 @@ void CGameMangerSystem::InitializeTitleScreen()
 #if MUSIC_ON
 	pcAudioSystem->IntiializeSystem(ErrorResult);
 	pcAudioSystem->SetBanksFolderPath(AKTEXT("../Villain CES/WwiseSounds/Windows"));
-	pcAudioSystem->RegisterGameObj(Listener);
-	pcAudioSystem->RegisterGameObj(m_AkMainMenuMusic);
-	pcAudioSystem->RegisterGameObj(m_AkHallwayBattle);
-	pcAudioSystem->RegisterGameObj(m_MetalReload);
-	pcAudioSystem->RegisterGameObj(m_AkMetalFired);
-	pcAudioSystem->RegisterGameObj(m_Laser_Fire);
-	pcAudioSystem->RegisterGameObj(m_Human_Hurt);
-	pcAudioSystem->RegisterGameObj(m_Scylian_Hurt);
-	pcAudioSystem->LoadBankFile(INIT_BNK, init_bnkID, ErrorResult);
-	pcAudioSystem->LoadBankFile(MAINMENU_BNK, MainMenu_bnkID, ErrorResult);
-	pcAudioSystem->LoadBankFile(SFX, m_SFX_bnkID, ErrorResult);
+	pcAudioSystem->RegisterGameObj(pcAudioSystem->Listener);
+	pcAudioSystem->RegisterGameObj(pcAudioSystem->m_AkMainMenuMusic);
+	pcAudioSystem->RegisterGameObj(pcAudioSystem->m_AkHallwayBattle);
+	pcAudioSystem->RegisterGameObj(pcAudioSystem->m_MetalReload);
+	pcAudioSystem->RegisterGameObj(pcAudioSystem->m_AkMetalFired);
+	pcAudioSystem->RegisterGameObj(pcAudioSystem->m_Laser_Fire);
+	pcAudioSystem->RegisterGameObj(pcAudioSystem->m_Human_Hurt);
+	pcAudioSystem->RegisterGameObj(pcAudioSystem->m_Scylian_Hurt);
+	pcAudioSystem->LoadBankFile(INIT_BNK, pcAudioSystem->init_bnkID, ErrorResult);
+	pcAudioSystem->LoadBankFile(MAINMENU_BNK, pcAudioSystem->MainMenu_bnkID, ErrorResult);
+	pcAudioSystem->LoadBankFile(SFX, pcAudioSystem->m_SFX_bnkID, ErrorResult);
 #endif 
 
 
@@ -2451,7 +2451,7 @@ int CGameMangerSystem::PathFindingExample()
 			{
 				if (tCameraMode.bWalkMode == true)
 				{
-					m_d3dPlayerMatrix = pcInputSystem->CharacterMovement(m_d3dPlayerMatrix, 1);
+					m_d3dPlayerMatrix = pcInputSystem->CharacterMovement(m_d3dPlayerMatrix, fpsTimer.GetDelta(), pcAudioSystem);
 					tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = m_d3dPlayerMatrix;
 					tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = pcPhysicsSystem->ResolveForces(&tThisWorld.atRigidBody[nCurrentEntity], tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, false);
 					m_d3dPlayerMatrix = tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix;
@@ -3540,7 +3540,7 @@ int CGameMangerSystem::SpacePirateGamePlay()
 			{
 				if (tCameraMode.bWalkMode == true)
 				{
-					m_d3dPlayerMatrix = pcInputSystem->CharacterMovement(m_d3dPlayerMatrix, 1);
+					m_d3dPlayerMatrix = pcInputSystem->CharacterMovement(m_d3dPlayerMatrix, fpsTimer.GetDelta(), pcAudioSystem);
 					tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = m_d3dPlayerMatrix;
 					tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = pcPhysicsSystem->ResolveForces(&tThisWorld.atRigidBody[nCurrentEntity], tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, false);
 					m_d3dPlayerMatrix = tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix;
@@ -4319,7 +4319,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	//Stops Main Menu Music 
 #if MUSIC_ON
 	AK::SoundEngine::StopAll();
-	pcAudioSystem->SendSoundsToEngine(AK::EVENTS::PLAY_HALLWAY_MUSIC, m_AkHallwayBattle);
+	pcAudioSystem->SendSoundsToEngine(AK::EVENTS::PLAY_HALLWAY_MUSIC, pcAudioSystem->m_AkHallwayBattle);
 #endif
 
 	/*while (ShowCursor(false) > -1)
@@ -5541,7 +5541,7 @@ int CGameMangerSystem::RealLevelUpdate()
 		walkCamera, aimCamera, debugCamera,
 		m_d3d_ResultMatrix, m_d3dPlayerMatrix, m_d3dOffsetMatrix, m_d3dWorldMatrix,
 		tMyVertexBufferTemp.m_d3dViewMatrix, tTempVertexBuffer.m_d3dViewMatrix,
-		tTempPixelBuffer.m_d3dCollisionColor, delta);
+		tTempPixelBuffer.m_d3dCollisionColor, delta, pcAudioSystem);
 #endif // INPUT_ABSTRACTED_ON
 	pcGraphicsSystem->UpdateD3D();
 
@@ -5759,14 +5759,14 @@ int CGameMangerSystem::RealLevelUpdate()
 				{
 					if (tCameraMode.bWalkMode == true)
 					{
-						m_d3dPlayerMatrix = pcInputSystem->CharacterMovement(m_d3dPlayerMatrix, fpsTimer.GetDelta());
+						m_d3dPlayerMatrix = pcInputSystem->CharacterMovement(m_d3dPlayerMatrix, fpsTimer.GetDelta(), pcAudioSystem);
 						tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = m_d3dPlayerMatrix;
 						tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = pcPhysicsSystem->ResolveForces(&tThisWorld.atRigidBody[nCurrentEntity], tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, false);
 						m_d3dPlayerMatrix = tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix;
 					}
 					else if (tCameraMode.bAimMode == true)
 					{
-						m_d3dPlayerMatrix = pcInputSystem->CharacterMovement(m_d3dPlayerMatrix, fpsTimer.GetDelta());
+						m_d3dPlayerMatrix = pcInputSystem->CharacterMovement(m_d3dPlayerMatrix, fpsTimer.GetDelta(), pcAudioSystem);
 						tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = m_d3dPlayerMatrix;
 						tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = pcPhysicsSystem->ResolveForces(&tThisWorld.atRigidBody[nCurrentEntity], tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, false);
 						m_d3dPlayerMatrix = tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix;
@@ -6021,7 +6021,7 @@ int CGameMangerSystem::RealLevelUpdate()
 							gunMatrix = XMMatrixMultiply(XMMatrixRotationY(XMConvertToRadians(-90)), gunMatrix);
 							gunMatrix = XMMatrixMultiply(localMatrix2, gunMatrix);
 #if MUSIC_ON
-							pcAudioSystem->SendSoundsToEngine(AK::EVENTS::PLAY_METAL_FIRED, m_AkMetalFired);
+							pcAudioSystem->SendSoundsToEngine(AK::EVENTS::PLAY_METAL_FIRED, pcAudioSystem->m_AkMetalFired);
 							pcAudioSystem->SetRTPCVolume(AK::GAME_PARAMETERS::SFX_VOLUME, m_fSFXVolume);
 #endif
 
@@ -6073,7 +6073,7 @@ int CGameMangerSystem::RealLevelUpdate()
 							gunMatrix = XMMatrixMultiply(localMatrix2, gunMatrix);
 							//Laser Fire sound is here - ZFB
 						#if MUSIC_ON
-							pcAudioSystem->SendSoundsToEngine(AK::EVENTS::PLAY_LASER_FIRE, m_Laser_Fire);
+							pcAudioSystem->SendSoundsToEngine(AK::EVENTS::PLAY_LASER_FIRE, pcAudioSystem->m_Laser_Fire);
 							pcAudioSystem->SetRTPCVolume(AK::GAME_PARAMETERS::SFX_VOLUME, m_fSFXVolume);
 						#endif
 							bulletType = 1;
@@ -6099,7 +6099,7 @@ int CGameMangerSystem::RealLevelUpdate()
 #if MUSIC_ON
 						if (tThisWorld.atClip[GunIndexForPlayer].nBulletsAvailables.size() < 3)
 						{
-							pcAudioSystem->SendSoundsToEngine(AK::EVENTS::PLAY_METAL_RELOAD, m_MetalReload);
+							pcAudioSystem->SendSoundsToEngine(AK::EVENTS::PLAY_METAL_RELOAD, pcAudioSystem->m_MetalReload);
 							pcAudioSystem->SetRTPCVolume(AK::GAME_PARAMETERS::SFX_VOLUME, m_fSFXVolume);
 						}
 #endif
@@ -6183,7 +6183,7 @@ int CGameMangerSystem::RealLevelUpdate()
 			if (tThisWorld.atAABB[nCurrentEntity].theeadmade == false &&( nCurrentEntity == PlayerStartIndex||tThisWorld.atAIMask[nCurrentEntity].m_tnAIMask>1||tThisWorld.atProjectiles[nCurrentEntity].m_tnProjectileMask>1)) {
 				/*thread newthread(&CCollisionSystem::TestThreading, pcCollisionSystem, &tThisWorld, nCurrentEntity, pcGraphicsSystem, &tTempVertexBuffer, &m_d3dPlayerMatrix, pcPhysicsSystem);
 				newthread.detach();*/
-				workers.push_back(thread(&CCollisionSystem::TestThreading, pcCollisionSystem,&tThisWorld,nCurrentEntity,pcGraphicsSystem, &tTempVertexBuffer,&m_d3dPlayerMatrix,pcPhysicsSystem,pcAiSystem, PlayerStartIndex, std::ref(playerDamage), std::ref(pirateDamage), std::ref(prevHealth), std::ref(fallingHealth), std::ref(lerpTime),m_fMasterVolume, m_fSFXVolume, m_fMusicVolume, m_Human_Hurt, m_Scylian_Hurt, pcAudioSystem));
+				workers.push_back(thread(&CCollisionSystem::TestThreading, pcCollisionSystem,&tThisWorld,nCurrentEntity,pcGraphicsSystem, &tTempVertexBuffer,&m_d3dPlayerMatrix,pcPhysicsSystem,pcAiSystem, PlayerStartIndex, std::ref(playerDamage), std::ref(pirateDamage), std::ref(prevHealth), std::ref(fallingHealth), std::ref(lerpTime),m_fMasterVolume, m_fSFXVolume, m_fMusicVolume, pcAudioSystem));
 		
 			//	tThisWorld.atAABB[nCurrentEntity].myThread = workers.begin() + workers.size() - 1;
 			}
@@ -6344,7 +6344,7 @@ int CGameMangerSystem::RealLevelUpdate()
 							clickTime = 0;
 							//Click soud for menus here - ZFB
 #if MUSIC_ON
-							pcAudioSystem->SendSoundsToEngine(AK::EVENTS::PLAY_MENU_CLICK, m_MenuClick);
+							pcAudioSystem->SendSoundsToEngine(AK::EVENTS::PLAY_MENU_CLICK, pcAudioSystem->m_MenuClick);
 							pcAudioSystem->SetRTPCVolume(AK::GAME_PARAMETERS::SFX_VOLUME, m_fSFXVolume);
 #endif
 							if (tThisWorld.atButton[nCurrentEntity].sceneIndex == OPTIONS_INDEX)
@@ -6402,7 +6402,7 @@ int CGameMangerSystem::RealLevelUpdate()
 							clickTime = 0;
 							//Click soud for menus here - ZFB
 #if MUSIC_ON
-							pcAudioSystem->SendSoundsToEngine(AK::EVENTS::PLAY_MENU_CLICK, m_MenuClick);
+							pcAudioSystem->SendSoundsToEngine(AK::EVENTS::PLAY_MENU_CLICK, pcAudioSystem->m_MenuClick);
 							pcAudioSystem->SetRTPCVolume(AK::GAME_PARAMETERS::SFX_VOLUME, m_fSFXVolume);
 #endif
 							if (tThisWorld.atButton[nCurrentEntity].sceneIndex == nCurrentScene)
@@ -6485,7 +6485,7 @@ int CGameMangerSystem::RealLevelUpdate()
 							clickTime = 0;
 							//Click soud for menus here - ZFB
 #if MUSIC_ON
-							pcAudioSystem->SendSoundsToEngine(AK::EVENTS::PLAY_MENU_CLICK, m_MenuClick);
+							pcAudioSystem->SendSoundsToEngine(AK::EVENTS::PLAY_MENU_CLICK, pcAudioSystem->m_MenuClick);
 							pcAudioSystem->SetRTPCVolume(AK::GAME_PARAMETERS::SFX_VOLUME, m_fSFXVolume);
 #endif
 

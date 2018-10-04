@@ -86,6 +86,25 @@ public:
 	void SetListener(AkGameObjectID in_ListenerID, AkUInt32 _instanceNumb, AKRESULT &out_ErrorCheck);
 	void SetRTPCVolume(const AkUniqueID uID, float volumeIn);
 	void ClearAllActiveBnks();
+
+
+	AkBankID init_bnkID;
+	AkGameObjectID Listener;
+	//Music Objects
+
+	AkGameObjectID m_AkMainMenuMusic;
+	AkGameObjectID m_AkHallwayBattle;
+	AkBankID MainMenu_bnkID;
+	//SFX Objects
+	AkGameObjectID m_MenuClick;
+	AkGameObjectID m_MetalReload;
+	AkGameObjectID m_AkMetalFired;
+	AkGameObjectID m_Laser_Fire;
+	AkGameObjectID m_Human_Hurt;
+	AkGameObjectID m_Syclian_Death;
+	AkGameObjectID m_Scylian_Hurt;
+	AkGameObjectID m_WalkSound;
+	AkBankID m_SFX_bnkID;
 private:
 	CAkFilePackageLowLevelIOBlocking * m_LowIOHook;
 };

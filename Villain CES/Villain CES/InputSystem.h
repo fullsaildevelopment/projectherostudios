@@ -2,6 +2,7 @@
 //#include "Entity.h"
 #include "stdafx.h"
 #include "Input_Component.h"
+#include "AudioSystem.h"
 #include"Gateware Redistribution R5B/Interface/G_System/GInput.h"
 #include"Gateware Redistribution R5B/Interface/G_System/GKeyDefines.h"
 using namespace GW;
@@ -11,6 +12,7 @@ class CInputSystem
 public:
 	CInputSystem();
 	~CInputSystem();
+	float stepCount;
 	/*
 	*/
 
@@ -27,7 +29,7 @@ public:
 		TCamera* tWalkCamera, TCamera* tAimCamera, TCamera* tDebugCamera,
 		XMMATRIX &d3dResultMatrix, XMMATRIX &d3dPlayerMatrix, XMMATRIX &d3dOffsetMatrix, XMMATRIX &d3dWorldMatrix,
 		XMMATRIX &tMyViewMatrix, XMMATRIX &tTempViewMatrix,
-		XMFLOAT4 &d3dCollisionColor, double &delta);
+		XMFLOAT4 &d3dCollisionColor, double &delta, CAudioSystem* in_Audio);
 	GReturn InitializeGInput(HWND cTheWindow);																																																													
 	
 
@@ -47,7 +49,7 @@ public:
 
 	XMMATRIX DebugCamera(XMMATRIX d3d_ViewM, XMMATRIX d3d_WorldM, double delta);
 
-	XMMATRIX CharacterMovement(XMMATRIX d3dplayerMatrix, double delta);
+	XMMATRIX CharacterMovement(XMMATRIX d3dplayerMatrix, double delta, CAudioSystem* in_Audio);
 
 	/*
 	* WalkCamera(): This fuction makes a camera follow an in-game object.
