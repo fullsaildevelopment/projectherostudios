@@ -6014,7 +6014,7 @@ int CGameMangerSystem::RealLevelUpdate()
 						{
 							foward.m128_f32[0] = 0;
 							foward.m128_f32[1] = 0;
-							foward.m128_f32[2] = .75;
+							foward.m128_f32[2] = 1;
 
 							localMatrix2 = XMMatrixTranslationFromVector(foward);
 							gunMatrix = tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix;
@@ -6121,7 +6121,7 @@ int CGameMangerSystem::RealLevelUpdate()
 					
 					if (tThisWorld.atClip[nCurrentEntity].fShootingCoolDown > 0)
 					{
-						tThisWorld.atClip[nCurrentEntity].fShootingCoolDown -= fpsTimer.GetDelta() * 50;
+						tThisWorld.atClip[nCurrentEntity].fShootingCoolDown -= fpsTimer.GetDelta() * 100;
 					}
 					
 				}

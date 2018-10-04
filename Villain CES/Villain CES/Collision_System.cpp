@@ -228,17 +228,6 @@ void CCollisionSystem::TestThreading(TWorld * ptWorld, int nCurrentEntity, CGrap
 
 								RemoveAABBCollider(nCurrentEntity);
 
-								if (prevHealth == 0)
-								{
-									prevHealth = ptWorld->atClayton[otherCollisionsIndex[i]].health;
-								}
-								else
-								{
-									prevHealth = fallingHealth;
-								}
-
-								lerpTime = 0;
-
 								pcGraphicsSystem->CleanD3DObject(ptWorld, nCurrentEntity);
 								ptWorld->atAiHeath[otherCollisionsIndex[i]].heath -= playerDamage;
 
