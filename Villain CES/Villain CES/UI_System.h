@@ -17,6 +17,6 @@ public:
 	void UpdateText(TWorld* tThisWorld, CGraphicsSystem* pcGraphicsSystem, int& nThisEntity, std::vector<TUIVert*>* atUIVertices, wchar_t* character, int& textSize, TUIVert* UVs);
 	bool CheckIfStringsAreTheSame(char* string1, int& textSize1, const char* string2);
 	void CheckOptionsBars(TWorld* tThisWorld, CInputSystem* pcInputSystem, int& nThisEntity, char* valueToChange, int& valueToChangeSize, float& m_fMasterVolume, float& m_fMusicVolume, float& m_fSFXVolume, int& masterIndex, int& musicIndex, int& fxIndex);
-	void UpdateFPS(TWorld* tThisWorld, CGraphicsSystem* pcGraphicsSystem, CFPS& fpsTimer, int& fpsIndex, CGraphicsSystem::TUIVertexBufferType& tUIVertexBuffer, CGraphicsSystem::TUIPixelBufferType& tUIPixelBuffer, std::vector<TUIVert*>& atUIVertices, TCamera* menuCamera, bool HUD);
+	void UpdateFPS(TWorld* tThisWorld, CGraphicsSystem* pcGraphicsSystem, CFPS& fpsTimer, int& fpsIndex, CGraphicsSystem::TUIVertexBufferType& tUIVertexBuffer, CGraphicsSystem::TUIPixelBufferType& tUIPixelBuffer, std::vector<TUIVert*>& atUIVertices, TCamera* menuCamera);
 	void ScrollText(TWorld* tThisWorld, CGraphicsSystem* pcGraphicsSystem, int& nThisEntity, std::vector<TUIVert*>* atUIVertices, double delta);
 };

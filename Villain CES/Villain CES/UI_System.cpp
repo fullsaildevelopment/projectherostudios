@@ -355,12 +355,11 @@ void CUISystem::CheckOptionsBars(TWorld* tThisWorld, CInputSystem* pcInputSystem
 	}
 }
 
-void CUISystem::UpdateFPS(TWorld* tThisWorld, CGraphicsSystem* pcGraphicsSystem, CFPS& fpsTimer, int& fpsIndex, CGraphicsSystem::TUIVertexBufferType& tUIVertexBuffer, CGraphicsSystem::TUIPixelBufferType& tUIPixelBuffer, std::vector<TUIVert*>& atUIVertices, TCamera* menuCamera, bool HUD)
+void CUISystem::UpdateFPS(TWorld* tThisWorld, CGraphicsSystem* pcGraphicsSystem, CFPS& fpsTimer, int& fpsIndex, CGraphicsSystem::TUIVertexBufferType& tUIVertexBuffer, CGraphicsSystem::TUIPixelBufferType& tUIPixelBuffer, std::vector<TUIVert*>& atUIVertices, TCamera* menuCamera)
 {
 	float fps = fpsTimer.UpdateFrameTime();
 
-	if (HUD)
-	{
+#if HUD
 		tUIVertexBuffer.start = -1;
 		tUIVertexBuffer.end = -1;
 		tUIVertexBuffer.ratio = -1;
@@ -395,7 +394,7 @@ void CUISystem::UpdateFPS(TWorld* tThisWorld, CGraphicsSystem* pcGraphicsSystem,
 
 		pcGraphicsSystem->InitUIShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tUIVertexBuffer, tUIPixelBuffer, tThisWorld->atMesh[fpsIndex], menuCamera->d3d_Position);
 		pcGraphicsSystem->ExecutePipeline(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld->atMesh[fpsIndex].m_nIndexCount, tThisWorld->atGraphicsMask[fpsIndex].m_tnGraphicsMask, tThisWorld->atShaderID[fpsIndex].m_nShaderID);
-	}
+#endif
 
 	fpsTimer.Throttle(60);
 }

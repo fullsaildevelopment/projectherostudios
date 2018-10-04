@@ -5,7 +5,6 @@
 #define MAIN_LEVEL_ON true
 #define MUSIC_ON false
 #define INPUT_ABSTRACTED_ON true
-#define HUD true
 //Don't forget to comment out PlaySoundInBank() call in VillCES.cpp if MUSIC_ON is False - ZFB
 CGameMangerSystem::CGameMangerSystem(HWND window, CInputSystem* _pcInputSystem)
 {
@@ -6251,7 +6250,7 @@ int CGameMangerSystem::RealLevelUpdate()
 
 		if (tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_SHADERID))
 		{
-			if (tThisWorld.atProjectiles[nCurrentEntity].m_tnProjectileMask == (COMPONENT_PROJECTILESMASK | COMPONENT_CLIP))
+			/*if (tThisWorld.atProjectiles[nCurrentEntity].m_tnProjectileMask == (COMPONENT_PROJECTILESMASK | COMPONENT_CLIP))
 			{
 				if (tCameraMode.bWalkMode == true)
 				{
@@ -6267,7 +6266,7 @@ int CGameMangerSystem::RealLevelUpdate()
 				}
 				pcGraphicsSystem->ExecutePipeline(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atMesh[nCurrentEntity].m_nIndexCount, tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask, tThisWorld.atShaderID[nCurrentEntity].m_nShaderID);
 			}
-			else if (tThisWorld.atProjectiles[nCurrentEntity].m_tnProjectileMask == (COMPONENT_PROJECTILESMASK | COMPONENT_METAL | COMPONENT_FRIENDLY) ||
+			else */if (tThisWorld.atProjectiles[nCurrentEntity].m_tnProjectileMask == (COMPONENT_PROJECTILESMASK | COMPONENT_METAL | COMPONENT_FRIENDLY) ||
 					 tThisWorld.atProjectiles[nCurrentEntity].m_tnProjectileMask == (COMPONENT_PROJECTILESMASK | COMPONENT_METAL | COMPONENT_ENEMY))
 			{
 				if (tCameraMode.bWalkMode == true)
@@ -6606,7 +6605,7 @@ int CGameMangerSystem::RealLevelUpdate()
 	clickTime += fpsTimer.GetDelta();
 	lerpTime += fpsTimer.GetDelta();
 
-	pcUISystem->UpdateFPS(&tThisWorld, pcGraphicsSystem, fpsTimer, fpsIndex, tUIVertexBuffer, tUIPixelBuffer, atUIVertices, menuCamera, HUD);
+	pcUISystem->UpdateFPS(&tThisWorld, pcGraphicsSystem, fpsTimer, fpsIndex, tUIVertexBuffer, tUIPixelBuffer, atUIVertices, menuCamera);
 
 	pcGraphicsSystem->m_pd3dSwapchain->Present(0, 0);
 	zValue += 0.001;
