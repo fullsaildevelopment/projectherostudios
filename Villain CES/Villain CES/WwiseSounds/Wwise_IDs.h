@@ -22,6 +22,7 @@ namespace AK
         static const AkUniqueID PLAY_METAL_FIRED = 372592918U;
         static const AkUniqueID PLAY_METAL_RELOAD = 4261380785U;
         static const AkUniqueID PLAY_SCYLIAN_DEATH = 3744242630U;
+        static const AkUniqueID PLAY_WALK = 1589278981U;
         static const AkUniqueID PLAY_XURIOUS___LIFTWAFFE = 1838748612U;
     } // namespace EVENTS
 

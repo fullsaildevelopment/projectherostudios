@@ -223,9 +223,17 @@ void destroyEntity(TWorld * ptWorld, unsigned int nThisEntity)
 	ptWorld->atRigidBody[nThisEntity].gravity = zeroVector;
 	ptWorld->atRigidBody[nThisEntity].maxVelocity = zeroVector;
 
+	ptWorld->atMesh[nThisEntity].m_VertexData.clear();
 	ptWorld->atSimpleMesh[nThisEntity].m_VertexData.clear();
+	ptWorld->atDebugMesh[nThisEntity].m_VertexData.clear();
 	ptWorld->atAABB[nThisEntity].m_SceneChange = -30;
 	ptWorld->atAABB[nThisEntity].m_MaterialType = MATERIAL_METAL;
+
+	//ptWorld->atAABB[nThisEntity].m_dMaxPoint = { 0, 0, 0 };
+	//ptWorld->atAABB[nThisEntity].m_dMaxPointOrginal = { 0, 0, 0 };
+	//ptWorld->atAABB[nThisEntity].m_dMinPoint = { 0, 0, 0 };
+	//ptWorld->atAABB[nThisEntity].m_dMinPointOrginal = { 0, 0, 0 };
+	//ptWorld->atAABB[nThisEntity].m_IndexLocation = -1;
 
 	ptWorld->atClip[nThisEntity].nBulletsAvailables.clear();
 
@@ -818,7 +826,7 @@ unsigned int CreateBullet(TWorld * ptWorld, XMMATRIX BulletSpawnLocation, int Ma
 	return nThisEntity;
 }
 
-unsigned int CreateBulletMesh(TWorld* ptWorld, ID3D11Device * m_pd3dDevice, XMMATRIX BulletSpawnLocation, int MaterialID, int bulletType, TMeshImport tMesh, TMaterialImport tMaterial)
+unsigned int CreateBulletMesh(TWorld* ptWorld, ID3D11Device* m_pd3dDevice, XMMATRIX BulletSpawnLocation, int MaterialID, int bulletType, TMeshImport tMesh, TMaterialImport tMaterial)
 {
 	unsigned int nThisEntity = createEntity(ptWorld);
 
@@ -1047,6 +1055,22 @@ unsigned int CreateBulletMesh(TWorld* ptWorld, ID3D11Device * m_pd3dDevice, XMMA
 	ptWorld->atRigidBody[nThisEntity].totalForce = zerovector;
 	ptWorld->atRigidBody[nThisEntity].ground = false;
 	ptWorld->atRigidBody[nThisEntity].wall = false;
+
+	ptWorld->atWorldMatrix[nThisEntity].worldMatrix = BulletSpawnLocation;
+
+	return nThisEntity;
+}
+
+unsigned int CreateBulletMesh(TWorld* ptWorld, XMMATRIX BulletSpawnLocation, BulletInfo& bulletToCopyFrom)
+{
+	unsigned int nThisEntity = createEntity(ptWorld);
+
+	ptWorld->atMesh[nThisEntity] = bulletToCopyFrom.atMesh;
+	ptWorld->atShaderID[nThisEntity] = bulletToCopyFrom.atShaderID;
+	ptWorld->atRigidBody[nThisEntity] = bulletToCopyFrom.atRigidBody;
+	ptWorld->atCollisionMask[nThisEntity] = bulletToCopyFrom.atCollisionMask;
+	ptWorld->atGraphicsMask[nThisEntity] = bulletToCopyFrom.atGraphicsMask;
+	ptWorld->atProjectiles[nThisEntity] = bulletToCopyFrom.atProjectiles;
 
 	ptWorld->atWorldMatrix[nThisEntity].worldMatrix = BulletSpawnLocation;
 
@@ -4226,7 +4250,7 @@ unsigned int createClaytonAnim(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TM
 	return nThisEntity;
 }
 
-unsigned int CreateScyllian(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMeshImport tMesh, TMaterialImport tMaterial, XMMATRIX SpawnPosition)
+unsigned int CreateScyllian(TWorld* ptWorld, ID3D11Device* m_pd3dDevice, TMeshImport tMesh, TMaterialImport tMaterial, XMMATRIX SpawnPosition)
 {
 	unsigned int nThisEntity = createEntity(ptWorld);
 
@@ -4427,6 +4451,23 @@ unsigned int CreateScyllian(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMesh
 	ptWorld->atMesh[nThisEntity].m_d3dIndexData.pSysMem = tMesh.indexBuffer;
 	ptWorld->atMesh[nThisEntity].m_d3dIndexData.SysMemPitch = 0;
 	ptWorld->atMesh[nThisEntity].m_d3dIndexData.SysMemSlicePitch = 0;
+
+	ptWorld->atWorldMatrix[nThisEntity].worldMatrix = SpawnPosition;
+
+	return nThisEntity;
+}
+
+unsigned int CreateScyllian(TWorld* ptWorld, XMMATRIX SpawnPosition, EnemyInfo& enemyToCopyFrom)
+{
+	unsigned int nThisEntity = createEntity(ptWorld);
+
+	ptWorld->atMesh[nThisEntity] = enemyToCopyFrom.atMesh;
+	ptWorld->atShaderID[nThisEntity] = enemyToCopyFrom.atShaderID;
+	ptWorld->atRigidBody[nThisEntity] = enemyToCopyFrom.atRigidBody;
+	ptWorld->atGraphicsMask[nThisEntity] = enemyToCopyFrom.atGraphicsMask;
+	ptWorld->atCollisionMask[nThisEntity] = enemyToCopyFrom.atCollisionMask;
+	ptWorld->atPhysicsMask[nThisEntity] = enemyToCopyFrom.atPhysicsMask;
+	ptWorld->atAIMask[nThisEntity] = enemyToCopyFrom.atAIMask;
 
 	ptWorld->atWorldMatrix[nThisEntity].worldMatrix = SpawnPosition;
 

@@ -122,16 +122,8 @@ private:
 #define CREDITS_INDEX 99
 #define TIMEUNTILCLICK 0.25
 
-	//ZB Variables
-	TCameraToggle tCameraMode;
-	XMMATRIX m_d3dWorldMatrix;
-	XMMATRIX m_d3dViewMatrix;
-	XMMATRIX m_d3dProjectionMatrix;
-	XMMATRIX m_d3dPlayerMatrix;
-
 	ID3D11ShaderResourceView* fontTexture = nullptr;
 	std::vector<TUIVert*> atUIVertices;
-	std::vector<TPrimalVert> atBeamVerts;
 	std::vector<short*> atUIIndices;
 	CFPS fpsTimer;
 	float clickTime;
@@ -143,6 +135,18 @@ private:
 	POINT dragPoint;
 	POINT hoverPoint;
 	POINT clickPoint = { -1, -1 };
+
+	BulletInfo bulletToCopyFrom;
+	EnemyInfo enemyToCopyFrom;
+
+	//ZB Variables
+	TCameraToggle tCameraMode;
+	XMMATRIX m_d3dWorldMatrix;
+	XMMATRIX m_d3dViewMatrix;
+	XMMATRIX m_d3dProjectionMatrix;
+	XMMATRIX m_d3dPlayerMatrix;
+
+	std::vector<TPrimalVert> atBeamVerts;
 
 	XTime PausedTimer;
 	float pausedTimer;

@@ -155,11 +155,11 @@ void CCollisionSystem::TestThreading(TWorld * ptWorld, int nCurrentEntity, CGrap
 					if (ptWorld->atProjectiles[nCurrentEntity].m_tnProjectileMask == (COMPONENT_PROJECTILESMASK | COMPONENT_METAL | COMPONENT_FRIENDLY) ||
 						ptWorld->atProjectiles[nCurrentEntity].m_tnProjectileMask == (COMPONENT_PROJECTILESMASK | COMPONENT_METAL | COMPONENT_ENEMY))
 					{
+
 						RemoveAABBCollider(nCurrentEntity);
 
-
-
 						pcGraphicsSystem->CleanD3DObject(ptWorld, nCurrentEntity);
+
 						break;
 					}
 				}
@@ -896,7 +896,7 @@ bool CCollisionSystem::AABBtoAABBCollisionCheck(TAABB m_AABB2, vector<int>* m_Ot
 			}
 		}
 	}
-	if (m_OtherColision->size() != 0) 
+	if (m_OtherColision->size() != 0)
 	{
 		return true;
 	}

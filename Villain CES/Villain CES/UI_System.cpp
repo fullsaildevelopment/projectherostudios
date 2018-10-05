@@ -311,13 +311,13 @@ bool CUISystem::CheckIfStringsAreTheSame(char* string1, int& textSize1, const ch
 	}
 }
 
-void CUISystem::CheckOptionsBars(TWorld* tThisWorld, CInputSystem* pcInputSystem, int& nThisEntity, char* valueToChange, int& valueToChangeSize, float& m_fMasterVolume, float& m_fMusicVolume, float& m_fSFXVolume, int& masterIndex, int& musicIndex, int& fxIndex)
+void CUISystem::CheckOptionsBars(TWorld* tThisWorld, CInputSystem* pcInputSystem, int& nThisEntity, float& m_fMasterVolume, float& m_fMusicVolume, float& m_fSFXVolume, int& masterIndex, int& musicIndex, int& fxIndex)
 {
-	if (this->CheckIfStringsAreTheSame(valueToChange, valueToChangeSize, "Sensitivity"))
+	if (this->CheckIfStringsAreTheSame(tThisWorld->atBar[nThisEntity].valueToChange, tThisWorld->atBar[nThisEntity].valueToChangeSize, "Sensitivity"))
 	{
 		pcInputSystem->SetMouseRotationSpeed(tThisWorld->atBar[nThisEntity].ratio * 0.005 + 0.003);
 	}
-	else if (this->CheckIfStringsAreTheSame(valueToChange, valueToChangeSize, "Master Volume"))
+	else if (this->CheckIfStringsAreTheSame(tThisWorld->atBar[nThisEntity].valueToChange, tThisWorld->atBar[nThisEntity].valueToChangeSize, "Master Volume"))
 	{
 		m_fMasterVolume = tThisWorld->atBar[nThisEntity].ratio * 100;
 
@@ -333,7 +333,7 @@ void CUISystem::CheckOptionsBars(TWorld* tThisWorld, CInputSystem* pcInputSystem
 			tThisWorld->atBar[fxIndex].ratio = m_fMasterVolume * .01;
 		}
 	}
-	else if (this->CheckIfStringsAreTheSame(valueToChange, valueToChangeSize, "Music Volume"))
+	else if (this->CheckIfStringsAreTheSame(tThisWorld->atBar[nThisEntity].valueToChange, tThisWorld->atBar[nThisEntity].valueToChangeSize, "Music Volume"))
 	{
 		m_fMusicVolume = tThisWorld->atBar[nThisEntity].ratio * 100;
 
@@ -343,7 +343,7 @@ void CUISystem::CheckOptionsBars(TWorld* tThisWorld, CInputSystem* pcInputSystem
 			tThisWorld->atBar[musicIndex].ratio = m_fMasterVolume * .01;
 		}
 	}
-	else if (this->CheckIfStringsAreTheSame(valueToChange, valueToChangeSize, "FX Volume"))
+	else if (this->CheckIfStringsAreTheSame(tThisWorld->atBar[nThisEntity].valueToChange, tThisWorld->atBar[nThisEntity].valueToChangeSize, "FX Volume"))
 	{
 		m_fSFXVolume = tThisWorld->atBar[nThisEntity].ratio * 100;
 
@@ -424,4 +424,39 @@ void CUISystem::ScrollText(TWorld* tThisWorld, CGraphicsSystem* pcGraphicsSystem
 	}
 
 	pcGraphicsSystem->CreateEntityBuffer(tThisWorld, nThisEntity);
+}
+
+void CUISystem::UpdateHUDBars(TWorld * tThisWorld, int & nThisEntity, CGraphicsSystem::TUIVertexBufferType& tUIVertexBuffer, int& screenWidth, int& PlayerStartIndex, int& GunIndexForPlayer)
+{
+	if (this->CheckIfStringsAreTheSame(tThisWorld->atBar[nThisEntity].valueToChange, tThisWorld->atBar[nThisEntity].valueToChangeSize, "Health"))
+	{
+		tUIVertexBuffer.start = (tThisWorld->atBar[nThisEntity].barBoundingBox.left + 14 - (screenWidth * .5)) / (screenWidth * .5);
+		tUIVertexBuffer.end = (tThisWorld->atBar[nThisEntity].barBoundingBox.right + 4 - (screenWidth * .5)) / (screenWidth * .5);
+		tUIVertexBuffer.ratio = tThisWorld->atClayton[PlayerStartIndex].health * .01;
+
+		if (tUIVertexBuffer.ratio > .6)
+		{
+			tThisWorld->atBar[nThisEntity].backgroundColor = XMFLOAT4(0, 1, 0, 1);
+		}
+		else if (tUIVertexBuffer.ratio > .3)
+		{
+			tThisWorld->atBar[nThisEntity].backgroundColor = XMFLOAT4(1, .5, 0, 1);
+		}
+		else
+		{
+			tThisWorld->atBar[nThisEntity].backgroundColor = XMFLOAT4(1, 0, 0, 1);
+		}
+	}
+	else if (this->CheckIfStringsAreTheSame(tThisWorld->atBar[nThisEntity].valueToChange, tThisWorld->atBar[nThisEntity].valueToChangeSize, "ShootingCooldown"))
+	{
+		tUIVertexBuffer.start = (tThisWorld->atBar[nThisEntity].barBoundingBox.left + 14 - (screenWidth * .5)) / (screenWidth * .5);
+		tUIVertexBuffer.end = (tThisWorld->atBar[nThisEntity].barBoundingBox.right + 4 - (screenWidth * .5)) / (screenWidth * .5);
+		tUIVertexBuffer.ratio = (tThisWorld->atClip[GunIndexForPlayer].fShootingCoolDown) * .01;
+	}
+	else
+	{
+		tUIVertexBuffer.start = -1;
+		tUIVertexBuffer.end = -1;
+		tUIVertexBuffer.ratio = -1;
+	}
 }

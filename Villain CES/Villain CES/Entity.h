@@ -64,7 +64,28 @@ struct TWorld
 	Clips			atClip[ENTITYCOUNT];
 };
 
+struct BulletInfo
+{
+	TMesh atMesh;
+	TShaderID atShaderID;
+	TRigidbody atRigidBody;
+	TGraphicsMask atGraphicsMask;
+	TCollisionMask atCollisionMask;
+	TPhysicsMask atPhysicsMask;
+	TProjectileMask atProjectiles;
+};
 
+struct EnemyInfo
+{
+	TMesh atMesh;
+	TShaderID atShaderID;
+	TRigidbody atRigidBody;
+	TGraphicsMask atGraphicsMask;
+	TCollisionMask atCollisionMask;
+	TPhysicsMask atPhysicsMask;
+	TAIMask atAIMask;
+	TAIActive atActiveAI;
+};
 
 struct TPrimalVert
 {
@@ -100,6 +121,7 @@ unsigned int CreateClayTon(TWorld * ptWorld);
 unsigned int CreateMaterialBullet(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMeshImport tMesh, TMaterialOptimized tMaterial, XMMATRIX BulletSpawnLocation, int meshIndex, int bulletType);
 unsigned int CreateBullet(TWorld * ptWorld, XMMATRIX bulletSpawnLocation, int MaterialID, int bulletType);
 unsigned int CreateBulletMesh(TWorld* ptWorld, ID3D11Device * m_pd3dDevice, XMMATRIX BulletSpawnLocation, int MaterialID, int bulletType, TMeshImport tMesh, TMaterialImport tMaterial);
+unsigned int CreateBulletMesh(TWorld* ptWorld, XMMATRIX BulletSpawnLocation, BulletInfo& bulletToCopyFrom);
 unsigned int CreateExtractionBeam(TWorld * ptWorld, XMMATRIX BulletSpawnLocation, int parentWorldMatrixIndex,std::vector<TPrimalVert> atBeamVerts);
 unsigned int AimingLine(TWorld * ptWorld, XMMATRIX BulletSpawnLocation, int parentWorldMatrixIndex, float xoffset, float yoffset, float zoffset);
 unsigned int createDebugCamera(TWorld * ptWorld, XMMATRIX debugCamera);
@@ -113,6 +135,7 @@ unsigned int createMesh(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMeshImpo
 unsigned int createClayton(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMeshImport tMesh, TMaterialImport tMaterial);
 unsigned int createClaytonAnim(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMeshImport tMesh, TMaterialOptimized tMaterial, TAnimationImport tAnim, int meshIndex);
 unsigned int CreateScyllian(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMeshImport tMesh, TMaterialImport tMaterial, XMMATRIX SpawnPosition);
+unsigned int CreateScyllian(TWorld * ptWorld, XMMATRIX SpawnPosition, EnemyInfo& enemyToCopyFrom);
 unsigned int CreateTemptUIBox(TWorld * ptWorld, XMMATRIX SpawnPosition);
 unsigned int CreateSimpleGunAi(TWorld * ptWorld, XMMATRIX SpawnPosition);
 unsigned int CreateSimpleSearchAi(TWorld* ptWorld, XMMATRIX SpawnPosition);
