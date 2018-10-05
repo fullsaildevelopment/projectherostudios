@@ -142,7 +142,7 @@ int CGameMangerSystem::LoadMainMenu()
 						fadeTime = 0;
 						fadeOut = false;
 
-						return 13;
+						return 11;
 					}
 
 					tUIPixelBuffer.hoverColor = XMFLOAT4(0, 0, 0, opacity);
@@ -582,102 +582,94 @@ int CGameMangerSystem::LoadStory()
 
 			tUIPixelBuffer.hoverColor = tThisWorld.atLabel[nCurrentEntity].color;
 
-			//if (pcInputSystem->InputCheck(G_KEY_H))
-			pcUISystem->ScrollText(&tThisWorld, pcGraphicsSystem, nCurrentEntity, &atUIVertices, fpsTimer.GetDelta());
+			double scrollSpeed = .05;
+			pcUISystem->ScrollText(&tThisWorld, pcGraphicsSystem, nCurrentEntity, &atUIVertices, scrollSpeed * fpsTimer.GetDelta());
 
 			pcGraphicsSystem->InitUIShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tUIVertexBuffer, tUIPixelBuffer, tThisWorld.atMesh[nCurrentEntity], menuCamera->d3d_Position);
 			pcGraphicsSystem->ExecutePipeline(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atMesh[nCurrentEntity].m_nIndexCount, tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask, tThisWorld.atShaderID[nCurrentEntity].m_nShaderID);
 		}
-		//if (_continue)
-		//{
-			if (tThisWorld.atUIMask[nCurrentEntity].m_tnUIMask == (COMPONENT_UIMASK | COMPONENT_LABEL | COMPONENT_LOADING))
+
+		if (tThisWorld.atUIMask[nCurrentEntity].m_tnUIMask == (COMPONENT_UIMASK | COMPONENT_LABEL | COMPONENT_LOADING))
+		{
+			tUIVertexBuffer.start = -1;
+			tUIVertexBuffer.end = -1;
+			tUIVertexBuffer.ratio = -1;
+			tUIVertexBuffer.padding = -1;
+
+			float opacity;
+
+			if (fadeOut)
 			{
-				tUIVertexBuffer.start = -1;
-				tUIVertexBuffer.end = -1;
-				tUIVertexBuffer.ratio = -1;
-				tUIVertexBuffer.padding = -1;
+				opacity = fadeTime / .5;
 
-				float opacity;
-
-				if (fadeOut)
+				if (opacity > 1)
 				{
-					opacity = fadeTime / .5;
-
-					if (opacity > 1)
-					{
-						fadeTime = 0;
-						blinkTime = 0;
-
-						loading = false;
-						fadeOut = false;
-						return 13;
-					}
-
-					tUIPixelBuffer.hoverColor = XMFLOAT4(0, 0, 0, opacity);
-				}
-				else
-				{
-					tUIPixelBuffer.hoverColor = XMFLOAT4(0, 0, 0, 0);
-				}
-
-				pcGraphicsSystem->InitUIShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tUIVertexBuffer, tUIPixelBuffer, tThisWorld.atMesh[nCurrentEntity], menuCamera->d3d_Position);
-				pcGraphicsSystem->ExecutePipeline(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atMesh[nCurrentEntity].m_nIndexCount, tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask, tThisWorld.atShaderID[nCurrentEntity].m_nShaderID);
-			}
-
-			if (tThisWorld.atUIMask[nCurrentEntity].m_tnUIMask == (COMPONENT_UIMASK | COMPONENT_LABEL | COMPONENT_BUTTON | COMPONENT_LOADING))
-			{
-				if (blinkTime < 1)
-				{
-					if (tThisWorld.atButton[nCurrentEntity].enabled == false)
-					{
-						tUIVertexBuffer.start = -1;
-						tUIVertexBuffer.end = -1;
-						tUIVertexBuffer.ratio = -1;
-						tUIVertexBuffer.padding = -1;
-
-						tUIPixelBuffer.hoverColor = tThisWorld.atLabel[nCurrentEntity].color;
-
-						pcGraphicsSystem->InitUIShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tUIVertexBuffer, tUIPixelBuffer, tThisWorld.atMesh[nCurrentEntity], menuCamera->d3d_Position);
-						pcGraphicsSystem->ExecutePipeline(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atMesh[nCurrentEntity].m_nIndexCount, tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask, tThisWorld.atShaderID[nCurrentEntity].m_nShaderID);
-					}
-				}
-				else if (blinkTime > 1.8)
-				{
+					fadeTime = 0;
 					blinkTime = 0;
+
+					loading = false;
+					fadeOut = false;
+					return 13;
+				}
+
+				tUIPixelBuffer.hoverColor = XMFLOAT4(0, 0, 0, opacity);
+			}
+			else
+			{
+				tUIPixelBuffer.hoverColor = XMFLOAT4(0, 0, 0, 0);
+			}
+
+			pcGraphicsSystem->InitUIShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tUIVertexBuffer, tUIPixelBuffer, tThisWorld.atMesh[nCurrentEntity], menuCamera->d3d_Position);
+			pcGraphicsSystem->ExecutePipeline(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atMesh[nCurrentEntity].m_nIndexCount, tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask, tThisWorld.atShaderID[nCurrentEntity].m_nShaderID);
+		}
+
+		/*if (tThisWorld.atUIMask[nCurrentEntity].m_tnUIMask == (COMPONENT_UIMASK | COMPONENT_LABEL | COMPONENT_BUTTON | COMPONENT_LOADING))
+		{
+			if (blinkTime < 1)
+			{
+				if (tThisWorld.atButton[nCurrentEntity].enabled == false)
+				{
+					tUIVertexBuffer.start = -1;
+					tUIVertexBuffer.end = -1;
+					tUIVertexBuffer.ratio = -1;
+					tUIVertexBuffer.padding = -1;
+
+					tUIPixelBuffer.hoverColor = tThisWorld.atLabel[nCurrentEntity].color;
+
+					pcGraphicsSystem->InitUIShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tUIVertexBuffer, tUIPixelBuffer, tThisWorld.atMesh[nCurrentEntity], menuCamera->d3d_Position);
+					pcGraphicsSystem->ExecutePipeline(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atMesh[nCurrentEntity].m_nIndexCount, tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask, tThisWorld.atShaderID[nCurrentEntity].m_nShaderID);
 				}
 			}
-		//}
+			else if (blinkTime > 1.8)
+			{
+				blinkTime = 0;
+			}
+		}*/
 	}
 	pcGraphicsSystem->m_pd3dSwapchain->Present(0, 0);
 
-	//if (_continue)
-	//{
-		for (auto i = G_KEY_UNKNOWN; i <= G_KEY_9; ++i)
+	for (auto i = G_KEY_UNKNOWN; i <= G_KEY_9; ++i)
+	{
+		if (pcInputSystem->InputCheck(i) == 1)
 		{
-			//if (pcInputSystem->InputCheck(G_KEY_H))
-			//	continue;
-
-			if (pcInputSystem->InputCheck(i) == 1)
-			{
-				fadeOut = true;
-			}
-		}
-
-		if (pcInputSystem->InputCheck(G_BUTTON_LEFT))
-		{
-			clickTime = 0;
-
 			fadeOut = true;
 		}
+	}
 
-		if (fadeOut)
-		{
-			fadeTime += fpsTimer.GetDelta();
-		}
+	if (pcInputSystem->InputCheck(G_BUTTON_LEFT))
+	{
+		clickTime = 0;
 
-		clickTime += fpsTimer.GetDelta();
-		blinkTime += fpsTimer.GetDelta();
-	//}
+		fadeOut = true;
+	}
+
+	if (fadeOut)
+	{
+		fadeTime += fpsTimer.GetDelta();
+	}
+
+	clickTime += fpsTimer.GetDelta();
+	blinkTime += fpsTimer.GetDelta();
 
 	return 12;
 }
@@ -703,7 +695,7 @@ void CGameMangerSystem::InitializeStory()
 		tThisWorld.atLabel[nThisEntity].color = XMFLOAT4(0, 0, 0, 1);
 	}
 
-	{
+	/*{
 		wchar_t textBuffer[] =
 		{ L"Press Any Key To Skip" };
 
@@ -713,8 +705,8 @@ void CGameMangerSystem::InitializeStory()
 
 		pcUISystem->AddMaskToUI(&tThisWorld, nThisEntity, COMPONENT_LOADING);
 
-		tThisWorld.atLabel[nThisEntity].color = XMFLOAT4(0, 0, 0, 0);
-	}
+		tThisWorld.atLabel[nThisEntity].color = XMFLOAT4(1, 1, 1, 0);
+	}*/
 
 	{
 		wchar_t textBuffer[] =
@@ -722,7 +714,7 @@ void CGameMangerSystem::InitializeStory()
 		//{ L"Clay visits his family on Earth. During that visit, \nintroduces him and his job surveying planets for precious resources. \nStays for a few days. The night of the final day he falls asleep, \nand wakes up in his ship, confused, he gets out and finds a panoramic of Scyllia. \nHe looks at his ship and is shocked to find it barely \nrecognizable due to various upgrades. He hears cheering, grabs his gun, \nand finds his way to the coliseum. He sees a tube with \nstrange symbols above it, and climbs in and slides to the center of the arena. \nHe sees a Scyllian with red markings (Seth). He tells him to \nfight with his hands, and a melee tutorial begins. Seth punches \nhim out, being the greater warrior. He wakes up outside his ship, \nSeth having carried him there, and explains what scyllia is like and \nthat no one on his planet has anything like this ship, being a \n(relatively) low tech warrior society. He asks Clayton to take him with him so that \nhe can gain the experience to be the great general of his time. \nClayton agrees and they go to his company’s HQ and they \nscold him for being late but forgive him for being a cheap and \neffective employee. They tell him he was gone for two months \nand he tries to figure out where he went during \nthose two months." };
 		{ L"Clay visits his family on Earth. During that visit, introduces him and his job surveying planets for precious resources. Stays for a few days. The night of the final day he falls asleep, and wakes up in his ship, confused, he gets out and finds a panoramic of Scyllia. He looks at his ship and is shocked to find it barely recognizable due to various upgrades. He hears cheering, grabs his gun, and finds his way to the coliseum. He sees a tube with strange symbols above it, and climbs in and slides to the center of the arena. He sees a Scyllian with red markings (Seth). He tells him to fight with his hands, and a melee tutorial begins. Seth punches him out, being the greater warrior. He wakes up outside his ship, Seth having carried him there, and explains what scyllia is like and that no one on his planet has anything like this ship, being a (relatively) low tech warrior society. He asks Clayton to take him with him so that he can gain the experience to be the great general of his time. Clayton agrees and they go to his company’s HQ and they scold him for being late but forgive him for being a cheap and effective employee. They tell him he was gone for two months and he tries to figure out where he went during those two months." };
 
-		nThisEntity = CreateUILabelForText2(&tThisWorld, menuCamera->d3d_Position, 15, 10, 0, -5, &atUIVertices, &atUIIndices, textBuffer, ARRAYSIZE(textBuffer), &windowRect, 10, -1, .15);
+		nThisEntity = CreateUILabelForText2(&tThisWorld, menuCamera->d3d_Position, 15, 10, 0, -8, &atUIVertices, &atUIIndices, textBuffer, ARRAYSIZE(textBuffer), &windowRect, 10, -1, .15);
 		pcUISystem->AddTextureToUI(&tThisWorld, nThisEntity, pcGraphicsSystem->m_pd3dDevice, nullptr, fontTexture);
 
 		tThisWorld.atLabel[nThisEntity].color = XMFLOAT4(1, 0, 0, 0);

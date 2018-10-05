@@ -408,7 +408,7 @@ void CUISystem::ScrollText(TWorld* tThisWorld, CGraphicsSystem* pcGraphicsSystem
 	{
 		tempPos[i] = atUIVertices->at(tThisWorld->atLabel[nThisEntity].vIndex)[i].m_d3dfPosition;
 
-		tempPos[i].y += .1 * delta;
+		tempPos[i].y += delta;
 
 		atUIVertices->at(tThisWorld->atLabel[nThisEntity].vIndex)[i].m_d3dfPosition.y = tempPos[i].y;
 
