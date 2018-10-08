@@ -75,6 +75,7 @@ int CGameMangerSystem::LoadMainMenu()
 	}
 	pcAudioSystem->SetRTPCVolume(AK::GAME_PARAMETERS::MUSIC_VOLUME, m_fMusicVolume);
 #endif
+
 	//////////
 	m_d3dWorldMatrix = pcGraphicsSystem->SetDefaultWorldPosition();
 	m_d3dViewMatrix = pcGraphicsSystem->SetDefaultViewMatrix();
@@ -295,7 +296,7 @@ int CGameMangerSystem::LoadMainMenu()
 				else if (PtInRect(&tThisWorld.atBar[nCurrentEntity].barBoundingBox, dragPoint))
 				{
 					tThisWorld.atBar[nCurrentEntity].ratio = (dragPoint.x - tThisWorld.atBar[nCurrentEntity].barBoundingBox.left - 5.0) / (tThisWorld.atBar[nCurrentEntity].barBoundingBox.right - tThisWorld.atBar[nCurrentEntity].barBoundingBox.left - 10);
-				
+
 					pcUISystem->CheckOptionsBars(&tThisWorld, pcInputSystem, nCurrentEntity, m_fMasterVolume, m_fDialogueVolume, m_fMusicVolume, m_fSFXVolume, masterIndex, dialogueIndex, musicIndex, fxIndex);
 				}
 

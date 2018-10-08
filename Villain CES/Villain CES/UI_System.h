@@ -20,4 +20,5 @@ public:
 	void UpdateFPS(TWorld* tThisWorld, CGraphicsSystem* pcGraphicsSystem, CFPS& fpsTimer, int& fpsIndex, CGraphicsSystem::TUIVertexBufferType& tUIVertexBuffer, CGraphicsSystem::TUIPixelBufferType& tUIPixelBuffer, std::vector<TUIVert*>& atUIVertices, TCamera* menuCamera);
 	void ScrollText(TWorld* tThisWorld, CGraphicsSystem* pcGraphicsSystem, int& nThisEntity, std::vector<TUIVert*>* atUIVertices, double delta);
 	void UpdateHUDBars(TWorld* tThisWorld, int& nThisEntity, CGraphicsSystem::TUIVertexBufferType& tUIVertexBuffer, int& screenWidth, int& PlayerStartIndex, int& GunIndexForPlayer);
+	void UpdateDirtyUI(HWND* cApplicationWindow, TWorld* tThisWorld, bool fullscreen);
 };

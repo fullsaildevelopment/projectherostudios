@@ -476,3 +476,75 @@ void CUISystem::UpdateHUDBars(TWorld * tThisWorld, int & nThisEntity, CGraphicsS
 		tUIVertexBuffer.ratio = -1;
 	}
 }
+
+void CUISystem::UpdateDirtyUI(HWND * cApplicationWindow, TWorld * tThisWorld, bool fullscreen)
+{
+	RECT window;
+	GetWindowRect(*cApplicationWindow, &window);
+
+	float screenWidth = window.right - window.left;
+	float screenHeight = window.bottom - window.top;
+
+	for (unsigned int nThisEntity = 0; nThisEntity < ENTITYCOUNT; ++nThisEntity)
+	{
+		float ratioLeftX = (screenWidth / 2) * ((tThisWorld->atLabel[nThisEntity].x - (tThisWorld->atLabel[nThisEntity].width / 2)) * .1);
+		float ratioTopY = (screenHeight / 2) * ((tThisWorld->atLabel[nThisEntity].y + (tThisWorld->atLabel[nThisEntity].height / 2)) * .1);
+		float ratioRightX = (screenWidth / 2) * ((tThisWorld->atLabel[nThisEntity].x + (tThisWorld->atLabel[nThisEntity].width / 2)) * .1);
+		float ratioBottomY = (screenHeight / 2) * ((tThisWorld->atLabel[nThisEntity].y - (tThisWorld->atLabel[nThisEntity].height / 2)) * .1);
+
+		if (tThisWorld->atUIMask[nThisEntity].m_tnUIMask == (COMPONENT_UIMASK | COMPONENT_LABEL | COMPONENT_BUTTON) ||
+			tThisWorld->atUIMask[nThisEntity].m_tnUIMask == (COMPONENT_UIMASK | COMPONENT_LABEL | COMPONENT_BUTTON | COMPONENT_PAUSESCREEN) ||
+			tThisWorld->atUIMask[nThisEntity].m_tnUIMask == (COMPONENT_UIMASK | COMPONENT_LABEL | COMPONENT_BUTTON | COMPONENT_OPTIONS))
+		{
+			if (fullscreen)
+			{
+				tThisWorld->atButton[nThisEntity].boundingBox.bottom = (screenHeight / 2) + (ratioBottomY * -1);
+				tThisWorld->atButton[nThisEntity].boundingBox.top = (screenHeight / 2) + (ratioTopY * -1);
+				tThisWorld->atButton[nThisEntity].boundingBox.left = (screenWidth / 2) + ratioLeftX;
+				tThisWorld->atButton[nThisEntity].boundingBox.right = (screenWidth / 2) + ratioRightX;
+			}
+			else
+			{
+				tThisWorld->atButton[nThisEntity].boundingBox.bottom = (screenHeight / 2) + (ratioBottomY * -1) - 17 + tThisWorld->atLabel[nThisEntity].y;
+				tThisWorld->atButton[nThisEntity].boundingBox.top = (screenHeight / 2) + (ratioTopY * -1) - 17 + tThisWorld->atLabel[nThisEntity].y;
+				tThisWorld->atButton[nThisEntity].boundingBox.left = (screenWidth / 2) + ratioLeftX - 9;
+				tThisWorld->atButton[nThisEntity].boundingBox.right = (screenWidth / 2) + ratioRightX - 9;
+			}
+		}
+		else if (tThisWorld->atUIMask[nThisEntity].m_tnUIMask == (COMPONENT_UIMASK | COMPONENT_LABEL | COMPONENT_BAR) ||
+				 tThisWorld->atUIMask[nThisEntity].m_tnUIMask == (COMPONENT_UIMASK | COMPONENT_LABEL | COMPONENT_BAR | COMPONENT_OPTIONS) ||
+				 tThisWorld->atUIMask[nThisEntity].m_tnUIMask == (COMPONENT_UIMASK | COMPONENT_LABEL | COMPONENT_BAR | COMPONENT_HUD))
+		{
+			if (fullscreen)
+			{
+				tThisWorld->atBar[nThisEntity].start.y = (screenHeight / 2) + (ratioTopY * -1);
+				tThisWorld->atBar[nThisEntity].end.y = (screenHeight / 2) + (ratioBottomY * -1);
+				tThisWorld->atBar[nThisEntity].start.x = (screenWidth / 2) + ratioLeftX - 9;
+				tThisWorld->atBar[nThisEntity].end.x = (screenWidth / 2) + ratioRightX - 9;
+
+				tThisWorld->atBar[nThisEntity].barBoundingBox.top = (screenHeight / 2) + (ratioTopY * -1);
+				tThisWorld->atBar[nThisEntity].barBoundingBox.bottom = (screenHeight / 2) + (ratioBottomY * -1);
+				tThisWorld->atBar[nThisEntity].barBoundingBox.left = (screenWidth / 2) + ratioLeftX - 14;
+				tThisWorld->atBar[nThisEntity].barBoundingBox.right = (screenWidth / 2) + ratioRightX - 4;
+
+				ClientToScreen(*cApplicationWindow, &tThisWorld->atBar[nThisEntity].start);
+				ClientToScreen(*cApplicationWindow, &tThisWorld->atBar[nThisEntity].end);
+			}
+			else
+			{
+				tThisWorld->atBar[nThisEntity].start.y = (screenHeight / 2) + (ratioTopY * -1) - 17 + tThisWorld->atLabel[nThisEntity].y;
+				tThisWorld->atBar[nThisEntity].end.y = (screenHeight / 2) + (ratioBottomY * -1) - 17 + tThisWorld->atLabel[nThisEntity].y;
+				tThisWorld->atBar[nThisEntity].start.x = (screenWidth / 2) + ratioLeftX - 9;
+				tThisWorld->atBar[nThisEntity].end.x = (screenWidth / 2) + ratioRightX - 9;
+
+				tThisWorld->atBar[nThisEntity].barBoundingBox.top = (screenHeight / 2) + (ratioTopY * -1) - 17 + tThisWorld->atLabel[nThisEntity].y;
+				tThisWorld->atBar[nThisEntity].barBoundingBox.bottom = (screenHeight / 2) + (ratioBottomY * -1) - 17 + tThisWorld->atLabel[nThisEntity].y;
+				tThisWorld->atBar[nThisEntity].barBoundingBox.left = (screenWidth / 2) + ratioLeftX - 14;
+				tThisWorld->atBar[nThisEntity].barBoundingBox.right = (screenWidth / 2) + ratioRightX - 4;
+
+				ClientToScreen(*cApplicationWindow, &tThisWorld->atBar[nThisEntity].start);
+				ClientToScreen(*cApplicationWindow, &tThisWorld->atBar[nThisEntity].end);
+			}
+		}
+	}
+}
