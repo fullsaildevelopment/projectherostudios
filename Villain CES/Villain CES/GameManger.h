@@ -59,6 +59,7 @@ public:
 	bool loading = false;
 	int nCurrentScene = 0;
 
+	
 
 private:
 	std::vector<std::thread> workers;
