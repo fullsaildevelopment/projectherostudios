@@ -22,15 +22,18 @@ struct TQuadPixelInputType
 };
 
 [maxvertexcount(2)]
-void main(point TLineGeoInputType input[1], uint primID : SV_PrimitiveID, inout LineStream<TQuadPixelInputType> output)
-{
+void main(point TLineGeoInputType input[1], 
+	uint primID : SV_PrimitiveID, 
+	inout LineStream<TQuadPixelInputType> output)
+{	
+	TQuadPixelInputType element;
+	element.pos = input[0].pos;
+	element.color = input[0].color
+	element.PrimID = primID;
+	output.Append(element);
 
-	for (uint i = 0; i < 2; i++)
-	{
-		TQuadPixelInputType element;
-		element.pos = input[0].pos;
-		element.color = input[0].color
-		element.PrimID = primID;
-		output.Append(element);
-	}
+	element.pos = endPoint;
+	element.color = input[0].color;
+	output.Append(element);
+	
 }

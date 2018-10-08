@@ -52,8 +52,13 @@
 				<Event Id="372592918" Name="Play_Metal_Fired" ObjectPath="\Events\Default Work Unit\Play_Metal_Fired"/>
 				<Event Id="4261380785" Name="Play_Metal_Reload" ObjectPath="\Events\Default Work Unit\Play_Metal_Reload"/>
 				<Event Id="3744242630" Name="Play_Scylian_Death" ObjectPath="\Events\Default Work Unit\Play_Scylian_Death"/>
+				<Event Id="1589278981" Name="Play_Walk" ObjectPath="\Events\Default Work Unit\Play_Walk"/>
 			</IncludedEvents>
 			<IncludedMemoryFiles>
+				<File Id="61846357" Language="SFX">
+					<ShortName>Walking-Firm.wav</ShortName>
+					<Path>SFX\Walking-Firm_56D34C19.wem</Path>
+				</File>
 				<File Id="214970038" Language="SFX">
 					<ShortName>Scyllian Death Cry.wav</ShortName>
 					<Path>SFX\Scyllian Death Cry_56D34C19.wem</Path>

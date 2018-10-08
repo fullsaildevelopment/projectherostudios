@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "Collision_System.h"
 
+
 CCollisionSystem::CCollisionSystem()
 {
 }
@@ -133,6 +134,243 @@ bool CCollisionSystem::AiVisionCheck(frustum_t eyeSight,vector<int>* index)
 	}
 	return seesomething;
 }
+
+void CCollisionSystem::TestThreading(TWorld * ptWorld, int nCurrentEntity, CGraphicsSystem* pcGraphicsSystem, CGraphicsSystem::TPrimalVertexBufferType* tTempVertexBuffer,XMMATRIX* m_d3dPlayerMatrix, CPhysicsSystem* pcPhysicsSystem, CAISystem* pcAiSystem,int PlayerStartIndex, float& playerDamage, float& pirateDamage, float& prevHealth, float& fallingHealth, float& lerpTime, float in_MasterVolume, float in_SFXVolume, float in_MusicVolume, CAudioSystem* pcAudioSystem)
+{
+	ptWorld->atAABB[nCurrentEntity].theeadmade = true;
+	//ptWorld->atClayton[nCurrentEntity].health = 10;
+//	float x = 0;
+	if ((ptWorld->atCollisionMask[nCurrentEntity].m_tnCollisionMask == (COMPONENT_COLLISIONMASK | COMPONENT_AABB | COMPONENT_NONSTATIC | COMPONENT_TRIGGER) || ptWorld->atCollisionMask[nCurrentEntity].m_tnCollisionMask == (COMPONENT_COLLISIONMASK | COMPONENT_NONTRIGGER | COMPONENT_AABB | COMPONENT_NONSTATIC)))
+	{
+		vector<int> otherCollisionsIndex;
+		if (AABBtoAABBCollisionCheck(ptWorld->atAABB[nCurrentEntity], &otherCollisionsIndex) == true)
+		{
+
+			for (int i = 0; i < otherCollisionsIndex.size(); ++i)
+			{
+				if (ptWorld->atRigidBody[otherCollisionsIndex[i]].ground == true
+					&& ptWorld->atCollisionMask[nCurrentEntity].m_tnCollisionMask == (COMPONENT_COLLISIONMASK | COMPONENT_TRIGGER | COMPONENT_AABB | COMPONENT_NONSTATIC))
+				{
+				//	SHOOTING A WALL OR ANYTHING ELSE
+					if (ptWorld->atProjectiles[nCurrentEntity].m_tnProjectileMask == (COMPONENT_PROJECTILESMASK | COMPONENT_METAL | COMPONENT_FRIENDLY) ||
+						ptWorld->atProjectiles[nCurrentEntity].m_tnProjectileMask == (COMPONENT_PROJECTILESMASK | COMPONENT_METAL | COMPONENT_ENEMY))
+					{
+
+						RemoveAABBCollider(nCurrentEntity);
+
+						pcGraphicsSystem->CleanD3DObject(ptWorld, nCurrentEntity);
+
+						break;
+					}
+				}
+				if (ptWorld->atRigidBody[otherCollisionsIndex[i]].ground == true
+					&& ptWorld->atCollisionMask[nCurrentEntity].m_tnCollisionMask != (COMPONENT_COLLISIONMASK | COMPONENT_TRIGGER | COMPONENT_AABB | COMPONENT_NONSTATIC))
+				{
+
+
+					ptWorld->atRigidBody[nCurrentEntity].totalForce = -ptWorld->atRigidBody[nCurrentEntity].velocity;
+					tTempVertexBuffer->m_d3dWorldMatrix = pcPhysicsSystem->ResolveForces(&ptWorld->atRigidBody[nCurrentEntity], ptWorld->atWorldMatrix[nCurrentEntity].worldMatrix, false);
+					ptWorld->atWorldMatrix[nCurrentEntity].worldMatrix = WalkingThrewObjectCheck(tTempVertexBuffer->m_d3dWorldMatrix, ptWorld->atAABB[otherCollisionsIndex[i]], ptWorld->atAABB[nCurrentEntity]);
+					ptWorld->atWorldMatrix[nCurrentEntity].worldMatrix = tTempVertexBuffer->m_d3dWorldMatrix;
+				}
+				if (ptWorld->atRigidBody[nCurrentEntity].ground == false
+					&& ptWorld->atRigidBody[nCurrentEntity].wall == false
+					&& ptWorld->atCollisionMask[nCurrentEntity].m_tnCollisionMask == (COMPONENT_COLLISIONMASK | COMPONENT_NONTRIGGER | COMPONENT_AABB | COMPONENT_NONSTATIC)
+					&& (ptWorld->atCollisionMask[otherCollisionsIndex[i]].m_tnCollisionMask == (COMPONENT_COLLISIONMASK | COMPONENT_NONTRIGGER | COMPONENT_AABB | COMPONENT_STATIC)
+						|| (ptWorld->atCollisionMask[otherCollisionsIndex[i]].m_tnCollisionMask == (COMPONENT_COLLISIONMASK | COMPONENT_NONTRIGGER | COMPONENT_AABB | COMPONENT_NONSTATIC))))
+				{
+					tTempVertexBuffer->m_d3dWorldMatrix = WalkingThrewObjectCheck(ptWorld->atWorldMatrix[nCurrentEntity].worldMatrix, ptWorld->atAABB[otherCollisionsIndex[i]], ptWorld->atAABB[nCurrentEntity]);
+					ptWorld->atWorldMatrix[nCurrentEntity].worldMatrix = tTempVertexBuffer->m_d3dWorldMatrix;
+					if (ptWorld->atInputMask[nCurrentEntity].m_tnInputMask == (COMPONENT_CLAYTON | COMPONENT_INPUTMASK))
+					{
+						*m_d3dPlayerMatrix = ptWorld->atWorldMatrix[nCurrentEntity].worldMatrix;
+					}
+
+				}
+				if (ptWorld->atRigidBody[nCurrentEntity].ground == false
+					&& ptWorld->atRigidBody[otherCollisionsIndex[i]].ground == false
+					&& ptWorld->atRigidBody[nCurrentEntity].wall == false
+					&& ptWorld->atCollisionMask[nCurrentEntity].m_tnCollisionMask == (COMPONENT_COLLISIONMASK | COMPONENT_TRIGGER | COMPONENT_AABB | COMPONENT_NONSTATIC)
+					&& (ptWorld->atCollisionMask[otherCollisionsIndex[i]].m_tnCollisionMask == (COMPONENT_COLLISIONMASK | COMPONENT_NONTRIGGER | COMPONENT_AABB | COMPONENT_STATIC))
+					|| ptWorld->atCollisionMask[otherCollisionsIndex[i]].m_tnCollisionMask == (COMPONENT_COLLISIONMASK | COMPONENT_NONTRIGGER | COMPONENT_AABB | COMPONENT_NONSTATIC))
+				{
+
+					if (ptWorld->atAIMask[otherCollisionsIndex[i]].m_tnAIMask > 1)
+					{
+						// SHOOTING AN AI ONLY
+						if (ptWorld->atProjectiles[nCurrentEntity].m_tnProjectileMask == (COMPONENT_PROJECTILESMASK | COMPONENT_METAL | COMPONENT_FRIENDLY))
+						{
+							if (ptWorld->atAiHeath[otherCollisionsIndex[i]].heath <= 0)
+							{
+								pcAiSystem->SetNumberOfAI(pcAiSystem->GetNumberOfAI() - 1);
+
+								if (ptWorld->atClip[nCurrentEntity].gunIndex != -1)
+								{
+
+
+									RemoveAABBCollider(nCurrentEntity);
+
+
+
+									pcGraphicsSystem->CleanD3DObject(ptWorld, nCurrentEntity);
+
+
+								}
+								RemoveAABBCollider(otherCollisionsIndex[i]);
+								pcGraphicsSystem->CleanD3DObject(ptWorld, otherCollisionsIndex[i]);
+								pcGraphicsSystem->CleanD3DObject(ptWorld, ptWorld->atAIMask[otherCollisionsIndex[i]].GunIndex);
+
+							}
+							else
+							{
+
+
+
+								RemoveAABBCollider(nCurrentEntity);
+
+								pcGraphicsSystem->CleanD3DObject(ptWorld, nCurrentEntity);
+								ptWorld->atAiHeath[otherCollisionsIndex[i]].heath -= playerDamage;
+
+								//pcAiSystem->AddAiInCombat(nCurrentEntity);
+								ptWorld->atActiveAI[otherCollisionsIndex[i]].active = true;
+								for (int activate = 0; activate < ptWorld->atActiveAI[otherCollisionsIndex[i]].NoctifyOtherAi.size(); ++activate) {
+									ptWorld->atActiveAI[ptWorld->atActiveAI[otherCollisionsIndex[i]].NoctifyOtherAi[activate]].active = true;
+									ptWorld->atAIVision[ptWorld->atActiveAI[otherCollisionsIndex[i]].NoctifyOtherAi[activate]].indexLookingAt = PlayerStartIndex;
+
+								}
+								ptWorld->atAIVision[otherCollisionsIndex[i]].indexLookingAt = PlayerStartIndex;
+#if MUSIC_ON
+								pcAudioSystem->SendSoundsToEngine(AK::EVENTS::PLAY_HURT_SCYLIAN, pcAudioSystem->m_Scylian_Hurt);
+								pcAudioSystem->SetRTPCVolume(AK::GAME_PARAMETERS::SFX_VOLUME, in_SFXVolume);
+#endif
+
+								if (ptWorld->atAiHeath[otherCollisionsIndex[i]].heath <= 0)
+								{
+									pcAiSystem->SetNumberOfAI(pcAiSystem->GetNumberOfAI() - 1);
+									RemoveAABBCollider(otherCollisionsIndex[i]);
+									pcGraphicsSystem->CleanD3DObject(ptWorld, otherCollisionsIndex[i]);
+									pcGraphicsSystem->CleanD3DObject(ptWorld, ptWorld->atAIMask[otherCollisionsIndex[i]].GunIndex);
+
+									pcGraphicsSystem->CleanD3DObject(ptWorld, otherCollisionsIndex[i] + 1);
+									pcGraphicsSystem->CleanD3DObject(ptWorld, otherCollisionsIndex[i] + 2);
+								}
+
+							}
+						}
+					}
+					else if (ptWorld->atInputMask[otherCollisionsIndex[i]].m_tnInputMask == (COMPONENT_CLAYTON | COMPONENT_INPUTMASK))
+					{
+					//	SHOOTING THE PLAYER ONLY
+						if (ptWorld->atProjectiles[nCurrentEntity].m_tnProjectileMask == (COMPONENT_PROJECTILESMASK | COMPONENT_METAL | COMPONENT_ENEMY))
+						{
+
+
+
+
+							RemoveAABBCollider(nCurrentEntity);
+
+
+
+
+							pcGraphicsSystem->CleanD3DObject(ptWorld, nCurrentEntity);
+
+							if (prevHealth == 0)
+							{
+								prevHealth = ptWorld->atClayton[otherCollisionsIndex[i]].health;
+							}
+							else
+							{
+								prevHealth = fallingHealth;
+							}
+
+							lerpTime = 0;
+
+							//	ptWorld->atClayton[otherCollisionsIndex[i]].health -= pirateDamage;
+							ptWorld->atClayton[otherCollisionsIndex[i]].health -= pirateDamage;
+#if MUSIC_ON
+							pcAudioSystem->SendSoundsToEngine(AK::EVENTS::PLAY_HURT_HUMAN, pcAudioSystem->m_Human_Hurt);
+							pcAudioSystem->SetRTPCVolume(AK::GAME_PARAMETERS::SFX_VOLUME, in_SFXVolume);
+#endif
+							cout << "turtle";
+
+							if (ptWorld->atClayton[otherCollisionsIndex[i]].health <= 0)
+							{
+								/*	GameOver = true;
+									InitializeEndScreen(false);*/
+							}
+						}
+
+
+					}
+					if (ptWorld->atInputMask[nCurrentEntity].m_tnInputMask == (COMPONENT_CLAYTON | COMPONENT_INPUTMASK)) {
+						if (ptWorld->atProjectiles[otherCollisionsIndex[i]].m_tnProjectileMask == (COMPONENT_PROJECTILESMASK | COMPONENT_METAL | COMPONENT_ENEMY))
+						{
+
+
+
+
+							RemoveAABBCollider(otherCollisionsIndex[i]);
+
+
+
+
+							pcGraphicsSystem->CleanD3DObject(ptWorld, otherCollisionsIndex[i]);
+
+
+							//	ptWorld->atClayton[otherCollisionsIndex[i]].health -= pirateDamage;
+							ptWorld->atClayton[nCurrentEntity].health -= playerDamage;
+							cout << "turtle";
+
+							if (ptWorld->atClayton[nCurrentEntity].health <= 0)
+							{
+								/*	GameOver = true;
+								InitializeEndScreen(false);*/
+							}
+						}
+					 }
+				//	Wasn't being hit at all so it's been commented.
+					if (ptWorld->atProjectiles[nCurrentEntity].m_tnProjectileMask == (COMPONENT_PROJECTILESMASK | COMPONENT_METAL))
+					{
+					if (ptWorld->atClip[nCurrentEntity].gunIndex != -1)
+					{
+
+
+					RemoveAABBCollider(nCurrentEntity);
+
+
+					pcGraphicsSystem->CleanD3DObject(ptWorld, ptWorld->atAIMask[nCurrentEntity].GunIndex);
+					pcGraphicsSystem->CleanD3DObject(ptWorld, nCurrentEntity);
+
+					}
+					}
+
+				}
+				if (otherCollisionsIndex[i] == 933) {
+					float x = 0;
+				}
+				if (ptWorld->atInputMask[nCurrentEntity].m_tnInputMask == (COMPONENT_CLAYTON | COMPONENT_INPUTMASK) && ptWorld->atAIMask[otherCollisionsIndex[i]].m_tnAIMask == (COMPONENT_AIMASK | COMPONENT_COVERTRIGGER))
+				{
+				pcAiSystem->MoveAiToCoverLocation(ptWorld->atCoverTrigger[otherCollisionsIndex[i]], ptWorld, PlayerStartIndex);
+
+				}
+			}
+		/*	if (ptWorld->atClayton[PlayerStartIndex].health <= 0)
+			{
+				GameOver = true;
+				InitializeEndScreen(false);
+			}*/
+
+		}
+	}
+	ptWorld->atAABB[nCurrentEntity].theeadmade = false;
+	//std::async(removeThread, std::this_thread::get_id());
+}
+
+
+
+
+
+
 
 /*
 * classify_aabb_to_aabb():  Determines if the two AABB are coliding or not
@@ -643,7 +881,7 @@ bool CCollisionSystem::RemoveAABBCollider(int nIndex)
 
 bool CCollisionSystem::AABBtoAABBCollisionCheck(TAABB m_AABB2, vector<int>* m_OtherColision)
 {
-	if (m_AABB2.m_IndexLocation == 1) 
+	if (m_AABB2.m_IndexLocation == 928) 
 	{
 		float x = 0;
 	}
@@ -652,17 +890,18 @@ bool CCollisionSystem::AABBtoAABBCollisionCheck(TAABB m_AABB2, vector<int>* m_Ot
 	{
 		if (m_AABB2.m_IndexLocation != ptr->m_IndexLocation) 
 		{
+			if (ptr->m_IndexLocation == 933)
+			{
+				float x = 0;
+			}
 			if (classify_aabb_to_aabb(m_AABB2, *ptr) == true) 
 			{
-				if (m_AABB2.m_IndexLocation == 8) 
-				{
-					float x = 0;
-				}
+				
 				m_OtherColision->push_back(ptr->m_IndexLocation);
 			}
 		}
 	}
-	if (m_OtherColision->size() != 0) 
+	if (m_OtherColision->size() != 0)
 	{
 		return true;
 	}

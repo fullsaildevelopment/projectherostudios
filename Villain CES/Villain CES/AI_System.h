@@ -67,8 +67,10 @@ public:
 	void PathPlaningMovement(TAIPathFinding* path, XMMATRIX* worldMatrix);
 	void LookAtObject(XMMATRIX thingToLookAt, XMMATRIX* AIMatrix);
 	void Strafe(XMMATRIX* AiMatrix);
-	void MoveAiToCoverLocation(TCoverTrigger Cover, TWorld * ptWorld);
+	void MoveAiToCoverLocation(TCoverTrigger Cover, TWorld * ptWorld,int PlayerStartIndex);
 	void AddAiInCombat(int aiEnitity);
+	void CLeanPathPlaning();
+	float CalculateDistanceMatrix(XMMATRIX matrix1, XMMATRIX matrix2);
 private:
 	vector<int> AIInCombat;
 
@@ -95,6 +97,7 @@ private:
 	};
 	map<int, SearchNode*>Nodes;
 	float CalcualteDistance(tiledata* _search, tiledata * goal);
+
 	map<SearchNode*, PlannerNode*> visited;
 	PriorityQueue<PlannerNode*> open;
 	float GetFinalCost(PlannerNode* finalCOst) 
