@@ -2248,6 +2248,7 @@ void CGraphicsSystem::ExecutePipeline(ID3D11DeviceContext *pd3dDeviceContext, in
 	}
 	//All Doors are PBR so they all do this then break.
 	{
+		#pragma region Draw
 		//Set Input_Layout
 		pd3dDeviceContext->IASetInputLayout(m_pd3dMyInputLayout);
 		//Set Shader
@@ -2258,6 +2259,9 @@ void CGraphicsSystem::ExecutePipeline(ID3D11DeviceContext *pd3dDeviceContext, in
 		{
 			pd3dDeviceContext->DrawIndexed(m_nIndexCount, 0, 0);
 		}
+
+#pragma endregion
+		break;
 	}
 	case DoorPiece1_FRAME:
 	{

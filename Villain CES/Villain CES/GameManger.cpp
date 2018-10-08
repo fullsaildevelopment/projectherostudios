@@ -3370,7 +3370,6 @@ int CGameMangerSystem::SpacePirateGamePlay()
 					m_d3dPlayerMatrix = tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix;
 				}
 			}
-			DoorEventListener(tThisWorld.atShaderID[nCurrentEntity].m_nShaderID);
 			if (tCameraMode.bWalkMode == true)
 			{
 				pcGraphicsSystem->InitMyShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tMyVertexBufferTemp, tThisWorld.atMesh[nCurrentEntity], walkCamera->d3d_Position);
@@ -5058,9 +5057,6 @@ int CGameMangerSystem::RealLevelUpdate()
 				}
 			}
 
-			//Door Event Check
-			tMyVertexBufferTemp.m_d3dWorldMatrix = XMMatrixMultiply(tMyVertexBufferTemp.m_d3dWorldMatrix, DoorEventListener(tThisWorld.atShaderID[nCurrentEntity].m_nShaderID));
-			//DoorEventChanger(tThisWorld.atShaderID[nCurrentEntity].m_nShaderID);
 			if (tCameraMode.bWalkMode == true)
 			{
 				pcGraphicsSystem->InitMyShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tMyVertexBufferTemp, tThisWorld.atMesh[nCurrentEntity], walkCamera->d3d_Position);
@@ -5463,14 +5459,6 @@ int CGameMangerSystem::RealLevelUpdate()
 
 					for (int i = 0; i < otherCollisionsIndex.size(); ++i)
 					{
-						if (tThisWorld.atInputMask[nCurrentEntity].m_tnInputMask == (COMPONENT_CLAYTON | COMPONENT_INPUTMASK))
-						{
-							if (tThisWorld.atCollisionMask[otherCollisionsIndex[i]].m_tnCollisionMask == (COMPONENT_COLLISIONMASK | COMPONENT_NONTRIGGER | COMPONENT_AABB | COMPONENT_STATIC) 
-								&& tThisWorld.atShaderID[otherCollisionsIndex[i]].m_nShaderID >= 20)
-							{
-								//DoorEventChanger(tThisWorld.atShaderID[otherCollisionsIndex[i]].m_nShaderID);
-							}
-						}
 						if (tThisWorld.atRigidBody[otherCollisionsIndex[i]].ground == true
 							&& tThisWorld.atCollisionMask[nCurrentEntity].m_tnCollisionMask == (COMPONENT_COLLISIONMASK | COMPONENT_TRIGGER | COMPONENT_AABB | COMPONENT_NONSTATIC))
 						{
