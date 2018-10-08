@@ -2432,19 +2432,19 @@ void CGraphicsSystem::ExecutePipeline(ID3D11DeviceContext *pd3dDeviceContext, in
 	}
 	case DoorPiece6_RIGHT:
 	{
-//#pragma region Draw
-//		//Set Input_Layout
-//		pd3dDeviceContext->IASetInputLayout(m_pd3dMyInputLayout);
-//		//Set Shader
-//		pd3dDeviceContext->VSSetShader(m_pd3dMyVertexShader, NULL, 0);
-//		pd3dDeviceContext->PSSetShader(m_pd3dMyPixelShader, NULL, 0);
-//		////Draw
-//		if (nGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_SHADERID))
-//		{
-//			pd3dDeviceContext->DrawIndexed(m_nIndexCount, 0, 0);
-//		}
-//
-//#pragma endregion
+#pragma region Draw
+		//Set Input_Layout
+		pd3dDeviceContext->IASetInputLayout(m_pd3dMyInputLayout);
+		//Set Shader
+		pd3dDeviceContext->VSSetShader(m_pd3dMyVertexShader, NULL, 0);
+		pd3dDeviceContext->PSSetShader(m_pd3dMyPixelShader, NULL, 0);
+		////Draw
+		if (nGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_SHADERID))
+		{
+			pd3dDeviceContext->DrawIndexed(m_nIndexCount, 0, 0);
+		}
+
+#pragma endregion
 		break;
 	}
 	default:
