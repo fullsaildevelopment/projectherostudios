@@ -2298,139 +2298,153 @@ void CGraphicsSystem::ExecutePipeline(ID3D11DeviceContext *pd3dDeviceContext, in
 	}
 	
 	//All Doors are PBR so they all do this then break.
-	{
-		#pragma region Draw
-		//Set Input_Layout
-		pd3dDeviceContext->IASetInputLayout(m_pd3dMyInputLayout);
-		//Set Shader
-		pd3dDeviceContext->VSSetShader(m_pd3dMyVertexShader, NULL, 0);
-		pd3dDeviceContext->PSSetShader(m_pd3dMyPixelShader, NULL, 0);
-		////Draw
-		if (nGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_SHADERID))
-		{
-			pd3dDeviceContext->DrawIndexed(m_nIndexCount, 0, 0);
-		}
-
-#pragma endregion
-	}
+//	{
+//		#pragma region Draw
+//		//Set Input_Layout
+//		pd3dDeviceContext->IASetInputLayout(m_pd3dMyInputLayout);
+//		//Set Shader
+//		pd3dDeviceContext->VSSetShader(m_pd3dMyVertexShader, NULL, 0);
+//		pd3dDeviceContext->PSSetShader(m_pd3dMyPixelShader, NULL, 0);
+//		////Draw
+//		if (nGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_SHADERID))
+//		{
+//			pd3dDeviceContext->DrawIndexed(m_nIndexCount, 0, 0);
+//		}
+//
+//#pragma endregion
+//	}
 	case DoorPiece1_FRAME:
 	{
-		break;
+
+		
 	}
 	case DoorPiece1_UP:
 	{
-		break;
+		
 	}
 	case DoorPiece1_DOWN:
 	{
-		break;
+		
 	}
 	case DoorPiece1_LEFT:
 	{
-		break;
+		
 	}
 	case DoorPiece1_RIGHT:
 	{
-		break;
+		
 	}
 	case DoorPiece2_FRAME:
 	{
-		break;
+		
 	}
 	case DoorPiece2_UP:
 	{
-		break;
+		
 	}
 	case DoorPiece2_DOWN:
 	{
-		break;
+		
 	}
 	case DoorPiece2_LEFT:
 	{
-		break;
+		
 	}
 	case DoorPiece2_RIGHT:
 	{
-		break;
+		
 	}
 	case DoorPiece3_FRAME:
 	{
-		break;
+		
 	}
 	case DoorPiece3_UP:
 	{
-		break;
+		
 	}
 	case DoorPiece3_DOWN:
 	{
-		break;
+		
 	}
 	case DoorPiece3_LEFT:
 	{
-		break;
+		
 	}
 	case DoorPiece3_RIGHT:
 	{
-		break;
+		
 	}
 	case DoorPiece4_FRAME:
 	{
-		break;
+		
 	}
 	case DoorPiece4_UP:
 	{
-		break;
+		
 	}
 	case DoorPiece4_DOWN:
 	{
-		break;
+		
 	}
 	case DoorPiece4_LEFT:
 	{
-		break;
+		
 	}
 	case DoorPiece4_RIGHT:
 	{
-		break;
+		
 	}
 	case DoorPiece5_FRAME:
 	{
-		break;
+		
 	}
 	case DoorPiece5_UP:
 	{
-		break;
+		
 	}
 	case DoorPiece5_DOWN:
 	{
-		break;
+		
 	}
 	case DoorPiece5_LEFT:
 	{
-		break;
+		
 	}
 	case DoorPiece5_RIGHT:
 	{
-		break;
+		
 	}
 	case DoorPiece6_FRAME:
 	{
-		break;
+		
 	}
 	case DoorPiece6_UP:
 	{
-		break;
+		
 	}
 	case DoorPiece6_DOWN:
 	{
-		break;
+		
 	}
 	case DoorPiece6_LEFT:
 	{
-		break;
+		
 	}
 	case DoorPiece6_RIGHT:
 	{
+//#pragma region Draw
+//		//Set Input_Layout
+//		pd3dDeviceContext->IASetInputLayout(m_pd3dMyInputLayout);
+//		//Set Shader
+//		pd3dDeviceContext->VSSetShader(m_pd3dMyVertexShader, NULL, 0);
+//		pd3dDeviceContext->PSSetShader(m_pd3dMyPixelShader, NULL, 0);
+//		////Draw
+//		if (nGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_SHADERID))
+//		{
+//			pd3dDeviceContext->DrawIndexed(m_nIndexCount, 0, 0);
+//		}
+//
+//#pragma endregion
 		break;
 	}
 	default:

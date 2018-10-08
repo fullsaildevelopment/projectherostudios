@@ -135,19 +135,26 @@ bool CCollisionSystem::AiVisionCheck(frustum_t eyeSight,vector<int>* index)
 	return seesomething;
 }
 
-void CCollisionSystem::TestThreading(TWorld * ptWorld, int nCurrentEntity, CGraphicsSystem* pcGraphicsSystem, CGraphicsSystem::TPrimalVertexBufferType* tTempVertexBuffer,XMMATRIX* m_d3dPlayerMatrix, CPhysicsSystem* pcPhysicsSystem, CAISystem* pcAiSystem,int PlayerStartIndex, float& playerDamage, float& pirateDamage, float& prevHealth, float& fallingHealth, float& lerpTime, float in_MasterVolume, float in_SFXVolume, float in_MusicVolume, CAudioSystem* pcAudioSystem)
+void CCollisionSystem::TestThreading(TWorld * ptWorld, int nCurrentEntity, CGraphicsSystem* pcGraphicsSystem, CGraphicsSystem::TPrimalVertexBufferType* tTempVertexBuffer, XMMATRIX& tMyVertexBufferWorldMatrix, XMMATRIX* m_d3dPlayerMatrix, CPhysicsSystem* pcPhysicsSystem, CAISystem* pcAiSystem,int PlayerStartIndex, float& playerDamage, float& pirateDamage, float& prevHealth, float& fallingHealth, float& lerpTime, float in_MasterVolume, float in_SFXVolume, float in_MusicVolume, CAudioSystem* pcAudioSystem, XMMATRIX(*doorEventListener)(int), void(*doorEventChanger)(int))
 {
 	ptWorld->atAABB[nCurrentEntity].theeadmade = true;
 	//ptWorld->atClayton[nCurrentEntity].health = 10;
 //	float x = 0;
+	//Change Door values
 	if ((ptWorld->atCollisionMask[nCurrentEntity].m_tnCollisionMask == (COMPONENT_COLLISIONMASK | COMPONENT_AABB | COMPONENT_NONSTATIC | COMPONENT_TRIGGER) || ptWorld->atCollisionMask[nCurrentEntity].m_tnCollisionMask == (COMPONENT_COLLISIONMASK | COMPONENT_NONTRIGGER | COMPONENT_AABB | COMPONENT_NONSTATIC)))
 	{
 		vector<int> otherCollisionsIndex;
 		if (AABBtoAABBCollisionCheck(ptWorld->atAABB[nCurrentEntity], &otherCollisionsIndex) == true)
 		{
-
 			for (int i = 0; i < otherCollisionsIndex.size(); ++i)
 			{
+				if (ptWorld->atShaderID[otherCollisionsIndex[i]].m_nShaderID >= 20
+					/*&& ptWorld->atInputMask[otherCollisionsIndex[i]].m_tnInputMask == 
+						(COMPONENT_CLAYTON | COMPONENT_INPUTMASK)*/)
+				{
+					doorEventChanger(ptWorld->atShaderID[otherCollisionsIndex[i]].m_nShaderID);
+					ptWorld->atWorldMatrix[otherCollisionsIndex[i]].worldMatrix = XMMatrixMultiply(doorEventListener(ptWorld->atShaderID[otherCollisionsIndex[i]].m_nShaderID), ptWorld->atWorldMatrix[otherCollisionsIndex[i]].worldMatrix);
+				}
 				if (ptWorld->atRigidBody[otherCollisionsIndex[i]].ground == true
 					&& ptWorld->atCollisionMask[nCurrentEntity].m_tnCollisionMask == (COMPONENT_COLLISIONMASK | COMPONENT_TRIGGER | COMPONENT_AABB | COMPONENT_NONSTATIC))
 				{
@@ -332,17 +339,17 @@ void CCollisionSystem::TestThreading(TWorld * ptWorld, int nCurrentEntity, CGrap
 				//	Wasn't being hit at all so it's been commented.
 					if (ptWorld->atProjectiles[nCurrentEntity].m_tnProjectileMask == (COMPONENT_PROJECTILESMASK | COMPONENT_METAL))
 					{
-					if (ptWorld->atClip[nCurrentEntity].gunIndex != -1)
-					{
+						if (ptWorld->atClip[nCurrentEntity].gunIndex != -1)
+						{
 
 
-					RemoveAABBCollider(nCurrentEntity);
+						RemoveAABBCollider(nCurrentEntity);
 
 
-					pcGraphicsSystem->CleanD3DObject(ptWorld, ptWorld->atAIMask[nCurrentEntity].GunIndex);
-					pcGraphicsSystem->CleanD3DObject(ptWorld, nCurrentEntity);
+						pcGraphicsSystem->CleanD3DObject(ptWorld, ptWorld->atAIMask[nCurrentEntity].GunIndex);
+						pcGraphicsSystem->CleanD3DObject(ptWorld, nCurrentEntity);
 
-					}
+						}
 					}
 
 				}
@@ -353,12 +360,6 @@ void CCollisionSystem::TestThreading(TWorld * ptWorld, int nCurrentEntity, CGrap
 				{
 					pcAiSystem->MoveAiToCoverLocation(ptWorld->atCoverTrigger[otherCollisionsIndex[i]], ptWorld, PlayerStartIndex);
 
-				}
-				//Change Door values
-				if (ptWorld->atInputMask[nCurrentEntity].m_tnInputMask == (COMPONENT_CLAYTON | COMPONENT_INPUTMASK) && ptWorld->atShaderID[otherCollisionsIndex[i]].m_nShaderID >= 20)
-				{
-					//DoorEventListener(ptWorld->atShaderID[otherCollisionsIndex[i]].m_nShaderID);
-					//DoorEventChanger(ptWorld->atShaderID[otherCollisionsIndex[i]].m_nShaderID);
 				}
 			}
 		/*	if (ptWorld->atClayton[PlayerStartIndex].health <= 0)

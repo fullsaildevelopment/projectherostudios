@@ -54,8 +54,8 @@ public:
 	int RealLevelUpdate();
 	void ResetLevel();
 
-	XMMATRIX DoorEventListener(int shaderID);
-	void DoorEventChanger(int shaderID);
+	//XMMATRIX DoorEventListener(int shaderID);
+	//const int DoorEventChanger(int shaderID);
 
 	bool GameOver = false;
 	bool GamePaused = false;
@@ -98,7 +98,6 @@ private:
 	int screenHeight;
 	float playerDamage = 25;
 	float pirateDamage = 18;
-	int doors[6] = {-2, -2, -2, -2, -2, -2};
 
 	bool options = false;
 	bool credits = false;

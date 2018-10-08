@@ -3415,6 +3415,7 @@ unsigned int createMesh(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMeshImpo
 	if (shaderID >= 20)
 	{
 		ptWorld->atShaderID[nThisEntity].m_nShaderID = shaderID;
+		ptWorld->atCollisionMask[nThisEntity].m_tnCollisionMask == (COMPONENT_COLLISIONMASK | COMPONENT_NONTRIGGER | COMPONENT_AABB | COMPONENT_NONSTATIC);
 		/*
 		switch (shaderID)
 				{
@@ -3532,14 +3533,15 @@ unsigned int createMesh(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMeshImpo
 	else if (entityMatIndex == -3)//Material Gun Projectile
 	{
 		ptWorld->atShaderID[nThisEntity].m_nShaderID = 11;
+		ptWorld->atCollisionMask[nThisEntity].m_tnCollisionMask = (COMPONENT_COLLISIONMASK | COMPONENT_AABB | COMPONENT_STATIC | COMPONENT_NONTRIGGER);
 	}
 	else
 	{
 		ptWorld->atShaderID[nThisEntity].m_nShaderID = 6;
+		ptWorld->atCollisionMask[nThisEntity].m_tnCollisionMask = (COMPONENT_COLLISIONMASK | COMPONENT_AABB | COMPONENT_STATIC | COMPONENT_NONTRIGGER);
 	}
 	
 	ptWorld->atGraphicsMask[nThisEntity].m_tnGraphicsMask = (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_SHADERID);
-	ptWorld->atCollisionMask[nThisEntity].m_tnCollisionMask = (COMPONENT_COLLISIONMASK | COMPONENT_AABB | COMPONENT_STATIC | COMPONENT_NONTRIGGER);
 
 	//ptWorld->atAIMask[nThisEntity].m_tnAIMask = (COMPONENT_AIMASK;
 	//ptWorld->atUIMask[nThisEntity].m_tnUIMask = (COMPONENT_UIMASK;
