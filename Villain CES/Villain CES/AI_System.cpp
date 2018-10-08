@@ -509,6 +509,15 @@ float CAISystem::CalcualteDistance(tiledata * _search, tiledata * goal)
 	);
 }
 
+float CAISystem::CalculateDistanceMatrix(XMMATRIX matrix1, XMMATRIX matrix2)
+{
+	return sqrtf(
+		((matrix1.r[3].m128_f32[0] - matrix2.r[3].m128_f32[0])*(matrix1.r[3].m128_f32[0] - matrix2.r[3].m128_f32[0])) +
+		((matrix1.r[3].m128_f32[1] - matrix2.r[3].m128_f32[1])*(matrix1.r[3].m128_f32[1] - matrix2.r[3].m128_f32[1])) +
+		((matrix1.r[3].m128_f32[2] - matrix2.r[3].m128_f32[2])*(matrix1.r[3].m128_f32[2] - matrix2.r[3].m128_f32[2]))
+	);
+}
+
 void CAISystem::MakeDirections(vector<XMVECTOR>* directions, PlannerNode* current)
 {
 	if (current != nullptr) {
