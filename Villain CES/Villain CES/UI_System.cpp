@@ -311,7 +311,7 @@ bool CUISystem::CheckIfStringsAreTheSame(char* string1, int& textSize1, const ch
 	}
 }
 
-void CUISystem::CheckOptionsBars(TWorld* tThisWorld, CInputSystem* pcInputSystem, int& nThisEntity, float& m_fMasterVolume, float& m_fMusicVolume, float& m_fSFXVolume, int& masterIndex, int& musicIndex, int& fxIndex)
+void CUISystem::CheckOptionsBars(TWorld* tThisWorld, CInputSystem* pcInputSystem, int& nThisEntity, float& m_fMasterVolume, float& m_fDialogueVolume, float& m_fMusicVolume, float& m_fSFXVolume, int& masterIndex, int& dialogueIndex, int& musicIndex, int& fxIndex)
 {
 	if (this->CheckIfStringsAreTheSame(tThisWorld->atBar[nThisEntity].valueToChange, tThisWorld->atBar[nThisEntity].valueToChangeSize, "Sensitivity"))
 	{
@@ -320,6 +320,12 @@ void CUISystem::CheckOptionsBars(TWorld* tThisWorld, CInputSystem* pcInputSystem
 	else if (this->CheckIfStringsAreTheSame(tThisWorld->atBar[nThisEntity].valueToChange, tThisWorld->atBar[nThisEntity].valueToChangeSize, "Master Volume"))
 	{
 		m_fMasterVolume = tThisWorld->atBar[nThisEntity].ratio * 100;
+
+		if (m_fMasterVolume < m_fDialogueVolume)
+		{
+			m_fDialogueVolume = m_fMasterVolume;
+			tThisWorld->atBar[dialogueIndex].ratio = m_fMasterVolume * .01;
+		}
 
 		if (m_fMasterVolume < m_fMusicVolume)
 		{
@@ -351,6 +357,16 @@ void CUISystem::CheckOptionsBars(TWorld* tThisWorld, CInputSystem* pcInputSystem
 		{
 			m_fSFXVolume = m_fMasterVolume;
 			tThisWorld->atBar[fxIndex].ratio = m_fMasterVolume * .01;
+		}
+	}
+	else if (this->CheckIfStringsAreTheSame(tThisWorld->atBar[nThisEntity].valueToChange, tThisWorld->atBar[nThisEntity].valueToChangeSize, "Dialogue Volume"))
+	{
+		m_fDialogueVolume = tThisWorld->atBar[nThisEntity].ratio * 100;
+
+		if (m_fDialogueVolume > m_fMasterVolume)
+		{
+			m_fDialogueVolume = m_fMasterVolume;
+			tThisWorld->atBar[dialogueIndex].ratio = m_fMasterVolume * .01;
 		}
 	}
 }

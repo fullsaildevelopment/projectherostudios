@@ -62,6 +62,8 @@ struct TWorld
 	TCaelis			atCaelis[ENTITYCOUNT];
 	TProjectileMask atProjectiles[ENTITYCOUNT];
 	Clips			atClip[ENTITYCOUNT];
+
+	TAIVision		atClaytonVision;
 };
 
 struct BulletInfo
