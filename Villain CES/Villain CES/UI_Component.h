@@ -15,7 +15,8 @@ enum eUIComponent
 	COMPONENT_BACKGROUND	= 1 << 9,
 	COMPONENT_HUD			= 1 << 10,
 	COMPONENT_FPS			= 1 << 11,
-	COMPONENT_LOADING		= 1 << 12
+	COMPONENT_LOADING		= 1 << 12,
+	COMPONENT_NOSHOW		= 1 << 13
 };
 
 struct TUIMask

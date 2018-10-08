@@ -135,7 +135,7 @@ bool CCollisionSystem::AiVisionCheck(frustum_t eyeSight,vector<int>* index)
 	return seesomething;
 }
 
-void CCollisionSystem::TestThreading(TWorld * ptWorld, int nCurrentEntity, CGraphicsSystem* pcGraphicsSystem, CGraphicsSystem::TPrimalVertexBufferType* tTempVertexBuffer,XMMATRIX* m_d3dPlayerMatrix, CPhysicsSystem* pcPhysicsSystem, CAISystem* pcAiSystem,int PlayerStartIndex)
+void CCollisionSystem::TestThreading(TWorld * ptWorld, int nCurrentEntity, CGraphicsSystem* pcGraphicsSystem, CGraphicsSystem::TPrimalVertexBufferType* tTempVertexBuffer,XMMATRIX* m_d3dPlayerMatrix, CPhysicsSystem* pcPhysicsSystem, CAISystem* pcAiSystem,int PlayerStartIndex, float& playerDamage, float& pirateDamage, float& prevHealth, float& fallingHealth, float& lerpTime, float in_MasterVolume, float in_SFXVolume, float in_MusicVolume, CAudioSystem* pcAudioSystem)
 {
 	ptWorld->atAABB[nCurrentEntity].theeadmade = true;
 	//ptWorld->atClayton[nCurrentEntity].health = 10;
@@ -155,11 +155,11 @@ void CCollisionSystem::TestThreading(TWorld * ptWorld, int nCurrentEntity, CGrap
 					if (ptWorld->atProjectiles[nCurrentEntity].m_tnProjectileMask == (COMPONENT_PROJECTILESMASK | COMPONENT_METAL | COMPONENT_FRIENDLY) ||
 						ptWorld->atProjectiles[nCurrentEntity].m_tnProjectileMask == (COMPONENT_PROJECTILESMASK | COMPONENT_METAL | COMPONENT_ENEMY))
 					{
+
 						RemoveAABBCollider(nCurrentEntity);
 
-
-
 						pcGraphicsSystem->CleanD3DObject(ptWorld, nCurrentEntity);
+
 						break;
 					}
 				}
@@ -203,6 +203,7 @@ void CCollisionSystem::TestThreading(TWorld * ptWorld, int nCurrentEntity, CGrap
 							if (ptWorld->atAiHeath[otherCollisionsIndex[i]].heath <= 0)
 							{
 								pcAiSystem->SetNumberOfAI(pcAiSystem->GetNumberOfAI() - 1);
+
 								if (ptWorld->atClip[nCurrentEntity].gunIndex != -1)
 								{
 
@@ -227,14 +228,8 @@ void CCollisionSystem::TestThreading(TWorld * ptWorld, int nCurrentEntity, CGrap
 
 								RemoveAABBCollider(nCurrentEntity);
 
-
-
-
 								pcGraphicsSystem->CleanD3DObject(ptWorld, nCurrentEntity);
-								ptWorld->atAiHeath[otherCollisionsIndex[i]].heath -= 30;
-
-							/*	pcAudioSystem->SendSoundsToEngine(AK::EVENTS::PLAY_HURT_HUMAN, m_Human_Hurt);
-								pcAudioSystem->SetRTPCVolume(AK::GAME_PARAMETERS::SFX_VOLUME, m_fSFXVolume);*/
+								ptWorld->atAiHeath[otherCollisionsIndex[i]].heath -= playerDamage;
 
 								//pcAiSystem->AddAiInCombat(nCurrentEntity);
 								ptWorld->atActiveAI[otherCollisionsIndex[i]].active = true;
@@ -245,9 +240,10 @@ void CCollisionSystem::TestThreading(TWorld * ptWorld, int nCurrentEntity, CGrap
 								}
 								ptWorld->atAIVision[otherCollisionsIndex[i]].indexLookingAt = PlayerStartIndex;
 #if MUSIC_ON
-								pcAudioSystem->SendSoundsToEngine(AK::EVENTS::PLAY_HURT_HUMAN, m_Human_Hurt);
-								pcAudioSystem->SetRTPCVolume(AK::GAME_PARAMETERS::SFX_VOLUME, m_fSFXVolume);
+								pcAudioSystem->SendSoundsToEngine(AK::EVENTS::PLAY_HURT_SCYLIAN, pcAudioSystem->m_Scylian_Hurt);
+								pcAudioSystem->SetRTPCVolume(AK::GAME_PARAMETERS::SFX_VOLUME, in_SFXVolume);
 #endif
+
 								if (ptWorld->atAiHeath[otherCollisionsIndex[i]].heath <= 0)
 								{
 									pcAiSystem->SetNumberOfAI(pcAiSystem->GetNumberOfAI() - 1);
@@ -267,26 +263,40 @@ void CCollisionSystem::TestThreading(TWorld * ptWorld, int nCurrentEntity, CGrap
 					//	SHOOTING THE PLAYER ONLY
 						if (ptWorld->atProjectiles[nCurrentEntity].m_tnProjectileMask == (COMPONENT_PROJECTILESMASK | COMPONENT_METAL | COMPONENT_ENEMY))
 						{
-							
-
-
-
-								RemoveAABBCollider(nCurrentEntity);
 
 
 
 
-								pcGraphicsSystem->CleanD3DObject(ptWorld, nCurrentEntity);
+							RemoveAABBCollider(nCurrentEntity);
 
-							
-						//	ptWorld->atClayton[otherCollisionsIndex[i]].health -= pirateDamage;
-							ptWorld->atClayton[otherCollisionsIndex[i]].health -= 30;
+
+
+
+							pcGraphicsSystem->CleanD3DObject(ptWorld, nCurrentEntity);
+
+							if (prevHealth == 0)
+							{
+								prevHealth = ptWorld->atClayton[otherCollisionsIndex[i]].health;
+							}
+							else
+							{
+								prevHealth = fallingHealth;
+							}
+
+							lerpTime = 0;
+
+							//	ptWorld->atClayton[otherCollisionsIndex[i]].health -= pirateDamage;
+							ptWorld->atClayton[otherCollisionsIndex[i]].health -= pirateDamage;
+#if MUSIC_ON
+							pcAudioSystem->SendSoundsToEngine(AK::EVENTS::PLAY_HURT_HUMAN, pcAudioSystem->m_Human_Hurt);
+							pcAudioSystem->SetRTPCVolume(AK::GAME_PARAMETERS::SFX_VOLUME, in_SFXVolume);
+#endif
 							cout << "turtle";
 
 							if (ptWorld->atClayton[otherCollisionsIndex[i]].health <= 0)
 							{
-							/*	GameOver = true;
-								InitializeEndScreen(false);*/
+								/*	GameOver = true;
+									InitializeEndScreen(false);*/
 							}
 						}
 
@@ -308,7 +318,7 @@ void CCollisionSystem::TestThreading(TWorld * ptWorld, int nCurrentEntity, CGrap
 
 
 							//	ptWorld->atClayton[otherCollisionsIndex[i]].health -= pirateDamage;
-							ptWorld->atClayton[nCurrentEntity].health -= 10;
+							ptWorld->atClayton[nCurrentEntity].health -= playerDamage;
 							cout << "turtle";
 
 							if (ptWorld->atClayton[nCurrentEntity].health <= 0)
@@ -891,7 +901,7 @@ bool CCollisionSystem::AABBtoAABBCollisionCheck(TAABB m_AABB2, vector<int>* m_Ot
 			}
 		}
 	}
-	if (m_OtherColision->size() != 0) 
+	if (m_OtherColision->size() != 0)
 	{
 		return true;
 	}

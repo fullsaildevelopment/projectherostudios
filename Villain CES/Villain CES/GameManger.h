@@ -33,6 +33,8 @@ public:
 	void InitializeMainMenu();
 	int LoadTitleScreen();
 	void InitializeTitleScreen();
+	int LoadStory();
+	void InitializeStory();
 	int LoadLoadingScreen(bool _continue);
 	void InitializeLoadingScreen();
 	void InitializePauseScreen();
@@ -120,13 +122,6 @@ private:
 #define CREDITS_INDEX 99
 #define TIMEUNTILCLICK 0.25
 
-	//ZB Variables
-	TCameraToggle tCameraMode;
-	XMMATRIX m_d3dWorldMatrix;
-	XMMATRIX m_d3dViewMatrix;
-	XMMATRIX m_d3dProjectionMatrix;
-	XMMATRIX m_d3dPlayerMatrix;
-
 	ID3D11ShaderResourceView* fontTexture = nullptr;
 	std::vector<TUIVert*> atUIVertices;
 	std::vector<short*> atUIIndices;
@@ -141,6 +136,18 @@ private:
 	POINT hoverPoint;
 	POINT clickPoint = { -1, -1 };
 
+	BulletInfo bulletToCopyFrom;
+	EnemyInfo enemyToCopyFrom;
+
+	//ZB Variables
+	TCameraToggle tCameraMode;
+	XMMATRIX m_d3dWorldMatrix;
+	XMMATRIX m_d3dViewMatrix;
+	XMMATRIX m_d3dProjectionMatrix;
+	XMMATRIX m_d3dPlayerMatrix;
+
+	std::vector<TPrimalVert> atBeamVerts;
+
 	XTime PausedTimer;
 	float pausedTimer;
 	TCamera *walkCamera;
@@ -151,26 +158,12 @@ private:
 	System_Times * tAugerTimers;
 	System_Times *tTimerInfo;
 
-	AkBankID init_bnkID;
-	AkGameObjectID Listener;
-	//Music Objects
-	AkGameObjectID m_AkMainMenuMusic;
-	AkGameObjectID m_AkHallwayBattle;
-	AkBankID MainMenu_bnkID;
-	//SFX Objects
-	AkGameObjectID m_MenuClick;
-	AkGameObjectID m_MetalReload;
-	AkGameObjectID m_AkMetalFired;
-	AkGameObjectID m_Laser_Fire;
-	AkGameObjectID m_Human_Hurt;
-	AkGameObjectID m_Syclian_Death;
-	AkGameObjectID m_Scylian_Hurt;
-	AkBankID m_SFX_bnkID;
 	float m_fMasterVolume;
 	float m_fMusicVolume;
 	float m_fSFXVolume;
 	AKRESULT ErrorResult;
 
+	bool makeBeamBuffer;
 	int ExtractionBeamIndex;
 	float m_RealTimeFov;
 	bool bMoving;
