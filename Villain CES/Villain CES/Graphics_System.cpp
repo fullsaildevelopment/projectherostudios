@@ -1,6 +1,5 @@
-#include "stdafx.h"
+#pragma once
 #include "Graphics_System.h"
-#include <map>
 #define FARVIEW 1000
 CGraphicsSystem::CGraphicsSystem()
 {
@@ -15,249 +14,249 @@ CGraphicsSystem::~CGraphicsSystem()
 
 void CGraphicsSystem::InitD3D(HWND cTheWindow)
 {
-#pragma region Main Window Stuff
+	#pragma region Main Window Stuff
 
-#pragma region Swapchain
-	// create a struct to hold information about the swap chain
-	DXGI_SWAP_CHAIN_DESC d3dSwapchainDescription;
+	#pragma region Swapchain
+		// create a struct to hold information about the swap chain
+		DXGI_SWAP_CHAIN_DESC d3dSwapchainDescription;
 
-	// clear out the struct for use
-	ZeroMemory(&d3dSwapchainDescription, sizeof(DXGI_SWAP_CHAIN_DESC));
+		// clear out the struct for use
+		ZeroMemory(&d3dSwapchainDescription, sizeof(DXGI_SWAP_CHAIN_DESC));
 
-	RECT cRectangle;
-	GetClientRect(cTheWindow, &cRectangle);
+		RECT cRectangle;
+		GetClientRect(cTheWindow, &cRectangle);
 
-	// fill the swap chain description struct
-	d3dSwapchainDescription.BufferCount = 1;                                    // one back buffer
-	d3dSwapchainDescription.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;     // use 32-bit color
-	d3dSwapchainDescription.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;      // how swap chain is to be used
-	d3dSwapchainDescription.OutputWindow = cTheWindow;                          // the window to be used
-	d3dSwapchainDescription.SampleDesc.Count = 1;                               // how many multisamples
-	d3dSwapchainDescription.Windowed = TRUE;                                    // windowed/full-screen mode
-	d3dSwapchainDescription.BufferDesc.Width = cRectangle.right - cRectangle.left;
-	d3dSwapchainDescription.BufferDesc.Height = cRectangle.bottom - cRectangle.top;
-	d3dSwapchainDescription.BufferDesc.RefreshRate.Numerator = 60;
-	d3dSwapchainDescription.BufferDesc.RefreshRate.Denominator = 1;
+		// fill the swap chain description struct
+		d3dSwapchainDescription.BufferCount = 1;                                    // one back buffer
+		d3dSwapchainDescription.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;     // use 32-bit color
+		d3dSwapchainDescription.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;      // how swap chain is to be used
+		d3dSwapchainDescription.OutputWindow = cTheWindow;                          // the window to be used
+		d3dSwapchainDescription.SampleDesc.Count = 1;                               // how many multisamples
+		d3dSwapchainDescription.Windowed = TRUE;                                    // windowed/full-screen mode
+		d3dSwapchainDescription.BufferDesc.Width = cRectangle.right - cRectangle.left;
+		d3dSwapchainDescription.BufferDesc.Height = cRectangle.bottom - cRectangle.top;
+		d3dSwapchainDescription.BufferDesc.RefreshRate.Numerator = 60;
+		d3dSwapchainDescription.BufferDesc.RefreshRate.Denominator = 1;
 
-#ifdef _DEBUG
-	unsigned int nDeviceAndSwapchainFlag = D3D11_CREATE_DEVICE_DEBUG;
-	D3D11CreateDeviceAndSwapChain(NULL,
-		D3D_DRIVER_TYPE_HARDWARE,
-		NULL,
-		nDeviceAndSwapchainFlag,
-		NULL,
-		NULL,
-		D3D11_SDK_VERSION,
-		&d3dSwapchainDescription,
-		&m_pd3dSwapchain,
-		&m_pd3dDevice,
-		NULL,
-		&m_pd3dDeviceContext);
-#endif // DEBUG
+	#ifdef _DEBUG
+		unsigned int nDeviceAndSwapchainFlag = D3D11_CREATE_DEVICE_DEBUG;
+		D3D11CreateDeviceAndSwapChain(NULL,
+			D3D_DRIVER_TYPE_HARDWARE,
+			NULL,
+			nDeviceAndSwapchainFlag,
+			NULL,
+			NULL,
+			D3D11_SDK_VERSION,
+			&d3dSwapchainDescription,
+			&m_pd3dSwapchain,
+			&m_pd3dDevice,
+			NULL,
+			&m_pd3dDeviceContext);
+	#endif // DEBUG
 
-#ifndef _DEBUG
-	// create a device, device context and swap chain using the information in the scd struct
-	D3D11CreateDeviceAndSwapChain(NULL,
-		D3D_DRIVER_TYPE_HARDWARE,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		D3D11_SDK_VERSION,
-		&d3dSwapchainDescription,
-		&m_pd3dSwapchain,
-		&m_pd3dDevice,
-		NULL,
-		&m_pd3dDeviceContext);
+	#ifndef _DEBUG
+		// create a device, device context and swap chain using the information in the scd struct
+		D3D11CreateDeviceAndSwapChain(NULL,
+			D3D_DRIVER_TYPE_HARDWARE,
+			NULL,
+			NULL,
+			NULL,
+			NULL,
+			D3D11_SDK_VERSION,
+			&d3dSwapchainDescription,
+			&m_pd3dSwapchain,
+			&m_pd3dDevice,
+			NULL,
+			&m_pd3dDeviceContext);
 
-#endif // !_DEBUG
+	#endif // !_DEBUG
 
-#pragma endregion
+	#pragma endregion
 
-#pragma region RenderTargetView And Viewport
-	m_fAspectRatio = (float)(cRectangle.bottom - cRectangle.top / cRectangle.right - cRectangle.left);
+	#pragma region RenderTargetView And Viewport
+		m_fAspectRatio = (float)(cRectangle.bottom - cRectangle.top / cRectangle.right - cRectangle.left);
 
-	D3D11_TEXTURE2D_DESC d3dTextureDescription;
-	ZeroMemory(&d3dTextureDescription, sizeof(d3dTextureDescription));
+		D3D11_TEXTURE2D_DESC d3dTextureDescription;
+		ZeroMemory(&d3dTextureDescription, sizeof(d3dTextureDescription));
 
-	m_pd3dSwapchain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&m_pd3dRenderTargetTexture);
-	m_pd3dDevice->CreateRenderTargetView(m_pd3dRenderTargetTexture, NULL, &m_pd3dRenderTargetView);
-	float fViewportWidth = 0;
-	float fViewportHeight = 0;
+		m_pd3dSwapchain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&m_pd3dRenderTargetTexture);
+		m_pd3dDevice->CreateRenderTargetView(m_pd3dRenderTargetTexture, NULL, &m_pd3dRenderTargetView);
+		float fViewportWidth = 0;
+		float fViewportHeight = 0;
 
-	m_pd3dRenderTargetTexture->GetDesc(&d3dTextureDescription);
-	//pd3dRenderTargetTexture->Release();
-	fViewportWidth = (float)d3dTextureDescription.Width;
-	fViewportHeight = (float)d3dTextureDescription.Height;
+		m_pd3dRenderTargetTexture->GetDesc(&d3dTextureDescription);
+		//pd3dRenderTargetTexture->Release();
+		fViewportWidth = (float)d3dTextureDescription.Width;
+		fViewportHeight = (float)d3dTextureDescription.Height;
 
-	m_d3dViewport = {
-		0,
-		0,
-		fViewportWidth,
-		fViewportHeight,
-		0,
-		1
-	};
-#pragma endregion
+		m_d3dViewport = {
+			0,
+			0,
+			fViewportWidth,
+			fViewportHeight,
+			0,
+			1
+		};
+	#pragma endregion
 
-#pragma region DepthStencilView And DepthStencilState
-	D3D11_TEXTURE2D_DESC descDepth;
-	descDepth.Width = (UINT)fViewportWidth;
-	descDepth.Height = (UINT)fViewportHeight;
-	descDepth.MipLevels = 1;
-	descDepth.ArraySize = 1;
-	descDepth.Format = DXGI_FORMAT_D32_FLOAT;
-	descDepth.SampleDesc.Count = 1;
-	descDepth.SampleDesc.Quality = 0;
-	descDepth.Usage = D3D11_USAGE_DEFAULT;
-	descDepth.BindFlags = D3D11_BIND_DEPTH_STENCIL;
-	descDepth.CPUAccessFlags = 0;
-	descDepth.MiscFlags = 0;
+	#pragma region DepthStencilView And DepthStencilState
+		D3D11_TEXTURE2D_DESC descDepth;
+		descDepth.Width = (UINT)fViewportWidth;
+		descDepth.Height = (UINT)fViewportHeight;
+		descDepth.MipLevels = 1;
+		descDepth.ArraySize = 1;
+		descDepth.Format = DXGI_FORMAT_D32_FLOAT;
+		descDepth.SampleDesc.Count = 1;
+		descDepth.SampleDesc.Quality = 0;
+		descDepth.Usage = D3D11_USAGE_DEFAULT;
+		descDepth.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+		descDepth.CPUAccessFlags = 0;
+		descDepth.MiscFlags = 0;
 
-	m_pd3dDevice->CreateTexture2D(&descDepth, NULL, &m_pd3dDepthStencil);
+		m_pd3dDevice->CreateTexture2D(&descDepth, NULL, &m_pd3dDepthStencil);
 
-	D3D11_DEPTH_STENCIL_VIEW_DESC d3dDepthStencilViewDescription;
-	d3dDepthStencilViewDescription.Format = DXGI_FORMAT_D32_FLOAT;
-	d3dDepthStencilViewDescription.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
-	d3dDepthStencilViewDescription.Texture2D.MipSlice = 0;
-	d3dDepthStencilViewDescription.Flags = 0;
-	m_pd3dDevice->CreateDepthStencilView(m_pd3dDepthStencil, NULL, &m_pd3dDepthStencilView);
+		D3D11_DEPTH_STENCIL_VIEW_DESC d3dDepthStencilViewDescription;
+		d3dDepthStencilViewDescription.Format = DXGI_FORMAT_D32_FLOAT;
+		d3dDepthStencilViewDescription.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
+		d3dDepthStencilViewDescription.Texture2D.MipSlice = 0;
+		d3dDepthStencilViewDescription.Flags = 0;
+		m_pd3dDevice->CreateDepthStencilView(m_pd3dDepthStencil, NULL, &m_pd3dDepthStencilView);
 
-	D3D11_DEPTH_STENCIL_DESC d3dDepthStencilDescription;
+		D3D11_DEPTH_STENCIL_DESC d3dDepthStencilDescription;
 
-	// Depth test parameters
-	d3dDepthStencilDescription.DepthEnable = true;
-	d3dDepthStencilDescription.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
-	d3dDepthStencilDescription.DepthFunc = D3D11_COMPARISON_LESS_EQUAL;
+		// Depth test parameters
+		d3dDepthStencilDescription.DepthEnable = true;
+		d3dDepthStencilDescription.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
+		d3dDepthStencilDescription.DepthFunc = D3D11_COMPARISON_LESS_EQUAL;
 
-	// Stencil test parameters
-	d3dDepthStencilDescription.StencilEnable = true;
-	d3dDepthStencilDescription.StencilReadMask = 0xFF;
-	d3dDepthStencilDescription.StencilWriteMask = 0xFF;
+		// Stencil test parameters
+		d3dDepthStencilDescription.StencilEnable = true;
+		d3dDepthStencilDescription.StencilReadMask = 0xFF;
+		d3dDepthStencilDescription.StencilWriteMask = 0xFF;
 
-	// Stencil operations if pixel is front-facing
-	d3dDepthStencilDescription.FrontFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
-	d3dDepthStencilDescription.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_INCR;
-	d3dDepthStencilDescription.FrontFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
-	d3dDepthStencilDescription.FrontFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
+		// Stencil operations if pixel is front-facing
+		d3dDepthStencilDescription.FrontFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+		d3dDepthStencilDescription.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_INCR;
+		d3dDepthStencilDescription.FrontFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
+		d3dDepthStencilDescription.FrontFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
 
-	// Stencil operations if pixel is back-facing
-	d3dDepthStencilDescription.BackFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
-	d3dDepthStencilDescription.BackFace.StencilDepthFailOp = D3D11_STENCIL_OP_DECR;
-	d3dDepthStencilDescription.BackFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
-	d3dDepthStencilDescription.BackFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
+		// Stencil operations if pixel is back-facing
+		d3dDepthStencilDescription.BackFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+		d3dDepthStencilDescription.BackFace.StencilDepthFailOp = D3D11_STENCIL_OP_DECR;
+		d3dDepthStencilDescription.BackFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
+		d3dDepthStencilDescription.BackFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
 
-	// Create depth stencil state
-	m_pd3dDevice->CreateDepthStencilState(&d3dDepthStencilDescription, &m_pd3dDepthStencilState);
+		// Create depth stencil state
+		m_pd3dDevice->CreateDepthStencilState(&d3dDepthStencilDescription, &m_pd3dDepthStencilState);
 
-#pragma endregion
+	#pragma endregion
 
-#pragma endregion
+	#pragma endregion
 
-#pragma region RasterStates
-	/*
-	D3D11_FILL_MODE FillMode;
-	D3D11_CULL_MODE CullMode;
-	BOOL FrontCounterClockwise;
-	INT DepthBias;
-	FLOAT DepthBiasClamp;
-	FLOAT SlopeScaledDepthBias;
-	BOOL DepthClipEnable;
-	BOOL ScissorEnable;
-	BOOL MultisampleEnable;
-	BOOL AntialiasedLineEnable;
-	*/
-	D3D11_RASTERIZER_DESC NoCull
-	{
-		D3D11_FILL_SOLID,
-		D3D11_CULL_NONE,
-		true,
-		1,
-		1.0f,
-		0.0f,
-		true,
-		false,
-		true,
-		false
-	};
+	#pragma region RasterStates
+		/*
+		D3D11_FILL_MODE FillMode;
+		D3D11_CULL_MODE CullMode;
+		BOOL FrontCounterClockwise;
+		INT DepthBias;
+		FLOAT DepthBiasClamp;
+		FLOAT SlopeScaledDepthBias;
+		BOOL DepthClipEnable;
+		BOOL ScissorEnable;
+		BOOL MultisampleEnable;
+		BOOL AntialiasedLineEnable;
+		*/
+		D3D11_RASTERIZER_DESC NoCull
+		{
+			D3D11_FILL_SOLID,
+			D3D11_CULL_NONE,
+			true,
+			1,
+			1.0f,
+			0.0f,
+			true,
+			false,
+			true,
+			false
+		};
 
-	D3D11_RASTERIZER_DESC Cull
-	{
-		D3D11_FILL_SOLID,
-		D3D11_CULL_FRONT,
-		true,
-		1,
-		1.0f,
-		0.0f,
-		true,
-		false,
-		true,
-		false
-	};
+		D3D11_RASTERIZER_DESC Cull
+		{
+			D3D11_FILL_SOLID,
+			D3D11_CULL_FRONT,
+			true,
+			1,
+			1.0f,
+			0.0f,
+			true,
+			false,
+			true,
+			false
+		};
 
-	m_pd3dDevice->CreateRasterizerState(&NoCull, &m_pd3dNoCullRasterizerState);
-	m_pd3dDevice->CreateRasterizerState(&Cull, &m_pd3dCullRasterizerState);
-#pragma endregion
+		m_pd3dDevice->CreateRasterizerState(&NoCull, &m_pd3dNoCullRasterizerState);
+		m_pd3dDevice->CreateRasterizerState(&Cull, &m_pd3dCullRasterizerState);
+	#pragma endregion
 
-#pragma region SamplerStates
-	D3D11_SAMPLER_DESC sampTmp
-	{
-		D3D11_FILTER_ANISOTROPIC,
-		D3D11_TEXTURE_ADDRESS_WRAP,
-		D3D11_TEXTURE_ADDRESS_WRAP,
-		D3D11_TEXTURE_ADDRESS_MIRROR,
-		1.0f,
-		16,
-		D3D11_COMPARISON_LESS_EQUAL,
-		1,
-		0,
-		D3D11_FLOAT32_MAX
-	};
+	#pragma region SamplerStates
+		D3D11_SAMPLER_DESC sampTmp
+		{
+			D3D11_FILTER_ANISOTROPIC,
+			D3D11_TEXTURE_ADDRESS_WRAP,
+			D3D11_TEXTURE_ADDRESS_WRAP,
+			D3D11_TEXTURE_ADDRESS_MIRROR,
+			1.0f,
+			16,
+			D3D11_COMPARISON_LESS_EQUAL,
+			1,
+			0,
+			D3D11_FLOAT32_MAX
+		};
 
-	m_pd3dDevice->CreateSamplerState(&sampTmp, &m_pd3dSamplerState);
-#pragma endregion
+		m_pd3dDevice->CreateSamplerState(&sampTmp, &m_pd3dSamplerState);
+	#pragma endregion
 
-#pragma region RTV
-	DXGI_SAMPLE_DESC tmp;
-	tmp.Count = 1;
-	tmp.Quality = 0;
-	D3D11_TEXTURE2D_DESC offScreenDesc
-	{
-		m_d3dViewport.Width,
-		m_d3dViewport.Height,
-		1,
-		1,
-		DXGI_FORMAT_R8G8B8A8_UNORM_SRGB,
-		tmp,
-		D3D11_USAGE_DEFAULT,
-		D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE,
-		0,//D3D11_CPU_ACCESS_READ | D3D11_CPU_ACCESS_WRITE,
-		D3D11_RESOURCE_MISC_GENERATE_MIPS
-	};
-	m_pd3dSwapchain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&m_pd3dOutsideGlassRenderToTexture);
+	#pragma region RTV
+		DXGI_SAMPLE_DESC tmp;
+		tmp.Count = 1;
+		tmp.Quality = 0;
+		D3D11_TEXTURE2D_DESC offScreenDesc
+		{
+			m_d3dViewport.Width,
+			m_d3dViewport.Height,
+			1,
+			1,
+			DXGI_FORMAT_R8G8B8A8_UNORM_SRGB,
+			tmp,
+			D3D11_USAGE_DEFAULT,
+			D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE,
+			0,//D3D11_CPU_ACCESS_READ | D3D11_CPU_ACCESS_WRITE,
+			D3D11_RESOURCE_MISC_GENERATE_MIPS
+		};
+		m_pd3dSwapchain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&m_pd3dOutsideGlassRenderToTexture);
 
-	m_pd3dDevice->CreateTexture2D(&offScreenDesc, 0, &m_pd3dOutsideGlassRenderToTexture);
+		m_pd3dDevice->CreateTexture2D(&offScreenDesc, 0, &m_pd3dOutsideGlassRenderToTexture);
 
-	m_pd3dDevice->CreateRenderTargetView(m_pd3dOutsideGlassRenderToTexture, NULL, &m_pd3dOutsideRenderTargetView);
-#pragma endregion
+		m_pd3dDevice->CreateRenderTargetView(m_pd3dOutsideGlassRenderToTexture, NULL, &m_pd3dOutsideRenderTargetView);
+	#pragma endregion
 
-#pragma region BlendState
-	D3D11_BLEND_DESC d3dBlendDescription;
-	d3dBlendDescription.AlphaToCoverageEnable = false;
-	d3dBlendDescription.IndependentBlendEnable = false;
-	d3dBlendDescription.RenderTarget[0].BlendEnable = true;
-	d3dBlendDescription.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
-	d3dBlendDescription.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
-	d3dBlendDescription.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
-	d3dBlendDescription.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ZERO;
-	d3dBlendDescription.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
-	d3dBlendDescription.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
-	d3dBlendDescription.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+	#pragma region BlendState
+		D3D11_BLEND_DESC d3dBlendDescription;
+		d3dBlendDescription.AlphaToCoverageEnable = false;
+		d3dBlendDescription.IndependentBlendEnable = false;
+		d3dBlendDescription.RenderTarget[0].BlendEnable = true;
+		d3dBlendDescription.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
+		d3dBlendDescription.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
+		d3dBlendDescription.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+		d3dBlendDescription.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ZERO;
+		d3dBlendDescription.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
+		d3dBlendDescription.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
+		d3dBlendDescription.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
 
-	m_pd3dDevice->CreateBlendState(&d3dBlendDescription, &m_pd3dBlendState);
+		m_pd3dDevice->CreateBlendState(&d3dBlendDescription, &m_pd3dBlendState);
 
-	m_pd3dDeviceContext->OMSetBlendState(m_pd3dBlendState, 0, 0xffffffff);
-#pragma endregion
+		m_pd3dDeviceContext->OMSetBlendState(m_pd3dBlendState, 0, 0xffffffff);
+	#pragma endregion
 }
 
 void CGraphicsSystem::UpdateD3D()
@@ -2280,40 +2279,24 @@ void CGraphicsSystem::ExecutePipeline(ID3D11DeviceContext *pd3dDeviceContext, in
 		}
 		break;
 	}
+
 	case Line:
 	{
-#if 0
-
-		pd3dDeviceContext->IASetInputLayout(m_pd3dQuadInputLayout);
+		//Set Input_Layout
+		pd3dDeviceContext->IASetInputLayout(m_pd3dLineInputLayout);
 		//Set Shader
-		pd3dDeviceContext->VSSetShader(m_pd3dQuadVertexShader, NULL, 0);
-		pd3dDeviceContext->GSSetShader(m_pd3dLineGeometryShader, NULL, 0);
-
-		pd3dDeviceContext->PSSetShader(m_pd3dQuadPixelShader, NULL, 0);
+		pd3dDeviceContext->VSSetShader(m_pd3dPrimalVertexShader, NULL, 0);
+		pd3dDeviceContext->PSSetShader(m_pd3dLinePixelShader, NULL, 0);
 		//Draw
 		if (nGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_DEBUGMESH | COMPONENT_SHADERID))
 		{
 			pd3dDeviceContext->Draw(m_nIndexCount, 0);
 		}
-		case Line:
-		{
-			//Set Input_Layout
-			pd3dDeviceContext->IASetInputLayout(m_pd3dLineInputLayout);
-			//Set Shader
-			pd3dDeviceContext->VSSetShader(m_pd3dPrimalVertexShader, NULL, 0);
-			pd3dDeviceContext->PSSetShader(m_pd3dLinePixelShader, NULL, 0);
-			//Draw
-			if (nGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_DEBUGMESH | COMPONENT_SHADERID))
-			{
-				pd3dDeviceContext->Draw(m_nIndexCount, 0);
-			}
-			////Don't want every object to go through geometry shader
-			//pd3dDeviceContext->GSSetShader(nullptr, NULL, 0);
-			break;
-		}
-		default:
-			break;
+		////Don't want every object to go through geometry shader
+		//pd3dDeviceContext->GSSetShader(nullptr, NULL, 0);
+		break;
 	}
+	
 	//All Doors are PBR so they all do this then break.
 	{
 		#pragma region Draw
@@ -2329,7 +2312,6 @@ void CGraphicsSystem::ExecutePipeline(ID3D11DeviceContext *pd3dDeviceContext, in
 		}
 
 #pragma endregion
-		break;
 	}
 	case DoorPiece1_FRAME:
 	{
