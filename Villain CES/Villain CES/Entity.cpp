@@ -187,7 +187,7 @@ unsigned int createEntityReverse(TWorld * ptWorld)
 	unsigned int nCurrentEntity;
 	//Mark entity for Creation by finding the first index in the entity list that has no components. 
 	//Return the index of this marked entity
-	for (nCurrentEntity = ENTITYCOUNT; nCurrentEntity >= 0; --nCurrentEntity)
+	for (nCurrentEntity = ENTITYCOUNT - 1; nCurrentEntity >= 0; --nCurrentEntity)
 	{
 
 		if (ptWorld->atGraphicsMask[nCurrentEntity].m_tnGraphicsMask == COMPONENT_NONE)
