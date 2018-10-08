@@ -189,6 +189,7 @@ unsigned int createEntityReverse(TWorld * ptWorld)
 	//Return the index of this marked entity
 	for (nCurrentEntity = ENTITYCOUNT; nCurrentEntity >= 0; --nCurrentEntity)
 	{
+
 		if (ptWorld->atGraphicsMask[nCurrentEntity].m_tnGraphicsMask == COMPONENT_NONE)
 		{
 			printf("Entity created: %d\n", nCurrentEntity);
@@ -212,6 +213,12 @@ void destroyEntity(TWorld * ptWorld, unsigned int nThisEntity)
 	ptWorld->atPhysicsMask[nThisEntity].m_tnPhysicsMask = (COMPONENT_PHYSICSMASK);
 	ptWorld->atProjectiles[nThisEntity].m_tnProjectileMask = (COMPONENT_PROJECTILESMASK);
 	ptWorld->atInputMask[nThisEntity].m_tnInputMask = (COMPONENT_INPUTMASK);
+	ptWorld->atActiveAI[nThisEntity].active = false;
+	ptWorld->atActiveAI[nThisEntity].NoctifyOtherAi.clear();
+	ptWorld->atCoverTrigger[nThisEntity].AItoMove.clear();
+	ptWorld->atCoverTrigger[nThisEntity].coverAiCanGoTo.clear();
+	ptWorld->atCover[nThisEntity].CoverPositions.clear();
+
 	XMVECTOR zeroVector;
 	zeroVector.m128_f32[0] = 0;
 	zeroVector.m128_f32[1] = 0;
