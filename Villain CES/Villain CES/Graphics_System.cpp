@@ -1,6 +1,5 @@
-#include "stdafx.h"
+#pragma once
 #include "Graphics_System.h"
-#include <map>
 #define FARVIEW 1000
 CGraphicsSystem::CGraphicsSystem()
 {
@@ -11,7 +10,6 @@ CGraphicsSystem::CGraphicsSystem()
 
 CGraphicsSystem::~CGraphicsSystem()
 {
-	
 }
 
 void CGraphicsSystem::InitD3D(HWND cTheWindow)
@@ -19,247 +17,246 @@ void CGraphicsSystem::InitD3D(HWND cTheWindow)
 	#pragma region Main Window Stuff
 
 	#pragma region Swapchain
-	// create a struct to hold information about the swap chain
-	DXGI_SWAP_CHAIN_DESC d3dSwapchainDescription;
+		// create a struct to hold information about the swap chain
+		DXGI_SWAP_CHAIN_DESC d3dSwapchainDescription;
 
-	// clear out the struct for use
-	ZeroMemory(&d3dSwapchainDescription, sizeof(DXGI_SWAP_CHAIN_DESC));
+		// clear out the struct for use
+		ZeroMemory(&d3dSwapchainDescription, sizeof(DXGI_SWAP_CHAIN_DESC));
 
-	RECT cRectangle;
-	GetClientRect(cTheWindow, &cRectangle);
+		RECT cRectangle;
+		GetClientRect(cTheWindow, &cRectangle);
 
-	// fill the swap chain description struct
-	d3dSwapchainDescription.BufferCount = 1;                                    // one back buffer
-	d3dSwapchainDescription.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;     // use 32-bit color
-	d3dSwapchainDescription.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;      // how swap chain is to be used
-	d3dSwapchainDescription.OutputWindow = cTheWindow;                          // the window to be used
-	d3dSwapchainDescription.SampleDesc.Count = 1;                               // how many multisamples
-	d3dSwapchainDescription.Windowed = TRUE;                                    // windowed/full-screen mode
-	d3dSwapchainDescription.BufferDesc.Width = cRectangle.right - cRectangle.left;
-	d3dSwapchainDescription.BufferDesc.Height = cRectangle.bottom - cRectangle.top;
-	d3dSwapchainDescription.BufferDesc.RefreshRate.Numerator = 60;
-	d3dSwapchainDescription.BufferDesc.RefreshRate.Denominator = 1;
+		// fill the swap chain description struct
+		d3dSwapchainDescription.BufferCount = 1;                                    // one back buffer
+		d3dSwapchainDescription.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;     // use 32-bit color
+		d3dSwapchainDescription.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;      // how swap chain is to be used
+		d3dSwapchainDescription.OutputWindow = cTheWindow;                          // the window to be used
+		d3dSwapchainDescription.SampleDesc.Count = 1;                               // how many multisamples
+		d3dSwapchainDescription.Windowed = TRUE;                                    // windowed/full-screen mode
+		d3dSwapchainDescription.BufferDesc.Width = cRectangle.right - cRectangle.left;
+		d3dSwapchainDescription.BufferDesc.Height = cRectangle.bottom - cRectangle.top;
+		d3dSwapchainDescription.BufferDesc.RefreshRate.Numerator = 60;
+		d3dSwapchainDescription.BufferDesc.RefreshRate.Denominator = 1;
 
 	#ifdef _DEBUG
-	unsigned int nDeviceAndSwapchainFlag = D3D11_CREATE_DEVICE_DEBUG;
-	D3D11CreateDeviceAndSwapChain(NULL,
-		D3D_DRIVER_TYPE_HARDWARE,
-		NULL,
-		nDeviceAndSwapchainFlag,
-		NULL,
-		NULL,
-		D3D11_SDK_VERSION,
-		&d3dSwapchainDescription,
-		&m_pd3dSwapchain,
-		&m_pd3dDevice,
-		NULL,
-		&m_pd3dDeviceContext);
+		unsigned int nDeviceAndSwapchainFlag = D3D11_CREATE_DEVICE_DEBUG;
+		D3D11CreateDeviceAndSwapChain(NULL,
+			D3D_DRIVER_TYPE_HARDWARE,
+			NULL,
+			nDeviceAndSwapchainFlag,
+			NULL,
+			NULL,
+			D3D11_SDK_VERSION,
+			&d3dSwapchainDescription,
+			&m_pd3dSwapchain,
+			&m_pd3dDevice,
+			NULL,
+			&m_pd3dDeviceContext);
 	#endif // DEBUG
 
 	#ifndef _DEBUG
-	// create a device, device context and swap chain using the information in the scd struct
-	D3D11CreateDeviceAndSwapChain(NULL,
-		D3D_DRIVER_TYPE_HARDWARE,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		D3D11_SDK_VERSION,
-		&d3dSwapchainDescription,
-		&m_pd3dSwapchain,
-		&m_pd3dDevice,
-		NULL,
-		&m_pd3dDeviceContext);
+		// create a device, device context and swap chain using the information in the scd struct
+		D3D11CreateDeviceAndSwapChain(NULL,
+			D3D_DRIVER_TYPE_HARDWARE,
+			NULL,
+			NULL,
+			NULL,
+			NULL,
+			D3D11_SDK_VERSION,
+			&d3dSwapchainDescription,
+			&m_pd3dSwapchain,
+			&m_pd3dDevice,
+			NULL,
+			&m_pd3dDeviceContext);
 
 	#endif // !_DEBUG
 
-#pragma endregion
+	#pragma endregion
 
 	#pragma region RenderTargetView And Viewport
-	m_fAspectRatio = (float)(cRectangle.bottom - cRectangle.top / cRectangle.right - cRectangle.left);
+		m_fAspectRatio = (float)(cRectangle.bottom - cRectangle.top / cRectangle.right - cRectangle.left);
 
-	D3D11_TEXTURE2D_DESC d3dTextureDescription;
-	ZeroMemory(&d3dTextureDescription, sizeof(d3dTextureDescription));
+		D3D11_TEXTURE2D_DESC d3dTextureDescription;
+		ZeroMemory(&d3dTextureDescription, sizeof(d3dTextureDescription));
 
+		m_pd3dSwapchain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&m_pd3dRenderTargetTexture);
+		m_pd3dDevice->CreateRenderTargetView(m_pd3dRenderTargetTexture, NULL, &m_pd3dRenderTargetView);
+		float fViewportWidth = 0;
+		float fViewportHeight = 0;
 
-	m_pd3dSwapchain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&m_pd3dRenderTargetTexture);
-	m_pd3dDevice->CreateRenderTargetView(m_pd3dRenderTargetTexture, NULL, &m_pd3dRenderTargetView);
-	float fViewportWidth = 0;
-	float fViewportHeight = 0;
-	
-	m_pd3dRenderTargetTexture->GetDesc(&d3dTextureDescription);
-	//pd3dRenderTargetTexture->Release();
-	fViewportWidth = (float)d3dTextureDescription.Width;
-	fViewportHeight = (float)d3dTextureDescription.Height;
+		m_pd3dRenderTargetTexture->GetDesc(&d3dTextureDescription);
+		//pd3dRenderTargetTexture->Release();
+		fViewportWidth = (float)d3dTextureDescription.Width;
+		fViewportHeight = (float)d3dTextureDescription.Height;
 
-	m_d3dViewport = {
-		0,
-		0,
-		fViewportWidth,
-		fViewportHeight,
-		0,
-		1
-	};
-#pragma endregion
+		m_d3dViewport = {
+			0,
+			0,
+			fViewportWidth,
+			fViewportHeight,
+			0,
+			1
+		};
+	#pragma endregion
 
 	#pragma region DepthStencilView And DepthStencilState
-	D3D11_TEXTURE2D_DESC descDepth;
-	descDepth.Width = (UINT)fViewportWidth;
-	descDepth.Height = (UINT)fViewportHeight;
-	descDepth.MipLevels = 1;
-	descDepth.ArraySize = 1;
-	descDepth.Format = DXGI_FORMAT_D32_FLOAT;
-	descDepth.SampleDesc.Count = 1;
-	descDepth.SampleDesc.Quality = 0;
-	descDepth.Usage = D3D11_USAGE_DEFAULT;
-	descDepth.BindFlags = D3D11_BIND_DEPTH_STENCIL;
-	descDepth.CPUAccessFlags = 0;
-	descDepth.MiscFlags = 0;
+		D3D11_TEXTURE2D_DESC descDepth;
+		descDepth.Width = (UINT)fViewportWidth;
+		descDepth.Height = (UINT)fViewportHeight;
+		descDepth.MipLevels = 1;
+		descDepth.ArraySize = 1;
+		descDepth.Format = DXGI_FORMAT_D32_FLOAT;
+		descDepth.SampleDesc.Count = 1;
+		descDepth.SampleDesc.Quality = 0;
+		descDepth.Usage = D3D11_USAGE_DEFAULT;
+		descDepth.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+		descDepth.CPUAccessFlags = 0;
+		descDepth.MiscFlags = 0;
 
-	m_pd3dDevice->CreateTexture2D(&descDepth, NULL, &m_pd3dDepthStencil);
+		m_pd3dDevice->CreateTexture2D(&descDepth, NULL, &m_pd3dDepthStencil);
 
-	D3D11_DEPTH_STENCIL_VIEW_DESC d3dDepthStencilViewDescription;
-	d3dDepthStencilViewDescription.Format = DXGI_FORMAT_D32_FLOAT;
-	d3dDepthStencilViewDescription.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
-	d3dDepthStencilViewDescription.Texture2D.MipSlice = 0;
-	d3dDepthStencilViewDescription.Flags = 0;
-	m_pd3dDevice->CreateDepthStencilView(m_pd3dDepthStencil, NULL, &m_pd3dDepthStencilView);
+		D3D11_DEPTH_STENCIL_VIEW_DESC d3dDepthStencilViewDescription;
+		d3dDepthStencilViewDescription.Format = DXGI_FORMAT_D32_FLOAT;
+		d3dDepthStencilViewDescription.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
+		d3dDepthStencilViewDescription.Texture2D.MipSlice = 0;
+		d3dDepthStencilViewDescription.Flags = 0;
+		m_pd3dDevice->CreateDepthStencilView(m_pd3dDepthStencil, NULL, &m_pd3dDepthStencilView);
 
-	D3D11_DEPTH_STENCIL_DESC d3dDepthStencilDescription;
+		D3D11_DEPTH_STENCIL_DESC d3dDepthStencilDescription;
 
-	// Depth test parameters
-	d3dDepthStencilDescription.DepthEnable = true;
-	d3dDepthStencilDescription.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
-	d3dDepthStencilDescription.DepthFunc = D3D11_COMPARISON_LESS_EQUAL;
+		// Depth test parameters
+		d3dDepthStencilDescription.DepthEnable = true;
+		d3dDepthStencilDescription.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
+		d3dDepthStencilDescription.DepthFunc = D3D11_COMPARISON_LESS_EQUAL;
 
-	// Stencil test parameters
-	d3dDepthStencilDescription.StencilEnable = true;
-	d3dDepthStencilDescription.StencilReadMask = 0xFF;
-	d3dDepthStencilDescription.StencilWriteMask = 0xFF;
+		// Stencil test parameters
+		d3dDepthStencilDescription.StencilEnable = true;
+		d3dDepthStencilDescription.StencilReadMask = 0xFF;
+		d3dDepthStencilDescription.StencilWriteMask = 0xFF;
 
-	// Stencil operations if pixel is front-facing
-	d3dDepthStencilDescription.FrontFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
-	d3dDepthStencilDescription.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_INCR;
-	d3dDepthStencilDescription.FrontFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
-	d3dDepthStencilDescription.FrontFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
+		// Stencil operations if pixel is front-facing
+		d3dDepthStencilDescription.FrontFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+		d3dDepthStencilDescription.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_INCR;
+		d3dDepthStencilDescription.FrontFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
+		d3dDepthStencilDescription.FrontFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
 
-	// Stencil operations if pixel is back-facing
-	d3dDepthStencilDescription.BackFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
-	d3dDepthStencilDescription.BackFace.StencilDepthFailOp = D3D11_STENCIL_OP_DECR;
-	d3dDepthStencilDescription.BackFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
-	d3dDepthStencilDescription.BackFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
+		// Stencil operations if pixel is back-facing
+		d3dDepthStencilDescription.BackFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+		d3dDepthStencilDescription.BackFace.StencilDepthFailOp = D3D11_STENCIL_OP_DECR;
+		d3dDepthStencilDescription.BackFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
+		d3dDepthStencilDescription.BackFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
 
-	// Create depth stencil state
-	m_pd3dDevice->CreateDepthStencilState(&d3dDepthStencilDescription, &m_pd3dDepthStencilState);
+		// Create depth stencil state
+		m_pd3dDevice->CreateDepthStencilState(&d3dDepthStencilDescription, &m_pd3dDepthStencilState);
 
-#pragma endregion
+	#pragma endregion
 
-#pragma endregion
+	#pragma endregion
 
 	#pragma region RasterStates
-	/*
-	D3D11_FILL_MODE FillMode;
-	D3D11_CULL_MODE CullMode;
-	BOOL FrontCounterClockwise;
-	INT DepthBias;
-	FLOAT DepthBiasClamp;
-	FLOAT SlopeScaledDepthBias;
-	BOOL DepthClipEnable;
-	BOOL ScissorEnable;
-	BOOL MultisampleEnable;
-	BOOL AntialiasedLineEnable;
-	*/
-	D3D11_RASTERIZER_DESC NoCull
-	{
-		D3D11_FILL_SOLID,
-		D3D11_CULL_NONE,
-		true,
-		1,
-		1.0f,
-		0.0f,
-		true,
-		false,
-		true,
-		false
-	};
+		/*
+		D3D11_FILL_MODE FillMode;
+		D3D11_CULL_MODE CullMode;
+		BOOL FrontCounterClockwise;
+		INT DepthBias;
+		FLOAT DepthBiasClamp;
+		FLOAT SlopeScaledDepthBias;
+		BOOL DepthClipEnable;
+		BOOL ScissorEnable;
+		BOOL MultisampleEnable;
+		BOOL AntialiasedLineEnable;
+		*/
+		D3D11_RASTERIZER_DESC NoCull
+		{
+			D3D11_FILL_SOLID,
+			D3D11_CULL_NONE,
+			true,
+			1,
+			1.0f,
+			0.0f,
+			true,
+			false,
+			true,
+			false
+		};
 
-	D3D11_RASTERIZER_DESC Cull
-	{
-		D3D11_FILL_SOLID,
-		D3D11_CULL_FRONT,
-		true,
-		1,
-		1.0f,
-		0.0f,
-		true,
-		false,
-		true,
-		false
-	};
+		D3D11_RASTERIZER_DESC Cull
+		{
+			D3D11_FILL_SOLID,
+			D3D11_CULL_FRONT,
+			true,
+			1,
+			1.0f,
+			0.0f,
+			true,
+			false,
+			true,
+			false
+		};
 
-	m_pd3dDevice->CreateRasterizerState(&NoCull, &m_pd3dNoCullRasterizerState);
-	m_pd3dDevice->CreateRasterizerState(&Cull, &m_pd3dCullRasterizerState);
-#pragma endregion
-	
+		m_pd3dDevice->CreateRasterizerState(&NoCull, &m_pd3dNoCullRasterizerState);
+		m_pd3dDevice->CreateRasterizerState(&Cull, &m_pd3dCullRasterizerState);
+	#pragma endregion
+
 	#pragma region SamplerStates
-	D3D11_SAMPLER_DESC sampTmp
-	{
-		D3D11_FILTER_ANISOTROPIC,
-		D3D11_TEXTURE_ADDRESS_WRAP,
-		D3D11_TEXTURE_ADDRESS_WRAP,
-		D3D11_TEXTURE_ADDRESS_MIRROR,
-		1.0f,
-		16,
-		D3D11_COMPARISON_LESS_EQUAL,
-		1,
-		0,
-		D3D11_FLOAT32_MAX
-	};
+		D3D11_SAMPLER_DESC sampTmp
+		{
+			D3D11_FILTER_ANISOTROPIC,
+			D3D11_TEXTURE_ADDRESS_WRAP,
+			D3D11_TEXTURE_ADDRESS_WRAP,
+			D3D11_TEXTURE_ADDRESS_MIRROR,
+			1.0f,
+			16,
+			D3D11_COMPARISON_LESS_EQUAL,
+			1,
+			0,
+			D3D11_FLOAT32_MAX
+		};
 
-	m_pd3dDevice->CreateSamplerState(&sampTmp, &m_pd3dSamplerState);
-#pragma endregion
+		m_pd3dDevice->CreateSamplerState(&sampTmp, &m_pd3dSamplerState);
+	#pragma endregion
 
 	#pragma region RTV
-	DXGI_SAMPLE_DESC tmp;
-	tmp.Count = 1;
-	tmp.Quality = 0;
-	D3D11_TEXTURE2D_DESC offScreenDesc
-	{
-		m_d3dViewport.Width,
-		m_d3dViewport.Height,
-		1,
-		1,
-		DXGI_FORMAT_R8G8B8A8_UNORM_SRGB,
-		tmp,
-		D3D11_USAGE_DEFAULT,
-		D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE,
-		0,//D3D11_CPU_ACCESS_READ | D3D11_CPU_ACCESS_WRITE,
-		D3D11_RESOURCE_MISC_GENERATE_MIPS
-	};
-	m_pd3dSwapchain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&m_pd3dOutsideGlassRenderToTexture);
+		DXGI_SAMPLE_DESC tmp;
+		tmp.Count = 1;
+		tmp.Quality = 0;
+		D3D11_TEXTURE2D_DESC offScreenDesc
+		{
+			m_d3dViewport.Width,
+			m_d3dViewport.Height,
+			1,
+			1,
+			DXGI_FORMAT_R8G8B8A8_UNORM_SRGB,
+			tmp,
+			D3D11_USAGE_DEFAULT,
+			D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE,
+			0,//D3D11_CPU_ACCESS_READ | D3D11_CPU_ACCESS_WRITE,
+			D3D11_RESOURCE_MISC_GENERATE_MIPS
+		};
+		m_pd3dSwapchain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&m_pd3dOutsideGlassRenderToTexture);
 
-	m_pd3dDevice->CreateTexture2D(&offScreenDesc, 0, &m_pd3dOutsideGlassRenderToTexture);
-	
-	m_pd3dDevice->CreateRenderTargetView(m_pd3dOutsideGlassRenderToTexture, NULL, &m_pd3dOutsideRenderTargetView);
-#pragma endregion
+		m_pd3dDevice->CreateTexture2D(&offScreenDesc, 0, &m_pd3dOutsideGlassRenderToTexture);
+
+		m_pd3dDevice->CreateRenderTargetView(m_pd3dOutsideGlassRenderToTexture, NULL, &m_pd3dOutsideRenderTargetView);
+	#pragma endregion
 
 	#pragma region BlendState
-	D3D11_BLEND_DESC d3dBlendDescription;
-	d3dBlendDescription.AlphaToCoverageEnable = false;
-	d3dBlendDescription.IndependentBlendEnable = false;
-	d3dBlendDescription.RenderTarget[0].BlendEnable = true;
-	d3dBlendDescription.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
-	d3dBlendDescription.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
-	d3dBlendDescription.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
-	d3dBlendDescription.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ZERO;
-	d3dBlendDescription.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
-	d3dBlendDescription.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
-	d3dBlendDescription.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+		D3D11_BLEND_DESC d3dBlendDescription;
+		d3dBlendDescription.AlphaToCoverageEnable = false;
+		d3dBlendDescription.IndependentBlendEnable = false;
+		d3dBlendDescription.RenderTarget[0].BlendEnable = true;
+		d3dBlendDescription.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
+		d3dBlendDescription.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
+		d3dBlendDescription.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+		d3dBlendDescription.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ZERO;
+		d3dBlendDescription.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
+		d3dBlendDescription.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
+		d3dBlendDescription.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
 
-	m_pd3dDevice->CreateBlendState(&d3dBlendDescription, &m_pd3dBlendState);
+		m_pd3dDevice->CreateBlendState(&d3dBlendDescription, &m_pd3dBlendState);
 
-	m_pd3dDeviceContext->OMSetBlendState(m_pd3dBlendState, 0, 0xffffffff);
-#pragma endregion
+		m_pd3dDeviceContext->OMSetBlendState(m_pd3dBlendState, 0, 0xffffffff);
+	#pragma endregion
 }
 
 void CGraphicsSystem::UpdateD3D()
@@ -357,7 +354,7 @@ void CGraphicsSystem::CleanD3DLevel(TWorld * ptPlanet)
 	{
 		/*if (ptPlanet->atUIMask[nEntityIndex].m_tnUIMask == (COMPONENT_LABEL | COMPONENT_TEXT | COMPONENT_UIMASK | COMPONENT_BUTTON))
 			continue;*/
-		//Check planet's mask at [i] to see what needs to be released
+			//Check planet's mask at [i] to see what needs to be released
 		if (ptPlanet->atGraphicsMask[nEntityIndex].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_DEBUGMESH | COMPONENT_SHADERID))
 		{
 			ptPlanet->atDebugMesh[nEntityIndex].m_pd3dVertexBuffer->Release();
@@ -402,7 +399,7 @@ void CGraphicsSystem::CleanD3DObject(TWorld * ptPlanet, int nEntityIndex)
 
 void CGraphicsSystem::CreateShaders(ID3D11Device * device)
 {
-	#pragma region MyShaders
+#pragma region MyShaders
 	D3D11_BUFFER_DESC d3dMyVertexBufferDesc;
 	device->CreateVertexShader(MyVertexShader, sizeof(MyVertexShader), NULL, &m_pd3dMyVertexShader);
 	device->CreatePixelShader(MyPixelShader, sizeof(MyPixelShader), NULL, &m_pd3dMyPixelShader);
@@ -437,7 +434,7 @@ void CGraphicsSystem::CreateShaders(ID3D11Device * device)
 	device->CreateBuffer(&d3dMyVertexBufferDesc, NULL, &m_pd3dMyVertexBuffer);
 #pragma endregion
 
-	#pragma region PrimalShaders
+#pragma region PrimalShaders
 	D3D11_BUFFER_DESC d3dPrimalMatrixBufferDesc;
 	D3D11_BUFFER_DESC d3dPrimalPixelBufferDesc;
 	device->CreateVertexShader(PrimalVertexShader, sizeof(PrimalVertexShader), NULL, &m_pd3dPrimalVertexShader);
@@ -479,7 +476,7 @@ void CGraphicsSystem::CreateShaders(ID3D11Device * device)
 	device->CreateBuffer(&d3dPrimalPixelBufferDesc, NULL, &m_pd3dPrimalPixelBuffer);
 #pragma endregion
 
-	#pragma region UIShaders
+#pragma region UIShaders
 	D3D11_BUFFER_DESC d3dUIMatrixBufferDesc;
 	D3D11_BUFFER_DESC d3dUIPixelBufferDesc;
 	device->CreateVertexShader(UIVertexShader, sizeof(UIVertexShader), NULL, &m_pd3dUIVertexShader);
@@ -523,7 +520,7 @@ void CGraphicsSystem::CreateShaders(ID3D11Device * device)
 	device->CreateBuffer(&d3dUIPixelBufferDesc, NULL, &m_pd3dUIPixelBuffer);
 #pragma endregion
 
-	#pragma region QuadGeometryShaders
+#pragma region QuadGeometryShaders
 	D3D11_BUFFER_DESC d3dQuadMatrixBufferDesc;
 	D3D11_BUFFER_DESC d3dQuadPixelBufferDesc;
 	device->CreateVertexShader(QuadVertexShader, sizeof(QuadVertexShader), NULL, &m_pd3dQuadVertexShader);
@@ -540,7 +537,7 @@ void CGraphicsSystem::CreateShaders(ID3D11Device * device)
 	int nQuadElements = sizeof(m_d3dQuadLayoutDesc) / sizeof(m_d3dQuadLayoutDesc[0]);
 
 	//Create the vertex input layout.
-	device->CreateInputLayout(m_d3dQuadLayoutDesc, nQuadElements, QuadVertexShader,sizeof(QuadVertexShader), &m_pd3dQuadInputLayout);
+	device->CreateInputLayout(m_d3dQuadLayoutDesc, nQuadElements, QuadVertexShader, sizeof(QuadVertexShader), &m_pd3dQuadInputLayout);
 
 	//Setup the description of the dynamic matrix constant buffer that is in the vertex shader.
 	d3dQuadMatrixBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
@@ -552,7 +549,6 @@ void CGraphicsSystem::CreateShaders(ID3D11Device * device)
 
 	//Create the constant buffer pointer so we can access the vertex shader constant buffer from within this class.
 	device->CreateBuffer(&d3dQuadMatrixBufferDesc, NULL, &m_pd3dQuadGeometryBuffer);
-
 
 	//Setup the description of the dynamic matrix constant buffer that is in the vertex shader.
 	d3dQuadPixelBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
@@ -596,9 +592,7 @@ void CGraphicsSystem::CreateShaders(ID3D11Device * device)
 #pragma endregion 
 #endif // 0
 
-	
-
-	#pragma region SkyboxShaders
+#pragma region SkyboxShaders
 	D3D11_BUFFER_DESC d3dSkyboxMatrixBufferDesc;
 	D3D11_BUFFER_DESC d3dSkyboxPixelBufferDesc;
 	device->CreateVertexShader(SkyboxVertexShader, sizeof(SkyboxVertexShader), NULL, &m_pd3dSkyboxVertexShader);
@@ -630,7 +624,7 @@ void CGraphicsSystem::CreateShaders(ID3D11Device * device)
 	device->CreateBuffer(&d3dSkyboxMatrixBufferDesc, NULL, &m_pd3dSkyboxVertexBuffer);
 #pragma endregion
 
-	#pragma region AnimatedShaders
+#pragma region AnimatedShaders
 	D3D11_BUFFER_DESC d3dAnimatedVertexBufferDesc;
 	device->CreateVertexShader(AnimatedVertexShader, sizeof(AnimatedVertexShader), NULL, &m_pd3dAnimatedVertexShader);
 	device->CreatePixelShader(AnimatedPixelShader, sizeof(AnimatedPixelShader), NULL, &m_pd3dAnimatedPixelShader);
@@ -665,194 +659,194 @@ void CGraphicsSystem::CreateShaders(ID3D11Device * device)
 
 TMaterialOptimized CGraphicsSystem::CreateTexturesFromFile(TMaterialImport * arrayOfMaterials, int numberOfEntities)
 {
-		//Maps texture filenames to entity indices
-		map<int, string> Map_EntityIndex_FileName;
-		string x;
-		std::vector<int> materialIndex;
-		ID3D11ShaderResourceView **SRVDefault = new ID3D11ShaderResourceView *[1];
+	//Maps texture filenames to entity indices
+	map<int, string> Map_EntityIndex_FileName;
+	string x;
+	std::vector<int> materialIndex;
+	ID3D11ShaderResourceView **SRVDefault = new ID3D11ShaderResourceView *[1];
 
-		bool insertFlag = true;
-		if (arrayOfMaterials[0].m_tPBRFileNames[0] != NULL)
+	bool insertFlag = true;
+	if (arrayOfMaterials[0].m_tPBRFileNames[0] != NULL)
+	{
+		x = arrayOfMaterials[0].m_tPBRFileNames[0];
+		Map_EntityIndex_FileName.insert(pair<int, string>(0, x));
+		//Vector of indices, one index for each entity that correspond to texture file names
+		materialIndex.push_back(0);
+		//loop number of entity times
+		for (int i = 1; i < numberOfEntities; i++)
 		{
-			x = arrayOfMaterials[0].m_tPBRFileNames[0];
-			Map_EntityIndex_FileName.insert(pair<int, string>(0, x));
-			//Vector of indices, one index for each entity that correspond to texture file names
-			materialIndex.push_back(0);
-			//loop number of entity times
-			for (int i = 1; i < numberOfEntities; i++)
+			//reset flag to true that we should insert filename into map
+			insertFlag = true;
+			//store filename in char*
+			char* x = arrayOfMaterials[i].m_tPBRFileNames[0];
+			int lambert = arrayOfMaterials[i].lambert;
+			//loop number of elements in map times
+			string strEntity;
+			string strMap;
+			if (x != nullptr)
 			{
-				//reset flag to true that we should insert filename into map
-				insertFlag = true;
-				//store filename in char*
-				char* x = arrayOfMaterials[i].m_tPBRFileNames[0];
-				int lambert = arrayOfMaterials[i].lambert;
-				//loop number of elements in map times
-				string strEntity;
-				string strMap;
-				if (x != nullptr)
+				strEntity = x;
+				for (int mapIndex = 0; mapIndex < Map_EntityIndex_FileName.size(); mapIndex++)
 				{
-					strEntity = x;
-					for (int mapIndex = 0; mapIndex < Map_EntityIndex_FileName.size(); mapIndex++)
+					if (!Map_EntityIndex_FileName[mapIndex].empty())
 					{
-						if (!Map_EntityIndex_FileName[mapIndex].empty())
+						strMap = Map_EntityIndex_FileName[mapIndex];
+						//if this current filename in the map is equal to the one of this entity
+						if (strMap == strEntity)
 						{
-							strMap = Map_EntityIndex_FileName[mapIndex];
-							//if this current filename in the map is equal to the one of this entity
-							if (strMap == strEntity)
-							{
-								//set insert flag to false so we don't insert this texture to the map
-								insertFlag = false;
-								materialIndex.push_back(mapIndex);
-								break;
-							}
+							//set insert flag to false so we don't insert this texture to the map
+							insertFlag = false;
+							materialIndex.push_back(mapIndex);
+							break;
 						}
 					}
-					if (insertFlag && *x != NULL)
-					{
-						Map_EntityIndex_FileName.insert(pair<int, string>(i, x));
-						materialIndex.push_back(i);
-					}
 				}
-				else if (lambert == 3)
+				if (insertFlag && *x != NULL)
 				{
-					materialIndex.push_back(-2);
-				}
-				else
-				{
-					materialIndex.push_back(-1);
+					Map_EntityIndex_FileName.insert(pair<int, string>(i, x));
+					materialIndex.push_back(i);
 				}
 			}
-		}
-		else if(arrayOfMaterials[0].m_tFileNames[0] != NULL && arrayOfMaterials[0].m_tFileNames[0][1] != '.')
-		{
-			x = arrayOfMaterials[0].m_tFileNames[0];
-			Map_EntityIndex_FileName.insert(pair<int, string>(0, x));
-			//Vector of indices, one index for each entity that correspond to texture file names
-			materialIndex.push_back(0);
-			//loop number of entity times
-			for (int i = 1; i < numberOfEntities; i++)
+			else if (lambert == 3)
 			{
-				//reset flag to true that we should insert filename into map
-				insertFlag = true;
-				//store filename in char*
-				char* x = arrayOfMaterials[i].m_tFileNames[0];
-				//loop number of elements in map times
-				string strEntity;
-				string strMap;
-				if (x != nullptr)
-				{
-					strEntity = x;
-					for (int mapIndex = 0; mapIndex < Map_EntityIndex_FileName.size(); mapIndex++)
-					{
-						if (!Map_EntityIndex_FileName[mapIndex].empty())
-						{
-							strMap = Map_EntityIndex_FileName[mapIndex];
-							//if this current filename in the map is equal to the one of this entity
-							if (strMap == strEntity)
-							{
-								//set insert flag to false so we don't insert this texture to the map
-								insertFlag = false;
-								materialIndex.push_back(mapIndex);
-								break;
-							}
-						}
-					}
-					if (insertFlag && *x != NULL)
-					{
-						Map_EntityIndex_FileName.insert(pair<int, string>(i, x));
-						materialIndex.push_back(i);
-					}
-				}
-				else
-				{
-					materialIndex.push_back(-1);
-				}
-			}
-		}
-		else//Apply a wood texture to the mesh or if it's a material gun projectile
-		{
-			int* Map_SRVIndex_EntityIndexArray = new int[1];
-			Map_SRVIndex_EntityIndexArray[0] = -3;
-			if (arrayOfMaterials[0].lambert == 4)
-			{
-				for (int i = 0; i < numberOfEntities; i++)
-				{
-					materialIndex.push_back(-3);
-				}				
-				CreateWICTextureFromFile(m_pd3dDevice, L"TestScene_V1.fbm\\PaintedMetal04_col.jpg", NULL, &SRVDefault[0], NULL);
-				TMaterialOptimized answer;
-				answer.Map_SRVIndex_EntityIndex = Map_SRVIndex_EntityIndexArray;
-				answer.materialIndex = materialIndex;
-				answer.SRVArrayOfMaterials = SRVDefault;
-				answer.numberOfMaterials = 1;
-				return answer;
+				materialIndex.push_back(-2);
 			}
 			else
 			{
-				int* Map_SRVIndex_EntityIndexArray = new int[1];
-				Map_SRVIndex_EntityIndexArray[0] = 0;
-				for (int i = 0; i < numberOfEntities; i++)
+				materialIndex.push_back(-1);
+			}
+		}
+	}
+	else if (arrayOfMaterials[0].m_tFileNames[0] != NULL && arrayOfMaterials[0].m_tFileNames[0][1] != '.')
+	{
+		x = arrayOfMaterials[0].m_tFileNames[0];
+		Map_EntityIndex_FileName.insert(pair<int, string>(0, x));
+		//Vector of indices, one index for each entity that correspond to texture file names
+		materialIndex.push_back(0);
+		//loop number of entity times
+		for (int i = 1; i < numberOfEntities; i++)
+		{
+			//reset flag to true that we should insert filename into map
+			insertFlag = true;
+			//store filename in char*
+			char* x = arrayOfMaterials[i].m_tFileNames[0];
+			//loop number of elements in map times
+			string strEntity;
+			string strMap;
+			if (x != nullptr)
+			{
+				strEntity = x;
+				for (int mapIndex = 0; mapIndex < Map_EntityIndex_FileName.size(); mapIndex++)
 				{
-					materialIndex.push_back(0);
+					if (!Map_EntityIndex_FileName[mapIndex].empty())
+					{
+						strMap = Map_EntityIndex_FileName[mapIndex];
+						//if this current filename in the map is equal to the one of this entity
+						if (strMap == strEntity)
+						{
+							//set insert flag to false so we don't insert this texture to the map
+							insertFlag = false;
+							materialIndex.push_back(mapIndex);
+							break;
+						}
+					}
 				}
-				CreateWICTextureFromFile(m_pd3dDevice, L"TestScene_V1.fbm\\Wood01_col.jpg", NULL, &SRVDefault[0], NULL);
-				TMaterialOptimized answer;
-				answer.Map_SRVIndex_EntityIndex = Map_SRVIndex_EntityIndexArray;
-				answer.materialIndex = materialIndex;
-				answer.SRVArrayOfMaterials = SRVDefault;
-				answer.numberOfMaterials = 1;
-				return answer;
+				if (insertFlag && *x != NULL)
+				{
+					Map_EntityIndex_FileName.insert(pair<int, string>(i, x));
+					materialIndex.push_back(i);
+				}
+			}
+			else
+			{
+				materialIndex.push_back(-1);
 			}
 		}
+	}
+	else//Apply a wood texture to the mesh or if it's a material gun projectile
+	{
+		int* Map_SRVIndex_EntityIndexArray = new int[1];
+		Map_SRVIndex_EntityIndexArray[0] = -3;
+		if (arrayOfMaterials[0].lambert == 4)
+		{
+			for (int i = 0; i < numberOfEntities; i++)
+			{
+				materialIndex.push_back(-3);
+			}
+			CreateWICTextureFromFile(m_pd3dDevice, L"TestScene_V1.fbm\\PaintedMetal04_col.jpg", NULL, &SRVDefault[0], NULL);
+			TMaterialOptimized answer;
+			answer.Map_SRVIndex_EntityIndex = Map_SRVIndex_EntityIndexArray;
+			answer.materialIndex = materialIndex;
+			answer.SRVArrayOfMaterials = SRVDefault;
+			answer.numberOfMaterials = 1;
+			return answer;
+		}
+		else
+		{
+			int* Map_SRVIndex_EntityIndexArray = new int[1];
+			Map_SRVIndex_EntityIndexArray[0] = 0;
+			for (int i = 0; i < numberOfEntities; i++)
+			{
+				materialIndex.push_back(0);
+			}
+			CreateWICTextureFromFile(m_pd3dDevice, L"TestScene_V1.fbm\\Wood01_col.jpg", NULL, &SRVDefault[0], NULL);
+			TMaterialOptimized answer;
+			answer.Map_SRVIndex_EntityIndex = Map_SRVIndex_EntityIndexArray;
+			answer.materialIndex = materialIndex;
+			answer.SRVArrayOfMaterials = SRVDefault;
+			answer.numberOfMaterials = 1;
+			return answer;
+		}
+	}
 
-		std::map<int, string>::iterator mapItr;
-		wchar_t fnPBR[260];
-		size_t result = 0;
-		mbstate_t d;
-		int count = 0;
-		for (mapItr = Map_EntityIndex_FileName.begin(); mapItr != Map_EntityIndex_FileName.end(); mapItr++)
+	std::map<int, string>::iterator mapItr;
+	wchar_t fnPBR[260];
+	size_t result = 0;
+	mbstate_t d;
+	int count = 0;
+	for (mapItr = Map_EntityIndex_FileName.begin(); mapItr != Map_EntityIndex_FileName.end(); mapItr++)
+	{
+		if (mapItr->second.size())
 		{
-			if (mapItr->second.size())
-			{
-				count++;
-			}
+			count++;
 		}
+	}
 
-		ID3D11ShaderResourceView **SRVArrayOfMaterials = new ID3D11ShaderResourceView*[count];
-		count = 0;
-		//Key - Count
-		//Value - Entity Index
-		std::map<int, int> Map_SRVIndex_EntityIndex;
-		for (mapItr = Map_EntityIndex_FileName.begin(); mapItr != Map_EntityIndex_FileName.end(); mapItr++)
+	ID3D11ShaderResourceView **SRVArrayOfMaterials = new ID3D11ShaderResourceView*[count];
+	count = 0;
+	//Key - Count
+	//Value - Entity Index
+	std::map<int, int> Map_SRVIndex_EntityIndex;
+	for (mapItr = Map_EntityIndex_FileName.begin(); mapItr != Map_EntityIndex_FileName.end(); mapItr++)
+	{
+		if (mapItr->second.size())
 		{
-			if (mapItr->second.size())
-			{
-				const char * name = mapItr->second.c_str();
-				int size = mapItr->second.size();
-				mbsrtowcs_s(&result, fnPBR, 260, (const char **)(&name), size, &d);
-				CreateWICTextureFromFile(m_pd3dDevice, &fnPBR[1], NULL, &SRVArrayOfMaterials[count], NULL);
-				Map_SRVIndex_EntityIndex.insert(pair<int, int>(count, mapItr->first));
-				count++;
-				int test = 0;
-			}
+			const char * name = mapItr->second.c_str();
+			int size = mapItr->second.size();
+			mbsrtowcs_s(&result, fnPBR, 260, (const char **)(&name), size, &d);
+			CreateWICTextureFromFile(m_pd3dDevice, &fnPBR[1], NULL, &SRVArrayOfMaterials[count], NULL);
+			Map_SRVIndex_EntityIndex.insert(pair<int, int>(count, mapItr->first));
+			count++;
+			int test = 0;
 		}
-		int* Map_SRVIndex_EntityIndexArray = new int[count];
-		int intArrayIndex = 0;
-		for (mapItr = Map_EntityIndex_FileName.begin(); mapItr != Map_EntityIndex_FileName.end(); mapItr++)
+	}
+	int* Map_SRVIndex_EntityIndexArray = new int[count];
+	int intArrayIndex = 0;
+	for (mapItr = Map_EntityIndex_FileName.begin(); mapItr != Map_EntityIndex_FileName.end(); mapItr++)
+	{
+		if (mapItr->second.size())
 		{
-			if (mapItr->second.size())
-			{
-				Map_SRVIndex_EntityIndexArray[intArrayIndex] = mapItr->first;
-				intArrayIndex++;
-				int test = 0;
-			}
+			Map_SRVIndex_EntityIndexArray[intArrayIndex] = mapItr->first;
+			intArrayIndex++;
+			int test = 0;
 		}
-		TMaterialOptimized answer;
-		answer.Map_SRVIndex_EntityIndex = Map_SRVIndex_EntityIndexArray;
-		answer.materialIndex = materialIndex;
-		answer.SRVArrayOfMaterials = SRVArrayOfMaterials;
-		answer.numberOfMaterials = Map_SRVIndex_EntityIndex.size();
-		return answer;
+	}
+	TMaterialOptimized answer;
+	answer.Map_SRVIndex_EntityIndex = Map_SRVIndex_EntityIndexArray;
+	answer.materialIndex = materialIndex;
+	answer.SRVArrayOfMaterials = SRVArrayOfMaterials;
+	answer.numberOfMaterials = Map_SRVIndex_EntityIndex.size();
+	return answer;
 }
 
 ID3D11ShaderResourceView * CGraphicsSystem::TexturesToCubeMap(ID3D11DeviceContext * pd3dDeviceContext, ID3D11Resource * srcTex[6])
@@ -1074,7 +1068,6 @@ XMMATRIX CGraphicsSystem::SetDefaultCameraMatrix()
 
 XMMATRIX CGraphicsSystem::ResetAimModeCameraOffset()
 {
-
 	return XMMatrixTranslationFromVector(XMVectorSet(-0.5, 1.7f, 8.5f, 1.0f));
 }
 
@@ -1133,7 +1126,7 @@ XMMATRIX CGraphicsSystem::SetDefaultPerspective(float FOV)
 
 	DefaultPerspectiveMatrix.r[2].m128_f32[0] = 0;
 	DefaultPerspectiveMatrix.r[2].m128_f32[1] = 0;
-	DefaultPerspectiveMatrix.r[2].m128_f32[2] = FARVIEW / (FARVIEW- 0.1f);
+	DefaultPerspectiveMatrix.r[2].m128_f32[2] = FARVIEW / (FARVIEW - 0.1f);
 	DefaultPerspectiveMatrix.r[2].m128_f32[3] = 1;
 
 	DefaultPerspectiveMatrix.r[3].m128_f32[0] = 0;
@@ -1218,7 +1211,7 @@ ImporterData CGraphicsSystem::ReadMesh(const char * input_file_path)
 #pragma region ImportDataMemoryAllocations
 
 	ImporterData tImportMe;
-	// Has Vertex tyoe and Joints 
+	// Has Vertex tyoe and Joints
 	tImportMe.vtMeshes = new TMeshImport[meshCount];
 	tImportMe.vtMaterials = new TMaterialImport[meshCount];
 	tImportMe.vtAnimations = new TAnimationImport[meshCount];
@@ -1230,7 +1223,6 @@ ImporterData CGraphicsSystem::ReadMesh(const char * input_file_path)
 		matFile.read((char*)&hasPose, sizeof(int));
 		if (hasPose)
 		{
-
 			bSize += sizeof(int);
 			matFile.read((char*)&duration, sizeof(double));
 			matFile.read((char*)&nodeCount, sizeof(int));
@@ -1316,11 +1308,7 @@ ImporterData CGraphicsSystem::ReadMesh(const char * input_file_path)
 				bSize += sizeof(int);
 				matFile.read((char*)&lamberts[materialIndex], sizeof(int));
 
-				if (lamberts[materialIndex] == 2)
-				{
-					bufferSize = sizeof(fMetallicness[materialIndex]) + sizeof(fRoughness[materialIndex]);
-				}
-				else if (lamberts[materialIndex] == 1 || lamberts[materialIndex] == 3 || lamberts[materialIndex] == 4)
+				if (lamberts[materialIndex] == 1 || lamberts[materialIndex] == 3 || lamberts[materialIndex] == 4)
 				{
 					bufferSize = sizeof(ambientColor[materialIndex]) + sizeof(diffuseColor[materialIndex]) + sizeof(emmissiveColor[materialIndex]) + sizeof(dTransparencyOrShininess[materialIndex]);
 				}
@@ -1328,54 +1316,15 @@ ImporterData CGraphicsSystem::ReadMesh(const char * input_file_path)
 				{
 					bufferSize = sizeof(ambientColor[materialIndex]) + sizeof(diffuseColor[materialIndex]) + sizeof(specularColor[materialIndex]) + sizeof(emmissiveColor[materialIndex]) + sizeof(dTransparencyOrShininess[materialIndex]);
 				}
+				else
+				{
+					bufferSize = sizeof(fMetallicness[materialIndex]) + sizeof(fRoughness[materialIndex]);
+				}
 
 				char *matBuffer = new char[bufferSize];
 				bSize += sizeof(int);
 				matFile.read(matBuffer, bufferSize);
-				if (lamberts[materialIndex] == 2)
-				{
-					memcpy(&fMetallicness[materialIndex], &matBuffer[0], sizeof(fMetallicness[materialIndex]));
-
-					memcpy(&fRoughness[materialIndex], &matBuffer[sizeof(fMetallicness[materialIndex])], sizeof(fRoughness[materialIndex]));
-
-					for (int i = 0; i < 9; i++)
-					{
-						matFile.read((char*)&pbrfileNameSizes[materialIndex][i], sizeof(pbrfileNameSizes[materialIndex][i]));
-					}
-
-					for (int i = 0; i < 9; i++)
-					{
-						if (pbrfileNameSizes[materialIndex][i] != NULL)
-						{
-							pbrfileNames[materialIndex][i] = new char[pbrfileNameSizes[materialIndex][i]];
-						}
-					}
-
-					char tmp = NULL;
-					for (int i = 0; i < 9; i++)
-					{
-						for (int j = 0; j < pbrfileNameSizes[materialIndex][i]; j++)
-						{
-							pbrfileNames[materialIndex][i][j] = 0;
-						}
-						if (pbrfileNameSizes[materialIndex][i])
-						{
-							for (int j = 0; j < pbrfileNameSizes[materialIndex][i]; j++)
-							{
-								matFile.read(&tmp, sizeof(tmp));
-								if (tmp == '^')
-								{
-									break;
-								}
-								else
-								{
-									pbrfileNames[materialIndex][i][j] = tmp;
-								}
-							}
-						}
-					}
-				}
-				else if (lamberts[materialIndex] == 1 || lamberts[materialIndex] == 3 || lamberts[materialIndex] == 4)
+				if (lamberts[materialIndex] == 1 || lamberts[materialIndex] == 3 || lamberts[materialIndex] == 4)
 				{
 					memcpy(&ambientColor[materialIndex], &matBuffer[0], sizeof(ambientColor));
 
@@ -1471,6 +1420,49 @@ ImporterData CGraphicsSystem::ReadMesh(const char * input_file_path)
 						}
 					}
 				}
+				else
+				{
+					memcpy(&fMetallicness[materialIndex], &matBuffer[0], sizeof(fMetallicness[materialIndex]));
+
+					memcpy(&fRoughness[materialIndex], &matBuffer[sizeof(fMetallicness[materialIndex])], sizeof(fRoughness[materialIndex]));
+
+					for (int i = 0; i < 9; i++)
+					{
+						matFile.read((char*)&pbrfileNameSizes[materialIndex][i], sizeof(pbrfileNameSizes[materialIndex][i]));
+					}
+
+					for (int i = 0; i < 9; i++)
+					{
+						if (pbrfileNameSizes[materialIndex][i] != NULL)
+						{
+							pbrfileNames[materialIndex][i] = new char[pbrfileNameSizes[materialIndex][i]];
+						}
+					}
+
+					char tmp = NULL;
+					for (int i = 0; i < 9; i++)
+					{
+						for (int j = 0; j < pbrfileNameSizes[materialIndex][i]; j++)
+						{
+							pbrfileNames[materialIndex][i][j] = 0;
+						}
+						if (pbrfileNameSizes[materialIndex][i])
+						{
+							for (int j = 0; j < pbrfileNameSizes[materialIndex][i]; j++)
+							{
+								matFile.read(&tmp, sizeof(tmp));
+								if (tmp == '^')
+								{
+									break;
+								}
+								else
+								{
+									pbrfileNames[materialIndex][i][j] = tmp;
+								}
+							}
+						}
+					}
+				}
 
 				delete[] matBuffer;
 				matBuffer = nullptr;
@@ -1497,7 +1489,7 @@ ImporterData CGraphicsSystem::ReadMesh(const char * input_file_path)
 		matFile.read((char*)&hasPolygon, sizeof(int));
 		if (hasPolygon)
 		{
-			#pragma region ReadMesh
+#pragma region ReadMesh
 			matFile.read((char*)&polyVertCount, sizeof(int));
 			matFile.read((char*)&uniqueVertexCount, sizeof(int));
 			matFile.read((char*)&worldTranslation[0], sizeof(double) * 3);
@@ -1553,8 +1545,6 @@ XMVECTOR CGraphicsSystem::GetCameraPos()
 	campos.m128_f32[2] = m_fCameraZPosition;
 	return campos;
 }
-
-
 
 void CGraphicsSystem::InitPrimalShaderData(ID3D11DeviceContext * pd3dDeviceContext, XMMATRIX d3dWorldMatrix, XMMATRIX d3dViewMatrix, XMMATRIX d3dProjectionMatrix, TDebugMesh tDebugMesh, XMMATRIX CameraMatrix)
 {
@@ -1755,7 +1745,7 @@ void CGraphicsSystem::InitSkyboxShaderData(ID3D11DeviceContext * pd3dDeviceConte
 	XMMATRIX tempProj = d3dVertexBuffer.m_d3dProjectionMatrix;
 	tempWorld = XMMatrixTranslation(m_fCameraXPosition, m_fCameraYPosition, m_fCameraZPosition);
 
-	#pragma region Map To Vertex Constant Buffer
+#pragma region Map To Vertex Constant Buffer
 	pd3dDeviceContext->Map(m_pd3dSkyboxVertexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &d3dSkyboxVertexMappedResource);
 
 	// Get a pointer to the data in the constant buffer.
@@ -1797,7 +1787,7 @@ void CGraphicsSystem::InitAnimShaderData(ID3D11DeviceContext * pd3dDeviceContext
 	XMMATRIX tempWorld = d3dVertexBuffer.m_d3dWorldMatrix;
 	XMMATRIX tempProj = d3dVertexBuffer.m_d3dProjectionMatrix;
 
-	#pragma region Map To Vertex Constant Buffer
+#pragma region Map To Vertex Constant Buffer
 	pd3dDeviceContext->Map(m_pd3dAnimatedVertexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &d3dAnimatedVertexMappedResource);
 
 	// Get a pointer to the data in the constant buffer.
@@ -1880,13 +1870,12 @@ void CGraphicsSystem::InitUIShaderData(ID3D11DeviceContext * pd3dDeviceContext, 
 
 	unsigned int vBufferNumber = 0;
 	unsigned int pBufferNumber = 0;
-	
+
 	//XMMATRIX tempWorld = d3dVertexBuffer.m_d3dWorldMatrix;
 	//XMMATRIX tempProj = d3dVertexBuffer.m_d3dProjectionMatrix;
 
-	#pragma region Map To Vertex Constant Buffer
+#pragma region Map To Vertex Constant Buffer
 	pd3dDeviceContext->Map(m_pd3dUIVertexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &d3dUIVertexMappedResource);
-
 
 	// Get a pointer to the data in the constant buffer.
 	ptUIVertexBufferDataPointer = (TUIVertexBufferType*)d3dUIVertexMappedResource.pData;
@@ -1906,9 +1895,8 @@ void CGraphicsSystem::InitUIShaderData(ID3D11DeviceContext * pd3dDeviceContext, 
 
 #pragma endregion
 
-	#pragma region Map To Pixel Constant Buffer
+#pragma region Map To Pixel Constant Buffer
 	pd3dDeviceContext->Map(m_pd3dUIPixelBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &d3dUIPixelMappedResource);
-
 
 	// Get a pointer to the data in the constant buffer.
 	ptUIPixelBufferDataPointer = (TUIPixelBufferType*)d3dUIPixelMappedResource.pData;
@@ -1919,7 +1907,7 @@ void CGraphicsSystem::InitUIShaderData(ID3D11DeviceContext * pd3dDeviceContext, 
 	// Unlock the constant buffer.
 	pd3dDeviceContext->Unmap(m_pd3dUIPixelBuffer, 0);
 
-#pragma endregion	
+#pragma endregion
 
 	pd3dDeviceContext->VSSetConstantBuffers(vBufferNumber, 1, &m_pd3dUIVertexBuffer);
 	pd3dDeviceContext->PSSetConstantBuffers(pBufferNumber, 1, &m_pd3dUIPixelBuffer);
@@ -1941,7 +1929,6 @@ void CGraphicsSystem::InitQuadShaderData(ID3D11DeviceContext * pd3dDeviceContext
 	TQuadGeometryBufferType* ptQuadMatrixBufferDataPointer = nullptr;
 	TQuadPixelBufferType* ptQuadPixelBufferDataPointer = nullptr;
 
-
 	unsigned int bufferNumber;
 
 	d3dViewMatrix = XMMatrixInverse(nullptr, CameraMatrix);
@@ -1950,7 +1937,7 @@ void CGraphicsSystem::InitQuadShaderData(ID3D11DeviceContext * pd3dDeviceContext
 
 	d3dView = d3dViewMatrix;
 
-	#pragma region Map To Geometry Constant Buffer
+#pragma region Map To Geometry Constant Buffer
 
 	pd3dDeviceContext->Map(m_pd3dQuadGeometryBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &d3dQuadMappedResource);
 
@@ -1967,7 +1954,7 @@ void CGraphicsSystem::InitQuadShaderData(ID3D11DeviceContext * pd3dDeviceContext
 
 #pragma endregion
 
-	#pragma region Map To Pixel Constant Buffer
+#pragma region Map To Pixel Constant Buffer
 	pd3dDeviceContext->Map(m_pd3dQuadPixelBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &d3dQuadPixelMappedResource);
 
 	// Get a pointer to the data in the constant buffer.
@@ -1999,7 +1986,6 @@ void CGraphicsSystem::InitLineShaderData(ID3D11DeviceContext * pd3dDeviceContext
 
 	TPrimalVertexBufferType* ptLineMatrixBufferDataPointer = nullptr;
 	//TQuadPixelBufferType* ptLinePixelBufferDataPointer = nullptr;
-
 
 	unsigned int bufferNumber;
 
@@ -2073,214 +2059,449 @@ enum
 	Projectile,
 	AnimatedMesh,
 	Line,
-
+	DoorPiece1_FRAME = 20,
+	DoorPiece1_UP,
+	DoorPiece1_DOWN,
+	DoorPiece1_LEFT,
+	DoorPiece1_RIGHT,
+	DoorPiece2_FRAME = 30,
+	DoorPiece2_UP,
+	DoorPiece2_DOWN,
+	DoorPiece2_LEFT,
+	DoorPiece2_RIGHT,
+	DoorPiece3_FRAME = 40,
+	DoorPiece3_UP,
+	DoorPiece3_DOWN,
+	DoorPiece3_LEFT,
+	DoorPiece3_RIGHT,
+	DoorPiece4_FRAME = 50,
+	DoorPiece4_UP,
+	DoorPiece4_DOWN,
+	DoorPiece4_LEFT,
+	DoorPiece4_RIGHT,
+	DoorPiece5_FRAME = 60,
+	DoorPiece5_UP,
+	DoorPiece5_DOWN,
+	DoorPiece5_LEFT,
+	DoorPiece5_RIGHT,
+	DoorPiece6_FRAME = 70,
+	DoorPiece6_UP,
+	DoorPiece6_DOWN,
+	DoorPiece6_LEFT,
+	DoorPiece6_RIGHT,
 };
 
 void CGraphicsSystem::ExecutePipeline(ID3D11DeviceContext *pd3dDeviceContext, int m_nIndexCount, int nGraphicsMask, int nShaderID)
 {
 	switch (nShaderID)
 	{
-		case Mesh:
+	case Mesh:
+	{
+		//Set Input_Layout
+		pd3dDeviceContext->IASetInputLayout(m_pd3dMyInputLayout);
+		//Set Shader
+		pd3dDeviceContext->VSSetShader(m_pd3dMyVertexShader, NULL, 0);
+		pd3dDeviceContext->PSSetShader(m_pd3dMyPixelShader, NULL, 0);
+		////Draw
+		if (nGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_SHADERID))
 		{
-			//Set Input_Layout
-			pd3dDeviceContext->IASetInputLayout(m_pd3dMyInputLayout);
-			//Set Shader
-			pd3dDeviceContext->VSSetShader(m_pd3dMyVertexShader, NULL, 0);
-			pd3dDeviceContext->PSSetShader(m_pd3dMyPixelShader, NULL, 0);
-			////Draw
-			if (nGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_SHADERID))
-			{
-				pd3dDeviceContext->DrawIndexed(m_nIndexCount, 0, 0);
-			}
-			break;
+			pd3dDeviceContext->DrawIndexed(m_nIndexCount, 0, 0);
 		}
-		case DebugMesh:
+		break;
+	}
+	case DebugMesh:
+	{
+		//Set Input_Layout
+		pd3dDeviceContext->IASetInputLayout(m_pd3dPrimalInputLayout);
+		//Set Shader
+		pd3dDeviceContext->VSSetShader(m_pd3dPrimalVertexShader, NULL, 0);
+		pd3dDeviceContext->PSSetShader(m_pd3dPrimalPixelShader, NULL, 0);
+		//Draw
+		if (nGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_DEBUGMESH | COMPONENT_SHADERID))
 		{
-			//Set Input_Layout
-			pd3dDeviceContext->IASetInputLayout(m_pd3dPrimalInputLayout);
-			//Set Shader
-			pd3dDeviceContext->VSSetShader(m_pd3dPrimalVertexShader, NULL, 0);
-			pd3dDeviceContext->PSSetShader(m_pd3dPrimalPixelShader, NULL, 0);
-			//Draw
-			if (nGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_DEBUGMESH | COMPONENT_SHADERID))
-			{
-				pd3dDeviceContext->Draw(m_nIndexCount, 0);
-			}
-			break;
+			pd3dDeviceContext->Draw(m_nIndexCount, 0);
 		}
-		case SimpleMesh:
+		break;
+	}
+	case SimpleMesh:
+	{
+		pd3dDeviceContext->IASetInputLayout(m_pd3dPrimalInputLayout);
+		//Set Shader
+		pd3dDeviceContext->VSSetShader(m_pd3dPrimalVertexShader, NULL, 0);
+		pd3dDeviceContext->GSSetShader(nullptr, NULL, 0);
+		pd3dDeviceContext->PSSetShader(m_pd3dPrimalPixelShader, NULL, 0);
+		//Draw
+		if (nGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_SIMPLEMESH | COMPONENT_SHADERID))
 		{
-			pd3dDeviceContext->IASetInputLayout(m_pd3dPrimalInputLayout);
-			//Set Shader
-			pd3dDeviceContext->VSSetShader(m_pd3dPrimalVertexShader, NULL, 0);
-			pd3dDeviceContext->GSSetShader(nullptr, NULL, 0);
-			pd3dDeviceContext->PSSetShader(m_pd3dPrimalPixelShader, NULL, 0);
-			//Draw
-			if (nGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_SIMPLEMESH | COMPONENT_SHADERID))
-			{
-				pd3dDeviceContext->DrawIndexed(m_nIndexCount, 0, 0);
-			}
-			break;
+			pd3dDeviceContext->DrawIndexed(m_nIndexCount, 0, 0);
 		}
-		case PhongMesh:
+		break;
+	}
+	case PhongMesh:
+	{
+		//Set Input_Layout
+		pd3dDeviceContext->IASetInputLayout(m_pd3dMyInputLayout);
+		//Set Shader
+		pd3dDeviceContext->VSSetShader(m_pd3dMyVertexShader, NULL, 0);
+		pd3dDeviceContext->GSSetShader(nullptr, NULL, 0);
+		pd3dDeviceContext->PSSetShader(m_pd3dMyPixelShader, NULL, 0);
+		////Draw
+		if (nGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_SHADERID))
 		{
-			//Set Input_Layout
-			pd3dDeviceContext->IASetInputLayout(m_pd3dMyInputLayout);
-			//Set Shader
-			pd3dDeviceContext->VSSetShader(m_pd3dMyVertexShader, NULL, 0);
-			pd3dDeviceContext->GSSetShader(nullptr, NULL, 0);
-			pd3dDeviceContext->PSSetShader(m_pd3dMyPixelShader, NULL, 0);
-			////Draw
-			if (nGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_SHADERID))
-			{
-				pd3dDeviceContext->DrawIndexed(m_nIndexCount, 0, 0);
-			}
-			break;
+			pd3dDeviceContext->DrawIndexed(m_nIndexCount, 0, 0);
 		}
-		case LambertMesh:
+		break;
+	}
+	case LambertMesh:
+	{
+		//Set Input_Layout
+		pd3dDeviceContext->IASetInputLayout(m_pd3dMyInputLayout);
+		//Set Shader
+		pd3dDeviceContext->VSSetShader(m_pd3dMyVertexShader, NULL, 0);
+		pd3dDeviceContext->GSSetShader(nullptr, NULL, 0);
+		pd3dDeviceContext->PSSetShader(m_pd3dMyPixelShader, NULL, 0);
+		////Draw
+		if (nGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_SHADERID))
 		{
-			//Set Input_Layout
-			pd3dDeviceContext->IASetInputLayout(m_pd3dMyInputLayout);
-			//Set Shader
-			pd3dDeviceContext->VSSetShader(m_pd3dMyVertexShader, NULL, 0);
-			pd3dDeviceContext->GSSetShader(nullptr, NULL, 0);
-			pd3dDeviceContext->PSSetShader(m_pd3dMyPixelShader, NULL, 0);
-			////Draw
-			if (nGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_SHADERID))
-			{
-				pd3dDeviceContext->DrawIndexed(m_nIndexCount, 0, 0);
-			}
-			else if (nGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_SIMPLEMESH | COMPONENT_SHADERID))
-			{
-				pd3dDeviceContext->DrawIndexed(m_nIndexCount, 0, 0);
-			}
-			break;
+			pd3dDeviceContext->DrawIndexed(m_nIndexCount, 0, 0);
 		}
-		case PBRMesh:
+		else if (nGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_SIMPLEMESH | COMPONENT_SHADERID))
 		{
-			//Set Input_Layout
-			pd3dDeviceContext->IASetInputLayout(m_pd3dMyInputLayout);
-			//Set Shader
-			pd3dDeviceContext->VSSetShader(m_pd3dMyVertexShader, NULL, 0);
-			pd3dDeviceContext->PSSetShader(m_pd3dMyPixelShader, NULL, 0);
-			////Draw
-			if (nGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_SHADERID))
-			{
-				pd3dDeviceContext->DrawIndexed(m_nIndexCount, 0, 0);
-			}
-			break;
-		}	
-		case UIMesh:
-		{
-			//Set Input_Layout
-			pd3dDeviceContext->IASetInputLayout(m_pd3dUIInputLayout);
-			//Set Shader
-			pd3dDeviceContext->VSSetShader(m_pd3dUIVertexShader, NULL, 0);
-			pd3dDeviceContext->PSSetShader(m_pd3dUIPixelShader, NULL, 0);
-			////Draw
-			if (nGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_SHADERID))
-			{
-				pd3dDeviceContext->DrawIndexed(m_nIndexCount, 0, 0);
-			}
-			else if (nGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_SHADERID))
-				pd3dDeviceContext->DrawIndexed(m_nIndexCount, 0, 0);
-			break;
+			pd3dDeviceContext->DrawIndexed(m_nIndexCount, 0, 0);
 		}
-		case Quad:
+		break;
+	}
+	case PBRMesh:
+	{
+		//Set Input_Layout
+		pd3dDeviceContext->IASetInputLayout(m_pd3dMyInputLayout);
+		//Set Shader
+		pd3dDeviceContext->VSSetShader(m_pd3dMyVertexShader, NULL, 0);
+		pd3dDeviceContext->PSSetShader(m_pd3dMyPixelShader, NULL, 0);
+		////Draw
+		if (nGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_SHADERID))
 		{
-			//Set Input_Layout
-			pd3dDeviceContext->IASetInputLayout(m_pd3dQuadInputLayout);
-			//Set Shader
-			pd3dDeviceContext->VSSetShader(m_pd3dQuadVertexShader, NULL, 0);
-			pd3dDeviceContext->GSSetShader(m_pd3dQuadGeometryShader, NULL, 0);
-			pd3dDeviceContext->PSSetShader(m_pd3dQuadPixelShader, NULL, 0);
-			//Draw
-			if (nGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_DEBUGMESH | COMPONENT_SHADERID))
-			{
-				pd3dDeviceContext->Draw(m_nIndexCount, 0);
-			}
-			pd3dDeviceContext->GSSetShader(nullptr, NULL, 0);
-			break;
+			pd3dDeviceContext->DrawIndexed(m_nIndexCount, 0, 0);
 		}
-		case Skybox:
+		break;
+	}
+	case UIMesh:
+	{
+		//Set Input_Layout
+		pd3dDeviceContext->IASetInputLayout(m_pd3dUIInputLayout);
+		//Set Shader
+		pd3dDeviceContext->VSSetShader(m_pd3dUIVertexShader, NULL, 0);
+		pd3dDeviceContext->PSSetShader(m_pd3dUIPixelShader, NULL, 0);
+		////Draw
+		if (nGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_SHADERID))
 		{
-			pd3dDeviceContext->RSSetState(m_pd3dNoCullRasterizerState);
-			pd3dDeviceContext->PSSetSamplers(0, 1, &m_pd3dSamplerState);
-			//Set Input_Layout
-			pd3dDeviceContext->IASetInputLayout(m_pd3dSkyboxInputLayout);
-			//Set Shader
-			pd3dDeviceContext->VSSetShader(m_pd3dSkyboxVertexShader, NULL, 0);
-			pd3dDeviceContext->PSSetShader(m_pd3dSkyboxPixelShader, NULL, 0);
+			pd3dDeviceContext->DrawIndexed(m_nIndexCount, 0, 0);
+		}
+		else if (nGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_SHADERID))
+			pd3dDeviceContext->DrawIndexed(m_nIndexCount, 0, 0);
+		break;
+	}
+	case Quad:
+	{
+		//Set Input_Layout
+		pd3dDeviceContext->IASetInputLayout(m_pd3dQuadInputLayout);
+		//Set Shader
+		pd3dDeviceContext->VSSetShader(m_pd3dQuadVertexShader, NULL, 0);
+		pd3dDeviceContext->GSSetShader(m_pd3dQuadGeometryShader, NULL, 0);
+		pd3dDeviceContext->PSSetShader(m_pd3dQuadPixelShader, NULL, 0);
+		//Draw
+		if (nGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_DEBUGMESH | COMPONENT_SHADERID))
+		{
+			pd3dDeviceContext->Draw(m_nIndexCount, 0);
+		}
+		pd3dDeviceContext->GSSetShader(nullptr, NULL, 0);
+		break;
+	}
+	case Skybox:
+	{
+		pd3dDeviceContext->RSSetState(m_pd3dNoCullRasterizerState);
+		pd3dDeviceContext->PSSetSamplers(0, 1, &m_pd3dSamplerState);
+		//Set Input_Layout
+		pd3dDeviceContext->IASetInputLayout(m_pd3dSkyboxInputLayout);
+		//Set Shader
+		pd3dDeviceContext->VSSetShader(m_pd3dSkyboxVertexShader, NULL, 0);
+		pd3dDeviceContext->PSSetShader(m_pd3dSkyboxPixelShader, NULL, 0);
 
-			//Draw
-			if (nGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_SKYBOX | COMPONENT_TEXTURE | COMPONENT_SHADERID))
-			{
-				pd3dDeviceContext->DrawIndexed(m_nIndexCount, 0, 0);
-			}
-			//pd3dDeviceContext->RSSetState(m_pd3dCullRasterizerState);
-			//pd3dDeviceContext->PSSetSamplers(0, 1, NULL);
+		//Draw
+		if (nGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_SKYBOX | COMPONENT_TEXTURE | COMPONENT_SHADERID))
+		{
+			pd3dDeviceContext->DrawIndexed(m_nIndexCount, 0, 0);
+		}
+		//pd3dDeviceContext->RSSetState(m_pd3dCullRasterizerState);
+		//pd3dDeviceContext->PSSetSamplers(0, 1, NULL);
 
-			break;
-		}
-		case Glass:
+		break;
+	}
+	case Glass:
+	{
+		//Set Input_Layout
+		pd3dDeviceContext->IASetInputLayout(m_pd3dMyInputLayout);
+		//Set Shader
+		pd3dDeviceContext->VSSetShader(m_pd3dMyVertexShader, NULL, 0);
+		pd3dDeviceContext->PSSetShader(m_pd3dMyPixelShader, NULL, 0);
+		////Draw
+		if (nGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_SHADERID))
 		{
-			//Set Input_Layout
-			pd3dDeviceContext->IASetInputLayout(m_pd3dMyInputLayout);
-			//Set Shader
-			pd3dDeviceContext->VSSetShader(m_pd3dMyVertexShader, NULL, 0);
-			pd3dDeviceContext->PSSetShader(m_pd3dMyPixelShader, NULL, 0);
-			////Draw
-			if (nGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_SHADERID))
-			{
-				pd3dDeviceContext->DrawIndexed(m_nIndexCount, 0, 0);
-			}
-			break;
+			pd3dDeviceContext->DrawIndexed(m_nIndexCount, 0, 0);
 		}
-		case Projectile:
+		break;
+	}
+	case Projectile:
+	{
+		//Set Input_Layout
+		pd3dDeviceContext->IASetInputLayout(m_pd3dMyInputLayout);
+		//Set Shader
+		pd3dDeviceContext->VSSetShader(m_pd3dMyVertexShader, NULL, 0);
+		pd3dDeviceContext->PSSetShader(m_pd3dMyPixelShader, NULL, 0);
+		////Draw
+		if (nGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_SHADERID))
 		{
-			//Set Input_Layout
-			pd3dDeviceContext->IASetInputLayout(m_pd3dMyInputLayout);
-			//Set Shader
-			pd3dDeviceContext->VSSetShader(m_pd3dMyVertexShader, NULL, 0);
-			pd3dDeviceContext->PSSetShader(m_pd3dMyPixelShader, NULL, 0);
-			////Draw
-			if (nGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_SHADERID))
-			{
-				pd3dDeviceContext->DrawIndexed(m_nIndexCount, 0, 0);
-			}
-			break;
+			pd3dDeviceContext->DrawIndexed(m_nIndexCount, 0, 0);
 		}
-		case AnimatedMesh:
+		break;
+	}
+	case AnimatedMesh:
+	{
+		//Set Input_Layout
+		pd3dDeviceContext->IASetInputLayout(m_pd3dAnimatedInputLayout);
+		//Set Shader
+		pd3dDeviceContext->VSSetShader(m_pd3dAnimatedVertexShader, NULL, 0);
+		pd3dDeviceContext->PSSetShader(m_pd3dAnimatedPixelShader, NULL, 0);
+		////Draw
+		if (nGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_ANIMATION | COMPONENT_SHADERID))
 		{
-			//Set Input_Layout
-			pd3dDeviceContext->IASetInputLayout(m_pd3dAnimatedInputLayout);
-			//Set Shader
-			pd3dDeviceContext->VSSetShader(m_pd3dAnimatedVertexShader, NULL, 0);
-			pd3dDeviceContext->PSSetShader(m_pd3dAnimatedPixelShader, NULL, 0);
-			////Draw
-			if (nGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_ANIMATION | COMPONENT_SHADERID))
-			{
-				pd3dDeviceContext->DrawIndexed(m_nIndexCount, 0, 0);
-			}
-			break;
+			pd3dDeviceContext->DrawIndexed(m_nIndexCount, 0, 0);
 		}
-		case Line:
+		break;
+	}
+
+	case Line:
+	{
+		//Set Input_Layout
+		pd3dDeviceContext->IASetInputLayout(m_pd3dLineInputLayout);
+		//Set Shader
+		pd3dDeviceContext->VSSetShader(m_pd3dPrimalVertexShader, NULL, 0);
+		pd3dDeviceContext->PSSetShader(m_pd3dLinePixelShader, NULL, 0);
+		//Draw
+		if (nGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_DEBUGMESH | COMPONENT_SHADERID))
 		{
-			//Set Input_Layout
-			pd3dDeviceContext->IASetInputLayout(m_pd3dLineInputLayout);
-			//Set Shader
-			pd3dDeviceContext->VSSetShader(m_pd3dPrimalVertexShader, NULL, 0);
-			pd3dDeviceContext->PSSetShader(m_pd3dLinePixelShader, NULL, 0);
-			//Draw
-			if (nGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_DEBUGMESH | COMPONENT_SHADERID))
-			{
-				pd3dDeviceContext->Draw(m_nIndexCount, 0);
-			}
-			////Don't want every object to go through geometry shader
-			//pd3dDeviceContext->GSSetShader(nullptr, NULL, 0);
-			break;
+			pd3dDeviceContext->Draw(m_nIndexCount, 0);
 		}
-		default:
-			break;
+		////Don't want every object to go through geometry shader
+		//pd3dDeviceContext->GSSetShader(nullptr, NULL, 0);
+		break;
+	}
+	
+	//All Doors are PBR so they all do this then break.
+//	{
+//		#pragma region Draw
+//		//Set Input_Layout
+//		pd3dDeviceContext->IASetInputLayout(m_pd3dMyInputLayout);
+//		//Set Shader
+//		pd3dDeviceContext->VSSetShader(m_pd3dMyVertexShader, NULL, 0);
+//		pd3dDeviceContext->PSSetShader(m_pd3dMyPixelShader, NULL, 0);
+//		////Draw
+//		if (nGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_SHADERID))
+//		{
+//			pd3dDeviceContext->DrawIndexed(m_nIndexCount, 0, 0);
+//		}
+//
+//#pragma endregion
+//	}
+	case DoorPiece1_FRAME:
+	{
+		//Set Input_Layout
+		pd3dDeviceContext->IASetInputLayout(m_pd3dMyInputLayout);
+		//Set Shader
+		pd3dDeviceContext->VSSetShader(m_pd3dMyVertexShader, NULL, 0);
+		pd3dDeviceContext->PSSetShader(m_pd3dMyPixelShader, NULL, 0);
+		////Draw
+		if (nGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_SHADERID))
+		{
+			pd3dDeviceContext->DrawIndexed(m_nIndexCount, 0, 0);
+		}
+		
+	}
+	case DoorPiece1_UP:
+	{
+		//Set Input_Layout
+		pd3dDeviceContext->IASetInputLayout(m_pd3dMyInputLayout);
+		//Set Shader
+		pd3dDeviceContext->VSSetShader(m_pd3dMyVertexShader, NULL, 0);
+		pd3dDeviceContext->PSSetShader(m_pd3dMyPixelShader, NULL, 0);
+		////Draw
+		if (nGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_SHADERID))
+		{
+			pd3dDeviceContext->DrawIndexed(m_nIndexCount, 0, 0);
+		}
+	}
+	case DoorPiece1_DOWN:
+	{
+		//Set Input_Layout
+		pd3dDeviceContext->IASetInputLayout(m_pd3dMyInputLayout);
+		//Set Shader
+		pd3dDeviceContext->VSSetShader(m_pd3dMyVertexShader, NULL, 0);
+		pd3dDeviceContext->PSSetShader(m_pd3dMyPixelShader, NULL, 0);
+		////Draw
+		if (nGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_SHADERID))
+		{
+			pd3dDeviceContext->DrawIndexed(m_nIndexCount, 0, 0);
+		}
+	}
+	case DoorPiece1_LEFT:
+	{
+		//Set Input_Layout
+		pd3dDeviceContext->IASetInputLayout(m_pd3dMyInputLayout);
+		//Set Shader
+		pd3dDeviceContext->VSSetShader(m_pd3dMyVertexShader, NULL, 0);
+		pd3dDeviceContext->PSSetShader(m_pd3dMyPixelShader, NULL, 0);
+		////Draw
+		if (nGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_SHADERID))
+		{
+			pd3dDeviceContext->DrawIndexed(m_nIndexCount, 0, 0);
+		}
+	}
+	case DoorPiece1_RIGHT:
+	{
+		//Set Input_Layout
+		pd3dDeviceContext->IASetInputLayout(m_pd3dMyInputLayout);
+		//Set Shader
+		pd3dDeviceContext->VSSetShader(m_pd3dMyVertexShader, NULL, 0);
+		pd3dDeviceContext->PSSetShader(m_pd3dMyPixelShader, NULL, 0);
+		////Draw
+		if (nGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_SHADERID))
+		{
+			pd3dDeviceContext->DrawIndexed(m_nIndexCount, 0, 0);
+		}
+	}
+	case DoorPiece2_FRAME:
+	{
+		
+	}
+	case DoorPiece2_UP:
+	{
+		
+	}
+	case DoorPiece2_DOWN:
+	{
+		
+	}
+	case DoorPiece2_LEFT:
+	{
+		
+	}
+	case DoorPiece2_RIGHT:
+	{
+		
+	}
+	case DoorPiece3_FRAME:
+	{
+		
+	}
+	case DoorPiece3_UP:
+	{
+		
+	}
+	case DoorPiece3_DOWN:
+	{
+		
+	}
+	case DoorPiece3_LEFT:
+	{
+		
+	}
+	case DoorPiece3_RIGHT:
+	{
+		
+	}
+	case DoorPiece4_FRAME:
+	{
+		
+	}
+	case DoorPiece4_UP:
+	{
+		
+	}
+	case DoorPiece4_DOWN:
+	{
+		
+	}
+	case DoorPiece4_LEFT:
+	{
+		
+	}
+	case DoorPiece4_RIGHT:
+	{
+		
+	}
+	case DoorPiece5_FRAME:
+	{
+		
+	}
+	case DoorPiece5_UP:
+	{
+		
+	}
+	case DoorPiece5_DOWN:
+	{
+		
+	}
+	case DoorPiece5_LEFT:
+	{
+		
+	}
+	case DoorPiece5_RIGHT:
+	{
+		
+	}
+	case DoorPiece6_FRAME:
+	{
+		
+	}
+	case DoorPiece6_UP:
+	{
+		
+	}
+	case DoorPiece6_DOWN:
+	{
+		
+	}
+	case DoorPiece6_LEFT:
+	{
+		//Set Input_Layout
+		pd3dDeviceContext->IASetInputLayout(m_pd3dMyInputLayout);
+		//Set Shader
+		pd3dDeviceContext->VSSetShader(m_pd3dMyVertexShader, NULL, 0);
+		pd3dDeviceContext->PSSetShader(m_pd3dMyPixelShader, NULL, 0);
+		////Draw
+		if (nGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_SHADERID))
+		{
+			pd3dDeviceContext->DrawIndexed(m_nIndexCount, 0, 0);
+		}
+	}
+	case DoorPiece6_RIGHT:
+	{
+#pragma region Draw
+		//Set Input_Layout
+		pd3dDeviceContext->IASetInputLayout(m_pd3dMyInputLayout);
+		//Set Shader
+		pd3dDeviceContext->VSSetShader(m_pd3dMyVertexShader, NULL, 0);
+		pd3dDeviceContext->PSSetShader(m_pd3dMyPixelShader, NULL, 0);
+		////Draw
+		if (nGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_SHADERID))
+		{
+			pd3dDeviceContext->DrawIndexed(m_nIndexCount, 0, 0);
+		}
+
+#pragma endregion
+		break;
+	}
+	default:
+		break;
 	}
 }
