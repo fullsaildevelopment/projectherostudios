@@ -5643,6 +5643,14 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 				}
 				if (tThisWorld.atShaderID[nCurrentEntity].m_nShaderID == 30) {
 					vector<int> DoorPices;
+				//	tThisWorld.atWorldMatrix[nCurrentEntity - 4].worldMatrix.r[3].m128_f32[2] += 5;
+					/*tThisWorld.atShaderID[nCurrentEntity - 1].m_nShaderID = 34;
+					tThisWorld.atShaderID[nCurrentEntity - 2].m_nShaderID = 32;
+					tThisWorld.atShaderID[nCurrentEntity - 3].m_nShaderID = 31;
+					tThisWorld.atShaderID[nCurrentEntity - 4].m_nShaderID = 33;*/
+
+
+
 					DoorPices.push_back(nCurrentEntity - 4);
 					DoorPices.push_back(nCurrentEntity - 1);
 					DoorPices.push_back(nCurrentEntity - 2);
@@ -5650,6 +5658,16 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 					//	DoorPices.push_back(nCurrentEntity + 4);
 
 					tThisWorld.atAABB[nCurrentEntity].doorPeices = DoorPices;
+					float x = 0;
+				}
+				if (tThisWorld.atShaderID[nCurrentEntity].m_nShaderID == 40) {
+					vector<int> DoorPices;
+					DoorPices.push_back(nCurrentEntity + 1);
+					DoorPices.push_back(nCurrentEntity + 2);
+					DoorPices.push_back(nCurrentEntity + 3);
+					DoorPices.push_back(nCurrentEntity + 4);
+					tThisWorld.atAABB[nCurrentEntity].doorPeices = DoorPices;
+
 					float x = 0;
 				}
 				if (nCurrentEntity == PlayerStartIndex) {
@@ -5807,12 +5825,12 @@ XMMATRIX DoorEventListener(int shaderID)
 	{
 		if (doors[1] == 1)
 		{
-			doors[1] = 2;
+			//doors[1] = 2;
 			return XMMatrixTranslation(0, 0, 0);
 		}
 		else if (doors[1] == -1)
 		{
-			doors[1] = -2;
+			//doors[1] = -2;
 			return XMMatrixTranslation(0, 0, 0);
 		}
 		break;
@@ -5821,12 +5839,12 @@ XMMATRIX DoorEventListener(int shaderID)
 	{
 		if (doors[1] == 1)
 		{
-			doors[1] = 2;
+			//doors[1] = 2;
 			return XMMatrixTranslation(0, 1, 0);
 		}
 		else if (doors[1] == -1)
 		{
-			doors[1] = -2;
+			//doors[1] = -2;
 			return XMMatrixTranslation(0, -1, 0);
 		}
 		break;
@@ -5835,12 +5853,12 @@ XMMATRIX DoorEventListener(int shaderID)
 	{
 		if (doors[1] == 1)
 		{
-			doors[1] = 2;
+			//doors[1] = 2;
 			return XMMatrixTranslation(0, -1, 0);
 		}
 		else if (doors[1] == -1)
 		{
-			doors[1] = -2;
+			//doors[1] = -2;
 			return XMMatrixTranslation(0, 1, 0);
 		}
 		break;
@@ -5849,12 +5867,12 @@ XMMATRIX DoorEventListener(int shaderID)
 	{
 		if (doors[1] == 1)
 		{
-			doors[1] = 2;
+			//doors[1] = 2;
 			return XMMatrixTranslation(-1, 0, 0);
 		}
 		else if (doors[1] == -1)
 		{
-			doors[1] = -2;
+			//doors[1] = -2;
 			return XMMatrixTranslation(1, 0, 0);
 		}
 		break;
@@ -5863,12 +5881,12 @@ XMMATRIX DoorEventListener(int shaderID)
 	{
 		if (doors[1] == 1)
 		{
-			doors[1] = 2;
+			//doors[1] = 2;
 			return XMMatrixTranslation(1, 0, 0);
 		}
 		else if (doors[1] == -1)
 		{
-			doors[1] = -2;
+			//doors[1] = -2;
 			return XMMatrixTranslation(-1, 0, 0);
 		}
 		break;
@@ -5877,12 +5895,12 @@ XMMATRIX DoorEventListener(int shaderID)
 	{
 		if (doors[2] == 1)
 		{
-			doors[2] = 2;
+			//doors[2] = 2;
 			return XMMatrixTranslation(0, 0, 0);
 		}
 		else if (doors[2] == -1)
 		{
-			doors[2] = -2;
+			//doors[2] = -2;
 			return XMMatrixTranslation(0, 0, 0);
 		}
 		break;
@@ -5891,12 +5909,12 @@ XMMATRIX DoorEventListener(int shaderID)
 	{
 		if (doors[2] == 1)
 		{
-			doors[2] = 2;
+			//doors[2] = 2;
 			return XMMatrixTranslation(0, 1, 0);
 		}
 		else if (doors[2] == -1)
 		{
-			doors[2] = -2;
+			//doors[2] = -2;
 			return XMMatrixTranslation(0, -1, 0);
 		}
 		break;
@@ -5905,12 +5923,12 @@ XMMATRIX DoorEventListener(int shaderID)
 	{
 		if (doors[2] == 1)
 		{
-			doors[2] = 2;
+			//doors[2] = 2;
 			return XMMatrixTranslation(0, -1, 0);
 		}
 		else if (doors[2] == -1)
 		{
-			doors[2] = -2;
+			//doors[2] = -2;
 			return XMMatrixTranslation(0, 1, 0);
 		}
 		break;
@@ -5919,12 +5937,12 @@ XMMATRIX DoorEventListener(int shaderID)
 	{
 		if (doors[2] == 1)
 		{
-			doors[2] = 2;
+			//doors[2] = 2;
 			return XMMatrixTranslation(-1, 0, 0);
 		}
 		else if (doors[2] == -1)
 		{
-			doors[2] = -2;
+		//	doors[2] = -2;
 			return XMMatrixTranslation(1, 0, 0);
 		}
 		break;
@@ -5933,12 +5951,12 @@ XMMATRIX DoorEventListener(int shaderID)
 	{
 		if (doors[2] == 1)
 		{
-			doors[2] = 2;
+			//doors[2] = 2;
 			return XMMatrixTranslation(1, 0, 0);
 		}
 		else if (doors[2] == -1)
 		{
-			doors[2] = -2;
+			//doors[2] = -2;
 			return XMMatrixTranslation(-1, 0, 0);
 		}
 		break;
@@ -5947,12 +5965,12 @@ XMMATRIX DoorEventListener(int shaderID)
 	{
 		if (doors[3] == 1)
 		{
-			doors[3] = 2;
+			//doors[3] = 2;
 			return XMMatrixTranslation(0, 0, 0);
 		}
 		else if (doors[3] == -1)
 		{
-			doors[3] = -2;
+			//doors[3] = -2;
 			return XMMatrixTranslation(0, 0, 0);
 		}
 		break;
@@ -5961,12 +5979,12 @@ XMMATRIX DoorEventListener(int shaderID)
 	{
 		if (doors[3] == 1)
 		{
-			doors[3] = 2;
+			//doors[3] = 2;
 			return XMMatrixTranslation(0, 1, 0);
 		}
 		else if (doors[3] == -1)
 		{
-			doors[3] = -2;
+			//doors[3] = -2;
 			return XMMatrixTranslation(0, -1, 0);
 		}
 		break;
@@ -5975,12 +5993,12 @@ XMMATRIX DoorEventListener(int shaderID)
 	{
 		if (doors[3] == 1)
 		{
-			doors[3] = 2;
+			//doors[3] = 2;
 			return XMMatrixTranslation(0, -1, 0);
 		}
 		else if (doors[3] == -1)
 		{
-			doors[3] = -2;
+		//	doors[3] = -2;
 			return XMMatrixTranslation(0, 1, 0);
 		}
 		break;
@@ -5989,12 +6007,12 @@ XMMATRIX DoorEventListener(int shaderID)
 	{
 		if (doors[3] == 1)
 		{
-			doors[3] = 2;
+			//doors[3] = 2;
 			return XMMatrixTranslation(-1, 0, 0);
 		}
 		else if (doors[3] == -1)
 		{
-			doors[3] = -2;
+			//doors[3] = -2;
 			return XMMatrixTranslation(1, 0, 0);
 		}
 		break;
@@ -6003,12 +6021,12 @@ XMMATRIX DoorEventListener(int shaderID)
 	{
 		if (doors[3] == 1)
 		{
-			doors[3] = 2;
+		//	doors[3] = 2;
 			return XMMatrixTranslation(1, 0, 0);
 		}
 		else if (doors[3] == -1)
 		{
-			doors[3] = -2;
+			//doors[3] = -2;
 			return XMMatrixTranslation(-1, 0, 0);
 		}
 		break;
@@ -6017,12 +6035,12 @@ XMMATRIX DoorEventListener(int shaderID)
 	{
 		if (doors[4] == 1)
 		{
-			doors[4] = 2;
+		//	doors[4] = 2;
 			return XMMatrixTranslation(0, 0, 0);
 		}
 		else if (doors[4] == -1)
 		{
-			doors[4] = -2;
+		//	doors[4] = -2;
 			return XMMatrixTranslation(0, 0, 0);
 		}
 		break;
@@ -6031,12 +6049,12 @@ XMMATRIX DoorEventListener(int shaderID)
 	{
 		if (doors[4] == 1)
 		{
-			doors[4] = 2;
+			//doors[4] = 2;
 			return XMMatrixTranslation(0, 1, 0);
 		}
 		else if (doors[4] == -1)
 		{
-			doors[4] = -2;
+		//	doors[4] = -2;
 			return XMMatrixTranslation(0, -1, 0);
 		}
 		break;
@@ -6045,12 +6063,12 @@ XMMATRIX DoorEventListener(int shaderID)
 	{
 		if (doors[4] == 1)
 		{
-			doors[4] = 2;
+			//doors[4] = 2;
 			return XMMatrixTranslation(0, -1, 0);
 		}
 		else if (doors[4] == -1)
 		{
-			doors[4] = -2;
+			//doors[4] = -2;
 			return XMMatrixTranslation(0, 1, 0);
 		}
 		break;
@@ -6059,12 +6077,12 @@ XMMATRIX DoorEventListener(int shaderID)
 	{
 		if (doors[4] == 1)
 		{
-			doors[4] = 2;
+			//doors[4] = 2;
 			return XMMatrixTranslation(-1, 0, 0);
 		}
 		else if (doors[4] == -1)
 		{
-			doors[4] = -2;
+			//doors[4] = -2;
 			return XMMatrixTranslation(1, 0, 0);
 		}
 		break;
@@ -6073,12 +6091,12 @@ XMMATRIX DoorEventListener(int shaderID)
 	{
 		if (doors[4] == 1)
 		{
-			doors[4] = 2;
+			//doors[4] = 2;
 			return XMMatrixTranslation(1, 0, 0);
 		}
 		else if (doors[4] == -1)
 		{
-			doors[4] = -2;
+			//doors[4] = -2;
 			return XMMatrixTranslation(-1, 0, 0);
 		}
 		break;
@@ -6087,12 +6105,12 @@ XMMATRIX DoorEventListener(int shaderID)
 	{
 		if (doors[5] == 1)
 		{
-			doors[5] = 2;
+			//doors[5] = 2;
 			return XMMatrixTranslation(0, 0, 0);
 		}
 		else if (doors[5] == -1)
 		{
-			doors[5] = -2;
+			//doors[5] = -2;
 			return XMMatrixTranslation(0, 0, 0);
 		}
 		break;
@@ -6101,12 +6119,12 @@ XMMATRIX DoorEventListener(int shaderID)
 	{
 		if (doors[5] == 1)
 		{
-			doors[5] = 2;
+			//doors[5] = 2;
 			return XMMatrixTranslation(0, 1, 0);
 		}
 		else if (doors[5] == -1)
 		{
-			doors[5] = -2;
+			//doors[5] = -2;
 			return XMMatrixTranslation(0, -1, 0);
 		}
 		break;
@@ -6115,12 +6133,12 @@ XMMATRIX DoorEventListener(int shaderID)
 	{
 		if (doors[5] == 1)
 		{
-			doors[5] = 2;
+			//doors[5] = 2;
 			return XMMatrixTranslation(0, -1, 0);
 		}
 		else if (doors[5] == -1)
 		{
-			doors[5] = -2;
+			//doors[5] = -2;
 			return XMMatrixTranslation(0, 1, 0);
 		}
 		break;
@@ -6129,12 +6147,12 @@ XMMATRIX DoorEventListener(int shaderID)
 	{
 		if (doors[5] == 1)
 		{
-			doors[5] = 2;
+		//	doors[5] = 2;
 			return XMMatrixTranslation(-1, 0, 0);
 		}
 		else if (doors[5] == -1)
 		{
-			doors[5] = -2;
+			//doors[5] = -2;
 			return XMMatrixTranslation(1, 0, 0);
 		}
 		break;
@@ -6143,12 +6161,12 @@ XMMATRIX DoorEventListener(int shaderID)
 	{
 		if (doors[5] == 1)
 		{
-			doors[5] = 2;
+		//	doors[5] = 2;
 			return XMMatrixTranslation(1, 0, 0);
 		}
 		else if (doors[5] == -1)
 		{
-			doors[5] = -2;
+		//	doors[5] = -2;
 			return XMMatrixTranslation(-1, 0, 0);
 		}
 		break;

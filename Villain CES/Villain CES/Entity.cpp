@@ -3418,8 +3418,8 @@ unsigned int createMesh(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMeshImpo
 			float x = 0;
 		}
 		ptWorld->atShaderID[nThisEntity].m_nShaderID = shaderID;
-		if(shaderID!=20)
-		ptWorld->atCollisionMask[nThisEntity].m_tnCollisionMask = (COMPONENT_COLLISIONMASK | COMPONENT_NONTRIGGER | COMPONENT_AABB | COMPONENT_STATIC);
+		if(shaderID!=20&&shaderID!=30&&shaderID!=40&&shaderID!=50)
+		ptWorld->atCollisionMask[nThisEntity].m_tnCollisionMask = (COMPONENT_COLLISIONMASK | COMPONENT_TRIGGER | COMPONENT_AABB | COMPONENT_STATIC);
 		else {
 			ptWorld->atCollisionMask[nThisEntity].m_tnCollisionMask = (COMPONENT_COLLISIONMASK | COMPONENT_TRIGGER | COMPONENT_AABB | COMPONENT_NONSTATIC);
 
