@@ -35,6 +35,7 @@ public:
 	void InitializeTitleScreen();
 	int LoadStory();
 	void InitializeStory();
+	void CleanLoadingScreen();
 	int LoadLoadingScreen(bool _continue);
 	void InitializeLoadingScreen();
 	void InitializePauseScreen();
@@ -119,6 +120,9 @@ private:
 	int masterIndex = -1;
 	int musicIndex = -1;
 	int fxIndex = -1;
+	int dialogueIndex = -1;
+
+	int claytonFrustumIndex = -1;
 
 #define SAVE_INDEX 96
 #define LOAD_INDEX 97
@@ -165,6 +169,7 @@ private:
 	float m_fMasterVolume;
 	float m_fMusicVolume;
 	float m_fSFXVolume;
+	float m_fDialogueVolume;
 	AKRESULT ErrorResult;
 
 	bool makeBeamBuffer;

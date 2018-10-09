@@ -152,6 +152,8 @@ void CAuger::Update(bool* loopgame)
 
 			if (pcGameMangerSystem->nCurrentScene == 14)
 			{
+				pcGameMangerSystem->CleanLoadingScreen();
+
 				while (ShowCursor(false) > -1)
 				{
 					continue;

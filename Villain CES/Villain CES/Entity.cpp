@@ -187,7 +187,7 @@ unsigned int createEntityReverse(TWorld * ptWorld)
 	unsigned int nCurrentEntity;
 	//Mark entity for Creation by finding the first index in the entity list that has no components. 
 	//Return the index of this marked entity
-	for (nCurrentEntity = ENTITYCOUNT; nCurrentEntity >= 0; --nCurrentEntity)
+	for (nCurrentEntity = ENTITYCOUNT - 1; nCurrentEntity >= 0; --nCurrentEntity)
 	{
 
 		if (ptWorld->atGraphicsMask[nCurrentEntity].m_tnGraphicsMask == COMPONENT_NONE)
@@ -229,6 +229,29 @@ void destroyEntity(TWorld * ptWorld, unsigned int nThisEntity)
 	ptWorld->atRigidBody[nThisEntity].velocity = zeroVector;
 	ptWorld->atRigidBody[nThisEntity].gravity = zeroVector;
 	ptWorld->atRigidBody[nThisEntity].maxVelocity = zeroVector;
+
+	//delete ptWorld->atMesh[nThisEntity].m_pd3dVertexBuffer;
+	ptWorld->atMesh[nThisEntity].m_pd3dVertexBuffer = nullptr;
+	//delete ptWorld->atMesh[nThisEntity].m_pd3dIndexBuffer;
+	ptWorld->atMesh[nThisEntity].m_pd3dIndexBuffer = nullptr;
+	//delete ptWorld->atSimpleMesh[nThisEntity].m_pd3dVertexBuffer;
+	ptWorld->atMesh[nThisEntity].m_pd3dVertexBuffer = nullptr;
+	//delete ptWorld->atSimpleMesh[nThisEntity].m_pd3dIndexBuffer;
+	ptWorld->atMesh[nThisEntity].m_pd3dIndexBuffer = nullptr;
+	//delete ptWorld->atDebugMesh[nThisEntity].m_pd3dVertexBuffer;
+	ptWorld->atMesh[nThisEntity].m_pd3dVertexBuffer = nullptr;
+
+	ptWorld->atMesh[nThisEntity].m_d3dVertexData.pSysMem = nullptr;
+	ptWorld->atMesh[nThisEntity].m_d3dIndexData.pSysMem = nullptr;
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dVertexData.pSysMem = nullptr;
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexData.pSysMem = nullptr;
+	ptWorld->atDebugMesh[nThisEntity].m_d3dVertexData.pSysMem = nullptr;
+
+	ptWorld->atMesh[nThisEntity].m_nVertexCount = 0;
+	ptWorld->atMesh[nThisEntity].m_nIndexCount = 0;
+	ptWorld->atSimpleMesh[nThisEntity].m_nVertexCount = 0;
+	ptWorld->atSimpleMesh[nThisEntity].m_nIndexCount = 0;
+	ptWorld->atDebugMesh[nThisEntity].m_nVertexCount = 0;
 
 	ptWorld->atMesh[nThisEntity].m_VertexData.clear();
 	ptWorld->atSimpleMesh[nThisEntity].m_VertexData.clear();
@@ -2186,7 +2209,7 @@ unsigned int CreateFrustumLines(TWorld * ptWorld,XMFLOAT3 fartopleft, XMFLOAT3 n
 	ptWorld->atCollisionMask[nThisEntity].m_tnCollisionMask = (COMPONENT_COLLISIONMASK);
 	ptWorld->atGraphicsMask[nThisEntity].m_tnGraphicsMask = (COMPONENT_GRAPHICSMASK | COMPONENT_DEBUGMESH | COMPONENT_SHADERID);
 	ptWorld->atAIMask[nThisEntity].m_tnAIMask = (COMPONENT_AIMASK);
-	ptWorld->atUIMask[nThisEntity].m_tnUIMask = (COMPONENT_UIMASK);
+	ptWorld->atUIMask[nThisEntity].m_tnUIMask = (COMPONENT_UIMASK | COMPONENT_NOSHOW);
 	ptWorld->atPhysicsMask[nThisEntity].m_tnPhysicsMask = (COMPONENT_PHYSICSMASK );
 	ptWorld->atAIVision[nThisEntity].indexoffrustum = nThisEntity;
 
