@@ -4561,7 +4561,7 @@ unsigned int CreateScyllian(TWorld* ptWorld, ID3D11Device* m_pd3dDevice, TMeshIm
 	}
 
 	XMVECTOR playerGravity;
-	playerGravity.m128_f32[1] = -0.0001;
+	playerGravity.m128_f32[1] = 0;
 	playerGravity.m128_f32[0] = 0;
 	playerGravity.m128_f32[2] = 0;
 	playerGravity.m128_f32[3] = 0;

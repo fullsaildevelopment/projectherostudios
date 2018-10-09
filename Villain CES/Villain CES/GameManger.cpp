@@ -7304,7 +7304,7 @@ int CGameMangerSystem::RealLevelUpdate()
 			}
 			if (tThisWorld.atAABB[nCurrentEntity].theeadmade == false 
 				&&(nCurrentEntity == PlayerStartIndex
-					|| tThisWorld.atAIMask[nCurrentEntity].m_tnAIMask > 1
+					|| tThisWorld.atActiveAI[nCurrentEntity].active== true
 					||tThisWorld.atProjectiles[nCurrentEntity].m_tnProjectileMask>1))
 			{
 				/*thread newthread(&CCollisionSystem::TestThreading, pcCollisionSystem, &tThisWorld, nCurrentEntity, pcGraphicsSystem, &tTempVertexBuffer, &m_d3dPlayerMatrix, pcPhysicsSystem);
