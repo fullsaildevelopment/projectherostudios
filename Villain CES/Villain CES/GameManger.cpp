@@ -4441,7 +4441,12 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	//GunIndexForPlayer = CreateGun(&tThisWorld, m_d3dWorldMatrix, PlayerStartIndex, -1, 1, 10.5, 3, 130);
 	tThisWorld.atClip[GunIndexForPlayer].bulletSpeed = 0.01;
 	tThisWorld.atClayton[PlayerStartIndex].health = 100;
-
+	
+	
+	//tThisWorld.atWorldMatrix[94].worldMatrix.r[3].m128_f32[2] += 10;
+	
+	
+	
 	XMMATRIX AILocation = pcGraphicsSystem->SetDefaultWorldPosition();
 	AILocation.r[3].m128_f32[2] -= 60;
 	AILocation.r[3].m128_f32[0] -= 8;
@@ -5595,10 +5600,12 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 
 
 
-
+	
 	#pragma region COLLISION INIT
 	for (int nCurrentEntity = 0; nCurrentEntity < ENTITYCOUNT; nCurrentEntity++)
 	{
+		
+		
 		if (tThisWorld.atCollisionMask[nCurrentEntity].m_tnCollisionMask > 1)
 		{
 
@@ -5609,6 +5616,8 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 				MyAbb.m_IndexLocation = nCurrentEntity;
 				tThisWorld.atAABB[nCurrentEntity] = MyAbb;
 				pcCollisionSystem->AddAABBCollider(MyAbb, nCurrentEntity);
+			
+
 				/*if (nCurrentEntity == door1Index || nCurrentEntity == door2Index || swordGuy == nCurrentEntity) {
 				pcCollisionSystem->AddAiVisioNCheck(MyAbb, nCurrentEntity);
 				}*/
@@ -5616,10 +5625,33 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 			}
 			if (tThisWorld.atMesh[nCurrentEntity].m_nVertexCount > tThisWorld.atDebugMesh[nCurrentEntity].m_nVertexCount)
 			{
+
 				TAABB MyAbb = pcCollisionSystem->createAABBS(tThisWorld.atMesh[nCurrentEntity].m_VertexData, tThisWorld.atAABB[nCurrentEntity]);
 				MyAbb.m_IndexLocation = nCurrentEntity;
 				tThisWorld.atAABB[nCurrentEntity] = MyAbb;
 				pcCollisionSystem->AddAABBCollider(MyAbb, nCurrentEntity);
+				if (tThisWorld.atShaderID[nCurrentEntity].m_nShaderID == 20) {
+					vector<int> DoorPices;
+					DoorPices.push_back(nCurrentEntity-1);
+					DoorPices.push_back(nCurrentEntity+1);
+					DoorPices.push_back(nCurrentEntity + 2);
+					DoorPices.push_back(nCurrentEntity + 3);
+				//	DoorPices.push_back(nCurrentEntity + 4);
+
+					tThisWorld.atAABB[nCurrentEntity].doorPeices = DoorPices;
+					float x = 0;
+				}
+				if (tThisWorld.atShaderID[nCurrentEntity].m_nShaderID == 30) {
+					vector<int> DoorPices;
+					DoorPices.push_back(nCurrentEntity - 4);
+					DoorPices.push_back(nCurrentEntity - 1);
+					DoorPices.push_back(nCurrentEntity - 2);
+					DoorPices.push_back(nCurrentEntity - 3);
+					//	DoorPices.push_back(nCurrentEntity + 4);
+
+					tThisWorld.atAABB[nCurrentEntity].doorPeices = DoorPices;
+					float x = 0;
+				}
 				if (nCurrentEntity == PlayerStartIndex) {
 					pcCollisionSystem->AddAiVisioNCheck(MyAbb, nCurrentEntity);
 
@@ -5632,7 +5664,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	{
 		if (tThisWorld.atCollisionMask[nCurrentEntity].m_tnCollisionMask > 1)
 		{
-			if (nCurrentEntity == 933) {
+			if (nCurrentEntity == 94) {
 				float x = 0;
 			}
 			tThisWorld.atAABB[nCurrentEntity] = pcCollisionSystem->updateAABB(tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, tThisWorld.atAABB[nCurrentEntity]);
@@ -5690,16 +5722,27 @@ XMMATRIX DoorEventListener(int shaderID)
 {
 	switch (shaderID)
 	{
-	case DoorPiece1_FRAME:
-	{
+	case 0: {
 		if (doors[0] == 1)
 		{
 			doors[0] = 2;
-			return XMMatrixTranslation(0, 0, 0);
+		
 		}
 		else if (doors[0] == -1)
 		{
 			doors[0] = -2;
+		}
+	}
+	case DoorPiece1_FRAME:
+	{
+		if (doors[0] == 1)
+		{
+			//doors[0] = 2;
+			return XMMatrixTranslation(0, 0, 0);
+		}
+		else if (doors[0] == -1)
+		{
+			//doors[0] = -2;
 			return XMMatrixTranslation(0, 0, 0);
 		}
 		break;
@@ -5708,12 +5751,12 @@ XMMATRIX DoorEventListener(int shaderID)
 	{
 		if (doors[0] == 1)
 		{
-			doors[0] = 2;
+			//doors[0] = 2;
 			return XMMatrixTranslation(0, 1, 0);
 		}
 		else if (doors[0] == -1)
 		{
-			doors[0] = -2;
+			//doors[0] = -2;
 			return XMMatrixTranslation(0, -1, 0);
 		}
 		break;
@@ -5722,12 +5765,12 @@ XMMATRIX DoorEventListener(int shaderID)
 	{
 		if (doors[0] == 1)
 		{
-			doors[0] = 2;
+			//doors[0] = 2;
 			return XMMatrixTranslation(0, -1, 0);
 		}
 		else if (doors[0] == -1)
 		{
-			doors[0] = -2;
+			//doors[0] = -2;
 			return XMMatrixTranslation(0, 1, 0);
 		}
 		break;
@@ -5736,12 +5779,12 @@ XMMATRIX DoorEventListener(int shaderID)
 	{
 		if (doors[0] == 1)
 		{
-			doors[0] = 2;
+			//doors[0] = 2;
 			return XMMatrixTranslation(-1, 0, 0);
 		}
 		else if (doors[0] == -1)
 		{
-			doors[0] = -2;
+			//doors[0] = -2;
 			return XMMatrixTranslation(1, 0, 0);
 		}
 		break;
@@ -5750,12 +5793,12 @@ XMMATRIX DoorEventListener(int shaderID)
 	{
 		if (doors[0] == 1)
 		{
-			doors[0] = 2;
+			//doors[0] = 2;
 			return XMMatrixTranslation(1, 0, 0);
 		}
 		else if (doors[0] == -1)
 		{
-			doors[0] = -2;
+			//doors[0] = -2;
 			return XMMatrixTranslation(-1, 0, 0);
 		}
 		break;
@@ -7100,6 +7143,9 @@ int CGameMangerSystem::RealLevelUpdate()
 			if (tThisWorld.atCollisionMask[nCurrentEntity].m_tnCollisionMask == (COMPONENT_COLLISIONMASK | COMPONENT_TRIGGER | COMPONENT_AABB | COMPONENT_NONSTATIC)
 				|| tThisWorld.atCollisionMask[nCurrentEntity].m_tnCollisionMask == (COMPONENT_COLLISIONMASK | COMPONENT_NONTRIGGER | COMPONENT_AABB | COMPONENT_NONSTATIC))
 			{
+				if (nCurrentEntity == 94) {
+					float x = 0;
+				}
 				tThisWorld.atAABB[nCurrentEntity] = pcCollisionSystem->updateAABB(tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, tThisWorld.atAABB[nCurrentEntity]);
 			}
 			if (nCurrentEntity == 962) 
@@ -7107,8 +7153,7 @@ int CGameMangerSystem::RealLevelUpdate()
 				float x = 0;
 			}
 			if (tThisWorld.atAABB[nCurrentEntity].theeadmade == false 
-				&&(tThisWorld.atShaderID[nCurrentEntity].m_nShaderID >= 20 
-					|| nCurrentEntity == PlayerStartIndex
+				&&(nCurrentEntity == PlayerStartIndex
 					|| tThisWorld.atAIMask[nCurrentEntity].m_tnAIMask > 1
 					||tThisWorld.atProjectiles[nCurrentEntity].m_tnProjectileMask>1))
 			{

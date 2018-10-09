@@ -3414,8 +3414,16 @@ unsigned int createMesh(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMeshImpo
 	}
 	if (shaderID >= 20)
 	{
+		if (nThisEntity == 94) {
+			float x = 0;
+		}
 		ptWorld->atShaderID[nThisEntity].m_nShaderID = shaderID;
-		ptWorld->atCollisionMask[nThisEntity].m_tnCollisionMask == (COMPONENT_COLLISIONMASK | COMPONENT_NONTRIGGER | COMPONENT_AABB | COMPONENT_NONSTATIC);
+		if(shaderID!=20)
+		ptWorld->atCollisionMask[nThisEntity].m_tnCollisionMask = (COMPONENT_COLLISIONMASK | COMPONENT_NONTRIGGER | COMPONENT_AABB | COMPONENT_STATIC);
+		else {
+			ptWorld->atCollisionMask[nThisEntity].m_tnCollisionMask = (COMPONENT_COLLISIONMASK | COMPONENT_TRIGGER | COMPONENT_AABB | COMPONENT_NONSTATIC);
+
+		}
 		/*
 		switch (shaderID)
 				{
@@ -3593,13 +3601,17 @@ unsigned int createMesh(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMeshImpo
 		pos.x = tmp.pos[0];
 		pos.y = tmp.pos[1];
 		pos.z = tmp.pos[2];
-
+		if (nThisEntity == 94) {
+			float x = 0;
+		}
 		ptWorld->atMesh[nThisEntity].m_VertexData.push_back(pos);
 
 		pMesh[i] = tmp;
 	}
 
-	
+	if (nThisEntity == 94) {
+		float x = 0;
+	}
 	ptWorld->atMesh[nThisEntity].m_nVertexCount = tMesh.nUniqueVertexCount;
 	ptWorld->atMesh[nThisEntity].m_nVertexBufferStride = sizeof(TPrimitiveMesh);
 	ptWorld->atMesh[nThisEntity].m_nVertexBufferOffset = 0;

@@ -148,12 +148,14 @@ void CCollisionSystem::TestThreading(TWorld * ptWorld, int nCurrentEntity, CGrap
 		{
 			for (int i = 0; i < otherCollisionsIndex.size(); ++i)
 			{
-				if (ptWorld->atShaderID[otherCollisionsIndex[i]].m_nShaderID >= 20
-					/*&& ptWorld->atInputMask[otherCollisionsIndex[i]].m_tnInputMask == 
-						(COMPONENT_CLAYTON | COMPONENT_INPUTMASK)*/)
+				if ((ptWorld->atShaderID[otherCollisionsIndex[i]].m_nShaderID == 20|| ptWorld->atShaderID[otherCollisionsIndex[i]].m_nShaderID == 30)
+					&& ptWorld->atInputMask[nCurrentEntity].m_tnInputMask == 
+						(COMPONENT_CLAYTON | COMPONENT_INPUTMASK))
 				{
-					doorEventChanger(ptWorld->atShaderID[otherCollisionsIndex[i]].m_nShaderID);
-					ptWorld->atWorldMatrix[otherCollisionsIndex[i]].worldMatrix = XMMatrixMultiply(doorEventListener(ptWorld->atShaderID[otherCollisionsIndex[i]].m_nShaderID), ptWorld->atWorldMatrix[otherCollisionsIndex[i]].worldMatrix);
+					for (int doorindex = 0;doorindex< ptWorld->atAABB[otherCollisionsIndex[i]].doorPeices.size(); ++doorindex) {
+						doorEventChanger(ptWorld->atShaderID[otherCollisionsIndex[i]].m_nShaderID);
+						ptWorld->atWorldMatrix[ptWorld->atAABB[otherCollisionsIndex[i]].doorPeices[doorindex]].worldMatrix = XMMatrixMultiply(doorEventListener(ptWorld->atShaderID[ptWorld->atAABB[otherCollisionsIndex[i]].doorPeices[doorindex]].m_nShaderID), ptWorld->atWorldMatrix[ptWorld->atAABB[otherCollisionsIndex[i]].doorPeices[doorindex]].worldMatrix);
+					}
 				}
 				if (ptWorld->atRigidBody[otherCollisionsIndex[i]].ground == true
 					&& ptWorld->atCollisionMask[nCurrentEntity].m_tnCollisionMask == (COMPONENT_COLLISIONMASK | COMPONENT_TRIGGER | COMPONENT_AABB | COMPONENT_NONSTATIC))
@@ -554,7 +556,7 @@ XMMATRIX CCollisionSystem::WalkingThrewObjectCheck(XMMATRIX worldPos, TAABB othe
 		) 
 	{
 		int numberofLoops = 0;
-		while (classify_aabb_to_aabb(otherCollision, UpdateCollision) && numberofLoops<2000)
+		while (classify_aabb_to_aabb(otherCollision, UpdateCollision) && numberofLoops<10000)
 		{
 			//d3d_ResultMatrix = pcGraphicsSystem->SetDefaultWorldPosition();;
 			XMMATRIX moveback;
@@ -573,7 +575,7 @@ XMMATRIX CCollisionSystem::WalkingThrewObjectCheck(XMMATRIX worldPos, TAABB othe
 		&&xLeft < zFar
 		&&xLeft < zClose) {
 		int numberofLoops = 0;
-		while (classify_aabb_to_aabb(otherCollision, UpdateCollision) && numberofLoops<2000)
+		while (classify_aabb_to_aabb(otherCollision, UpdateCollision) && numberofLoops<10000)
 		{
 			//d3d_ResultMatrix = pcGraphicsSystem->SetDefaultWorldPosition();;
 			XMMATRIX moveback;
@@ -592,7 +594,7 @@ XMMATRIX CCollisionSystem::WalkingThrewObjectCheck(XMMATRIX worldPos, TAABB othe
 		&&yTop < zClose) 
 	{
 		int numberofLoops = 0;
-		while (classify_aabb_to_aabb(otherCollision, UpdateCollision) && numberofLoops<2000)
+		while (classify_aabb_to_aabb(otherCollision, UpdateCollision) && numberofLoops<10000)
 		{
 			//d3d_ResultMatrix = pcGraphicsSystem->SetDefaultWorldPosition();;
 			XMMATRIX moveback;
@@ -612,7 +614,7 @@ XMMATRIX CCollisionSystem::WalkingThrewObjectCheck(XMMATRIX worldPos, TAABB othe
 		&&yBottom < zFar) 
 	{
 		int numberofLoops = 0;
-		while (classify_aabb_to_aabb(otherCollision, UpdateCollision) && numberofLoops<2000)
+		while (classify_aabb_to_aabb(otherCollision, UpdateCollision) && numberofLoops<10000)
 		{
 			//d3d_ResultMatrix = pcGraphicsSystem->SetDefaultWorldPosition();;
 			XMMATRIX moveback;
@@ -631,7 +633,7 @@ XMMATRIX CCollisionSystem::WalkingThrewObjectCheck(XMMATRIX worldPos, TAABB othe
 		&&zFar < yTop)
 	{
 		int numberofLoops = 0;
-		while (classify_aabb_to_aabb(otherCollision, UpdateCollision) && numberofLoops<2000)
+		while (classify_aabb_to_aabb(otherCollision, UpdateCollision) && numberofLoops<10000)
 		{
 			//d3d_ResultMatrix = pcGraphicsSystem->SetDefaultWorldPosition();;
 			XMMATRIX moveback;
@@ -649,7 +651,7 @@ XMMATRIX CCollisionSystem::WalkingThrewObjectCheck(XMMATRIX worldPos, TAABB othe
 		&&zClose < yBottom
 		&&zClose < yTop) {
 		int numberofLoops = 0;
-		while (classify_aabb_to_aabb(otherCollision, UpdateCollision)&&numberofLoops<2000)
+		while (classify_aabb_to_aabb(otherCollision, UpdateCollision)&&numberofLoops<10000)
 		{
 			//d3d_ResultMatrix = pcGraphicsSystem->SetDefaultWorldPosition();;
 			XMMATRIX moveback;
