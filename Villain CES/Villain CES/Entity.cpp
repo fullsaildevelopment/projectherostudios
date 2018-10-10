@@ -4285,7 +4285,7 @@ unsigned int createClayton(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMeshI
 	}
 
 	XMVECTOR playerGravity;
-	playerGravity.m128_f32[1] = -0.005;
+	playerGravity.m128_f32[1] = -0.001;
 	playerGravity.m128_f32[0] = 0;
 	playerGravity.m128_f32[2] = 0;
 	playerGravity.m128_f32[3] = 0;
