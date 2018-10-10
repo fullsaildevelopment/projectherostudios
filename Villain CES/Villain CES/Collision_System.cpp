@@ -154,7 +154,7 @@ void CCollisionSystem::TestThreading(TWorld * ptWorld, int nCurrentEntity, CGrap
 		{
 			for (int i = 0; i < otherCollisionsIndex.size(); ++i)
 			{
-				if ((ptWorld->atShaderID[otherCollisionsIndex[i]].m_nShaderID == 20|| ptWorld->atShaderID[otherCollisionsIndex[i]].m_nShaderID == 30|| ptWorld->atShaderID[otherCollisionsIndex[i]].m_nShaderID == 40)
+				if ((ptWorld->atShaderID[otherCollisionsIndex[i]].m_nShaderID %10==0 /*== 20|| ptWorld->atShaderID[otherCollisionsIndex[i]].m_nShaderID == 30|| ptWorld->atShaderID[otherCollisionsIndex[i]].m_nShaderID == 40*/)
 					&& ptWorld->atInputMask[nCurrentEntity].m_tnInputMask == 
 						(COMPONENT_CLAYTON | COMPONENT_INPUTMASK))
 				{

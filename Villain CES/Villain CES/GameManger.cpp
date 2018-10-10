@@ -1,5 +1,5 @@
 #include "GameManger.h"
-#define AI_ON true
+#define AI_ON false
 #define MIKES_SANDBOX_ON false
 #define SKELETON_LOAD_ON false
 #define MAIN_LEVEL_ON true
@@ -3124,7 +3124,7 @@ void CGameMangerSystem::FirstSkeltonAiTestLoad()
 
 	XMMATRIX nodeLocation = CoverLocation;
 	nodeLocation.r[3].m128_f32[0] += 3;
-	nodeLocation.r[3].m128_f32[1] -= 1;
+ nodeLocation.r[3].m128_f32[1] -= 0;
 	nodeLocation.r[3].m128_f32[2] += 2;
 
 	//pcAiSystem->AddNodeToPathFinding(nodeLocation, nodePosition, 1);
@@ -4538,7 +4538,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	int cover1 = CreateCover(&tThisWorld, CoverLocation, coverPosition);
 	XMMATRIX nodeLocation = CoverLocation;
 	nodeLocation.r[3].m128_f32[0] += 0;
-	nodeLocation.r[3].m128_f32[1] -= 1;
+ nodeLocation.r[3].m128_f32[1] -= 0;
 	nodeLocation.r[3].m128_f32[2] += -2;
 
 	//pcAiSystem->AddNodeToPathFinding(nodeLocation, nodePosition, 1);
@@ -4663,7 +4663,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	 cover1 = CreateCover(&tThisWorld, CoverLocation, coverPosition);
 	 nodeLocation = CoverLocation;
 	nodeLocation.r[3].m128_f32[0] += 0;
-	nodeLocation.r[3].m128_f32[1] -= 1;
+ nodeLocation.r[3].m128_f32[1] -= 0;
 	nodeLocation.r[3].m128_f32[2] += -2;
 
 	//pcAiSystem->AddNodeToPathFinding(nodeLocation, nodePosition, 1);
@@ -4790,7 +4790,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	cover1 = CreateCover(&tThisWorld, CoverLocation, coverPosition);
 	nodeLocation = CoverLocation;
 	nodeLocation.r[3].m128_f32[0] += 0;
-	nodeLocation.r[3].m128_f32[1] -= 1;
+ nodeLocation.r[3].m128_f32[1] -= 0;
 	nodeLocation.r[3].m128_f32[2] += -2;
 
 	//pcAiSystem->AddNodeToPathFinding(nodeLocation, nodePosition, 1);
@@ -4906,7 +4906,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	cover1 = CreateCover(&tThisWorld, CoverLocation, coverPosition);
 	nodeLocation = CoverLocation;
 	nodeLocation.r[3].m128_f32[0] += 0;
-	nodeLocation.r[3].m128_f32[1] -= 1;
+ nodeLocation.r[3].m128_f32[1] -= 0;
 	nodeLocation.r[3].m128_f32[2] += -2;
 
 	//pcAiSystem->AddNodeToPathFinding(nodeLocation, nodePosition, 1);
@@ -4970,7 +4970,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	cover1 = CreateCover(&tThisWorld, CoverLocation, coverPosition);
 	nodeLocation = CoverLocation;
 	nodeLocation.r[3].m128_f32[0] += 0;
-	nodeLocation.r[3].m128_f32[1] -= 1;
+ nodeLocation.r[3].m128_f32[1] -= 0;
 	nodeLocation.r[3].m128_f32[2] += -2;
 
 	//pcAiSystem->AddNodeToPathFinding(nodeLocation, nodePosition, 1);
@@ -5085,7 +5085,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	cover1 = CreateCover(&tThisWorld, CoverLocation, coverPosition);
 	nodeLocation = CoverLocation;
 	nodeLocation.r[3].m128_f32[0] += 0;
-	nodeLocation.r[3].m128_f32[1] -= 1;
+ nodeLocation.r[3].m128_f32[1] -= 0;
 	nodeLocation.r[3].m128_f32[2] += -2;
 
 	//pcAiSystem->AddNodeToPathFinding(nodeLocation, nodePosition, 1);
@@ -5143,7 +5143,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	cover1 = CreateCover(&tThisWorld, CoverLocation, coverPosition);
 	nodeLocation = CoverLocation;
 	nodeLocation.r[3].m128_f32[0] += 0;
-	nodeLocation.r[3].m128_f32[1] -= 1;
+ nodeLocation.r[3].m128_f32[1] -= 0;
 	nodeLocation.r[3].m128_f32[2] += -2;
 
 	//pcAiSystem->AddNodeToPathFinding(nodeLocation, nodePosition, 1);
@@ -5258,7 +5258,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	cover1 = CreateCover(&tThisWorld, CoverLocation, coverPosition);
 	nodeLocation = CoverLocation;
 	nodeLocation.r[3].m128_f32[0] += 3.5f;
-	nodeLocation.r[3].m128_f32[1] -= 1;
+ nodeLocation.r[3].m128_f32[1] -= 0;
 	nodeLocation.r[3].m128_f32[2] += 5;
 
 	//pcAiSystem->AddNodeToPathFinding(nodeLocation, nodePosition, 1);
@@ -5293,7 +5293,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	cover1 = CreateCover(&tThisWorld, CoverLocation, coverPosition);
 	nodeLocation = CoverLocation;
 	nodeLocation.r[3].m128_f32[0] += 3.5f;
-	nodeLocation.r[3].m128_f32[1] -= 1;
+ nodeLocation.r[3].m128_f32[1] -= 0;
 	nodeLocation.r[3].m128_f32[2] += 5;
 
 	//pcAiSystem->AddNodeToPathFinding(nodeLocation, nodePosition, 1);
@@ -5353,7 +5353,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	cover1 = CreateCover(&tThisWorld, CoverLocation, coverPosition);
 	nodeLocation = CoverLocation;
 	nodeLocation.r[3].m128_f32[0] += 6;
-	nodeLocation.r[3].m128_f32[1] -= 1;
+ nodeLocation.r[3].m128_f32[1] -= 0;
 	nodeLocation.r[3].m128_f32[2] += 5;
 
 	//pcAiSystem->AddNodeToPathFinding(nodeLocation, nodePosition, 1);
@@ -5497,7 +5497,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	cover1 = CreateCover(&tThisWorld, CoverLocation, coverPosition);
 	nodeLocation = CoverLocation;
 	nodeLocation.r[3].m128_f32[0] += 0;
-	nodeLocation.r[3].m128_f32[1] -= 1;
+ nodeLocation.r[3].m128_f32[1] -= 0;
 //	nodeLocation.r[3].m128_f32[2] += -2;
 
 	//pcAiSystem->AddNodeToPathFinding(nodeLocation, nodePosition, 1);
@@ -5640,7 +5640,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	cover1 = CreateCover(&tThisWorld, CoverLocation, coverPosition);
 	nodeLocation = CoverLocation;
 	nodeLocation.r[3].m128_f32[0] += 0;
-	nodeLocation.r[3].m128_f32[1] -= 1;
+ nodeLocation.r[3].m128_f32[1] -= 0;
 	//	nodeLocation.r[3].m128_f32[2] += -2;
 
 	//pcAiSystem->AddNodeToPathFinding(nodeLocation, nodePosition, 1);
@@ -5681,7 +5681,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 
 
 	AILocation = pcGraphicsSystem->SetDefaultWorldPosition();
-	AILocation.r[3].m128_f32[2] -= 121;
+	AILocation.r[3].m128_f32[2] -= 135;
 	AILocation.r[3].m128_f32[0] -= 9;
 	AILocation.r[3].m128_f32[1] -= 1;
 	AiLookPosition = AILocation;
@@ -5782,7 +5782,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	cover1 = CreateCover(&tThisWorld, CoverLocation, coverPosition);
 	nodeLocation = CoverLocation;
 	nodeLocation.r[3].m128_f32[0] += 0;
-	nodeLocation.r[3].m128_f32[1] -= 1;
+ nodeLocation.r[3].m128_f32[1] -= 0;
 		nodeLocation.r[3].m128_f32[2] += -20;
 
 	//pcAiSystem->AddNodeToPathFinding(nodeLocation, nodePosition, 1);
@@ -5819,13 +5819,18 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 
 	tThisWorld.atCoverTrigger[CoverTriggerIndex].coverAiCanGoTo.push_back(tThisWorld.atCover[cover1]);
 	tThisWorld.atPathPlanining[spacePirate].Goal = nodeindexBackRight;
-
-
+	XMMATRIX rectangle = m_d3dPlayerMatrix;
+	rectangle.r[3].m128_f32[2] -= 53.5;
+	rectangle.r[3].m128_f32[1] -= 0.5f;
+	rectangle.r[3].m128_f32[0] -= 4;
+	int cylinder=CreateCylinder(&tThisWorld, rectangle);
 	#pragma region COLLISION INIT
 	for (int nCurrentEntity = 0; nCurrentEntity < ENTITYCOUNT; nCurrentEntity++)
 	{
 		
-		
+		if (cylinder == nCurrentEntity) {
+			float x = 0;
+		}
 		if (tThisWorld.atCollisionMask[nCurrentEntity].m_tnCollisionMask > 1&&nCurrentEntity!=216&&nCurrentEntity!=215)
 		{
 
@@ -7244,6 +7249,12 @@ int CGameMangerSystem::RealLevelUpdate()
 					{
 						if (tThisWorld.atPathPlanining[nCurrentEntity].DelayMovement <= 0)
 						{
+							XMVECTOR playerGravity;
+							playerGravity.m128_f32[1] = -0.01f;
+							playerGravity.m128_f32[0] = 0;
+							playerGravity.m128_f32[2] = 0;
+							playerGravity.m128_f32[3] = 0;
+							tThisWorld.atRigidBody[nCurrentEntity].gravity = playerGravity;
 							pcAiSystem->PathPlaningMovement(&tThisWorld.atPathPlanining[nCurrentEntity], &tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix);
 						}
 						else
@@ -7380,8 +7391,12 @@ int CGameMangerSystem::RealLevelUpdate()
 							pcAudioSystem->SetRTPCVolume(AK::GAME_PARAMETERS::SFX_VOLUME, m_fSFXVolume);
 						#endif
 							bulletType = 1;
-
-							int newbullet = CreateBullet(&tThisWorld, gunMatrix, tThisWorld.atClip[nCurrentEntity].currentMaterial, bulletType);
+							int newbullet;
+							for (int meshIndex = 0; meshIndex < bulletMesh.meshCount; ++meshIndex)
+							{
+								newbullet = CreateBulletMesh(&tThisWorld, gunMatrix, bulletToCopyFrom);
+								//newbullet = CreateBulletMesh(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, gunMatrix, tThisWorld.atClip[nCurrentEntity].currentMaterial, bulletType, bulletMesh.vtMeshes[meshIndex], bulletMesh.vtMaterials[meshIndex]);
+							}
 							tThisWorld.atClip[newbullet].gunIndex = nCurrentEntity;
 							tThisWorld.atSimpleMesh[newbullet].m_nColor = tThisWorld.atClip[nCurrentEntity].colorofBullets;
 							tThisWorld.atClip[newbullet].indexInclip = pcProjectileSystem->CreateBulletProjectile(newbullet, &tThisWorld.atClip[nCurrentEntity]);
@@ -7436,7 +7451,7 @@ int CGameMangerSystem::RealLevelUpdate()
 			tThisWorld.atProjectiles[nCurrentEntity].m_tnProjectileMask == (COMPONENT_PROJECTILESMASK | COMPONENT_METAL | COMPONENT_ENEMY))
 		{
 			//ADD FORCE TO EVERY BULLET
-			pcPhysicsSystem->AddBulletForce(&tThisWorld.atRigidBody[nCurrentEntity], fpsTimer.GetDelta() * 0.6);
+			pcPhysicsSystem->AddBulletForce(&tThisWorld.atRigidBody[nCurrentEntity], fpsTimer.GetDelta() * 1.5f);
 
 			tThisWorld.atClip[nCurrentEntity].lifeTime += fpsTimer.GetDelta();
 
@@ -7492,7 +7507,7 @@ int CGameMangerSystem::RealLevelUpdate()
 			}
 			if (tThisWorld.atAABB[nCurrentEntity].theeadmade == false 
 				&&(nCurrentEntity == PlayerStartIndex
-					|| tThisWorld.atActiveAI[nCurrentEntity].active== true
+					||( tThisWorld.atAIMask[nCurrentEntity].m_tnAIMask>1&&tThisWorld.atActiveAI[nCurrentEntity].active==true)
 					||tThisWorld.atProjectiles[nCurrentEntity].m_tnProjectileMask>1))
 			{
 				/*thread newthread(&CCollisionSystem::TestThreading, pcCollisionSystem, &tThisWorld, nCurrentEntity, pcGraphicsSystem, &tTempVertexBuffer, &m_d3dPlayerMatrix, pcPhysicsSystem);
@@ -7592,8 +7607,8 @@ int CGameMangerSystem::RealLevelUpdate()
 
 		if (tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_SIMPLEMESH | COMPONENT_SHADERID))
 		{
-		//	if (tThisWorld.atUIMask[nCurrentEntity].m_tnUIMask != (COMPONENT_UIMASK | COMPONENT_NOSHOW))
-		//	{
+			if (tThisWorld.atUIMask[nCurrentEntity].m_tnUIMask != (COMPONENT_UIMASK | COMPONENT_NOSHOW))
+			{
 				if (pcCollisionSystem->aabb_to_frustum(tThisWorld.atAABB[nCurrentEntity], tThisWorld.atClaytonVision.eyes0))
 				{
 					if (tCameraMode.bWalkMode == true)
@@ -7610,7 +7625,7 @@ int CGameMangerSystem::RealLevelUpdate()
 					}
 					pcGraphicsSystem->ExecutePipeline(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atSimpleMesh[nCurrentEntity].m_nIndexCount, tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask, tThisWorld.atShaderID[nCurrentEntity].m_nShaderID);
 				}
-		//	}
+			}
 		}
 
 		if (tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_SHADERID))
