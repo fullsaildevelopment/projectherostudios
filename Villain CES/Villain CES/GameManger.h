@@ -146,8 +146,8 @@ private:
 	XMMATRIX m_d3dProjectionMatrix;
 	XMMATRIX m_d3dPlayerMatrix;
 
-	std::vector<TPrimalVert> atBeamVerts;
-
+	std::vector<TPrimalVert*> atBeamVerts;
+	
 	XTime PausedTimer;
 	float pausedTimer;
 	TCamera *walkCamera;
@@ -157,7 +157,7 @@ private:
 
 	System_Times * tAugerTimers;
 	System_Times *tTimerInfo;
-
+	bool initGameObjects;
 	float m_fMasterVolume;
 	float m_fMusicVolume;
 	float m_fSFXVolume;
@@ -166,7 +166,7 @@ private:
 	bool makeBeamBuffer;
 	int ExtractionBeamIndex;
 	float m_RealTimeFov;
-	bool bMoving;
+	bool bNoMoving;
 	float Health = 1.0f;
 	XTime frameLock;
 };

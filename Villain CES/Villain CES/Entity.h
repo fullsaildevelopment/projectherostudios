@@ -122,7 +122,7 @@ unsigned int CreateMaterialBullet(TWorld * ptWorld, ID3D11Device * m_pd3dDevice,
 unsigned int CreateBullet(TWorld * ptWorld, XMMATRIX bulletSpawnLocation, int MaterialID, int bulletType);
 unsigned int CreateBulletMesh(TWorld* ptWorld, ID3D11Device * m_pd3dDevice, XMMATRIX BulletSpawnLocation, int MaterialID, int bulletType, TMeshImport tMesh, TMaterialImport tMaterial);
 unsigned int CreateBulletMesh(TWorld* ptWorld, XMMATRIX BulletSpawnLocation, BulletInfo& bulletToCopyFrom);
-unsigned int CreateExtractionBeam(TWorld * ptWorld, XMMATRIX BulletSpawnLocation, int parentWorldMatrixIndex,std::vector<TPrimalVert> atBeamVerts);
+unsigned int CreateExtractionBeam(TWorld * ptWorld, XMMATRIX BulletSpawnLocation, int parentWorldMatrixIndex,std::vector<TPrimalVert*> atBeamVerts);
 unsigned int AimingLine(TWorld * ptWorld, XMMATRIX BulletSpawnLocation, int parentWorldMatrixIndex, float xoffset, float yoffset, float zoffset);
 unsigned int createDebugCamera(TWorld * ptWorld, XMMATRIX debugCamera);
 unsigned int CreateGround(TWorld* ptWorld, XMMATRIX SpawnPosition);

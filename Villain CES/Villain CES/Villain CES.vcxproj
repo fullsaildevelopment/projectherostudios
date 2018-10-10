@@ -107,12 +107,12 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(WWISESDK)\include;$(WWISESDK)\samples;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(WWISESDK)\include;C:\Program Files (x86)\Audiokinetic\Wwise 2018.1.0.6714\SDK\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>d3d11.lib;AkSoundEngine.lib;AkMemoryMgr.lib;AkStreamMgr.lib;AkMusicEngine.lib;CommunicationCentral.lib;dinput8.lib;Winmm.lib;dsound.lib;dxguid.lib;ws2_32.lib;xinput.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>d3d11.lib;AkAudioInputSource.lib;AkAutobahn.lib;AkCompressorFX.lib;AkDelayFX.lib;AkExpanderFX.lib;AkFlangerFx.lib;AkGainFX.lib;AkGuitarDistortionFX.lib;AkHarmonizerFX.lib;AkMatrixReverbFX.lib;AkMeterFX.lib;AkMotionSink.lib;AkMotionGeneratorSource.lib;AkMotionSourceSource.lib;AkOpusDecoder.lib;AkPeakLimiterFX.lib;AkParametricEQFX.lib;AkPitchShifterFX.lib;AkRecorderFX.lib;AkRoomVerbFX.lib;AkSilenceSource.lib;AkSineSource.lib;AkSoundSeedImpactFX.lib;AkSoundSeedWindSource.lib;AkSoundSeedWooshSource.lib;AkSpatialAudio.lib;AkStereoDelayFX.lib;AkSynthOneSource.lib;AkTimeStretchFX.lib;AkToneSource.lib;AkTremoloFX.lib;AkVorbisDecoder.lib;AuroHeadphoneFX.lib;iZHybridReverbFX.lib;iZTrashBoxModelerFX.lib;iZTrashDelayFX.lib;iZTrashDistortionFX.lib;iZTrashDynamicsFX.lib;iZTrashFiltersFX.lib;iZTrashMultibandDistortionFX.lib;McDSPFutzBoxFX.lib;McDSPLimiterFX.lib;SFLib.lib;AkSoundEngine.lib;AkMemoryMgr.lib;AkStreamMgr.lib;AkMusicEngine.lib;CommunicationCentral.lib;dinput8.lib;Winmm.lib;dsound.lib;dxguid.lib;ws2_32.lib;xinput.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalOptions>/VERBOSE:LIB %(AdditionalOptions)</AdditionalOptions>
     </Link>
@@ -165,7 +165,11 @@
     <ClInclude Include="AudioSystem.h" />
     <ClInclude Include="Auger.h" />
     <ClInclude Include="CAnimationSystem.h" />
+    <ClInclude Include="Common\AkDefaultLowLevelIODispatcher.h" />
+    <ClInclude Include="Common\AkFileLocationBase.h" />
+    <ClInclude Include="Common\AkFilePackage.h" />
     <ClInclude Include="Common\AkFilePackageLowLevelIO.h" />
+    <ClInclude Include="Common\AkFilePackageLUT.h" />
     <ClInclude Include="Common\AkMultipleFileLocation.h" />
     <ClInclude Include="GameManger.h" />
     <ClInclude Include="InputSystem.h" />
@@ -192,8 +196,10 @@
     <ClInclude Include="UI_System.h" />
     <ClInclude Include="Villain CES.h" />
     <ClInclude Include="Win32\AkDefaultIOHookBlocking.h" />
+    <ClInclude Include="Win32\AkDefaultIOHookDeferred.h" />
     <ClInclude Include="Win32\AkFileHelpers.h" />
     <ClInclude Include="Win32\AkFilePackageLowLevelIOBlocking.h" />
+    <ClInclude Include="Win32\AkFilePackageLowLevelIODeferred.h" />
     <ClInclude Include="WwiseSounds\Wwise_IDs.h" />
     <ClInclude Include="XTime.h" />
   </ItemGroup>
@@ -227,6 +233,7 @@
     <ClCompile Include="UI_System.cpp" />
     <ClCompile Include="Villain CES.cpp" />
     <ClCompile Include="Win32\AkDefaultIOHookBlocking.cpp" />
+    <ClCompile Include="Win32\AkDefaultIOHookDeferred.cpp" />
     <ClCompile Include="XTime.cpp" />
   </ItemGroup>
   <ItemGroup>

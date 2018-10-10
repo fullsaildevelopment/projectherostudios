@@ -7,6 +7,8 @@ CGraphicsSystem::CGraphicsSystem()
 	m_fCameraXPosition = 0;
 	m_fCameraYPosition = 0.5;
 	m_fCameraZPosition = -10;
+	StartBeam = new TPrimalVert;
+	endBeam = new TPrimalVert;
 }
 
 CGraphicsSystem::~CGraphicsSystem()
@@ -277,6 +279,10 @@ void CGraphicsSystem::CleanD3D(TWorld *ptPlanet)
 	for (int nEntityIndex = 0; nEntityIndex < ENTITYCOUNT; nEntityIndex++)
 	{
 		//Check planet's mask at [i] to see what needs to be released
+		if (ptPlanet->atGraphicsMask[nEntityIndex].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_DEBUGMESH | COMPONENT_SHADERID | COMPONENT_BEAM))
+		{
+			ptPlanet->atDebugMesh[nEntityIndex].m_pd3dVertexBuffer->Release();
+		}
 		if (ptPlanet->atGraphicsMask[nEntityIndex].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_DEBUGMESH | COMPONENT_SHADERID))
 		{
 			ptPlanet->atDebugMesh[nEntityIndex].m_pd3dVertexBuffer->Release();
@@ -340,10 +346,23 @@ void CGraphicsSystem::CleanD3D(TWorld *ptPlanet)
 	m_pd3dSkyboxPixelShader->Release();
 	m_pd3dSkyboxInputLayout->Release();
 	m_pd3dSkyboxVertexBuffer->Release();
-
-	m_pd3dLineVTConstantBuffer->Release();
-	m_pd3dLineInputLayout->Release();
+	if (m_pd3dLineVertexShader != NULL)
+	{
+	m_pd3dLineVertexShader->Release();
+	}
+	if (m_pd3dLinePixelShader != NULL)
+	{
 	m_pd3dLinePixelShader->Release();
+	}
+	if (m_pd3dLineVTConstantBuffer != NULL)
+	{
+	m_pd3dLineVTConstantBuffer->Release();
+	}
+	if (m_pd3dLineInputLayout != NULL)
+	{
+	m_pd3dLineInputLayout->Release();
+	}
+	
 	if (debug != nullptr)
 	{
 		HRESULT result = debug->ReportLiveDeviceObjects(D3D11_RLDO_SUMMARY | D3D11_RLDO_DETAIL);
@@ -358,6 +377,10 @@ void CGraphicsSystem::CleanD3DLevel(TWorld * ptPlanet)
 		/*if (ptPlanet->atUIMask[nEntityIndex].m_tnUIMask == (COMPONENT_LABEL | COMPONENT_TEXT | COMPONENT_UIMASK | COMPONENT_BUTTON))
 			continue;*/
 		//Check planet's mask at [i] to see what needs to be released
+		if (ptPlanet->atGraphicsMask[nEntityIndex].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_DEBUGMESH | COMPONENT_SHADERID | COMPONENT_BEAM))
+		{
+			ptPlanet->atDebugMesh[nEntityIndex].m_pd3dVertexBuffer->Release();
+		}
 		if (ptPlanet->atGraphicsMask[nEntityIndex].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_DEBUGMESH | COMPONENT_SHADERID))
 		{
 			ptPlanet->atDebugMesh[nEntityIndex].m_pd3dVertexBuffer->Release();
@@ -387,6 +410,10 @@ void CGraphicsSystem::CleanD3DLevel(TWorld * ptPlanet)
 
 void CGraphicsSystem::CleanD3DObject(TWorld * ptPlanet, int nEntityIndex)
 {
+	if (ptPlanet->atGraphicsMask[nEntityIndex].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_DEBUGMESH | COMPONENT_SHADERID | COMPONENT_BEAM))
+	{
+		ptPlanet->atDebugMesh[nEntityIndex].m_pd3dVertexBuffer->Release();
+	}
 	if (ptPlanet->atGraphicsMask[nEntityIndex].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_DEBUGMESH | COMPONENT_SHADERID))
 	{
 		ptPlanet->atDebugMesh[nEntityIndex].m_pd3dVertexBuffer->Release();
@@ -567,20 +594,30 @@ void CGraphicsSystem::CreateShaders(ID3D11Device * device)
 #pragma endregion
 #if 1
 #pragma region Line Buffers/Shaders
+	D3D11_BUFFER_DESC d3dLineMatrixBufferDesc;
+
+	d3dLineMatrixBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+	d3dLineMatrixBufferDesc.ByteWidth = sizeof(TLineVertexBufferType);
+	d3dLineMatrixBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	d3dLineMatrixBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	d3dLineMatrixBufferDesc.MiscFlags = 0;
+	d3dLineMatrixBufferDesc.StructureByteStride = 0;
+
+	device->CreateVertexShader(LineVertexShader, sizeof(LineVertexShader), NULL, &m_pd3dLineVertexShader);
 	device->CreatePixelShader(LinePixelShader, sizeof(LinePixelShader), NULL, &m_pd3dLinePixelShader);
 	D3D11_INPUT_ELEMENT_DESC m_d3dLineLayoutDesc[] =
 	{
 		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		{ "POSITION", 1, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 	};
 	//Get a count of the elements in the layout.
 	int nLineElements = sizeof(m_d3dLineLayoutDesc) / sizeof(m_d3dLineLayoutDesc[0]);
 
-	device->CreateInputLayout(m_d3dLineLayoutDesc, nLineElements, PrimalVertexShader, sizeof(PrimalVertexShader) ,&m_pd3dLineInputLayout);
+	device->CreateInputLayout(m_d3dLineLayoutDesc, nLineElements, LineVertexShader, sizeof(LineVertexShader), &m_pd3dLineInputLayout);
 
-	device->CreateBuffer(&d3dPrimalMatrixBufferDesc, NULL, &m_pd3dLineVTConstantBuffer);
+	device->CreateBuffer(&d3dLineMatrixBufferDesc, NULL, &m_pd3dLineVTConstantBuffer);
+
 	//D3D11_BUFFER_DESC d3dLineMatrixBufferDesc;
-	//
 	////device->CreateGeometryShader(LineGeometryShader, sizeof(LineGeometryShader), NULL, &m_pd3dLineGeometryShader);
 	//// Use Quad Layout Desc, Quad vertex shader, and Quad Pixel Shader
 	//d3dLineMatrixBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
@@ -928,6 +965,11 @@ void CGraphicsSystem::CreateBuffers(TWorld *ptPlanet)//init first frame
 	for (int nCurrentEntity = 0; nCurrentEntity < ENTITYCOUNT; nCurrentEntity++)
 	{
 		//Check Mask to see what buffers need to get created
+		if (ptPlanet->atGraphicsMask[nCurrentEntity].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_DEBUGMESH | COMPONENT_SHADERID | COMPONENT_BEAM))
+		{
+			if (ptPlanet->atDebugMesh[nCurrentEntity].m_nVertexCount)
+				m_pd3dDevice->CreateBuffer(&ptPlanet->atDebugMesh[nCurrentEntity].m_d3dVertexBufferDesc, NULL, &ptPlanet->atDebugMesh[nCurrentEntity].m_pd3dVertexBuffer);
+		}
 		if (ptPlanet->atGraphicsMask[nCurrentEntity].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_DEBUGMESH | COMPONENT_SHADERID))
 		{
 			if (ptPlanet->atDebugMesh[nCurrentEntity].m_nVertexCount)
@@ -1043,26 +1085,7 @@ void CGraphicsSystem::UpdateLineVTBuffer(TWorld * ptWorld, TDebugMesh debugMesh,
 	}
 }
 
-void CGraphicsSystem::StoreBeamPoints(XMFLOAT3 startPoint, XMFLOAT4 endPoint, std::vector<TPrimalVert>& BeamPoints)
-{
-	TPrimalVert pointAdded, pointAdded2;
-	
-	pointAdded.m_d3dfColor = XMFLOAT4(0, 1, 1, 1);
-			  
-	pointAdded.m_d3dfPosition.x = startPoint.x;
-	pointAdded.m_d3dfPosition.y = startPoint.y;
-	pointAdded.m_d3dfPosition.z = startPoint.z;
 
-	BeamPoints.push_back(pointAdded);
-
-	pointAdded2.m_d3dfColor = XMFLOAT4(0, 1, 1, 1);
-
-	pointAdded2.m_d3dfPosition.x = endPoint.x;
-	pointAdded2.m_d3dfPosition.y = endPoint.y;
-	pointAdded2.m_d3dfPosition.z = endPoint.z + 20.0f;
-	
-	BeamPoints.push_back(pointAdded2);
-}
 
 XMMATRIX CGraphicsSystem::SetDefaultCameraMatrix()
 {
@@ -1704,7 +1727,7 @@ void CGraphicsSystem::InitPrimalShaderData3(ID3D11DeviceContext * pd3dDeviceCont
 	// Copy the matrices into the constant buffer.
 	ptPrimalVertexBufferDataPointer->m_d3dWorldMatrix = tempWorld;
 	ptPrimalVertexBufferDataPointer->m_d3dViewMatrix = d3dView;
-	ptPrimalVertexBufferDataPointer->m_d3dProjectionMatrix = tempProj;;
+	ptPrimalVertexBufferDataPointer->m_d3dProjectionMatrix = tempProj;
 
 	// Unlock the constant buffer.
 	pd3dDeviceContext->Unmap(m_pd3dPrimalVertexBuffer, 0);
@@ -1992,12 +2015,12 @@ void CGraphicsSystem::InitQuadShaderData(ID3D11DeviceContext * pd3dDeviceContext
 	pd3dDeviceContext->IASetVertexBuffers(0, 1, &tDebugMesh.m_pd3dVertexBuffer, &tDebugMesh.m_nVertexBufferStride, &tDebugMesh.m_nVertexBufferOffset);
 }
 
-void CGraphicsSystem::InitLineShaderData(ID3D11DeviceContext * pd3dDeviceContext, XMMATRIX d3dWorldMatrix, XMMATRIX d3dViewMatrix, XMMATRIX d3dProjectionMatrix,  TDebugMesh tDebugMesh, XMMATRIX CameraMatrix, std::vector<TPrimalVert> m_verts)
+void CGraphicsSystem::InitLineShaderData(ID3D11DeviceContext * pd3dDeviceContext, XMMATRIX d3dWorldMatrix, XMMATRIX d3dViewMatrix, XMMATRIX d3dProjectionMatrix,  TDebugMesh tDebugMesh, XMMATRIX CameraMatrix, std::vector<TPrimalVert*> m_verts)
 {
 	D3D11_MAPPED_SUBRESOURCE d3dLineMappedResource;
 	D3D11_MAPPED_SUBRESOURCE d3dLineMatrixMappedResource;
 
-	TPrimalVertexBufferType* ptLineMatrixBufferDataPointer = nullptr;
+	TLineVertexBufferType* ptLineMatrixBufferDataPointer = nullptr;
 	//TQuadPixelBufferType* ptLinePixelBufferDataPointer = nullptr;
 
 
@@ -2014,7 +2037,7 @@ void CGraphicsSystem::InitLineShaderData(ID3D11DeviceContext * pd3dDeviceContext
 	pd3dDeviceContext->Map(tDebugMesh.m_pd3dVertexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &d3dLineMappedResource);
 
 	// Copy the matrices into the constant buffer.
-	memcpy(d3dLineMappedResource.pData, &m_verts, sizeof(TPrimalVert) * m_verts.size());
+	memcpy(d3dLineMappedResource.pData, m_verts.data(), sizeof(TPrimalVert) * m_verts.size());
 	// Unlock the constant buffer.
 	pd3dDeviceContext->Unmap(tDebugMesh.m_pd3dVertexBuffer, 0);
 
@@ -2024,9 +2047,10 @@ void CGraphicsSystem::InitLineShaderData(ID3D11DeviceContext * pd3dDeviceContext
 
 	pd3dDeviceContext->Map(m_pd3dLineVTConstantBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &d3dLineMatrixMappedResource);
 
-	ptLineMatrixBufferDataPointer = (TPrimalVertexBufferType*)d3dLineMatrixMappedResource.pData;
-	ptLineMatrixBufferDataPointer->m_d3dViewMatrix = d3dView;
+	ptLineMatrixBufferDataPointer = (TLineVertexBufferType*)d3dLineMatrixMappedResource.pData;
+
 	ptLineMatrixBufferDataPointer->m_d3dWorldMatrix = d3dWorldMatrix;
+	ptLineMatrixBufferDataPointer->m_d3dViewMatrix = d3dView;
 	ptLineMatrixBufferDataPointer->m_d3dProjectionMatrix = d3dProjectionMatrix;
 
 	pd3dDeviceContext->Unmap(m_pd3dLineVTConstantBuffer, 0);
@@ -2269,10 +2293,10 @@ void CGraphicsSystem::ExecutePipeline(ID3D11DeviceContext *pd3dDeviceContext, in
 			//Set Input_Layout
 			pd3dDeviceContext->IASetInputLayout(m_pd3dLineInputLayout);
 			//Set Shader
-			pd3dDeviceContext->VSSetShader(m_pd3dPrimalVertexShader, NULL, 0);
+			pd3dDeviceContext->VSSetShader(m_pd3dLineVertexShader, NULL, 0);
 			pd3dDeviceContext->PSSetShader(m_pd3dLinePixelShader, NULL, 0);
 			//Draw
-			if (nGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_DEBUGMESH | COMPONENT_SHADERID))
+			if (nGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_DEBUGMESH | COMPONENT_SHADERID | COMPONENT_BEAM))
 			{
 				pd3dDeviceContext->Draw(m_nIndexCount, 0);
 			}

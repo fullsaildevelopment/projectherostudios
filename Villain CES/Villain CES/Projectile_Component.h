@@ -23,6 +23,7 @@ struct TProjectileMask
 struct Clips
 {
 	bool maderay;
+	bool empty = false;
 	bool GunMode = false;
 	float fShootingCoolDown;
 	list<bool> nBulletsAvailables;
