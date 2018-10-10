@@ -33,6 +33,7 @@ struct TAABB
 	int		 m_MaterialType = MATERIAL_METAL;
 	int		 m_SceneChange = -30;
 	bool theeadmade = false;
+	vector<int> doorPeices;
 //	thread myThread;
 };
 

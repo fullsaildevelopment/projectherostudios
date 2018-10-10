@@ -135,19 +135,35 @@ bool CCollisionSystem::AiVisionCheck(frustum_t eyeSight,vector<int>* index)
 	return seesomething;
 }
 
-void CCollisionSystem::TestThreading(TWorld * ptWorld, int nCurrentEntity, CGraphicsSystem* pcGraphicsSystem, CGraphicsSystem::TPrimalVertexBufferType* tTempVertexBuffer,XMMATRIX* m_d3dPlayerMatrix, CPhysicsSystem* pcPhysicsSystem, CAISystem* pcAiSystem,int PlayerStartIndex, float& playerDamage, float& pirateDamage, float& prevHealth, float& fallingHealth, float& lerpTime, float in_MasterVolume, float in_SFXVolume, float in_MusicVolume, CAudioSystem* pcAudioSystem)
+void CCollisionSystem::TestThreading(TWorld * ptWorld, int nCurrentEntity, CGraphicsSystem* pcGraphicsSystem, CGraphicsSystem::TPrimalVertexBufferType* tTempVertexBuffer, XMMATRIX& tMyVertexBufferWorldMatrix, XMMATRIX* m_d3dPlayerMatrix, CPhysicsSystem* pcPhysicsSystem, CAISystem* pcAiSystem,int PlayerStartIndex, float& playerDamage, float& pirateDamage, float& prevHealth, float& fallingHealth, float& lerpTime, float in_MasterVolume, float in_SFXVolume, float in_MusicVolume, CAudioSystem* pcAudioSystem, XMMATRIX(*doorEventListener)(int), void(*doorEventChanger)(int))
 {
 	ptWorld->atAABB[nCurrentEntity].theeadmade = true;
+	if (ptWorld->atCollisionMask[nCurrentEntity].m_tnCollisionMask == (COMPONENT_COLLISIONMASK | COMPONENT_TRIGGER | COMPONENT_AABB | COMPONENT_NONSTATIC)
+		|| ptWorld->atCollisionMask[nCurrentEntity].m_tnCollisionMask == (COMPONENT_COLLISIONMASK | COMPONENT_NONTRIGGER | COMPONENT_AABB | COMPONENT_NONSTATIC))
+	{
+		ptWorld->atAABB[nCurrentEntity] = updateAABB(ptWorld->atWorldMatrix[nCurrentEntity].worldMatrix, ptWorld->atAABB[nCurrentEntity]);
+	}
+	
 	//ptWorld->atClayton[nCurrentEntity].health = 10;
 //	float x = 0;
+	//Change Door values
 	if ((ptWorld->atCollisionMask[nCurrentEntity].m_tnCollisionMask == (COMPONENT_COLLISIONMASK | COMPONENT_AABB | COMPONENT_NONSTATIC | COMPONENT_TRIGGER) || ptWorld->atCollisionMask[nCurrentEntity].m_tnCollisionMask == (COMPONENT_COLLISIONMASK | COMPONENT_NONTRIGGER | COMPONENT_AABB | COMPONENT_NONSTATIC)))
 	{
 		vector<int> otherCollisionsIndex;
 		if (AABBtoAABBCollisionCheck(ptWorld->atAABB[nCurrentEntity], &otherCollisionsIndex) == true)
 		{
-
 			for (int i = 0; i < otherCollisionsIndex.size(); ++i)
 			{
+				if ((ptWorld->atShaderID[otherCollisionsIndex[i]].m_nShaderID == 20|| ptWorld->atShaderID[otherCollisionsIndex[i]].m_nShaderID == 30|| ptWorld->atShaderID[otherCollisionsIndex[i]].m_nShaderID == 40)
+					&& ptWorld->atInputMask[nCurrentEntity].m_tnInputMask == 
+						(COMPONENT_CLAYTON | COMPONENT_INPUTMASK))
+				{
+					for (int doorindex = 0;doorindex< ptWorld->atAABB[otherCollisionsIndex[i]].doorPeices.size(); ++doorindex) {
+						doorEventChanger(ptWorld->atShaderID[otherCollisionsIndex[i]].m_nShaderID);
+						ptWorld->atWorldMatrix[ptWorld->atAABB[otherCollisionsIndex[i]].doorPeices[doorindex]].worldMatrix = XMMatrixMultiply(doorEventListener(ptWorld->atShaderID[ptWorld->atAABB[otherCollisionsIndex[i]].doorPeices[doorindex]].m_nShaderID), ptWorld->atWorldMatrix[ptWorld->atAABB[otherCollisionsIndex[i]].doorPeices[doorindex]].worldMatrix);
+						ptWorld->atAABB[ptWorld->atAABB[otherCollisionsIndex[i]].doorPeices[doorindex]] = updateAABB(ptWorld->atWorldMatrix[ptWorld->atAABB[otherCollisionsIndex[i]].doorPeices[doorindex]].worldMatrix, ptWorld->atAABB[ptWorld->atAABB[otherCollisionsIndex[i]].doorPeices[doorindex]]);
+					}
+				}
 				if (ptWorld->atRigidBody[otherCollisionsIndex[i]].ground == true
 					&& ptWorld->atCollisionMask[nCurrentEntity].m_tnCollisionMask == (COMPONENT_COLLISIONMASK | COMPONENT_TRIGGER | COMPONENT_AABB | COMPONENT_NONSTATIC))
 				{
@@ -164,7 +180,7 @@ void CCollisionSystem::TestThreading(TWorld * ptWorld, int nCurrentEntity, CGrap
 					}
 				}
 				if (ptWorld->atRigidBody[otherCollisionsIndex[i]].ground == true
-					&& ptWorld->atCollisionMask[nCurrentEntity].m_tnCollisionMask != (COMPONENT_COLLISIONMASK | COMPONENT_TRIGGER | COMPONENT_AABB | COMPONENT_NONSTATIC))
+					&& ptWorld->atCollisionMask[nCurrentEntity].m_tnCollisionMask != (COMPONENT_COLLISIONMASK | COMPONENT_TRIGGER | COMPONENT_AABB | COMPONENT_NONSTATIC)&& ptWorld->atCollisionMask[otherCollisionsIndex[i]].m_tnCollisionMask != (COMPONENT_COLLISIONMASK | COMPONENT_TRIGGER | COMPONENT_AABB | COMPONENT_NONSTATIC))
 				{
 
 
@@ -302,7 +318,8 @@ void CCollisionSystem::TestThreading(TWorld * ptWorld, int nCurrentEntity, CGrap
 
 
 					}
-					if (ptWorld->atInputMask[nCurrentEntity].m_tnInputMask == (COMPONENT_CLAYTON | COMPONENT_INPUTMASK)) {
+					if (ptWorld->atInputMask[nCurrentEntity].m_tnInputMask == (COMPONENT_CLAYTON | COMPONENT_INPUTMASK)) 
+					{
 						if (ptWorld->atProjectiles[otherCollisionsIndex[i]].m_tnProjectileMask == (COMPONENT_PROJECTILESMASK | COMPONENT_METAL | COMPONENT_ENEMY))
 						{
 
@@ -331,17 +348,17 @@ void CCollisionSystem::TestThreading(TWorld * ptWorld, int nCurrentEntity, CGrap
 				//	Wasn't being hit at all so it's been commented.
 					if (ptWorld->atProjectiles[nCurrentEntity].m_tnProjectileMask == (COMPONENT_PROJECTILESMASK | COMPONENT_METAL))
 					{
-					if (ptWorld->atClip[nCurrentEntity].gunIndex != -1)
-					{
+						if (ptWorld->atClip[nCurrentEntity].gunIndex != -1)
+						{
 
 
-					RemoveAABBCollider(nCurrentEntity);
+						RemoveAABBCollider(nCurrentEntity);
 
 
-					pcGraphicsSystem->CleanD3DObject(ptWorld, ptWorld->atAIMask[nCurrentEntity].GunIndex);
-					pcGraphicsSystem->CleanD3DObject(ptWorld, nCurrentEntity);
+						pcGraphicsSystem->CleanD3DObject(ptWorld, ptWorld->atAIMask[nCurrentEntity].GunIndex);
+						pcGraphicsSystem->CleanD3DObject(ptWorld, nCurrentEntity);
 
-					}
+						}
 					}
 
 				}
@@ -350,7 +367,7 @@ void CCollisionSystem::TestThreading(TWorld * ptWorld, int nCurrentEntity, CGrap
 				}
 				if (ptWorld->atInputMask[nCurrentEntity].m_tnInputMask == (COMPONENT_CLAYTON | COMPONENT_INPUTMASK) && ptWorld->atAIMask[otherCollisionsIndex[i]].m_tnAIMask == (COMPONENT_AIMASK | COMPONENT_COVERTRIGGER))
 				{
-				pcAiSystem->MoveAiToCoverLocation(ptWorld->atCoverTrigger[otherCollisionsIndex[i]], ptWorld, PlayerStartIndex);
+					pcAiSystem->MoveAiToCoverLocation(ptWorld->atCoverTrigger[otherCollisionsIndex[i]], ptWorld, PlayerStartIndex);
 
 				}
 			}
@@ -546,7 +563,7 @@ XMMATRIX CCollisionSystem::WalkingThrewObjectCheck(XMMATRIX worldPos, TAABB othe
 		) 
 	{
 		int numberofLoops = 0;
-		while (classify_aabb_to_aabb(otherCollision, UpdateCollision) && numberofLoops<2000)
+		while (classify_aabb_to_aabb(otherCollision, UpdateCollision) && numberofLoops<10000)
 		{
 			//d3d_ResultMatrix = pcGraphicsSystem->SetDefaultWorldPosition();;
 			XMMATRIX moveback;
@@ -565,7 +582,7 @@ XMMATRIX CCollisionSystem::WalkingThrewObjectCheck(XMMATRIX worldPos, TAABB othe
 		&&xLeft < zFar
 		&&xLeft < zClose) {
 		int numberofLoops = 0;
-		while (classify_aabb_to_aabb(otherCollision, UpdateCollision) && numberofLoops<2000)
+		while (classify_aabb_to_aabb(otherCollision, UpdateCollision) && numberofLoops<10000)
 		{
 			//d3d_ResultMatrix = pcGraphicsSystem->SetDefaultWorldPosition();;
 			XMMATRIX moveback;
@@ -584,7 +601,7 @@ XMMATRIX CCollisionSystem::WalkingThrewObjectCheck(XMMATRIX worldPos, TAABB othe
 		&&yTop < zClose) 
 	{
 		int numberofLoops = 0;
-		while (classify_aabb_to_aabb(otherCollision, UpdateCollision) && numberofLoops<2000)
+		while (classify_aabb_to_aabb(otherCollision, UpdateCollision) && numberofLoops<10000)
 		{
 			//d3d_ResultMatrix = pcGraphicsSystem->SetDefaultWorldPosition();;
 			XMMATRIX moveback;
@@ -604,7 +621,7 @@ XMMATRIX CCollisionSystem::WalkingThrewObjectCheck(XMMATRIX worldPos, TAABB othe
 		&&yBottom < zFar) 
 	{
 		int numberofLoops = 0;
-		while (classify_aabb_to_aabb(otherCollision, UpdateCollision) && numberofLoops<2000)
+		while (classify_aabb_to_aabb(otherCollision, UpdateCollision) && numberofLoops<10000)
 		{
 			//d3d_ResultMatrix = pcGraphicsSystem->SetDefaultWorldPosition();;
 			XMMATRIX moveback;
@@ -623,7 +640,7 @@ XMMATRIX CCollisionSystem::WalkingThrewObjectCheck(XMMATRIX worldPos, TAABB othe
 		&&zFar < yTop)
 	{
 		int numberofLoops = 0;
-		while (classify_aabb_to_aabb(otherCollision, UpdateCollision) && numberofLoops<2000)
+		while (classify_aabb_to_aabb(otherCollision, UpdateCollision) && numberofLoops<10000)
 		{
 			//d3d_ResultMatrix = pcGraphicsSystem->SetDefaultWorldPosition();;
 			XMMATRIX moveback;
@@ -641,7 +658,7 @@ XMMATRIX CCollisionSystem::WalkingThrewObjectCheck(XMMATRIX worldPos, TAABB othe
 		&&zClose < yBottom
 		&&zClose < yTop) {
 		int numberofLoops = 0;
-		while (classify_aabb_to_aabb(otherCollision, UpdateCollision)&&numberofLoops<2000)
+		while (classify_aabb_to_aabb(otherCollision, UpdateCollision)&&numberofLoops<10000)
 		{
 			//d3d_ResultMatrix = pcGraphicsSystem->SetDefaultWorldPosition();;
 			XMMATRIX moveback;

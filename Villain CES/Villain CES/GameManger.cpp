@@ -1,5 +1,5 @@
 #include "GameManger.h"
-#define AI_ON false
+#define AI_ON true
 #define MIKES_SANDBOX_ON false
 #define SKELETON_LOAD_ON false
 #define MAIN_LEVEL_ON true
@@ -2422,7 +2422,6 @@ int CGameMangerSystem::PathFindingExample()
 
 		if (tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_DEBUGMESH | COMPONENT_SHADERID))
 		{
-
 			pcGraphicsSystem->InitPrimalShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, debugCamera->d3d_Position, m_d3dProjectionMatrix, tThisWorld.atDebugMesh[nCurrentEntity], debugCamera->d3d_Position);
 
 			pcGraphicsSystem->ExecutePipeline(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atDebugMesh[nCurrentEntity].m_nVertexCount, tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask, tThisWorld.atShaderID[nCurrentEntity].m_nShaderID);
@@ -4129,7 +4128,7 @@ void CGameMangerSystem::LoadMikesGraphicsSandbox()
 	//	int myMesh = createMesh(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, tempImport.vtMeshes[meshIndex], matOpt, meshIndex);
 	//}
 
-	tempImport = pcGraphicsSystem->ReadMesh("meshData_NoBrewery7.txt");
+	tempImport = pcGraphicsSystem->ReadMesh("meshData_DemoDoors.txt");
 	matOpt = pcGraphicsSystem->CreateTexturesFromFile(tempImport.vtMaterials, tempImport.meshCount);
 	for (int meshIndex = 0; meshIndex < tempImport.meshCount; meshIndex++)
 	{
@@ -4316,7 +4315,6 @@ int CGameMangerSystem::MikesGraphicsSandbox()
 	tThisWorld.atAnimation[0].tTimer.GetLocalTime(tThisWorld.atAnimation[0].tTimer.tSceneTimer, tThisWorld.atAnimation[0].tTimer.localTime);
 	tThisWorld.atAnimation[0].tTimer.DisplayTimes(pcInputSystem);
 
-
 	//End Time
 	return 10;
 }
@@ -4348,7 +4346,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	InitializeLoadingScreen();
 	LoadLoadingScreen(false);
 
-	pcAiSystem->SetNumberOfAI(5);
+	pcAiSystem->SetNumberOfAI(8);
 	//	tTimerInfo->StartClock(tAugerTimers->tSceneTimer);
 	ImporterData tempImport;
 	TMaterialOptimized matOpt;
@@ -4395,11 +4393,12 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 
 	pcGraphicsSystem->CleanD3DObject(&tThisWorld, tempBullet);
 
-	tempImport = pcGraphicsSystem->ReadMesh("meshData_NoBrewery.txt");
+	tempImport = pcGraphicsSystem->ReadMesh("meshData_DemoDoors.txt");
 	matOpt = pcGraphicsSystem->CreateTexturesFromFile(tempImport.vtMaterials, tempImport.meshCount);
 	for (int meshIndex = 0; meshIndex < tempImport.meshCount; meshIndex++)
 	{
-		int myMesh = createMesh(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, tempImport.vtMeshes[meshIndex], matOpt, meshIndex);
+		tempImport.vtMaterials[meshIndex].lambert;
+		int myMesh = createMesh(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, tempImport.vtMeshes[meshIndex], matOpt, meshIndex, tempImport.vtMaterials[meshIndex].lambert);
 	}
 
 	#pragma region Matrix Init
@@ -4433,7 +4432,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 
 	m_d3dPlayerMatrix.r[3].m128_f32[2] += 20;
 	m_d3dPlayerMatrix.r[3].m128_f32[0] -= 5;
-	m_d3dPlayerMatrix.r[3].m128_f32[1] += 0.2;
+	m_d3dPlayerMatrix.r[3].m128_f32[1] -= 1;
 
 #pragma endregion
 
@@ -4497,18 +4496,23 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	//GunIndexForPlayer = CreateGun(&tThisWorld, m_d3dWorldMatrix, PlayerStartIndex, -1, 1, 10.5, 3, 130);
 	tThisWorld.atClip[GunIndexForPlayer].bulletSpeed = 0.01;
 	tThisWorld.atClayton[PlayerStartIndex].health = 100;
-
+	
+	
+	//tThisWorld.atWorldMatrix[94].worldMatrix.r[3].m128_f32[2] += 10;
+	
+	
+	
 	XMMATRIX AILocation = pcGraphicsSystem->SetDefaultWorldPosition();
 	AILocation.r[3].m128_f32[2] -= 60;
 	AILocation.r[3].m128_f32[0] -= 8;
-	AILocation.r[3].m128_f32[1] += 0.2;
+	AILocation.r[3].m128_f32[1] -= 1;
 	XMMATRIX CoverLocation = AILocation;
 	vector<int> coverPosition;
 	CoverLocation.r[3].m128_f32[2] += 4;
 	int cover1 = CreateCover(&tThisWorld, CoverLocation, coverPosition);
 	XMMATRIX nodeLocation = CoverLocation;
 	nodeLocation.r[3].m128_f32[0] += 0;
-	//nodeLocation.r[3].m128_f32[1] -= 1;
+	nodeLocation.r[3].m128_f32[1] -= 1;
 	nodeLocation.r[3].m128_f32[2] += -2;
 
 	//pcAiSystem->AddNodeToPathFinding(nodeLocation, nodePosition, 1);
@@ -4569,7 +4573,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	//int GunINdexai = CreateGun(&tThisWorld, m_d3dWorldMatrix, spacePirate, -1.1, 0.5, 12.5, 10, 30);
 	for (int meshIndex = 0; meshIndex < gunImport.meshCount; ++meshIndex)
 	{
-		GunINdexai = CreateScyllianGun(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, m_d3dWorldMatrix, spacePirate, -1.5, 1, 11.5, 10, 100, gunImport.vtMeshes[meshIndex], gunImport.vtMaterials[meshIndex]);
+	 GunINdexai = CreateScyllianGun(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, m_d3dWorldMatrix, spacePirate, -1.5, 1, 11.5, 10, 200, gunImport.vtMeshes[meshIndex], gunImport.vtMaterials[meshIndex]);
 	}
 
 	#pragma region More AI Init
@@ -4626,14 +4630,14 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	 AILocation = pcGraphicsSystem->SetDefaultWorldPosition();
 	AILocation.r[3].m128_f32[2] -= 60;
 	AILocation.r[3].m128_f32[0] -= 4;
-	AILocation.r[3].m128_f32[1] += 0.2;
+	AILocation.r[3].m128_f32[1] -= 1;
 	 CoverLocation = AILocation;
 	 coverPosition.clear();
 	CoverLocation.r[3].m128_f32[2] += 4;
 	 cover1 = CreateCover(&tThisWorld, CoverLocation, coverPosition);
 	 nodeLocation = CoverLocation;
 	nodeLocation.r[3].m128_f32[0] += 0;
-	//nodeLocation.r[3].m128_f32[1] -= 1;
+	nodeLocation.r[3].m128_f32[1] -= 1;
 	nodeLocation.r[3].m128_f32[2] += -2;
 
 	//pcAiSystem->AddNodeToPathFinding(nodeLocation, nodePosition, 1);
@@ -4748,7 +4752,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	AILocation = pcGraphicsSystem->SetDefaultWorldPosition();
 	AILocation.r[3].m128_f32[2] -= 80;
 	AILocation.r[3].m128_f32[0] += 3.5;
-	AILocation.r[3].m128_f32[1] += 0.2;
+	AILocation.r[3].m128_f32[1] -= 1;
 	XMMATRIX AiLookPosition=AILocation;
 	AiLookPosition.r[3].m128_f32[0] -= 12;
 	AiLookPosition.r[3].m128_f32[2] += 10;
@@ -4760,7 +4764,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	cover1 = CreateCover(&tThisWorld, CoverLocation, coverPosition);
 	nodeLocation = CoverLocation;
 	nodeLocation.r[3].m128_f32[0] += 0;
-	//nodeLocation.r[3].m128_f32[1] -= 1;
+	nodeLocation.r[3].m128_f32[1] -= 1;
 	nodeLocation.r[3].m128_f32[2] += -2;
 
 	//pcAiSystem->AddNodeToPathFinding(nodeLocation, nodePosition, 1);
@@ -4821,7 +4825,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	//int GunINdexai = CreateGun(&tThisWorld, m_d3dWorldMatrix, spacePirate, -1.1, 0.5, 12.5, 10, 30);
 	for (int meshIndex = 0; meshIndex < tempImport.meshCount; ++meshIndex)
 	{
-		GunINdexai = CreateScyllianGun(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, m_d3dWorldMatrix, spacePirate, -1.5, 1, 11.5, 10, 100, gunImport.vtMeshes[meshIndex], gunImport.vtMaterials[meshIndex]);
+	 GunINdexai = CreateScyllianGun(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, m_d3dWorldMatrix, spacePirate, -1.5, 1, 11.5, 10, 200, gunImport.vtMeshes[meshIndex], gunImport.vtMaterials[meshIndex]);
 	}
 #pragma region MORE AI Init
 	tThisWorld.atAIMask[spacePirate].GunIndex = GunINdexai;
@@ -4876,7 +4880,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	cover1 = CreateCover(&tThisWorld, CoverLocation, coverPosition);
 	nodeLocation = CoverLocation;
 	nodeLocation.r[3].m128_f32[0] += 0;
-	//nodeLocation.r[3].m128_f32[1] -= 1;
+	nodeLocation.r[3].m128_f32[1] -= 1;
 	nodeLocation.r[3].m128_f32[2] += -2;
 
 	//pcAiSystem->AddNodeToPathFinding(nodeLocation, nodePosition, 1);
@@ -4928,7 +4932,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	AILocation = pcGraphicsSystem->SetDefaultWorldPosition();
 	AILocation.r[3].m128_f32[2] -= 80;
 	AILocation.r[3].m128_f32[0] -= 16;
-	AILocation.r[3].m128_f32[1] += 0.2;
+	AILocation.r[3].m128_f32[1] -= 1;
 	 AiLookPosition = AILocation;
 	AiLookPosition.r[3].m128_f32[0] -= 12;
 	AiLookPosition.r[3].m128_f32[2] += 10;
@@ -4940,7 +4944,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	cover1 = CreateCover(&tThisWorld, CoverLocation, coverPosition);
 	nodeLocation = CoverLocation;
 	nodeLocation.r[3].m128_f32[0] += 0;
-	//nodeLocation.r[3].m128_f32[1] -= 1;
+	nodeLocation.r[3].m128_f32[1] -= 1;
 	nodeLocation.r[3].m128_f32[2] += -2;
 
 	//pcAiSystem->AddNodeToPathFinding(nodeLocation, nodePosition, 1);
@@ -4995,7 +4999,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	//int GunINdexai = CreateGun(&tThisWorld, m_d3dWorldMatrix, spacePirate, -1.1, 0.5, 12.5, 10, 30);
 	for (int meshIndex = 0; meshIndex < tempImport.meshCount; ++meshIndex)
 	{
-		GunINdexai = CreateScyllianGun(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, m_d3dWorldMatrix, spacePirate, -1.5, 1, 11.5, 10, 100, gunImport.vtMeshes[meshIndex], gunImport.vtMaterials[meshIndex]);
+	 GunINdexai = CreateScyllianGun(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, m_d3dWorldMatrix, spacePirate, -1.5, 1, 11.5, 10, 200, gunImport.vtMeshes[meshIndex], gunImport.vtMaterials[meshIndex]);
 	}
 #pragma region MORE AI Init
 	tThisWorld.atAIMask[spacePirate].GunIndex = GunINdexai;
@@ -5055,7 +5059,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	cover1 = CreateCover(&tThisWorld, CoverLocation, coverPosition);
 	nodeLocation = CoverLocation;
 	nodeLocation.r[3].m128_f32[0] += 0;
-	//nodeLocation.r[3].m128_f32[1] -= 1;
+	nodeLocation.r[3].m128_f32[1] -= 1;
 	nodeLocation.r[3].m128_f32[2] += -2;
 
 	//pcAiSystem->AddNodeToPathFinding(nodeLocation, nodePosition, 1);
@@ -5101,7 +5105,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	AILocation = pcGraphicsSystem->SetDefaultWorldPosition();
 	AILocation.r[3].m128_f32[2] -= 90;
 	AILocation.r[3].m128_f32[0] -= 10;
-	AILocation.r[3].m128_f32[1] += 0.2;
+	AILocation.r[3].m128_f32[1] -= 1;
 	AiLookPosition = AILocation;
 	AiLookPosition.r[3].m128_f32[0] -= 12;
 	AiLookPosition.r[3].m128_f32[2] += 10;
@@ -5113,7 +5117,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	cover1 = CreateCover(&tThisWorld, CoverLocation, coverPosition);
 	nodeLocation = CoverLocation;
 	nodeLocation.r[3].m128_f32[0] += 0;
-	//nodeLocation.r[3].m128_f32[1] -= 1;
+	nodeLocation.r[3].m128_f32[1] -= 1;
 	nodeLocation.r[3].m128_f32[2] += -2;
 
 	//pcAiSystem->AddNodeToPathFinding(nodeLocation, nodePosition, 1);
@@ -5168,7 +5172,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	//int GunINdexai = CreateGun(&tThisWorld, m_d3dWorldMatrix, spacePirate, -1.1, 0.5, 12.5, 10, 30);
 	for (int meshIndex = 0; meshIndex < gunImport.meshCount; ++meshIndex)
 	{
-		GunINdexai = CreateScyllianGun(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, m_d3dWorldMatrix, spacePirate, -1.5, 1, 11.5, 10, 100, gunImport.vtMeshes[meshIndex], gunImport.vtMaterials[meshIndex]);
+	 GunINdexai = CreateScyllianGun(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, m_d3dWorldMatrix, spacePirate, -1.5, 1, 11.5, 10, 200, gunImport.vtMeshes[meshIndex], gunImport.vtMaterials[meshIndex]);
 	}
 #pragma region MORE AI Init
 	tThisWorld.atAIMask[spacePirate].GunIndex = GunINdexai;
@@ -5228,7 +5232,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	cover1 = CreateCover(&tThisWorld, CoverLocation, coverPosition);
 	nodeLocation = CoverLocation;
 	nodeLocation.r[3].m128_f32[0] += 3.5f;
-	//nodeLocation.r[3].m128_f32[1] -= 1;
+	nodeLocation.r[3].m128_f32[1] -= 1;
 	nodeLocation.r[3].m128_f32[2] += 5;
 
 	//pcAiSystem->AddNodeToPathFinding(nodeLocation, nodePosition, 1);
@@ -5263,7 +5267,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	cover1 = CreateCover(&tThisWorld, CoverLocation, coverPosition);
 	nodeLocation = CoverLocation;
 	nodeLocation.r[3].m128_f32[0] += 3.5f;
-	//nodeLocation.r[3].m128_f32[1] -= 1;
+	nodeLocation.r[3].m128_f32[1] -= 1;
 	nodeLocation.r[3].m128_f32[2] += 5;
 
 	//pcAiSystem->AddNodeToPathFinding(nodeLocation, nodePosition, 1);
@@ -5323,7 +5327,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	cover1 = CreateCover(&tThisWorld, CoverLocation, coverPosition);
 	nodeLocation = CoverLocation;
 	nodeLocation.r[3].m128_f32[0] += 6;
-	//nodeLocation.r[3].m128_f32[1] -= 1;
+	nodeLocation.r[3].m128_f32[1] -= 1;
 	nodeLocation.r[3].m128_f32[2] += 5;
 
 	//pcAiSystem->AddNodeToPathFinding(nodeLocation, nodePosition, 1);
@@ -5368,7 +5372,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	AILocation = pcGraphicsSystem->SetDefaultWorldPosition();
 	AILocation.r[3].m128_f32[2] -= 106;
 	AILocation.r[3].m128_f32[0] -= 13;
-	AILocation.r[3].m128_f32[1] += 0.2;
+	AILocation.r[3].m128_f32[1] -= 1;
 	AiLookPosition = AILocation;
 	AiLookPosition.r[3].m128_f32[0] -= 12;
 	AiLookPosition.r[3].m128_f32[2] += 10;
@@ -5408,7 +5412,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	//int GunINdexai = CreateGun(&tThisWorld, m_d3dWorldMatrix, spacePirate, -1.1, 0.5, 12.5, 10, 30);
 	for (int meshIndex = 0; meshIndex < tempImport.meshCount; ++meshIndex)
 	{
-		GunINdexai = CreateScyllianGun(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, m_d3dWorldMatrix, spacePirate, -1.5, 1, 11.5, 10, 100, gunImport.vtMeshes[meshIndex], gunImport.vtMaterials[meshIndex]);
+	 GunINdexai = CreateScyllianGun(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, m_d3dWorldMatrix, spacePirate, -1.5, 1, 11.5, 10, 200, gunImport.vtMeshes[meshIndex], gunImport.vtMaterials[meshIndex]);
 	}
 #pragma region MORE AI Init
 	tThisWorld.atAIMask[spacePirate].GunIndex = GunINdexai;
@@ -5467,7 +5471,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	cover1 = CreateCover(&tThisWorld, CoverLocation, coverPosition);
 	nodeLocation = CoverLocation;
 	nodeLocation.r[3].m128_f32[0] += 0;
-	//nodeLocation.r[3].m128_f32[1] -= 1;
+	nodeLocation.r[3].m128_f32[1] -= 1;
 //	nodeLocation.r[3].m128_f32[2] += -2;
 
 	//pcAiSystem->AddNodeToPathFinding(nodeLocation, nodePosition, 1);
@@ -5511,7 +5515,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	AILocation = pcGraphicsSystem->SetDefaultWorldPosition();
 	AILocation.r[3].m128_f32[2] -= 106;
 	AILocation.r[3].m128_f32[0] -= 3;
-	AILocation.r[3].m128_f32[1] += 0.2;
+	AILocation.r[3].m128_f32[1] -= 1;
 	AiLookPosition = AILocation;
 	AiLookPosition.r[3].m128_f32[0] -= 12;
 	AiLookPosition.r[3].m128_f32[2] += 10;
@@ -5551,7 +5555,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	//int GunINdexai = CreateGun(&tThisWorld, m_d3dWorldMatrix, spacePirate, -1.1, 0.5, 12.5, 10, 30);
 	for (int meshIndex = 0; meshIndex < tempImport.meshCount; ++meshIndex)
 	{
-		GunINdexai = CreateScyllianGun(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, m_d3dWorldMatrix, spacePirate, -1.5, 1, 11.5, 10, 100, gunImport.vtMeshes[meshIndex], gunImport.vtMaterials[meshIndex]);
+	 GunINdexai = CreateScyllianGun(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, m_d3dWorldMatrix, spacePirate, -1.5, 1, 11.5, 10, 200, gunImport.vtMeshes[meshIndex], gunImport.vtMaterials[meshIndex]);
 	}
 #pragma region MORE AI Init
 	tThisWorld.atAIMask[spacePirate].GunIndex = GunINdexai;
@@ -5610,7 +5614,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	cover1 = CreateCover(&tThisWorld, CoverLocation, coverPosition);
 	nodeLocation = CoverLocation;
 	nodeLocation.r[3].m128_f32[0] += 0;
-	//nodeLocation.r[3].m128_f32[1] -= 1;
+	nodeLocation.r[3].m128_f32[1] -= 1;
 	//	nodeLocation.r[3].m128_f32[2] += -2;
 
 	//pcAiSystem->AddNodeToPathFinding(nodeLocation, nodePosition, 1);
@@ -5650,12 +5654,153 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 
 
 
+	AILocation = pcGraphicsSystem->SetDefaultWorldPosition();
+	AILocation.r[3].m128_f32[2] -= 121;
+	AILocation.r[3].m128_f32[0] -= 9;
+	AILocation.r[3].m128_f32[1] -= 1;
+	AiLookPosition = AILocation;
+	AiLookPosition.r[3].m128_f32[0] -= 12;
+	AiLookPosition.r[3].m128_f32[2] += 10;
+
+	CreateNodePoint(&tThisWorld, AiLookPosition);
+
+	coverPosition.clear();
+
+
+	pcAiSystem->LookAtObject(AILocation, &m_d3dPlayerMatrix);
+
+
+	//CoverTriggerIndex = CreateCoverTriggerZone(&tThisWorld, TriggerZone);
+
+
+#pragma endregion
+
+	tempImport = pcGraphicsSystem->ReadMesh("meshData_Scyllian.txt");
+	gunImport = pcGraphicsSystem->ReadMesh("meshData_LaserFlintlockTextured.txt");
+	//AILocation.r[3].m128_f32[0] += 7;
+
+	for (int meshIndex = 0; meshIndex < tempImport.meshCount; ++meshIndex)
+	{
+		spacePirate = CreateScyllian(&tThisWorld, AILocation, enemyToCopyFrom);
+		//spacePirate = CreateScyllian(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, tempImport.vtMeshes[meshIndex], tempImport.vtMaterials[meshIndex], AILocation);
+	}
+	pcAiSystem->LookAtObject(AiLookPosition, &tThisWorld.atWorldMatrix[spacePirate].worldMatrix);
+	//spacePirate = CreateSpacePirate(&tThisWorld, AILocation);
+	tThisWorld.atAiHeath[spacePirate].heath = 100;
+	createGSQuad(&tThisWorld, XMFLOAT4(1, 0, 0, 1), spacePirate);
+	createGSQuad(&tThisWorld, XMFLOAT4(0, 0, 0, 1), spacePirate);
+
+
+
+
+
+	//int GunINdexai = CreateGun(&tThisWorld, m_d3dWorldMatrix, spacePirate, -1.1, 0.5, 12.5, 10, 30);
+	for (int meshIndex = 0; meshIndex < tempImport.meshCount; ++meshIndex)
+	{
+	 GunINdexai = CreateScyllianGun(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, m_d3dWorldMatrix, spacePirate, -1.5, 1, 11.5, 10, 200, gunImport.vtMeshes[meshIndex], gunImport.vtMaterials[meshIndex]);
+	}
+#pragma region MORE AI Init
+	tThisWorld.atAIMask[spacePirate].GunIndex = GunINdexai;
+
+	tThisWorld.atClip[GunINdexai].bulletSpeed = 0.01;//Frame Dependent
+
+
+	AiFrustum.row1.x = tThisWorld.atWorldMatrix[spacePirate].worldMatrix.r[0].m128_f32[0];
+	AiFrustum.row1.y = tThisWorld.atWorldMatrix[spacePirate].worldMatrix.r[0].m128_f32[1];
+	AiFrustum.row1.z = tThisWorld.atWorldMatrix[spacePirate].worldMatrix.r[0].m128_f32[2];
+	AiFrustum.row1.w = tThisWorld.atWorldMatrix[spacePirate].worldMatrix.r[0].m128_f32[3];
+
+	AiFrustum.row2.x = tThisWorld.atWorldMatrix[spacePirate].worldMatrix.r[1].m128_f32[0];
+	AiFrustum.row2.y = tThisWorld.atWorldMatrix[spacePirate].worldMatrix.r[1].m128_f32[1];
+	AiFrustum.row2.z = tThisWorld.atWorldMatrix[spacePirate].worldMatrix.r[1].m128_f32[2];
+	AiFrustum.row2.w = tThisWorld.atWorldMatrix[spacePirate].worldMatrix.r[1].m128_f32[3];
+
+	AiFrustum.row3.x = tThisWorld.atWorldMatrix[spacePirate].worldMatrix.r[2].m128_f32[0];
+	AiFrustum.row3.y = tThisWorld.atWorldMatrix[spacePirate].worldMatrix.r[2].m128_f32[1];
+	AiFrustum.row3.z = tThisWorld.atWorldMatrix[spacePirate].worldMatrix.r[2].m128_f32[2];
+	AiFrustum.row3.w = tThisWorld.atWorldMatrix[spacePirate].worldMatrix.r[2].m128_f32[3];
+
+	AiFrustum.row4.x = tThisWorld.atWorldMatrix[spacePirate].worldMatrix.r[3].m128_f32[0];
+	AiFrustum.row4.y = tThisWorld.atWorldMatrix[spacePirate].worldMatrix.r[3].m128_f32[1];
+	AiFrustum.row4.z = tThisWorld.atWorldMatrix[spacePirate].worldMatrix.r[3].m128_f32[2];
+	AiFrustum.row4.w = tThisWorld.atWorldMatrix[spacePirate].worldMatrix.r[3].m128_f32[3];
+
+	frustumIndex = pcAiSystem->calculate_frustum(&tThisWorld, planes, AiFrustum, 70, 1, 0.1, 20, spacePirate, -2.1, 1.4, 19.6);
+	tThisWorld.atWorldMatrix[frustumIndex].worldMatrix = AILocation;
+
+	tThisWorld.atAIVision[spacePirate].eyes0 = planes;
+	tThisWorld.atAIVision[spacePirate].normalAtBegining[0] = planes[0].normal;
+	tThisWorld.atAIVision[spacePirate].normalAtBegining[1] = planes[1].normal;
+	tThisWorld.atAIVision[spacePirate].normalAtBegining[2] = planes[2].normal;
+	tThisWorld.atAIVision[spacePirate].normalAtBegining[3] = planes[3].normal;
+	tThisWorld.atAIVision[spacePirate].normalAtBegining[4] = planes[4].normal;
+	tThisWorld.atAIVision[spacePirate].normalAtBegining[5] = planes[5].normal;
+	//AILocation.r[3].m128_f32[0] += 8;
+	tThisWorld.atPathPlanining[spacePirate].startingNode = nodeindex2;
+	tThisWorld.atPathPlanining[spacePirate].Goal = nodeindex;
+
+	tThisWorld.atAIVision[spacePirate].keepSearching = false;
+	//	tThisWorld.atCoverTrigger[CoverTriggerIndex].AItoMove.push_back(spacePirate);
+	//
+	//	tThisWorld.atCoverTrigger[CoverTriggerIndex].coverAiCanGoTo.push_back(tThisWorld.atCover[cover1]);
+	//#pragma endregion
+	// This is my AIMovementTrigger for backleft ai and back right
+	TriggerZone = AILocation;
+	TriggerZone.r[3].m128_f32[2] += 10;
+
+	CoverTriggerIndex = CreateCoverTriggerZone(&tThisWorld, TriggerZone);
+
+	CoverLocation = AILocation;
+	coverPosition.clear();
+	CoverLocation.r[3].m128_f32[2] += 4;
+	cover1 = CreateCover(&tThisWorld, CoverLocation, coverPosition);
+	nodeLocation = CoverLocation;
+	nodeLocation.r[3].m128_f32[0] += 0;
+	nodeLocation.r[3].m128_f32[1] -= 1;
+		nodeLocation.r[3].m128_f32[2] += -20;
+
+	//pcAiSystem->AddNodeToPathFinding(nodeLocation, nodePosition, 1);
+	nodeindexBackRight = CreateNodePoint(&tThisWorld, nodeLocation);
+	nodePosition;
+	nodePosition.x = nodeLocation.r[3].m128_f32[0];
+	nodePosition.y = nodeLocation.r[3].m128_f32[1];
+	nodePosition.z = nodeLocation.r[3].m128_f32[2];
+	pcAiSystem->AddNodeToPathFinding(nodeindexBackRight, nodePosition, 1);
+	nodeLocation = AILocation;
+	backrightFrontnodeindex2 = CreateNodePoint(&tThisWorld, nodeLocation);
+
+	nodePosition.x = nodeLocation.r[3].m128_f32[0];
+	nodePosition.y = nodeLocation.r[3].m128_f32[1];
+	nodePosition.z = nodeLocation.r[3].m128_f32[2];
+	pcAiSystem->AddNodeToPathFinding(backrightFrontnodeindex2, nodePosition, 1);
+	tThisWorld.atCover[cover1].CoverPositions.push_back(nodeindexBackRight);
+	tThisWorld.atPathPlanining[spacePirate].startingNode = backrightFrontnodeindex2;
+
+	//	pcAiSystem->LookAtObject(AILocation, &m_d3dPlayerMatrix);
+
+
+	//CoverTriggerIndex = CreateCoverTriggerZone(&tThisWorld, TriggerZone);
+
+	edges.clear();
+	edges.push_back(nodeindexBackRight);
+	pcAiSystem->AddEdgestoNode(backrightFrontnodeindex2, edges);
+	//pcAiSystem->AddEdgestoNode(nodeindex3, edges);
+	edges.clear();
+	edges.push_back(backrightFrontnodeindex2);
+	pcAiSystem->AddEdgestoNode(nodeindexBackRight, edges);
+
+	tThisWorld.atCoverTrigger[CoverTriggerIndex].AItoMove.push_back(spacePirate);
+
+	tThisWorld.atCoverTrigger[CoverTriggerIndex].coverAiCanGoTo.push_back(tThisWorld.atCover[cover1]);
+	tThisWorld.atPathPlanining[spacePirate].Goal = nodeindexBackRight;
 
 
 	#pragma region COLLISION INIT
 	for (int nCurrentEntity = 0; nCurrentEntity < ENTITYCOUNT; nCurrentEntity++)
 	{
-		if (tThisWorld.atCollisionMask[nCurrentEntity].m_tnCollisionMask > 1)
+		
+		
+		if (tThisWorld.atCollisionMask[nCurrentEntity].m_tnCollisionMask > 1&&nCurrentEntity!=216&&nCurrentEntity!=215)
 		{
 
 			if (tThisWorld.atSimpleMesh[nCurrentEntity].m_nVertexCount > tThisWorld.atDebugMesh[nCurrentEntity].m_nVertexCount)
@@ -5665,17 +5810,61 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 				MyAbb.m_IndexLocation = nCurrentEntity;
 				tThisWorld.atAABB[nCurrentEntity] = MyAbb;
 				pcCollisionSystem->AddAABBCollider(MyAbb, nCurrentEntity);
+			
+
 				/*if (nCurrentEntity == door1Index || nCurrentEntity == door2Index || swordGuy == nCurrentEntity) {
 				pcCollisionSystem->AddAiVisioNCheck(MyAbb, nCurrentEntity);
 				}*/
 
 			}
+			
 			if (tThisWorld.atMesh[nCurrentEntity].m_nVertexCount > tThisWorld.atDebugMesh[nCurrentEntity].m_nVertexCount)
 			{
+
 				TAABB MyAbb = pcCollisionSystem->createAABBS(tThisWorld.atMesh[nCurrentEntity].m_VertexData, tThisWorld.atAABB[nCurrentEntity]);
 				MyAbb.m_IndexLocation = nCurrentEntity;
 				tThisWorld.atAABB[nCurrentEntity] = MyAbb;
 				pcCollisionSystem->AddAABBCollider(MyAbb, nCurrentEntity);
+				if (tThisWorld.atShaderID[nCurrentEntity].m_nShaderID == 20) {
+					vector<int> DoorPices;
+					DoorPices.push_back(nCurrentEntity-1);
+					DoorPices.push_back(nCurrentEntity+1);
+					DoorPices.push_back(nCurrentEntity + 2);
+					DoorPices.push_back(nCurrentEntity + 3);
+				//	DoorPices.push_back(nCurrentEntity + 4);
+
+					tThisWorld.atAABB[nCurrentEntity].doorPeices = DoorPices;
+					float x = 0;
+				}
+				if (tThisWorld.atShaderID[nCurrentEntity].m_nShaderID == 30) {
+					vector<int> DoorPices;
+				//	tThisWorld.atWorldMatrix[nCurrentEntity - 4].worldMatrix.r[3].m128_f32[2] += 5;
+					/*tThisWorld.atShaderID[nCurrentEntity - 1].m_nShaderID = 34;
+					tThisWorld.atShaderID[nCurrentEntity - 2].m_nShaderID = 32;
+					tThisWorld.atShaderID[nCurrentEntity - 3].m_nShaderID = 31;
+					tThisWorld.atShaderID[nCurrentEntity - 4].m_nShaderID = 33;*/
+
+
+
+					DoorPices.push_back(nCurrentEntity - 4);
+					DoorPices.push_back(nCurrentEntity - 1);
+					DoorPices.push_back(nCurrentEntity - 2);
+					DoorPices.push_back(nCurrentEntity - 3);
+					//	DoorPices.push_back(nCurrentEntity + 4);
+
+					tThisWorld.atAABB[nCurrentEntity].doorPeices = DoorPices;
+					float x = 0;
+				}
+				if (tThisWorld.atShaderID[nCurrentEntity].m_nShaderID == 40) {
+					vector<int> DoorPices;
+					DoorPices.push_back(nCurrentEntity + 1);
+					DoorPices.push_back(nCurrentEntity + 2);
+					DoorPices.push_back(nCurrentEntity + 3);
+					DoorPices.push_back(nCurrentEntity + 4);
+					tThisWorld.atAABB[nCurrentEntity].doorPeices = DoorPices;
+
+					float x = 0;
+				}
 				if (nCurrentEntity == PlayerStartIndex) {
 					pcCollisionSystem->AddAiVisioNCheck(MyAbb, nCurrentEntity);
 
@@ -5688,7 +5877,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	{
 		if (tThisWorld.atCollisionMask[nCurrentEntity].m_tnCollisionMask > 1)
 		{
-			if (nCurrentEntity == 933) {
+			if (nCurrentEntity == 94) {
 				float x = 0;
 			}
 			tThisWorld.atAABB[nCurrentEntity] = pcCollisionSystem->updateAABB(tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, tThisWorld.atAABB[nCurrentEntity]);
@@ -5706,6 +5895,557 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	loading = true;
 	fpsTimer.Restart();
 	fpsTimer.Init_FPSReader();
+}
+enum
+{
+	DoorPiece1_FRAME = 20,
+	DoorPiece1_UP,
+	DoorPiece1_DOWN,
+	DoorPiece1_LEFT,
+	DoorPiece1_RIGHT,
+	DoorPiece2_FRAME = 30,
+	DoorPiece2_UP,
+	DoorPiece2_DOWN,
+	DoorPiece2_LEFT,
+	DoorPiece2_RIGHT,
+	DoorPiece3_FRAME = 40,
+	DoorPiece3_UP,
+	DoorPiece3_DOWN,
+	DoorPiece3_LEFT,
+	DoorPiece3_RIGHT,
+	DoorPiece4_FRAME = 50,
+	DoorPiece4_UP,
+	DoorPiece4_DOWN,
+	DoorPiece4_LEFT,
+	DoorPiece4_RIGHT,
+	DoorPiece5_FRAME = 60,
+	DoorPiece5_UP,
+	DoorPiece5_DOWN,
+	DoorPiece5_LEFT,
+	DoorPiece5_RIGHT,
+	DoorPiece6_FRAME = 70,
+	DoorPiece6_UP,
+	DoorPiece6_DOWN,
+	DoorPiece6_LEFT,
+	DoorPiece6_RIGHT,
+};
+int doors[6] = { -2, -2, -2, -2, -2, -2 };
+
+XMMATRIX DoorEventListener(int shaderID)
+{
+	switch (shaderID)
+	{
+	case 0: {
+		if (doors[0] == 1)
+		{
+			doors[0] = 2;
+		
+		}
+		else if (doors[0] == -1)
+		{
+			doors[0] = -2;
+		}
+	}
+	case DoorPiece1_FRAME:
+	{
+		if (doors[0] == 1)
+		{
+			//doors[0] = 2;
+			return XMMatrixTranslation(0, 0, 0);
+		}
+		else if (doors[0] == -1)
+		{
+			//doors[0] = -2;
+			return XMMatrixTranslation(0, 0, 0);
+		}
+		break;
+	}
+	case DoorPiece1_UP:
+	{
+		if (doors[0] == 1)
+		{
+			//doors[0] = 2;
+			return XMMatrixTranslation(0, 1, 0);
+		}
+		else if (doors[0] == -1)
+		{
+			//doors[0] = -2;
+			return XMMatrixTranslation(0, -1, 0);
+		}
+		break;
+	}
+	case DoorPiece1_DOWN:
+	{
+		if (doors[0] == 1)
+		{
+			//doors[0] = 2;
+			return XMMatrixTranslation(0, -1, 0);
+		}
+		else if (doors[0] == -1)
+		{
+			//doors[0] = -2;
+			return XMMatrixTranslation(0, 1, 0);
+		}
+		break;
+	}
+	case DoorPiece1_LEFT:
+	{
+		if (doors[0] == 1)
+		{
+			//doors[0] = 2;
+			return XMMatrixTranslation(-1, 0, 0);
+		}
+		else if (doors[0] == -1)
+		{
+			//doors[0] = -2;
+			return XMMatrixTranslation(1, 0, 0);
+		}
+		break;
+	}
+	case DoorPiece1_RIGHT:
+	{
+		if (doors[0] == 1)
+		{
+			//doors[0] = 2;
+			return XMMatrixTranslation(1, 0, 0);
+		}
+		else if (doors[0] == -1)
+		{
+			//doors[0] = -2;
+			return XMMatrixTranslation(-1, 0, 0);
+		}
+		break;
+	}
+	case DoorPiece2_FRAME:
+	{
+		if (doors[1] == 1)
+		{
+			//doors[1] = 2;
+			return XMMatrixTranslation(0, 0, 0);
+		}
+		else if (doors[1] == -1)
+		{
+			//doors[1] = -2;
+			return XMMatrixTranslation(0, 0, 0);
+		}
+		break;
+	}
+	case DoorPiece2_UP:
+	{
+		if (doors[1] == 1)
+		{
+			//doors[1] = 2;
+			return XMMatrixTranslation(0, 1, 0);
+		}
+		else if (doors[1] == -1)
+		{
+			//doors[1] = -2;
+			return XMMatrixTranslation(0, -1, 0);
+		}
+		break;
+	}
+	case DoorPiece2_DOWN:
+	{
+		if (doors[1] == 1)
+		{
+			//doors[1] = 2;
+			return XMMatrixTranslation(0, -1, 0);
+		}
+		else if (doors[1] == -1)
+		{
+			//doors[1] = -2;
+			return XMMatrixTranslation(0, 1, 0);
+		}
+		break;
+	}
+	case DoorPiece2_LEFT:
+	{
+		if (doors[1] == 1)
+		{
+			//doors[1] = 2;
+			return XMMatrixTranslation(-1, 0, 0);
+		}
+		else if (doors[1] == -1)
+		{
+			//doors[1] = -2;
+			return XMMatrixTranslation(1, 0, 0);
+		}
+		break;
+	}
+	case DoorPiece2_RIGHT:
+	{
+		if (doors[1] == 1)
+		{
+			//doors[1] = 2;
+			return XMMatrixTranslation(1, 0, 0);
+		}
+		else if (doors[1] == -1)
+		{
+			//doors[1] = -2;
+			return XMMatrixTranslation(-1, 0, 0);
+		}
+		break;
+	}
+	case DoorPiece3_FRAME:
+	{
+		if (doors[2] == 1)
+		{
+			//doors[2] = 2;
+			return XMMatrixTranslation(0, 0, 0);
+		}
+		else if (doors[2] == -1)
+		{
+			//doors[2] = -2;
+			return XMMatrixTranslation(0, 0, 0);
+		}
+		break;
+	}
+	case DoorPiece3_UP:
+	{
+		if (doors[2] == 1)
+		{
+			//doors[2] = 2;
+			return XMMatrixTranslation(0, 1, 0);
+		}
+		else if (doors[2] == -1)
+		{
+			//doors[2] = -2;
+			return XMMatrixTranslation(0, -1, 0);
+		}
+		break;
+	}
+	case DoorPiece3_DOWN:
+	{
+		if (doors[2] == 1)
+		{
+			//doors[2] = 2;
+			return XMMatrixTranslation(0, -1, 0);
+		}
+		else if (doors[2] == -1)
+		{
+			//doors[2] = -2;
+			return XMMatrixTranslation(0, 1, 0);
+		}
+		break;
+	}
+	case DoorPiece3_LEFT:
+	{
+		if (doors[2] == 1)
+		{
+			//doors[2] = 2;
+			return XMMatrixTranslation(-1, 0, 0);
+		}
+		else if (doors[2] == -1)
+		{
+		//	doors[2] = -2;
+			return XMMatrixTranslation(1, 0, 0);
+		}
+		break;
+	}
+	case DoorPiece3_RIGHT:
+	{
+		if (doors[2] == 1)
+		{
+			//doors[2] = 2;
+			return XMMatrixTranslation(1, 0, 0);
+		}
+		else if (doors[2] == -1)
+		{
+			//doors[2] = -2;
+			return XMMatrixTranslation(-1, 0, 0);
+		}
+		break;
+	}
+	case DoorPiece4_FRAME:
+	{
+		if (doors[3] == 1)
+		{
+			//doors[3] = 2;
+			return XMMatrixTranslation(0, 0, 0);
+		}
+		else if (doors[3] == -1)
+		{
+			//doors[3] = -2;
+			return XMMatrixTranslation(0, 0, 0);
+		}
+		break;
+	}
+	case DoorPiece4_UP:
+	{
+		if (doors[3] == 1)
+		{
+			//doors[3] = 2;
+			return XMMatrixTranslation(0, 1, 0);
+		}
+		else if (doors[3] == -1)
+		{
+			//doors[3] = -2;
+			return XMMatrixTranslation(0, -1, 0);
+		}
+		break;
+	}
+	case DoorPiece4_DOWN:
+	{
+		if (doors[3] == 1)
+		{
+			//doors[3] = 2;
+			return XMMatrixTranslation(0, -1, 0);
+		}
+		else if (doors[3] == -1)
+		{
+		//	doors[3] = -2;
+			return XMMatrixTranslation(0, 1, 0);
+		}
+		break;
+	}
+	case DoorPiece4_LEFT:
+	{
+		if (doors[3] == 1)
+		{
+			//doors[3] = 2;
+			return XMMatrixTranslation(-1, 0, 0);
+		}
+		else if (doors[3] == -1)
+		{
+			//doors[3] = -2;
+			return XMMatrixTranslation(1, 0, 0);
+		}
+		break;
+	}
+	case DoorPiece4_RIGHT:
+	{
+		if (doors[3] == 1)
+		{
+		//	doors[3] = 2;
+			return XMMatrixTranslation(1, 0, 0);
+		}
+		else if (doors[3] == -1)
+		{
+			//doors[3] = -2;
+			return XMMatrixTranslation(-1, 0, 0);
+		}
+		break;
+	}
+	case DoorPiece5_FRAME:
+	{
+		if (doors[4] == 1)
+		{
+		//	doors[4] = 2;
+			return XMMatrixTranslation(0, 0, 0);
+		}
+		else if (doors[4] == -1)
+		{
+		//	doors[4] = -2;
+			return XMMatrixTranslation(0, 0, 0);
+		}
+		break;
+	}
+	case DoorPiece5_UP:
+	{
+		if (doors[4] == 1)
+		{
+			//doors[4] = 2;
+			return XMMatrixTranslation(0, 1, 0);
+		}
+		else if (doors[4] == -1)
+		{
+		//	doors[4] = -2;
+			return XMMatrixTranslation(0, -1, 0);
+		}
+		break;
+	}
+	case DoorPiece5_DOWN:
+	{
+		if (doors[4] == 1)
+		{
+			//doors[4] = 2;
+			return XMMatrixTranslation(0, -1, 0);
+		}
+		else if (doors[4] == -1)
+		{
+			//doors[4] = -2;
+			return XMMatrixTranslation(0, 1, 0);
+		}
+		break;
+	}
+	case DoorPiece5_LEFT:
+	{
+		if (doors[4] == 1)
+		{
+			//doors[4] = 2;
+			return XMMatrixTranslation(-1, 0, 0);
+		}
+		else if (doors[4] == -1)
+		{
+			//doors[4] = -2;
+			return XMMatrixTranslation(1, 0, 0);
+		}
+		break;
+	}
+	case DoorPiece5_RIGHT:
+	{
+		if (doors[4] == 1)
+		{
+			//doors[4] = 2;
+			return XMMatrixTranslation(1, 0, 0);
+		}
+		else if (doors[4] == -1)
+		{
+			//doors[4] = -2;
+			return XMMatrixTranslation(-1, 0, 0);
+		}
+		break;
+	}
+	case DoorPiece6_FRAME:
+	{
+		if (doors[5] == 1)
+		{
+			//doors[5] = 2;
+			return XMMatrixTranslation(0, 0, 0);
+		}
+		else if (doors[5] == -1)
+		{
+			//doors[5] = -2;
+			return XMMatrixTranslation(0, 0, 0);
+		}
+		break;
+	}
+	case DoorPiece6_UP:
+	{
+		if (doors[5] == 1)
+		{
+			//doors[5] = 2;
+			return XMMatrixTranslation(0, 1, 0);
+		}
+		else if (doors[5] == -1)
+		{
+			//doors[5] = -2;
+			return XMMatrixTranslation(0, -1, 0);
+		}
+		break;
+	}
+	case DoorPiece6_DOWN:
+	{
+		if (doors[5] == 1)
+		{
+			//doors[5] = 2;
+			return XMMatrixTranslation(0, -1, 0);
+		}
+		else if (doors[5] == -1)
+		{
+			//doors[5] = -2;
+			return XMMatrixTranslation(0, 1, 0);
+		}
+		break;
+	}
+	case DoorPiece6_LEFT:
+	{
+		if (doors[5] == 1)
+		{
+		//	doors[5] = 2;
+			return XMMatrixTranslation(-1, 0, 0);
+		}
+		else if (doors[5] == -1)
+		{
+			//doors[5] = -2;
+			return XMMatrixTranslation(1, 0, 0);
+		}
+		break;
+	}
+	case DoorPiece6_RIGHT:
+	{
+		if (doors[5] == 1)
+		{
+		//	doors[5] = 2;
+			return XMMatrixTranslation(1, 0, 0);
+		}
+		else if (doors[5] == -1)
+		{
+		//	doors[5] = -2;
+			return XMMatrixTranslation(-1, 0, 0);
+		}
+		break;
+	}
+	default:
+	{
+		return XMMatrixIdentity();
+		break;
+	}
+	}
+	return XMMatrixIdentity();
+}
+
+void DoorEventChanger(int shaderID)
+{
+	if (shaderID >= 20)
+	{
+		if (shaderID < 25)
+		{
+			if (doors[0] == -2)
+			{
+				doors[0] = 1;
+			}
+			else if (doors[0] == 2)
+			{
+				doors[0] = -1;
+			}
+		}
+		else if (shaderID < 35)
+		{
+			if (doors[1] == -2)
+			{
+				doors[1] = 1;
+			}
+			else if (doors[1] == 2)
+			{
+				doors[1] = -1;
+			}
+		}
+		else if (shaderID < 45)
+		{
+			if (doors[2] == -2)
+			{
+				doors[2] = 1;
+			}
+			else if (doors[2] == 2)
+			{
+				doors[2] = -1;
+			}
+		}
+		else if (shaderID < 55)
+		{
+			if (doors[3] == -2)
+			{
+				doors[3] = 1;
+			}
+			else if (doors[3] == 2)
+			{
+				doors[3] = -1;
+			}
+		}
+		else if (shaderID < 65)
+		{
+			if (doors[4] == -2)
+			{
+				doors[4] = 1;
+			}
+			else if (doors[4] == 2)
+			{
+				doors[4] = -1;
+			}
+		}
+		else if (shaderID < 75)
+		{
+			if (doors[5] == -2)
+			{
+				doors[5] = 1;
+			}
+			else if (doors[5] == 2)
+			{
+				doors[5] = -1;
+			}
+		}
+	}
 }
 
 int CGameMangerSystem::RealLevelUpdate()
@@ -6706,33 +7446,46 @@ int CGameMangerSystem::RealLevelUpdate()
 	
 		if (GamePaused == false && GameOver == false)
 		{
-			if (tThisWorld.atCollisionMask[nCurrentEntity].m_tnCollisionMask == (COMPONENT_COLLISIONMASK | COMPONENT_TRIGGER | COMPONENT_AABB | COMPONENT_NONSTATIC)
-				|| tThisWorld.atCollisionMask[nCurrentEntity].m_tnCollisionMask == (COMPONENT_COLLISIONMASK | COMPONENT_NONTRIGGER | COMPONENT_AABB | COMPONENT_NONSTATIC))
+			
+			if (nCurrentEntity == 962) 
 			{
-				tThisWorld.atAABB[nCurrentEntity] = pcCollisionSystem->updateAABB(tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, tThisWorld.atAABB[nCurrentEntity]);
-			}
-			if (nCurrentEntity == 962) {
 				float x = 0;
 			}
-			if (tThisWorld.atAABB[nCurrentEntity].theeadmade == false &&( nCurrentEntity == PlayerStartIndex||tThisWorld.atAIMask[nCurrentEntity].m_tnAIMask>1||tThisWorld.atProjectiles[nCurrentEntity].m_tnProjectileMask>1)) {
+			if (tThisWorld.atAABB[nCurrentEntity].theeadmade == false 
+				&&(nCurrentEntity == PlayerStartIndex
+					|| tThisWorld.atActiveAI[nCurrentEntity].active== true
+					||tThisWorld.atProjectiles[nCurrentEntity].m_tnProjectileMask>1))
+			{
 				/*thread newthread(&CCollisionSystem::TestThreading, pcCollisionSystem, &tThisWorld, nCurrentEntity, pcGraphicsSystem, &tTempVertexBuffer, &m_d3dPlayerMatrix, pcPhysicsSystem);
 				newthread.detach();*/
-				workers.push_back(thread(&CCollisionSystem::TestThreading, pcCollisionSystem,&tThisWorld,nCurrentEntity,pcGraphicsSystem, &tTempVertexBuffer,&m_d3dPlayerMatrix,pcPhysicsSystem,pcAiSystem, PlayerStartIndex, std::ref(playerDamage), std::ref(pirateDamage), std::ref(prevHealth), std::ref(fallingHealth), std::ref(lerpTime),m_fMasterVolume, m_fSFXVolume, m_fMusicVolume, pcAudioSystem));
+				XMMATRIX(*doorEventListenerPointer)(int) = DoorEventListener;
+				void(*doorEventChangerPointer)(int) = DoorEventChanger;
+
+				workers.push_back(thread(&CCollisionSystem::TestThreading, pcCollisionSystem,
+					&tThisWorld,nCurrentEntity,pcGraphicsSystem, 
+					&tTempVertexBuffer, std::ref(tMyVertexBufferTemp.m_d3dWorldMatrix), &m_d3dPlayerMatrix,pcPhysicsSystem,pcAiSystem,
+					PlayerStartIndex, std::ref(playerDamage), std::ref(pirateDamage), 
+					std::ref(prevHealth), std::ref(fallingHealth), std::ref(lerpTime)
+					,m_fMasterVolume, m_fSFXVolume, m_fMusicVolume, pcAudioSystem, 
+					doorEventListenerPointer, doorEventChangerPointer));
 		
 			//	tThisWorld.atAABB[nCurrentEntity].myThread = workers.begin() + workers.size() - 1;
 			}
-			for (std::thread &t : workers) {
-				if (t.joinable()) {
+			for (std::thread &t : workers) 
+			{
+				if (t.joinable()) 
+				{
 					t.join();
 					workers.erase(workers.begin());
-}
 				}
 			}
+		}
 			
 		
 		if (tThisWorld.atParentWorldMatrix[nCurrentEntity] != -1)
 		{
-			if (nCurrentEntity != GunIndexForPlayer) {
+			if (nCurrentEntity != GunIndexForPlayer) 
+			{
 				tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = XMMatrixMultiply(pcGraphicsSystem->SetDefaultWorldPosition(),
 					tThisWorld.atWorldMatrix[tThisWorld.atParentWorldMatrix[nCurrentEntity]].worldMatrix);
 			}
@@ -6862,7 +7615,6 @@ int CGameMangerSystem::RealLevelUpdate()
 		{
 			tThisWorld.atClayton[PlayerStartIndex].health *= 0;
 		}
-
 
 		if (GamePaused)
 		{
@@ -7159,3 +7911,20 @@ int CGameMangerSystem::RealLevelUpdate()
 
 	return 14;
 }
+
+
+
+/*
+If door[i] == 1
+	open door
+If door[i] == -1
+	close door
+If door[i] == 0
+	Something is wrong
+If door[i] == 2
+	door is open, do nothing
+If door[i] == -2
+	door is closed, do nothing
+*/
+
+
