@@ -14,9 +14,7 @@
 #include "SkyboxPixelShader.csh"
 #include "AnimatedVertexShader.csh"
 #include "AnimatedPixelShader.csh"
-#include"LinePixelShader.csh"
-#include <vector>
-#include <string.h>
+#include "LinePixelShader.csh"
 class CGraphicsSystem
 {
 public:
