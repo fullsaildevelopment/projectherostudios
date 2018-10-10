@@ -6162,9 +6162,14 @@ int CGameMangerSystem::RealLevelUpdate()
 				atBeamVerts.push_back(pcGraphicsSystem->endBeam);
 
 				
-				pcGraphicsSystem->InitLineShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atWorldMatrix[ExtractionBeamIndex].worldMatrix, m_d3dViewMatrix, m_d3dProjectionMatrix, tThisWorld.atDebugMesh[ExtractionBeamIndex], aimCamera->d3d_Position, atBeamVerts);
+				
 			}
+			if (pcCollisionSystem->aabb_to_frustum(tThisWorld.atAABB[nCurrentEntity], tThisWorld.atClaytonVision.eyes0))
+			{
+				pcGraphicsSystem->InitLineShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atWorldMatrix[ExtractionBeamIndex].worldMatrix, m_d3dViewMatrix, m_d3dProjectionMatrix, tThisWorld.atDebugMesh[ExtractionBeamIndex], aimCamera->d3d_Position, atBeamVerts);
 				pcGraphicsSystem->ExecutePipeline(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atDebugMesh[ExtractionBeamIndex].m_nVertexCount, tThisWorld.atGraphicsMask[ExtractionBeamIndex].m_tnGraphicsMask, tThisWorld.atShaderID[ExtractionBeamIndex].m_nShaderID);
+			}
+
 
 		}
 		if (tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_DEBUGMESH | COMPONENT_SHADERID))
@@ -6234,12 +6239,7 @@ int CGameMangerSystem::RealLevelUpdate()
 			}
 			
 
-				if (pcCollisionSystem->aabb_to_frustum(tThisWorld.atAABB[nCurrentEntity], tThisWorld.atClaytonVision.eyes0))
-				{
-					pcGraphicsSystem->InitLineShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atWorldMatrix[ExtractionBeamIndex].worldMatrix, m_d3dViewMatrix, m_d3dProjectionMatrix, tThisWorld.atDebugMesh[ExtractionBeamIndex], aimCamera->d3d_Position, atBeamVerts);
-					pcGraphicsSystem->ExecutePipeline(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atDebugMesh[ExtractionBeamIndex].m_nVertexCount, tThisWorld.atGraphicsMask[ExtractionBeamIndex].m_tnGraphicsMask, tThisWorld.atShaderID[ExtractionBeamIndex].m_nShaderID);
-				}
-			}
+		}
 
 
 		if (tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_SHADERID) && tThisWorld.atUIMask[nCurrentEntity].m_tnUIMask == (COMPONENT_UIMASK))
@@ -7008,11 +7008,18 @@ int CGameMangerSystem::RealLevelUpdate()
 						else if (PtInRect(&tThisWorld.atButton[nCurrentEntity].boundingBox, hoverPoint))
 						{
 							tUIPixelBuffer.hoverColor = XMFLOAT4(.6, .6, .6, 0);
-							if (pcAudioSystem->hoverDone == true)
+							if (tThisWorld.atButton[nCurrentEntity].hovered == false)
 							{
-
+#if MUSIC_ON
+								pcAudioSystem->SendSoundsToEngine(AK::EVENTS::PLAY_HOVERSOUND, pcAudioSystem->m_HoverSound);
+#endif
 							}
+							tThisWorld.atButton[nCurrentEntity].hovered = true;
 
+						}
+						else
+						{
+							tThisWorld.atButton[nCurrentEntity].hovered = false;
 						}
 					}
 
@@ -7051,8 +7058,20 @@ int CGameMangerSystem::RealLevelUpdate()
 						else if (PtInRect(&tThisWorld.atButton[nCurrentEntity].boundingBox, hoverPoint))
 						{
 							tUIPixelBuffer.hoverColor = XMFLOAT4(.6, .6, .6, 0);
+							if (tThisWorld.atButton[nCurrentEntity].hovered == false)
+							{
+#if MUSIC_ON
+								pcAudioSystem->SendSoundsToEngine(AK::EVENTS::PLAY_HOVERSOUND, pcAudioSystem->m_HoverSound);
+#endif
+							}
+							tThisWorld.atButton[nCurrentEntity].hovered = true;
 
 						}
+						else
+						{
+							tThisWorld.atButton[nCurrentEntity].hovered = false;
+						}
+						
 					}
 
 					pcGraphicsSystem->InitUIShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tUIVertexBuffer, tUIPixelBuffer, tThisWorld.atMesh[nCurrentEntity], menuCamera->d3d_Position);
@@ -7136,6 +7155,18 @@ int CGameMangerSystem::RealLevelUpdate()
 						else if (PtInRect(&tThisWorld.atButton[nCurrentEntity].boundingBox, hoverPoint))
 						{
 							tUIPixelBuffer.hoverColor = XMFLOAT4(.6, .6, .6, 0);
+							if (tThisWorld.atButton[nCurrentEntity].hovered == false)
+							{
+#if MUSIC_ON
+								pcAudioSystem->SendSoundsToEngine(AK::EVENTS::PLAY_HOVERSOUND, pcAudioSystem->m_HoverSound);
+#endif
+							}
+							tThisWorld.atButton[nCurrentEntity].hovered = true;
+
+						}
+						else
+						{
+							tThisWorld.atButton[nCurrentEntity].hovered = false;
 						}
 					}
 

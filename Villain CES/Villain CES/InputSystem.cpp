@@ -5,7 +5,7 @@ CInputSystem::CInputSystem()
 	m_fMouseRotationSpeed = .0055f;
 	m_fMouseMovementSpeed = 3.0f;
 	m_YRotationLimit = 0;
-	 fXchange = 0, fYchange = 0, fXEnd = 0, fYEnd = 0;
+	 fXchange = 0, fYchange = 0, fXEnd = 0, fYEnd = 0, prev_fXchange = 0, prev_fYchange = 0;
 	 stepCount = 0;
 }
 
@@ -34,14 +34,14 @@ TCameraToggle CInputSystem::CameraModeListen(TCameraToggle tMyCam)
 
 	}
 
-	/*if (InputCheck(G_KEY_8) == 1)
+	if (InputCheck(G_KEY_8) == 1)
 	{
 		tTempCamMode.bWalkMode = true;
 		tTempCamMode.bDebugMode = false;
 		tTempCamMode.bAimMode = false;
 		tTempCamMode.bSwitch = true;
 
-	}*/
+	}
 	 if (InputCheck(G_BUTTON_RIGHT) == 1)
 	{
 		if (tTempCamMode.bAimMode == false) {
@@ -330,7 +330,9 @@ XMMATRIX CInputSystem::DebugCamera(XMMATRIX d3d_ViewM, XMMATRIX d3d_WorldM, doub
 
 	return d3dTmpViewM;
 }
-
+/*
+CharacterMovement is a a function that does the player's movement & rotation actions 
+*/
 XMMATRIX CInputSystem::CharacterMovement(XMMATRIX d3dplayerMatrix, double delta, CAudioSystem* in_Audio, bool move)
 {
 
@@ -340,9 +342,14 @@ XMMATRIX CInputSystem::CharacterMovement(XMMATRIX d3dplayerMatrix, double delta,
 	bool keyPressed = false;
 	if (move == false)
 	{
-		if (fXchange > 0.3f || fYchange > 0.3f || fXchange < -0.3f || fYchange < -0.3f)
+	 if (prev_fXchange == fXchange)
 	{
-		d3dRotation = XMMatrixRotationY(fXchange * m_fMouseRotationSpeed);
+		fXchange = 0;
+		
+	}
+	else if (fXchange > 0.3f || fYchange > 0.3f || fXchange < -0.3f || fYchange < -0.3f)
+	{
+		d3dRotation = XMMatrixRotationY(fXchange * m_fMouseRotationSpeed * delta);
 		
 		d3dTmpViewM = XMMatrixMultiply(d3dRotation, d3dTmpViewM);
 		d3d_existingZ = d3dTmpViewM.r[2];
@@ -357,7 +364,8 @@ XMMATRIX CInputSystem::CharacterMovement(XMMATRIX d3dplayerMatrix, double delta,
 		d3dTmpViewM.r[1] = d3d_newY;
 		d3dTmpViewM.r[2] = d3d_existingZ;
 	}
-		else {
+		else 
+		{
 			fXchange = 0;
 			fYchange = 0;
 		}
@@ -367,52 +375,54 @@ XMMATRIX CInputSystem::CharacterMovement(XMMATRIX d3dplayerMatrix, double delta,
 		if (InputCheck(G_KEY_W) == 1) {
 		d3dMovementM = XMMatrixTranslation(0, 0, m_fMouseMovementSpeed * delta);
 		d3dTmpViewM = XMMatrixMultiply(d3dMovementM, d3dTmpViewM);
-		stepCount++;
-		keyPressed = true;
-	}
-		// down key movement
-		if (InputCheck(G_KEY_S) == 1) {
-		d3dMovementM = XMMatrixTranslation(0, 0, -m_fMouseMovementSpeed * delta);
+			stepCount++;
+			keyPressed = true;
+		}
+			// down key movement
+			if (InputCheck(G_KEY_S) == 1) {
+			d3dMovementM = XMMatrixTranslation(0, 0, -m_fMouseMovementSpeed * delta);
 
-		d3dTmpViewM = XMMatrixMultiply(d3dMovementM, d3dTmpViewM);
-		keyPressed = true;
-		stepCount++;
-	}
-		// left key movement
-		if (InputCheck(G_KEY_A) == 1) {
-		d3dMovementM = XMMatrixTranslation(-m_fMouseMovementSpeed * delta, 0, 0);
-		d3dTmpViewM = XMMatrixMultiply(d3dMovementM, d3dTmpViewM);
-		keyPressed = true;
-		stepCount++;
+			d3dTmpViewM = XMMatrixMultiply(d3dMovementM, d3dTmpViewM);
+			keyPressed = true;
+			stepCount++;
+		}
+			// left key movement
+			if (InputCheck(G_KEY_A) == 1) {
+			d3dMovementM = XMMatrixTranslation(-m_fMouseMovementSpeed * delta, 0, 0);
+			d3dTmpViewM = XMMatrixMultiply(d3dMovementM, d3dTmpViewM);
+			keyPressed = true;
+			stepCount++;
 
-	}
-		// right key movement
-		if (InputCheck(G_KEY_D) == 1) {
-		d3dMovementM = XMMatrixTranslation(m_fMouseMovementSpeed * delta, 0, 0);
-		d3dTmpViewM = XMMatrixMultiply(d3dMovementM, d3dTmpViewM);
-		keyPressed = true;
-		stepCount++;
-	}
-		if (InputCheck(G_KEY_SPACE) == 1) {
-		d3dMovementM = XMMatrixTranslation(0, m_fMouseMovementSpeed * delta, 0);
-		d3dTmpViewM = XMMatrixMultiply(d3dMovementM, d3dTmpViewM);
-		keyPressed = true;
-		stepCount++;
+		}
+			// right key movement
+			if (InputCheck(G_KEY_D) == 1) {
+			d3dMovementM = XMMatrixTranslation(m_fMouseMovementSpeed * delta, 0, 0);
+			d3dTmpViewM = XMMatrixMultiply(d3dMovementM, d3dTmpViewM);
+			keyPressed = true;
+			stepCount++;
+		}
+			if (InputCheck(G_KEY_SPACE) == 1) {
+			d3dMovementM = XMMatrixTranslation(0, m_fMouseMovementSpeed * delta, 0);
+			d3dTmpViewM = XMMatrixMultiply(d3dMovementM, d3dTmpViewM);
+			keyPressed = true;
+			stepCount++;
 
 
-	}
+		}
 
-		if (keyPressed == true && stepCount == 20)
-	{
+			if (keyPressed == true && stepCount == 20)
+			{
 #if MUSIC_ON
 		in_Audio->SendSoundsToEngine(AK::EVENTS::PLAY_WALK, in_Audio->m_WalkSound);
 		stepCount = 0;
 #endif
-	}
+			}
 		if (stepCount > 20)
-	{
+		{
 		stepCount = 0;
-	}
+		}
+		prev_fXchange = fXchange;
+		prev_fYchange = fYchange;
 	}
 	
 	return d3dTmpViewM;
@@ -491,25 +501,19 @@ XMMATRIX CInputSystem::AimMode(TCamera * in_AimCamera, XMMATRIX d3dplayerMatrix,
 
 	//MouseBoundryCheck(fXEnd, fYEnd, fXchange, fYchange);
 	//Display current mouse pose
-	if (InputCheck(G_KEY_K) == 1)
-	{
-		std::string stTimeDisplay;
-		stTimeDisplay = "X Coord: ";
-		stTimeDisplay += std::to_string(fXEnd);
-		cout << stTimeDisplay << endl;
-
-		stTimeDisplay = "Y Coord: ";
-		stTimeDisplay += std::to_string(fYEnd);
-		cout << stTimeDisplay << endl;
-	}
+	
 	// Check thatacts like a deadzone and for getting a good mouse pos delta
 	//if (fXEnd > 2.0f && fXEnd < 1410.0f && fYEnd > 2.0f && fYEnd < 700.0f)
 	//{
 	if (move == false)
 	{
-
 		m_pcMyInput->GetMouseDelta(fXchange, fYchange);
-		if (fYchange > 0.3f || fYchange < -0.3f)
+		if (prev_fXchange == fXchange || prev_fYchange == fYchange)
+		{
+		fXchange = 0;
+		in_AimCamera->fPitch = 0;
+		}
+		else if (fYchange > 0.3f || fYchange < -0.3f)
 		{
 			in_AimCamera->fPitch += fYchange;
 			if (in_AimCamera->fPitch >= 90.0f)
@@ -523,7 +527,7 @@ XMMATRIX CInputSystem::AimMode(TCamera * in_AimCamera, XMMATRIX d3dplayerMatrix,
 		}
 		else
 		{
-			fYchange = 0;
+			in_AimCamera->fPitch = 0;
 			fXchange = 0;
 		}
 
@@ -536,6 +540,18 @@ XMMATRIX CInputSystem::AimMode(TCamera * in_AimCamera, XMMATRIX d3dplayerMatrix,
 		d3dRotation = XMMatrixRotationY(fXchange * m_fMouseRotationSpeed * delta);
 		d3dTmpViewM = XMMatrixMultiply(d3dRotation, d3dTmpViewM);
 		//d3dTmpViewM = XMMatrixMultiply(d3dRotation, d3dTmpViewM); 
+		//Debug 
+		if (InputCheck(G_KEY_K) == 1)
+		{
+			std::string stTimeDisplay;
+			stTimeDisplay = "X Change: ";
+			stTimeDisplay += std::to_string(fXchange);
+			cout << stTimeDisplay << endl;
+
+			stTimeDisplay = "Y Change: ";
+			stTimeDisplay += std::to_string(fYchange);
+			cout << stTimeDisplay << endl;
+		}
 
 		//Gimbal-Lock implementation
 		d3d_existingZ = d3dTmpViewM.r[2];
@@ -550,6 +566,8 @@ XMMATRIX CInputSystem::AimMode(TCamera * in_AimCamera, XMMATRIX d3dplayerMatrix,
 		d3dTmpViewM.r[1] = d3d_newY;
 		d3dTmpViewM.r[2] = d3d_existingZ;
 
+		prev_fXchange = fXchange;
+		prev_fYchange = fYchange;
 	}
 		
 	

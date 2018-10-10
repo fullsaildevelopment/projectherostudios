@@ -139,6 +139,8 @@ private:
 	float				m_fDistance;
 	float fXchange;
 	float fYchange;
+	float prev_fXchange;
+	float prev_fYchange;
 	float fXEnd;
 	float fYEnd;
 	XMVECTOR m_PlayerForwardV;
