@@ -5820,9 +5820,9 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	tThisWorld.atCoverTrigger[CoverTriggerIndex].coverAiCanGoTo.push_back(tThisWorld.atCover[cover1]);
 	tThisWorld.atPathPlanining[spacePirate].Goal = nodeindexBackRight;
 	XMMATRIX rectangle = m_d3dPlayerMatrix;
-	rectangle.r[3].m128_f32[2] -= 53.5;
-	rectangle.r[3].m128_f32[1] -= 0.5f;
-	rectangle.r[3].m128_f32[0] -= 4;
+	rectangle.r[3].m128_f32[2] -= 53.5f;
+	rectangle.r[3].m128_f32[1] -= 1.0f;
+	rectangle.r[3].m128_f32[0] -= 1.0f;
 	int cylinder=CreateCylinder(&tThisWorld, rectangle);
 	#pragma region COLLISION INIT
 	for (int nCurrentEntity = 0; nCurrentEntity < ENTITYCOUNT; nCurrentEntity++)

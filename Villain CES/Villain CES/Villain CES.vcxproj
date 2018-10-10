@@ -23,7 +23,7 @@
     <ProjectGuid>{F295078B-8D6D-4BEF-8C35-AB4E37FF64C5}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>VillainCES</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.17134.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -107,12 +107,12 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(WWISESDK)\include;$(WWISESDK)\samples;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(WWISESDK)\include;$(WWISESDK)\samples;C:\Program Files (x86)\Audiokinetic\Wwise 2018.1.0.6714\SDK\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>d3d11.lib;AkSoundEngine.lib;AkMemoryMgr.lib;AkStreamMgr.lib;AkMusicEngine.lib;CommunicationCentral.lib;dinput8.lib;Winmm.lib;dsound.lib;dxguid.lib;ws2_32.lib;xinput.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>d3d11.lib;AkAudioInputSource.lib;AkAutobahn.lib;AkCompressorFX.lib;AkDelayFX.lib;AkExpanderFX.lib;AkFlangerFx.lib;AkGainFX.lib;AkGuitarDistortionFX.lib;AkHarmonizerFX.lib;AkMatrixReverbFX.lib;AkMeterFX.lib;AkMotionSink.lib;AkMotionGeneratorSource.lib;AkMotionSourceSource.lib;AkOpusDecoder.lib;AkPeakLimiterFX.lib;AkParametricEQFX.lib;AkPitchShifterFX.lib;AkRecorderFX.lib;AkRoomVerbFX.lib;AkSilenceSource.lib;AkSineSource.lib;AkSoundSeedImpactFX.lib;AkSoundSeedWindSource.lib;AkSoundSeedWooshSource.lib;AkSpatialAudio.lib;AkStereoDelayFX.lib;AkSynthOneSource.lib;AkTimeStretchFX.lib;AkToneSource.lib;AkTremoloFX.lib;AkVorbisDecoder.lib;AuroHeadphoneFX.lib;iZHybridReverbFX.lib;iZTrashBoxModelerFX.lib;iZTrashDelayFX.lib;iZTrashDistortionFX.lib;iZTrashDynamicsFX.lib;iZTrashFiltersFX.lib;iZTrashMultibandDistortionFX.lib;McDSPFutzBoxFX.lib;McDSPLimiterFX.lib;SFLib.lib;AkSoundEngine.lib;AkMemoryMgr.lib;AkStreamMgr.lib;AkMusicEngine.lib;CommunicationCentral.lib;dinput8.lib;Winmm.lib;dsound.lib;dxguid.lib;ws2_32.lib;xinput.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalOptions>/VERBOSE:LIB %(AdditionalOptions)</AdditionalOptions>
     </Link>
@@ -146,7 +146,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_WINDOWS;AK_OPTIMIZED;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(WWISESDK)\include;$(WWISESDK)\samples;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(WWISESDK)\include;$(WWISESDK)\samples;C:\Program Files (x86)\Audiokinetic\Wwise 2018.1.0.6714\SDK\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
