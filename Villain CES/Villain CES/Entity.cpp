@@ -2345,7 +2345,7 @@ unsigned int CreateNodePoint(TWorld * ptWorld, XMMATRIX SpawnPosition)
 	ptWorld->atCollisionMask[nThisEntity].m_tnCollisionMask = (COMPONENT_COLLISIONMASK);
 	ptWorld->atGraphicsMask[nThisEntity].m_tnGraphicsMask = (COMPONENT_GRAPHICSMASK | COMPONENT_SIMPLEMESH | COMPONENT_SHADERID);
 	ptWorld->atAIMask[nThisEntity].m_tnAIMask = (COMPONENT_AIMASK);
-	ptWorld->atUIMask[nThisEntity].m_tnUIMask = (COMPONENT_UIMASK | COMPONENT_NOSHOW);
+	ptWorld->atUIMask[nThisEntity].m_tnUIMask = (COMPONENT_UIMASK);
 	ptWorld->atPhysicsMask[nThisEntity].m_tnPhysicsMask = (COMPONENT_PHYSICSMASK);
 	static TPrimalVert atCubeVertices[]
 	{
@@ -3442,14 +3442,14 @@ unsigned int createMesh(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMeshImpo
 		}
 		ptWorld->atShaderID[nThisEntity].m_nShaderID = shaderID;
 		if (shaderID != 20 && shaderID != 30 && shaderID != 40 && shaderID != 50) {
-			ptWorld->atCollisionMask[nThisEntity].m_tnCollisionMask = (COMPONENT_COLLISIONMASK | COMPONENT_TRIGGER | COMPONENT_AABB | COMPONENT_STATIC);
+			ptWorld->atCollisionMask[nThisEntity].m_tnCollisionMask = (COMPONENT_COLLISIONMASK | COMPONENT_NONTRIGGER | COMPONENT_AABB | COMPONENT_STATIC);
 
-			ptWorld->atRigidBody[nThisEntity].ground = false;
+			ptWorld->atRigidBody[nThisEntity].ground = true;
 
 		}
 		else {
 			ptWorld->atCollisionMask[nThisEntity].m_tnCollisionMask = (COMPONENT_COLLISIONMASK | COMPONENT_TRIGGER | COMPONENT_AABB | COMPONENT_STATIC);
-			ptWorld->atRigidBody[nThisEntity].ground = false;
+			ptWorld->atRigidBody[nThisEntity].ground = true;
 
 
 		}

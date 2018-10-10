@@ -143,6 +143,7 @@ void CCollisionSystem::TestThreading(TWorld * ptWorld, int nCurrentEntity, CGrap
 	{
 		ptWorld->atAABB[nCurrentEntity] = updateAABB(ptWorld->atWorldMatrix[nCurrentEntity].worldMatrix, ptWorld->atAABB[nCurrentEntity]);
 	}
+	
 	//ptWorld->atClayton[nCurrentEntity].health = 10;
 //	float x = 0;
 	//Change Door values
@@ -160,6 +161,7 @@ void CCollisionSystem::TestThreading(TWorld * ptWorld, int nCurrentEntity, CGrap
 					for (int doorindex = 0;doorindex< ptWorld->atAABB[otherCollisionsIndex[i]].doorPeices.size(); ++doorindex) {
 						doorEventChanger(ptWorld->atShaderID[otherCollisionsIndex[i]].m_nShaderID);
 						ptWorld->atWorldMatrix[ptWorld->atAABB[otherCollisionsIndex[i]].doorPeices[doorindex]].worldMatrix = XMMatrixMultiply(doorEventListener(ptWorld->atShaderID[ptWorld->atAABB[otherCollisionsIndex[i]].doorPeices[doorindex]].m_nShaderID), ptWorld->atWorldMatrix[ptWorld->atAABB[otherCollisionsIndex[i]].doorPeices[doorindex]].worldMatrix);
+						ptWorld->atAABB[ptWorld->atAABB[otherCollisionsIndex[i]].doorPeices[doorindex]] = updateAABB(ptWorld->atWorldMatrix[ptWorld->atAABB[otherCollisionsIndex[i]].doorPeices[doorindex]].worldMatrix, ptWorld->atAABB[ptWorld->atAABB[otherCollisionsIndex[i]].doorPeices[doorindex]]);
 					}
 				}
 				if (ptWorld->atRigidBody[otherCollisionsIndex[i]].ground == true
@@ -178,7 +180,7 @@ void CCollisionSystem::TestThreading(TWorld * ptWorld, int nCurrentEntity, CGrap
 					}
 				}
 				if (ptWorld->atRigidBody[otherCollisionsIndex[i]].ground == true
-					&& ptWorld->atCollisionMask[nCurrentEntity].m_tnCollisionMask != (COMPONENT_COLLISIONMASK | COMPONENT_TRIGGER | COMPONENT_AABB | COMPONENT_NONSTATIC))
+					&& ptWorld->atCollisionMask[nCurrentEntity].m_tnCollisionMask != (COMPONENT_COLLISIONMASK | COMPONENT_TRIGGER | COMPONENT_AABB | COMPONENT_NONSTATIC)&& ptWorld->atCollisionMask[otherCollisionsIndex[i]].m_tnCollisionMask != (COMPONENT_COLLISIONMASK | COMPONENT_TRIGGER | COMPONENT_AABB | COMPONENT_NONSTATIC))
 				{
 
 

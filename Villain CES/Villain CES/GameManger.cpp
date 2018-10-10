@@ -1,5 +1,5 @@
 #include "GameManger.h"
-#define AI_ON false
+#define AI_ON true
 #define MIKES_SANDBOX_ON false
 #define SKELETON_LOAD_ON false
 #define MAIN_LEVEL_ON true
@@ -4432,7 +4432,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 
 	m_d3dPlayerMatrix.r[3].m128_f32[2] += 20;
 	m_d3dPlayerMatrix.r[3].m128_f32[0] -= 5;
-	m_d3dPlayerMatrix.r[3].m128_f32[1] += 0.2;
+	m_d3dPlayerMatrix.r[3].m128_f32[1] -= 1;
 
 #pragma endregion
 
@@ -4505,14 +4505,14 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	XMMATRIX AILocation = pcGraphicsSystem->SetDefaultWorldPosition();
 	AILocation.r[3].m128_f32[2] -= 60;
 	AILocation.r[3].m128_f32[0] -= 8;
-	AILocation.r[3].m128_f32[1] += 0.2;
+	AILocation.r[3].m128_f32[1] -= 1;
 	XMMATRIX CoverLocation = AILocation;
 	vector<int> coverPosition;
 	CoverLocation.r[3].m128_f32[2] += 4;
 	int cover1 = CreateCover(&tThisWorld, CoverLocation, coverPosition);
 	XMMATRIX nodeLocation = CoverLocation;
 	nodeLocation.r[3].m128_f32[0] += 0;
-	//nodeLocation.r[3].m128_f32[1] -= 1;
+	nodeLocation.r[3].m128_f32[1] -= 1;
 	nodeLocation.r[3].m128_f32[2] += -2;
 
 	//pcAiSystem->AddNodeToPathFinding(nodeLocation, nodePosition, 1);
@@ -4573,7 +4573,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	//int GunINdexai = CreateGun(&tThisWorld, m_d3dWorldMatrix, spacePirate, -1.1, 0.5, 12.5, 10, 30);
 	for (int meshIndex = 0; meshIndex < gunImport.meshCount; ++meshIndex)
 	{
-		GunINdexai = CreateScyllianGun(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, m_d3dWorldMatrix, spacePirate, -1.5, 1, 11.5, 10, 100, gunImport.vtMeshes[meshIndex], gunImport.vtMaterials[meshIndex]);
+	 GunINdexai = CreateScyllianGun(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, m_d3dWorldMatrix, spacePirate, -1.5, 1, 11.5, 10, 200, gunImport.vtMeshes[meshIndex], gunImport.vtMaterials[meshIndex]);
 	}
 
 	#pragma region More AI Init
@@ -4630,14 +4630,14 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	 AILocation = pcGraphicsSystem->SetDefaultWorldPosition();
 	AILocation.r[3].m128_f32[2] -= 60;
 	AILocation.r[3].m128_f32[0] -= 4;
-	AILocation.r[3].m128_f32[1] += 0.2;
+	AILocation.r[3].m128_f32[1] -= 1;
 	 CoverLocation = AILocation;
 	 coverPosition.clear();
 	CoverLocation.r[3].m128_f32[2] += 4;
 	 cover1 = CreateCover(&tThisWorld, CoverLocation, coverPosition);
 	 nodeLocation = CoverLocation;
 	nodeLocation.r[3].m128_f32[0] += 0;
-	//nodeLocation.r[3].m128_f32[1] -= 1;
+	nodeLocation.r[3].m128_f32[1] -= 1;
 	nodeLocation.r[3].m128_f32[2] += -2;
 
 	//pcAiSystem->AddNodeToPathFinding(nodeLocation, nodePosition, 1);
@@ -4752,7 +4752,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	AILocation = pcGraphicsSystem->SetDefaultWorldPosition();
 	AILocation.r[3].m128_f32[2] -= 80;
 	AILocation.r[3].m128_f32[0] += 3.5;
-	AILocation.r[3].m128_f32[1] += 0.2;
+	AILocation.r[3].m128_f32[1] -= 1;
 	XMMATRIX AiLookPosition=AILocation;
 	AiLookPosition.r[3].m128_f32[0] -= 12;
 	AiLookPosition.r[3].m128_f32[2] += 10;
@@ -4764,7 +4764,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	cover1 = CreateCover(&tThisWorld, CoverLocation, coverPosition);
 	nodeLocation = CoverLocation;
 	nodeLocation.r[3].m128_f32[0] += 0;
-	//nodeLocation.r[3].m128_f32[1] -= 1;
+	nodeLocation.r[3].m128_f32[1] -= 1;
 	nodeLocation.r[3].m128_f32[2] += -2;
 
 	//pcAiSystem->AddNodeToPathFinding(nodeLocation, nodePosition, 1);
@@ -4825,7 +4825,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	//int GunINdexai = CreateGun(&tThisWorld, m_d3dWorldMatrix, spacePirate, -1.1, 0.5, 12.5, 10, 30);
 	for (int meshIndex = 0; meshIndex < tempImport.meshCount; ++meshIndex)
 	{
-		GunINdexai = CreateScyllianGun(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, m_d3dWorldMatrix, spacePirate, -1.5, 1, 11.5, 10, 100, gunImport.vtMeshes[meshIndex], gunImport.vtMaterials[meshIndex]);
+	 GunINdexai = CreateScyllianGun(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, m_d3dWorldMatrix, spacePirate, -1.5, 1, 11.5, 10, 200, gunImport.vtMeshes[meshIndex], gunImport.vtMaterials[meshIndex]);
 	}
 #pragma region MORE AI Init
 	tThisWorld.atAIMask[spacePirate].GunIndex = GunINdexai;
@@ -4880,7 +4880,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	cover1 = CreateCover(&tThisWorld, CoverLocation, coverPosition);
 	nodeLocation = CoverLocation;
 	nodeLocation.r[3].m128_f32[0] += 0;
-	//nodeLocation.r[3].m128_f32[1] -= 1;
+	nodeLocation.r[3].m128_f32[1] -= 1;
 	nodeLocation.r[3].m128_f32[2] += -2;
 
 	//pcAiSystem->AddNodeToPathFinding(nodeLocation, nodePosition, 1);
@@ -4932,7 +4932,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	AILocation = pcGraphicsSystem->SetDefaultWorldPosition();
 	AILocation.r[3].m128_f32[2] -= 80;
 	AILocation.r[3].m128_f32[0] -= 16;
-	AILocation.r[3].m128_f32[1] += 0.2;
+	AILocation.r[3].m128_f32[1] -= 1;
 	 AiLookPosition = AILocation;
 	AiLookPosition.r[3].m128_f32[0] -= 12;
 	AiLookPosition.r[3].m128_f32[2] += 10;
@@ -4944,7 +4944,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	cover1 = CreateCover(&tThisWorld, CoverLocation, coverPosition);
 	nodeLocation = CoverLocation;
 	nodeLocation.r[3].m128_f32[0] += 0;
-	//nodeLocation.r[3].m128_f32[1] -= 1;
+	nodeLocation.r[3].m128_f32[1] -= 1;
 	nodeLocation.r[3].m128_f32[2] += -2;
 
 	//pcAiSystem->AddNodeToPathFinding(nodeLocation, nodePosition, 1);
@@ -4999,7 +4999,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	//int GunINdexai = CreateGun(&tThisWorld, m_d3dWorldMatrix, spacePirate, -1.1, 0.5, 12.5, 10, 30);
 	for (int meshIndex = 0; meshIndex < tempImport.meshCount; ++meshIndex)
 	{
-		GunINdexai = CreateScyllianGun(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, m_d3dWorldMatrix, spacePirate, -1.5, 1, 11.5, 10, 100, gunImport.vtMeshes[meshIndex], gunImport.vtMaterials[meshIndex]);
+	 GunINdexai = CreateScyllianGun(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, m_d3dWorldMatrix, spacePirate, -1.5, 1, 11.5, 10, 200, gunImport.vtMeshes[meshIndex], gunImport.vtMaterials[meshIndex]);
 	}
 #pragma region MORE AI Init
 	tThisWorld.atAIMask[spacePirate].GunIndex = GunINdexai;
@@ -5059,7 +5059,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	cover1 = CreateCover(&tThisWorld, CoverLocation, coverPosition);
 	nodeLocation = CoverLocation;
 	nodeLocation.r[3].m128_f32[0] += 0;
-	//nodeLocation.r[3].m128_f32[1] -= 1;
+	nodeLocation.r[3].m128_f32[1] -= 1;
 	nodeLocation.r[3].m128_f32[2] += -2;
 
 	//pcAiSystem->AddNodeToPathFinding(nodeLocation, nodePosition, 1);
@@ -5105,7 +5105,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	AILocation = pcGraphicsSystem->SetDefaultWorldPosition();
 	AILocation.r[3].m128_f32[2] -= 90;
 	AILocation.r[3].m128_f32[0] -= 10;
-	AILocation.r[3].m128_f32[1] += 0.2;
+	AILocation.r[3].m128_f32[1] -= 1;
 	AiLookPosition = AILocation;
 	AiLookPosition.r[3].m128_f32[0] -= 12;
 	AiLookPosition.r[3].m128_f32[2] += 10;
@@ -5117,7 +5117,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	cover1 = CreateCover(&tThisWorld, CoverLocation, coverPosition);
 	nodeLocation = CoverLocation;
 	nodeLocation.r[3].m128_f32[0] += 0;
-	//nodeLocation.r[3].m128_f32[1] -= 1;
+	nodeLocation.r[3].m128_f32[1] -= 1;
 	nodeLocation.r[3].m128_f32[2] += -2;
 
 	//pcAiSystem->AddNodeToPathFinding(nodeLocation, nodePosition, 1);
@@ -5172,7 +5172,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	//int GunINdexai = CreateGun(&tThisWorld, m_d3dWorldMatrix, spacePirate, -1.1, 0.5, 12.5, 10, 30);
 	for (int meshIndex = 0; meshIndex < gunImport.meshCount; ++meshIndex)
 	{
-		GunINdexai = CreateScyllianGun(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, m_d3dWorldMatrix, spacePirate, -1.5, 1, 11.5, 10, 100, gunImport.vtMeshes[meshIndex], gunImport.vtMaterials[meshIndex]);
+	 GunINdexai = CreateScyllianGun(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, m_d3dWorldMatrix, spacePirate, -1.5, 1, 11.5, 10, 200, gunImport.vtMeshes[meshIndex], gunImport.vtMaterials[meshIndex]);
 	}
 #pragma region MORE AI Init
 	tThisWorld.atAIMask[spacePirate].GunIndex = GunINdexai;
@@ -5232,7 +5232,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	cover1 = CreateCover(&tThisWorld, CoverLocation, coverPosition);
 	nodeLocation = CoverLocation;
 	nodeLocation.r[3].m128_f32[0] += 3.5f;
-	//nodeLocation.r[3].m128_f32[1] -= 1;
+	nodeLocation.r[3].m128_f32[1] -= 1;
 	nodeLocation.r[3].m128_f32[2] += 5;
 
 	//pcAiSystem->AddNodeToPathFinding(nodeLocation, nodePosition, 1);
@@ -5267,7 +5267,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	cover1 = CreateCover(&tThisWorld, CoverLocation, coverPosition);
 	nodeLocation = CoverLocation;
 	nodeLocation.r[3].m128_f32[0] += 3.5f;
-	//nodeLocation.r[3].m128_f32[1] -= 1;
+	nodeLocation.r[3].m128_f32[1] -= 1;
 	nodeLocation.r[3].m128_f32[2] += 5;
 
 	//pcAiSystem->AddNodeToPathFinding(nodeLocation, nodePosition, 1);
@@ -5327,7 +5327,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	cover1 = CreateCover(&tThisWorld, CoverLocation, coverPosition);
 	nodeLocation = CoverLocation;
 	nodeLocation.r[3].m128_f32[0] += 6;
-	//nodeLocation.r[3].m128_f32[1] -= 1;
+	nodeLocation.r[3].m128_f32[1] -= 1;
 	nodeLocation.r[3].m128_f32[2] += 5;
 
 	//pcAiSystem->AddNodeToPathFinding(nodeLocation, nodePosition, 1);
@@ -5372,7 +5372,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	AILocation = pcGraphicsSystem->SetDefaultWorldPosition();
 	AILocation.r[3].m128_f32[2] -= 106;
 	AILocation.r[3].m128_f32[0] -= 13;
-	AILocation.r[3].m128_f32[1] += 0.2;
+	AILocation.r[3].m128_f32[1] -= 1;
 	AiLookPosition = AILocation;
 	AiLookPosition.r[3].m128_f32[0] -= 12;
 	AiLookPosition.r[3].m128_f32[2] += 10;
@@ -5412,7 +5412,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	//int GunINdexai = CreateGun(&tThisWorld, m_d3dWorldMatrix, spacePirate, -1.1, 0.5, 12.5, 10, 30);
 	for (int meshIndex = 0; meshIndex < tempImport.meshCount; ++meshIndex)
 	{
-		GunINdexai = CreateScyllianGun(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, m_d3dWorldMatrix, spacePirate, -1.5, 1, 11.5, 10, 100, gunImport.vtMeshes[meshIndex], gunImport.vtMaterials[meshIndex]);
+	 GunINdexai = CreateScyllianGun(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, m_d3dWorldMatrix, spacePirate, -1.5, 1, 11.5, 10, 200, gunImport.vtMeshes[meshIndex], gunImport.vtMaterials[meshIndex]);
 	}
 #pragma region MORE AI Init
 	tThisWorld.atAIMask[spacePirate].GunIndex = GunINdexai;
@@ -5471,7 +5471,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	cover1 = CreateCover(&tThisWorld, CoverLocation, coverPosition);
 	nodeLocation = CoverLocation;
 	nodeLocation.r[3].m128_f32[0] += 0;
-	//nodeLocation.r[3].m128_f32[1] -= 1;
+	nodeLocation.r[3].m128_f32[1] -= 1;
 //	nodeLocation.r[3].m128_f32[2] += -2;
 
 	//pcAiSystem->AddNodeToPathFinding(nodeLocation, nodePosition, 1);
@@ -5515,7 +5515,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	AILocation = pcGraphicsSystem->SetDefaultWorldPosition();
 	AILocation.r[3].m128_f32[2] -= 106;
 	AILocation.r[3].m128_f32[0] -= 3;
-	AILocation.r[3].m128_f32[1] += 0.2;
+	AILocation.r[3].m128_f32[1] -= 1;
 	AiLookPosition = AILocation;
 	AiLookPosition.r[3].m128_f32[0] -= 12;
 	AiLookPosition.r[3].m128_f32[2] += 10;
@@ -5555,7 +5555,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	//int GunINdexai = CreateGun(&tThisWorld, m_d3dWorldMatrix, spacePirate, -1.1, 0.5, 12.5, 10, 30);
 	for (int meshIndex = 0; meshIndex < tempImport.meshCount; ++meshIndex)
 	{
-		GunINdexai = CreateScyllianGun(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, m_d3dWorldMatrix, spacePirate, -1.5, 1, 11.5, 10, 100, gunImport.vtMeshes[meshIndex], gunImport.vtMaterials[meshIndex]);
+	 GunINdexai = CreateScyllianGun(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, m_d3dWorldMatrix, spacePirate, -1.5, 1, 11.5, 10, 200, gunImport.vtMeshes[meshIndex], gunImport.vtMaterials[meshIndex]);
 	}
 #pragma region MORE AI Init
 	tThisWorld.atAIMask[spacePirate].GunIndex = GunINdexai;
@@ -5614,7 +5614,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	cover1 = CreateCover(&tThisWorld, CoverLocation, coverPosition);
 	nodeLocation = CoverLocation;
 	nodeLocation.r[3].m128_f32[0] += 0;
-	//nodeLocation.r[3].m128_f32[1] -= 1;
+	nodeLocation.r[3].m128_f32[1] -= 1;
 	//	nodeLocation.r[3].m128_f32[2] += -2;
 
 	//pcAiSystem->AddNodeToPathFinding(nodeLocation, nodePosition, 1);
@@ -5657,7 +5657,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	AILocation = pcGraphicsSystem->SetDefaultWorldPosition();
 	AILocation.r[3].m128_f32[2] -= 121;
 	AILocation.r[3].m128_f32[0] -= 9;
-	AILocation.r[3].m128_f32[1] += 0.2;
+	AILocation.r[3].m128_f32[1] -= 1;
 	AiLookPosition = AILocation;
 	AiLookPosition.r[3].m128_f32[0] -= 12;
 	AiLookPosition.r[3].m128_f32[2] += 10;
@@ -5697,7 +5697,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	//int GunINdexai = CreateGun(&tThisWorld, m_d3dWorldMatrix, spacePirate, -1.1, 0.5, 12.5, 10, 30);
 	for (int meshIndex = 0; meshIndex < tempImport.meshCount; ++meshIndex)
 	{
-		GunINdexai = CreateScyllianGun(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, m_d3dWorldMatrix, spacePirate, -1.5, 1, 11.5, 10, 100, gunImport.vtMeshes[meshIndex], gunImport.vtMaterials[meshIndex]);
+	 GunINdexai = CreateScyllianGun(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, m_d3dWorldMatrix, spacePirate, -1.5, 1, 11.5, 10, 200, gunImport.vtMeshes[meshIndex], gunImport.vtMaterials[meshIndex]);
 	}
 #pragma region MORE AI Init
 	tThisWorld.atAIMask[spacePirate].GunIndex = GunINdexai;
@@ -5756,7 +5756,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	cover1 = CreateCover(&tThisWorld, CoverLocation, coverPosition);
 	nodeLocation = CoverLocation;
 	nodeLocation.r[3].m128_f32[0] += 0;
-	//nodeLocation.r[3].m128_f32[1] -= 1;
+	nodeLocation.r[3].m128_f32[1] -= 1;
 		nodeLocation.r[3].m128_f32[2] += -20;
 
 	//pcAiSystem->AddNodeToPathFinding(nodeLocation, nodePosition, 1);
