@@ -141,6 +141,7 @@ private:
 	float fYchange;
 	float prev_fXchange;
 	float prev_fYchange;
+	int resetCounter;
 	float fXEnd;
 	float fYEnd;
 	XMVECTOR m_PlayerForwardV;

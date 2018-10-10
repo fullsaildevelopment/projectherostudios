@@ -7,6 +7,7 @@ CInputSystem::CInputSystem()
 	m_YRotationLimit = 0;
 	 fXchange = 0, fYchange = 0, fXEnd = 0, fYEnd = 0, prev_fXchange = 0, prev_fYchange = 0;
 	 stepCount = 0;
+	 resetCounter = 0;
 }
 
 
@@ -342,14 +343,10 @@ XMMATRIX CInputSystem::CharacterMovement(XMMATRIX d3dplayerMatrix, double delta,
 	bool keyPressed = false;
 	if (move == false)
 	{
-	 if (prev_fXchange == fXchange)
+	
+	 if (fXchange > 0.3f || fXchange < -0.3f)
 	{
-		fXchange = 0;
-		
-	}
-	else if (fXchange > 0.3f || fYchange > 0.3f || fXchange < -0.3f || fYchange < -0.3f)
-	{
-		d3dRotation = XMMatrixRotationY(fXchange * m_fMouseRotationSpeed * delta);
+		d3dRotation = XMMatrixRotationY(fXchange * m_fMouseRotationSpeed);
 		
 		d3dTmpViewM = XMMatrixMultiply(d3dRotation, d3dTmpViewM);
 		d3d_existingZ = d3dTmpViewM.r[2];
@@ -364,11 +361,7 @@ XMMATRIX CInputSystem::CharacterMovement(XMMATRIX d3dplayerMatrix, double delta,
 		d3dTmpViewM.r[1] = d3d_newY;
 		d3dTmpViewM.r[2] = d3d_existingZ;
 	}
-		else 
-		{
-			fXchange = 0;
-			fYchange = 0;
-		}
+		
 
 		//Forward && Back Movement
 		// up key movement
@@ -417,12 +410,11 @@ XMMATRIX CInputSystem::CharacterMovement(XMMATRIX d3dplayerMatrix, double delta,
 		stepCount = 0;
 #endif
 			}
-		if (stepCount > 20)
-		{
-		stepCount = 0;
-		}
-		prev_fXchange = fXchange;
-		prev_fYchange = fYchange;
+			if (stepCount > 20)
+			{
+			stepCount = 0;
+			}
+		
 	}
 	
 	return d3dTmpViewM;
@@ -493,11 +485,11 @@ void CInputSystem::GetMousePosition()
 XMMATRIX CInputSystem::AimMode(TCamera * in_AimCamera, XMMATRIX d3dplayerMatrix, double delta, bool move)
 {
 	XMMATRIX d3dTmpViewM, d3dMovementM, d3dRotation;
-
+	GReturn input_Check;
 	d3dTmpViewM = d3dplayerMatrix;
 
 	XMVECTOR d3d_newX, d3d_newY, d3d_existingZ;
-	//m_pcMyInput->GetMousePosition(fXEnd, fYEnd);
+	 m_pcMyInput->GetMousePosition(fXEnd, fYEnd);
 
 	//MouseBoundryCheck(fXEnd, fYEnd, fXchange, fYchange);
 	//Display current mouse pose
@@ -507,15 +499,19 @@ XMMATRIX CInputSystem::AimMode(TCamera * in_AimCamera, XMMATRIX d3dplayerMatrix,
 	//{
 	if (move == false)
 	{
-		m_pcMyInput->GetMouseDelta(fXchange, fYchange);
-		if (prev_fXchange == fXchange || prev_fYchange == fYchange)
+		
+		input_Check = m_pcMyInput->GetMouseDelta(fXchange, fYchange);
+		if (prev_fXchange == fXchange && prev_fYchange == fYchange && (prev_fXchange != 0 || prev_fYchange != 0) && input_Check == REDUNDANT_OPERATION)
 		{
-		fXchange = 0;
+			fXchange = 0;
+			fYchange = 0;
 		in_AimCamera->fPitch = 0;
+			
 		}
 		else if (fYchange > 0.3f || fYchange < -0.3f)
 		{
 			in_AimCamera->fPitch += fYchange;
+
 			if (in_AimCamera->fPitch >= 90.0f)
 			{
 				in_AimCamera->fPitch = 89.0f;
@@ -527,11 +523,12 @@ XMMATRIX CInputSystem::AimMode(TCamera * in_AimCamera, XMMATRIX d3dplayerMatrix,
 		}
 		else
 		{
-			in_AimCamera->fPitch = 0;
 			fXchange = 0;
+			fYchange = 0;
 		}
+		
 
-		d3dRotation = XMMatrixRotationX(in_AimCamera->fPitch * m_fMouseRotationSpeed);
+		d3dRotation = XMMatrixRotationX(in_AimCamera->fPitch * m_fMouseRotationSpeed * delta);
 		d3dTmpViewM = XMMatrixMultiply(d3dTmpViewM, d3dRotation);
 
 		//d3dTmpViewM = XMMatrixMultiply(d3dTmpViewM, d3dRotation);
@@ -565,9 +562,12 @@ XMMATRIX CInputSystem::AimMode(TCamera * in_AimCamera, XMMATRIX d3dplayerMatrix,
 		d3dTmpViewM.r[0] = d3d_newX;
 		d3dTmpViewM.r[1] = d3d_newY;
 		d3dTmpViewM.r[2] = d3d_existingZ;
-
+		if (input_Check != REDUNDANT_OPERATION)
+		{
 		prev_fXchange = fXchange;
 		prev_fYchange = fYchange;
+		}
+		
 	}
 		
 	
