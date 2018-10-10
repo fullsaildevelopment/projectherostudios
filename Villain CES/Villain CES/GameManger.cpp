@@ -5800,7 +5800,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	{
 		
 		
-		if (tThisWorld.atCollisionMask[nCurrentEntity].m_tnCollisionMask > 1)
+		if (tThisWorld.atCollisionMask[nCurrentEntity].m_tnCollisionMask > 1&&nCurrentEntity!=216&&nCurrentEntity!=215)
 		{
 
 			if (tThisWorld.atSimpleMesh[nCurrentEntity].m_nVertexCount > tThisWorld.atDebugMesh[nCurrentEntity].m_nVertexCount)
@@ -5817,6 +5817,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 				}*/
 
 			}
+			
 			if (tThisWorld.atMesh[nCurrentEntity].m_nVertexCount > tThisWorld.atDebugMesh[nCurrentEntity].m_nVertexCount)
 			{
 
