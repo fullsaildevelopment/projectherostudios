@@ -55,11 +55,15 @@ public:
 	int RealLevelUpdate();
 	void ResetLevel();
 
+	//XMMATRIX DoorEventListener(int shaderID);
+	//const int DoorEventChanger(int shaderID);
+
 	bool GameOver = false;
 	bool GamePaused = false;
 	bool loading = false;
 	int nCurrentScene = 0;
 
+	
 
 private:
 	std::vector<std::thread> workers;
@@ -109,9 +113,11 @@ private:
 
 	float prevHealth = 0;
 	float fallingHealth = 0;
+	float hitmarkerTime = 1;
 
 	int fpsIndex = -1;
 	int objLogoIndex = -1;
+	int hitmarkerIndex = -1;
 	int ammoIndex = -1;
 	int masterIndex = -1;
 	int musicIndex = -1;

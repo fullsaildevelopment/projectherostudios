@@ -26,6 +26,7 @@ struct Clips
 	bool empty = false;
 	bool GunMode = false;
 	float fShootingCoolDown;
+	float fsReloadingCoolDown;
 	list<bool> nBulletsAvailables;
 	int nSizeofClipl;
 	bool tryToShoot = false;
@@ -36,5 +37,7 @@ struct Clips
 	float bulletSpeed;
 	int gunIndex;
 	int indexInclip;
+	float lifeTime;
+	float maxLifeTime;
 };
 #endif
