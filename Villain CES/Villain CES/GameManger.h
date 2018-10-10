@@ -109,9 +109,11 @@ private:
 
 	float prevHealth = 0;
 	float fallingHealth = 0;
+	float hitmarkerTime = 1;
 
 	int fpsIndex = -1;
 	int objLogoIndex = -1;
+	int hitmarkerIndex = -1;
 	int ammoIndex = -1;
 	int masterIndex = -1;
 	int musicIndex = -1;
