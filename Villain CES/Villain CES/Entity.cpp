@@ -230,15 +230,10 @@ void destroyEntity(TWorld * ptWorld, unsigned int nThisEntity)
 	ptWorld->atRigidBody[nThisEntity].gravity = zeroVector;
 	ptWorld->atRigidBody[nThisEntity].maxVelocity = zeroVector;
 
-	//delete ptWorld->atMesh[nThisEntity].m_pd3dVertexBuffer;
 	ptWorld->atMesh[nThisEntity].m_pd3dVertexBuffer = nullptr;
-	//delete ptWorld->atMesh[nThisEntity].m_pd3dIndexBuffer;
 	ptWorld->atMesh[nThisEntity].m_pd3dIndexBuffer = nullptr;
-	//delete ptWorld->atSimpleMesh[nThisEntity].m_pd3dVertexBuffer;
 	ptWorld->atMesh[nThisEntity].m_pd3dVertexBuffer = nullptr;
-	//delete ptWorld->atSimpleMesh[nThisEntity].m_pd3dIndexBuffer;
 	ptWorld->atMesh[nThisEntity].m_pd3dIndexBuffer = nullptr;
-	//delete ptWorld->atDebugMesh[nThisEntity].m_pd3dVertexBuffer;
 	ptWorld->atMesh[nThisEntity].m_pd3dVertexBuffer = nullptr;
 
 	ptWorld->atMesh[nThisEntity].m_d3dVertexData.pSysMem = nullptr;
@@ -270,6 +265,9 @@ void destroyEntity(TWorld * ptWorld, unsigned int nThisEntity)
 	ptWorld->atClip[nThisEntity].tryToShoot = false;
 	ptWorld->atClip[nThisEntity].tryToReload = false;
 	ptWorld->atClip[nThisEntity].maderay = false;
+
+	ptWorld->atClip[nThisEntity].lifeTime = 0;
+	ptWorld->atClip[nThisEntity].maxLifeTime = 0;
 
 	ptWorld->atLabel[nThisEntity].height = 0;
 	ptWorld->atLabel[nThisEntity].width = 0;
@@ -777,25 +775,26 @@ unsigned int CreateBullet(TWorld * ptWorld, XMMATRIX BulletSpawnLocation, int Ma
 	ptWorld->atPhysicsMask[nThisEntity].m_tnPhysicsMask = (COMPONENT_PHYSICSMASK | COMPONENT_RIGIDBODY);
 	static TPrimalVert atCubeVertices[]
 	{
-		TPrimalVert{ XMFLOAT3(-0, 0.5f, 0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//0 Top F Left
-		TPrimalVert{ XMFLOAT3(0.5f, 0.5f, 0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//1 Top F Right
-		TPrimalVert{ XMFLOAT3(-0, -0, 0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//2 Bottom F Left
-		TPrimalVert{ XMFLOAT3(0.5f, -0, 0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//3 Bottom F Right
-		TPrimalVert{ XMFLOAT3(-0, 0.5f, -0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//4 Top B Left
-		TPrimalVert{ XMFLOAT3(0.5f, 0.5f, -0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//5 Top B Right
-		TPrimalVert{ XMFLOAT3(-0, -0, -0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//6 Bottom B Left
-		TPrimalVert{ XMFLOAT3(0.5f, -0, -0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//7 Bottom B Right
-
-		TPrimalVert{ XMFLOAT3(0.5f, 0.5f, 0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//8 //Top F Right
-		TPrimalVert{ XMFLOAT3(-0, 0.5f, 0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//9 // Top F Left
-		TPrimalVert{ XMFLOAT3(-0, -0, -0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//10 Bottom B Left
-		TPrimalVert{ XMFLOAT3(0.5f, -0, -0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//11 Bottom B Right
-		TPrimalVert{ XMFLOAT3(-0, -0, 0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//12 Bottom F Left
-		TPrimalVert{ XMFLOAT3(-0, 0.5f, 0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//13 Top F Left
-		TPrimalVert{ XMFLOAT3(0.5f, 0.5f, 0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },//14 Top F Right
-		TPrimalVert{ XMFLOAT3(0.5f, -0, 0.5f),	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) }//15 Bottm F Right
+		TPrimalVert{ XMFLOAT3(-0, 0.2f, 0.5f),		XMFLOAT4(1.0f, 1.0f, 0, 1.0f) },//0 Top F Left
+		TPrimalVert{ XMFLOAT3(0.2f, 0.2f, 0.5f),	XMFLOAT4(1.0f, 1.0f, 0, 1.0f) },//1 Top F Right
+		TPrimalVert{ XMFLOAT3(-0, -0, 0.5f),		XMFLOAT4(1.0f, 1.0f, 0, 1.0f) },//2 Bottom F Left
+		TPrimalVert{ XMFLOAT3(0.2f, -0, 0.5f),		XMFLOAT4(1.0f, 1.0f, 0, 1.0f) },//3 Bottom F Right
+		TPrimalVert{ XMFLOAT3(-0, 0.2f, -0.5f),		XMFLOAT4(1.0f, 1.0f, 0, 1.0f) },//4 Top B Left
+		TPrimalVert{ XMFLOAT3(0.2f, 0.2f, -0.5f),	XMFLOAT4(1.0f, 1.0f, 0, 1.0f) },//5 Top B Right
+		TPrimalVert{ XMFLOAT3(-0, -0, -0.5f),		XMFLOAT4(1.0f, 1.0f, 0, 1.0f) },//6 Bottom B Left
+		TPrimalVert{ XMFLOAT3(0.2f, -0, -0.5f),		XMFLOAT4(1.0f, 1.0f, 0, 1.0f) },//7 Bottom B Right
+																		 
+		TPrimalVert{ XMFLOAT3(0.2f, 0.2f, 0.5f),	XMFLOAT4(1.0f, 1.0f, 0, 1.0f) },//8 //Top F Right
+		TPrimalVert{ XMFLOAT3(-0, 0.2f, 0.5f),		XMFLOAT4(1.0f, 1.0f, 0, 1.0f) },//9 // Top F Left
+		TPrimalVert{ XMFLOAT3(-0, -0, -0.5f),		XMFLOAT4(1.0f, 1.0f, 0, 1.0f) },//10 Bottom B Left
+		TPrimalVert{ XMFLOAT3(0.2f, -0, -0.5f),		XMFLOAT4(1.0f, 1.0f, 0, 1.0f) },//11 Bottom B Right
+		TPrimalVert{ XMFLOAT3(-0, -0, 0.5f),		XMFLOAT4(1.0f, 1.0f, 0, 1.0f) },//12 Bottom F Left
+		TPrimalVert{ XMFLOAT3(-0, 0.2f, 0.5f),		XMFLOAT4(1.0f, 1.0f, 0, 1.0f) },//13 Top F Left
+		TPrimalVert{ XMFLOAT3(0.2f, 0.2f, 0.5f),	XMFLOAT4(1.0f, 1.0f, 0, 1.0f) },//14 Top F Right
+		TPrimalVert{ XMFLOAT3(0.2f, -0, 0.5f),		XMFLOAT4(1.0f, 1.0f, 0, 1.0f) }//15 Bottm F Right
 	};
-	for (unsigned int i = 0; i < 16; ++i) {
+	for (unsigned int i = 0; i < 16; ++i) 
+	{
 		//atCubeVertices[i].m_d3dfPosition.x *= 1;
 		//atCubeVertices[i].m_d3dfPosition.y *= 1;
 		//atCubeVertices[i].m_d3dfPosition.z *= 1;
@@ -4286,11 +4285,13 @@ unsigned int createClayton(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMeshI
 	}
 
 	XMVECTOR playerGravity;
-	playerGravity.m128_f32[1] = -0.0001;
+	playerGravity.m128_f32[1] = -0.005;
 	playerGravity.m128_f32[0] = 0;
 	playerGravity.m128_f32[2] = 0;
 	playerGravity.m128_f32[3] = 0;
 	ptWorld->atRigidBody[nThisEntity].gravity = playerGravity;
+
+	ptWorld->atClayton[nThisEntity].jumpTime = 1;
 
 	ptWorld->atMesh[nThisEntity].m_nVertexCount = tMesh.nUniqueVertexCount;
 	ptWorld->atMesh[nThisEntity].m_nVertexBufferStride = sizeof(TPrimitiveMesh);

@@ -2330,69 +2330,69 @@ void CGraphicsSystem::ExecutePipeline(ID3D11DeviceContext *pd3dDeviceContext, in
 //	}
 	case DoorPiece1_FRAME:
 	{
-		//Set Input_Layout
-		pd3dDeviceContext->IASetInputLayout(m_pd3dMyInputLayout);
-		//Set Shader
-		pd3dDeviceContext->VSSetShader(m_pd3dMyVertexShader, NULL, 0);
-		pd3dDeviceContext->PSSetShader(m_pd3dMyPixelShader, NULL, 0);
-		////Draw
-		if (nGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_SHADERID))
-		{
-			pd3dDeviceContext->DrawIndexed(m_nIndexCount, 0, 0);
-		}
-		
+		////Set Input_Layout
+		//pd3dDeviceContext->IASetInputLayout(m_pd3dMyInputLayout);
+		////Set Shader
+		//pd3dDeviceContext->VSSetShader(m_pd3dMyVertexShader, NULL, 0);
+		//pd3dDeviceContext->PSSetShader(m_pd3dMyPixelShader, NULL, 0);
+		//////Draw
+		//if (nGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_SHADERID))
+		//{
+		//	pd3dDeviceContext->DrawIndexed(m_nIndexCount, 0, 0);
+		//}
+		//
 	}
 	case DoorPiece1_UP:
 	{
-		//Set Input_Layout
-		pd3dDeviceContext->IASetInputLayout(m_pd3dMyInputLayout);
-		//Set Shader
-		pd3dDeviceContext->VSSetShader(m_pd3dMyVertexShader, NULL, 0);
-		pd3dDeviceContext->PSSetShader(m_pd3dMyPixelShader, NULL, 0);
-		////Draw
-		if (nGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_SHADERID))
-		{
-			pd3dDeviceContext->DrawIndexed(m_nIndexCount, 0, 0);
-		}
+		////Set Input_Layout
+		//pd3dDeviceContext->IASetInputLayout(m_pd3dMyInputLayout);
+		////Set Shader
+		//pd3dDeviceContext->VSSetShader(m_pd3dMyVertexShader, NULL, 0);
+		//pd3dDeviceContext->PSSetShader(m_pd3dMyPixelShader, NULL, 0);
+		//////Draw
+		//if (nGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_SHADERID))
+		//{
+		//	pd3dDeviceContext->DrawIndexed(m_nIndexCount, 0, 0);
+		//}
 	}
 	case DoorPiece1_DOWN:
 	{
-		//Set Input_Layout
-		pd3dDeviceContext->IASetInputLayout(m_pd3dMyInputLayout);
-		//Set Shader
-		pd3dDeviceContext->VSSetShader(m_pd3dMyVertexShader, NULL, 0);
-		pd3dDeviceContext->PSSetShader(m_pd3dMyPixelShader, NULL, 0);
-		////Draw
-		if (nGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_SHADERID))
-		{
-			pd3dDeviceContext->DrawIndexed(m_nIndexCount, 0, 0);
-		}
+		////Set Input_Layout
+		//pd3dDeviceContext->IASetInputLayout(m_pd3dMyInputLayout);
+		////Set Shader
+		//pd3dDeviceContext->VSSetShader(m_pd3dMyVertexShader, NULL, 0);
+		//pd3dDeviceContext->PSSetShader(m_pd3dMyPixelShader, NULL, 0);
+		//////Draw
+		//if (nGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_SHADERID))
+		//{
+		//	pd3dDeviceContext->DrawIndexed(m_nIndexCount, 0, 0);
+		//}
 	}
 	case DoorPiece1_LEFT:
 	{
-		//Set Input_Layout
-		pd3dDeviceContext->IASetInputLayout(m_pd3dMyInputLayout);
-		//Set Shader
-		pd3dDeviceContext->VSSetShader(m_pd3dMyVertexShader, NULL, 0);
-		pd3dDeviceContext->PSSetShader(m_pd3dMyPixelShader, NULL, 0);
-		////Draw
-		if (nGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_SHADERID))
-		{
-			pd3dDeviceContext->DrawIndexed(m_nIndexCount, 0, 0);
-		}
+		////Set Input_Layout
+		//pd3dDeviceContext->IASetInputLayout(m_pd3dMyInputLayout);
+		////Set Shader
+		//pd3dDeviceContext->VSSetShader(m_pd3dMyVertexShader, NULL, 0);
+		//pd3dDeviceContext->PSSetShader(m_pd3dMyPixelShader, NULL, 0);
+		//////Draw
+		//if (nGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_SHADERID))
+		//{
+		//	pd3dDeviceContext->DrawIndexed(m_nIndexCount, 0, 0);
+		//}
 	}
 	case DoorPiece1_RIGHT:
 	{
-		//Set Input_Layout
-		pd3dDeviceContext->IASetInputLayout(m_pd3dMyInputLayout);
-		//Set Shader
-		pd3dDeviceContext->VSSetShader(m_pd3dMyVertexShader, NULL, 0);
-		pd3dDeviceContext->PSSetShader(m_pd3dMyPixelShader, NULL, 0);
-		////Draw
-		if (nGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_SHADERID))
-		{
-			pd3dDeviceContext->DrawIndexed(m_nIndexCount, 0, 0);
-		}
+		////Set Input_Layout
+		//pd3dDeviceContext->IASetInputLayout(m_pd3dMyInputLayout);
+		////Set Shader
+		//pd3dDeviceContext->VSSetShader(m_pd3dMyVertexShader, NULL, 0);
+		//pd3dDeviceContext->PSSetShader(m_pd3dMyPixelShader, NULL, 0);
+		//////Draw
+		//if (nGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_SHADERID))
+		//{
+		//	pd3dDeviceContext->DrawIndexed(m_nIndexCount, 0, 0);
+		//}
 	}
 	case DoorPiece2_FRAME:
 	{
@@ -2488,16 +2488,16 @@ void CGraphicsSystem::ExecutePipeline(ID3D11DeviceContext *pd3dDeviceContext, in
 	}
 	case DoorPiece6_LEFT:
 	{
-		//Set Input_Layout
-		pd3dDeviceContext->IASetInputLayout(m_pd3dMyInputLayout);
-		//Set Shader
-		pd3dDeviceContext->VSSetShader(m_pd3dMyVertexShader, NULL, 0);
-		pd3dDeviceContext->PSSetShader(m_pd3dMyPixelShader, NULL, 0);
-		////Draw
-		if (nGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_SHADERID))
-		{
-			pd3dDeviceContext->DrawIndexed(m_nIndexCount, 0, 0);
-		}
+		////Set Input_Layout
+		//pd3dDeviceContext->IASetInputLayout(m_pd3dMyInputLayout);
+		////Set Shader
+		//pd3dDeviceContext->VSSetShader(m_pd3dMyVertexShader, NULL, 0);
+		//pd3dDeviceContext->PSSetShader(m_pd3dMyPixelShader, NULL, 0);
+		//////Draw
+		//if (nGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_SHADERID))
+		//{
+		//	pd3dDeviceContext->DrawIndexed(m_nIndexCount, 0, 0);
+		//}
 	}
 	case DoorPiece6_RIGHT:
 	{
