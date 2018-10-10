@@ -25,6 +25,7 @@ struct Clips
 	bool maderay;
 	bool GunMode = false;
 	float fShootingCoolDown;
+	float fsReloadingCoolDown;
 	list<bool> nBulletsAvailables;
 	int nSizeofClipl;
 	bool tryToShoot = false;
