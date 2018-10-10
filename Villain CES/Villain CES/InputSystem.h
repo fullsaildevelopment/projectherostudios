@@ -29,7 +29,7 @@ public:
 		TCamera* tWalkCamera, TCamera* tAimCamera, TCamera* tDebugCamera,
 		XMMATRIX &d3dResultMatrix, XMMATRIX &d3dPlayerMatrix, XMMATRIX &d3dOffsetMatrix, XMMATRIX &d3dWorldMatrix,
 		XMMATRIX &tMyViewMatrix, XMMATRIX &tTempViewMatrix,
-		XMFLOAT4 &d3dCollisionColor, double &delta, CAudioSystem* in_Audio);
+		XMFLOAT4 &d3dCollisionColor, double &delta, CAudioSystem* in_Audio, TClayton &clayton, XMVECTOR &playerVeclocity);
 	GReturn InitializeGInput(HWND cTheWindow);																																																													
 	
 
@@ -49,7 +49,7 @@ public:
 
 	XMMATRIX DebugCamera(XMMATRIX d3d_ViewM, XMMATRIX d3d_WorldM, double delta);
 
-	XMMATRIX CharacterMovement(XMMATRIX d3dplayerMatrix, double delta, CAudioSystem* in_Audio);
+	XMMATRIX CharacterMovement(XMMATRIX d3dplayerMatrix, double delta, CAudioSystem* in_Audio, TClayton &clayton, XMVECTOR &playerVeclocity);
 
 	/*
 	* WalkCamera(): This fuction makes a camera follow an in-game object.

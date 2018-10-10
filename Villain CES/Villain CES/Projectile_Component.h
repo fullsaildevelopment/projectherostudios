@@ -35,5 +35,7 @@ struct Clips
 	float bulletSpeed;
 	int gunIndex;
 	int indexInclip;
+	float lifeTime;
+	float maxLifeTime;
 };
 #endif

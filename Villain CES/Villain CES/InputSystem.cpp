@@ -69,7 +69,7 @@ void CInputSystem::gameManagerCodeAbstracted(
 	TCamera* tWalkCamera, TCamera* tAimCamera, TCamera* tDebugCamera,
 	XMMATRIX &d3dResultMatrix, XMMATRIX &d3dPlayerMatrix, XMMATRIX &d3dOffsetMatrix, XMMATRIX &d3dWorldMatrix,
 	XMMATRIX &tMyViewMatrix, XMMATRIX &tTempViewMatrix,
-	XMFLOAT4 &d3dCollisionColor, double &delta, CAudioSystem* in_Audio)
+	XMFLOAT4 &d3dCollisionColor, double &delta, CAudioSystem* in_Audio, TClayton &clayton, XMVECTOR &playerVeclocity)
 {
 	cHoverPoint = { -1, -1 };
 	//POINT hoverPoint;
@@ -165,7 +165,7 @@ void CInputSystem::gameManagerCodeAbstracted(
 			// Camera rotation Done here
 			tAimCamera->d3d_Position = this->AimMode(tAimCamera, d3dResultMatrix, delta);
 			//Does Character Rotation and Movement
-			d3dPlayerMatrix = this->CharacterMovement(d3dPlayerMatrix, delta, in_Audio);
+			d3dPlayerMatrix = this->CharacterMovement(d3dPlayerMatrix, delta, in_Audio, clayton, playerVeclocity);
 
 			tAimCamera->d3d_Position = XMMatrixMultiply(tAimCamera->d3d_Position, d3dPlayerMatrix);
 			// for shoulder offset 
@@ -331,7 +331,7 @@ XMMATRIX CInputSystem::DebugCamera(XMMATRIX d3d_ViewM, XMMATRIX d3d_WorldM, doub
 	return d3dTmpViewM;
 }
 
-XMMATRIX CInputSystem::CharacterMovement(XMMATRIX d3dplayerMatrix, double delta, CAudioSystem* in_Audio)
+XMMATRIX CInputSystem::CharacterMovement(XMMATRIX d3dplayerMatrix, double delta, CAudioSystem* in_Audio, TClayton &clayton, XMVECTOR &playerVeclocity)
 {
 
 	XMMATRIX d3dTmpViewM, d3dMovementM, d3dRotation;
@@ -361,14 +361,16 @@ XMMATRIX CInputSystem::CharacterMovement(XMMATRIX d3dplayerMatrix, double delta,
 
 	// up key movement
 
-	if (InputCheck(G_KEY_W) == 1) {
+	if (InputCheck(G_KEY_W) == 1) 
+	{
 		d3dMovementM = XMMatrixTranslation(0, 0, m_fMouseMovementSpeed * delta);
 		d3dTmpViewM = XMMatrixMultiply(d3dMovementM, d3dTmpViewM);
 		stepCount++;
 		keyPressed = true;
 	}
 	// down key movement
-	if (InputCheck(G_KEY_S) == 1) {
+	if (InputCheck(G_KEY_S) == 1)
+	{
 		d3dMovementM = XMMatrixTranslation(0, 0, -m_fMouseMovementSpeed * delta);
 
 		d3dTmpViewM = XMMatrixMultiply(d3dMovementM, d3dTmpViewM);
@@ -376,7 +378,8 @@ XMMATRIX CInputSystem::CharacterMovement(XMMATRIX d3dplayerMatrix, double delta,
 		stepCount++;
 	}
 	// left key movement
-	if (InputCheck(G_KEY_A) == 1) {
+	if (InputCheck(G_KEY_A) == 1)
+	{
 		d3dMovementM = XMMatrixTranslation(-m_fMouseMovementSpeed * delta, 0, 0);
 		d3dTmpViewM = XMMatrixMultiply(d3dMovementM, d3dTmpViewM);
 		keyPressed = true;
@@ -384,19 +387,33 @@ XMMATRIX CInputSystem::CharacterMovement(XMMATRIX d3dplayerMatrix, double delta,
 
 	}
 	// right key movement
-	if (InputCheck(G_KEY_D) == 1) {
+	if (InputCheck(G_KEY_D) == 1) 
+	{
 		d3dMovementM = XMMatrixTranslation(m_fMouseMovementSpeed * delta, 0, 0);
 		d3dTmpViewM = XMMatrixMultiply(d3dMovementM, d3dTmpViewM);
 		keyPressed = true;
 		stepCount++;
 	}
-	if (InputCheck(G_KEY_SPACE) == 1) {
+	if (InputCheck(G_KEY_SPACE) == 1 && clayton.jumpTime > 0 && playerVeclocity.m128_f32[1] > -.1)
+	{
 		d3dMovementM = XMMatrixTranslation(0, m_fMouseMovementSpeed * delta, 0);
 		d3dTmpViewM = XMMatrixMultiply(d3dMovementM, d3dTmpViewM);
 		keyPressed = true;
 		stepCount++;
 
+		clayton.jumpTime -= delta;
 
+		if (clayton.jumpTime <= 0)
+		{
+			clayton.jumpCooldown = 1;
+		}
+	}
+	else if (InputCheck(G_KEY_SPACE) == 0 && clayton.jumpTime > 0)
+	{
+		if (clayton.jumpTime < 1)
+		{
+			clayton.jumpTime += delta;
+		}
 	}
 
 	if (keyPressed == true && stepCount == 20)

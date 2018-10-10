@@ -32,6 +32,9 @@ struct TClayton
 	float m_tfMaterialLoadTime = 0.0f;
 	float m_tfMaterialLoadCooldown = 0.0f;
 	float m_tfReloadTime = 0.0f;
+
+	float jumpTime = 0;
+	float jumpCooldown = 0;
 };
 
 struct TSeth
