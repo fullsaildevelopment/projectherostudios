@@ -5819,13 +5819,18 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 
 	tThisWorld.atCoverTrigger[CoverTriggerIndex].coverAiCanGoTo.push_back(tThisWorld.atCover[cover1]);
 	tThisWorld.atPathPlanining[spacePirate].Goal = nodeindexBackRight;
-
-
+	XMMATRIX rectangle = m_d3dPlayerMatrix;
+	rectangle.r[3].m128_f32[2] -= 53.5;
+	rectangle.r[3].m128_f32[1] -= 0.5f;
+	rectangle.r[3].m128_f32[0] -= 4;
+	int cylinder=CreateCylinder(&tThisWorld, rectangle);
 	#pragma region COLLISION INIT
 	for (int nCurrentEntity = 0; nCurrentEntity < ENTITYCOUNT; nCurrentEntity++)
 	{
 		
-		
+		if (cylinder == nCurrentEntity) {
+			float x = 0;
+		}
 		if (tThisWorld.atCollisionMask[nCurrentEntity].m_tnCollisionMask > 1&&nCurrentEntity!=216&&nCurrentEntity!=215)
 		{
 
@@ -7602,8 +7607,8 @@ int CGameMangerSystem::RealLevelUpdate()
 
 		if (tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_SIMPLEMESH | COMPONENT_SHADERID))
 		{
-		//	if (tThisWorld.atUIMask[nCurrentEntity].m_tnUIMask != (COMPONENT_UIMASK | COMPONENT_NOSHOW))
-		//	{
+			if (tThisWorld.atUIMask[nCurrentEntity].m_tnUIMask != (COMPONENT_UIMASK | COMPONENT_NOSHOW))
+			{
 				if (pcCollisionSystem->aabb_to_frustum(tThisWorld.atAABB[nCurrentEntity], tThisWorld.atClaytonVision.eyes0))
 				{
 					if (tCameraMode.bWalkMode == true)
@@ -7620,7 +7625,7 @@ int CGameMangerSystem::RealLevelUpdate()
 					}
 					pcGraphicsSystem->ExecutePipeline(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atSimpleMesh[nCurrentEntity].m_nIndexCount, tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask, tThisWorld.atShaderID[nCurrentEntity].m_nShaderID);
 				}
-		//	}
+			}
 		}
 
 		if (tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_SHADERID))
