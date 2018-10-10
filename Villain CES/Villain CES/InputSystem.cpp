@@ -404,8 +404,10 @@ XMMATRIX CInputSystem::CharacterMovement(XMMATRIX d3dplayerMatrix, double delta,
 
 		if (keyPressed == true && stepCount == 20)
 	{
+#if MUSIC_ON
 		in_Audio->SendSoundsToEngine(AK::EVENTS::PLAY_WALK, in_Audio->m_WalkSound);
 		stepCount = 0;
+#endif
 	}
 		if (stepCount > 20)
 	{

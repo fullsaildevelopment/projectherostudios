@@ -102,6 +102,21 @@ void CGraphicsSystem::InitD3D(HWND cTheWindow)
 		0,
 		1
 	};
+
+	IDXGIDevice* dxgiDevice = 0;
+	m_pd3dDevice->QueryInterface(__uuidof(IDXGIDevice), (void**)&dxgiDevice);
+
+	IDXGIAdapter* dxgiAdapter = 0;
+	dxgiDevice->GetParent(__uuidof(IDXGIAdapter), (void**)&dxgiAdapter);
+
+	IDXGIFactory* dxgiFactory = 0;
+	dxgiAdapter->GetParent(__uuidof(IDXGIFactory), (void**)&dxgiFactory);
+
+	dxgiFactory->MakeWindowAssociation(cTheWindow, DXGI_MWA_NO_ALT_ENTER);
+
+	dxgiDevice->Release();
+	dxgiAdapter->Release();
+	dxgiFactory->Release();
 #pragma endregion
 
 	#pragma region DepthStencilView And DepthStencilState
