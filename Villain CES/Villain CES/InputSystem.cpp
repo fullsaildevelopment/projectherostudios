@@ -34,14 +34,14 @@ TCameraToggle CInputSystem::CameraModeListen(TCameraToggle tMyCam)
 
 	}
 
-	/*if (InputCheck(G_KEY_8) == 1)
+	if (InputCheck(G_KEY_8) == 1)
 	{
 		tTempCamMode.bWalkMode = true;
 		tTempCamMode.bDebugMode = false;
 		tTempCamMode.bAimMode = false;
 		tTempCamMode.bSwitch = true;
 
-	}*/
+	}
 	 if (InputCheck(G_BUTTON_RIGHT) == 1)
 	{
 		if (tTempCamMode.bAimMode == false) {
@@ -339,7 +339,7 @@ XMMATRIX CInputSystem::CharacterMovement(XMMATRIX d3dplayerMatrix, double delta,
 	d3dTmpViewM = d3dplayerMatrix;
 	bool keyPressed = false;
 	
-	if (fXchange > 1.0f || fYchange > 1.0f || fXchange < -1.0f || fYchange < -1.0f)
+	if (fXchange > 0.5f || fYchange > 0.5f || fXchange < -0.5f || fYchange < -0.5f)
 	{
 		d3dRotation = XMMatrixRotationY(fXchange * m_fMouseRotationSpeed);
 		
@@ -758,6 +758,12 @@ XMMATRIX CInputSystem::MyTurnTo(XMMATRIX M, XMVECTOR T, float s, XMMATRIX world)
 //	GrandSchmit(View, XMMatrixIdentity());
 //	M = View;
 	return M;
+}
+
+XMMATRIX CInputSystem::CharacterSwitch(int characterIndex)
+{
+	
+	return XMMATRIX();
 }
 
 void CInputSystem::MouseBoundryCheck(float _x, float _y, float &_outX, float &_outY)

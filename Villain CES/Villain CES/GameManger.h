@@ -85,6 +85,8 @@ private:
 	HWND cApplicationWindow;
 	vector<int> UIIndex;
 	int PlayerStartIndex = -10;
+	int CaelusIndex = -10;
+	int SethIndex = -10;
 	int GunIndexForPlayer = -10;
 	int rayindex = -10;
 	int frustumIndex;

@@ -4,6 +4,8 @@ Event	ID	Name			Wwise Object Path	Notes
 	1357778998	Play_Menu_Click			\Default Work Unit\Play_Menu_Click	
 	1589278981	Play_Walk			\Default Work Unit\Play_Walk	
 	2189107751	Play_Hurt_Human			\Default Work Unit\Play_Hurt_Human	
+	2244627757	Play_HoverSound			\Default Work Unit\Play_HoverSound	
+	3280679725	Play_AmmoDepleted			\Default Work Unit\Play_AmmoDepleted	
 	3600088999	Play_Hurt_Scylian			\Default Work Unit\Play_Hurt_Scylian	
 	3744242630	Play_Scylian_Death			\Default Work Unit\Play_Scylian_Death	
 	4261380785	Play_Metal_Reload			\Default Work Unit\Play_Metal_Reload	
@@ -12,9 +14,11 @@ Game Parameter	ID	Name			Wwise Object Path	Notes
 	1564184899	SFX_Volume			\Default Work Unit\SFX_Volume	
 
 In Memory Audio	ID	Name	Audio source file		Wwise Object Path	Notes	Data Size
+	26377840	Gun Analyzing	C:\Users\world\Documents\WwiseProjects\Augur_Sounds\.cache\Windows\SFX\Gun Analyzing_56D34C19.wem		\Actor-Mixer Hierarchy\Default Work Unit\Gun Analyzing		103632
 	61846357	Walking-Firm	C:\Users\world\Documents\WwiseProjects\Augur_Sounds\.cache\Windows\SFX\Walking-Firm_56D34C19.wem		\Actor-Mixer Hierarchy\Default Work Unit\Walking-Firm		94440
 	214970038	Scyllian Death Cry	C:\Users\world\Documents\WwiseProjects\Augur_Sounds\.cache\Windows\SFX\Scyllian Death Cry_56D34C19.wem		\Actor-Mixer Hierarchy\Default Work Unit\Scyllian Death Cry		526400
 	245692687	Scyllian Growl 2 (Deeper)	C:\Users\world\Documents\WwiseProjects\Augur_Sounds\.cache\Windows\SFX\Scyllian Growl 2 (Deeper)_56D34C19.wem		\Actor-Mixer Hierarchy\Default Work Unit\Scyllian Growl 2 (Deeper)		332352
+	303155662	Glass Reload	C:\Users\world\Documents\WwiseProjects\Augur_Sounds\.cache\Windows\SFX\Glass Reload_56D34C19.wem		\Actor-Mixer Hierarchy\Default Work Unit\Glass Reload		411024
 	654863545	Menu Tick	C:\Users\world\Documents\WwiseProjects\Augur_Sounds\.cache\Windows\SFX\Menu Tick_56D34C19.wem		\Actor-Mixer Hierarchy\Default Work Unit\Menu Tick		7796
 	709819371	Flintlock Fired	C:\Users\world\Documents\WwiseProjects\Augur_Sounds\.cache\Windows\SFX\Flintlock Fired_56D34C19.wem		\Actor-Mixer Hierarchy\Default Work Unit\Flintlock Fired		416720
 	728176999	Grunt-Human Male	C:\Users\world\Documents\WwiseProjects\Augur_Sounds\.cache\Windows\SFX\Grunt-Human Male_56D34C19.wem		\Actor-Mixer Hierarchy\Default Work Unit\Grunt-Human Male		57352

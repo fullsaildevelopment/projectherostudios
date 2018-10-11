@@ -7424,10 +7424,10 @@ int CGameMangerSystem::RealLevelUpdate()
 						tThisWorld.atClip[nCurrentEntity].tryToShoot = false;
 						if (tThisWorld.atClip[GunIndexForPlayer].nBulletsAvailables.size() == 0 && tThisWorld.atClip[GunIndexForPlayer].empty == true)
 						{
-#if MUSIC_ON
+							#if MUSIC_ON
 							pcAudioSystem->SendSoundsToEngine(AK::EVENTS::PLAY_AMMODEPLETED, pcAudioSystem->m_GunEmpty);
 							pcAudioSystem->SetRTPCVolume(AK::GAME_PARAMETERS::SFX_VOLUME, m_fSFXVolume);
-#endif
+							#endif
 							tThisWorld.atClip[GunIndexForPlayer].empty = false;
 
 						}

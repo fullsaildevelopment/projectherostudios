@@ -104,6 +104,8 @@ public:
 	AkGameObjectID m_Syclian_Death;
 	AkGameObjectID m_Scylian_Hurt;
 	AkGameObjectID m_WalkSound;
+	AkGameObjectID m_HoverSound;
+	AkGameObjectID m_GunEmpty;
 	AkBankID m_SFX_bnkID;
 private:
 	CAkFilePackageLowLevelIOBlocking * m_LowIOHook;

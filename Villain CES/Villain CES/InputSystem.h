@@ -91,7 +91,8 @@ public:
 	void GetMousePosition();
 	XMMATRIX CameraOrientationReset(XMMATRIX m1);
 	XMMATRIX MyTurnTo(XMMATRIX M, XMVECTOR T, float s, XMMATRIX world);
-/*
+	XMMATRIX CharacterSwitch(int characterIndex);
+/*	
 	*AimMode() : This fuction does camera rotation on Yaw(Y Axis) & Pitch(X Axis) for combat.
 		*
 		* Ins :
