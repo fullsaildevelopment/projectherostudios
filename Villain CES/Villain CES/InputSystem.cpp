@@ -62,7 +62,7 @@ void CInputSystem::gameManagerCodeAbstracted(
 	bool &bGunMode, bool &bTryToShoot, bool &bTryToReload,
 	bool &bMouseUp, bool &bMouseDown, bool &bClick,
 	bool &bGamePaused, bool &bGameOver, bool &bPauseInit, bool &bOptions, 
-	bool &bMoving,
+	bool &bNoMoving,
 	float &fRealTimeFov,
 	POINT &cStartDragPoint, POINT &cDragPoint, POINT &cHoverPoint, POINT &cClickPoint,
 	TCameraToggle &tCameraMode,
@@ -142,7 +142,7 @@ void CInputSystem::gameManagerCodeAbstracted(
 				tCameraMode.bSwitch = false;
 			}
 
-			d3dResultMatrix = this->WalkCameraControls(XMVectorSet(0, 1.0f, 0, 0), d3dResultMatrix, bMoving, delta);
+			d3dResultMatrix = this->WalkCameraControls(XMVectorSet(0, 1.0f, 0, 0), d3dResultMatrix, bNoMoving, delta);
 
 			tWalkCamera->d3d_Position = XMMatrixMultiply(d3dResultMatrix, d3dPlayerMatrix);
 			tWalkCamera->d3d_Position = XMMatrixMultiply(d3dOffsetMatrix, tWalkCamera->d3d_Position);
@@ -165,7 +165,7 @@ void CInputSystem::gameManagerCodeAbstracted(
 			// Camera rotation Done here
 			tAimCamera->d3d_Position = this->AimMode(tAimCamera, d3dResultMatrix, delta);
 			//Does Character Rotation and Movement
-			d3dPlayerMatrix = this->CharacterMovement(d3dPlayerMatrix, delta, in_Audio, clayton, playerVeclocity);
+			d3dPlayerMatrix = this->CharacterMovement(d3dPlayerMatrix, delta, in_Audio, clayton, playerVeclocity, bNoMoving);
 
 			tAimCamera->d3d_Position = XMMatrixMultiply(tAimCamera->d3d_Position, d3dPlayerMatrix);
 			// for shoulder offset 
@@ -331,7 +331,7 @@ XMMATRIX CInputSystem::DebugCamera(XMMATRIX d3d_ViewM, XMMATRIX d3d_WorldM, doub
 	return d3dTmpViewM;
 }
 
-XMMATRIX CInputSystem::CharacterMovement(XMMATRIX d3dplayerMatrix, double delta, CAudioSystem* in_Audio, TClayton &clayton, XMVECTOR &playerVeclocity)
+XMMATRIX CInputSystem::CharacterMovement(XMMATRIX d3dplayerMatrix, double delta, CAudioSystem* in_Audio, TClayton &clayton, XMVECTOR &playerVeclocity, bool move)
 {
 
 	XMMATRIX d3dTmpViewM, d3dMovementM, d3dRotation;

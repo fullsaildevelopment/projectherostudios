@@ -177,7 +177,7 @@ private:
 	bool makeBeamBuffer;
 	int ExtractionBeamIndex;
 	float m_RealTimeFov;
-	bool bMoving;
+	bool bNoMoving;
 	float Health = 1.0f;
 	XTime frameLock;
 };

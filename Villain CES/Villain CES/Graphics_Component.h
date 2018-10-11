@@ -15,7 +15,8 @@ enum eGraphicsComponent
 	COMPONENT_CAMERA = 1 << 7,
 	COMPONENT_SIMPLEMESH = 1 << 8,
 	COMPONENT_PBRMESH = 1 << 9,
-	COMPONENT_SKYBOX = 1 << 10
+	COMPONENT_SKYBOX = 1 << 10,
+	COMPONENT_BEAM = 1 << 11
 };
 
 struct TGraphicsMask

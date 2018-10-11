@@ -22,7 +22,7 @@ public:
 		bool &bGunMode, bool &bTryToShoot, bool &bTryToReload,
 		bool &bMouseUp, bool &bMouseDown, bool &bClick,
 		bool &bGamePaused, bool &bGameOver, bool &bPauseInit, bool &bOptions,
-		bool &bMoving,
+		bool &bNoMoving,
 		float &fRealTimeFov,
 		POINT &cStartDragPoint, POINT &cDragPoint, POINT &cHoverPoint, POINT &cClickPoint,
 		TCameraToggle &tCameraMode,
@@ -49,7 +49,7 @@ public:
 
 	XMMATRIX DebugCamera(XMMATRIX d3d_ViewM, XMMATRIX d3d_WorldM, double delta);
 
-	XMMATRIX CharacterMovement(XMMATRIX d3dplayerMatrix, double delta, CAudioSystem* in_Audio, TClayton &clayton, XMVECTOR &playerVeclocity);
+	XMMATRIX CharacterMovement(XMMATRIX d3dplayerMatrix, double delta, CAudioSystem* in_Audio, TClayton &clayton, XMVECTOR &playerVeclocity, bool move);
 
 	/*
 	* WalkCamera(): This fuction makes a camera follow an in-game object.
