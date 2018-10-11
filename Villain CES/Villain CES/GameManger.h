@@ -33,6 +33,7 @@ public:
 	void InitializeMainMenu();
 	int LoadTitleScreen();
 	void InitializeTitleScreen();
+	void CleanStory();
 	int LoadStory();
 	void InitializeStory();
 	void CleanLoadingScreen();
@@ -115,6 +116,10 @@ private:
 	float fallingHealth = 0;
 	float hitmarkerTime = 1;
 
+	int loadingImage = 0;
+	int loadingImageIndex = -1;
+	int loadingTextIndex = -1;
+
 	int fpsIndex = -1;
 	int objLogoIndex = -1;
 	int hitmarkerIndex = -1;
@@ -140,6 +145,7 @@ private:
 	float fadeTime;
 	float lerpTime;
 	float blinkTime;
+	float timeOutTime;
 
 	POINT startDragPoint;
 	POINT dragPoint;

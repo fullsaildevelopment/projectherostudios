@@ -409,6 +409,18 @@ void CGraphicsSystem::CleanD3DObject(TWorld * ptPlanet, int nEntityIndex)
 		ptPlanet->atSimpleMesh[nEntityIndex].m_pd3dVertexBuffer->Release();
 		ptPlanet->atSimpleMesh[nEntityIndex].m_pd3dIndexBuffer->Release();
 	}
+
+	if (ptPlanet->atGraphicsMask[nEntityIndex].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_SHADERID))
+	{
+		ptPlanet->atMesh[nEntityIndex].m_pd3dVertexBuffer->Release();
+		ptPlanet->atMesh[nEntityIndex].m_pd3dIndexBuffer->Release();
+	}
+
+	if (ptPlanet->atGraphicsMask[nEntityIndex].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_SHADERID))
+	{
+		ptPlanet->atMesh[nEntityIndex].m_pd3dVertexBuffer->Release();
+		ptPlanet->atMesh[nEntityIndex].m_pd3dIndexBuffer->Release();
+	}
 	destroyEntity(ptPlanet, nEntityIndex);
 }
 

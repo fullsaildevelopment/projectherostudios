@@ -418,12 +418,12 @@ void CGameMangerSystem::InitializeMainMenu()
 		ID3D11Resource* resource;
 
 		wchar_t filepath[] =
-		{ L"UI_Textures.fbm/FontB.png" };
+		{ L"UI_Textures.fbm/FontB_Updated.png" };
 
 		CreateWICTextureFromFile(pcGraphicsSystem->m_pd3dDevice, filepath, &resource, &fontTexture, NULL);
 	}
 
-	unsigned int nThisEntity;
+	int nThisEntity;
 	{
 		wchar_t wideChar[] =
 		{ L"UI_Textures.fbm/Auger_MainMenu.png" };
@@ -550,6 +550,16 @@ void CGameMangerSystem::InitializeMainMenu()
 	fadeTime = 0;
 }
 
+void CGameMangerSystem::CleanStory()
+{
+	pcGraphicsSystem->CleanD3DObject(&tThisWorld, loadingImageIndex);
+	pcGraphicsSystem->CleanD3DObject(&tThisWorld, loadingTextIndex + 1);
+	pcGraphicsSystem->CleanD3DObject(&tThisWorld, loadingTextIndex--);
+	pcGraphicsSystem->CleanD3DObject(&tThisWorld, loadingTextIndex--);
+	pcGraphicsSystem->CleanD3DObject(&tThisWorld, loadingTextIndex--);
+	pcGraphicsSystem->CleanD3DObject(&tThisWorld, loadingTextIndex--);
+}
+
 int CGameMangerSystem::LoadStory()
 {
 	fpsTimer.Xtime_Signal();
@@ -574,20 +584,20 @@ int CGameMangerSystem::LoadStory()
 			pcGraphicsSystem->ExecutePipeline(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atMesh[nCurrentEntity].m_nIndexCount, tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask, tThisWorld.atShaderID[nCurrentEntity].m_nShaderID);
 		}
 
-		if (tThisWorld.atUIMask[nCurrentEntity].m_tnUIMask == (COMPONENT_UIMASK | COMPONENT_LABEL))
+		if (tThisWorld.atUIMask[nCurrentEntity].m_tnUIMask == (COMPONENT_UIMASK | COMPONENT_LABEL) && nCurrentEntity == loadingTextIndex)
 		{
 			tUIVertexBuffer.start = -1;
 			tUIVertexBuffer.end = -1;
 			tUIVertexBuffer.ratio = -1;
 			tUIVertexBuffer.padding = -1;
 
-			tUIPixelBuffer.hoverColor = tThisWorld.atLabel[nCurrentEntity].color;
+			tUIPixelBuffer.hoverColor = tThisWorld.atLabel[loadingTextIndex].color;
 
 			double scrollSpeed = .05;
-			pcUISystem->ScrollText(&tThisWorld, pcGraphicsSystem, nCurrentEntity, &atUIVertices, scrollSpeed * fpsTimer.GetDelta());
+			pcUISystem->ScrollText(&tThisWorld, pcGraphicsSystem, loadingTextIndex, &atUIVertices, scrollSpeed * fpsTimer.GetDelta());
 
-			pcGraphicsSystem->InitUIShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tUIVertexBuffer, tUIPixelBuffer, tThisWorld.atMesh[nCurrentEntity], menuCamera->d3d_Position);
-			pcGraphicsSystem->ExecutePipeline(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atMesh[nCurrentEntity].m_nIndexCount, tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask, tThisWorld.atShaderID[nCurrentEntity].m_nShaderID);
+			pcGraphicsSystem->InitUIShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tUIVertexBuffer, tUIPixelBuffer, tThisWorld.atMesh[loadingTextIndex], menuCamera->d3d_Position);
+			pcGraphicsSystem->ExecutePipeline(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atMesh[loadingTextIndex].m_nIndexCount, tThisWorld.atGraphicsMask[loadingTextIndex].m_tnGraphicsMask, tThisWorld.atShaderID[nCurrentEntity].m_nShaderID);
 		}
 
 		if (tThisWorld.atUIMask[nCurrentEntity].m_tnUIMask == (COMPONENT_UIMASK | COMPONENT_LABEL | COMPONENT_LOADING))
@@ -598,19 +608,84 @@ int CGameMangerSystem::LoadStory()
 			tUIVertexBuffer.padding = -1;
 
 			float opacity;
-
-			if (fadeOut)
+			if (fadeIn && fadeOut)
 			{
-				opacity = fadeTime / .5;
+				opacity = 1 - (fadeTime);
 
-				if (opacity > 1)
+				fadeTime = (opacity + 1) * .2;
+
+				fadeIn = false;
+			}
+			else if (fadeIn)
+			{
+				opacity = 1 - (fadeTime);
+
+				if (opacity < 0)
+				{
+					fadeIn = false;
+
+					fadeTime = 0;
+				}
+
+				tUIPixelBuffer.hoverColor = XMFLOAT4(0, 0, 0, opacity);
+			}
+			else if (fadeOut || timeOutTime > 20)
+			{
+				opacity = fadeTime * 2;
+
+				if (opacity > 1 || timeOutTime > 20)
 				{
 					fadeTime = 0;
 					blinkTime = 0;
+					timeOutTime = 0;
 
 					loading = false;
 					fadeOut = false;
-					return 13;
+					fadeIn = true;
+
+					if (loadingImage >= 3)
+					{
+						loadingImage = 0;
+
+						CleanStory();
+
+						return 13;
+					}
+					else
+					{
+						++loadingImage;
+						++loadingTextIndex;
+
+						switch (loadingImage)
+						{
+						case 1:
+						{
+							wchar_t filePath[] =
+							{ L"UI_Textures.fbm/IntroImage_02.png" };
+
+							pcUISystem->AddTextureToUI(&tThisWorld, loadingImageIndex, pcGraphicsSystem->m_pd3dDevice, filePath);
+						}
+						break;
+						case 2:
+						{
+							wchar_t filePath[] =
+							{ L"UI_Textures.fbm/IntroImage_03.png" };
+
+							pcUISystem->AddTextureToUI(&tThisWorld, loadingImageIndex, pcGraphicsSystem->m_pd3dDevice, filePath);
+						}
+						break;
+						case 3:
+						{
+							wchar_t filePath[] =
+							{ L"UI_Textures.fbm/IntroImage_04.png" };
+
+							pcUISystem->AddTextureToUI(&tThisWorld, loadingImageIndex, pcGraphicsSystem->m_pd3dDevice, filePath);
+						}
+						break;
+						default:
+							break;
+						}
+					}
 				}
 
 				tUIPixelBuffer.hoverColor = XMFLOAT4(0, 0, 0, opacity);
@@ -651,26 +726,27 @@ int CGameMangerSystem::LoadStory()
 
 	for (auto i = G_KEY_UNKNOWN; i <= G_KEY_9; ++i)
 	{
-		if (pcInputSystem->InputCheck(i) == 1)
+		if (pcInputSystem->InputCheck(i) == 1 && !fadeOut)
 		{
 			fadeOut = true;
 		}
 	}
 
-	if (pcInputSystem->InputCheck(G_BUTTON_LEFT))
+	if (pcInputSystem->InputCheck(G_BUTTON_LEFT) && !fadeOut)
 	{
 		clickTime = 0;
 
 		fadeOut = true;
 	}
 
-	if (fadeOut)
+	if (fadeOut || fadeIn)
 	{
 		fadeTime += fpsTimer.GetDelta();
 	}
 
 	clickTime += fpsTimer.GetDelta();
 	blinkTime += fpsTimer.GetDelta();
+	timeOutTime += fpsTimer.GetDelta();
 
 	return 12;
 }
@@ -681,11 +757,26 @@ void CGameMangerSystem::InitializeStory()
 	atUIVertices.clear();
 	atUIIndices.clear();
 
-	unsigned int nThisEntity;
+	int nThisEntity;
 
 	{
 		wchar_t wideChar[] =
-		{ L"UI_Textures.fbm/Auger_Loading.png" };
+		{ L"UI_Textures.fbm/IntroImage_01.png" };
+
+		nThisEntity = CreateUILabel(&tThisWorld, menuCamera->d3d_Position, 20, 20, 0, 0, &atUIVertices, -1, .2);
+		pcUISystem->AddTextureToUI(&tThisWorld, nThisEntity, pcGraphicsSystem->m_pd3dDevice, wideChar);
+
+		pcUISystem->AddMaskToUI(&tThisWorld, nThisEntity, COMPONENT_LOADING);
+		pcUISystem->AddMaskToUI(&tThisWorld, nThisEntity, COMPONENT_BACKGROUND);
+
+		tThisWorld.atLabel[nThisEntity].color = XMFLOAT4(0, 0, 0, 1);
+
+		loadingImageIndex = nThisEntity;
+	}
+
+	/*{
+		wchar_t wideChar[] =
+		{ L"UI_Textures.fbm/IntroImage_02.png" };
 
 		nThisEntity = CreateUILabel(&tThisWorld, menuCamera->d3d_Position, 20, 20, 0, 0, &atUIVertices, -1, .2);
 		pcUISystem->AddTextureToUI(&tThisWorld, nThisEntity, pcGraphicsSystem->m_pd3dDevice, wideChar);
@@ -695,6 +786,32 @@ void CGameMangerSystem::InitializeStory()
 
 		tThisWorld.atLabel[nThisEntity].color = XMFLOAT4(0, 0, 0, 1);
 	}
+
+	{
+		wchar_t wideChar[] =
+		{ L"UI_Textures.fbm/IntroImage_03.png" };
+
+		nThisEntity = CreateUILabel(&tThisWorld, menuCamera->d3d_Position, 20, 20, 0, 0, &atUIVertices, -1, .2);
+		pcUISystem->AddTextureToUI(&tThisWorld, nThisEntity, pcGraphicsSystem->m_pd3dDevice, wideChar);
+
+		pcUISystem->AddMaskToUI(&tThisWorld, nThisEntity, COMPONENT_LOADING);
+		pcUISystem->AddMaskToUI(&tThisWorld, nThisEntity, COMPONENT_BACKGROUND);
+
+		tThisWorld.atLabel[nThisEntity].color = XMFLOAT4(0, 0, 0, 1);
+	}
+
+	{
+		wchar_t wideChar[] =
+		{ L"UI_Textures.fbm/IntroImage_04.png" };
+
+		nThisEntity = CreateUILabel(&tThisWorld, menuCamera->d3d_Position, 20, 20, 0, 0, &atUIVertices, -1, .2);
+		pcUISystem->AddTextureToUI(&tThisWorld, nThisEntity, pcGraphicsSystem->m_pd3dDevice, wideChar);
+
+		pcUISystem->AddMaskToUI(&tThisWorld, nThisEntity, COMPONENT_LOADING);
+		pcUISystem->AddMaskToUI(&tThisWorld, nThisEntity, COMPONENT_BACKGROUND);
+
+		tThisWorld.atLabel[nThisEntity].color = XMFLOAT4(0, 0, 0, 1);
+	}*/
 
 	/*{
 		wchar_t textBuffer[] =
@@ -711,11 +828,41 @@ void CGameMangerSystem::InitializeStory()
 
 	{
 		wchar_t textBuffer[] =
-			//{ L"Alteris: “Dark Matter Gates possess the unique ability \nto open passages to their twins when a sufficient \ncharge is run through them both, this passage allows for \ninstantaneous transport between the two gates.”" };
-		//{ L"Clay visits his family on Earth. During that visit, \nintroduces him and his job surveying planets for precious resources. \nStays for a few days. The night of the final day he falls asleep, \nand wakes up in his ship, confused, he gets out and finds a panoramic of Scyllia. \nHe looks at his ship and is shocked to find it barely \nrecognizable due to various upgrades. He hears cheering, grabs his gun, \nand finds his way to the coliseum. He sees a tube with \nstrange symbols above it, and climbs in and slides to the center of the arena. \nHe sees a Scyllian with red markings (Seth). He tells him to \nfight with his hands, and a melee tutorial begins. Seth punches \nhim out, being the greater warrior. He wakes up outside his ship, \nSeth having carried him there, and explains what scyllia is like and \nthat no one on his planet has anything like this ship, being a \n(relatively) low tech warrior society. He asks Clayton to take him with him so that \nhe can gain the experience to be the great general of his time. \nClayton agrees and they go to his company’s HQ and they \nscold him for being late but forgive him for being a cheap and \neffective employee. They tell him he was gone for two months \nand he tries to figure out where he went during \nthose two months." };
-		{ L"Clay visits his family on Earth. During that visit, introduces him and his job surveying planets for precious resources. Stays for a few days. The night of the final day he falls asleep, and wakes up in his ship, confused, he gets out and finds a panoramic of Scyllia. He looks at his ship and is shocked to find it barely recognizable due to various upgrades. He hears cheering, grabs his gun, and finds his way to the coliseum. He sees a tube with strange symbols above it, and climbs in and slides to the center of the arena. He sees a Scyllian with red markings (Seth). He tells him to fight with his hands, and a melee tutorial begins. Seth punches him out, being the greater warrior. He wakes up outside his ship, Seth having carried him there, and explains what scyllia is like and that no one on his planet has anything like this ship, being a (relatively) low tech warrior society. He asks Clayton to take him with him so that he can gain the experience to be the great general of his time. Clayton agrees and they go to his company’s HQ and they scold him for being late but forgive him for being a cheap and effective employee. They tell him he was gone for two months and he tries to figure out where he went during those two months." };
+		{ L"Voice over the radio: \"Clayton.\" Clayton: \"Yes General K?\" General K: \"Commercial Station 1 in Rannia's Orbit is under attack. All surviving civilians and personnel are holed up in the station's safe room, but it won't be long until the attackers break in.\"" };
 
-		nThisEntity = CreateUILabelForText2(&tThisWorld, menuCamera->d3d_Position, 15, 10, 0, -8, &atUIVertices, &atUIIndices, textBuffer, ARRAYSIZE(textBuffer), &windowRect, 10, -1, .15);
+		nThisEntity = CreateUILabelForText2(&tThisWorld, menuCamera->d3d_Position, 15, 3, 0, -8, &atUIVertices, &atUIIndices, textBuffer, ARRAYSIZE(textBuffer), &windowRect, 10, -1, .15);
+		pcUISystem->AddTextureToUI(&tThisWorld, nThisEntity, pcGraphicsSystem->m_pd3dDevice, nullptr, fontTexture);
+
+		tThisWorld.atLabel[nThisEntity].color = XMFLOAT4(1, 0, 0, 0);
+
+		loadingTextIndex = nThisEntity;
+	}
+
+	{
+		wchar_t textBuffer[] =
+		{ L"General K: \"The culprits are a notorious band of Human and Scyllian pirates known as the Gorgonate. They often take contracts, but their motives are unclear as of right now.\"" };
+
+		nThisEntity = CreateUILabelForText2(&tThisWorld, menuCamera->d3d_Position, 15, 2, 0, -8, &atUIVertices, &atUIIndices, textBuffer, ARRAYSIZE(textBuffer), &windowRect, 10, -1, .15);
+		pcUISystem->AddTextureToUI(&tThisWorld, nThisEntity, pcGraphicsSystem->m_pd3dDevice, nullptr, fontTexture);
+
+		tThisWorld.atLabel[nThisEntity].color = XMFLOAT4(1, 0, 0, 0);
+	}
+
+	{
+		wchar_t textBuffer[] =
+		{ L"General K: \"You are the only one who can make it in time. It's in your hands now. There's no time to get you better equipped, but I had my men prep your ship for you, while you were in my office.\"" };
+
+		nThisEntity = CreateUILabelForText2(&tThisWorld, menuCamera->d3d_Position, 15, 2, 0, -8, &atUIVertices, &atUIIndices, textBuffer, ARRAYSIZE(textBuffer), &windowRect, 10, -1, .15);
+		pcUISystem->AddTextureToUI(&tThisWorld, nThisEntity, pcGraphicsSystem->m_pd3dDevice, nullptr, fontTexture);
+
+		tThisWorld.atLabel[nThisEntity].color = XMFLOAT4(1, 0, 0, 0);
+	}
+
+	{
+		wchar_t textBuffer[] =
+		{ L"General K: \"All you'll have are the guns you brought with you, including your material gun. There should be a lot of resources for you to scan once you get there, so make use of them how you see fit.\"" };
+
+		nThisEntity = CreateUILabelForText2(&tThisWorld, menuCamera->d3d_Position, 15, 2, 0, -8, &atUIVertices, &atUIIndices, textBuffer, ARRAYSIZE(textBuffer), &windowRect, 10, -1, .15);
 		pcUISystem->AddTextureToUI(&tThisWorld, nThisEntity, pcGraphicsSystem->m_pd3dDevice, nullptr, fontTexture);
 
 		tThisWorld.atLabel[nThisEntity].color = XMFLOAT4(1, 0, 0, 0);
@@ -866,7 +1013,7 @@ int CGameMangerSystem::LoadLoadingScreen(bool _continue)
 
 void CGameMangerSystem::InitializeLoadingScreen()
 {
-	unsigned int nThisEntity;
+	int nThisEntity;
 
 	{
 		wchar_t wideChar[] =
@@ -1043,7 +1190,7 @@ void CGameMangerSystem::InitializeTitleScreen()
 	atUIVertices.clear();
 	atUIIndices.clear();
 
-	unsigned int nThisEntity;
+	int nThisEntity;
 
 	{
 		wchar_t wideChar[] =
@@ -1069,7 +1216,7 @@ void CGameMangerSystem::InitializeTitleScreen()
 void CGameMangerSystem::InitializeEndScreen(bool playerWin)
 {
 	
-	unsigned int nThisEntity;
+	int nThisEntity;
 
 	if (playerWin)
 	{
@@ -1182,14 +1329,14 @@ void CGameMangerSystem::InitializeEndScreen(bool playerWin)
 
 void CGameMangerSystem::InitializeOptionsMenu()
 {
-	unsigned int nThisEntity;
+	signed int nThisEntity;
 
 	if (fontTexture == nullptr)
 	{
 		ID3D11Resource* resource;
 
 		wchar_t filepath[] =
-		{ L"UI_Textures.fbm/FontB.png" };
+		{ L"UI_Textures.fbm/FontB_Updated.png" };
 
 		CreateWICTextureFromFile(pcGraphicsSystem->m_pd3dDevice, filepath, &resource, &fontTexture, NULL);
 	}
@@ -1453,7 +1600,7 @@ void CGameMangerSystem::InitializeOptionsMenu()
 
 void CGameMangerSystem::InitializeCredits()
 {
-	unsigned int nThisEntity;
+	int nThisEntity;
 	{
 		wchar_t wideChar[] =
 		{ L"UI_Textures.fbm/Auger_Credits.png" };
@@ -1506,7 +1653,7 @@ void CGameMangerSystem::InitializeCredits()
 
 void CGameMangerSystem::InitializePauseScreen()
 {
-	unsigned int nThisEntity;
+	int nThisEntity;
 
 	{
 		wchar_t filePath[] =
@@ -1870,7 +2017,7 @@ void CGameMangerSystem::InitializeHUD()
 	atUIVertices.clear();
 	atUIIndices.clear();
 
-	unsigned int nThisEntity;
+	int nThisEntity;
 
 	{
 		wchar_t filePath[] =
@@ -4419,6 +4566,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	bulletToCopyFrom.atCollisionMask = tThisWorld.atCollisionMask[tempBullet];
 	bulletToCopyFrom.atProjectiles = tThisWorld.atProjectiles[tempBullet];
 
+	pcGraphicsSystem->CreateEntityBuffer(&tThisWorld, tempBullet);
 	pcGraphicsSystem->CleanD3DObject(&tThisWorld, tempBullet);
 
 	tempImport = pcGraphicsSystem->ReadMesh("meshData_DemoDoors.txt");
