@@ -40,6 +40,7 @@ public:
 	int LoadLoadingScreen(bool _continue);
 	void InitializeLoadingScreen();
 	void InitializePauseScreen();
+	void CleanEndScreen(bool playerWin);
 	void InitializeEndScreen(bool playerWin);
 	void InitializeOptionsMenu();
 	void InitializeCredits();
@@ -54,7 +55,7 @@ public:
 	
 	void LoadLevelWithMapInIt();
 	int RealLevelUpdate();
-	void ResetLevel();
+	int ResetLevel();
 
 	//XMMATRIX DoorEventListener(int shaderID);
 	//const int DoorEventChanger(int shaderID);
@@ -119,6 +120,7 @@ private:
 	int loadingImage = 0;
 	int loadingImageIndex = -1;
 	int loadingTextIndex = -1;
+	int endScreenBackgroundIndex = -1;
 
 	int fpsIndex = -1;
 	int objLogoIndex = -1;
