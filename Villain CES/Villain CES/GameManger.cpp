@@ -4759,6 +4759,8 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	enemyToCopyFrom.atPhysicsMask = tThisWorld.atPhysicsMask[spacePirate];
 	enemyToCopyFrom.atAIMask = tThisWorld.atAIMask[spacePirate];
 
+	tThisWorld.atOffSetMatrix[spacePirate] = AILocation;
+
 	//spacePirate = CreateSpacePirate(&tThisWorld, AILocation);
 	tThisWorld.atAiHeath[spacePirate].heath = 100;
 	createGSQuad(&tThisWorld, XMFLOAT4(1, 0, 0, 1), spacePirate);
@@ -4879,6 +4881,8 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	}
 	tThisWorld.atActiveAI[previousai].NoctifyOtherAi.push_back(spacePirate);
 	tThisWorld.atActiveAI[spacePirate].NoctifyOtherAi.push_back(previousai);
+
+	tThisWorld.atOffSetMatrix[spacePirate] = AILocation;
 
 	//spacePirate = CreateSpacePirate(&tThisWorld, AILocation);
 	tThisWorld.atAiHeath[spacePirate].heath = 100;
@@ -5005,7 +5009,8 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 		spacePirate = CreateScyllian(&tThisWorld, AILocation, enemyToCopyFrom);
 		//spacePirate = CreateScyllian(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, tempImport.vtMeshes[meshIndex], tempImport.vtMaterials[meshIndex], AILocation);
 	}
-	
+
+	tThisWorld.atOffSetMatrix[spacePirate] = AILocation;
 
 	pcAiSystem->LookAtObject(AiLookPosition, &tThisWorld.atWorldMatrix[spacePirate].worldMatrix);
 	//spacePirate = CreateSpacePirate(&tThisWorld, AILocation);
@@ -5183,6 +5188,9 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 		spacePirate = CreateScyllian(&tThisWorld, AILocation, enemyToCopyFrom);
 		//spacePirate = CreateScyllian(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, tempImport.vtMeshes[meshIndex], tempImport.vtMaterials[meshIndex], AILocation);
 	}
+
+	tThisWorld.atOffSetMatrix[spacePirate] = AILocation;
+
 	pcAiSystem->LookAtObject(AiLookPosition, &tThisWorld.atWorldMatrix[spacePirate].worldMatrix);
 	//spacePirate = CreateSpacePirate(&tThisWorld, AILocation);
 	tThisWorld.atAiHeath[spacePirate].heath = 100;
@@ -5356,6 +5364,9 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 		spacePirate = CreateScyllian(&tThisWorld, AILocation, enemyToCopyFrom);
 		//spacePirate = CreateScyllian(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, tempImport.vtMeshes[meshIndex], tempImport.vtMaterials[meshIndex], AILocation);
 	}
+
+	tThisWorld.atOffSetMatrix[spacePirate] = AILocation;
+
 	pcAiSystem->LookAtObject(AiLookPosition, &tThisWorld.atWorldMatrix[spacePirate].worldMatrix);
 	//spacePirate = CreateSpacePirate(&tThisWorld, AILocation);
 	tThisWorld.atAiHeath[spacePirate].heath = 100;
@@ -5596,6 +5607,9 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 		spacePirate = CreateScyllian(&tThisWorld, AILocation, enemyToCopyFrom);
 		//spacePirate = CreateScyllian(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, tempImport.vtMeshes[meshIndex], tempImport.vtMaterials[meshIndex], AILocation);
 	}
+
+	tThisWorld.atOffSetMatrix[spacePirate] = AILocation;
+
 	pcAiSystem->LookAtObject(AiLookPosition, &tThisWorld.atWorldMatrix[spacePirate].worldMatrix);
 	//spacePirate = CreateSpacePirate(&tThisWorld, AILocation);
 	tThisWorld.atAiHeath[spacePirate].heath = 100;
@@ -5739,6 +5753,9 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 		spacePirate = CreateScyllian(&tThisWorld, AILocation, enemyToCopyFrom);
 		//spacePirate = CreateScyllian(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, tempImport.vtMeshes[meshIndex], tempImport.vtMaterials[meshIndex], AILocation);
 	}
+
+	tThisWorld.atOffSetMatrix[spacePirate] = AILocation;
+
 	pcAiSystem->LookAtObject(AiLookPosition, &tThisWorld.atWorldMatrix[spacePirate].worldMatrix);
 	//spacePirate = CreateSpacePirate(&tThisWorld, AILocation);
 	tThisWorld.atAiHeath[spacePirate].heath = 100;
@@ -5881,6 +5898,9 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 		spacePirate = CreateScyllian(&tThisWorld, AILocation, enemyToCopyFrom);
 		//spacePirate = CreateScyllian(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, tempImport.vtMeshes[meshIndex], tempImport.vtMaterials[meshIndex], AILocation);
 	}
+
+	tThisWorld.atOffSetMatrix[spacePirate] = AILocation;
+
 	pcAiSystem->LookAtObject(AiLookPosition, &tThisWorld.atWorldMatrix[spacePirate].worldMatrix);
 	//spacePirate = CreateSpacePirate(&tThisWorld, AILocation);
 	tThisWorld.atAiHeath[spacePirate].heath = 100;
@@ -7078,14 +7098,6 @@ void DoorEventChanger(int shaderID)
 			{
 				doors[0] = -1;
 			}
-			else if (doors[0] == 1)
-			{
-				doors[0] = -2;
-			}
-			else if (doors[0] == -1)
-			{
-				doors[0] = 2;
-			}
 		}
 		else if (shaderID < 35)
 		{
@@ -7096,14 +7108,6 @@ void DoorEventChanger(int shaderID)
 			else if (doors[1] == 2)
 			{
 				doors[1] = -1;
-			}
-			else if (doors[1] == 1)
-			{
-				doors[1] = -2;
-			}
-			else if (doors[1] == -1)
-			{
-				doors[1] = 2;
 			}
 		}
 		else if (shaderID < 45)
@@ -7116,14 +7120,6 @@ void DoorEventChanger(int shaderID)
 			{
 				doors[2] = -1;
 			}
-			else if (doors[2] == 1)
-			{
-				doors[2] = -2;
-			}
-			else if (doors[2] == -1)
-			{
-				doors[2] = 2;
-			}
 		}
 		else if (shaderID < 55)
 		{
@@ -7134,14 +7130,6 @@ void DoorEventChanger(int shaderID)
 			else if (doors[3] == 2)
 			{
 				doors[3] = -1;
-			}
-			else if (doors[3] == 1)
-			{
-				doors[3] = -2;
-			}
-			else if (doors[3] == -1)
-			{
-				doors[3] = 2;
 			}
 		}
 		else if (shaderID < 65)
@@ -7154,14 +7142,6 @@ void DoorEventChanger(int shaderID)
 			{
 				doors[4] = -1;
 			}
-			else if (doors[4] == 1)
-			{
-				doors[4] = -2;
-			}
-			else if (doors[4] == -1)
-			{
-				doors[4] = 2;
-			}
 		}
 		else if (shaderID < 75)
 		{
@@ -7172,14 +7152,6 @@ void DoorEventChanger(int shaderID)
 			else if (doors[5] == 2)
 			{
 				doors[5] = -1;
-			}
-			else if (doors[5] == 1)
-			{
-				doors[5] = -2;
-			}
-			else if (doors[5] == -1)
-			{
-				doors[5] = 2;
 			}
 		}
 	}
@@ -7490,6 +7462,11 @@ int CGameMangerSystem::RealLevelUpdate()
 
 #endif // !INPUT_ABSTRACTED_ON
 
+	if (pcInputSystem->InputCheck(G_KEY_H) == 1)
+	{
+		tThisWorld.atWorldMatrix[934].worldMatrix.r[3].m128_f32[1] = -1;
+		tThisWorld.atRigidBody[934].velocity.m128_f32[1] = 0;
+	}
 
 	for (int nCurrentEntity = 0; nCurrentEntity < ENTITYCOUNT; nCurrentEntity++)
 	{
@@ -7886,7 +7863,7 @@ int CGameMangerSystem::RealLevelUpdate()
 				pcAiSystem->UpdateFrustum(tThisWorld.atAIVision[nCurrentEntity].eyes0, AiFrustum, 70, 1, 0.1, 20);
 				//	 pcAiSystem->calculate_frustum(&tThisWorld,tThisWorld.atAIVision[nCurrentEntity].eyes0, AiFrustum,70,1,0.1,20, nCurrentEntity, -2.1, 1.4, 19.6);
 				vector<int> indicies;
-				if (pcCollisionSystem->AiVisionCheck(tThisWorld.atAIVision[nCurrentEntity].eyes0, &indicies) == true)
+				if (pcCollisionSystem->AiVisionCheck(tThisWorld.atAIVision[nCurrentEntity].eyes0, &indicies) == true && tThisWorld.atAIVision[nCurrentEntity].stopSearching == false)
 				{
 					bool danger = false;
 					for (int i = 0; i < indicies.size(); ++i)
@@ -8727,7 +8704,18 @@ int CGameMangerSystem::ResetLevel()
 		{
 			if (tThisWorld.atBar[nCurrentEntity].entityToFollow != -1)
 			{
-				tThisWorld.atAiHeath[tThisWorld.atBar[nCurrentEntity].entityToFollow].heath = 100;
+				/*tThisWorld.atAiHeath[tThisWorld.atBar[nCurrentEntity].entityToFollow].heath = 100;
+
+				tThisWorld.atAIVision[nCurrentEntity].stopSearching = false;
+
+				tThisWorld.atRigidBody[nCurrentEntity].gravity.m128_f32[1] = 0;
+
+				tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = tThisWorld.atOffSetMatrix[nCurrentEntity];
+
+				TAABB MyAbb = pcCollisionSystem->createAABBS(tThisWorld.atMesh[nCurrentEntity].m_VertexData, tThisWorld.atAABB[nCurrentEntity]);
+				MyAbb.m_IndexLocation = nCurrentEntity;
+				tThisWorld.atAABB[nCurrentEntity] = MyAbb;
+				pcCollisionSystem->AddAABBCollider(MyAbb, nCurrentEntity);*/
 
 				/*if (tThisWorld.atActiveAI[tThisWorld.atBar[nCurrentEntity].entityToFollow].active == true)
 				{
@@ -8874,28 +8862,48 @@ int CGameMangerSystem::ResetLevel()
 					tCameraMode.bWalkMode = false;
 					tCameraMode.bSwitch = true;
 
+					//m_d3dPlayerMatrix = aimCamera->d3d_Position;
+					//
+					//tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = m_d3dPlayerMatrix;
+
+					//m_d3dPlayerMatrix = tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = XMMatrixIdentity();
+					//m_d3dPlayerMatrix = tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = XMMatrixMultiply(tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, XMMatrixTranslation(0, 0, 0));
+					m_d3dPlayerMatrix = tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = XMMatrixRotationRollPitchYaw(0, XMConvertToRadians(180), 0);
+					//tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = XMMatrixMultiply(tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, XMMatrixScaling(.01, .01, .01));
+					
+					m_d3dPlayerMatrix.r[3].m128_f32[0] = tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix.r[3].m128_f32[0] = -4;
+					m_d3dPlayerMatrix.r[3].m128_f32[1] = tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix.r[3].m128_f32[1] = -1.2;
+					m_d3dPlayerMatrix.r[3].m128_f32[2] = tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix.r[3].m128_f32[2] = 10.8;
+
 					debugCamera->d3d_Position = pcGraphicsSystem->SetDefaultCameraMatrix();
+					debugCamera->fPitch = 0;
+					debugCamera->fRoll = 0;
+					debugCamera->fYaw = 0;
 					walkCamera->d3d_Position = pcGraphicsSystem->SetDefaultCameraMatrix();
+					walkCamera->fPitch = 0;
+					walkCamera->fRoll = 0;
+					walkCamera->fYaw = 0;
 					aimCamera->d3d_Position = pcGraphicsSystem->SetDefaultCameraMatrix();
+					aimCamera->fPitch = 0;
+					aimCamera->fRoll = 0;
+					aimCamera->fYaw = 0;
 
-					m_d3dPlayerMatrix = aimCamera->d3d_Position;
-
-					tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = m_d3dPlayerMatrix;
-
-					tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = XMMatrixIdentity();
-					tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = XMMatrixMultiply(tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, XMMatrixTranslation(0, 0, 0));
-					tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = XMMatrixMultiply(tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, XMMatrixRotationRollPitchYaw(0, 0, 0));
-					tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = XMMatrixMultiply(tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, XMMatrixScaling(.01, .01, .01));
+					tThisWorld.atRigidBody[nCurrentEntity].velocity = XMVectorSet(0, 0, 0, 0);
 
 					tThisWorld.atClayton[nCurrentEntity].health = 100;
 					tThisWorld.atClayton[nCurrentEntity].jumpCooldown = 0;
 					tThisWorld.atClayton[nCurrentEntity].jumpTime = 1;
 
-					/*for (int i = 0; i < tThisWorld.atClip[nCurrentEntity].nBulletsAvailables.size; ++i)
-					{
-						tThisWorld.atClip[nCurrentEntity].nBulletsAvailables[i] = true;
-					}*/
-					tThisWorld.atClip[nCurrentEntity].nSizeofClipl = 3;
+					pcProjectileSystem->Reload(&tThisWorld.atClip[GunIndexForPlayer]);
+
+					int textSize = 1;
+					wchar_t* textBuffer = new wchar_t[textSize];
+
+					textBuffer[0] = (tThisWorld.atClip[GunIndexForPlayer].nBulletsAvailables.size());
+
+					pcUISystem->UpdateText(&tThisWorld, pcGraphicsSystem, ammoIndex, &atUIVertices, textBuffer, textSize, atUIVertices.at(tThisWorld.atLabel[ammoIndex].vIndex));
+
+					delete[] textBuffer;
 
 					XMMATRIX claytonFrustumMatrix = aimCamera->d3d_Position;
 					claytonFrustumMatrix = XMMatrixMultiply(XMMatrixTranslation(0, 0, -15), claytonFrustumMatrix);
@@ -9035,6 +9043,33 @@ int CGameMangerSystem::ResetLevel()
 							tThisWorld.atClayton[nCurrentEntity].jumpTime = 1;
 						}
 					}*/
+				}
+				else if (tThisWorld.atAIMask[nCurrentEntity].m_tnAIMask == (COMPONENT_AIMASK | COMPONENT_FOLLOW) ||
+						 tThisWorld.atAIMask[nCurrentEntity].m_tnAIMask == (COMPONENT_SHOOT | COMPONENT_AIMASK | COMPONENT_FOLLOW) ||
+						 tThisWorld.atAIMask[nCurrentEntity].m_tnAIMask == (COMPONENT_AIMASK | COMPONENT_SEARCH | COMPONENT_PATHFINDTEST) ||
+						 tThisWorld.atAIMask[nCurrentEntity].m_tnAIMask == (COMPONENT_AIMASK | COMPONENT_SEARCH) ||
+						 tThisWorld.atAIMask[nCurrentEntity].m_tnAIMask == (COMPONENT_AIMASK | COMPONENT_SPOTEDPLAYER))
+				{
+					tThisWorld.atAiHeath[nCurrentEntity].heath = 100;
+
+					tThisWorld.atAIMask[nCurrentEntity].m_tnAIMask = (COMPONENT_AIMASK | COMPONENT_SEARCH | COMPONENT_PATHFINDTEST);
+
+					tThisWorld.atAIVision[nCurrentEntity].keepSearching = true;
+					tThisWorld.atAIVision[nCurrentEntity].keepRotatingRight = true;
+					tThisWorld.atAIVision[nCurrentEntity].stopSearching = false;
+
+					tThisWorld.atActiveAI[nCurrentEntity].active = false;
+
+					tThisWorld.atRigidBody[nCurrentEntity].gravity.m128_f32[1] = 0;
+					tThisWorld.atRigidBody[nCurrentEntity].velocity = XMVectorSet(0, 0, 0, 0);
+
+					tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = tThisWorld.atOffSetMatrix[nCurrentEntity];
+
+					TAABB MyAbb = pcCollisionSystem->createAABBS(tThisWorld.atMesh[nCurrentEntity].m_VertexData, tThisWorld.atAABB[nCurrentEntity]);
+					MyAbb.m_IndexLocation = nCurrentEntity;
+					tThisWorld.atAABB[nCurrentEntity] = MyAbb;
+					pcCollisionSystem->AddAABBCollider(MyAbb, nCurrentEntity);
+					tThisWorld.atAABB[nCurrentEntity] = pcCollisionSystem->updateAABB(tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, tThisWorld.atAABB[nCurrentEntity]);
 				}
 			}
 			/*if (pcCollisionSystem->aabb_to_frustum(tThisWorld.atAABB[nCurrentEntity], tThisWorld.atClaytonVision.eyes0))
@@ -9232,6 +9267,15 @@ int CGameMangerSystem::ResetLevel()
 						}*/
 					}
 				}
+
+				if (tThisWorld.atAABB[nCurrentEntity].m_IndexLocation == -1)
+				{
+					tThisWorld.atAABB[nCurrentEntity] = pcCollisionSystem->createAABBS(tThisWorld.atMesh[nCurrentEntity].m_VertexData, tThisWorld.atAABB[nCurrentEntity]);
+					tThisWorld.atAABB[nCurrentEntity].m_IndexLocation = nCurrentEntity;
+
+					pcCollisionSystem->AddAABBCollider(tThisWorld.atAABB[nCurrentEntity], nCurrentEntity);
+					pcGraphicsSystem->CreateEntityBuffer(&tThisWorld, nCurrentEntity);
+				}
 			}
 		}
 		//Gun Clips here for player - ZFB
@@ -9244,7 +9288,7 @@ int CGameMangerSystem::ResetLevel()
 
 				tThisWorld.atClip[nCurrentEntity].fShootingCoolDown = 0;
 
-				if (nCurrentEntity == GunIndexForPlayer)
+				/*if (nCurrentEntity == GunIndexForPlayer)
 				{
 					int textSize = 1;
 					wchar_t* textBuffer = new wchar_t[textSize];
@@ -9254,7 +9298,7 @@ int CGameMangerSystem::ResetLevel()
 					pcUISystem->UpdateText(&tThisWorld, pcGraphicsSystem, ammoIndex, &atUIVertices, textBuffer, textSize, atUIVertices.at(tThisWorld.atLabel[ammoIndex].vIndex));
 
 					delete[] textBuffer;
-				}
+				}*/
 
 				if (tThisWorld.atClip[nCurrentEntity].GunMode == false
 					&& tThisWorld.atClip[nCurrentEntity].tryToShoot == true)
@@ -9641,9 +9685,15 @@ int CGameMangerSystem::ResetLevel()
 
 		if (tThisWorld.atShaderID[nCurrentEntity].m_nShaderID % 10 == 0)
 		{
-			for (int doorindex = 0; doorindex < tThisWorld.atAABB[nCurrentEntity].doorPeices.size(); ++doorindex) {
+			for (int doorindex = 0; doorindex < tThisWorld.atAABB[nCurrentEntity].doorPeices.size(); ++doorindex) 
+			{
 				DoorEventChanger(tThisWorld.atShaderID[nCurrentEntity].m_nShaderID);
-				tThisWorld.atWorldMatrix[tThisWorld.atAABB[nCurrentEntity].doorPeices[doorindex]].worldMatrix = XMMatrixMultiply(DoorEventListener(tThisWorld.atShaderID[tThisWorld.atAABB[nCurrentEntity].doorPeices[doorindex]].m_nShaderID, false), tThisWorld.atWorldMatrix[tThisWorld.atAABB[nCurrentEntity].doorPeices[doorindex]].worldMatrix);
+				while (tThisWorld.atWorldMatrix[tThisWorld.atAABB[nCurrentEntity].doorPeices[doorindex]].worldMatrix.r[3].m128_f32[0] != 0 ||
+					   tThisWorld.atWorldMatrix[tThisWorld.atAABB[nCurrentEntity].doorPeices[doorindex]].worldMatrix.r[3].m128_f32[1] != 0 ||
+					   tThisWorld.atWorldMatrix[tThisWorld.atAABB[nCurrentEntity].doorPeices[doorindex]].worldMatrix.r[3].m128_f32[2] != 0)
+				{
+					tThisWorld.atWorldMatrix[tThisWorld.atAABB[nCurrentEntity].doorPeices[doorindex]].worldMatrix = XMMatrixMultiply(DoorEventListener(tThisWorld.atShaderID[tThisWorld.atAABB[nCurrentEntity].doorPeices[doorindex]].m_nShaderID, false), tThisWorld.atWorldMatrix[tThisWorld.atAABB[nCurrentEntity].doorPeices[doorindex]].worldMatrix);
+				}
 				tThisWorld.atAABB[tThisWorld.atAABB[nCurrentEntity].doorPeices[doorindex]] = pcCollisionSystem->updateAABB(tThisWorld.atWorldMatrix[tThisWorld.atAABB[nCurrentEntity].doorPeices[doorindex]].worldMatrix, tThisWorld.atAABB[tThisWorld.atAABB[nCurrentEntity].doorPeices[doorindex]]);
 			}
 		}

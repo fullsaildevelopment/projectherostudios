@@ -233,8 +233,8 @@ void CCollisionSystem::TestThreading(TWorld * ptWorld, int nCurrentEntity, CGrap
 
 								}
 								RemoveAABBCollider(otherCollisionsIndex[i]);
-								//pcGraphicsSystem->CleanD3DObject(ptWorld, otherCollisionsIndex[i]);
-								//pcGraphicsSystem->CleanD3DObject(ptWorld, ptWorld->atAIMask[otherCollisionsIndex[i]].GunIndex);
+								pcGraphicsSystem->CleanD3DObject(ptWorld, otherCollisionsIndex[i]);
+								pcGraphicsSystem->CleanD3DObject(ptWorld, ptWorld->atAIMask[otherCollisionsIndex[i]].GunIndex);
 
 							}
 							else
@@ -266,11 +266,24 @@ void CCollisionSystem::TestThreading(TWorld * ptWorld, int nCurrentEntity, CGrap
 								{
 									pcAiSystem->SetNumberOfAI(pcAiSystem->GetNumberOfAI() - 1);
 									RemoveAABBCollider(otherCollisionsIndex[i]);
-									pcGraphicsSystem->CleanD3DObject(ptWorld, otherCollisionsIndex[i]);
-									pcGraphicsSystem->CleanD3DObject(ptWorld, ptWorld->atAIMask[otherCollisionsIndex[i]].GunIndex);
 
-									pcGraphicsSystem->CleanD3DObject(ptWorld, otherCollisionsIndex[i] + 1);
-									pcGraphicsSystem->CleanD3DObject(ptWorld, otherCollisionsIndex[i] + 2);
+									ptWorld->atAABB[otherCollisionsIndex[i]].m_IndexLocation = -1;
+									ptWorld->atAABB[otherCollisionsIndex[i]].m_dMaxPoint = XMFLOAT3(0, 0, 0);
+									ptWorld->atAABB[otherCollisionsIndex[i]].m_dMaxPointOrginal = XMFLOAT3(0, 0, 0);
+									ptWorld->atAABB[otherCollisionsIndex[i]].m_dMinPoint = XMFLOAT3(0, 0, 0);
+									ptWorld->atAABB[otherCollisionsIndex[i]].m_dMinPointOrginal = XMFLOAT3(0, 0, 0);
+
+									ptWorld->atAiHeath[otherCollisionsIndex[i]].heath = 1;
+									ptWorld->atActiveAI[otherCollisionsIndex[i]].active = false;
+									ptWorld->atAIVision[otherCollisionsIndex[i]].stopSearching = true;
+
+									//ptWorld->atRigidBody[otherCollisionsIndex[i]].gravity.m128_f32[1] = 0.0002;
+
+									//pcGraphicsSystem->CleanD3DObject(ptWorld, otherCollisionsIndex[i]);
+									//pcGraphicsSystem->CleanD3DObject(ptWorld, ptWorld->atAIMask[otherCollisionsIndex[i]].GunIndex);
+									
+									//pcGraphicsSystem->CleanD3DObject(ptWorld, otherCollisionsIndex[i] + 1);
+									//pcGraphicsSystem->CleanD3DObject(ptWorld, otherCollisionsIndex[i] + 2);
 								}
 
 							}
