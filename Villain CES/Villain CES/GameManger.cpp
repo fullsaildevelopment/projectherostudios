@@ -4777,7 +4777,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 
 	AILocation = pcGraphicsSystem->SetDefaultWorldPosition();
 	AILocation.r[3].m128_f32[2] -= 80;
-	AILocation.r[3].m128_f32[0] += 3.5;
+	AILocation.r[3].m128_f32[0] += 4;
 	AILocation.r[3].m128_f32[1] -= 1;
 	XMMATRIX AiLookPosition=AILocation;
 	AiLookPosition.r[3].m128_f32[0] -= 12;
@@ -4898,7 +4898,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	TriggerZone.r[3].m128_f32[2] -= 90;
 	TriggerZone.r[3].m128_f32[0] -= 2;
 
-	CoverTriggerIndex = CreateCoverTriggerZone(&tThisWorld, TriggerZone);
+//	CoverTriggerIndex = CreateCoverTriggerZone(&tThisWorld, TriggerZone);
 
 	CoverLocation = AILocation;
 	coverPosition.clear();
@@ -4943,9 +4943,9 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	edges.push_back(nodeindexBackleft);
 	pcAiSystem->AddEdgestoNode(backleftFrontnodeindex2, edges);
 
-	tThisWorld.atCoverTrigger[CoverTriggerIndex].AItoMove.push_back(spacePirate);
+	//tThisWorld.atCoverTrigger[CoverTriggerIndex].AItoMove.push_back(spacePirate);
 
-	tThisWorld.atCoverTrigger[CoverTriggerIndex].coverAiCanGoTo.push_back(tThisWorld.atCover[cover1]);
+	//tThisWorld.atCoverTrigger[CoverTriggerIndex].coverAiCanGoTo.push_back(tThisWorld.atCover[cover1]);
 	tThisWorld.atPathPlanining[spacePirate].Goal = nodeindexBackleft;
 	//tThisWorld.atCoverTrigger[CoverTriggerIndex].AItoMove.push_back(spacePirate);
 
@@ -5077,7 +5077,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	TriggerZone.r[3].m128_f32[2] -= 90;
 	TriggerZone.r[3].m128_f32[0] -= 2;
 
-	CoverTriggerIndex = CreateCoverTriggerZone(&tThisWorld, TriggerZone);
+	//CoverTriggerIndex = CreateCoverTriggerZone(&tThisWorld, TriggerZone);
 
 	CoverLocation = AILocation;
 	coverPosition.clear();
@@ -5122,9 +5122,9 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	edges.push_back(nodeindexBackRight);
 	pcAiSystem->AddEdgestoNode(backrightFrontnodeindex2, edges);
 
-	tThisWorld.atCoverTrigger[CoverTriggerIndex].AItoMove.push_back(spacePirate);
+	/*tThisWorld.atCoverTrigger[CoverTriggerIndex].AItoMove.push_back(spacePirate);
 
-	tThisWorld.atCoverTrigger[CoverTriggerIndex].coverAiCanGoTo.push_back(tThisWorld.atCover[cover1]);
+	tThisWorld.atCoverTrigger[CoverTriggerIndex].coverAiCanGoTo.push_back(tThisWorld.atCover[cover1]);*/
 	tThisWorld.atPathPlanining[spacePirate].Goal = nodeindexBackRight;
 
 	// ai next to tree
@@ -5250,7 +5250,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	TriggerZone.r[3].m128_f32[2] -= 90;
 	TriggerZone.r[3].m128_f32[0] -= 2;
 
-	CoverTriggerIndex = CreateCoverTriggerZone(&tThisWorld, TriggerZone);
+//	CoverTriggerIndex = CreateCoverTriggerZone(&tThisWorld, TriggerZone);
 
 	CoverLocation = AILocation;
 	coverPosition.clear();
@@ -5283,7 +5283,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	TriggerZone.r[3].m128_f32[2] -= 110;
 	TriggerZone.r[3].m128_f32[0] += 6;
 
-	CoverTriggerIndex = CreateCoverTriggerZone(&tThisWorld, TriggerZone,2);
+	//CoverTriggerIndex = CreateCoverTriggerZone(&tThisWorld, TriggerZone,2);
 
 
 
@@ -5334,9 +5334,9 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	pcAiSystem->AddEdgestoNode(nodeindexBackRight, edges);
 	
 
-	tThisWorld.atCoverTrigger[CoverTriggerIndex].AItoMove.push_back(spacePirate);
+	//tThisWorld.atCoverTrigger[CoverTriggerIndex].AItoMove.push_back(spacePirate);
 
-	tThisWorld.atCoverTrigger[CoverTriggerIndex].coverAiCanGoTo.push_back(tThisWorld.atCover[cover1]);
+	//tThisWorld.atCoverTrigger[CoverTriggerIndex].coverAiCanGoTo.push_back(tThisWorld.atCover[cover1]);
 	tThisWorld.atPathPlanining[spacePirate].Goal = nodeindexBackRight;
 
 
@@ -5344,7 +5344,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	TriggerZone.r[3].m128_f32[2] -= 100;
 	TriggerZone.r[3].m128_f32[0] += 3;
 
-	int coverIndexHorzontal = CreateCoverTriggerZone(&tThisWorld, TriggerZone);
+	//int coverIndexHorzontal = CreateCoverTriggerZone(&tThisWorld, TriggerZone);
 
 
 	CoverLocation = AILocation;
@@ -5390,435 +5390,435 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	edges.push_back(nodeindexBackRight);
 	pcAiSystem->AddEdgestoNode(noderighttree, edges);
 
-	tThisWorld.atCoverTrigger[coverIndexHorzontal].AItoMove.push_back(spacePirate);
-
-	tThisWorld.atCoverTrigger[coverIndexHorzontal].coverAiCanGoTo.push_back(tThisWorld.atCover[cover1]);
-
-
-	AILocation = pcGraphicsSystem->SetDefaultWorldPosition();
-	AILocation.r[3].m128_f32[2] -= 106;
-	AILocation.r[3].m128_f32[0] -= 13;
-	AILocation.r[3].m128_f32[1] -= 1;
-	AiLookPosition = AILocation;
-	AiLookPosition.r[3].m128_f32[0] -= 12;
-	AiLookPosition.r[3].m128_f32[2] += 10;
-
-	CreateNodePoint(&tThisWorld, AiLookPosition);
-
-	coverPosition.clear();
-
-
-	pcAiSystem->LookAtObject(AILocation, &m_d3dPlayerMatrix);
-
-
-	//CoverTriggerIndex = CreateCoverTriggerZone(&tThisWorld, TriggerZone);
-
-
-#pragma endregion
-
-	tempImport = pcGraphicsSystem->ReadMesh("meshData_Scyllian.txt");
-	gunImport = pcGraphicsSystem->ReadMesh("meshData_LaserFlintlockTextured.txt");
-	//AILocation.r[3].m128_f32[0] += 7;
-
-	for (int meshIndex = 0; meshIndex < tempImport.meshCount; ++meshIndex)
-	{
-		spacePirate = CreateScyllian(&tThisWorld, AILocation, enemyToCopyFrom);
-		//spacePirate = CreateScyllian(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, tempImport.vtMeshes[meshIndex], tempImport.vtMaterials[meshIndex], AILocation);
-	}
-	pcAiSystem->LookAtObject(AiLookPosition, &tThisWorld.atWorldMatrix[spacePirate].worldMatrix);
-	//spacePirate = CreateSpacePirate(&tThisWorld, AILocation);
-	tThisWorld.atAiHeath[spacePirate].heath = 100;
-	createGSQuad(&tThisWorld, XMFLOAT4(1, 0, 0, 1), spacePirate);
-	createGSQuad(&tThisWorld, XMFLOAT4(0, 0, 0, 1), spacePirate);
-
-
-
-
-
-	//int GunINdexai = CreateGun(&tThisWorld, m_d3dWorldMatrix, spacePirate, -1.1, 0.5, 12.5, 10, 30);
-	for (int meshIndex = 0; meshIndex < tempImport.meshCount; ++meshIndex)
-	{
-	 GunINdexai = CreateScyllianGun(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, m_d3dWorldMatrix, spacePirate, -1.5, 1, 11.5, 10, 200, gunImport.vtMeshes[meshIndex], gunImport.vtMaterials[meshIndex]);
-	}
-#pragma region MORE AI Init
-	tThisWorld.atAIMask[spacePirate].GunIndex = GunINdexai;
-
-	tThisWorld.atClip[GunINdexai].bulletSpeed = 0.01;//Frame Dependent
-
-
-	AiFrustum.row1.x = tThisWorld.atWorldMatrix[spacePirate].worldMatrix.r[0].m128_f32[0];
-	AiFrustum.row1.y = tThisWorld.atWorldMatrix[spacePirate].worldMatrix.r[0].m128_f32[1];
-	AiFrustum.row1.z = tThisWorld.atWorldMatrix[spacePirate].worldMatrix.r[0].m128_f32[2];
-	AiFrustum.row1.w = tThisWorld.atWorldMatrix[spacePirate].worldMatrix.r[0].m128_f32[3];
-
-	AiFrustum.row2.x = tThisWorld.atWorldMatrix[spacePirate].worldMatrix.r[1].m128_f32[0];
-	AiFrustum.row2.y = tThisWorld.atWorldMatrix[spacePirate].worldMatrix.r[1].m128_f32[1];
-	AiFrustum.row2.z = tThisWorld.atWorldMatrix[spacePirate].worldMatrix.r[1].m128_f32[2];
-	AiFrustum.row2.w = tThisWorld.atWorldMatrix[spacePirate].worldMatrix.r[1].m128_f32[3];
-
-	AiFrustum.row3.x = tThisWorld.atWorldMatrix[spacePirate].worldMatrix.r[2].m128_f32[0];
-	AiFrustum.row3.y = tThisWorld.atWorldMatrix[spacePirate].worldMatrix.r[2].m128_f32[1];
-	AiFrustum.row3.z = tThisWorld.atWorldMatrix[spacePirate].worldMatrix.r[2].m128_f32[2];
-	AiFrustum.row3.w = tThisWorld.atWorldMatrix[spacePirate].worldMatrix.r[2].m128_f32[3];
-
-	AiFrustum.row4.x = tThisWorld.atWorldMatrix[spacePirate].worldMatrix.r[3].m128_f32[0];
-	AiFrustum.row4.y = tThisWorld.atWorldMatrix[spacePirate].worldMatrix.r[3].m128_f32[1];
-	AiFrustum.row4.z = tThisWorld.atWorldMatrix[spacePirate].worldMatrix.r[3].m128_f32[2];
-	AiFrustum.row4.w = tThisWorld.atWorldMatrix[spacePirate].worldMatrix.r[3].m128_f32[3];
-
-	frustumIndex = pcAiSystem->calculate_frustum(&tThisWorld, planes, AiFrustum, 70, 1, 0.1, 20, spacePirate, -2.1, 1.4, 19.6);
-	tThisWorld.atWorldMatrix[frustumIndex].worldMatrix = AILocation;
-
-	tThisWorld.atAIVision[spacePirate].eyes0 = planes;
-	tThisWorld.atAIVision[spacePirate].normalAtBegining[0] = planes[0].normal;
-	tThisWorld.atAIVision[spacePirate].normalAtBegining[1] = planes[1].normal;
-	tThisWorld.atAIVision[spacePirate].normalAtBegining[2] = planes[2].normal;
-	tThisWorld.atAIVision[spacePirate].normalAtBegining[3] = planes[3].normal;
-	tThisWorld.atAIVision[spacePirate].normalAtBegining[4] = planes[4].normal;
-	tThisWorld.atAIVision[spacePirate].normalAtBegining[5] = planes[5].normal;
-	//AILocation.r[3].m128_f32[0] += 8;
-	tThisWorld.atPathPlanining[spacePirate].startingNode = nodeindex2;
-	tThisWorld.atPathPlanining[spacePirate].Goal = nodeindex;
-
-	tThisWorld.atAIVision[spacePirate].keepSearching = false;
-	//	tThisWorld.atCoverTrigger[CoverTriggerIndex].AItoMove.push_back(spacePirate);
-	//
-	//	tThisWorld.atCoverTrigger[CoverTriggerIndex].coverAiCanGoTo.push_back(tThisWorld.atCover[cover1]);
-	//#pragma endregion
-	// This is my AIMovementTrigger for backleft ai and back right
-	TriggerZone = AILocation;
-	TriggerZone.r[3].m128_f32[2] += 10;
-
-	CoverTriggerIndex = CreateCoverTriggerZone(&tThisWorld, TriggerZone);
-
-	CoverLocation = AILocation;
-	coverPosition.clear();
-	CoverLocation.r[3].m128_f32[2] += 4;
-	cover1 = CreateCover(&tThisWorld, CoverLocation, coverPosition);
-	nodeLocation = CoverLocation;
-	nodeLocation.r[3].m128_f32[0] += 0;
- nodeLocation.r[3].m128_f32[1] -= 0;
-//	nodeLocation.r[3].m128_f32[2] += -2;
-
-	//pcAiSystem->AddNodeToPathFinding(nodeLocation, nodePosition, 1);
-	 nodeindexBackRight = CreateNodePoint(&tThisWorld, nodeLocation);
-	nodePosition;
-	nodePosition.x = nodeLocation.r[3].m128_f32[0];
-	nodePosition.y = nodeLocation.r[3].m128_f32[1];
-	nodePosition.z = nodeLocation.r[3].m128_f32[2];
-	pcAiSystem->AddNodeToPathFinding(nodeindexBackRight, nodePosition, 1);
-	nodeLocation = AILocation;
-	 backrightFrontnodeindex2 = CreateNodePoint(&tThisWorld, nodeLocation);
-
-	nodePosition.x = nodeLocation.r[3].m128_f32[0];
-	nodePosition.y = nodeLocation.r[3].m128_f32[1];
-	nodePosition.z = nodeLocation.r[3].m128_f32[2];
-	pcAiSystem->AddNodeToPathFinding(backrightFrontnodeindex2, nodePosition, 1);
-	tThisWorld.atCover[cover1].CoverPositions.push_back(nodeindexBackRight);
-	tThisWorld.atPathPlanining[spacePirate].startingNode = backrightFrontnodeindex2;
-
-	//	pcAiSystem->LookAtObject(AILocation, &m_d3dPlayerMatrix);
-
-
-	//CoverTriggerIndex = CreateCoverTriggerZone(&tThisWorld, TriggerZone);
-
-	edges.clear();
-	edges.push_back(nodeindexBackRight);
-	pcAiSystem->AddEdgestoNode(backrightFrontnodeindex2, edges);
-	//pcAiSystem->AddEdgestoNode(nodeindex3, edges);
-	edges.clear();
-	edges.push_back(backrightFrontnodeindex2);
-	pcAiSystem->AddEdgestoNode(nodeindexBackRight, edges);
-
-	tThisWorld.atCoverTrigger[CoverTriggerIndex].AItoMove.push_back(spacePirate);
-
-	tThisWorld.atCoverTrigger[CoverTriggerIndex].coverAiCanGoTo.push_back(tThisWorld.atCover[cover1]);
-	tThisWorld.atPathPlanining[spacePirate].Goal = nodeindexBackRight;
-
-
-
-
-	AILocation = pcGraphicsSystem->SetDefaultWorldPosition();
-	AILocation.r[3].m128_f32[2] -= 106;
-	AILocation.r[3].m128_f32[0] -= 3;
-	AILocation.r[3].m128_f32[1] -= 1;
-	AiLookPosition = AILocation;
-	AiLookPosition.r[3].m128_f32[0] -= 12;
-	AiLookPosition.r[3].m128_f32[2] += 10;
-
-	CreateNodePoint(&tThisWorld, AiLookPosition);
-
-	coverPosition.clear();
-
-
-	pcAiSystem->LookAtObject(AILocation, &m_d3dPlayerMatrix);
-
-
-	//CoverTriggerIndex = CreateCoverTriggerZone(&tThisWorld, TriggerZone);
-
-
-#pragma endregion
-
-	tempImport = pcGraphicsSystem->ReadMesh("meshData_Scyllian.txt");
-	gunImport = pcGraphicsSystem->ReadMesh("meshData_LaserFlintlockTextured.txt");
-	//AILocation.r[3].m128_f32[0] += 7;
-
-	for (int meshIndex = 0; meshIndex < tempImport.meshCount; ++meshIndex)
-	{
-		spacePirate = CreateScyllian(&tThisWorld, AILocation, enemyToCopyFrom);
-		//spacePirate = CreateScyllian(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, tempImport.vtMeshes[meshIndex], tempImport.vtMaterials[meshIndex], AILocation);
-	}
-	pcAiSystem->LookAtObject(AiLookPosition, &tThisWorld.atWorldMatrix[spacePirate].worldMatrix);
-	//spacePirate = CreateSpacePirate(&tThisWorld, AILocation);
-	tThisWorld.atAiHeath[spacePirate].heath = 100;
-	createGSQuad(&tThisWorld, XMFLOAT4(1, 0, 0, 1), spacePirate);
-	createGSQuad(&tThisWorld, XMFLOAT4(0, 0, 0, 1), spacePirate);
-
-
-
-
-
-	//int GunINdexai = CreateGun(&tThisWorld, m_d3dWorldMatrix, spacePirate, -1.1, 0.5, 12.5, 10, 30);
-	for (int meshIndex = 0; meshIndex < tempImport.meshCount; ++meshIndex)
-	{
-	 GunINdexai = CreateScyllianGun(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, m_d3dWorldMatrix, spacePirate, -1.5, 1, 11.5, 10, 200, gunImport.vtMeshes[meshIndex], gunImport.vtMaterials[meshIndex]);
-	}
-#pragma region MORE AI Init
-	tThisWorld.atAIMask[spacePirate].GunIndex = GunINdexai;
-
-	tThisWorld.atClip[GunINdexai].bulletSpeed = 0.01;//Frame Dependent
-
-
-	AiFrustum.row1.x = tThisWorld.atWorldMatrix[spacePirate].worldMatrix.r[0].m128_f32[0];
-	AiFrustum.row1.y = tThisWorld.atWorldMatrix[spacePirate].worldMatrix.r[0].m128_f32[1];
-	AiFrustum.row1.z = tThisWorld.atWorldMatrix[spacePirate].worldMatrix.r[0].m128_f32[2];
-	AiFrustum.row1.w = tThisWorld.atWorldMatrix[spacePirate].worldMatrix.r[0].m128_f32[3];
-
-	AiFrustum.row2.x = tThisWorld.atWorldMatrix[spacePirate].worldMatrix.r[1].m128_f32[0];
-	AiFrustum.row2.y = tThisWorld.atWorldMatrix[spacePirate].worldMatrix.r[1].m128_f32[1];
-	AiFrustum.row2.z = tThisWorld.atWorldMatrix[spacePirate].worldMatrix.r[1].m128_f32[2];
-	AiFrustum.row2.w = tThisWorld.atWorldMatrix[spacePirate].worldMatrix.r[1].m128_f32[3];
-
-	AiFrustum.row3.x = tThisWorld.atWorldMatrix[spacePirate].worldMatrix.r[2].m128_f32[0];
-	AiFrustum.row3.y = tThisWorld.atWorldMatrix[spacePirate].worldMatrix.r[2].m128_f32[1];
-	AiFrustum.row3.z = tThisWorld.atWorldMatrix[spacePirate].worldMatrix.r[2].m128_f32[2];
-	AiFrustum.row3.w = tThisWorld.atWorldMatrix[spacePirate].worldMatrix.r[2].m128_f32[3];
-
-	AiFrustum.row4.x = tThisWorld.atWorldMatrix[spacePirate].worldMatrix.r[3].m128_f32[0];
-	AiFrustum.row4.y = tThisWorld.atWorldMatrix[spacePirate].worldMatrix.r[3].m128_f32[1];
-	AiFrustum.row4.z = tThisWorld.atWorldMatrix[spacePirate].worldMatrix.r[3].m128_f32[2];
-	AiFrustum.row4.w = tThisWorld.atWorldMatrix[spacePirate].worldMatrix.r[3].m128_f32[3];
-
-	frustumIndex = pcAiSystem->calculate_frustum(&tThisWorld, planes, AiFrustum, 70, 1, 0.1, 20, spacePirate, -2.1, 1.4, 19.6);
-	tThisWorld.atWorldMatrix[frustumIndex].worldMatrix = AILocation;
-
-	tThisWorld.atAIVision[spacePirate].eyes0 = planes;
-	tThisWorld.atAIVision[spacePirate].normalAtBegining[0] = planes[0].normal;
-	tThisWorld.atAIVision[spacePirate].normalAtBegining[1] = planes[1].normal;
-	tThisWorld.atAIVision[spacePirate].normalAtBegining[2] = planes[2].normal;
-	tThisWorld.atAIVision[spacePirate].normalAtBegining[3] = planes[3].normal;
-	tThisWorld.atAIVision[spacePirate].normalAtBegining[4] = planes[4].normal;
-	tThisWorld.atAIVision[spacePirate].normalAtBegining[5] = planes[5].normal;
-	//AILocation.r[3].m128_f32[0] += 8;
-	tThisWorld.atPathPlanining[spacePirate].startingNode = nodeindex2;
-	tThisWorld.atPathPlanining[spacePirate].Goal = nodeindex;
-
-	tThisWorld.atAIVision[spacePirate].keepSearching = false;
-	//	tThisWorld.atCoverTrigger[CoverTriggerIndex].AItoMove.push_back(spacePirate);
-	//
-	//	tThisWorld.atCoverTrigger[CoverTriggerIndex].coverAiCanGoTo.push_back(tThisWorld.atCover[cover1]);
-	//#pragma endregion
-	// This is my AIMovementTrigger for backleft ai and back right
-	TriggerZone = AILocation;
-	TriggerZone.r[3].m128_f32[2] += 10;
-
-	CoverTriggerIndex = CreateCoverTriggerZone(&tThisWorld, TriggerZone);
-
-	CoverLocation = AILocation;
-	coverPosition.clear();
-	CoverLocation.r[3].m128_f32[2] += 4;
-	cover1 = CreateCover(&tThisWorld, CoverLocation, coverPosition);
-	nodeLocation = CoverLocation;
-	nodeLocation.r[3].m128_f32[0] += 0;
- nodeLocation.r[3].m128_f32[1] -= 0;
-	//	nodeLocation.r[3].m128_f32[2] += -2;
-
-	//pcAiSystem->AddNodeToPathFinding(nodeLocation, nodePosition, 1);
-	nodeindexBackRight = CreateNodePoint(&tThisWorld, nodeLocation);
-	nodePosition;
-	nodePosition.x = nodeLocation.r[3].m128_f32[0];
-	nodePosition.y = nodeLocation.r[3].m128_f32[1];
-	nodePosition.z = nodeLocation.r[3].m128_f32[2];
-	pcAiSystem->AddNodeToPathFinding(nodeindexBackRight, nodePosition, 1);
-	nodeLocation = AILocation;
-	backrightFrontnodeindex2 = CreateNodePoint(&tThisWorld, nodeLocation);
-
-	nodePosition.x = nodeLocation.r[3].m128_f32[0];
-	nodePosition.y = nodeLocation.r[3].m128_f32[1];
-	nodePosition.z = nodeLocation.r[3].m128_f32[2];
-	pcAiSystem->AddNodeToPathFinding(backrightFrontnodeindex2, nodePosition, 1);
-	tThisWorld.atCover[cover1].CoverPositions.push_back(nodeindexBackRight);
-	tThisWorld.atPathPlanining[spacePirate].startingNode = backrightFrontnodeindex2;
-
-	//	pcAiSystem->LookAtObject(AILocation, &m_d3dPlayerMatrix);
-
-
-	//CoverTriggerIndex = CreateCoverTriggerZone(&tThisWorld, TriggerZone);
-
-	edges.clear();
-	edges.push_back(nodeindexBackRight);
-	pcAiSystem->AddEdgestoNode(backrightFrontnodeindex2, edges);
-	//pcAiSystem->AddEdgestoNode(nodeindex3, edges);
-	edges.clear();
-	edges.push_back(backrightFrontnodeindex2);
-	pcAiSystem->AddEdgestoNode(nodeindexBackRight, edges);
-
-	tThisWorld.atCoverTrigger[CoverTriggerIndex].AItoMove.push_back(spacePirate);
-
-	tThisWorld.atCoverTrigger[CoverTriggerIndex].coverAiCanGoTo.push_back(tThisWorld.atCover[cover1]);
-	tThisWorld.atPathPlanining[spacePirate].Goal = nodeindexBackRight;
-
-
-
-	AILocation = pcGraphicsSystem->SetDefaultWorldPosition();
-	AILocation.r[3].m128_f32[2] -= 135;
-	AILocation.r[3].m128_f32[0] -= 9;
-	AILocation.r[3].m128_f32[1] -= 1;
-	AiLookPosition = AILocation;
-	AiLookPosition.r[3].m128_f32[0] -= 12;
-	AiLookPosition.r[3].m128_f32[2] += 10;
-
-	CreateNodePoint(&tThisWorld, AiLookPosition);
-
-	coverPosition.clear();
-
-
-	pcAiSystem->LookAtObject(AILocation, &m_d3dPlayerMatrix);
-
-
-	//CoverTriggerIndex = CreateCoverTriggerZone(&tThisWorld, TriggerZone);
-
-
-#pragma endregion
-
-	tempImport = pcGraphicsSystem->ReadMesh("meshData_Scyllian.txt");
-	gunImport = pcGraphicsSystem->ReadMesh("meshData_LaserFlintlockTextured.txt");
-	//AILocation.r[3].m128_f32[0] += 7;
-
-	for (int meshIndex = 0; meshIndex < tempImport.meshCount; ++meshIndex)
-	{
-		spacePirate = CreateScyllian(&tThisWorld, AILocation, enemyToCopyFrom);
-		//spacePirate = CreateScyllian(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, tempImport.vtMeshes[meshIndex], tempImport.vtMaterials[meshIndex], AILocation);
-	}
-	pcAiSystem->LookAtObject(AiLookPosition, &tThisWorld.atWorldMatrix[spacePirate].worldMatrix);
-	//spacePirate = CreateSpacePirate(&tThisWorld, AILocation);
-	tThisWorld.atAiHeath[spacePirate].heath = 100;
-	createGSQuad(&tThisWorld, XMFLOAT4(1, 0, 0, 1), spacePirate);
-	createGSQuad(&tThisWorld, XMFLOAT4(0, 0, 0, 1), spacePirate);
-
-
-
-
-
-	//int GunINdexai = CreateGun(&tThisWorld, m_d3dWorldMatrix, spacePirate, -1.1, 0.5, 12.5, 10, 30);
-	for (int meshIndex = 0; meshIndex < tempImport.meshCount; ++meshIndex)
-	{
-	 GunINdexai = CreateScyllianGun(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, m_d3dWorldMatrix, spacePirate, -1.5, 1, 11.5, 10, 200, gunImport.vtMeshes[meshIndex], gunImport.vtMaterials[meshIndex]);
-	}
-#pragma region MORE AI Init
-	tThisWorld.atAIMask[spacePirate].GunIndex = GunINdexai;
-
-	tThisWorld.atClip[GunINdexai].bulletSpeed = 0.01;//Frame Dependent
-
-
-	AiFrustum.row1.x = tThisWorld.atWorldMatrix[spacePirate].worldMatrix.r[0].m128_f32[0];
-	AiFrustum.row1.y = tThisWorld.atWorldMatrix[spacePirate].worldMatrix.r[0].m128_f32[1];
-	AiFrustum.row1.z = tThisWorld.atWorldMatrix[spacePirate].worldMatrix.r[0].m128_f32[2];
-	AiFrustum.row1.w = tThisWorld.atWorldMatrix[spacePirate].worldMatrix.r[0].m128_f32[3];
-
-	AiFrustum.row2.x = tThisWorld.atWorldMatrix[spacePirate].worldMatrix.r[1].m128_f32[0];
-	AiFrustum.row2.y = tThisWorld.atWorldMatrix[spacePirate].worldMatrix.r[1].m128_f32[1];
-	AiFrustum.row2.z = tThisWorld.atWorldMatrix[spacePirate].worldMatrix.r[1].m128_f32[2];
-	AiFrustum.row2.w = tThisWorld.atWorldMatrix[spacePirate].worldMatrix.r[1].m128_f32[3];
-
-	AiFrustum.row3.x = tThisWorld.atWorldMatrix[spacePirate].worldMatrix.r[2].m128_f32[0];
-	AiFrustum.row3.y = tThisWorld.atWorldMatrix[spacePirate].worldMatrix.r[2].m128_f32[1];
-	AiFrustum.row3.z = tThisWorld.atWorldMatrix[spacePirate].worldMatrix.r[2].m128_f32[2];
-	AiFrustum.row3.w = tThisWorld.atWorldMatrix[spacePirate].worldMatrix.r[2].m128_f32[3];
-
-	AiFrustum.row4.x = tThisWorld.atWorldMatrix[spacePirate].worldMatrix.r[3].m128_f32[0];
-	AiFrustum.row4.y = tThisWorld.atWorldMatrix[spacePirate].worldMatrix.r[3].m128_f32[1];
-	AiFrustum.row4.z = tThisWorld.atWorldMatrix[spacePirate].worldMatrix.r[3].m128_f32[2];
-	AiFrustum.row4.w = tThisWorld.atWorldMatrix[spacePirate].worldMatrix.r[3].m128_f32[3];
-
-	frustumIndex = pcAiSystem->calculate_frustum(&tThisWorld, planes, AiFrustum, 70, 1, 0.1, 20, spacePirate, -2.1, 1.4, 19.6);
-	tThisWorld.atWorldMatrix[frustumIndex].worldMatrix = AILocation;
-
-	tThisWorld.atAIVision[spacePirate].eyes0 = planes;
-	tThisWorld.atAIVision[spacePirate].normalAtBegining[0] = planes[0].normal;
-	tThisWorld.atAIVision[spacePirate].normalAtBegining[1] = planes[1].normal;
-	tThisWorld.atAIVision[spacePirate].normalAtBegining[2] = planes[2].normal;
-	tThisWorld.atAIVision[spacePirate].normalAtBegining[3] = planes[3].normal;
-	tThisWorld.atAIVision[spacePirate].normalAtBegining[4] = planes[4].normal;
-	tThisWorld.atAIVision[spacePirate].normalAtBegining[5] = planes[5].normal;
-	//AILocation.r[3].m128_f32[0] += 8;
-	tThisWorld.atPathPlanining[spacePirate].startingNode = nodeindex2;
-	tThisWorld.atPathPlanining[spacePirate].Goal = nodeindex;
-
-	tThisWorld.atAIVision[spacePirate].keepSearching = false;
-	//	tThisWorld.atCoverTrigger[CoverTriggerIndex].AItoMove.push_back(spacePirate);
-	//
-	//	tThisWorld.atCoverTrigger[CoverTriggerIndex].coverAiCanGoTo.push_back(tThisWorld.atCover[cover1]);
-	//#pragma endregion
-	// This is my AIMovementTrigger for backleft ai and back right
-	TriggerZone = AILocation;
-	TriggerZone.r[3].m128_f32[2] += 10;
-
-	CoverTriggerIndex = CreateCoverTriggerZone(&tThisWorld, TriggerZone);
-
-	CoverLocation = AILocation;
-	coverPosition.clear();
-	CoverLocation.r[3].m128_f32[2] += 4;
-	cover1 = CreateCover(&tThisWorld, CoverLocation, coverPosition);
-	nodeLocation = CoverLocation;
-	nodeLocation.r[3].m128_f32[0] += 0;
- nodeLocation.r[3].m128_f32[1] -= 0;
-		nodeLocation.r[3].m128_f32[2] += -20;
-
-	//pcAiSystem->AddNodeToPathFinding(nodeLocation, nodePosition, 1);
-	nodeindexBackRight = CreateNodePoint(&tThisWorld, nodeLocation);
-	nodePosition;
-	nodePosition.x = nodeLocation.r[3].m128_f32[0];
-	nodePosition.y = nodeLocation.r[3].m128_f32[1];
-	nodePosition.z = nodeLocation.r[3].m128_f32[2];
-	pcAiSystem->AddNodeToPathFinding(nodeindexBackRight, nodePosition, 1);
-	nodeLocation = AILocation;
-	backrightFrontnodeindex2 = CreateNodePoint(&tThisWorld, nodeLocation);
-
-	nodePosition.x = nodeLocation.r[3].m128_f32[0];
-	nodePosition.y = nodeLocation.r[3].m128_f32[1];
-	nodePosition.z = nodeLocation.r[3].m128_f32[2];
-	pcAiSystem->AddNodeToPathFinding(backrightFrontnodeindex2, nodePosition, 1);
-	tThisWorld.atCover[cover1].CoverPositions.push_back(nodeindexBackRight);
-	tThisWorld.atPathPlanining[spacePirate].startingNode = backrightFrontnodeindex2;
-
-	//	pcAiSystem->LookAtObject(AILocation, &m_d3dPlayerMatrix);
-
-
-	//CoverTriggerIndex = CreateCoverTriggerZone(&tThisWorld, TriggerZone);
-
-	edges.clear();
-	edges.push_back(nodeindexBackRight);
-	pcAiSystem->AddEdgestoNode(backrightFrontnodeindex2, edges);
-	//pcAiSystem->AddEdgestoNode(nodeindex3, edges);
-	edges.clear();
-	edges.push_back(backrightFrontnodeindex2);
-	pcAiSystem->AddEdgestoNode(nodeindexBackRight, edges);
-
-	tThisWorld.atCoverTrigger[CoverTriggerIndex].AItoMove.push_back(spacePirate);
-
-	tThisWorld.atCoverTrigger[CoverTriggerIndex].coverAiCanGoTo.push_back(tThisWorld.atCover[cover1]);
-	tThisWorld.atPathPlanining[spacePirate].Goal = nodeindexBackRight;
+	/*tThisWorld.atCoverTrigger[coverIndexHorzontal].AItoMove.push_back(spacePirate);
+
+	tThisWorld.atCoverTrigger[coverIndexHorzontal].coverAiCanGoTo.push_back(tThisWorld.atCover[cover1]);*/
+
+//
+//	AILocation = pcGraphicsSystem->SetDefaultWorldPosition();
+//	AILocation.r[3].m128_f32[2] -= 106;
+//	AILocation.r[3].m128_f32[0] -= 13;
+//	AILocation.r[3].m128_f32[1] -= 1;
+//	AiLookPosition = AILocation;
+//	AiLookPosition.r[3].m128_f32[0] -= 12;
+//	AiLookPosition.r[3].m128_f32[2] += 10;
+//
+//	CreateNodePoint(&tThisWorld, AiLookPosition);
+//
+//	coverPosition.clear();
+//
+//
+//	pcAiSystem->LookAtObject(AILocation, &m_d3dPlayerMatrix);
+//
+//
+//	//CoverTriggerIndex = CreateCoverTriggerZone(&tThisWorld, TriggerZone);
+//
+//
+//#pragma endregion
+//
+//	tempImport = pcGraphicsSystem->ReadMesh("meshData_Scyllian.txt");
+//	gunImport = pcGraphicsSystem->ReadMesh("meshData_LaserFlintlockTextured.txt");
+//	//AILocation.r[3].m128_f32[0] += 7;
+//
+//	for (int meshIndex = 0; meshIndex < tempImport.meshCount; ++meshIndex)
+//	{
+//		spacePirate = CreateScyllian(&tThisWorld, AILocation, enemyToCopyFrom);
+//		//spacePirate = CreateScyllian(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, tempImport.vtMeshes[meshIndex], tempImport.vtMaterials[meshIndex], AILocation);
+//	}
+//	pcAiSystem->LookAtObject(AiLookPosition, &tThisWorld.atWorldMatrix[spacePirate].worldMatrix);
+//	//spacePirate = CreateSpacePirate(&tThisWorld, AILocation);
+//	tThisWorld.atAiHeath[spacePirate].heath = 100;
+//	createGSQuad(&tThisWorld, XMFLOAT4(1, 0, 0, 1), spacePirate);
+//	createGSQuad(&tThisWorld, XMFLOAT4(0, 0, 0, 1), spacePirate);
+//
+//
+//
+//
+//
+//	//int GunINdexai = CreateGun(&tThisWorld, m_d3dWorldMatrix, spacePirate, -1.1, 0.5, 12.5, 10, 30);
+//	for (int meshIndex = 0; meshIndex < tempImport.meshCount; ++meshIndex)
+//	{
+//	 GunINdexai = CreateScyllianGun(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, m_d3dWorldMatrix, spacePirate, -1.5, 1, 11.5, 10, 200, gunImport.vtMeshes[meshIndex], gunImport.vtMaterials[meshIndex]);
+//	}
+//#pragma region MORE AI Init
+//	tThisWorld.atAIMask[spacePirate].GunIndex = GunINdexai;
+//
+//	tThisWorld.atClip[GunINdexai].bulletSpeed = 0.01;//Frame Dependent
+//
+//
+//	AiFrustum.row1.x = tThisWorld.atWorldMatrix[spacePirate].worldMatrix.r[0].m128_f32[0];
+//	AiFrustum.row1.y = tThisWorld.atWorldMatrix[spacePirate].worldMatrix.r[0].m128_f32[1];
+//	AiFrustum.row1.z = tThisWorld.atWorldMatrix[spacePirate].worldMatrix.r[0].m128_f32[2];
+//	AiFrustum.row1.w = tThisWorld.atWorldMatrix[spacePirate].worldMatrix.r[0].m128_f32[3];
+//
+//	AiFrustum.row2.x = tThisWorld.atWorldMatrix[spacePirate].worldMatrix.r[1].m128_f32[0];
+//	AiFrustum.row2.y = tThisWorld.atWorldMatrix[spacePirate].worldMatrix.r[1].m128_f32[1];
+//	AiFrustum.row2.z = tThisWorld.atWorldMatrix[spacePirate].worldMatrix.r[1].m128_f32[2];
+//	AiFrustum.row2.w = tThisWorld.atWorldMatrix[spacePirate].worldMatrix.r[1].m128_f32[3];
+//
+//	AiFrustum.row3.x = tThisWorld.atWorldMatrix[spacePirate].worldMatrix.r[2].m128_f32[0];
+//	AiFrustum.row3.y = tThisWorld.atWorldMatrix[spacePirate].worldMatrix.r[2].m128_f32[1];
+//	AiFrustum.row3.z = tThisWorld.atWorldMatrix[spacePirate].worldMatrix.r[2].m128_f32[2];
+//	AiFrustum.row3.w = tThisWorld.atWorldMatrix[spacePirate].worldMatrix.r[2].m128_f32[3];
+//
+//	AiFrustum.row4.x = tThisWorld.atWorldMatrix[spacePirate].worldMatrix.r[3].m128_f32[0];
+//	AiFrustum.row4.y = tThisWorld.atWorldMatrix[spacePirate].worldMatrix.r[3].m128_f32[1];
+//	AiFrustum.row4.z = tThisWorld.atWorldMatrix[spacePirate].worldMatrix.r[3].m128_f32[2];
+//	AiFrustum.row4.w = tThisWorld.atWorldMatrix[spacePirate].worldMatrix.r[3].m128_f32[3];
+//
+//	frustumIndex = pcAiSystem->calculate_frustum(&tThisWorld, planes, AiFrustum, 70, 1, 0.1, 20, spacePirate, -2.1, 1.4, 19.6);
+//	tThisWorld.atWorldMatrix[frustumIndex].worldMatrix = AILocation;
+//
+//	tThisWorld.atAIVision[spacePirate].eyes0 = planes;
+//	tThisWorld.atAIVision[spacePirate].normalAtBegining[0] = planes[0].normal;
+//	tThisWorld.atAIVision[spacePirate].normalAtBegining[1] = planes[1].normal;
+//	tThisWorld.atAIVision[spacePirate].normalAtBegining[2] = planes[2].normal;
+//	tThisWorld.atAIVision[spacePirate].normalAtBegining[3] = planes[3].normal;
+//	tThisWorld.atAIVision[spacePirate].normalAtBegining[4] = planes[4].normal;
+//	tThisWorld.atAIVision[spacePirate].normalAtBegining[5] = planes[5].normal;
+//	//AILocation.r[3].m128_f32[0] += 8;
+//	tThisWorld.atPathPlanining[spacePirate].startingNode = nodeindex2;
+//	tThisWorld.atPathPlanining[spacePirate].Goal = nodeindex;
+//
+//	tThisWorld.atAIVision[spacePirate].keepSearching = false;
+//	//	tThisWorld.atCoverTrigger[CoverTriggerIndex].AItoMove.push_back(spacePirate);
+//	//
+//	//	tThisWorld.atCoverTrigger[CoverTriggerIndex].coverAiCanGoTo.push_back(tThisWorld.atCover[cover1]);
+//	//#pragma endregion
+//	// This is my AIMovementTrigger for backleft ai and back right
+//	TriggerZone = AILocation;
+//	TriggerZone.r[3].m128_f32[2] += 10;
+//
+//	CoverTriggerIndex = CreateCoverTriggerZone(&tThisWorld, TriggerZone);
+//
+//	CoverLocation = AILocation;
+//	coverPosition.clear();
+//	CoverLocation.r[3].m128_f32[2] += 4;
+//	cover1 = CreateCover(&tThisWorld, CoverLocation, coverPosition);
+//	nodeLocation = CoverLocation;
+//	nodeLocation.r[3].m128_f32[0] += 0;
+// nodeLocation.r[3].m128_f32[1] -= 0;
+////	nodeLocation.r[3].m128_f32[2] += -2;
+//
+//	//pcAiSystem->AddNodeToPathFinding(nodeLocation, nodePosition, 1);
+//	 nodeindexBackRight = CreateNodePoint(&tThisWorld, nodeLocation);
+//	nodePosition;
+//	nodePosition.x = nodeLocation.r[3].m128_f32[0];
+//	nodePosition.y = nodeLocation.r[3].m128_f32[1];
+//	nodePosition.z = nodeLocation.r[3].m128_f32[2];
+//	pcAiSystem->AddNodeToPathFinding(nodeindexBackRight, nodePosition, 1);
+//	nodeLocation = AILocation;
+//	 backrightFrontnodeindex2 = CreateNodePoint(&tThisWorld, nodeLocation);
+//
+//	nodePosition.x = nodeLocation.r[3].m128_f32[0];
+//	nodePosition.y = nodeLocation.r[3].m128_f32[1];
+//	nodePosition.z = nodeLocation.r[3].m128_f32[2];
+//	pcAiSystem->AddNodeToPathFinding(backrightFrontnodeindex2, nodePosition, 1);
+//	tThisWorld.atCover[cover1].CoverPositions.push_back(nodeindexBackRight);
+//	tThisWorld.atPathPlanining[spacePirate].startingNode = backrightFrontnodeindex2;
+//
+//	//	pcAiSystem->LookAtObject(AILocation, &m_d3dPlayerMatrix);
+//
+//
+//	//CoverTriggerIndex = CreateCoverTriggerZone(&tThisWorld, TriggerZone);
+//
+//	edges.clear();
+//	edges.push_back(nodeindexBackRight);
+//	pcAiSystem->AddEdgestoNode(backrightFrontnodeindex2, edges);
+//	//pcAiSystem->AddEdgestoNode(nodeindex3, edges);
+//	edges.clear();
+//	edges.push_back(backrightFrontnodeindex2);
+//	pcAiSystem->AddEdgestoNode(nodeindexBackRight, edges);
+//
+//	tThisWorld.atCoverTrigger[CoverTriggerIndex].AItoMove.push_back(spacePirate);
+//
+//	tThisWorld.atCoverTrigger[CoverTriggerIndex].coverAiCanGoTo.push_back(tThisWorld.atCover[cover1]);
+//	tThisWorld.atPathPlanining[spacePirate].Goal = nodeindexBackRight;
+//
+//
+//
+//
+//	AILocation = pcGraphicsSystem->SetDefaultWorldPosition();
+//	AILocation.r[3].m128_f32[2] -= 106;
+//	AILocation.r[3].m128_f32[0] -= 3;
+//	AILocation.r[3].m128_f32[1] -= 1;
+//	AiLookPosition = AILocation;
+//	AiLookPosition.r[3].m128_f32[0] -= 12;
+//	AiLookPosition.r[3].m128_f32[2] += 10;
+//
+//	CreateNodePoint(&tThisWorld, AiLookPosition);
+//
+//	coverPosition.clear();
+//
+//
+//	pcAiSystem->LookAtObject(AILocation, &m_d3dPlayerMatrix);
+//
+//
+//	//CoverTriggerIndex = CreateCoverTriggerZone(&tThisWorld, TriggerZone);
+//
+//
+//#pragma endregion
+//
+//	tempImport = pcGraphicsSystem->ReadMesh("meshData_Scyllian.txt");
+//	gunImport = pcGraphicsSystem->ReadMesh("meshData_LaserFlintlockTextured.txt");
+//	//AILocation.r[3].m128_f32[0] += 7;
+//
+//	for (int meshIndex = 0; meshIndex < tempImport.meshCount; ++meshIndex)
+//	{
+//		spacePirate = CreateScyllian(&tThisWorld, AILocation, enemyToCopyFrom);
+//		//spacePirate = CreateScyllian(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, tempImport.vtMeshes[meshIndex], tempImport.vtMaterials[meshIndex], AILocation);
+//	}
+//	pcAiSystem->LookAtObject(AiLookPosition, &tThisWorld.atWorldMatrix[spacePirate].worldMatrix);
+//	//spacePirate = CreateSpacePirate(&tThisWorld, AILocation);
+//	tThisWorld.atAiHeath[spacePirate].heath = 100;
+//	createGSQuad(&tThisWorld, XMFLOAT4(1, 0, 0, 1), spacePirate);
+//	createGSQuad(&tThisWorld, XMFLOAT4(0, 0, 0, 1), spacePirate);
+//
+//
+//
+//
+//
+//	//int GunINdexai = CreateGun(&tThisWorld, m_d3dWorldMatrix, spacePirate, -1.1, 0.5, 12.5, 10, 30);
+//	for (int meshIndex = 0; meshIndex < tempImport.meshCount; ++meshIndex)
+//	{
+//	 GunINdexai = CreateScyllianGun(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, m_d3dWorldMatrix, spacePirate, -1.5, 1, 11.5, 10, 200, gunImport.vtMeshes[meshIndex], gunImport.vtMaterials[meshIndex]);
+//	}
+//#pragma region MORE AI Init
+//	tThisWorld.atAIMask[spacePirate].GunIndex = GunINdexai;
+//
+//	tThisWorld.atClip[GunINdexai].bulletSpeed = 0.01;//Frame Dependent
+//
+//
+//	AiFrustum.row1.x = tThisWorld.atWorldMatrix[spacePirate].worldMatrix.r[0].m128_f32[0];
+//	AiFrustum.row1.y = tThisWorld.atWorldMatrix[spacePirate].worldMatrix.r[0].m128_f32[1];
+//	AiFrustum.row1.z = tThisWorld.atWorldMatrix[spacePirate].worldMatrix.r[0].m128_f32[2];
+//	AiFrustum.row1.w = tThisWorld.atWorldMatrix[spacePirate].worldMatrix.r[0].m128_f32[3];
+//
+//	AiFrustum.row2.x = tThisWorld.atWorldMatrix[spacePirate].worldMatrix.r[1].m128_f32[0];
+//	AiFrustum.row2.y = tThisWorld.atWorldMatrix[spacePirate].worldMatrix.r[1].m128_f32[1];
+//	AiFrustum.row2.z = tThisWorld.atWorldMatrix[spacePirate].worldMatrix.r[1].m128_f32[2];
+//	AiFrustum.row2.w = tThisWorld.atWorldMatrix[spacePirate].worldMatrix.r[1].m128_f32[3];
+//
+//	AiFrustum.row3.x = tThisWorld.atWorldMatrix[spacePirate].worldMatrix.r[2].m128_f32[0];
+//	AiFrustum.row3.y = tThisWorld.atWorldMatrix[spacePirate].worldMatrix.r[2].m128_f32[1];
+//	AiFrustum.row3.z = tThisWorld.atWorldMatrix[spacePirate].worldMatrix.r[2].m128_f32[2];
+//	AiFrustum.row3.w = tThisWorld.atWorldMatrix[spacePirate].worldMatrix.r[2].m128_f32[3];
+//
+//	AiFrustum.row4.x = tThisWorld.atWorldMatrix[spacePirate].worldMatrix.r[3].m128_f32[0];
+//	AiFrustum.row4.y = tThisWorld.atWorldMatrix[spacePirate].worldMatrix.r[3].m128_f32[1];
+//	AiFrustum.row4.z = tThisWorld.atWorldMatrix[spacePirate].worldMatrix.r[3].m128_f32[2];
+//	AiFrustum.row4.w = tThisWorld.atWorldMatrix[spacePirate].worldMatrix.r[3].m128_f32[3];
+//
+//	frustumIndex = pcAiSystem->calculate_frustum(&tThisWorld, planes, AiFrustum, 70, 1, 0.1, 20, spacePirate, -2.1, 1.4, 19.6);
+//	tThisWorld.atWorldMatrix[frustumIndex].worldMatrix = AILocation;
+//
+//	tThisWorld.atAIVision[spacePirate].eyes0 = planes;
+//	tThisWorld.atAIVision[spacePirate].normalAtBegining[0] = planes[0].normal;
+//	tThisWorld.atAIVision[spacePirate].normalAtBegining[1] = planes[1].normal;
+//	tThisWorld.atAIVision[spacePirate].normalAtBegining[2] = planes[2].normal;
+//	tThisWorld.atAIVision[spacePirate].normalAtBegining[3] = planes[3].normal;
+//	tThisWorld.atAIVision[spacePirate].normalAtBegining[4] = planes[4].normal;
+//	tThisWorld.atAIVision[spacePirate].normalAtBegining[5] = planes[5].normal;
+//	//AILocation.r[3].m128_f32[0] += 8;
+//	tThisWorld.atPathPlanining[spacePirate].startingNode = nodeindex2;
+//	tThisWorld.atPathPlanining[spacePirate].Goal = nodeindex;
+//
+//	tThisWorld.atAIVision[spacePirate].keepSearching = false;
+//	//	tThisWorld.atCoverTrigger[CoverTriggerIndex].AItoMove.push_back(spacePirate);
+//	//
+//	//	tThisWorld.atCoverTrigger[CoverTriggerIndex].coverAiCanGoTo.push_back(tThisWorld.atCover[cover1]);
+//	//#pragma endregion
+//	// This is my AIMovementTrigger for backleft ai and back right
+//	TriggerZone = AILocation;
+//	TriggerZone.r[3].m128_f32[2] += 10;
+//
+//	CoverTriggerIndex = CreateCoverTriggerZone(&tThisWorld, TriggerZone);
+//
+//	CoverLocation = AILocation;
+//	coverPosition.clear();
+//	CoverLocation.r[3].m128_f32[2] += 4;
+//	cover1 = CreateCover(&tThisWorld, CoverLocation, coverPosition);
+//	nodeLocation = CoverLocation;
+//	nodeLocation.r[3].m128_f32[0] += 0;
+// nodeLocation.r[3].m128_f32[1] -= 0;
+//	//	nodeLocation.r[3].m128_f32[2] += -2;
+//
+//	//pcAiSystem->AddNodeToPathFinding(nodeLocation, nodePosition, 1);
+//	nodeindexBackRight = CreateNodePoint(&tThisWorld, nodeLocation);
+//	nodePosition;
+//	nodePosition.x = nodeLocation.r[3].m128_f32[0];
+//	nodePosition.y = nodeLocation.r[3].m128_f32[1];
+//	nodePosition.z = nodeLocation.r[3].m128_f32[2];
+//	pcAiSystem->AddNodeToPathFinding(nodeindexBackRight, nodePosition, 1);
+//	nodeLocation = AILocation;
+//	backrightFrontnodeindex2 = CreateNodePoint(&tThisWorld, nodeLocation);
+//
+//	nodePosition.x = nodeLocation.r[3].m128_f32[0];
+//	nodePosition.y = nodeLocation.r[3].m128_f32[1];
+//	nodePosition.z = nodeLocation.r[3].m128_f32[2];
+//	pcAiSystem->AddNodeToPathFinding(backrightFrontnodeindex2, nodePosition, 1);
+//	tThisWorld.atCover[cover1].CoverPositions.push_back(nodeindexBackRight);
+//	tThisWorld.atPathPlanining[spacePirate].startingNode = backrightFrontnodeindex2;
+//
+//	//	pcAiSystem->LookAtObject(AILocation, &m_d3dPlayerMatrix);
+//
+//
+//	//CoverTriggerIndex = CreateCoverTriggerZone(&tThisWorld, TriggerZone);
+//
+//	edges.clear();
+//	edges.push_back(nodeindexBackRight);
+//	pcAiSystem->AddEdgestoNode(backrightFrontnodeindex2, edges);
+//	//pcAiSystem->AddEdgestoNode(nodeindex3, edges);
+//	edges.clear();
+//	edges.push_back(backrightFrontnodeindex2);
+//	pcAiSystem->AddEdgestoNode(nodeindexBackRight, edges);
+//
+//	tThisWorld.atCoverTrigger[CoverTriggerIndex].AItoMove.push_back(spacePirate);
+//
+//	tThisWorld.atCoverTrigger[CoverTriggerIndex].coverAiCanGoTo.push_back(tThisWorld.atCover[cover1]);
+//	tThisWorld.atPathPlanining[spacePirate].Goal = nodeindexBackRight;
+//
+//
+//
+//	AILocation = pcGraphicsSystem->SetDefaultWorldPosition();
+//	AILocation.r[3].m128_f32[2] -= 135;
+//	AILocation.r[3].m128_f32[0] -= 9;
+//	AILocation.r[3].m128_f32[1] -= 1;
+//	AiLookPosition = AILocation;
+//	AiLookPosition.r[3].m128_f32[0] -= 12;
+//	AiLookPosition.r[3].m128_f32[2] += 10;
+//
+//	CreateNodePoint(&tThisWorld, AiLookPosition);
+//
+//	coverPosition.clear();
+//
+//
+//	pcAiSystem->LookAtObject(AILocation, &m_d3dPlayerMatrix);
+//
+//
+//	//CoverTriggerIndex = CreateCoverTriggerZone(&tThisWorld, TriggerZone);
+//
+//
+//#pragma endregion
+//
+//	tempImport = pcGraphicsSystem->ReadMesh("meshData_Scyllian.txt");
+//	gunImport = pcGraphicsSystem->ReadMesh("meshData_LaserFlintlockTextured.txt");
+//	//AILocation.r[3].m128_f32[0] += 7;
+//
+//	for (int meshIndex = 0; meshIndex < tempImport.meshCount; ++meshIndex)
+//	{
+//		spacePirate = CreateScyllian(&tThisWorld, AILocation, enemyToCopyFrom);
+//		//spacePirate = CreateScyllian(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, tempImport.vtMeshes[meshIndex], tempImport.vtMaterials[meshIndex], AILocation);
+//	}
+//	pcAiSystem->LookAtObject(AiLookPosition, &tThisWorld.atWorldMatrix[spacePirate].worldMatrix);
+//	//spacePirate = CreateSpacePirate(&tThisWorld, AILocation);
+//	tThisWorld.atAiHeath[spacePirate].heath = 100;
+//	createGSQuad(&tThisWorld, XMFLOAT4(1, 0, 0, 1), spacePirate);
+//	createGSQuad(&tThisWorld, XMFLOAT4(0, 0, 0, 1), spacePirate);
+//
+//
+//
+//
+//
+//	//int GunINdexai = CreateGun(&tThisWorld, m_d3dWorldMatrix, spacePirate, -1.1, 0.5, 12.5, 10, 30);
+//	for (int meshIndex = 0; meshIndex < tempImport.meshCount; ++meshIndex)
+//	{
+//	 GunINdexai = CreateScyllianGun(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, m_d3dWorldMatrix, spacePirate, -1.5, 1, 11.5, 10, 200, gunImport.vtMeshes[meshIndex], gunImport.vtMaterials[meshIndex]);
+//	}
+//#pragma region MORE AI Init
+//	tThisWorld.atAIMask[spacePirate].GunIndex = GunINdexai;
+//
+//	tThisWorld.atClip[GunINdexai].bulletSpeed = 0.01;//Frame Dependent
+//
+//
+//	AiFrustum.row1.x = tThisWorld.atWorldMatrix[spacePirate].worldMatrix.r[0].m128_f32[0];
+//	AiFrustum.row1.y = tThisWorld.atWorldMatrix[spacePirate].worldMatrix.r[0].m128_f32[1];
+//	AiFrustum.row1.z = tThisWorld.atWorldMatrix[spacePirate].worldMatrix.r[0].m128_f32[2];
+//	AiFrustum.row1.w = tThisWorld.atWorldMatrix[spacePirate].worldMatrix.r[0].m128_f32[3];
+//
+//	AiFrustum.row2.x = tThisWorld.atWorldMatrix[spacePirate].worldMatrix.r[1].m128_f32[0];
+//	AiFrustum.row2.y = tThisWorld.atWorldMatrix[spacePirate].worldMatrix.r[1].m128_f32[1];
+//	AiFrustum.row2.z = tThisWorld.atWorldMatrix[spacePirate].worldMatrix.r[1].m128_f32[2];
+//	AiFrustum.row2.w = tThisWorld.atWorldMatrix[spacePirate].worldMatrix.r[1].m128_f32[3];
+//
+//	AiFrustum.row3.x = tThisWorld.atWorldMatrix[spacePirate].worldMatrix.r[2].m128_f32[0];
+//	AiFrustum.row3.y = tThisWorld.atWorldMatrix[spacePirate].worldMatrix.r[2].m128_f32[1];
+//	AiFrustum.row3.z = tThisWorld.atWorldMatrix[spacePirate].worldMatrix.r[2].m128_f32[2];
+//	AiFrustum.row3.w = tThisWorld.atWorldMatrix[spacePirate].worldMatrix.r[2].m128_f32[3];
+//
+//	AiFrustum.row4.x = tThisWorld.atWorldMatrix[spacePirate].worldMatrix.r[3].m128_f32[0];
+//	AiFrustum.row4.y = tThisWorld.atWorldMatrix[spacePirate].worldMatrix.r[3].m128_f32[1];
+//	AiFrustum.row4.z = tThisWorld.atWorldMatrix[spacePirate].worldMatrix.r[3].m128_f32[2];
+//	AiFrustum.row4.w = tThisWorld.atWorldMatrix[spacePirate].worldMatrix.r[3].m128_f32[3];
+//
+//	frustumIndex = pcAiSystem->calculate_frustum(&tThisWorld, planes, AiFrustum, 70, 1, 0.1, 20, spacePirate, -2.1, 1.4, 19.6);
+//	tThisWorld.atWorldMatrix[frustumIndex].worldMatrix = AILocation;
+//
+//	tThisWorld.atAIVision[spacePirate].eyes0 = planes;
+//	tThisWorld.atAIVision[spacePirate].normalAtBegining[0] = planes[0].normal;
+//	tThisWorld.atAIVision[spacePirate].normalAtBegining[1] = planes[1].normal;
+//	tThisWorld.atAIVision[spacePirate].normalAtBegining[2] = planes[2].normal;
+//	tThisWorld.atAIVision[spacePirate].normalAtBegining[3] = planes[3].normal;
+//	tThisWorld.atAIVision[spacePirate].normalAtBegining[4] = planes[4].normal;
+//	tThisWorld.atAIVision[spacePirate].normalAtBegining[5] = planes[5].normal;
+//	//AILocation.r[3].m128_f32[0] += 8;
+//	tThisWorld.atPathPlanining[spacePirate].startingNode = nodeindex2;
+//	tThisWorld.atPathPlanining[spacePirate].Goal = nodeindex;
+//
+//	tThisWorld.atAIVision[spacePirate].keepSearching = false;
+//	//	tThisWorld.atCoverTrigger[CoverTriggerIndex].AItoMove.push_back(spacePirate);
+//	//
+//	//	tThisWorld.atCoverTrigger[CoverTriggerIndex].coverAiCanGoTo.push_back(tThisWorld.atCover[cover1]);
+//	//#pragma endregion
+//	// This is my AIMovementTrigger for backleft ai and back right
+//	TriggerZone = AILocation;
+//	TriggerZone.r[3].m128_f32[2] += 10;
+//
+//	CoverTriggerIndex = CreateCoverTriggerZone(&tThisWorld, TriggerZone);
+//
+//	CoverLocation = AILocation;
+//	coverPosition.clear();
+//	CoverLocation.r[3].m128_f32[2] += 4;
+//	cover1 = CreateCover(&tThisWorld, CoverLocation, coverPosition);
+//	nodeLocation = CoverLocation;
+//	nodeLocation.r[3].m128_f32[0] += 0;
+// nodeLocation.r[3].m128_f32[1] -= 0;
+//		nodeLocation.r[3].m128_f32[2] += -20;
+//
+//	//pcAiSystem->AddNodeToPathFinding(nodeLocation, nodePosition, 1);
+//	nodeindexBackRight = CreateNodePoint(&tThisWorld, nodeLocation);
+//	nodePosition;
+//	nodePosition.x = nodeLocation.r[3].m128_f32[0];
+//	nodePosition.y = nodeLocation.r[3].m128_f32[1];
+//	nodePosition.z = nodeLocation.r[3].m128_f32[2];
+//	pcAiSystem->AddNodeToPathFinding(nodeindexBackRight, nodePosition, 1);
+//	nodeLocation = AILocation;
+//	backrightFrontnodeindex2 = CreateNodePoint(&tThisWorld, nodeLocation);
+//
+//	nodePosition.x = nodeLocation.r[3].m128_f32[0];
+//	nodePosition.y = nodeLocation.r[3].m128_f32[1];
+//	nodePosition.z = nodeLocation.r[3].m128_f32[2];
+//	pcAiSystem->AddNodeToPathFinding(backrightFrontnodeindex2, nodePosition, 1);
+//	tThisWorld.atCover[cover1].CoverPositions.push_back(nodeindexBackRight);
+//	tThisWorld.atPathPlanining[spacePirate].startingNode = backrightFrontnodeindex2;
+//
+//	//	pcAiSystem->LookAtObject(AILocation, &m_d3dPlayerMatrix);
+//
+//
+//	//CoverTriggerIndex = CreateCoverTriggerZone(&tThisWorld, TriggerZone);
+//
+//	edges.clear();
+//	edges.push_back(nodeindexBackRight);
+//	pcAiSystem->AddEdgestoNode(backrightFrontnodeindex2, edges);
+//	//pcAiSystem->AddEdgestoNode(nodeindex3, edges);
+//	edges.clear();
+//	edges.push_back(backrightFrontnodeindex2);
+//	pcAiSystem->AddEdgestoNode(nodeindexBackRight, edges);
+//
+//	tThisWorld.atCoverTrigger[CoverTriggerIndex].AItoMove.push_back(spacePirate);
+//
+//	tThisWorld.atCoverTrigger[CoverTriggerIndex].coverAiCanGoTo.push_back(tThisWorld.atCover[cover1]);
+//	tThisWorld.atPathPlanining[spacePirate].Goal = nodeindexBackRight;
 	XMMATRIX rectangle = m_d3dPlayerMatrix;
 	rectangle.r[3].m128_f32[2] -= 53.5f;
 	rectangle.r[3].m128_f32[1] -= 1.0f;
@@ -7264,7 +7264,11 @@ int CGameMangerSystem::RealLevelUpdate()
 							playerGravity.m128_f32[0] = 0;
 							playerGravity.m128_f32[2] = 0;
 							playerGravity.m128_f32[3] = 0;
-							tThisWorld.atRigidBody[nCurrentEntity].gravity = playerGravity;
+						//	tThisWorld.atRigidBody[nCurrentEntity].gravity = playerGravity;
+							cout << tThisWorld.atPathPlanining[nCurrentEntity].startingNode<<"start"<<std::endl;
+							cout << tThisWorld.atPathPlanining[nCurrentEntity].Goal<<"goal"<<std::endl;
+
+							cout << "AITRYINGTOMOVE" << nCurrentEntity << std::endl;
 							pcAiSystem->PathPlaningMovement(&tThisWorld.atPathPlanining[nCurrentEntity], &tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix);
 						}
 						else
@@ -7631,7 +7635,7 @@ int CGameMangerSystem::RealLevelUpdate()
 
 		if (tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_SIMPLEMESH | COMPONENT_SHADERID))
 		{
-			if (tThisWorld.atUIMask[nCurrentEntity].m_tnUIMask != (COMPONENT_UIMASK | COMPONENT_NOSHOW))
+		//	if (tThisWorld.atUIMask[nCurrentEntity].m_tnUIMask != (COMPONENT_UIMASK | COMPONENT_NOSHOW))
 			{
 				if (pcCollisionSystem->aabb_to_frustum(tThisWorld.atAABB[nCurrentEntity], tThisWorld.atClaytonVision.eyes0))
 				{
