@@ -38,5 +38,6 @@ struct Clips
 	int indexInclip;
 	float lifeTime;
 	float maxLifeTime;
+	bool empty = false;
 };
 #endif

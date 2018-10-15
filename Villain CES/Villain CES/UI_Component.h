@@ -62,5 +62,6 @@ struct TButton
 	RECT boundingBox;
 	int sceneIndex;
 	bool enabled;
+	bool hovered = false;
 };
 #endif
