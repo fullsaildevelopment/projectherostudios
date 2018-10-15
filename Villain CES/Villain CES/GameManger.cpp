@@ -4960,7 +4960,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	AILocation.r[3].m128_f32[0] -= 16;
 	AILocation.r[3].m128_f32[1] -= 1;
 	 AiLookPosition = AILocation;
-	AiLookPosition.r[3].m128_f32[0] -= 12;
+	AiLookPosition.r[3].m128_f32[0] += 12;
 	AiLookPosition.r[3].m128_f32[2] += 10;
 
 	CreateNodePoint(&tThisWorld, AiLookPosition);
@@ -4988,7 +4988,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	nodePosition.z = nodeLocation.r[3].m128_f32[2];
 	pcAiSystem->AddNodeToPathFinding(nodeindex2, nodePosition, 1);
 	tThisWorld.atCover[cover1].CoverPositions.push_back(nodeindex);
-	pcAiSystem->LookAtObject(AILocation, &m_d3dPlayerMatrix);
+	//pcAiSystem->LookAtObject(AILocation, &m_d3dPlayerMatrix);
 
 
 	//CoverTriggerIndex = CreateCoverTriggerZone(&tThisWorld, TriggerZone);
@@ -5025,7 +5025,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	//int GunINdexai = CreateGun(&tThisWorld, m_d3dWorldMatrix, spacePirate, -1.1, 0.5, 12.5, 10, 30);
 	for (int meshIndex = 0; meshIndex < tempImport.meshCount; ++meshIndex)
 	{
-	 GunINdexai = CreateScyllianGun(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, m_d3dWorldMatrix, spacePirate, -1, 1, 11.5, 10, 200, gunImport.vtMeshes[meshIndex], gunImport.vtMaterials[meshIndex]);
+	 GunINdexai = CreateScyllianGun(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, m_d3dWorldMatrix, spacePirate, -1, 1, 12, 10, 200, gunImport.vtMeshes[meshIndex], gunImport.vtMaterials[meshIndex]);
 	}
 #pragma region MORE AI Init
 	tThisWorld.atAIMask[spacePirate].GunIndex = GunINdexai;
@@ -5133,8 +5133,10 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	AILocation.r[3].m128_f32[0] -= 10;
 	AILocation.r[3].m128_f32[1] -= 1;
 	AiLookPosition = AILocation;
-	AiLookPosition.r[3].m128_f32[0] -= 12;
+	AiLookPosition.r[3].m128_f32[0] += 12;
 	AiLookPosition.r[3].m128_f32[2] += 10;
+	//pcAiSystem->LookAtObject(AiLookPosition, &tThisWorld.atWorldMatrix[spacePirate].worldMatrix);
+
 
 	CreateNodePoint(&tThisWorld, AiLookPosition);
 	CoverLocation = AILocation;
@@ -5161,7 +5163,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	nodePosition.z = nodeLocation.r[3].m128_f32[2];
 	pcAiSystem->AddNodeToPathFinding(nodeindex2, nodePosition, 1);
 	tThisWorld.atCover[cover1].CoverPositions.push_back(nodeindex);
-	pcAiSystem->LookAtObject(AILocation, &m_d3dPlayerMatrix);
+	//pcAiSystem->LookAtObject(AILocation, &m_d3dPlayerMatrix);
 
 
 	//CoverTriggerIndex = CreateCoverTriggerZone(&tThisWorld, TriggerZone);
@@ -7156,7 +7158,8 @@ int CGameMangerSystem::RealLevelUpdate()
 					if (tThisWorld.atAIVision[nCurrentEntity].visionRotation < 7
 						&& tThisWorld.atAIVision[nCurrentEntity].keepRotatingRight == true)
 					{
-						tThisWorld.atAIVision[nCurrentEntity].visionRotation += 0.01;
+						cout << nCurrentEntity << " " << " Looking for player"<<std::endl;
+						tThisWorld.atAIVision[nCurrentEntity].visionRotation += 0.1;
 						tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = pcAiSystem->LookBackLeftToRight(tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix,
 							true);
 					}
@@ -7167,7 +7170,9 @@ int CGameMangerSystem::RealLevelUpdate()
 					else if (tThisWorld.atAIVision[nCurrentEntity].visionRotation > -7
 						&& tThisWorld.atAIVision[nCurrentEntity].keepRotatingRight == false)
 					{
-						tThisWorld.atAIVision[nCurrentEntity].visionRotation -= 0.01;
+						cout << nCurrentEntity << " " << " Looking for player" << std::endl;
+
+						tThisWorld.atAIVision[nCurrentEntity].visionRotation -= 0.1;
 						tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = pcAiSystem->LookBackLeftToRight(tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix,
 							false);
 					}
