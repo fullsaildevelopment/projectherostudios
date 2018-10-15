@@ -1,7 +1,8 @@
 #pragma once
-//#include "Entity.h"
 #include "stdafx.h"
 #include "Input_Component.h"
+#include<string>
+//#include"Entity.h"
 #include "AudioSystem.h"
 #include"Gateware Redistribution R5B/Interface/G_System/GInput.h"
 #include"Gateware Redistribution R5B/Interface/G_System/GKeyDefines.h"
@@ -91,7 +92,8 @@ public:
 	void GetMousePosition();
 	XMMATRIX CameraOrientationReset(XMMATRIX m1);
 	XMMATRIX MyTurnTo(XMMATRIX M, XMVECTOR T, float s, XMMATRIX world);
-/*
+	int CharacterSwitch(int characterIndex, int companionOneIndex, int companionTwoIndex, bool&characterSwitch);
+/*	
 	*AimMode() : This fuction does camera rotation on Yaw(Y Axis) & Pitch(X Axis) for combat.
 		*
 		* Ins :
@@ -132,6 +134,12 @@ public:
 	TCameraToggle CameraModeListen(TCameraToggle tMyCam);
 
 	GInput * m_pcMyInput;
+	int m_Companion1;
+	int m_Companion2;
+	bool m_buttonPressed = false;
+	bool m_characterSwitch = false;
+	bool m_ToCompanion1 = false;
+	bool m_ToCompanion2 = false;
 
 private:
 	float				m_fMouseRotationSpeed;

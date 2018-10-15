@@ -1,12 +1,11 @@
 #include "InputSystem.h"
-#include<string>
 CInputSystem::CInputSystem()
 {
 	m_fMouseRotationSpeed = .0055f;
 	m_fMouseMovementSpeed = 3.0f;
 	m_YRotationLimit = 0;
 	prev_X = prev_Y = fXchange = 0, fYchange = 0, fXEnd = 0, fYEnd = 0;
-	 stepCount = 0;
+	 m_Companion1 = m_Companion2 = stepCount = 0;
 }
 
 
@@ -34,14 +33,14 @@ TCameraToggle CInputSystem::CameraModeListen(TCameraToggle tMyCam)
 
 	}
 
-	/*if (InputCheck(G_KEY_8) == 1)
+	if (InputCheck(G_KEY_8) == 1)
 	{
 		tTempCamMode.bWalkMode = true;
 		tTempCamMode.bDebugMode = false;
 		tTempCamMode.bAimMode = false;
 		tTempCamMode.bSwitch = true;
 
-	}*/
+	}
 	 if (InputCheck(G_BUTTON_RIGHT) == 1)
 	{
 		if (tTempCamMode.bAimMode == false) {
@@ -128,8 +127,8 @@ void CInputSystem::gameManagerCodeAbstracted(
 		}
 	}
 
-	d3dCollisionColor = XMFLOAT4(1.0f, 0.0f, 0.0f, 0.0f);
-
+	//d3dCollisionColor = XMFLOAT4(1.0f, 0.0f, 0.0f, 0.0f);
+	
 	//Camera Functions here will move to a input system function when all behaviors are finalized - ZFB
 	if (bGamePaused == false && bGameOver == false)
 	{
@@ -339,7 +338,7 @@ XMMATRIX CInputSystem::CharacterMovement(XMMATRIX d3dplayerMatrix, double delta,
 	d3dTmpViewM = d3dplayerMatrix;
 	bool keyPressed = false;
 	
-	if (fXchange > 1.0f || fYchange > 1.0f || fXchange < -1.0f || fYchange < -1.0f)
+	if (fXchange > 0.5f || fYchange > 0.5f || fXchange < -0.5f || fYchange < -0.5f)
 	{
 		d3dRotation = XMMatrixRotationY(fXchange * m_fMouseRotationSpeed);
 		
@@ -758,6 +757,33 @@ XMMATRIX CInputSystem::MyTurnTo(XMMATRIX M, XMVECTOR T, float s, XMMATRIX world)
 //	GrandSchmit(View, XMMatrixIdentity());
 //	M = View;
 	return M;
+}
+
+int CInputSystem::CharacterSwitch(int characterIndex, int companionOneIndex, int companionTwoIndex, bool &characterSwitch)
+{
+	int m_CurrentPlayerIndex = characterIndex;
+	m_Companion1 = companionOneIndex;
+	m_Companion2 = companionTwoIndex;
+	// Switch to Companion 1
+	if (InputCheck(G_KEY_0) == 1 && m_buttonPressed == false)
+	{
+		// switch playerStartIndex to companion 1 
+		m_CurrentPlayerIndex = companionOneIndex;
+		//Switch previous character index to be Companion 1
+		m_Companion1 = characterIndex;
+		m_ToCompanion1 = true;
+	}
+	//Switch to Companion 2
+	else if (InputCheck(G_KEY_5) == 1 && m_buttonPressed == false)
+	{
+		// switch playerStartIndex to companion 2
+		m_CurrentPlayerIndex = companionTwoIndex;
+		//Switch previous character index to be Companion 2
+		m_Companion2 = characterIndex;
+		m_ToCompanion2 = true;
+	}
+	characterSwitch = true;
+	return  m_CurrentPlayerIndex;
 }
 
 void CInputSystem::MouseBoundryCheck(float _x, float _y, float &_outX, float &_outY)

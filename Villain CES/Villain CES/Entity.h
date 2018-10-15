@@ -157,7 +157,7 @@ unsigned int CreateSpacePirate(TWorld * ptWorld, XMMATRIX SpawnPosition);
 
 unsigned int CreateCover(TWorld * ptWorld, XMMATRIX SpawnPosition, vector<int> coverNodes);
 
-unsigned int CreateHealingAI(TWorld * ptWorld, XMMATRIX SpawnPosition, unsigned int playerIndex);
+unsigned int CreateHealingAI(TWorld * ptWorld);
 unsigned int CreateFriendlySwordsMan(TWorld * ptWorld, XMMATRIX SpawnPosition, unsigned int playerIndex);
 unsigned int CreateCoverTriggerZone(TWorld * ptWorld, XMMATRIX SpawnPosition);
 unsigned int CreateCoverTriggerZone(TWorld * ptWorld, XMMATRIX SpawnPosition,int longway);
@@ -169,4 +169,4 @@ unsigned int CreateStoneObstacleHorizontal(TWorld * ptWorld, XMMATRIX SpawnPosit
 unsigned int CreateStairCase(TWorld * ptWorld, XMMATRIX SpawnPosition);
 unsigned int CreateTree(TWorld * ptWorld, XMMATRIX SpawnPosition);
 unsigned int CreateCylinder(TWorld * ptWorld, XMMATRIX SpawnPosition);
-
+unsigned int CreateCaelis(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMeshImport tMesh, TMaterialImport tMaterial);
