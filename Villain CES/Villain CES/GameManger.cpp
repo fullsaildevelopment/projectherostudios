@@ -2654,7 +2654,7 @@ int CGameMangerSystem::PathFindingExample()
 			}
 			else {
 				if (tThisWorld.atPathPlanining[nCurrentEntity].DelayMovement <= 0) {
-					pcAiSystem->PathPlaningMovement(&tThisWorld.atPathPlanining[nCurrentEntity], &tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix);
+					pcAiSystem->PathPlaningMovement(&tThisWorld.atPathPlanining[nCurrentEntity], &tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, fpsTimer.GetDelta());
 				}
 				else {
 					tThisWorld.atPathPlanining[nCurrentEntity].DelayMovement -= 0.001;
@@ -3746,7 +3746,7 @@ int CGameMangerSystem::SpacePirateGamePlay()
 				}
 				else {
 					if (tThisWorld.atPathPlanining[nCurrentEntity].DelayMovement <= 0) {
-						pcAiSystem->PathPlaningMovement(&tThisWorld.atPathPlanining[nCurrentEntity], &tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix);
+						pcAiSystem->PathPlaningMovement(&tThisWorld.atPathPlanining[nCurrentEntity], &tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, fpsTimer.GetDelta());
 					}
 					else {
 						tThisWorld.atPathPlanining[nCurrentEntity].DelayMovement -= 0.001;
@@ -7158,7 +7158,7 @@ int CGameMangerSystem::RealLevelUpdate()
 					if (tThisWorld.atAIVision[nCurrentEntity].visionRotation < 7
 						&& tThisWorld.atAIVision[nCurrentEntity].keepRotatingRight == true)
 					{
-						cout << nCurrentEntity << " " << " Looking for player"<<std::endl;
+						
 						tThisWorld.atAIVision[nCurrentEntity].visionRotation += 0.1;
 						tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = pcAiSystem->LookBackLeftToRight(tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix,
 							true);
@@ -7170,7 +7170,7 @@ int CGameMangerSystem::RealLevelUpdate()
 					else if (tThisWorld.atAIVision[nCurrentEntity].visionRotation > -7
 						&& tThisWorld.atAIVision[nCurrentEntity].keepRotatingRight == false)
 					{
-						cout << nCurrentEntity << " " << " Looking for player" << std::endl;
+					
 
 						tThisWorld.atAIVision[nCurrentEntity].visionRotation -= 0.1;
 						tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = pcAiSystem->LookBackLeftToRight(tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix,
@@ -7291,7 +7291,7 @@ int CGameMangerSystem::RealLevelUpdate()
 
 							cout << "AITRYINGTOMOVE" << nCurrentEntity << std::endl;*/
 							if(tThisWorld.atPathPlanining[nCurrentEntity].startingNode!= tThisWorld.atPathPlanining[nCurrentEntity].Goal)
-							pcAiSystem->PathPlaningMovement(&tThisWorld.atPathPlanining[nCurrentEntity], &tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix);
+							pcAiSystem->PathPlaningMovement(&tThisWorld.atPathPlanining[nCurrentEntity], &tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, fpsTimer.GetDelta());
 						}
 						else
 						{
