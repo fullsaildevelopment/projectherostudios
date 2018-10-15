@@ -201,7 +201,10 @@ void CCollisionSystem::TestThreading(TWorld * ptWorld, int nCurrentEntity, CGrap
 					{
 						*m_d3dPlayerMatrix = ptWorld->atWorldMatrix[nCurrentEntity].worldMatrix;
 					}
-
+					else if (ptWorld->atInputMask[nCurrentEntity].m_tnInputMask == (COMPONENT_CAELIS | COMPONENT_INPUTMASK))
+					{
+						*m_d3dPlayerMatrix = ptWorld->atWorldMatrix[nCurrentEntity].worldMatrix;
+					}
 				}
 				if (ptWorld->atRigidBody[nCurrentEntity].ground == false
 					&& ptWorld->atRigidBody[otherCollisionsIndex[i]].ground == false

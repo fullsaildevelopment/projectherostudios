@@ -4524,7 +4524,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 
 	for (int meshIndex = 0; meshIndex < gunImport.meshCount; ++meshIndex)
 	{
-		GunIndexForPlayer = CreateClaytonGun(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, m_d3dWorldMatrix, PlayerStartIndex, -.7, 1, 10.4, 3, 130, gunImport.vtMeshes[meshIndex], gunImport.vtMaterials[meshIndex]);
+		GunIndexForPlayer = CreateClaytonGun(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, tThisWorld.atWorldMatrix[ClaytonIndex].worldMatrix, PlayerStartIndex, -.7, 1, 10.4, 3, 130, gunImport.vtMeshes[meshIndex], gunImport.vtMaterials[meshIndex]);
 	}
 
 	tThisWorld.atAABB[GunIndexForPlayer] = pcCollisionSystem->createAABBS(tThisWorld.atMesh[GunIndexForPlayer].m_VertexData, tThisWorld.atAABB[GunIndexForPlayer]);
@@ -6691,7 +6691,7 @@ int CGameMangerSystem::RealLevelUpdate()
 
 		if (tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_SHADERID))
 		{
-			tTempVertexBuffer.m_d3dWorldMatrix = m_d3dWorldMatrix;
+			tTempVertexBuffer.m_d3dWorldMatrix = tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix;
 			if (tCameraMode.bWalkMode == true)
 			{
 				tMyVertexBufferTemp.m_d3dViewMatrix = walkCamera->d3d_Position;
@@ -6747,30 +6747,7 @@ int CGameMangerSystem::RealLevelUpdate()
 		}
 	}
 
-#pragma region Switching Character Matrices
-	if (pcInputSystem->m_characterSwitch == true)
-	{
-		//if (pcInputSystem->m_ToCompanion1 == true)
-		//{
-		//	/*tThisWorld.atWorldMatrix[PlayerStartIndex].worldMatrix.r[0] = tThisWorld.atWorldMatrix[pcInputSystem->m_Companion1].worldMatrix.r[0];
-		//	tThisWorld.atWorldMatrix[PlayerStartIndex].worldMatrix.r[0] = tThisWorld.atWorldMatrix[pcInputSystem->m_Companion1].worldMatrix.r[0];*/
 
-		//	/*tThisWorld.atWorldMatrix[PlayerStartIndex].worldMatrix.r[1] = tThisWorld.atWorldMatrix[pcInputSystem->m_Companion1].worldMatrix.r[1];
-		//	tThisWorld.atWorldMatrix[PlayerStartIndex].worldMatrix.r[1] = tThisWorld.atWorldMatrix[pcInputSystem->m_Companion1].worldMatrix.r[1];*/
-		//	/*tThisWorld.atWorldMatrix[PlayerStartIndex].worldMatrix.r[2] = tThisWorld.atWorldMatrix[pcInputSystem->m_Companion1].worldMatrix.r[2];
-		//	tThisWorld.atWorldMatrix[PlayerStartIndex].worldMatrix.r[2] = tThisWorld.atWorldMatrix[pcInputSystem->m_Companion1].worldMatrix.r[2];*/
-			m_d3dPlayerMatrix = tThisWorld.atWorldMatrix[PlayerStartIndex].worldMatrix;
-			pcInputSystem->m_ToCompanion1 = false;
-
-	//	}
-		
-		pcInputSystem->m_characterSwitch = false;
-	}
-	else
-	{
-		m_d3dPlayerMatrix = tThisWorld.atWorldMatrix[PlayerStartIndex].worldMatrix;
-	}
-#pragma endregion
 
 	//This abstraction is 12 lines formatted and 1 line unformatted. Not abstracted is 169 lines.
 #if INPUT_ABSTRACTED_ON
@@ -8232,7 +8209,30 @@ int CGameMangerSystem::RealLevelUpdate()
 		}
 #endif
 	}
+#pragma region Switching Character Matrices
+	if (pcInputSystem->m_characterSwitch == true)
+	{
+		//if (pcInputSystem->m_ToCompanion1 == true)
+		//{
+		//	/*tThisWorld.atWorldMatrix[PlayerStartIndex].worldMatrix.r[0] = tThisWorld.atWorldMatrix[pcInputSystem->m_Companion1].worldMatrix.r[0];
+		//	tThisWorld.atWorldMatrix[PlayerStartIndex].worldMatrix.r[0] = tThisWorld.atWorldMatrix[pcInputSystem->m_Companion1].worldMatrix.r[0];*/
 
+		//	/*tThisWorld.atWorldMatrix[PlayerStartIndex].worldMatrix.r[1] = tThisWorld.atWorldMatrix[pcInputSystem->m_Companion1].worldMatrix.r[1];
+		//	tThisWorld.atWorldMatrix[PlayerStartIndex].worldMatrix.r[1] = tThisWorld.atWorldMatrix[pcInputSystem->m_Companion1].worldMatrix.r[1];*/
+		//	/*tThisWorld.atWorldMatrix[PlayerStartIndex].worldMatrix.r[2] = tThisWorld.atWorldMatrix[pcInputSystem->m_Companion1].worldMatrix.r[2];
+		//	tThisWorld.atWorldMatrix[PlayerStartIndex].worldMatrix.r[2] = tThisWorld.atWorldMatrix[pcInputSystem->m_Companion1].worldMatrix.r[2];*/
+		m_d3dPlayerMatrix = tThisWorld.atWorldMatrix[PlayerStartIndex].worldMatrix;
+		pcInputSystem->m_ToCompanion1 = false;
+
+		//	}
+
+		pcInputSystem->m_characterSwitch = false;
+	}
+	/*else
+	{
+		m_d3dPlayerMatrix = tThisWorld.atWorldMatrix[PlayerStartIndex].worldMatrix;
+	}*/
+#pragma endregion
 	pcGraphicsSystem->m_pd3dOutsideGlassSRV->Release();
 
 	delta = fpsTimer.GetDelta();
