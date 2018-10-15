@@ -144,6 +144,7 @@ int CGameMangerSystem::LoadMainMenu()
 					{
 						fadeTime = 0;
 						fadeOut = false;
+						fadeIn = true;
 
 						return 11;
 					}
@@ -8907,6 +8908,9 @@ int CGameMangerSystem::ResetLevel()
 					tThisWorld.atRigidBody[nCurrentEntity].velocity = XMVectorSet(0, 0, 0, 0);
 
 					tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = tThisWorld.atOffSetMatrix[nCurrentEntity];
+
+					pcAiSystem->SetCanWeChooseShooter(true);
+					pcAiSystem->ClearShootingActiveAI();
 
 					TAABB MyAbb = pcCollisionSystem->createAABBS(tThisWorld.atMesh[nCurrentEntity].m_VertexData, tThisWorld.atAABB[nCurrentEntity]);
 					MyAbb.m_IndexLocation = nCurrentEntity;
