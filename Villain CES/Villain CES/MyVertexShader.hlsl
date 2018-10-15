@@ -8,6 +8,8 @@ cbuffer MatrixBuffer : register(b0)
 	matrix d3dWorldMatrix;
 	matrix d3dViewMatrix;
 	matrix d3dProjectionMatrix;
+
+	float4 d3dColor;
 };
 
 //////////////
@@ -23,6 +25,8 @@ struct TPixelInputType
 {
 	float4 d3dPosition : SV_POSITION;
 	float2 d3dUVs : TEXCOORD;
+
+	float4 d3dColor : COLOR;
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -39,5 +43,7 @@ TPixelInputType MyVertexShader(TVertexInputType tInput)
 
 	// Store the texture coordinates for the pixel shader.
 	output.d3dUVs = tInput.d3dUVs;
+
+	output.d3dColor = d3dColor;
 	return output;
 }

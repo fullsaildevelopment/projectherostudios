@@ -1090,7 +1090,7 @@ unsigned int CreateBulletMesh(TWorld* ptWorld, ID3D11Device* m_pd3dDevice, XMMAT
 	return nThisEntity;
 }
 
-unsigned int CreateBulletMesh(TWorld* ptWorld, XMMATRIX BulletSpawnLocation, BulletInfo& bulletToCopyFrom)
+unsigned int CreateBulletMesh(TWorld* ptWorld, XMMATRIX BulletSpawnLocation, BulletInfo& bulletToCopyFrom, int bulletType)
 {
 	unsigned int nThisEntity = createEntity(ptWorld);
 
@@ -1102,6 +1102,22 @@ unsigned int CreateBulletMesh(TWorld* ptWorld, XMMATRIX BulletSpawnLocation, Bul
 	ptWorld->atProjectiles[nThisEntity] = bulletToCopyFrom.atProjectiles;
 
 	ptWorld->atWorldMatrix[nThisEntity].worldMatrix = BulletSpawnLocation;
+
+	switch (bulletType)
+	{
+	case 0:
+	{
+		ptWorld->atProjectiles[nThisEntity].m_tnProjectileMask = (COMPONENT_PROJECTILESMASK | COMPONENT_METAL | COMPONENT_FRIENDLY);
+	}
+	break;
+	case 1:
+	{
+		ptWorld->atProjectiles[nThisEntity].m_tnProjectileMask = (COMPONENT_PROJECTILESMASK | COMPONENT_METAL | COMPONENT_ENEMY);
+	}
+	break;
+	default:
+		break;
+	}
 
 	return nThisEntity;
 }

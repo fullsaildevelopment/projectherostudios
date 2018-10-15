@@ -1868,6 +1868,8 @@ void CGraphicsSystem::InitMyShaderData(ID3D11DeviceContext * pd3dDeviceContext, 
 	ptMyVertexBufferDataPointer->m_d3dViewMatrix = d3dView;
 	ptMyVertexBufferDataPointer->m_d3dProjectionMatrix = tempProj;
 
+	ptMyVertexBufferDataPointer->m_d3dColor = d3dVertexBuffer.m_d3dColor;
+
 	// Unlock the constant buffer.
 	pd3dDeviceContext->Unmap(m_pd3dMyVertexBuffer, 0);
 
