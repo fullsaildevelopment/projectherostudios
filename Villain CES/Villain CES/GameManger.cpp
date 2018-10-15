@@ -4555,7 +4555,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	nodePosition.y = nodeLocation.r[3].m128_f32[1];
 	nodePosition.z = nodeLocation.r[3].m128_f32[2];
 	pcAiSystem->AddNodeToPathFinding(nodeindex2, nodePosition, 1);
-	tThisWorld.atCover[cover1].CoverPositions.push_back(nodeindex);
+	tThisWorld.atCover[cover1].CoverPositions.push_back(nodeindex2);
 	pcAiSystem->LookAtObject(AILocation, &m_d3dPlayerMatrix);
 	XMMATRIX TriggerZone = m_d3dPlayerMatrix;
 	TriggerZone.r[3].m128_f32[2] -= 40;
@@ -4641,7 +4641,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	tThisWorld.atAIVision[spacePirate].normalAtBegining[5] = planes[5].normal;
 	AILocation.r[3].m128_f32[0] += 3;
 	tThisWorld.atPathPlanining[spacePirate].startingNode = nodeindex2;
-	tThisWorld.atPathPlanining[spacePirate].Goal = nodeindex;
+	tThisWorld.atPathPlanining[spacePirate].Goal = nodeindex2;
 
 
 
@@ -4680,7 +4680,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	nodePosition.y = nodeLocation.r[3].m128_f32[1];
 	nodePosition.z = nodeLocation.r[3].m128_f32[2];
 	pcAiSystem->AddNodeToPathFinding(nodeindex2, nodePosition, 1);
-	tThisWorld.atCover[cover1].CoverPositions.push_back(nodeindex);
+	tThisWorld.atCover[cover1].CoverPositions.push_back(nodeindex2);
 	pcAiSystem->LookAtObject(AILocation, &m_d3dPlayerMatrix);
 	 TriggerZone = m_d3dPlayerMatrix;
 	TriggerZone.r[3].m128_f32[2] -= 40;
@@ -4761,7 +4761,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	tThisWorld.atAIVision[spacePirate].normalAtBegining[5] = planes[5].normal;
 	AILocation.r[3].m128_f32[0] += 3;
 	tThisWorld.atPathPlanining[spacePirate].startingNode = nodeindex2;
-	tThisWorld.atPathPlanining[spacePirate].Goal = nodeindex;
+	tThisWorld.atPathPlanining[spacePirate].Goal = nodeindex2;
 
 
 
@@ -7269,6 +7269,7 @@ int CGameMangerSystem::RealLevelUpdate()
 							cout << tThisWorld.atPathPlanining[nCurrentEntity].Goal<<"goal"<<std::endl;
 
 							cout << "AITRYINGTOMOVE" << nCurrentEntity << std::endl;
+							if(tThisWorld.atPathPlanining[nCurrentEntity].startingNode!= tThisWorld.atPathPlanining[nCurrentEntity].Goal)
 							pcAiSystem->PathPlaningMovement(&tThisWorld.atPathPlanining[nCurrentEntity], &tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix);
 						}
 						else
