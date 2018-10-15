@@ -8,6 +8,6 @@ public:
 	int CreateBulletProjectile(int indexofBullet, Clips* Gun);
 	bool Reload(Clips* Gun);
 	int ExtractMaterial(TWorld *tThisWorld, Clips* Gun, int currentEntity);
-	XMVECTOR FindBeamEndPoint(XMMATRIX in_ViewMatrix, XMMATRIX in_ProjectionMatrix, HWND in_WindowHandle, D3D11_VIEWPORT m_d3dViewport);
+	XMVECTOR FindBeamEndPoint(XMVECTOR pointInScreenSpace, XMMATRIX in_WorldMatrix, XMMATRIX in_ViewMatrix, XMMATRIX in_ProjectionMatrix, HWND in_WindowHandle, D3D11_VIEWPORT m_d3dViewport);
 	
 };

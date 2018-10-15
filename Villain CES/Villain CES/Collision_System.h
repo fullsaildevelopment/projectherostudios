@@ -46,18 +46,11 @@ public:
 	bool AiVisionCheck(frustum_t eyeSight, vector<int>* index);
 	void TestThreading(TWorld * ptWorld, int nCurrentEntity, CGraphicsSystem* pcGraphicsSystem, CGraphicsSystem::TPrimalVertexBufferType* tTempVertexBuffer, XMMATRIX& tMyVertexBufferWorldMatrix, XMMATRIX* m_d3dPlayerMatrix, CPhysicsSystem* pcPhysicsSystem, CAISystem* pcAiSystem, int PlayerStartIndex, float& playerDamage, float& pirateDamage, float& prevHealth, float& fallingHealth, float& lerpTime, float in_MasterVolume, float in_SFXVolume, float in_MusicVolume, CAudioSystem* pcAudioSystem, XMMATRIX(*doorEventListener)(int), void(*doorEventChanger)(int), float &hitmarkerTime);
 	
-	
-		
-		
-	
 private:
 	bool ContainAABB(int nIndex);
 	int classify_aabb_to_plane(TAABB& aabb, plane_t& plane);
 	bool spehreCollison(sphere_t a, sphere_t b);
 	int classify_sphere_to_plane(sphere_t& sphere, plane_t& plane);
 	mutex mylock;
-	
-
-
 };
 

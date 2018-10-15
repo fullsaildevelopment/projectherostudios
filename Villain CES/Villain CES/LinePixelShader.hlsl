@@ -2,7 +2,7 @@
 struct TLinePixelInputType
 {
 	float4 d3dPos : SV_POSITION;
-	float4 d3dColor : POSITION1;
+	float4 d3dColor : POSITION;
 };
 
 
