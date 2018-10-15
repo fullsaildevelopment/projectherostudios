@@ -1,12 +1,11 @@
 #include "InputSystem.h"
-#include<string>
 CInputSystem::CInputSystem()
 {
 	m_fMouseRotationSpeed = .0055f;
 	m_fMouseMovementSpeed = 3.0f;
 	m_YRotationLimit = 0;
 	prev_X = prev_Y = fXchange = 0, fYchange = 0, fXEnd = 0, fYEnd = 0;
-	 stepCount = 0;
+	 m_Companion1 = m_Companion2 = stepCount = 0;
 }
 
 
@@ -129,7 +128,7 @@ void CInputSystem::gameManagerCodeAbstracted(
 	}
 
 	d3dCollisionColor = XMFLOAT4(1.0f, 0.0f, 0.0f, 0.0f);
-
+	
 	//Camera Functions here will move to a input system function when all behaviors are finalized - ZFB
 	if (bGamePaused == false && bGameOver == false)
 	{
@@ -760,10 +759,30 @@ XMMATRIX CInputSystem::MyTurnTo(XMMATRIX M, XMVECTOR T, float s, XMMATRIX world)
 	return M;
 }
 
-XMMATRIX CInputSystem::CharacterSwitch(int characterIndex)
+int CInputSystem::CharacterSwitch(int characterIndex, int companionOneIndex, int companionTwoIndex, bool &characterSwitch)
 {
-	
-	return XMMATRIX();
+	int m_CurrentPlayerIndex = characterIndex;
+	m_Companion1 = companionOneIndex;
+	m_Companion2 = companionTwoIndex;
+	// Switch to Companion 1
+	if (InputCheck(G_KEY_0) == 1)
+	{
+		// switch playerStartIndex to companion 1 
+		m_CurrentPlayerIndex = companionOneIndex;
+		//Switch previous character index to be Companion 1
+		m_Companion1 = characterIndex;
+		
+	}
+	//Switch to Companion 2
+	else if (InputCheck(G_KEY_5) == 1)
+	{
+		// switch playerStartIndex to companion 2
+		m_CurrentPlayerIndex = companionTwoIndex;
+		//Switch previous character index to be Companion 1
+		m_Companion2 = characterIndex;
+	}
+	characterSwitch = true;
+	return  m_CurrentPlayerIndex;
 }
 
 void CInputSystem::MouseBoundryCheck(float _x, float _y, float &_outX, float &_outY)
