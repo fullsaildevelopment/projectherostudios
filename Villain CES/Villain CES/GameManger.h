@@ -33,12 +33,14 @@ public:
 	void InitializeMainMenu();
 	int LoadTitleScreen();
 	void InitializeTitleScreen();
+	void CleanStory();
 	int LoadStory();
 	void InitializeStory();
 	void CleanLoadingScreen();
 	int LoadLoadingScreen(bool _continue);
 	void InitializeLoadingScreen();
 	void InitializePauseScreen();
+	void CleanEndScreen(bool playerWin);
 	void InitializeEndScreen(bool playerWin);
 	void InitializeOptionsMenu();
 	void InitializeCredits();
@@ -53,7 +55,7 @@ public:
 	
 	void LoadLevelWithMapInIt();
 	int RealLevelUpdate();
-	void ResetLevel();
+	int ResetLevel();
 
 	//XMMATRIX DoorEventListener(int shaderID);
 	//const int DoorEventChanger(int shaderID);
@@ -118,6 +120,11 @@ private:
 	float fallingHealth = 0;
 	float hitmarkerTime = 1;
 
+	int loadingImage = 0;
+	int loadingImageIndex = -1;
+	int loadingTextIndex = -1;
+	int endScreenBackgroundIndex = -1;
+
 	int fpsIndex = -1;
 	int objLogoIndex = -1;
 	int hitmarkerIndex = -1;
@@ -128,6 +135,7 @@ private:
 	int dialogueIndex = -1;
 
 	int claytonFrustumIndex = -1;
+	int caelisIndex = -1;
 
 #define SAVE_INDEX 96
 #define LOAD_INDEX 97
@@ -143,6 +151,7 @@ private:
 	float fadeTime;
 	float lerpTime;
 	float blinkTime;
+	float timeOutTime;
 
 	POINT startDragPoint;
 	POINT dragPoint;

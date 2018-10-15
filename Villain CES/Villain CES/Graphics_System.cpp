@@ -409,6 +409,18 @@ void CGraphicsSystem::CleanD3DObject(TWorld * ptPlanet, int nEntityIndex)
 		ptPlanet->atSimpleMesh[nEntityIndex].m_pd3dVertexBuffer->Release();
 		ptPlanet->atSimpleMesh[nEntityIndex].m_pd3dIndexBuffer->Release();
 	}
+
+	if (ptPlanet->atGraphicsMask[nEntityIndex].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_SHADERID))
+	{
+		ptPlanet->atMesh[nEntityIndex].m_pd3dVertexBuffer->Release();
+		ptPlanet->atMesh[nEntityIndex].m_pd3dIndexBuffer->Release();
+	}
+
+	if (ptPlanet->atGraphicsMask[nEntityIndex].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_SHADERID))
+	{
+		ptPlanet->atMesh[nEntityIndex].m_pd3dVertexBuffer->Release();
+		ptPlanet->atMesh[nEntityIndex].m_pd3dIndexBuffer->Release();
+	}
 	destroyEntity(ptPlanet, nEntityIndex);
 }
 
@@ -1855,6 +1867,8 @@ void CGraphicsSystem::InitMyShaderData(ID3D11DeviceContext * pd3dDeviceContext, 
 	ptMyVertexBufferDataPointer->m_d3dWorldMatrix = tempWorld;
 	ptMyVertexBufferDataPointer->m_d3dViewMatrix = d3dView;
 	ptMyVertexBufferDataPointer->m_d3dProjectionMatrix = tempProj;
+
+	ptMyVertexBufferDataPointer->m_d3dColor = d3dVertexBuffer.m_d3dColor;
 
 	// Unlock the constant buffer.
 	pd3dDeviceContext->Unmap(m_pd3dMyVertexBuffer, 0);

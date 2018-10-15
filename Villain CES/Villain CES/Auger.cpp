@@ -177,6 +177,11 @@ void CAuger::Update(bool* loopgame)
 		pcGameMangerSystem->LoadPathFindingTest();
 		pcGameMangerSystem->nCurrentScene = 6;
 		break;
+	case 16:
+	{
+		pcGameMangerSystem->nCurrentScene = pcGameMangerSystem->ResetLevel();
+	}
+	break;
 	default:
 		break;
 	}
