@@ -127,7 +127,7 @@ void CInputSystem::gameManagerCodeAbstracted(
 		}
 	}
 
-	d3dCollisionColor = XMFLOAT4(1.0f, 0.0f, 0.0f, 0.0f);
+	//d3dCollisionColor = XMFLOAT4(1.0f, 0.0f, 0.0f, 0.0f);
 	
 	//Camera Functions here will move to a input system function when all behaviors are finalized - ZFB
 	if (bGamePaused == false && bGameOver == false)
@@ -765,21 +765,22 @@ int CInputSystem::CharacterSwitch(int characterIndex, int companionOneIndex, int
 	m_Companion1 = companionOneIndex;
 	m_Companion2 = companionTwoIndex;
 	// Switch to Companion 1
-	if (InputCheck(G_KEY_0) == 1)
+	if (InputCheck(G_KEY_0) == 1 && m_buttonPressed == false)
 	{
 		// switch playerStartIndex to companion 1 
 		m_CurrentPlayerIndex = companionOneIndex;
 		//Switch previous character index to be Companion 1
 		m_Companion1 = characterIndex;
-		
+		m_ToCompanion1 = true;
 	}
 	//Switch to Companion 2
-	else if (InputCheck(G_KEY_5) == 1)
+	else if (InputCheck(G_KEY_5) == 1 && m_buttonPressed == false)
 	{
 		// switch playerStartIndex to companion 2
 		m_CurrentPlayerIndex = companionTwoIndex;
 		//Switch previous character index to be Companion 1
 		m_Companion2 = characterIndex;
+		m_ToCompanion2 = true;
 	}
 	characterSwitch = true;
 	return  m_CurrentPlayerIndex;

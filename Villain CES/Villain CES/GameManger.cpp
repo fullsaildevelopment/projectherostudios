@@ -1,5 +1,5 @@
 #include "GameManger.h"
-#define AI_ON false
+#define AI_ON true
 #define MIKES_SANDBOX_ON false
 #define SKELETON_LOAD_ON false
 #define MAIN_LEVEL_ON true
@@ -6503,9 +6503,14 @@ int CGameMangerSystem::RealLevelUpdate()
 	// checks the camera bool variables & store mouse position at the beginning  
 
 	tCameraMode = pcInputSystem->CameraModeListen(tCameraMode);
-	if (pcInputSystem->InputCheck(G_KEY_0) == 1 || pcInputSystem->InputCheck(G_KEY_5) == 1)
+	if ((pcInputSystem->InputCheck(G_KEY_0) == 1 || pcInputSystem->InputCheck(G_KEY_5) == 1) && pcInputSystem->m_buttonPressed != true)
 	{
-	PlayerStartIndex = pcInputSystem->CharacterSwitch(PlayerStartIndex, pcInputSystem->m_Companion1, pcInputSystem->m_Companion2, pcInputSystem->m_characterSwitch);
+		PlayerStartIndex = pcInputSystem->CharacterSwitch(PlayerStartIndex, pcInputSystem->m_Companion1, pcInputSystem->m_Companion2, pcInputSystem->m_characterSwitch);
+		pcInputSystem->m_buttonPressed = true;
+	}
+	else if	(pcInputSystem->InputCheck(G_KEY_0) == 0 && pcInputSystem->InputCheck(G_KEY_5) == 0 && pcInputSystem->m_buttonPressed == true)
+	{
+		pcInputSystem->m_buttonPressed = false;
 	}
 
 	pcInputSystem->GetMousePosition();
@@ -6735,10 +6740,40 @@ int CGameMangerSystem::RealLevelUpdate()
 			}
 		}
 	}
+
 #pragma region Switching Character Matrices
 	if (pcInputSystem->m_characterSwitch == true)
 	{
-		m_d3dPlayerMatrix = tThisWorld.atWorldMatrix[PlayerStartIndex].worldMatrix;
+		if (pcInputSystem->m_ToCompanion1 == true)
+		{
+			/*tThisWorld.atWorldMatrix[PlayerStartIndex].worldMatrix.r[0] = tThisWorld.atWorldMatrix[pcInputSystem->m_Companion1].worldMatrix.r[0];
+			tThisWorld.atWorldMatrix[PlayerStartIndex].worldMatrix.r[0] = tThisWorld.atWorldMatrix[pcInputSystem->m_Companion1].worldMatrix.r[0];*/
+
+			/*tThisWorld.atWorldMatrix[PlayerStartIndex].worldMatrix.r[1] = tThisWorld.atWorldMatrix[pcInputSystem->m_Companion1].worldMatrix.r[1];
+			tThisWorld.atWorldMatrix[PlayerStartIndex].worldMatrix.r[1] = tThisWorld.atWorldMatrix[pcInputSystem->m_Companion1].worldMatrix.r[1];*/
+
+			/*tThisWorld.atWorldMatrix[PlayerStartIndex].worldMatrix.r[2] = tThisWorld.atWorldMatrix[pcInputSystem->m_Companion1].worldMatrix.r[2];
+			tThisWorld.atWorldMatrix[PlayerStartIndex].worldMatrix.r[2] = tThisWorld.atWorldMatrix[pcInputSystem->m_Companion1].worldMatrix.r[2];*/
+
+			m_d3dPlayerMatrix = tThisWorld.atWorldMatrix[PlayerStartIndex].worldMatrix;
+			pcInputSystem->m_ToCompanion1 = false;
+
+		}
+		else if (pcInputSystem->m_ToCompanion2 == true)
+		{
+			tThisWorld.atWorldMatrix[PlayerStartIndex].worldMatrix.r[0] = tThisWorld.atWorldMatrix[pcInputSystem->m_Companion2].worldMatrix.r[0];
+			tThisWorld.atWorldMatrix[PlayerStartIndex].worldMatrix.r[0] = tThisWorld.atWorldMatrix[pcInputSystem->m_Companion2].worldMatrix.r[0];
+
+			tThisWorld.atWorldMatrix[PlayerStartIndex].worldMatrix.r[1] = tThisWorld.atWorldMatrix[pcInputSystem->m_Companion2].worldMatrix.r[1];
+			tThisWorld.atWorldMatrix[PlayerStartIndex].worldMatrix.r[1] = tThisWorld.atWorldMatrix[pcInputSystem->m_Companion2].worldMatrix.r[1];
+
+			tThisWorld.atWorldMatrix[PlayerStartIndex].worldMatrix.r[2] = tThisWorld.atWorldMatrix[pcInputSystem->m_Companion2].worldMatrix.r[2];
+			tThisWorld.atWorldMatrix[PlayerStartIndex].worldMatrix.r[2] = tThisWorld.atWorldMatrix[pcInputSystem->m_Companion2].worldMatrix.r[2];
+
+			m_d3dPlayerMatrix = tThisWorld.atWorldMatrix[PlayerStartIndex].worldMatrix;
+			pcInputSystem->m_ToCompanion2 = false;
+		}
+		
 		pcInputSystem->m_characterSwitch = false;
 	}
 	else
@@ -6746,6 +6781,7 @@ int CGameMangerSystem::RealLevelUpdate()
 		m_d3dPlayerMatrix = tThisWorld.atWorldMatrix[PlayerStartIndex].worldMatrix;
 	}
 #pragma endregion
+
 	//This abstraction is 12 lines formatted and 1 line unformatted. Not abstracted is 169 lines.
 #if INPUT_ABSTRACTED_ON
 	double delta = fpsTimer.GetDelta();
@@ -7087,121 +7123,6 @@ int CGameMangerSystem::RealLevelUpdate()
 						pcAiSystem->UpdateFrustum(tThisWorld.atClaytonVision.eyes0, ClaytonFrustum, 60, 1, 0.1, 150);
 
 						tThisWorld.atWorldMatrix[claytonFrustumIndex].worldMatrix = claytonFrustumMatrix;
-					}
-
-					if (tThisWorld.atClayton[nCurrentEntity].jumpTime <= 0)
-					{
-						tThisWorld.atClayton[nCurrentEntity].jumpCooldown -= fpsTimer.GetDelta();
-
-						if (tThisWorld.atClayton[nCurrentEntity].jumpCooldown <= 0)
-						{
-							tThisWorld.atClayton[nCurrentEntity].jumpTime = 1;
-						}
-					}
-				}
-				
-				else if (tThisWorld.atInputMask[nCurrentEntity].m_tnInputMask == (COMPONENT_CAELIS | COMPONENT_INPUTMASK) && PlayerStartIndex == CaelisIndex)
-				{
-					
-					if (tCameraMode.bWalkMode == true)
-					{
-						m_d3dPlayerMatrix = pcInputSystem->CharacterMovement(m_d3dPlayerMatrix, fpsTimer.GetDelta(), pcAudioSystem, tThisWorld.atClayton[PlayerStartIndex], tThisWorld.atRigidBody[PlayerStartIndex].velocity, bNoMoving);
-						tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = m_d3dPlayerMatrix;
-						tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = pcPhysicsSystem->ResolveForces(&tThisWorld.atRigidBody[nCurrentEntity], tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, false);
-						m_d3dPlayerMatrix = tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix;
-
-						XMMATRIX claytonFrustumMatrix = walkCamera->d3d_Position;
-						claytonFrustumMatrix = XMMatrixMultiply(XMMatrixTranslation(0, 0, -15), claytonFrustumMatrix);
-
-						float4x4 ClaytonFrustum;
-						ClaytonFrustum.row1.x = claytonFrustumMatrix.r[0].m128_f32[0];
-						ClaytonFrustum.row1.y = claytonFrustumMatrix.r[0].m128_f32[1];
-						ClaytonFrustum.row1.z = claytonFrustumMatrix.r[0].m128_f32[2];
-						ClaytonFrustum.row1.w = claytonFrustumMatrix.r[0].m128_f32[3];
-
-						ClaytonFrustum.row2.x = claytonFrustumMatrix.r[1].m128_f32[0];
-						ClaytonFrustum.row2.y = claytonFrustumMatrix.r[1].m128_f32[1];
-						ClaytonFrustum.row2.z = claytonFrustumMatrix.r[1].m128_f32[2];
-						ClaytonFrustum.row2.w = claytonFrustumMatrix.r[1].m128_f32[3];
-
-						ClaytonFrustum.row3.x = claytonFrustumMatrix.r[2].m128_f32[0];
-						ClaytonFrustum.row3.y = claytonFrustumMatrix.r[2].m128_f32[1];
-						ClaytonFrustum.row3.z = claytonFrustumMatrix.r[2].m128_f32[2];
-						ClaytonFrustum.row3.w = claytonFrustumMatrix.r[2].m128_f32[3];
-
-						ClaytonFrustum.row4.x = claytonFrustumMatrix.r[3].m128_f32[0];
-						ClaytonFrustum.row4.y = claytonFrustumMatrix.r[3].m128_f32[1];
-						ClaytonFrustum.row4.z = claytonFrustumMatrix.r[3].m128_f32[2];
-						ClaytonFrustum.row4.w = claytonFrustumMatrix.r[3].m128_f32[3];
-
-						pcAiSystem->UpdateFrustum(tThisWorld.atClaytonVision.eyes0, ClaytonFrustum, 60, 1, 0.1, 150);
-
-						tThisWorld.atWorldMatrix[claytonFrustumIndex].worldMatrix = claytonFrustumMatrix;
-					}
-					else if (tCameraMode.bAimMode == true)
-					{
-						m_d3dPlayerMatrix = pcInputSystem->CharacterMovement(m_d3dPlayerMatrix, fpsTimer.GetDelta(), pcAudioSystem, tThisWorld.atClayton[PlayerStartIndex], tThisWorld.atRigidBody[PlayerStartIndex].velocity, bNoMoving);
-						tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = m_d3dPlayerMatrix;
-						tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = pcPhysicsSystem->ResolveForces(&tThisWorld.atRigidBody[nCurrentEntity], tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, false);
-						m_d3dPlayerMatrix = tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix;
-
-						XMMATRIX claytonFrustumMatrix = aimCamera->d3d_Position;
-						claytonFrustumMatrix = XMMatrixMultiply(XMMatrixTranslation(0, 0, -15), claytonFrustumMatrix);
-
-						float4x4 ClaytonFrustum;
-						ClaytonFrustum.row1.x = claytonFrustumMatrix.r[0].m128_f32[0];
-						ClaytonFrustum.row1.y = claytonFrustumMatrix.r[0].m128_f32[1];
-						ClaytonFrustum.row1.z = claytonFrustumMatrix.r[0].m128_f32[2];
-						ClaytonFrustum.row1.w = claytonFrustumMatrix.r[0].m128_f32[3];
-
-						ClaytonFrustum.row2.x = claytonFrustumMatrix.r[1].m128_f32[0];
-						ClaytonFrustum.row2.y = claytonFrustumMatrix.r[1].m128_f32[1];
-						ClaytonFrustum.row2.z = claytonFrustumMatrix.r[1].m128_f32[2];
-						ClaytonFrustum.row2.w = claytonFrustumMatrix.r[1].m128_f32[3];
-
-						ClaytonFrustum.row3.x = claytonFrustumMatrix.r[2].m128_f32[0];
-						ClaytonFrustum.row3.y = claytonFrustumMatrix.r[2].m128_f32[1];
-						ClaytonFrustum.row3.z = claytonFrustumMatrix.r[2].m128_f32[2];
-						ClaytonFrustum.row3.w = claytonFrustumMatrix.r[2].m128_f32[3];
-
-						ClaytonFrustum.row4.x = claytonFrustumMatrix.r[3].m128_f32[0];
-						ClaytonFrustum.row4.y = claytonFrustumMatrix.r[3].m128_f32[1];
-						ClaytonFrustum.row4.z = claytonFrustumMatrix.r[3].m128_f32[2];
-						ClaytonFrustum.row4.w = claytonFrustumMatrix.r[3].m128_f32[3];
-
-						pcAiSystem->UpdateFrustum(tThisWorld.atClaytonVision.eyes0, ClaytonFrustum, 60, 1, 0.1, 150);
-
-						tThisWorld.atWorldMatrix[claytonFrustumIndex].worldMatrix = claytonFrustumMatrix;
-					}
-					else
-					{
-						XMMATRIX caelisFrustumMatrix = debugCamera->d3d_Position;
-						caelisFrustumMatrix = XMMatrixMultiply(XMMatrixTranslation(0, 0, -15), caelisFrustumMatrix);
-
-						float4x4 CaelisFrustum;
-						CaelisFrustum.row1.x = caelisFrustumMatrix.r[0].m128_f32[0];
-						CaelisFrustum.row1.y = caelisFrustumMatrix.r[0].m128_f32[1];
-						CaelisFrustum.row1.z = caelisFrustumMatrix.r[0].m128_f32[2];
-						CaelisFrustum.row1.w = caelisFrustumMatrix.r[0].m128_f32[3];
-								
-						CaelisFrustum.row2.x = caelisFrustumMatrix.r[1].m128_f32[0];
-						CaelisFrustum.row2.y = caelisFrustumMatrix.r[1].m128_f32[1];
-						CaelisFrustum.row2.z = caelisFrustumMatrix.r[1].m128_f32[2];
-						CaelisFrustum.row2.w = caelisFrustumMatrix.r[1].m128_f32[3];
-							
-						CaelisFrustum.row3.x = caelisFrustumMatrix.r[2].m128_f32[0];
-						CaelisFrustum.row3.y = caelisFrustumMatrix.r[2].m128_f32[1];
-						CaelisFrustum.row3.z = caelisFrustumMatrix.r[2].m128_f32[2];
-						CaelisFrustum.row3.w = caelisFrustumMatrix.r[2].m128_f32[3];
-							
-						CaelisFrustum.row4.x = caelisFrustumMatrix.r[3].m128_f32[0];
-						CaelisFrustum.row4.y = caelisFrustumMatrix.r[3].m128_f32[1];
-						CaelisFrustum.row4.z = caelisFrustumMatrix.r[3].m128_f32[2];
-						CaelisFrustum.row4.w = caelisFrustumMatrix.r[3].m128_f32[3];
-
-						pcAiSystem->UpdateFrustum(tThisWorld.atClaytonVision.eyes0, CaelisFrustum, 60, 1, 0.1, 150);
-
-						tThisWorld.atWorldMatrix[claytonFrustumIndex].worldMatrix = caelisFrustumMatrix;
 					}
 
 					if (tThisWorld.atClayton[nCurrentEntity].jumpTime <= 0)
@@ -7769,6 +7690,143 @@ int CGameMangerSystem::RealLevelUpdate()
 
 		if (tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_SIMPLEMESH | COMPONENT_SHADERID))
 		{
+			tTempPixelBuffer.m_d3dCollisionColor = XMFLOAT4(0, 1.0f, 0, 1.0f);
+			if (tThisWorld.atInputMask[nCurrentEntity].m_tnInputMask == (COMPONENT_CAELIS | COMPONENT_INPUTMASK) && PlayerStartIndex == CaelisIndex)
+			{    // This pair of if checks set the Camera Matricies
+				if (tCameraMode.bWalkMode == true)
+				{
+					tMyVertexBufferTemp.m_d3dViewMatrix = walkCamera->d3d_Position;
+					tTempVertexBuffer.m_d3dViewMatrix = walkCamera->d3d_Position;
+				}
+				else if (tCameraMode.bAimMode == true)
+				{
+					tTempVertexBuffer.m_d3dViewMatrix = aimCamera->d3d_Position;
+					tMyVertexBufferTemp.m_d3dViewMatrix = aimCamera->d3d_Position;
+				}
+				else if (tCameraMode.bDebugMode == true)
+				{
+					tTempVertexBuffer.m_d3dWorldMatrix = m_d3dWorldMatrix;
+					tTempVertexBuffer.m_d3dViewMatrix = debugCamera->d3d_Position;
+					tMyVertexBufferTemp.m_d3dViewMatrix = debugCamera->d3d_Position;
+				}
+				else
+				{
+					tTempVertexBuffer.m_d3dWorldMatrix = tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix;
+					tTempVertexBuffer.m_d3dViewMatrix = m_d3dViewMatrix;
+					tMyVertexBufferTemp.m_d3dViewMatrix = m_d3dViewMatrix;
+				}
+
+				if (tCameraMode.bWalkMode == true)
+				{
+					m_d3dPlayerMatrix = pcInputSystem->CharacterMovement(m_d3dPlayerMatrix, fpsTimer.GetDelta(), pcAudioSystem, tThisWorld.atClayton[PlayerStartIndex], tThisWorld.atRigidBody[PlayerStartIndex].velocity, bNoMoving);
+					tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = m_d3dPlayerMatrix;
+					tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = pcPhysicsSystem->ResolveForces(&tThisWorld.atRigidBody[nCurrentEntity], tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, false);
+					m_d3dPlayerMatrix = tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix;
+
+					XMMATRIX claytonFrustumMatrix = walkCamera->d3d_Position;
+					claytonFrustumMatrix = XMMatrixMultiply(XMMatrixTranslation(0, 0, -15), claytonFrustumMatrix);
+
+					float4x4 ClaytonFrustum;
+					ClaytonFrustum.row1.x = claytonFrustumMatrix.r[0].m128_f32[0];
+					ClaytonFrustum.row1.y = claytonFrustumMatrix.r[0].m128_f32[1];
+					ClaytonFrustum.row1.z = claytonFrustumMatrix.r[0].m128_f32[2];
+					ClaytonFrustum.row1.w = claytonFrustumMatrix.r[0].m128_f32[3];
+
+					ClaytonFrustum.row2.x = claytonFrustumMatrix.r[1].m128_f32[0];
+					ClaytonFrustum.row2.y = claytonFrustumMatrix.r[1].m128_f32[1];
+					ClaytonFrustum.row2.z = claytonFrustumMatrix.r[1].m128_f32[2];
+					ClaytonFrustum.row2.w = claytonFrustumMatrix.r[1].m128_f32[3];
+
+					ClaytonFrustum.row3.x = claytonFrustumMatrix.r[2].m128_f32[0];
+					ClaytonFrustum.row3.y = claytonFrustumMatrix.r[2].m128_f32[1];
+					ClaytonFrustum.row3.z = claytonFrustumMatrix.r[2].m128_f32[2];
+					ClaytonFrustum.row3.w = claytonFrustumMatrix.r[2].m128_f32[3];
+
+					ClaytonFrustum.row4.x = claytonFrustumMatrix.r[3].m128_f32[0];
+					ClaytonFrustum.row4.y = claytonFrustumMatrix.r[3].m128_f32[1];
+					ClaytonFrustum.row4.z = claytonFrustumMatrix.r[3].m128_f32[2];
+					ClaytonFrustum.row4.w = claytonFrustumMatrix.r[3].m128_f32[3];
+
+					pcAiSystem->UpdateFrustum(tThisWorld.atClaytonVision.eyes0, ClaytonFrustum, 60, 1, 0.1, 150);
+
+					tThisWorld.atWorldMatrix[claytonFrustumIndex].worldMatrix = claytonFrustumMatrix;
+				}
+				else if (tCameraMode.bAimMode == true)
+				{
+					//m_d3dPlayerMatrix = pcInputSystem->CharacterMovement(m_d3dPlayerMatrix, fpsTimer.GetDelta(), pcAudioSystem, tThisWorld.atClayton[PlayerStartIndex], tThisWorld.atRigidBody[PlayerStartIndex].velocity, bNoMoving);
+					tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = m_d3dPlayerMatrix;
+					tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = pcPhysicsSystem->ResolveForces(&tThisWorld.atRigidBody[nCurrentEntity], tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, false);
+					m_d3dPlayerMatrix = tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix;
+
+					XMMATRIX claytonFrustumMatrix = aimCamera->d3d_Position;
+					claytonFrustumMatrix = XMMatrixMultiply(XMMatrixTranslation(0, 0, -15), claytonFrustumMatrix);
+
+					float4x4 ClaytonFrustum;
+					ClaytonFrustum.row1.x = claytonFrustumMatrix.r[0].m128_f32[0];
+					ClaytonFrustum.row1.y = claytonFrustumMatrix.r[0].m128_f32[1];
+					ClaytonFrustum.row1.z = claytonFrustumMatrix.r[0].m128_f32[2];
+					ClaytonFrustum.row1.w = claytonFrustumMatrix.r[0].m128_f32[3];
+
+					ClaytonFrustum.row2.x = claytonFrustumMatrix.r[1].m128_f32[0];
+					ClaytonFrustum.row2.y = claytonFrustumMatrix.r[1].m128_f32[1];
+					ClaytonFrustum.row2.z = claytonFrustumMatrix.r[1].m128_f32[2];
+					ClaytonFrustum.row2.w = claytonFrustumMatrix.r[1].m128_f32[3];
+
+					ClaytonFrustum.row3.x = claytonFrustumMatrix.r[2].m128_f32[0];
+					ClaytonFrustum.row3.y = claytonFrustumMatrix.r[2].m128_f32[1];
+					ClaytonFrustum.row3.z = claytonFrustumMatrix.r[2].m128_f32[2];
+					ClaytonFrustum.row3.w = claytonFrustumMatrix.r[2].m128_f32[3];
+
+					ClaytonFrustum.row4.x = claytonFrustumMatrix.r[3].m128_f32[0];
+					ClaytonFrustum.row4.y = claytonFrustumMatrix.r[3].m128_f32[1];
+					ClaytonFrustum.row4.z = claytonFrustumMatrix.r[3].m128_f32[2];
+					ClaytonFrustum.row4.w = claytonFrustumMatrix.r[3].m128_f32[3];
+
+					pcAiSystem->UpdateFrustum(tThisWorld.atClaytonVision.eyes0, ClaytonFrustum, 60, 1, 0.1, 150);
+
+					tThisWorld.atWorldMatrix[claytonFrustumIndex].worldMatrix = claytonFrustumMatrix;
+				}
+				else
+				{
+					XMMATRIX caelisFrustumMatrix = debugCamera->d3d_Position;
+					caelisFrustumMatrix = XMMatrixMultiply(XMMatrixTranslation(0, 0, -15), caelisFrustumMatrix);
+
+					float4x4 CaelisFrustum;
+					CaelisFrustum.row1.x = caelisFrustumMatrix.r[0].m128_f32[0];
+					CaelisFrustum.row1.y = caelisFrustumMatrix.r[0].m128_f32[1];
+					CaelisFrustum.row1.z = caelisFrustumMatrix.r[0].m128_f32[2];
+					CaelisFrustum.row1.w = caelisFrustumMatrix.r[0].m128_f32[3];
+
+					CaelisFrustum.row2.x = caelisFrustumMatrix.r[1].m128_f32[0];
+					CaelisFrustum.row2.y = caelisFrustumMatrix.r[1].m128_f32[1];
+					CaelisFrustum.row2.z = caelisFrustumMatrix.r[1].m128_f32[2];
+					CaelisFrustum.row2.w = caelisFrustumMatrix.r[1].m128_f32[3];
+
+					CaelisFrustum.row3.x = caelisFrustumMatrix.r[2].m128_f32[0];
+					CaelisFrustum.row3.y = caelisFrustumMatrix.r[2].m128_f32[1];
+					CaelisFrustum.row3.z = caelisFrustumMatrix.r[2].m128_f32[2];
+					CaelisFrustum.row3.w = caelisFrustumMatrix.r[2].m128_f32[3];
+
+					CaelisFrustum.row4.x = caelisFrustumMatrix.r[3].m128_f32[0];
+					CaelisFrustum.row4.y = caelisFrustumMatrix.r[3].m128_f32[1];
+					CaelisFrustum.row4.z = caelisFrustumMatrix.r[3].m128_f32[2];
+					CaelisFrustum.row4.w = caelisFrustumMatrix.r[3].m128_f32[3];
+
+					pcAiSystem->UpdateFrustum(tThisWorld.atClaytonVision.eyes0, CaelisFrustum, 60, 1, 0.1, 150);
+
+					tThisWorld.atWorldMatrix[claytonFrustumIndex].worldMatrix = caelisFrustumMatrix;
+				}
+
+				if (tThisWorld.atClayton[nCurrentEntity].jumpTime <= 0)
+				{
+					tThisWorld.atClayton[nCurrentEntity].jumpCooldown -= fpsTimer.GetDelta();
+
+					if (tThisWorld.atClayton[nCurrentEntity].jumpCooldown <= 0)
+					{
+						tThisWorld.atClayton[nCurrentEntity].jumpTime = 1;
+					}
+				}
+			}
 			if (tThisWorld.atUIMask[nCurrentEntity].m_tnUIMask != (COMPONENT_UIMASK | COMPONENT_NOSHOW))
 			{
 				if (pcCollisionSystem->aabb_to_frustum(tThisWorld.atAABB[nCurrentEntity], tThisWorld.atClaytonVision.eyes0))
@@ -7788,7 +7846,27 @@ int CGameMangerSystem::RealLevelUpdate()
 					pcGraphicsSystem->ExecutePipeline(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atSimpleMesh[nCurrentEntity].m_nIndexCount, tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask, tThisWorld.atShaderID[nCurrentEntity].m_nShaderID);
 				}
 			}
+
+			
+			//if (pcCollisionSystem->aabb_to_frustum(tThisWorld.atAABB[nCurrentEntity], tThisWorld.atClaytonVision.eyes0))
+			//{
+			//	if (tCameraMode.bWalkMode == true)
+			//	{
+			//		pcGraphicsSystem->InitPrimalShaderData2(pcGraphicsSystem->m_pd3dDeviceContext, tTempVertexBuffer, tTempPixelBuffer, tThisWorld.atSimpleMesh[nCurrentEntity], walkCamera->d3d_Position);
+			//	}
+			//	//Calls Shader Function on Aim Camera If aim mode is active
+			//	else if (tCameraMode.bAimMode == true)
+			//	{
+			//		pcGraphicsSystem->InitPrimalShaderData2(pcGraphicsSystem->m_pd3dDeviceContext, tTempVertexBuffer, tTempPixelBuffer , tThisWorld.atSimpleMesh[nCurrentEntity],aimCamera->d3d_Position);
+			//	}
+			//	else
+			//	{
+			//		pcGraphicsSystem->InitPrimalShaderData2(pcGraphicsSystem->m_pd3dDeviceContext, tTempVertexBuffer, tTempPixelBuffer, tThisWorld.atSimpleMesh[nCurrentEntity], debugCamera->d3d_Position);
+			//	}
+			//	pcGraphicsSystem->ExecutePipeline(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atSimpleMesh[nCurrentEntity].m_nIndexCount, tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask, tThisWorld.atShaderID[nCurrentEntity].m_nShaderID);
+			//}
 		}
+
 
 		if (tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_SHADERID))
 		{

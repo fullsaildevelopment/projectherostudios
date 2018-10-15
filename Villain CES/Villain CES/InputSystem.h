@@ -136,8 +136,10 @@ public:
 	GInput * m_pcMyInput;
 	int m_Companion1;
 	int m_Companion2;
+	bool m_buttonPressed = false;
 	bool m_characterSwitch = false;
-
+	bool m_ToCompanion1 = false;
+	bool m_ToCompanion2 = false;
 
 private:
 	float				m_fMouseRotationSpeed;
