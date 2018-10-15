@@ -22,7 +22,7 @@ public:
 		bool &bGunMode, bool &bTryToShoot, bool &bTryToReload,
 		bool &bMouseUp, bool &bMouseDown, bool &bClick,
 		bool &bGamePaused, bool &bGameOver, bool &bPauseInit, bool &bOptions,
-		bool &bMoving,
+		bool &bNoMoving,
 		float &fRealTimeFov,
 		POINT &cStartDragPoint, POINT &cDragPoint, POINT &cHoverPoint, POINT &cClickPoint,
 		TCameraToggle &tCameraMode,
@@ -49,7 +49,7 @@ public:
 
 	XMMATRIX DebugCamera(XMMATRIX d3d_ViewM, XMMATRIX d3d_WorldM, double delta);
 
-	XMMATRIX CharacterMovement(XMMATRIX d3dplayerMatrix, double delta, CAudioSystem* in_Audio, TClayton &clayton, XMVECTOR &playerVeclocity);
+	XMMATRIX CharacterMovement(XMMATRIX d3dplayerMatrix, double delta, CAudioSystem* in_Audio, TClayton &clayton, XMVECTOR &playerVeclocity, bool move);
 
 	/*
 	* WalkCamera(): This fuction makes a camera follow an in-game object.
@@ -81,7 +81,7 @@ public:
 	* Mod. Initials:          ZFB
 	*/
 	
-	XMMATRIX AimMode(TCamera* in_AimCamera, XMMATRIX d3dplayerMatrix, double delta);
+	XMMATRIX AimMode(TCamera * in_AimCamera, XMMATRIX d3dplayerMatrix, double delta, bool move);
 	XMMATRIX WalkCameraControls(XMVECTOR U, XMMATRIX viewM, bool &_movement, double delta);
 	XMMATRIX CameraUpdate(TCamera* in_walkCamera, TCamera* in_aimMode, TCamera* in_debugCamera, XMMATRIX in_resultMatrix, XMMATRIX offsetMatrix);
 	XMMATRIX CameraBehaviorLerp(XMMATRIX m1, XMMATRIX m2, float scale);
@@ -139,6 +139,8 @@ private:
 	float				m_fDistance;
 	float fXchange;
 	float fYchange;
+	float prev_X;
+	float prev_Y;
 	float fXEnd;
 	float fYEnd;
 	XMVECTOR m_PlayerForwardV;
