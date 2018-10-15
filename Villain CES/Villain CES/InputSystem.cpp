@@ -778,7 +778,7 @@ int CInputSystem::CharacterSwitch(int characterIndex, int companionOneIndex, int
 	{
 		// switch playerStartIndex to companion 2
 		m_CurrentPlayerIndex = companionTwoIndex;
-		//Switch previous character index to be Companion 1
+		//Switch previous character index to be Companion 2
 		m_Companion2 = characterIndex;
 		m_ToCompanion2 = true;
 	}

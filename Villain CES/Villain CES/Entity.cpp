@@ -2926,9 +2926,12 @@ unsigned int CreateHealingAI(TWorld * ptWorld)
 	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexData.SysMemPitch = 0;
 	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexData.SysMemSlicePitch = 0;
 	ptWorld->atWorldMatrix[nThisEntity].worldMatrix = XMMatrixIdentity();
-	ptWorld->atWorldMatrix[nThisEntity].worldMatrix = XMMatrixMultiply(XMMatrixTranslation(0, 0, -5), ptWorld->atWorldMatrix[nThisEntity].worldMatrix);
+	ptWorld->atWorldMatrix[nThisEntity].worldMatrix = XMMatrixMultiply(XMMatrixTranslation(0, 0, 0), ptWorld->atWorldMatrix[nThisEntity].worldMatrix);
 
 	ptWorld->atShaderID[nThisEntity].m_nShaderID = 3;
+	for (unsigned int i = 0; i < ptWorld->atSimpleMesh[nThisEntity].m_nVertexCount; ++i) {
+		ptWorld->atSimpleMesh[nThisEntity].m_VertexData.push_back(atCubeVertices[i].m_d3dfPosition);
+	}
 	return nThisEntity;
 }
 

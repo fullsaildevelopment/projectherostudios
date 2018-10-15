@@ -101,7 +101,6 @@ public:
 	AkGameObjectID m_AkMetalFired;
 	AkGameObjectID m_Laser_Fire;
 	AkGameObjectID m_Human_Hurt;
-	AkGameObjectID m_Syclian_Death;
 	AkGameObjectID m_Scylian_Hurt;
 	AkGameObjectID m_WalkSound;
 	AkGameObjectID m_HoverSound;

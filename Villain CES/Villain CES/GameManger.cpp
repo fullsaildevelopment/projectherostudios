@@ -6744,35 +6744,19 @@ int CGameMangerSystem::RealLevelUpdate()
 #pragma region Switching Character Matrices
 	if (pcInputSystem->m_characterSwitch == true)
 	{
-		if (pcInputSystem->m_ToCompanion1 == true)
-		{
-			/*tThisWorld.atWorldMatrix[PlayerStartIndex].worldMatrix.r[0] = tThisWorld.atWorldMatrix[pcInputSystem->m_Companion1].worldMatrix.r[0];
-			tThisWorld.atWorldMatrix[PlayerStartIndex].worldMatrix.r[0] = tThisWorld.atWorldMatrix[pcInputSystem->m_Companion1].worldMatrix.r[0];*/
+		//if (pcInputSystem->m_ToCompanion1 == true)
+		//{
+		//	/*tThisWorld.atWorldMatrix[PlayerStartIndex].worldMatrix.r[0] = tThisWorld.atWorldMatrix[pcInputSystem->m_Companion1].worldMatrix.r[0];
+		//	tThisWorld.atWorldMatrix[PlayerStartIndex].worldMatrix.r[0] = tThisWorld.atWorldMatrix[pcInputSystem->m_Companion1].worldMatrix.r[0];*/
 
-			/*tThisWorld.atWorldMatrix[PlayerStartIndex].worldMatrix.r[1] = tThisWorld.atWorldMatrix[pcInputSystem->m_Companion1].worldMatrix.r[1];
-			tThisWorld.atWorldMatrix[PlayerStartIndex].worldMatrix.r[1] = tThisWorld.atWorldMatrix[pcInputSystem->m_Companion1].worldMatrix.r[1];*/
-
-			/*tThisWorld.atWorldMatrix[PlayerStartIndex].worldMatrix.r[2] = tThisWorld.atWorldMatrix[pcInputSystem->m_Companion1].worldMatrix.r[2];
-			tThisWorld.atWorldMatrix[PlayerStartIndex].worldMatrix.r[2] = tThisWorld.atWorldMatrix[pcInputSystem->m_Companion1].worldMatrix.r[2];*/
-
+		//	/*tThisWorld.atWorldMatrix[PlayerStartIndex].worldMatrix.r[1] = tThisWorld.atWorldMatrix[pcInputSystem->m_Companion1].worldMatrix.r[1];
+		//	tThisWorld.atWorldMatrix[PlayerStartIndex].worldMatrix.r[1] = tThisWorld.atWorldMatrix[pcInputSystem->m_Companion1].worldMatrix.r[1];*/
+		//	/*tThisWorld.atWorldMatrix[PlayerStartIndex].worldMatrix.r[2] = tThisWorld.atWorldMatrix[pcInputSystem->m_Companion1].worldMatrix.r[2];
+		//	tThisWorld.atWorldMatrix[PlayerStartIndex].worldMatrix.r[2] = tThisWorld.atWorldMatrix[pcInputSystem->m_Companion1].worldMatrix.r[2];*/
 			m_d3dPlayerMatrix = tThisWorld.atWorldMatrix[PlayerStartIndex].worldMatrix;
 			pcInputSystem->m_ToCompanion1 = false;
 
-		}
-		else if (pcInputSystem->m_ToCompanion2 == true)
-		{
-			tThisWorld.atWorldMatrix[PlayerStartIndex].worldMatrix.r[0] = tThisWorld.atWorldMatrix[pcInputSystem->m_Companion2].worldMatrix.r[0];
-			tThisWorld.atWorldMatrix[PlayerStartIndex].worldMatrix.r[0] = tThisWorld.atWorldMatrix[pcInputSystem->m_Companion2].worldMatrix.r[0];
-
-			tThisWorld.atWorldMatrix[PlayerStartIndex].worldMatrix.r[1] = tThisWorld.atWorldMatrix[pcInputSystem->m_Companion2].worldMatrix.r[1];
-			tThisWorld.atWorldMatrix[PlayerStartIndex].worldMatrix.r[1] = tThisWorld.atWorldMatrix[pcInputSystem->m_Companion2].worldMatrix.r[1];
-
-			tThisWorld.atWorldMatrix[PlayerStartIndex].worldMatrix.r[2] = tThisWorld.atWorldMatrix[pcInputSystem->m_Companion2].worldMatrix.r[2];
-			tThisWorld.atWorldMatrix[PlayerStartIndex].worldMatrix.r[2] = tThisWorld.atWorldMatrix[pcInputSystem->m_Companion2].worldMatrix.r[2];
-
-			m_d3dPlayerMatrix = tThisWorld.atWorldMatrix[PlayerStartIndex].worldMatrix;
-			pcInputSystem->m_ToCompanion2 = false;
-		}
+	//	}
 		
 		pcInputSystem->m_characterSwitch = false;
 	}
@@ -7061,7 +7045,7 @@ int CGameMangerSystem::RealLevelUpdate()
 					}
 					else if (tCameraMode.bAimMode == true)
 					{
-						m_d3dPlayerMatrix = pcInputSystem->CharacterMovement(m_d3dPlayerMatrix, fpsTimer.GetDelta(), pcAudioSystem, tThisWorld.atClayton[PlayerStartIndex], tThisWorld.atRigidBody[PlayerStartIndex].velocity, bNoMoving);
+						//m_d3dPlayerMatrix = pcInputSystem->CharacterMovement(m_d3dPlayerMatrix, fpsTimer.GetDelta(), pcAudioSystem, tThisWorld.atClayton[PlayerStartIndex], tThisWorld.atRigidBody[PlayerStartIndex].velocity, bNoMoving);
 						tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = m_d3dPlayerMatrix;
 						tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = pcPhysicsSystem->ResolveForces(&tThisWorld.atRigidBody[nCurrentEntity], tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, false);
 						m_d3dPlayerMatrix = tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix;
