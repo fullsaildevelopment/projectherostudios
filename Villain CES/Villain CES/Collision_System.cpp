@@ -220,9 +220,11 @@ void CCollisionSystem::TestThreading(TWorld * ptWorld, int nCurrentEntity, CGrap
 							{
 								pcAiSystem->SetNumberOfAI(pcAiSystem->GetNumberOfAI() - 1);
 
-								if (ptWorld->atClip[nCurrentEntity].gunIndex != -1)
-								{
-
+								
+									if (ptWorld->atAIMask[otherCollisionsIndex[i]].GunIndex == pcAiSystem->GetActiveShooter()) {
+										pcAiSystem->chooseAnotherShooter = true;
+										pcAiSystem->SetActiveShooter(0);
+									}
 
 									RemoveAABBCollider(nCurrentEntity);
 
@@ -231,7 +233,7 @@ void CCollisionSystem::TestThreading(TWorld * ptWorld, int nCurrentEntity, CGrap
 									pcGraphicsSystem->CleanD3DObject(ptWorld, nCurrentEntity);
 
 
-								}
+								
 								RemoveAABBCollider(otherCollisionsIndex[i]);
 								pcGraphicsSystem->CleanD3DObject(ptWorld, otherCollisionsIndex[i]);
 								pcGraphicsSystem->CleanD3DObject(ptWorld, ptWorld->atAIMask[otherCollisionsIndex[i]].GunIndex);
@@ -249,7 +251,7 @@ void CCollisionSystem::TestThreading(TWorld * ptWorld, int nCurrentEntity, CGrap
 
 								hitmarkerTime = 0;
 
-								//pcAiSystem->AddAiInCombat(nCurrentEntity);
+								//pcAiSystem->AddShootingActiveAI(nCurrentEntity);
 								ptWorld->atActiveAI[otherCollisionsIndex[i]].active = true;
 								for (int activate = 0; activate < ptWorld->atActiveAI[otherCollisionsIndex[i]].NoctifyOtherAi.size(); ++activate) {
 									ptWorld->atActiveAI[ptWorld->atActiveAI[otherCollisionsIndex[i]].NoctifyOtherAi[activate]].active = true;
@@ -264,6 +266,11 @@ void CCollisionSystem::TestThreading(TWorld * ptWorld, int nCurrentEntity, CGrap
 
 								if (ptWorld->atAiHeath[otherCollisionsIndex[i]].heath <= 0)
 								{
+									cout << pcAiSystem->GetActiveShooter();
+									if (ptWorld->atAIMask[otherCollisionsIndex[i]].GunIndex == pcAiSystem->GetActiveShooter()) {
+										pcAiSystem->chooseAnotherShooter = true;
+										pcAiSystem->SetActiveShooter(0);
+									}
 									pcAiSystem->SetNumberOfAI(pcAiSystem->GetNumberOfAI() - 1);
 									RemoveAABBCollider(otherCollisionsIndex[i]);
 									pcGraphicsSystem->CleanD3DObject(ptWorld, otherCollisionsIndex[i]);
@@ -271,6 +278,7 @@ void CCollisionSystem::TestThreading(TWorld * ptWorld, int nCurrentEntity, CGrap
 
 									pcGraphicsSystem->CleanD3DObject(ptWorld, otherCollisionsIndex[i] + 1);
 									pcGraphicsSystem->CleanD3DObject(ptWorld, otherCollisionsIndex[i] + 2);
+									pcAiSystem->RemoveeShootingActiveAI(otherCollisionsIndex[i]);
 								}
 
 							}

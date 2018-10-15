@@ -523,6 +523,35 @@ float CAISystem::CalculateDistanceMatrix(XMMATRIX matrix1, XMMATRIX matrix2)
 	);
 }
 
+bool CAISystem::ActiveShooterCheck(int AiIndex,float cooldownofGun)
+{
+	if(CurrentShooter!=AiIndex)
+	return false;
+	else if (cooldownofGun <= 0) {
+		chooseAnotherShooter = true;
+	
+
+	}
+	return true;
+}
+
+int CAISystem::ChooseRandomSHooter()
+{
+
+	chooseAnotherShooter = false;
+	return  ShootingActiveAI[rand() % ShootingActiveAI.size()];;
+}
+
+bool CAISystem::GetCanWechooseShooter()
+{
+	return chooseAnotherShooter;
+}
+
+void CAISystem::SetActiveShooter(int activeSHooter)
+{
+	CurrentShooter = activeSHooter;
+}
+
 void CAISystem::MakeDirections(vector<XMVECTOR>* directions, PlannerNode* current)
 {
 	if (current != nullptr) {
@@ -559,15 +588,35 @@ void CAISystem::MoveAiToCoverLocation(TCoverTrigger Cover,TWorld * ptWorld,int P
 	}
 }
 
-void CAISystem::AddAiInCombat(int aiEnitity)
+void CAISystem::AddShootingActiveAI(int aiEnitity)
 {
 	
-	/*for (int i = 0; AIInCombat.size(); ++i) {
-		if (AIInCombat[i] == aiEnitity) {
+	for (int i = 0;i< ShootingActiveAI.size(); ++i) {
+		if (ShootingActiveAI[i] == aiEnitity) {
 			return;
 		}
 	}
-	AIInCombat.push_back(aiEnitity);*/
+	ShootingActiveAI.push_back(aiEnitity);
+	cout << "Size of AI Active List" << ShootingActiveAI.size() << " " << std::endl;
+
+}
+
+void CAISystem::RemoveeShootingActiveAI(int aiEnitity)
+{
+	for (int i = 0;i< ShootingActiveAI.size(); ++i) {
+		if (ShootingActiveAI[i] == aiEnitity) {
+	
+			ShootingActiveAI.erase(ShootingActiveAI.begin() + i);
+			cout << "Size of AI Active List" << ShootingActiveAI.size() << " " << std::endl;
+		}
+	}
+
+	//ShootingActiveAI.push_back(aiEnitity);
+}
+
+int CAISystem::GetActiveShooter()
+{
+	return CurrentShooter;
 }
 
 void CAISystem::CLeanPathPlaning()
