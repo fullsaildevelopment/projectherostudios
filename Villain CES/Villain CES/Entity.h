@@ -169,4 +169,4 @@ unsigned int CreateStoneObstacleHorizontal(TWorld * ptWorld, XMMATRIX SpawnPosit
 unsigned int CreateStairCase(TWorld * ptWorld, XMMATRIX SpawnPosition);
 unsigned int CreateTree(TWorld * ptWorld, XMMATRIX SpawnPosition);
 unsigned int CreateCylinder(TWorld * ptWorld, XMMATRIX SpawnPosition);
-
+unsigned int CreateCaelis(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMeshImport tMesh, TMaterialImport tMaterial);
