@@ -1065,23 +1065,35 @@ void CGraphicsSystem::UpdateLineVTBuffer(D3D11_BUFFER_DESC* bufDesc,ID3D11Buffer
 
 void CGraphicsSystem::StoreBeamPoints(XMFLOAT3 startPoint, XMFLOAT3 endPoint, std::vector<TPrimalVert>& BeamPoints)
 {
-	TPrimalVert pointAdded, pointAdded2;
+	TPrimalVert Point0, Point1, Point2, Point3;
 	
-	pointAdded.m_d3dfColor = XMFLOAT4( 0.0f, .05f, 1.0f, 1 );
-			  
-	pointAdded.m_d3dfPosition.x = startPoint.x;
-	pointAdded.m_d3dfPosition.y = startPoint.y;
-	pointAdded.m_d3dfPosition.z = startPoint.z;
 
-	BeamPoints.push_back(pointAdded);
+	Point0.m_d3dfColor = XMFLOAT4( 0.0f, 1.0f, 0, 1 );
+	Point1.m_d3dfColor = XMFLOAT4( 0.0f, 0.0f, 0.0f, 1 );
 
-	pointAdded2.m_d3dfColor = XMFLOAT4( 1.0f, 0.05f, 0.0f, 1 );
+	Point0.m_d3dfPosition.x = startPoint.x;
+	Point0.m_d3dfPosition.y = startPoint.y;
+	Point0.m_d3dfPosition.z = startPoint.z;
+	Point1.m_d3dfPosition.x = endPoint.x;
+	Point1.m_d3dfPosition.y = endPoint.y;
+	Point1.m_d3dfPosition.z = endPoint.z;
+	Point2 = Point0;
+	Point3 = Point1;
 
-	pointAdded2.m_d3dfPosition.x = endPoint.x;
-	pointAdded2.m_d3dfPosition.y = endPoint.y;
-	pointAdded2.m_d3dfPosition.z = endPoint.z;
-	
-	BeamPoints.push_back(pointAdded2);
+	Point2.m_d3dfColor = XMFLOAT4(1.0f, 0.0f, 0, 1);
+	Point3.m_d3dfColor = XMFLOAT4(1.0f, 1.0f, 0.0f, 1);
+
+	Point2.m_d3dfPosition.x = startPoint.x + .1;
+	Point3.m_d3dfPosition.x = endPoint.x + .1;
+
+	BeamPoints.push_back(Point0);
+	BeamPoints.push_back(Point1);
+	BeamPoints.push_back(Point2);
+
+	BeamPoints.push_back(Point2);
+	BeamPoints.push_back(Point1);
+	BeamPoints.push_back(Point3);
+
 }
 
 XMMATRIX CGraphicsSystem::SetDefaultCameraMatrix()
@@ -2052,7 +2064,7 @@ void CGraphicsSystem::InitLineShaderData(ID3D11DeviceContext * pd3dDeviceContext
 	bufferNumber = 0;
 
 	
-	pd3dDeviceContext->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_LINELIST);
+	pd3dDeviceContext->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	//pd3dDeviceContext->PSSetConstantBuffers(bufferNumber, 1, &m_pd3dQuadPixelBuffer);
 	pd3dDeviceContext->VSSetConstantBuffers(bufferNumber, 1, &m_pd3dLineVTConstantBuffer);
 	// Set the constant buffer in the Geometry shader with the updated values.

@@ -133,6 +133,7 @@ private:
 #define TIMEUNTILCLICK 0.25
 
 	ID3D11ShaderResourceView* fontTexture = nullptr;
+	ID3D11ShaderResourceView* materialGunProjectileSRV = nullptr;
 	std::vector<TUIVert*> atUIVertices;
 	std::vector<short*> atUIIndices;
 	CFPS fpsTimer;

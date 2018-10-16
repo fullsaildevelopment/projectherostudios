@@ -5921,6 +5921,14 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	atBeamVerts.push_back(x);
 	x.m_d3dfPosition = XMFLOAT3(10, 0, 0);
 	atBeamVerts.push_back(x);
+	x.m_d3dfPosition = XMFLOAT3(0, 0, 0);
+	atBeamVerts.push_back(x);
+	x.m_d3dfPosition = XMFLOAT3(10, 0, 0);
+	atBeamVerts.push_back(x);
+	x.m_d3dfPosition = XMFLOAT3(0, 0, 0);
+	atBeamVerts.push_back(x);
+	x.m_d3dfPosition = XMFLOAT3(10, 0, 0);
+	atBeamVerts.push_back(x);
 
 	ExtractionBeamIndex = CreateExtractionBeam(&tThisWorld, m_d3dWorldMatrix, PlayerStartIndex, atBeamVerts);
 	
@@ -6708,31 +6716,37 @@ int CGameMangerSystem::RealLevelUpdate()
 				}
 			}
 			//Extraction Beam & related functions are here - ZFB
-			if ((pcInputSystem->InputCheck(G_KEY_Q) == 1 && tCameraMode.bAimMode == true && nCurrentEntity == ExtractionBeamIndex))
+			if ((pcInputSystem->InputCheck(G_KEY_Q) == 1 
+				&& tCameraMode.bAimMode == true 
+				&& nCurrentEntity == ExtractionBeamIndex))
 			{
 				//Get Gun Matrix position 
 				atBeamVerts.clear();
+				tThisWorld.atDebugMesh[nCurrentEntity].m_VertexData.clear();
 				XMVECTOR unProjectedFar = XMVectorSet(0, 0, 1, 1);
 
-				XMMATRIX t = XMMatrixMultiply(XMMatrixTranslation(0, 0, 150), aimCamera->d3d_Position);
-				
-				unProjectedFar = XMVector3Transform(unProjectedFar, t);
+				XMMATRIX t1 = XMMatrixMultiply(XMMatrixTranslation(0, 0, 150), aimCamera->d3d_Position);
+
+				unProjectedFar = XMVector3Transform(unProjectedFar, t1);
 
 				XMVECTOR startPoint = XMVectorSet(0, 0, 0, 1);
 				startPoint = XMVector3Transform(startPoint,tThisWorld.atWorldMatrix[GunIndexForPlayer].worldMatrix);
 				XMFLOAT3 Point1, Point2;
-				XMStoreFloat3(&Point2, unProjectedFar);
 				XMStoreFloat3(&Point1, startPoint);
+				XMStoreFloat3(&Point2, unProjectedFar);
 
-				std::cout << "Start Point:\t" << 
-					Point1.x << ", " << 
-					Point1.y << ", " << 
-					Point1.z << "\n";
+				//std::cout << "Start Point:\t" << 
+				//	Point1.x << ", " << 
+				//	Point1.y << ", " << 
+				//	Point1.z << "\n";
 
-				std::cout << "End Point:\t" << 
-					Point2.x << ", " << 
-					Point2.y << ", " << 
-					Point2.z << "\n";
+				//std::cout << "End Point:\t" << 
+				//	Point2.x << ", " << 
+				//	Point2.y << ", " << 
+				//	Point2.z << "\n";
+
+				tThisWorld.atDebugMesh[nCurrentEntity].m_VertexData.push_back(startPoint);
+				tThisWorld.atDebugMesh[nCurrentEntity].m_VertexData.push_back(unProjectedFar);
 
 				pcGraphicsSystem->StoreBeamPoints(Point1, Point2, atBeamVerts);
 				pcGraphicsSystem->UpdateLineVTBuffer(&tThisWorld.atDebugMesh[ExtractionBeamIndex].m_d3dVertexBufferDesc, tThisWorld.atDebugMesh[ExtractionBeamIndex].m_pd3dVertexBuffer, atBeamVerts);
@@ -6744,11 +6758,12 @@ int CGameMangerSystem::RealLevelUpdate()
 			else if (nCurrentEntity == ExtractionBeamIndex)
 			{
 				atBeamVerts.clear();
+				tThisWorld.atDebugMesh[nCurrentEntity].m_VertexData.clear();
+
 				XMVECTOR startPoint = XMVectorSet(0, 0, 0, 1);
 				XMVECTOR endPoint;
 				startPoint = XMVector3Transform(startPoint, tThisWorld.atWorldMatrix[GunIndexForPlayer].worldMatrix);
-				endPoint = startPoint;//pcProjectileSystem->FindBeamEndPoint(aimCamera->d3d_Position, m_d3dProjectionMatrix, cApplicationWindow, pcGraphicsSystem->m_d3dViewport);
-				//endPoint.m128_f32[2] += 20.0f;
+				endPoint = startPoint;
 				
 				XMVECTOR BeamDirection = endPoint - startPoint;
 
@@ -6758,6 +6773,8 @@ int CGameMangerSystem::RealLevelUpdate()
 				XMStoreFloat3(&Point1, startPoint);
 				XMStoreFloat3(&Point2, endPoint);
 
+				tThisWorld.atDebugMesh[nCurrentEntity].m_VertexData.push_back(startPoint);
+				tThisWorld.atDebugMesh[nCurrentEntity].m_VertexData.push_back(endPoint);
 				
 	//Stores points into vector of primal vert types
 				pcGraphicsSystem->StoreBeamPoints(Point1, Point2, atBeamVerts);
@@ -6767,18 +6784,15 @@ int CGameMangerSystem::RealLevelUpdate()
 				pcGraphicsSystem->ExecutePipeline(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atDebugMesh[ExtractionBeamIndex].m_nVertexCount, tThisWorld.atGraphicsMask[ExtractionBeamIndex].m_tnGraphicsMask, tThisWorld.atShaderID[ExtractionBeamIndex].m_nShaderID);
 			}
 		}
-		if (tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_SHADERID) && tThisWorld.atUIMask[nCurrentEntity].m_tnUIMask == (COMPONENT_UIMASK))
+		
+		if (tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_SHADERID) 
+			&& tThisWorld.atUIMask[nCurrentEntity].m_tnUIMask == (COMPONENT_UIMASK))
 		{
 			if (tCameraMode.bWalkMode == true)
 			{
 				tMyVertexBufferTemp.m_d3dViewMatrix = walkCamera->d3d_Position;
 				tTempVertexBuffer.m_d3dViewMatrix = walkCamera->d3d_Position;
 			}
-			/*else if (tCameraMode.bAimMode == true)
-			{
-			tTempVertexBuffer.m_d3dViewMatrix = aimCamera->d3d_Position;
-			tMyVertexBufferTemp.m_d3dViewMatrix = aimCamera->d3d_Position;
-			}*/
 			else if (tCameraMode.bDebugMode == true)
 			{
 				tTempVertexBuffer.m_d3dWorldMatrix = m_d3dWorldMatrix;
@@ -7181,6 +7195,10 @@ int CGameMangerSystem::RealLevelUpdate()
 							for (int meshIndex = 0; meshIndex < bulletMesh.meshCount; ++meshIndex)
 							{
 								newbullet = CreateBulletMesh(&tThisWorld, gunMatrix, bulletToCopyFrom);
+								if (materialGunProjectileSRV != nullptr)
+								{
+									tThisWorld.atMesh[newbullet].m_d3dSRVDiffuse = materialGunProjectileSRV;
+								}
 								//newbullet = CreateBulletMesh(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, gunMatrix, tThisWorld.atClip[nCurrentEntity].currentMaterial, bulletType, bulletMesh.vtMeshes[meshIndex], bulletMesh.vtMaterials[meshIndex]);
 							}
 							tThisWorld.atClip[newbullet].gunIndex = nCurrentEntity;
@@ -7315,7 +7333,6 @@ int CGameMangerSystem::RealLevelUpdate()
 				//ptr is the collided entity index compared to current entit index. - ZFB
 				for (list<TAABB>::iterator ptr = pcCollisionSystem->m_AAbb.begin(); ptr != pcCollisionSystem->m_AAbb.end(); ++ptr)
 				{
-
 					if (ptr->m_IndexLocation != PlayerStartIndex && ptr->m_IndexLocation != GunIndexForPlayer)
 					{
 						if (pcCollisionSystem->intersectRayAABox2(
@@ -7325,9 +7342,11 @@ int CGameMangerSystem::RealLevelUpdate()
 								tThisWorld.atWorldMatrix[PlayerStartIndex].worldMatrix), *ptr
 						) == true)
 						{
+							std::cout << "Intersected Entity #:\t" << ptr->m_IndexLocation << "\n";
 							//CloseEstObject = *distanceCalucaltion;
 							tThisWorld.atClip[GunIndexForPlayer].currentMaterial = 0;
-							tThisWorld.atClip[GunIndexForPlayer].colorofBullets = tThisWorld.atSimpleMesh[ptr->m_IndexLocation].m_nColor;
+							materialGunProjectileSRV = tThisWorld.atMesh[ptr->m_IndexLocation].m_d3dSRVDiffuse;
+							//tThisWorld.atClip[GunIndexForPlayer].colorofBullets = tThisWorld.atSimpleMesh[ptr->m_IndexLocation].m_nColor;
 						}
 
 					}
@@ -7463,43 +7482,6 @@ int CGameMangerSystem::RealLevelUpdate()
 					pcGraphicsSystem->ExecutePipeline(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atSimpleMesh[nCurrentEntity].m_nIndexCount, tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask, tThisWorld.atShaderID[nCurrentEntity].m_nShaderID);
 				}
 			}
-		}
-
-		if (tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_SHADERID))
-		{
-			/*if (tThisWorld.atProjectiles[nCurrentEntity].m_tnProjectileMask == (COMPONENT_PROJECTILESMASK | COMPONENT_CLIP))
-			{
-				if (tCameraMode.bWalkMode == true)
-				{
-					pcGraphicsSystem->InitPrimalShaderData3(pcGraphicsSystem->m_pd3dDeviceContext, tTempVertexBuffer, tTempPixelBuffer, tThisWorld.atMesh[nCurrentEntity], walkCamera->d3d_Position);
-				}
-				else if (tCameraMode.bAimMode == true)
-				{
-					pcGraphicsSystem->InitPrimalShaderData3(pcGraphicsSystem->m_pd3dDeviceContext, tTempVertexBuffer, tTempPixelBuffer, tThisWorld.atMesh[nCurrentEntity], aimCamera->d3d_Position);
-				}
-				else
-				{
-					pcGraphicsSystem->InitPrimalShaderData3(pcGraphicsSystem->m_pd3dDeviceContext, tTempVertexBuffer, tTempPixelBuffer, tThisWorld.atMesh[nCurrentEntity], debugCamera->d3d_Position);
-				}
-				pcGraphicsSystem->ExecutePipeline(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atMesh[nCurrentEntity].m_nIndexCount, tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask, tThisWorld.atShaderID[nCurrentEntity].m_nShaderID);
-			}
-			else if (tThisWorld.atProjectiles[nCurrentEntity].m_tnProjectileMask == (COMPONENT_PROJECTILESMASK | COMPONENT_METAL | COMPONENT_FRIENDLY) ||
-					 tThisWorld.atProjectiles[nCurrentEntity].m_tnProjectileMask == (COMPONENT_PROJECTILESMASK | COMPONENT_METAL | COMPONENT_ENEMY))
-			{
-				if (tCameraMode.bWalkMode == true)
-				{
-					pcGraphicsSystem->InitMyShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tMyVertexBufferTemp, tThisWorld.atMesh[nCurrentEntity], walkCamera->d3d_Position);
-				}
-				else if (tCameraMode.bAimMode == true)
-				{
-					pcGraphicsSystem->InitMyShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tMyVertexBufferTemp, tThisWorld.atMesh[nCurrentEntity], aimCamera->d3d_Position);
-				}
-				else
-				{
-					pcGraphicsSystem->InitMyShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tMyVertexBufferTemp, tThisWorld.atMesh[nCurrentEntity], debugCamera->d3d_Position);
-				}
-				pcGraphicsSystem->ExecutePipeline(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atMesh[nCurrentEntity].m_nIndexCount, tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask, tThisWorld.atShaderID[nCurrentEntity].m_nShaderID);
-			}*/
 		}
 
 		if (tThisWorld.atWorldMatrix[PlayerStartIndex].worldMatrix.r[3].m128_f32[1] < -30)
