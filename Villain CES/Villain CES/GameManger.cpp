@@ -6708,32 +6708,21 @@ int CGameMangerSystem::RealLevelUpdate()
 				}
 			}
 			//Extraction Beam & related functions are here - ZFB
-			if (true || (pcInputSystem->InputCheck(G_KEY_Q) == 1 && tCameraMode.bAimMode == true && nCurrentEntity == ExtractionBeamIndex))
+			if ((pcInputSystem->InputCheck(G_KEY_Q) == 1 && tCameraMode.bAimMode == true && nCurrentEntity == ExtractionBeamIndex))
 			{
 				//Get Gun Matrix position 
 				atBeamVerts.clear();
+				XMVECTOR unProjectedFar = XMVectorSet(0, 0, 1, 1);
+
+				XMMATRIX t = XMMatrixMultiply(XMMatrixTranslation(0, 0, 150), aimCamera->d3d_Position);
+				
+				unProjectedFar = XMVector3Transform(unProjectedFar, t);
+
 				XMVECTOR startPoint = XMVectorSet(0, 0, 0, 1);
-				/*XMVectorSet(tThisWorld.atMesh[GunIndexForPlayer].m_VertexData[0].x,
-					tThisWorld.atMesh[GunIndexForPlayer].m_VertexData[0].y,
-					tThisWorld.atMesh[GunIndexForPlayer].m_VertexData[0].z, 
-					1);*/
-				XMVECTOR endPoint = XMVectorSet(0, 0, 1, 1);
-
-				// Create the start of the Beam and put it in a vertex buffer & other intilized values
-				//Creates the end point an infinite ray to farthest point of frustum and need to now find a way to intersect with objects
-				//startPoint = pcProjectileSystem->FindBeamEndPoint(startPoint, tThisWorld.atWorldMatrix[GunIndexForPlayer].worldMatrix,
-				//	aimCamera->d3d_Position, m_d3dProjectionMatrix, cApplicationWindow, pcGraphicsSystem->m_d3dViewport);
-				endPoint = pcProjectileSystem->FindBeamEndPoint(endPoint, tThisWorld.atWorldMatrix[GunIndexForPlayer].worldMatrix, 
-					aimCamera->d3d_Position, m_d3dProjectionMatrix, cApplicationWindow, pcGraphicsSystem->m_d3dViewport);
-				startPoint = XMVector3Transform(startPoint, tThisWorld.atWorldMatrix[GunIndexForPlayer].worldMatrix);
-				//endPoint = XMVector3Transform(endPoint,tThisWorld.atWorldMatrix[GunIndexForPlayer].worldMatrix);
-
-				// updateing the next frame should delete itself 
-				XMVECTOR BeamDirection = XMVector3Normalize(endPoint - startPoint);
-				XMFLOAT3 Point1, Point2, Direction;				
+				startPoint = XMVector3Transform(startPoint,tThisWorld.atWorldMatrix[GunIndexForPlayer].worldMatrix);
+				XMFLOAT3 Point1, Point2;
+				XMStoreFloat3(&Point2, unProjectedFar);
 				XMStoreFloat3(&Point1, startPoint);
-				XMStoreFloat3(&Point2, endPoint);
-				XMStoreFloat3(&Direction, BeamDirection);
 
 				std::cout << "Start Point:\t" << 
 					Point1.x << ", " << 
@@ -6745,13 +6734,6 @@ int CGameMangerSystem::RealLevelUpdate()
 					Point2.y << ", " << 
 					Point2.z << "\n";
 
-				std::cout << "Direction:\t" <<
-					Direction.x << ", " <<
-					Direction.y << ", " <<
-					Direction.z << "\n";
-
-				//Point1.x += Direction.x * (Point1.z / -Direction.z);
-				//Point1.y += Direction.y * (Point1.z / -Direction.z);
 				pcGraphicsSystem->StoreBeamPoints(Point1, Point2, atBeamVerts);
 				pcGraphicsSystem->UpdateLineVTBuffer(&tThisWorld.atDebugMesh[ExtractionBeamIndex].m_d3dVertexBufferDesc, tThisWorld.atDebugMesh[ExtractionBeamIndex].m_pd3dVertexBuffer, atBeamVerts);
 
