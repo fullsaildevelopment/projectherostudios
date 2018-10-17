@@ -10,21 +10,21 @@ cbuffer MatrixBuffer : register(b0)
 
 struct TVertexInputType
 {
-	float3 d3dPosition : POSITION;
+	float4 d3dPosition : POSITION;
 	float4 d3dColor: COLOR;
 };
 
 struct TPixelInputType
 {
-	float4 d3dPosition : SV_POSITION;
+	float4 d3dPosition : POSITION;
 	float4 d3dColor: COLOR;
 };
 
 TPixelInputType LineVertexShader(TVertexInputType in_vertex)
 {
 	TPixelInputType line_Output = (TPixelInputType)0;
-    line_Output.d3dPosition = float4(in_vertex.d3dPosition.xyz, 1);
-	line_Output.d3dPosition = mul(line_Output.d3dPosition, d3dWorldMatrix);
+	line_Output.d3dPosition.w = 1.0f;
+	line_Output.d3dPosition = mul(in_vertex.d3dPosition, d3dWorldMatrix);
 	line_Output.d3dPosition = mul(line_Output.d3dPosition, d3dViewMatrix);
 	line_Output.d3dPosition = mul(line_Output.d3dPosition, d3dProjectionMatrix);
 

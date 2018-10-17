@@ -686,10 +686,10 @@ unsigned int CreateMaterialBullet(TWorld * ptWorld, ID3D11Device * m_pd3dDevice,
 	return nThisEntity;
 }
 
-unsigned int CreateExtractionBeam(TWorld * ptWorld, XMMATRIX BulletSpawnLocation, int parentWorldMatrixIndex, std::vector<TPrimalVert*> atBeamVerts)
+unsigned int CreateExtractionBeam(TWorld * ptWorld, XMMATRIX BulletSpawnLocation, int parentWorldMatrixIndex, std::vector<TPrimalVert> atBeamVerts)
 {
 	unsigned int nThisEntity = createEntity(ptWorld);
-	ptWorld->atGraphicsMask[nThisEntity].m_tnGraphicsMask = (COMPONENT_GRAPHICSMASK | COMPONENT_DEBUGMESH | COMPONENT_SHADERID | COMPONENT_BEAM);
+	ptWorld->atGraphicsMask[nThisEntity].m_tnGraphicsMask = (COMPONENT_GRAPHICSMASK | COMPONENT_DEBUGMESH | COMPONENT_SHADERID);
 	ptWorld->atCollisionMask[nThisEntity].m_tnCollisionMask = (COMPONENT_COLLISIONMASK);
 	ptWorld->atAIMask[nThisEntity].m_tnAIMask = (COMPONENT_AIMASK);
 	ptWorld->atUIMask[nThisEntity].m_tnUIMask = (COMPONENT_UIMASK);
@@ -699,7 +699,6 @@ unsigned int CreateExtractionBeam(TWorld * ptWorld, XMMATRIX BulletSpawnLocation
 	{
 		TPrimalVert{ XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT4(0,1,1,1)}
 	};*/
-
 	ptWorld->atDebugMesh[nThisEntity].m_nVertexCount = 2;
 
 	ptWorld->atDebugMesh[nThisEntity].m_nVertexBufferStride = sizeof(TPrimalVert);

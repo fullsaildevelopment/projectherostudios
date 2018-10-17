@@ -2,19 +2,17 @@
 #include"AudioSystem.h"
 CAudioSystem::CAudioSystem()
 {
-	// Make sure its clear
 	m_LowIOHook = NULL;
 	m_LowIOHook = new CAkFilePackageLowLevelIOBlocking();
-	//m_LowIOHook = new CAkDefaultIOHookBlocking();
-
 }
 
 CAudioSystem::~CAudioSystem()
 {
 	//Has to deallocate be this order or at least tutorial said to
+//#ifndef AK_OPTIMIZED
+//	AK::Comm::Term();
+//#endif //!AK_OPTIMIZED
 
-	delete m_LowIOHook;
-	m_LowIOHook = NULL;
 }
 void CAudioSystem::IntiializeSystem(AKRESULT &out_ErrorCheck)
 {
@@ -48,15 +46,15 @@ void CAudioSystem::IntiializeSystem(AKRESULT &out_ErrorCheck)
 	out_ErrorCheck =  m_LowIOHook->Init(myDevice);
 
 
+
+
 #pragma endregion Stream Manager & Device Init
 
 #pragma region
 	AkInitSettings mySoundEngine;
 	AkPlatformInitSettings myPlatform;
 	AK::SoundEngine::GetDefaultInitSettings(mySoundEngine);
-	//mySoundEngine.uDefaultPoolSize = 16 * 1024 * 1024;
 	AK::SoundEngine::GetDefaultPlatformInitSettings(myPlatform);
-	//myPlatform.uLEngineDefaultPoolSize = 32 * 1024 * 1024;
 	out_ErrorCheck = AK::SoundEngine::Init(&mySoundEngine, &myPlatform);
 	if (out_ErrorCheck != AK_Success)
 	{
@@ -92,21 +90,18 @@ void CAudioSystem::IntiializeSystem(AKRESULT &out_ErrorCheck)
 void CAudioSystem::TermSoundEngine()
 {
 	//AK::SoundEngine::StopAll();
-	ClearActiveGameObjs();
 	ClearAllActiveBnks();
-#ifndef AK_OPTIMIZED
-	//Used for error checking
-	//AK::Comm::Term();
-#endif
+	ClearActiveGameObjs();
 	AK::MusicEngine::Term();
 
 	AK::SoundEngine::Term();
 
-	
+	m_LowIOHook->Term();
+	delete m_LowIOHook;
+	m_LowIOHook = NULL;
 	if (AK::IAkStreamMgr::Get())
 	{
 		// main problem here is it crashes on exit with a unknown memory leak
-		m_LowIOHook->Term();
 		AK::IAkStreamMgr::Get()->Destroy();
 	}
 
@@ -120,13 +115,7 @@ void CAudioSystem::ClearActiveGameObjs()
 
 void CAudioSystem::RegisterGameObj(AkGameObjectID in_gameObj)
 {
-	AKRESULT temp;
-
-	temp = AK::SoundEngine::RegisterGameObj(in_gameObj);
-	if (temp != AK_Success)
-	{
-
-	}
+	AK::SoundEngine::RegisterGameObj(in_gameObj);
 }
 
 void CAudioSystem::UnRegisterGameObj(AkGameObjectID in_gameObj)

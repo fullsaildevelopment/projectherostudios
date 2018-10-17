@@ -4757,7 +4757,6 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 		ClaytonIndex = createClayton(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, tempImport.vtMeshes[meshIndex], tempImport.vtMaterials[meshIndex]);
 	}
 	//pcInputSystem->m_Companion1 = ClaytonIndex;
-	pcInputSystem->m_Companion1 = ClaytonIndex;
 	//Put Caelis Import Data here 
 	tempImport = pcGraphicsSystem->ReadMesh("meshData_Caelis2.txt");
 	for (int meshIndex = 0;  meshIndex < tempImport.meshCount; meshIndex++)
@@ -4765,8 +4764,12 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 		CaelisIndex = CreateCaelis(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, tempImport.vtMeshes[meshIndex], tempImport.vtMaterials[meshIndex]);
 	}
 	// CreateHealingAI(&tThisWorld);
-	PlayerStartIndex = CaelisIndex;
+	pcInputSystem->m_Companion1 = CaelisIndex;
+
+	PlayerStartIndex = ClaytonIndex;
 	m_d3dCaelisMatrix = tThisWorld.atWorldMatrix[CaelisIndex].worldMatrix;
+	m_d3dCalytonMatrix = tThisWorld.atWorldMatrix[ClaytonIndex].worldMatrix;
+	
 	//PlayerStartIndex = CaelisIndex;
 
 	// Put Seth Import Data here
@@ -7317,12 +7320,15 @@ int CGameMangerSystem::RealLevelUpdate()
 		pcInputSystem->m_buttonPressed = true;
 		if (PlayerStartIndex == ClaytonIndex)
 		{
+			m_d3dCalytonMatrix = tThisWorld.atWorldMatrix[ClaytonIndex].worldMatrix;
 			m_d3dPlayerMatrix = tThisWorld.atWorldMatrix[ClaytonIndex].worldMatrix;
 			
 		}
 		else if(PlayerStartIndex == CaelisIndex)
 		{
 			m_d3dCaelisMatrix = tThisWorld.atWorldMatrix[CaelisIndex].worldMatrix;
+			m_d3dPlayerMatrix = tThisWorld.atWorldMatrix[CaelisIndex].worldMatrix;
+
 		}
 	}
 	else if	(pcInputSystem->InputCheck(G_KEY_0) == 0 && pcInputSystem->InputCheck(G_KEY_5) == 0 && pcInputSystem->m_buttonPressed == true)
@@ -7578,7 +7584,7 @@ int CGameMangerSystem::RealLevelUpdate()
 		startDragPoint, dragPoint, hoverPoint, clickPoint,
 		tCameraMode,
 		walkCamera, aimCamera, debugCamera,
-		m_d3d_ResultMatrix, m_d3dPlayerMatrix, m_d3dOffsetMatrix, m_d3dWorldMatrix,
+		m_d3d_ResultMatrix, m_d3dCalytonMatrix, m_d3dOffsetMatrix, m_d3dWorldMatrix,
 		tMyVertexBufferTemp.m_d3dViewMatrix, tTempVertexBuffer.m_d3dViewMatrix,
 		tTempPixelBuffer.m_d3dCollisionColor, delta, pcAudioSystem, tThisWorld.atClayton[PlayerStartIndex], tThisWorld.atRigidBody[PlayerStartIndex].velocity, m_d3dCaelisMatrix, PlayerStartIndex
 	,CaelisIndex, ClaytonIndex);
@@ -7856,10 +7862,10 @@ int CGameMangerSystem::RealLevelUpdate()
 					{
 
 						//m_d3dPlayerMatrix = pcInputSystem->CharacterMovement(m_d3dPlayerMatrix, fpsTimer.GetDelta(), pcAudioSystem, tThisWorld.atClayton[PlayerStartIndex], tThisWorld.atRigidBody[PlayerStartIndex].velocity, bNoMoving);
-						tThisWorld.atWorldMatrix[ClaytonIndex].worldMatrix = m_d3dPlayerMatrix;
+						tThisWorld.atWorldMatrix[ClaytonIndex].worldMatrix = m_d3dCalytonMatrix;
 						tThisWorld.atWorldMatrix[ClaytonIndex].worldMatrix = pcPhysicsSystem->ResolveForces(&tThisWorld.atRigidBody[ClaytonIndex], tThisWorld.atWorldMatrix[ClaytonIndex].worldMatrix, false);
-						m_d3dPlayerMatrix = tThisWorld.atWorldMatrix[ClaytonIndex].worldMatrix;
-
+						m_d3dCalytonMatrix = tThisWorld.atWorldMatrix[ClaytonIndex].worldMatrix;
+						m_d3dPlayerMatrix = m_d3dCalytonMatrix;
 						tTempVertexBuffer.m_d3dWorldMatrix = tThisWorld.atWorldMatrix[ClaytonIndex].worldMatrix;
 						tMyVertexBufferTemp.m_d3dWorldMatrix = tThisWorld.atWorldMatrix[ClaytonIndex].worldMatrix;
 
@@ -7993,6 +7999,7 @@ int CGameMangerSystem::RealLevelUpdate()
 						tThisWorld.atWorldMatrix[CaelisIndex].worldMatrix = m_d3dCaelisMatrix;
 						tThisWorld.atWorldMatrix[CaelisIndex].worldMatrix = pcPhysicsSystem->ResolveForces(&tThisWorld.atRigidBody[CaelisIndex], tThisWorld.atWorldMatrix[CaelisIndex].worldMatrix, false);
 						m_d3dCaelisMatrix = tThisWorld.atWorldMatrix[CaelisIndex].worldMatrix;
+						m_d3dPlayerMatrix = m_d3dCaelisMatrix;
 						
 						tTempVertexBuffer.m_d3dWorldMatrix = tThisWorld.atWorldMatrix[CaelisIndex].worldMatrix;
 						tMyVertexBufferTemp.m_d3dWorldMatrix = tThisWorld.atWorldMatrix[CaelisIndex].worldMatrix;
@@ -8547,7 +8554,7 @@ int CGameMangerSystem::RealLevelUpdate()
 		}
 		if (GamePaused == false && GameOver == false)
 		{
-			tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = pcPhysicsSystem->ResolveForces(&tThisWorld.atRigidBody[nCurrentEntity], tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, true);
+		//	tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = pcPhysicsSystem->ResolveForces(&tThisWorld.atRigidBody[nCurrentEntity], tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, true);
 		}
 		if (GamePaused == false && GameOver == false)
 		{
@@ -8604,7 +8611,8 @@ int CGameMangerSystem::RealLevelUpdate()
 					PlayerStartIndex, std::ref(playerDamage), std::ref(pirateDamage),
 					std::ref(prevHealth), std::ref(fallingHealth), std::ref(lerpTime)
 					, m_fMasterVolume, m_fSFXVolume, m_fMusicVolume, pcAudioSystem,
-					doorEventListenerPointer, doorEventChangerPointer, std::ref(hitmarkerTime)));
+					doorEventListenerPointer, doorEventChangerPointer, std::ref(hitmarkerTime), &m_d3dCalytonMatrix, &m_d3dCaelisMatrix));
+				
 
 				//	tThisWorld.atAABB[nCurrentEntity].myThread = workers.begin() + workers.size() - 1;
 			}

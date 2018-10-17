@@ -129,24 +129,6 @@
     <ClInclude Include="WwiseSounds\Wwise_IDs.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Common\AkDefaultLowLevelIODispatcher.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Common\AkFilePackageLUT.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Common\AkFilePackage.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Common\AkFileLocationBase.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Win32\AkDefaultIOHookDeferred.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Win32\AkFilePackageLowLevelIODeferred.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -222,9 +204,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Timer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Win32\AkDefaultIOHookDeferred.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -135,7 +135,7 @@ bool CCollisionSystem::AiVisionCheck(frustum_t eyeSight,vector<int>* index)
 	return seesomething;
 }
 
-void CCollisionSystem::TestThreading(TWorld * ptWorld, int nCurrentEntity, CGraphicsSystem* pcGraphicsSystem, CGraphicsSystem::TPrimalVertexBufferType* tTempVertexBuffer, XMMATRIX& tMyVertexBufferWorldMatrix, XMMATRIX* m_d3dPlayerMatrix, CPhysicsSystem* pcPhysicsSystem, CAISystem* pcAiSystem,int PlayerStartIndex, float& playerDamage, float& pirateDamage, float& prevHealth, float& fallingHealth, float& lerpTime, float in_MasterVolume, float in_SFXVolume, float in_MusicVolume, CAudioSystem* pcAudioSystem, XMMATRIX(*doorEventListener)(int, bool), void(*doorEventChanger)(int), float &hitmarkerTime)
+void CCollisionSystem::TestThreading(TWorld * ptWorld, int nCurrentEntity, CGraphicsSystem* pcGraphicsSystem, CGraphicsSystem::TPrimalVertexBufferType* tTempVertexBuffer, XMMATRIX& tMyVertexBufferWorldMatrix, XMMATRIX* m_d3dPlayerMatrix, CPhysicsSystem* pcPhysicsSystem, CAISystem* pcAiSystem,int PlayerStartIndex, float& playerDamage, float& pirateDamage, float& prevHealth, float& fallingHealth, float& lerpTime, float in_MasterVolume, float in_SFXVolume, float in_MusicVolume, CAudioSystem* pcAudioSystem, XMMATRIX(*doorEventListener)(int, bool), void(*doorEventChanger)(int), float &hitmarkerTime, XMMATRIX* m_d3dClaytonMatrix, XMMATRIX* m_d3dCaelisMatrix)
 {
 	ptWorld->atAABB[nCurrentEntity].theeadmade = true;
 	if (ptWorld->atCollisionMask[nCurrentEntity].m_tnCollisionMask == (COMPONENT_COLLISIONMASK | COMPONENT_TRIGGER | COMPONENT_AABB | COMPONENT_NONSTATIC)
@@ -155,8 +155,8 @@ void CCollisionSystem::TestThreading(TWorld * ptWorld, int nCurrentEntity, CGrap
 			for (int i = 0; i < otherCollisionsIndex.size(); ++i)
 			{
 				if ((ptWorld->atShaderID[otherCollisionsIndex[i]].m_nShaderID %10==0 /*== 20|| ptWorld->atShaderID[otherCollisionsIndex[i]].m_nShaderID == 30|| ptWorld->atShaderID[otherCollisionsIndex[i]].m_nShaderID == 40*/)
-					&& ptWorld->atInputMask[nCurrentEntity].m_tnInputMask == 
-						(COMPONENT_CLAYTON | COMPONENT_INPUTMASK))
+					&& ptWorld->atInputMask[nCurrentEntity].m_tnInputMask >1 
+					)
 				{
 					for (int doorindex = 0;doorindex< ptWorld->atAABB[otherCollisionsIndex[i]].doorPeices.size(); ++doorindex) {
 						doorEventChanger(ptWorld->atShaderID[otherCollisionsIndex[i]].m_nShaderID);
@@ -197,7 +197,7 @@ void CCollisionSystem::TestThreading(TWorld * ptWorld, int nCurrentEntity, CGrap
 				{
 					tTempVertexBuffer->m_d3dWorldMatrix = WalkingThrewObjectCheck(ptWorld->atWorldMatrix[nCurrentEntity].worldMatrix, ptWorld->atAABB[otherCollisionsIndex[i]], ptWorld->atAABB[nCurrentEntity]);
 					ptWorld->atWorldMatrix[nCurrentEntity].worldMatrix = tTempVertexBuffer->m_d3dWorldMatrix;
-					if (ptWorld->atInputMask[nCurrentEntity].m_tnInputMask == (COMPONENT_CLAYTON | COMPONENT_INPUTMASK))
+					if (ptWorld->atInputMask[nCurrentEntity].m_tnInputMask >1)
 					{
 						*m_d3dPlayerMatrix = ptWorld->atWorldMatrix[nCurrentEntity].worldMatrix;
 					}
@@ -413,6 +413,13 @@ void CCollisionSystem::TestThreading(TWorld * ptWorld, int nCurrentEntity, CGrap
 
 		}
 	}
+	if (ptWorld->atInputMask[nCurrentEntity].m_tnInputMask == (COMPONENT_CLAYTON | COMPONENT_INPUTMASK)) {
+		*m_d3dClaytonMatrix = *m_d3dPlayerMatrix;
+	}
+	else if (ptWorld->atInputMask[nCurrentEntity].m_tnInputMask == (COMPONENT_CAELIS | COMPONENT_INPUTMASK)) {
+		*m_d3dCaelisMatrix = *m_d3dPlayerMatrix;
+	}
+
 	ptWorld->atAABB[nCurrentEntity].theeadmade = false;
 	//std::async(removeThread, std::this_thread::get_id());
 }
