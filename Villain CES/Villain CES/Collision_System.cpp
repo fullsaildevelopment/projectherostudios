@@ -171,7 +171,7 @@ void CCollisionSystem::TestThreading(TWorld * ptWorld, int nCurrentEntity, CGrap
 					if (ptWorld->atProjectiles[nCurrentEntity].m_tnProjectileMask == (COMPONENT_PROJECTILESMASK | COMPONENT_METAL | COMPONENT_FRIENDLY) ||
 						ptWorld->atProjectiles[nCurrentEntity].m_tnProjectileMask == (COMPONENT_PROJECTILESMASK | COMPONENT_METAL | COMPONENT_ENEMY))
 					{
-
+						cout << otherCollisionsIndex[i] <<" ObjectHitting" <<std::endl;
 						RemoveAABBCollider(nCurrentEntity);
 
 						pcGraphicsSystem->CleanD3DObject(ptWorld, nCurrentEntity);

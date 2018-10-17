@@ -5503,7 +5503,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 
 	// ai next to tree
 	AILocation = pcGraphicsSystem->SetDefaultWorldPosition();
-	AILocation.r[3].m128_f32[2] -= 90;
+	AILocation.r[3].m128_f32[2] -= 100;
 	AILocation.r[3].m128_f32[0] -= 10;
 	AILocation.r[3].m128_f32[1] -= 1;
 	AiLookPosition = AILocation;
@@ -6204,6 +6204,11 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	rectangle.r[3].m128_f32[1] -= 1.0f;
 	rectangle.r[3].m128_f32[0] -= 1.0f;
 	int cylinder=CreateCylinder(&tThisWorld, rectangle);
+	tThisWorld.atCollisionMask[218].m_tnCollisionMask = 1;
+	tThisWorld.atCollisionMask[233].m_tnCollisionMask = 1;
+
+	tThisWorld.atCollisionMask[118].m_tnCollisionMask = 1;
+
 	#pragma region COLLISION INIT
 	for (int nCurrentEntity = 0; nCurrentEntity < ENTITYCOUNT; nCurrentEntity++)
 	{
@@ -6211,12 +6216,18 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 		if (cylinder == nCurrentEntity) {
 			float x = 0;
 		}
-		if (tThisWorld.atCollisionMask[nCurrentEntity].m_tnCollisionMask > 1&&nCurrentEntity!=216&&nCurrentEntity!=215)
+		if (tThisWorld.atCollisionMask[nCurrentEntity].m_tnCollisionMask > 1&&nCurrentEntity!=216&&nCurrentEntity!=215&&nCurrentEntity!=218&&nCurrentEntity!=118&&nCurrentEntity!=233 && nCurrentEntity != 133 && nCurrentEntity != 33)// && nCurrentEntity != 18)
 		{
 
 			if (tThisWorld.atSimpleMesh[nCurrentEntity].m_nVertexCount > tThisWorld.atDebugMesh[nCurrentEntity].m_nVertexCount)
 			{
-				
+				if (nCurrentEntity == 218) {
+					TAABB MyAbb = pcCollisionSystem->createAABBS(tThisWorld.atSimpleMesh[nCurrentEntity].m_VertexData, tThisWorld.atAABB[nCurrentEntity]);
+					MyAbb.m_IndexLocation = nCurrentEntity;
+					tThisWorld.atAABB[nCurrentEntity] = MyAbb;
+					pcCollisionSystem->AddAABBCollider(MyAbb, nCurrentEntity);
+					
+				}
 				TAABB MyAbb = pcCollisionSystem->createAABBS(tThisWorld.atSimpleMesh[nCurrentEntity].m_VertexData, tThisWorld.atAABB[nCurrentEntity]);
 				MyAbb.m_IndexLocation = nCurrentEntity;
 				tThisWorld.atAABB[nCurrentEntity] = MyAbb;
@@ -6284,7 +6295,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 			}
 		}
 
-		if (tThisWorld.atProjectiles[nCurrentEntity].m_tnProjectileMask == (COMPONENT_PROJECTILESMASK | COMPONENT_CLIP))
+		if (tThisWorld.atProjectiles[nCurrentEntity].m_tnProjectileMask == (COMPONENT_PROJECTILESMASK | COMPONENT_CLIP)&&nCurrentEntity!=218)
 		{
 			if (tThisWorld.atMesh[nCurrentEntity].m_nVertexCount > tThisWorld.atDebugMesh[nCurrentEntity].m_nVertexCount)
 			{
@@ -8395,15 +8406,15 @@ int CGameMangerSystem::RealLevelUpdate()
 							playerGravity.m128_f32[2] = 0;
 							playerGravity.m128_f32[3] = 0;
 						//	tThisWorld.atRigidBody[nCurrentEntity].gravity = playerGravity;
-							cout << tThisWorld.atPathPlanining[nCurrentEntity].startingNode<<"start"<<std::endl;
+							/*cout << tThisWorld.atPathPlanining[nCurrentEntity].startingNode<<"start"<<std::endl;
 							cout << tThisWorld.atPathPlanining[nCurrentEntity].Goal<<"goal"<<std::endl;
 
 							cout << "AITRYINGTOMOVE" << nCurrentEntity << std::endl;
-							cout << tThisWorld.atPathPlanining[nCurrentEntity].pauseMovement;
+							cout << tThisWorld.atPathPlanining[nCurrentEntity].pauseMovement;*/
 							if(tThisWorld.atPathPlanining[nCurrentEntity].startingNode!= tThisWorld.atPathPlanining[nCurrentEntity].Goal&&tThisWorld.atPathPlanining[nCurrentEntity].pauseMovement==false)
 							pcAiSystem->PathPlaningMovement(&tThisWorld.atPathPlanining[nCurrentEntity], &tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, fpsTimer.GetDelta());
 							else {
-								cout << " penguin " << std::endl;
+							//	cout << " penguin " << std::endl;
 							}
 						}
 						else
