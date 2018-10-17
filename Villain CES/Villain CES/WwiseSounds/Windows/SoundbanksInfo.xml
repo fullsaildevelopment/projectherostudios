@@ -75,6 +75,8 @@
 			<Path>Augur_SFX.bnk</Path>
 			<IncludedEvents>
 				<Event Id="3280679725" Name="Play_AmmoDepleted" ObjectPath="\Events\Default Work Unit\Play_AmmoDepleted"/>
+				<Event Id="1306210889" Name="Play_Extract" ObjectPath="\Events\Default Work Unit\Play_Extract"/>
+				<Event Id="2639148008" Name="Play_Heal" ObjectPath="\Events\Default Work Unit\Play_Heal"/>
 				<Event Id="2244627757" Name="Play_HoverSound" ObjectPath="\Events\Default Work Unit\Play_HoverSound"/>
 				<Event Id="2189107751" Name="Play_Hurt_Human" ObjectPath="\Events\Default Work Unit\Play_Hurt_Human"/>
 				<Event Id="3600088999" Name="Play_Hurt_Scylian" ObjectPath="\Events\Default Work Unit\Play_Hurt_Scylian"/>
@@ -94,6 +96,10 @@
 					<ShortName>Walking-Firm.wav</ShortName>
 					<Path>SFX\Walking-Firm_56D34C19.wem</Path>
 				</File>
+				<File Id="162605886" Language="SFX">
+					<ShortName>CaelisHeal_SFX.wav</ShortName>
+					<Path>SFX\CaelisHeal_SFX_56D34C19.wem</Path>
+				</File>
 				<File Id="214970038" Language="SFX">
 					<ShortName>Scyllian Death Cry.wav</ShortName>
 					<Path>SFX\Scyllian Death Cry_56D34C19.wem</Path>
@@ -109,6 +115,10 @@
 				<File Id="654863545" Language="SFX">
 					<ShortName>Menu Tick.wav</ShortName>
 					<Path>SFX\Menu Tick_56D34C19.wem</Path>
+				</File>
+				<File Id="697282732" Language="SFX">
+					<ShortName>MaterialGun_Analyze (1) (online-audio-converter.com).wav</ShortName>
+					<Path>SFX\MaterialGun_Analyze (1) (online-audio-converter.com)_56D34C19.wem</Path>
 				</File>
 				<File Id="709819371" Language="SFX">
 					<ShortName>Flintlock Fired.wav</ShortName>

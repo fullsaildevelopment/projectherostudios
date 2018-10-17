@@ -106,14 +106,17 @@ public:
 	AkGameObjectID m_WalkSound;
 	AkGameObjectID m_HoverSound;
 	AkGameObjectID m_GunEmpty;
+	AkGameObjectID m_Extract;
+	AkGameObjectID m_Heal;
 	AkGameObjectID m_Story1;
 	AkGameObjectID m_Story2;
 	AkGameObjectID m_Story3;
 	AkGameObjectID m_Story4;
-	bool playOnce1 = false;
-	bool playOnce2 = false;
-	bool playOnce3 = false;
-	bool playOnce4 = false;
+	bool m_playOnce1 = false;
+	bool m_playOnce2 = false;
+	bool m_playOnce3 = false;
+	bool m_playOnce4 = false;
+	bool m_BeamSoundOn = false;
 	AkBankID m_SFX_bnkID;
 	AkBankID m_Story_bnkID;
 private:

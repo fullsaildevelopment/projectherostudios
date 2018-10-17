@@ -454,6 +454,8 @@ void CGameMangerSystem::InitializeMainMenu()
 		pcAudioSystem->UnRegisterGameObj(pcAudioSystem->m_Scylian_Hurt);
 		pcAudioSystem->UnRegisterGameObj(pcAudioSystem->m_GunEmpty);
 		pcAudioSystem->UnRegisterGameObj(pcAudioSystem->m_WalkSound);
+		pcAudioSystem->UnRegisterGameObj(pcAudioSystem->m_Extract);
+		pcAudioSystem->UnRegisterGameObj(pcAudioSystem->m_Heal);
 		pcAudioSystem->RegisterGameObj(pcAudioSystem->m_AkMainMenuMusic);
 		soundOff = false;
 	}
@@ -462,10 +464,10 @@ void CGameMangerSystem::InitializeMainMenu()
 		pcAudioSystem->RegisterGameObj(pcAudioSystem->m_HoverSound);
 		pcAudioSystem->RegisterGameObj(pcAudioSystem->m_AkMainMenuMusic);
 	}
-	pcAudioSystem->playOnce1 = false;
-	pcAudioSystem->playOnce2 = false;
-	pcAudioSystem->playOnce3 = false;
-	pcAudioSystem->playOnce4 = false;
+	pcAudioSystem->m_playOnce1 = false;
+	pcAudioSystem->m_playOnce2 = false;
+	pcAudioSystem->m_playOnce3 = false;
+	pcAudioSystem->m_playOnce4 = false;
 	pcAudioSystem->SendSoundsToEngine(AK::EVENTS::PLAY_MAIN_MENU_MUSIC, pcAudioSystem->m_AkMainMenuMusic);
 #endif
 	
@@ -764,32 +766,32 @@ int CGameMangerSystem::LoadStory()
 				tUIPixelBuffer.hoverColor = XMFLOAT4(0, 0, 0, 0);
 			}
 #if MUSIC_ON
-			if (loadingImage == 0 && pcAudioSystem->playOnce1 == false)
+			if (loadingImage == 0 && pcAudioSystem->m_playOnce1 == false)
 			{
 
 				AK::SoundEngine::StopAll();
 				pcAudioSystem->SendSoundsToEngine(AK::EVENTS::PLAY_STORY_1, pcAudioSystem->m_Story1);
-				pcAudioSystem->playOnce1 = true;
+				pcAudioSystem->m_playOnce1 = true;
 			}
-			else if (loadingImage == 1 && pcAudioSystem->playOnce2 == false)
+			else if (loadingImage == 1 && pcAudioSystem->m_playOnce2 == false)
 			{
 				AK::SoundEngine::StopAll();
 				pcAudioSystem->SendSoundsToEngine(AK::EVENTS::PLAY_STORY_2, pcAudioSystem->m_Story2);
-				pcAudioSystem->playOnce2 = true;
+				pcAudioSystem->m_playOnce2 = true;
 
 			}
-			else if (loadingImage == 2 && pcAudioSystem->playOnce3 == false)
+			else if (loadingImage == 2 && pcAudioSystem->m_playOnce3 == false)
 			{
 				AK::SoundEngine::StopAll();
 				pcAudioSystem->SendSoundsToEngine(AK::EVENTS::PLAY_STORY_3, pcAudioSystem->m_Story3);
-				pcAudioSystem->playOnce3 = true;
+				pcAudioSystem->m_playOnce3 = true;
 
 			}
-			else if (loadingImage == 3 && pcAudioSystem->playOnce4 == false)
+			else if (loadingImage == 3 && pcAudioSystem->m_playOnce4 == false)
 			{
 				AK::SoundEngine::StopAll();
 				pcAudioSystem->SendSoundsToEngine(AK::EVENTS::PLAY_STORY_4, pcAudioSystem->m_Story4);
-				pcAudioSystem->playOnce4 = true;
+				pcAudioSystem->m_playOnce4 = true;
 
 			}
 #endif
@@ -4646,6 +4648,8 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 		pcAudioSystem->RegisterGameObj(pcAudioSystem->m_Scylian_Hurt);
 		pcAudioSystem->RegisterGameObj(pcAudioSystem->m_GunEmpty);
 		pcAudioSystem->RegisterGameObj(pcAudioSystem->m_WalkSound);
+		pcAudioSystem->RegisterGameObj(pcAudioSystem->m_Extract);
+		pcAudioSystem->RegisterGameObj(pcAudioSystem->m_Heal);
 		soundOff = true;
 	}
 	
@@ -4850,7 +4854,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	tThisWorld.atAABB[GunIndexForClayton].m_IndexLocation = GunIndexForClayton;
 	pcCollisionSystem->AddAABBCollider(tThisWorld.atAABB[GunIndexForClayton], GunIndexForClayton);
 
-	gunImport = pcGraphicsSystem->ReadMesh("meshData_CaelisGun.txt");
+	gunImport = pcGraphicsSystem->ReadMesh("meshData_CaelisGun.txt"); 
 
 	for (int meshIndex = 0; meshIndex < gunImport.meshCount; ++meshIndex)
 	{
@@ -7540,7 +7544,7 @@ int CGameMangerSystem::RealLevelUpdate()
 		m_d3d_ResultMatrix, m_d3dCalytonMatrix, m_d3dOffsetMatrix, m_d3dWorldMatrix,
 		tMyVertexBufferTemp.m_d3dViewMatrix, tTempVertexBuffer.m_d3dViewMatrix,
 		tTempPixelBuffer.m_d3dCollisionColor, delta, pcAudioSystem, tThisWorld.atClayton[PlayerStartIndex], tThisWorld.atRigidBody[PlayerStartIndex].velocity, m_d3dCaelisMatrix, PlayerStartIndex
-	,CaelisIndex, ClaytonIndex,tThisWorld.atCaelis[CaelisIndex]);
+	,CaelisIndex, ClaytonIndex,tThisWorld.atCaelis[CaelisIndex], pcAudioSystem);
 	
 #endif // INPUT_ABSTRACTED_ON
 	pcGraphicsSystem->UpdateD3D();
@@ -7674,6 +7678,10 @@ int CGameMangerSystem::RealLevelUpdate()
 					pcGraphicsSystem->ExecutePipeline(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atDebugMesh[nCurrentEntity].m_nVertexCount, tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask, tThisWorld.atShaderID[nCurrentEntity].m_nShaderID);
 				}
 			}
+#if MUSIC_ON
+			
+			
+#endif
 			//Extraction Beam & related functions are here - ZFB
 			if ((pcInputSystem->InputCheck(G_KEY_Q) == 1 
 				&& tCameraMode.bAimMode == true 
@@ -7682,6 +7690,7 @@ int CGameMangerSystem::RealLevelUpdate()
 				//Get Gun Matrix position 
 				atBeamVerts.clear();
 				tThisWorld.atDebugMesh[nCurrentEntity].m_VertexData.clear();
+
 				XMVECTOR unProjectedFar = XMVectorSet(0, 0, 1, 1);
 
 				XMMATRIX t1 = XMMatrixMultiply(XMMatrixTranslation(0, 0, 150), aimCamera->d3d_Position);
@@ -7714,7 +7723,15 @@ int CGameMangerSystem::RealLevelUpdate()
 
 				pcGraphicsSystem->InitLineShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, m_d3dViewMatrix, m_d3dProjectionMatrix, tThisWorld.atDebugMesh[nCurrentEntity], aimCamera->d3d_Position, atBeamVerts, particleSRV);
 				pcGraphicsSystem->ExecutePipeline(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atDebugMesh[ExtractionBeamIndex].m_nVertexCount, tThisWorld.atGraphicsMask[ExtractionBeamIndex].m_tnGraphicsMask, tThisWorld.atShaderID[ExtractionBeamIndex].m_nShaderID);
+#if MUSIC_ON
+				if (pcInputSystem->InputCheck(G_KEY_Q) == 1 && pcAudioSystem->m_BeamSoundOn == false)
+				{
+					pcAudioSystem->SendSoundsToEngine(AK::EVENTS::PLAY_EXTRACT, pcAudioSystem->m_Extract);
+					pcAudioSystem->m_BeamSoundOn = true;
 
+				}
+				
+#endif
 			}
 			else if (nCurrentEntity == ExtractionBeamIndex)
 			{
@@ -7743,6 +7760,10 @@ int CGameMangerSystem::RealLevelUpdate()
 
 				pcGraphicsSystem->InitLineShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atWorldMatrix[ExtractionBeamIndex].worldMatrix, m_d3dViewMatrix, m_d3dProjectionMatrix, tThisWorld.atDebugMesh[ExtractionBeamIndex], aimCamera->d3d_Position, atBeamVerts, particleSRV);
 				pcGraphicsSystem->ExecutePipeline(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atDebugMesh[ExtractionBeamIndex].m_nVertexCount, tThisWorld.atGraphicsMask[ExtractionBeamIndex].m_tnGraphicsMask, tThisWorld.atShaderID[ExtractionBeamIndex].m_nShaderID);
+			}
+			 if (pcInputSystem->InputCheck(G_KEY_Q) == 0 && pcAudioSystem->m_BeamSoundOn == true)
+			{
+				pcAudioSystem->m_BeamSoundOn = false;
 			}
 		}
 		
@@ -8523,6 +8544,7 @@ int CGameMangerSystem::RealLevelUpdate()
 			{
 				tThisWorld.atClip[nCurrentEntity].fShootingCoolDown -= fpsTimer.GetDelta() * 100;
 			}
+
 			if (tThisWorld.atPathPlanining[tThisWorld.atClip[nCurrentEntity].gunHolder].movementPausedTimer > 0) {
 				tThisWorld.atPathPlanining[tThisWorld.atClip[nCurrentEntity].gunHolder].movementPausedTimer -= fpsTimer.GetDelta() * 100;
 			}
