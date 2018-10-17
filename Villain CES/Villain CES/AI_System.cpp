@@ -547,6 +547,11 @@ bool CAISystem::GetCanWechooseShooter()
 	return chooseAnotherShooter;
 }
 
+void CAISystem::SetCanWeChooseShooter(bool _chooseAnotherShooter)
+{
+	chooseAnotherShooter = _chooseAnotherShooter;
+}
+
 void CAISystem::SetActiveShooter(int activeSHooter)
 {
 	CurrentShooter = activeSHooter;
@@ -612,6 +617,11 @@ void CAISystem::RemoveeShootingActiveAI(int aiEnitity)
 	}
 
 	//ShootingActiveAI.push_back(aiEnitity);
+}
+
+void CAISystem::ClearShootingActiveAI()
+{
+	ShootingActiveAI.clear();
 }
 
 int CAISystem::GetActiveShooter()

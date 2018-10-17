@@ -40,11 +40,42 @@
 				</File>
 			</IncludedMemoryFiles>
 		</SoundBank>
+		<SoundBank Id="2376717261" Language="SFX">
+			<ObjectPath>\SoundBanks\Default Work Unit\Augur_Story</ObjectPath>
+			<ShortName>Augur_Story</ShortName>
+			<Path>Augur_Story.bnk</Path>
+			<IncludedEvents>
+				<Event Id="877548213" Name="Play_Story_1" ObjectPath="\Events\Default Work Unit\Play_Story_1"/>
+				<Event Id="877548214" Name="Play_Story_2" ObjectPath="\Events\Default Work Unit\Play_Story_2"/>
+				<Event Id="877548215" Name="Play_Story_3" ObjectPath="\Events\Default Work Unit\Play_Story_3"/>
+				<Event Id="877548208" Name="Play_Story_4" ObjectPath="\Events\Default Work Unit\Play_Story_4"/>
+			</IncludedEvents>
+			<IncludedMemoryFiles>
+				<File Id="61659941" Language="SFX">
+					<ShortName>Image_1.wav</ShortName>
+					<Path>SFX\Image_1_56D34C19.wem</Path>
+				</File>
+				<File Id="100634698" Language="SFX">
+					<ShortName>Image_2.wav</ShortName>
+					<Path>SFX\Image_2_56D34C19.wem</Path>
+				</File>
+				<File Id="784929343" Language="SFX">
+					<ShortName>Image_4.wav</ShortName>
+					<Path>SFX\Image_4_56D34C19.wem</Path>
+				</File>
+				<File Id="972710559" Language="SFX">
+					<ShortName>Image_3.wav</ShortName>
+					<Path>SFX\Image_3_56D34C19.wem</Path>
+				</File>
+			</IncludedMemoryFiles>
+		</SoundBank>
 		<SoundBank Id="2726633543" Language="SFX">
 			<ObjectPath>\SoundBanks\Default Work Unit\Augur_SFX</ObjectPath>
 			<ShortName>Augur_SFX</ShortName>
 			<Path>Augur_SFX.bnk</Path>
 			<IncludedEvents>
+				<Event Id="3280679725" Name="Play_AmmoDepleted" ObjectPath="\Events\Default Work Unit\Play_AmmoDepleted"/>
+				<Event Id="2244627757" Name="Play_HoverSound" ObjectPath="\Events\Default Work Unit\Play_HoverSound"/>
 				<Event Id="2189107751" Name="Play_Hurt_Human" ObjectPath="\Events\Default Work Unit\Play_Hurt_Human"/>
 				<Event Id="3600088999" Name="Play_Hurt_Scylian" ObjectPath="\Events\Default Work Unit\Play_Hurt_Scylian"/>
 				<Event Id="532216254" Name="Play_Laser_Fire" ObjectPath="\Events\Default Work Unit\Play_Laser_Fire"/>
@@ -55,6 +86,10 @@
 				<Event Id="1589278981" Name="Play_Walk" ObjectPath="\Events\Default Work Unit\Play_Walk"/>
 			</IncludedEvents>
 			<IncludedMemoryFiles>
+				<File Id="26377840" Language="SFX">
+					<ShortName>Gun Analyzing.wav</ShortName>
+					<Path>SFX\Gun Analyzing_56D34C19.wem</Path>
+				</File>
 				<File Id="61846357" Language="SFX">
 					<ShortName>Walking-Firm.wav</ShortName>
 					<Path>SFX\Walking-Firm_56D34C19.wem</Path>
@@ -66,6 +101,10 @@
 				<File Id="245692687" Language="SFX">
 					<ShortName>Scyllian Growl 2 (Deeper).wav</ShortName>
 					<Path>SFX\Scyllian Growl 2 (Deeper)_56D34C19.wem</Path>
+				</File>
+				<File Id="303155662" Language="SFX">
+					<ShortName>Glass Reload.wav</ShortName>
+					<Path>SFX\Glass Reload_56D34C19.wem</Path>
 				</File>
 				<File Id="654863545" Language="SFX">
 					<ShortName>Menu Tick.wav</ShortName>

@@ -76,7 +76,9 @@ public:
 	bool ActiveShooterCheck(int AiIndex, float cooldownofGun);
 	int ChooseRandomSHooter();
 	bool GetCanWechooseShooter();
+	void SetCanWeChooseShooter(bool _chooseAnotherShooter);
 	void SetActiveShooter(int activeSHooter);
+	void ClearShootingActiveAI();
 	bool chooseAnotherShooter = true;
 private:
 

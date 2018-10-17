@@ -24,6 +24,7 @@
 #define INIT_BNK L"Init.bnk"
 #define MAINMENU_BNK L"Augur_MusicBank.bnk"
 #define SFX L"Augur_SFX.bnk"
+#define STORY_BNK L"Augur_Story.bnk"
 //#define AK_OPTIMIZED
 //#ifndef AK_OPTIMIZED
 //// Only needed for debug mode
@@ -101,10 +102,20 @@ public:
 	AkGameObjectID m_AkMetalFired;
 	AkGameObjectID m_Laser_Fire;
 	AkGameObjectID m_Human_Hurt;
-	AkGameObjectID m_Syclian_Death;
 	AkGameObjectID m_Scylian_Hurt;
 	AkGameObjectID m_WalkSound;
+	AkGameObjectID m_HoverSound;
+	AkGameObjectID m_GunEmpty;
+	AkGameObjectID m_Story1;
+	AkGameObjectID m_Story2;
+	AkGameObjectID m_Story3;
+	AkGameObjectID m_Story4;
+	bool playOnce1 = false;
+	bool playOnce2 = false;
+	bool playOnce3 = false;
+	bool playOnce4 = false;
 	AkBankID m_SFX_bnkID;
+	AkBankID m_Story_bnkID;
 private:
 	CAkFilePackageLowLevelIOBlocking * m_LowIOHook;
 };

@@ -63,6 +63,8 @@ public:
 		XMMATRIX m_d3dWorldMatrix;
 		XMMATRIX m_d3dViewMatrix;
 		XMMATRIX m_d3dProjectionMatrix;
+
+		XMFLOAT4 m_d3dColor;
 	};
 
 	struct TAnimatedVertexBufferType
