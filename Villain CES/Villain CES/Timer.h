@@ -66,6 +66,7 @@ public:
 	void Restart();
 
 	void StableFrameRate();
+	double GetTotalTime();
 private:
  int m_framesPassed;
  double m_startTime;

@@ -6162,6 +6162,8 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 
 	pcGraphicsSystem->CreateBuffers(&tThisWorld);
 
+	moveTime = 0;
+	bNoMoving = true;
 	loading = true;
 	fpsTimer.Restart();
 	fpsTimer.Init_FPSReader();
@@ -9004,14 +9006,19 @@ int CGameMangerSystem::RealLevelUpdate()
 	clickTime += delta;
 	lerpTime += delta;
 	hitmarkerTime += delta;
-
 	tThisWorld.atCaelis[CaelisIndex].m_tfSpecialCooldown -= delta * 10;
+	moveTime += delta;
+
+	if (moveTime > 1 && bNoMoving)
+	{
+		bNoMoving = false;
+	}
 
 	pcUISystem->UpdateFPS(&tThisWorld, pcGraphicsSystem, fpsTimer, fpsIndex, tUIVertexBuffer, tUIPixelBuffer, atUIVertices, menuCamera);
 
 	pcGraphicsSystem->m_pd3dSwapchain->Present(0, 0);
 	zValue += 0.001;
-	bNoMoving = false;
+	//bNoMoving = false;
 	return 14;
 }
 

@@ -378,11 +378,11 @@ XMMATRIX CInputSystem::CharacterMovement(XMMATRIX d3dplayerMatrix, double delta,
 	XMVECTOR d3d_newX, d3d_newY, d3d_existingZ;
 	d3dTmpViewM = d3dplayerMatrix;
 	bool keyPressed = false;
-	
+
 	if (fXchange > 0.5f || fYchange > 0.5f || fXchange < -0.5f || fYchange < -0.5f)
 	{
 		d3dRotation = XMMatrixRotationY(fXchange * m_fMouseRotationSpeed);
-		
+
 		d3dTmpViewM = XMMatrixMultiply(d3dRotation, d3dTmpViewM);
 		d3d_existingZ = d3dTmpViewM.r[2];
 		d3d_newX = XMVector3Cross(XMVectorSet(0, 1, 0, 0), d3d_existingZ);
@@ -396,77 +396,79 @@ XMMATRIX CInputSystem::CharacterMovement(XMMATRIX d3dplayerMatrix, double delta,
 		d3dTmpViewM.r[1] = d3d_newY;
 		d3dTmpViewM.r[2] = d3d_existingZ;
 	}
-	
+
 
 	//Forward && Back Movement
 
 	// up key movement
-
-	if (InputCheck(G_KEY_W) == 1) 
+	if (!move)
 	{
-		d3dMovementM = XMMatrixTranslation(0, 0, m_fMouseMovementSpeed * delta);
-		d3dTmpViewM = XMMatrixMultiply(d3dMovementM, d3dTmpViewM);
-		stepCount++;
-		keyPressed = true;
-	}
-	// down key movement
-	if (InputCheck(G_KEY_S) == 1)
-	{
-		d3dMovementM = XMMatrixTranslation(0, 0, -m_fMouseMovementSpeed * delta);
-
-		d3dTmpViewM = XMMatrixMultiply(d3dMovementM, d3dTmpViewM);
-		keyPressed = true;
-		stepCount++;
-	}
-	// left key movement
-	if (InputCheck(G_KEY_A) == 1)
-	{
-		d3dMovementM = XMMatrixTranslation(-m_fMouseMovementSpeed * delta, 0, 0);
-		d3dTmpViewM = XMMatrixMultiply(d3dMovementM, d3dTmpViewM);
-		keyPressed = true;
-		stepCount++;
-
-	}
-	// right key movement
-	if (InputCheck(G_KEY_D) == 1) 
-	{
-		d3dMovementM = XMMatrixTranslation(m_fMouseMovementSpeed * delta, 0, 0);
-		d3dTmpViewM = XMMatrixMultiply(d3dMovementM, d3dTmpViewM);
-		keyPressed = true;
-		stepCount++;
-	}
-	if (InputCheck(G_KEY_SPACE) == 1 && clayton.jumpTime > 0 && playerVeclocity.m128_f32[1] > -.1)
-	{
-		d3dMovementM = XMMatrixTranslation(0, m_fMouseMovementSpeed * delta, 0);
-		d3dTmpViewM = XMMatrixMultiply(d3dMovementM, d3dTmpViewM);
-		keyPressed = true;
-		stepCount++;
-
-		clayton.jumpTime -= delta;
-
-		if (clayton.jumpTime <= 0)
+		if (InputCheck(G_KEY_W) == 1)
 		{
-			clayton.jumpCooldown = .6;
+			d3dMovementM = XMMatrixTranslation(0, 0, m_fMouseMovementSpeed * delta);
+			d3dTmpViewM = XMMatrixMultiply(d3dMovementM, d3dTmpViewM);
+			stepCount++;
+			keyPressed = true;
 		}
-	}
-	else if (InputCheck(G_KEY_SPACE) == 0 && clayton.jumpTime > 0)
-	{
-		if (clayton.jumpTime < .5)
+		// down key movement
+		if (InputCheck(G_KEY_S) == 1)
 		{
-			clayton.jumpTime += delta;
-		}
-	}
+			d3dMovementM = XMMatrixTranslation(0, 0, -m_fMouseMovementSpeed * delta);
 
-	if (keyPressed == true && stepCount == 20)
-	{
+			d3dTmpViewM = XMMatrixMultiply(d3dMovementM, d3dTmpViewM);
+			keyPressed = true;
+			stepCount++;
+		}
+		// left key movement
+		if (InputCheck(G_KEY_A) == 1)
+		{
+			d3dMovementM = XMMatrixTranslation(-m_fMouseMovementSpeed * delta, 0, 0);
+			d3dTmpViewM = XMMatrixMultiply(d3dMovementM, d3dTmpViewM);
+			keyPressed = true;
+			stepCount++;
+
+		}
+		// right key movement
+		if (InputCheck(G_KEY_D) == 1)
+		{
+			d3dMovementM = XMMatrixTranslation(m_fMouseMovementSpeed * delta, 0, 0);
+			d3dTmpViewM = XMMatrixMultiply(d3dMovementM, d3dTmpViewM);
+			keyPressed = true;
+			stepCount++;
+		}
+		if (InputCheck(G_KEY_SPACE) == 1 && clayton.jumpTime > 0 && playerVeclocity.m128_f32[1] > -.1)
+		{
+			d3dMovementM = XMMatrixTranslation(0, m_fMouseMovementSpeed * delta, 0);
+			d3dTmpViewM = XMMatrixMultiply(d3dMovementM, d3dTmpViewM);
+			keyPressed = true;
+			stepCount++;
+
+			clayton.jumpTime -= delta;
+
+			if (clayton.jumpTime <= 0)
+			{
+				clayton.jumpCooldown = .6;
+			}
+		}
+		else if (InputCheck(G_KEY_SPACE) == 0 && clayton.jumpTime > 0)
+		{
+			if (clayton.jumpTime < .5)
+			{
+				clayton.jumpTime += delta;
+			}
+		}
+
+		if (keyPressed == true && stepCount == 20)
+		{
 #if MUSIC_ON
-		in_Audio->SendSoundsToEngine(AK::EVENTS::PLAY_WALK, in_Audio->m_WalkSound);
-		stepCount = 0;
+			in_Audio->SendSoundsToEngine(AK::EVENTS::PLAY_WALK, in_Audio->m_WalkSound);
+			stepCount = 0;
 #endif
-	}
-	if (stepCount > 20)
-	{
-		stepCount = 0;
+		}
+		if (stepCount > 20)
+		{
+			stepCount = 0;
+		}
 	}
 	return d3dTmpViewM;
 }

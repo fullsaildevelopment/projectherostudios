@@ -151,6 +151,7 @@ private:
 	float lerpTime;
 	float blinkTime;
 	float timeOutTime;
+	float moveTime;
 
 	POINT startDragPoint;
 	POINT dragPoint;
