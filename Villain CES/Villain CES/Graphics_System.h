@@ -15,6 +15,8 @@
 #include "AnimatedVertexShader.csh"
 #include "AnimatedPixelShader.csh"
 #include "LinePixelShader.csh"
+#include "LineVertexShader.csh"
+
 class CGraphicsSystem
 {
 public:
@@ -157,11 +159,11 @@ public:
 	void InitAnimShaderData(ID3D11DeviceContext * pd3dDeviceContext, TAnimatedVertexBufferType d3dVertexBuffer, TMesh tSimpleMesh, XMMATRIX CameraMatrix);
 	void InitMyShaderData(ID3D11DeviceContext * pd3dDeviceContext, TMyVertexBufferType d3dVertexBuffer, TMesh tSimpleMesh, XMMATRIX CameraMatrix);
 	void InitUIShaderData(ID3D11DeviceContext * pd3dDeviceContext, TUIVertexBufferType d3dVertexBuffer, TUIPixelBufferType d3dPixelBuffer, TMesh tMesh, XMMATRIX CameraMatrix);
-	void InitLineShaderData(ID3D11DeviceContext * pd3dDeviceContext, XMMATRIX d3dWorldMatrix, XMMATRIX d3dViewMatrix, XMMATRIX d3dProjectionMatrix, TDebugMesh tDebugMesh, XMMATRIX CameraMatrix, std::vector<TPrimalVert> m_verts);
+	void InitLineShaderData(ID3D11DeviceContext * pd3dDeviceContext, XMMATRIX d3dWorldMatrix, XMMATRIX d3dViewMatrix, XMMATRIX d3dProjectionMatrix, TDebugMesh tDebugMesh, XMMATRIX CameraMatrix, std::vector<TPrimalVert> m_verts, ID3D11ShaderResourceView * ParticleTexture);
 	void ExecutePipeline(ID3D11DeviceContext *pd3dDeviceContext, int m_nIndexCount, int nGraphicsMask, int nShaderID);
 	void UpdateBuffer(TWorld * ptWorld, std::vector<TSimpleMesh> vtVertexVector, int nEntity, int nMask);
-	void UpdateLineVTBuffer(TWorld * ptWorld, TDebugMesh debugMesh, int nEntity, int nMask);
-	void StoreBeamPoints(XMFLOAT3 startPoint, XMFLOAT4 endPoint, std::vector<TPrimalVert> &BeamPoints);
+	void UpdateLineVTBuffer(D3D11_BUFFER_DESC* bufDesc, ID3D11Buffer* &vertexBuffer, std::vector<TPrimalVert> lineVector);
+	void StoreBeamPoints(XMFLOAT3 startPoint, XMFLOAT3 endPoint, std::vector<TPrimalVert> &BeamPoints, float timeScroll);
 	ImporterData ReadMesh(const char * input_file_path);
 	XMVECTOR GetCameraPos();
 	XMMATRIX SetDefaultCameraMatrix();
@@ -189,6 +191,7 @@ private:
 	ID3D11Buffer		*m_pd3dLineVTConstantBuffer;
 	ID3D11InputLayout	*m_pd3dLineInputLayout;
 	ID3D11PixelShader	*m_pd3dLinePixelShader;
+	ID3D11VertexShader	*m_pd3dLineVertexShader;
 
 	//ID3D11Buffer		*m_pd3dLinePixelBuffer;
 
@@ -227,4 +230,5 @@ private:
 	float				m_fNewY;
 	float				m_fMouseRotationSpeed;
 	float				m_fMouseMovementSpeed;
+
 };

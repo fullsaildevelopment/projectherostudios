@@ -121,7 +121,7 @@ private:
 	float prevHealth = 0;
 	float fallingHealth = 0;
 	float hitmarkerTime = 1;
-
+	float uvScroll = 0.0f;
 	int loadingImage = 0;
 	int loadingImageIndex = -1;
 	int loadingTextIndex = -1;
@@ -138,6 +138,7 @@ private:
 
 	int claytonFrustumIndex = -1;
 
+
 #define SAVE_INDEX 96
 #define LOAD_INDEX 97
 #define OPTIONS_INDEX 98
@@ -145,6 +146,8 @@ private:
 #define TIMEUNTILCLICK 0.25
 
 	ID3D11ShaderResourceView* fontTexture = nullptr;
+	ID3D11ShaderResourceView* materialGunProjectileSRV = nullptr;
+	ID3D11ShaderResourceView* particleSRV = nullptr;
 	std::vector<TUIVert*> atUIVertices;
 	std::vector<short*> atUIIndices;
 	CFPS fpsTimer;
