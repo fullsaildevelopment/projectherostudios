@@ -7329,7 +7329,11 @@ int CGameMangerSystem::RealLevelUpdate()
 			if (tThisWorld.atProjectiles[nCurrentEntity].m_tnProjectileMask == (COMPONENT_PROJECTILESMASK | COMPONENT_RAYGUN))
 			{
 				float CloseEstObject = 10000000000000000000.0f;
-				float* distanceCalucaltion = new float();
+				float distanceCalucaltion = 0;
+				XMVECTOR gunVector = XMVector3Transform(XMVectorZero(), tThisWorld.atWorldMatrix[GunIndexForPlayer].worldMatrix);
+				XMVECTOR intersectVector = XMVectorZero();
+				XMVECTOR diff = XMVectorZero();
+				
 				//ptr is the collided entity index compared to current entit index. - ZFB
 				for (list<TAABB>::iterator ptr = pcCollisionSystem->m_AAbb.begin(); ptr != pcCollisionSystem->m_AAbb.end(); ++ptr)
 				{
@@ -7342,16 +7346,36 @@ int CGameMangerSystem::RealLevelUpdate()
 								tThisWorld.atWorldMatrix[PlayerStartIndex].worldMatrix), *ptr
 						) == true)
 						{
-							std::cout << "Intersected Entity #:\t" << ptr->m_IndexLocation << "\n";
-							//CloseEstObject = *distanceCalucaltion;
-							tThisWorld.atClip[GunIndexForPlayer].currentMaterial = 0;
-							materialGunProjectileSRV = tThisWorld.atMesh[ptr->m_IndexLocation].m_d3dSRVDiffuse;
-							//tThisWorld.atClip[GunIndexForPlayer].colorofBullets = tThisWorld.atSimpleMesh[ptr->m_IndexLocation].m_nColor;
+							intersectVector = XMLoadFloat3(&(ptr->m_dMaxPointOrginal));
+							intersectVector = XMVector3Transform(intersectVector, tThisWorld.atWorldMatrix[ptr->m_IndexLocation].worldMatrix);
+							std::cout << "Gun Vector:\t";
+							for (int i = 0; i < 3; i++)
+							{
+								std::cout << gunVector.m128_f32[i] << ", ";
+							}
+							std::cout << "\n";
+
+							std::cout << "Intersect Vector:\t";
+							for (int i = 0; i < 3; i++)
+							{
+								std::cout << intersectVector.m128_f32[i] << ", ";
+							}
+							std::cout << "\n";
+
+							distanceCalucaltion = sqrt((gunVector.m128_f32[0] - intersectVector.m128_f32[0]) * (gunVector.m128_f32[0] - intersectVector.m128_f32[0]) +
+								(gunVector.m128_f32[1] - intersectVector.m128_f32[1]) * (gunVector.m128_f32[1] - intersectVector.m128_f32[1]) +
+								(gunVector.m128_f32[2] - intersectVector.m128_f32[2]) * (gunVector.m128_f32[2] - intersectVector.m128_f32[2]));
+							std::cout << "Intersected Entity #:\t" << ptr->m_IndexLocation << "\n\tDistance From Gun:\t" << distanceCalucaltion <<"\n";
+							if (CloseEstObject > distanceCalucaltion)
+							{
+								CloseEstObject = distanceCalucaltion;
+								materialGunProjectileSRV = tThisWorld.atMesh[ptr->m_IndexLocation].m_d3dSRVDiffuse;
+								//Make Load Sound
+							}
 						}
 
 					}
 				}
-				delete distanceCalucaltion;
 			}
 		}
 	
