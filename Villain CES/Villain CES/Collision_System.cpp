@@ -290,14 +290,11 @@ void CCollisionSystem::TestThreading(TWorld * ptWorld, int nCurrentEntity, CGrap
 									ptWorld->atAiHeath[otherCollisionsIndex[i]].heath = 0;
 									ptWorld->atActiveAI[otherCollisionsIndex[i]].active = false;
 									ptWorld->atAIVision[otherCollisionsIndex[i]].stopSearching = true;
-									//ptWorld->atAIVision[otherCollisionsIndex[i]].indexLookingAt = 0;
 
 									ptWorld->atClip[otherCollisionsIndex[i]].tryToShoot = false;
 									ptWorld->atClip[otherCollisionsIndex[i]].tryToReload = false;
 
 									ptWorld->atWorldMatrix[otherCollisionsIndex[i]].worldMatrix.r[3].m128_f32[1] -= 10;
-
-									//ptWorld->atRigidBody[otherCollisionsIndex[i]].gravity.m128_f32[1] = 0.0002;
 
 									//pcGraphicsSystem->CleanD3DObject(ptWorld, otherCollisionsIndex[i]);
 									//pcGraphicsSystem->CleanD3DObject(ptWorld, ptWorld->atAIMask[otherCollisionsIndex[i]].GunIndex);

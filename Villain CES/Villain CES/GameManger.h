@@ -174,7 +174,7 @@ private:
 	XMMATRIX m_d3dProjectionMatrix;
 	XMMATRIX m_d3dPlayerMatrix;
 	XMMATRIX m_d3dCaelisMatrix;
-	XMMATRIX m_d3dCalytonMatrix;
+	XMMATRIX m_d3dClaytonMatrix;
 
 	std::vector<TPrimalVert> atBeamVerts;
 
