@@ -135,7 +135,6 @@ private:
 	int dialogueIndex = -1;
 
 	int claytonFrustumIndex = -1;
-	int caelisIndex = -1;
 
 #define SAVE_INDEX 96
 #define LOAD_INDEX 97

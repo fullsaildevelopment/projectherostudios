@@ -596,8 +596,8 @@ int CGameMangerSystem::LoadStory()
 
 			tUIPixelBuffer.hoverColor = tThisWorld.atLabel[loadingTextIndex].color;
 
-			double scrollSpeed = .05;
-			pcUISystem->ScrollText(&tThisWorld, pcGraphicsSystem, loadingTextIndex, &atUIVertices, scrollSpeed * fpsTimer.GetDelta());
+			//double scrollSpeed = .05;
+			//pcUISystem->ScrollText(&tThisWorld, pcGraphicsSystem, loadingTextIndex, &atUIVertices, scrollSpeed * fpsTimer.GetDelta());
 
 			pcGraphicsSystem->InitUIShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tUIVertexBuffer, tUIPixelBuffer, tThisWorld.atMesh[loadingTextIndex], menuCamera->d3d_Position);
 			pcGraphicsSystem->ExecutePipeline(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atMesh[loadingTextIndex].m_nIndexCount, tThisWorld.atGraphicsMask[loadingTextIndex].m_tnGraphicsMask, tThisWorld.atShaderID[nCurrentEntity].m_nShaderID);
@@ -2174,6 +2174,17 @@ void CGameMangerSystem::InitializeHUD()
 		nThisEntity = createEntityReverse(&tThisWorld);
 		CreateUILabel(&tThisWorld, menuCamera->d3d_Position, 3, 1, -7, -8, &atUIVertices, nThisEntity, .15);
 		pcUISystem->AddBarToUI(&cApplicationWindow, &tThisWorld, nThisEntity, &XMFLOAT4(0, 0, 0, 1), nullptr);
+
+		pcUISystem->AddMaskToUI(&tThisWorld, nThisEntity, COMPONENT_HUD);
+	}
+
+	{
+		char valueToChange[] =
+		{ "CaelisAbilityCooldown" };
+
+		nThisEntity = createEntityReverse(&tThisWorld);
+		CreateUILabel(&tThisWorld, menuCamera->d3d_Position, 3, 1, -7, -9.1, &atUIVertices, nThisEntity, .1);
+		pcUISystem->AddBarToUI(&cApplicationWindow, &tThisWorld, nThisEntity, &XMFLOAT4(0, 0, 1, 1), valueToChange, ARRAYSIZE(valueToChange));
 
 		pcUISystem->AddMaskToUI(&tThisWorld, nThisEntity, COMPONENT_HUD);
 	}
@@ -6072,6 +6083,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 				MyAbb.m_IndexLocation = nCurrentEntity;
 				tThisWorld.atAABB[nCurrentEntity] = MyAbb;
 				pcCollisionSystem->AddAABBCollider(MyAbb, nCurrentEntity);
+
 				if (tThisWorld.atShaderID[nCurrentEntity].m_nShaderID == 20) {
 					vector<int> DoorPices;
 					DoorPices.push_back(nCurrentEntity-1);
@@ -6116,6 +6128,17 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 					pcCollisionSystem->AddAiVisioNCheck(MyAbb, nCurrentEntity);
 
 				}
+			}
+		}
+
+		if (tThisWorld.atProjectiles[nCurrentEntity].m_tnProjectileMask == (COMPONENT_PROJECTILESMASK | COMPONENT_CLIP))
+		{
+			if (tThisWorld.atMesh[nCurrentEntity].m_nVertexCount > tThisWorld.atDebugMesh[nCurrentEntity].m_nVertexCount)
+			{
+				TAABB MyAbb = pcCollisionSystem->createAABBS(tThisWorld.atMesh[nCurrentEntity].m_VertexData, tThisWorld.atAABB[nCurrentEntity]);
+				MyAbb.m_IndexLocation = nCurrentEntity;
+				tThisWorld.atAABB[nCurrentEntity] = MyAbb;
+				pcCollisionSystem->AddAABBCollider(MyAbb, nCurrentEntity);
 			}
 		}
 	}
@@ -7184,6 +7207,11 @@ void DoorEventChanger(int shaderID)
 
 int CGameMangerSystem::RealLevelUpdate()
 {
+	if (pcInputSystem->InputCheck(G_KEY_K))
+	{
+		tThisWorld.atClayton[PlayerStartIndex].health -= 1;
+	}
+
 	if (tThisWorld.atClayton[PlayerStartIndex].health <= 0 && !endInit)
 	{
 		GameOver = true;
@@ -7438,6 +7466,7 @@ int CGameMangerSystem::RealLevelUpdate()
 			}
 		}
 	}
+#pragma endregion
 
 #pragma region Switching Character Matrices
 	if (pcInputSystem->m_characterSwitch == true)
@@ -7468,7 +7497,7 @@ int CGameMangerSystem::RealLevelUpdate()
 #if INPUT_ABSTRACTED_ON
 	double delta = fpsTimer.GetDelta();
 
-	pcInputSystem->gameManagerCodeAbstracted(pcInputSystem->InputCheck(G_BUTTON_LEFT), pcInputSystem->InputCheck(G_BUTTON_MIDDLE), pcInputSystem->InputCheck(G_KEY_P), pcInputSystem->InputCheck(G_KEY_U), pcInputSystem->InputCheck(G_KEY_R),
+	pcInputSystem->gameManagerCodeAbstracted(pcInputSystem->InputCheck(G_BUTTON_LEFT), pcInputSystem->InputCheck(G_BUTTON_MIDDLE), pcInputSystem->InputCheck(G_KEY_P), pcInputSystem->InputCheck(G_KEY_U), pcInputSystem->InputCheck(G_KEY_R), pcInputSystem->InputCheck(G_KEY_E), 
 		cApplicationWindow, pcGraphicsSystem->ResetAimModeCameraOffset(),
 		tThisWorld.atClip[GunIndexForPlayer].GunMode, tThisWorld.atClip[GunIndexForPlayer].tryToShoot, tThisWorld.atClip[GunIndexForPlayer].tryToReload,
 		mouseUp, mouseDown, click,
@@ -7480,7 +7509,8 @@ int CGameMangerSystem::RealLevelUpdate()
 		walkCamera, aimCamera, debugCamera,
 		m_d3d_ResultMatrix, m_d3dPlayerMatrix, m_d3dOffsetMatrix, m_d3dWorldMatrix,
 		tMyVertexBufferTemp.m_d3dViewMatrix, tTempVertexBuffer.m_d3dViewMatrix,
-		tTempPixelBuffer.m_d3dCollisionColor, delta, pcAudioSystem, tThisWorld.atClayton[PlayerStartIndex], tThisWorld.atRigidBody[PlayerStartIndex].velocity);
+		tTempPixelBuffer.m_d3dCollisionColor, delta, pcAudioSystem, tThisWorld.atClayton[PlayerStartIndex], tThisWorld.atRigidBody[PlayerStartIndex].velocity,
+		tThisWorld.atCaelis[CaelisIndex]);
 #endif // INPUT_ABSTRACTED_ON
 	pcGraphicsSystem->UpdateD3D();
 
@@ -7522,12 +7552,6 @@ int CGameMangerSystem::RealLevelUpdate()
 #pragma endregion
 
 #endif // !INPUT_ABSTRACTED_ON
-
-	if (pcInputSystem->InputCheck(G_KEY_H) == 1)
-	{
-		tThisWorld.atWorldMatrix[934].worldMatrix.r[3].m128_f32[1] = -1;
-		tThisWorld.atRigidBody[934].velocity.m128_f32[1] = 0;
-	}
 
 	for (int nCurrentEntity = 0; nCurrentEntity < ENTITYCOUNT; nCurrentEntity++)
 	{
@@ -7818,7 +7842,7 @@ int CGameMangerSystem::RealLevelUpdate()
 
 						if (tThisWorld.atClayton[nCurrentEntity].jumpCooldown <= 0)
 						{
-							tThisWorld.atClayton[nCurrentEntity].jumpTime = 1;
+							tThisWorld.atClayton[nCurrentEntity].jumpTime = .5;
 						}
 					}
 				}
@@ -7936,30 +7960,33 @@ int CGameMangerSystem::RealLevelUpdate()
 					}
 				}
 				else if ((tThisWorld.atInputMask[nCurrentEntity].m_tnInputMask == (COMPONENT_CAELIS | COMPONENT_INPUTMASK) && PlayerStartIndex != CaelisIndex) ||
-						  tThisWorld.atInputMask[nCurrentEntity].m_tnInputMask == (COMPONENT_CLAYTON | COMPONENT_INPUTMASK) && PlayerStartIndex != ClaytonIndex)
+					tThisWorld.atInputMask[nCurrentEntity].m_tnInputMask == (COMPONENT_CLAYTON | COMPONENT_INPUTMASK) && PlayerStartIndex != ClaytonIndex)
 				{
-					if (tThisWorld.atInputMask[nCurrentEntity].m_tnInputMask == (COMPONENT_INPUTMASK | COMPONENT_CAELIS))
+					float distanceFromUser = pcAiSystem->CalculateDistanceMatrix(tThisWorld.atWorldMatrix[PlayerStartIndex].worldMatrix, tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix);
+
+					double tempDelta = fpsTimer.GetDelta();
+					double scaleBy = 0.3;
+
+					pcAiSystem->LookAtObject(tThisWorld.atWorldMatrix[PlayerStartIndex].worldMatrix, &tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix);
+
+					if (distanceFromUser >= 5)
 					{
-						float distanceFromUser = pcAiSystem->CalculateDistanceMatrix(tThisWorld.atWorldMatrix[PlayerStartIndex].worldMatrix, tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix);
-
-						double tempDelta = fpsTimer.GetDelta();
-						double scaleBy = 0.2;
-
-						pcAiSystem->LookAtObject(tThisWorld.atWorldMatrix[PlayerStartIndex].worldMatrix, &tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix);
-
-						if (distanceFromUser >= 5)
+						tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = XMMatrixMultiply(tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, XMMatrixTranslation((tThisWorld.atWorldMatrix[PlayerStartIndex].worldMatrix.r[3].m128_f32[0] - tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix.r[3].m128_f32[0]) * tempDelta * scaleBy, (tThisWorld.atWorldMatrix[PlayerStartIndex].worldMatrix.r[3].m128_f32[1] - tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix.r[3].m128_f32[1]) * tempDelta * scaleBy, (tThisWorld.atWorldMatrix[PlayerStartIndex].worldMatrix.r[3].m128_f32[2] - tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix.r[3].m128_f32[2]) * tempDelta * scaleBy));
+					
+						/*if (tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix.r[3].m128_f32[1] < -.5)
 						{
-							tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = XMMatrixMultiply(tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, XMMatrixTranslation((tThisWorld.atWorldMatrix[PlayerStartIndex].worldMatrix.r[3].m128_f32[0] - tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix.r[3].m128_f32[0]) * tempDelta * scaleBy, (tThisWorld.atWorldMatrix[PlayerStartIndex].worldMatrix.r[3].m128_f32[1] - tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix.r[3].m128_f32[1]) * tempDelta * scaleBy, (tThisWorld.atWorldMatrix[PlayerStartIndex].worldMatrix.r[3].m128_f32[2] - tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix.r[3].m128_f32[2]) * tempDelta * scaleBy));
-						}
-
-						tThisWorld.atAABB[nCurrentEntity] = pcCollisionSystem->updateAABB(tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, tThisWorld.atAABB[nCurrentEntity]);
+							tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix.r[3].m128_f32[1] = -.5;
+						}*/
 					}
+
+					tThisWorld.atAABB[nCurrentEntity] = pcCollisionSystem->updateAABB(tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, tThisWorld.atAABB[nCurrentEntity]);
 				}
 			}
 			if (pcCollisionSystem->aabb_to_frustum(tThisWorld.atAABB[nCurrentEntity], tThisWorld.atClaytonVision.eyes0))
 			{
 				if (tThisWorld.atProjectiles[nCurrentEntity].m_tnProjectileMask == (COMPONENT_PROJECTILESMASK | COMPONENT_METAL | COMPONENT_ENEMY))
 				{
+					// changes the color of the enemy bullets
 					tMyVertexBufferTemp.m_d3dColor = XMFLOAT4(1, 0, 0, 1);
 				}
 
@@ -7980,6 +8007,7 @@ int CGameMangerSystem::RealLevelUpdate()
 			
 				if (tThisWorld.atProjectiles[nCurrentEntity].m_tnProjectileMask == (COMPONENT_PROJECTILESMASK | COMPONENT_METAL | COMPONENT_ENEMY))
 				{
+					//changes the color back
 					tMyVertexBufferTemp.m_d3dColor = XMFLOAT4(0, 0, 0, 0);
 				}
 			}
@@ -8069,6 +8097,7 @@ int CGameMangerSystem::RealLevelUpdate()
 				//	pcAiSystem->LookAtObject(tThisWorld.atWorldMatrix[PlayerStartIndex].worldMatrix, &tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix);
 				}
 
+				pcCollisionSystem->updateAABB(tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, tThisWorld.atAABB[nCurrentEntity]);
 
 				float4x4 AiFrustum;
 				AiFrustum.row1.x = tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix.r[0].m128_f32[0];
@@ -8242,6 +8271,8 @@ int CGameMangerSystem::RealLevelUpdate()
 						// Metal Fired Sound in Here -ZFB
 						if (nCurrentEntity == GunIndexForPlayer)
 						{
+							pcCollisionSystem->updateAABB(tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, tThisWorld.atAABB[nCurrentEntity]);
+
 							foward.m128_f32[0] = 0;
 							foward.m128_f32[1] = 0;
 							foward.m128_f32[2] = 1;
@@ -8296,6 +8327,8 @@ int CGameMangerSystem::RealLevelUpdate()
 					}
 						else
 						{
+							pcCollisionSystem->updateAABB(tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, tThisWorld.atAABB[nCurrentEntity]);
+							
 							foward.m128_f32[0] = 0;
 							foward.m128_f32[1] = 0;
 							foward.m128_f32[2] = 1;
@@ -8919,7 +8952,7 @@ int CGameMangerSystem::RealLevelUpdate()
 
 			if (tThisWorld.atUIMask[nCurrentEntity].m_tnUIMask == (COMPONENT_UIMASK | COMPONENT_LABEL | COMPONENT_BAR | COMPONENT_HUD))
 			{
-				pcUISystem->UpdateHUDBars(&tThisWorld, nCurrentEntity, tUIVertexBuffer, screenWidth, PlayerStartIndex, GunIndexForPlayer);
+				pcUISystem->UpdateHUDBars(&tThisWorld, nCurrentEntity, tUIVertexBuffer, screenWidth, PlayerStartIndex, GunIndexForPlayer, CaelisIndex);
 
 				tUIPixelBuffer.hoverColor = tThisWorld.atBar[nCurrentEntity].backgroundColor;
 
@@ -8971,6 +9004,8 @@ int CGameMangerSystem::RealLevelUpdate()
 	clickTime += delta;
 	lerpTime += delta;
 	hitmarkerTime += delta;
+
+	tThisWorld.atCaelis[CaelisIndex].m_tfSpecialCooldown -= delta * 10;
 
 	pcUISystem->UpdateFPS(&tThisWorld, pcGraphicsSystem, fpsTimer, fpsIndex, tUIVertexBuffer, tUIPixelBuffer, atUIVertices, menuCamera);
 

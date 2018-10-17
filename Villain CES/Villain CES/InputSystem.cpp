@@ -2,7 +2,7 @@
 CInputSystem::CInputSystem()
 {
 	m_fMouseRotationSpeed = .0055f;
-	m_fMouseMovementSpeed = 3.0f;
+	m_fMouseMovementSpeed = 6.0f;
 	m_YRotationLimit = 0;
 	prev_X = prev_Y = fXchange = 0, fYchange = 0, fXEnd = 0, fYEnd = 0;
 	 m_Companion1 = m_Companion2 = stepCount = 0;
@@ -56,7 +56,7 @@ TCameraToggle CInputSystem::CameraModeListen(TCameraToggle tMyCam)
 }
 
 void CInputSystem::gameManagerCodeAbstracted(
-	const int nButtonLeft, const int nButtonMiddle, const int nKeyP, const int nKeyU, const int nKeyR,
+	const int nButtonLeft, const int nButtonMiddle, const int nKeyP, const int nKeyU, const int nKeyR, const int nKeyE, 
 	const HWND cApplicationWindow, const XMMATRIX d3dResetAimModeCameraOffset,
 	bool &bGunMode, bool &bTryToShoot, bool &bTryToReload,
 	bool &bMouseUp, bool &bMouseDown, bool &bClick,
@@ -68,7 +68,8 @@ void CInputSystem::gameManagerCodeAbstracted(
 	TCamera* tWalkCamera, TCamera* tAimCamera, TCamera* tDebugCamera,
 	XMMATRIX &d3dResultMatrix, XMMATRIX &d3dPlayerMatrix, XMMATRIX &d3dOffsetMatrix, XMMATRIX &d3dWorldMatrix,
 	XMMATRIX &tMyViewMatrix, XMMATRIX &tTempViewMatrix,
-	XMFLOAT4 &d3dCollisionColor, double &delta, CAudioSystem* in_Audio, TClayton &clayton, XMVECTOR &playerVeclocity)
+	XMFLOAT4 &d3dCollisionColor, double &delta, CAudioSystem* in_Audio, TClayton &clayton, XMVECTOR &playerVeclocity,
+	TCaelis &caelis)
 {
 	cHoverPoint = { -1, -1 };
 	//POINT hoverPoint;
@@ -124,6 +125,46 @@ void CInputSystem::gameManagerCodeAbstracted(
 		{
 			bPauseInit = false;
 			ShowCursor(false);
+		}
+	}
+
+	if (nKeyE && !bGameOver && !bGamePaused && caelis.m_tfSpecialCooldown <= 0)
+	{
+		clayton.health += caelis.healthGiven += 30 * delta;
+		caelis.healing = true;
+		caelis.m_tfSpecialCooldown = 100;
+	}
+	else if (!bGameOver && !bGamePaused && caelis.healing == true)
+	{
+		float amount = 50 * delta;
+
+		if (caelis.healthGiven + amount > 30)
+		{
+			float decreaseBy = caelis.healthGiven + amount - 30;
+
+			amount -= decreaseBy;
+
+			clayton.health += amount;
+			caelis.healthGiven += amount;
+		}
+		else
+		{
+			clayton.health += amount;
+			caelis.healthGiven += amount;
+		}
+
+		if (caelis.healthGiven >= 30)
+		{
+			caelis.healing = false;
+			caelis.healthGiven = 0;
+		}
+
+		if (clayton.health >= 100)
+		{
+			clayton.health = 100;
+
+			caelis.healing = false;
+			caelis.healthGiven = 0;
 		}
 	}
 
@@ -405,12 +446,12 @@ XMMATRIX CInputSystem::CharacterMovement(XMMATRIX d3dplayerMatrix, double delta,
 
 		if (clayton.jumpTime <= 0)
 		{
-			clayton.jumpCooldown = 1;
+			clayton.jumpCooldown = .6;
 		}
 	}
 	else if (InputCheck(G_KEY_SPACE) == 0 && clayton.jumpTime > 0)
 	{
-		if (clayton.jumpTime < 1)
+		if (clayton.jumpTime < .5)
 		{
 			clayton.jumpTime += delta;
 		}
