@@ -9314,6 +9314,13 @@ int CGameMangerSystem::ResetLevel()
 				{
 					PlayerStartIndex = nCurrentEntity;
 
+					GunIndexForPlayer = GunIndexForClayton;
+
+					wchar_t filePath[] =
+					{ L"UI_Textures.fbm/Material_Gun_Paint.png" };
+
+					pcUISystem->AddTextureToUI(&tThisWorld, gunImageIndex, pcGraphicsSystem->m_pd3dDevice, filePath);
+
 					tCameraMode.bAimMode = true;
 					tCameraMode.bDebugMode = false;
 					tCameraMode.bWalkMode = false;
