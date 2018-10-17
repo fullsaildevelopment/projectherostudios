@@ -1,5 +1,5 @@
 #include "GameManger.h"
-#define AI_ON false
+#define AI_ON true
 #define MIKES_SANDBOX_ON false
 #define SKELETON_LOAD_ON false
 #define MAIN_LEVEL_ON true
@@ -764,9 +764,10 @@ int CGameMangerSystem::LoadStory()
 			{
 				tUIPixelBuffer.hoverColor = XMFLOAT4(0, 0, 0, 0);
 			}
-
+#if MUSIC_ON
 			if (loadingImage == 0 && pcAudioSystem->playOnce1 == false)
 			{
+
 				AK::SoundEngine::StopAll();
 				pcAudioSystem->SendSoundsToEngine(AK::EVENTS::PLAY_STORY_1, pcAudioSystem->m_Story1);
 				pcAudioSystem->playOnce1 = true;
@@ -792,6 +793,7 @@ int CGameMangerSystem::LoadStory()
 				pcAudioSystem->playOnce4 = true;
 
 			}
+#endif
 
 			pcGraphicsSystem->InitUIShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tUIVertexBuffer, tUIPixelBuffer, tThisWorld.atMesh[nCurrentEntity], menuCamera->d3d_Position);
 			pcGraphicsSystem->ExecutePipeline(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atMesh[nCurrentEntity].m_nIndexCount, tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask, tThisWorld.atShaderID[nCurrentEntity].m_nShaderID);
@@ -7819,7 +7821,7 @@ int CGameMangerSystem::RealLevelUpdate()
 					tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = tThisWorld.atWorldMatrix[PlayerStartIndex].worldMatrix;
 				}
 
-				if (tThisWorld.atUIMask[nCurrentEntity].m_tnUIMask != (COMPONENT_UIMASK | COMPONENT_NOSHOW))
+			//	if (tThisWorld.atUIMask[nCurrentEntity].m_tnUIMask != (COMPONENT_UIMASK | COMPONENT_NOSHOW))
 				{
 					pcGraphicsSystem->InitPrimalShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, debugCamera->d3d_Position, m_d3dProjectionMatrix, tThisWorld.atDebugMesh[nCurrentEntity], debugCamera->d3d_Position);
 					pcGraphicsSystem->ExecutePipeline(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atDebugMesh[nCurrentEntity].m_nVertexCount, tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask, tThisWorld.atShaderID[nCurrentEntity].m_nShaderID);
@@ -8770,7 +8772,7 @@ int CGameMangerSystem::RealLevelUpdate()
 		{
 			tTempPixelBuffer.m_d3dCollisionColor = XMFLOAT4(0, 1.0f, 0, 1.0f);
 		
-			if (tThisWorld.atUIMask[nCurrentEntity].m_tnUIMask != (COMPONENT_UIMASK | COMPONENT_NOSHOW))
+		//	if (tThisWorld.atUIMask[nCurrentEntity].m_tnUIMask != (COMPONENT_UIMASK | COMPONENT_NOSHOW))
 			{
 				if (pcCollisionSystem->aabb_to_frustum(tThisWorld.atAABB[nCurrentEntity], tThisWorld.atClaytonVision.eyes0))
 				{
