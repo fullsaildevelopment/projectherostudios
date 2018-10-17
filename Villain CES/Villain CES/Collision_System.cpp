@@ -295,6 +295,8 @@ void CCollisionSystem::TestThreading(TWorld * ptWorld, int nCurrentEntity, CGrap
 									ptWorld->atClip[otherCollisionsIndex[i]].tryToShoot = false;
 									ptWorld->atClip[otherCollisionsIndex[i]].tryToReload = false;
 
+									ptWorld->atWorldMatrix[otherCollisionsIndex[i]].worldMatrix.r[3].m128_f32[1] -= 10;
+
 									//ptWorld->atRigidBody[otherCollisionsIndex[i]].gravity.m128_f32[1] = 0.0002;
 
 									//pcGraphicsSystem->CleanD3DObject(ptWorld, otherCollisionsIndex[i]);

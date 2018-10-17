@@ -19,6 +19,6 @@ public:
 	void CheckOptionsBars(TWorld* tThisWorld, CInputSystem* pcInputSystem, int& nThisEntity, float& m_fMasterVolume, float& m_fDialogueVolume, float& m_fMusicVolume, float& m_fSFXVolume, int& masterIndex, int& dialogueIndex, int& musicIndex, int& fxIndex);
 	void UpdateFPS(TWorld* tThisWorld, CGraphicsSystem* pcGraphicsSystem, CFPS& fpsTimer, int& fpsIndex, CGraphicsSystem::TUIVertexBufferType& tUIVertexBuffer, CGraphicsSystem::TUIPixelBufferType& tUIPixelBuffer, std::vector<TUIVert*>& atUIVertices, TCamera* menuCamera);
 	void ScrollText(TWorld* tThisWorld, CGraphicsSystem* pcGraphicsSystem, int& nThisEntity, std::vector<TUIVert*>* atUIVertices, double delta);
-	void UpdateHUDBars(TWorld* tThisWorld, int& nThisEntity, CGraphicsSystem::TUIVertexBufferType& tUIVertexBuffer, int& screenWidth, int& PlayerStartIndex, int& GunIndexForPlayer);
+	void UpdateHUDBars(TWorld* tThisWorld, int& nThisEntity, CGraphicsSystem::TUIVertexBufferType& tUIVertexBuffer, int& screenWidth, int& PlayerStartIndex, int& GunIndexForPlayer, int& CaelisIndex);
 	void UpdateDirtyUI(HWND* cApplicationWindow, TWorld* tThisWorld, bool fullscreen);
 };

@@ -442,7 +442,7 @@ void CUISystem::ScrollText(TWorld* tThisWorld, CGraphicsSystem* pcGraphicsSystem
 	pcGraphicsSystem->CreateEntityBuffer(tThisWorld, nThisEntity);
 }
 
-void CUISystem::UpdateHUDBars(TWorld * tThisWorld, int & nThisEntity, CGraphicsSystem::TUIVertexBufferType& tUIVertexBuffer, int& screenWidth, int& PlayerStartIndex, int& GunIndexForPlayer)
+void CUISystem::UpdateHUDBars(TWorld * tThisWorld, int & nThisEntity, CGraphicsSystem::TUIVertexBufferType& tUIVertexBuffer, int& screenWidth, int& PlayerStartIndex, int& GunIndexForPlayer, int& CaelisIndex)
 {
 	if (this->CheckIfStringsAreTheSame(tThisWorld->atBar[nThisEntity].valueToChange, tThisWorld->atBar[nThisEntity].valueToChangeSize, "Health"))
 	{
@@ -468,6 +468,12 @@ void CUISystem::UpdateHUDBars(TWorld * tThisWorld, int & nThisEntity, CGraphicsS
 		tUIVertexBuffer.start = (tThisWorld->atBar[nThisEntity].barBoundingBox.left + 14 - (screenWidth * .5)) / (screenWidth * .5);
 		tUIVertexBuffer.end = (tThisWorld->atBar[nThisEntity].barBoundingBox.right + 4 - (screenWidth * .5)) / (screenWidth * .5);
 		tUIVertexBuffer.ratio = (tThisWorld->atClip[GunIndexForPlayer].fShootingCoolDown) * .01;
+	}
+	else if (this->CheckIfStringsAreTheSame(tThisWorld->atBar[nThisEntity].valueToChange, tThisWorld->atBar[nThisEntity].valueToChangeSize, "CaelisAbilityCooldown"))
+	{
+		tUIVertexBuffer.start = (tThisWorld->atBar[nThisEntity].barBoundingBox.left + 14 - (screenWidth * .5)) / (screenWidth * .5);
+		tUIVertexBuffer.end = (tThisWorld->atBar[nThisEntity].barBoundingBox.right + 4 - (screenWidth * .5)) / (screenWidth * .5);
+		tUIVertexBuffer.ratio = (100 - tThisWorld->atCaelis[CaelisIndex].m_tfSpecialCooldown) * .01;
 	}
 	else
 	{

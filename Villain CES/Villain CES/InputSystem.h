@@ -18,7 +18,7 @@ public:
 	*/
 
 	void gameManagerCodeAbstracted(
-		const int nButtonLeft, const int nButtonMiddle, const int nKeyP, const int nKeyU, const int nKeyR,
+		const int nButtonLeft, const int nButtonMiddle, const int nKeyP, const int nKeyU, const int nKeyR, const int nKeyE,
 		const HWND cApplicationWindow, const XMMATRIX d3dResetAimModeCameraOffset,
 		bool &bGunMode, bool &bTryToShoot, bool &bTryToReload,
 		bool &bMouseUp, bool &bMouseDown, bool &bClick,
@@ -31,7 +31,7 @@ public:
 		XMMATRIX &d3dResultMatrix, XMMATRIX &d3dPlayerMatrix, XMMATRIX &d3dOffsetMatrix, XMMATRIX &d3dWorldMatrix,
 		XMMATRIX &tMyViewMatrix, XMMATRIX &tTempViewMatrix,
 		XMFLOAT4 &d3dCollisionColor, double &delta, CAudioSystem* in_Audio, TClayton &clayton, XMVECTOR &playerVeclocity, 
-		XMMATRIX &Caelis_Matrix, int PlayerIndex, int CaelisIndex, int ClaytonIndex);
+		XMMATRIX &Caelis_Matrix, int PlayerIndex, int CaelisIndex, int ClaytonIndex, TCaelis  &caelis);
 	GReturn InitializeGInput(HWND cTheWindow);																																																													
 	
 

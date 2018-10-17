@@ -61,6 +61,9 @@ struct TCaelis
 	float m_tfSpecialCooldown = 0.0f;
 	float m_tfAttackCooldown = 0.0f;
 	float m_tfFlightSpeed = 0.0f;
+
+	bool healing = false;
+	float healthGiven = 0;
 };
 
 struct TCamera
