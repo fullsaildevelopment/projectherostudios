@@ -138,6 +138,7 @@ private:
 
 	int claytonFrustumIndex = -1;
 
+
 #define SAVE_INDEX 96
 #define LOAD_INDEX 97
 #define OPTIONS_INDEX 98
