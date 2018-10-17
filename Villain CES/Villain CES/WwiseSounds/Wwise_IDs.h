@@ -14,7 +14,9 @@ namespace AK
     namespace EVENTS
     {
         static const AkUniqueID PLAY_AMMODEPLETED = 3280679725U;
+        static const AkUniqueID PLAY_EXTRACT = 1306210889U;
         static const AkUniqueID PLAY_HALLWAY_MUSIC = 2804017732U;
+        static const AkUniqueID PLAY_HEAL = 2639148008U;
         static const AkUniqueID PLAY_HOVERSOUND = 2244627757U;
         static const AkUniqueID PLAY_HURT_HUMAN = 2189107751U;
         static const AkUniqueID PLAY_HURT_SCYLIAN = 3600088999U;

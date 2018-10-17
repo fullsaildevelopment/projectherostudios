@@ -133,7 +133,6 @@ int CGameMangerSystem::LoadMainMenu()
 				tUIVertexBuffer.end = -1;
 				tUIVertexBuffer.ratio = -1;
 				tUIVertexBuffer.padding = -1;
-
 				float opacity;
 
 				if (fadeOut)
@@ -455,6 +454,8 @@ void CGameMangerSystem::InitializeMainMenu()
 		pcAudioSystem->UnRegisterGameObj(pcAudioSystem->m_Scylian_Hurt);
 		pcAudioSystem->UnRegisterGameObj(pcAudioSystem->m_GunEmpty);
 		pcAudioSystem->UnRegisterGameObj(pcAudioSystem->m_WalkSound);
+		pcAudioSystem->UnRegisterGameObj(pcAudioSystem->m_Extract);
+		pcAudioSystem->UnRegisterGameObj(pcAudioSystem->m_Heal);
 		pcAudioSystem->RegisterGameObj(pcAudioSystem->m_AkMainMenuMusic);
 		soundOff = false;
 	}
@@ -463,10 +464,10 @@ void CGameMangerSystem::InitializeMainMenu()
 		pcAudioSystem->RegisterGameObj(pcAudioSystem->m_HoverSound);
 		pcAudioSystem->RegisterGameObj(pcAudioSystem->m_AkMainMenuMusic);
 	}
-	pcAudioSystem->playOnce1 = false;
-	pcAudioSystem->playOnce2 = false;
-	pcAudioSystem->playOnce3 = false;
-	pcAudioSystem->playOnce4 = false;
+	pcAudioSystem->m_playOnce1 = false;
+	pcAudioSystem->m_playOnce2 = false;
+	pcAudioSystem->m_playOnce3 = false;
+	pcAudioSystem->m_playOnce4 = false;
 	pcAudioSystem->SendSoundsToEngine(AK::EVENTS::PLAY_MAIN_MENU_MUSIC, pcAudioSystem->m_AkMainMenuMusic);
 #endif
 	
@@ -765,32 +766,32 @@ int CGameMangerSystem::LoadStory()
 				tUIPixelBuffer.hoverColor = XMFLOAT4(0, 0, 0, 0);
 			}
 #if MUSIC_ON
-			if (loadingImage == 0 && pcAudioSystem->playOnce1 == false)
+			if (loadingImage == 0 && pcAudioSystem->m_playOnce1 == false)
 			{
 
 				AK::SoundEngine::StopAll();
 				pcAudioSystem->SendSoundsToEngine(AK::EVENTS::PLAY_STORY_1, pcAudioSystem->m_Story1);
-				pcAudioSystem->playOnce1 = true;
+				pcAudioSystem->m_playOnce1 = true;
 			}
-			else if (loadingImage == 1 && pcAudioSystem->playOnce2 == false)
+			else if (loadingImage == 1 && pcAudioSystem->m_playOnce2 == false)
 			{
 				AK::SoundEngine::StopAll();
 				pcAudioSystem->SendSoundsToEngine(AK::EVENTS::PLAY_STORY_2, pcAudioSystem->m_Story2);
-				pcAudioSystem->playOnce2 = true;
+				pcAudioSystem->m_playOnce2 = true;
 
 			}
-			else if (loadingImage == 2 && pcAudioSystem->playOnce3 == false)
+			else if (loadingImage == 2 && pcAudioSystem->m_playOnce3 == false)
 			{
 				AK::SoundEngine::StopAll();
 				pcAudioSystem->SendSoundsToEngine(AK::EVENTS::PLAY_STORY_3, pcAudioSystem->m_Story3);
-				pcAudioSystem->playOnce3 = true;
+				pcAudioSystem->m_playOnce3 = true;
 
 			}
-			else if (loadingImage == 3 && pcAudioSystem->playOnce4 == false)
+			else if (loadingImage == 3 && pcAudioSystem->m_playOnce4 == false)
 			{
 				AK::SoundEngine::StopAll();
 				pcAudioSystem->SendSoundsToEngine(AK::EVENTS::PLAY_STORY_4, pcAudioSystem->m_Story4);
-				pcAudioSystem->playOnce4 = true;
+				pcAudioSystem->m_playOnce4 = true;
 
 			}
 #endif
@@ -4647,6 +4648,8 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 		pcAudioSystem->RegisterGameObj(pcAudioSystem->m_Scylian_Hurt);
 		pcAudioSystem->RegisterGameObj(pcAudioSystem->m_GunEmpty);
 		pcAudioSystem->RegisterGameObj(pcAudioSystem->m_WalkSound);
+		pcAudioSystem->RegisterGameObj(pcAudioSystem->m_Extract);
+		pcAudioSystem->RegisterGameObj(pcAudioSystem->m_Heal);
 		soundOff = true;
 	}
 	
@@ -4677,6 +4680,8 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	TMaterialOptimized matOpt;
 	
 	ImporterData gunImport;
+
+	CreateWICTextureFromFile(pcGraphicsSystem->m_pd3dDevice, L"Cubemap_SpaceLightBlue/left.png", NULL, &particleSRV, NULL);
 
 	#pragma region Create Skybox
 	ID3D11Resource * spaceMap[6];
@@ -4849,7 +4854,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	tThisWorld.atAABB[GunIndexForClayton].m_IndexLocation = GunIndexForClayton;
 	pcCollisionSystem->AddAABBCollider(tThisWorld.atAABB[GunIndexForClayton], GunIndexForClayton);
 
-	gunImport = pcGraphicsSystem->ReadMesh("meshData_CaelisGun.txt");
+	gunImport = pcGraphicsSystem->ReadMesh("meshData_CaelisGun.txt"); 
 
 	for (int meshIndex = 0; meshIndex < gunImport.meshCount; ++meshIndex)
 	{
@@ -6319,7 +6324,20 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	}
 
 #pragma endregion
-
+	TPrimalVert x;
+	x.m_d3dfColor = XMFLOAT4(1, 1, 0, 1);
+	x.m_d3dfPosition = XMFLOAT3(0, 0, 0);
+	atBeamVerts.push_back(x);
+	x.m_d3dfPosition = XMFLOAT3(10, 0, 0);
+	atBeamVerts.push_back(x);
+	x.m_d3dfPosition = XMFLOAT3(0, 0, 0);
+	atBeamVerts.push_back(x);
+	x.m_d3dfPosition = XMFLOAT3(10, 0, 0);
+	atBeamVerts.push_back(x);
+	x.m_d3dfPosition = XMFLOAT3(0, 0, 0);
+	atBeamVerts.push_back(x);
+	x.m_d3dfPosition = XMFLOAT3(10, 0, 0);
+	atBeamVerts.push_back(x);
 
 	ExtractionBeamIndex = CreateExtractionBeam(&tThisWorld, m_d3dWorldMatrix, PlayerStartIndex, atBeamVerts);
 	
@@ -6332,6 +6350,8 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	fpsTimer.Restart();
 	fpsTimer.Init_FPSReader();
 }
+
+#pragma region Door Stuff
 enum
 {
 	DoorPiece1_FRAME = 20,
@@ -7371,6 +7391,8 @@ void DoorEventChanger(int shaderID)
 	}
 }
 
+#pragma endregion
+
 int CGameMangerSystem::RealLevelUpdate()
 {
 	if (pcInputSystem->InputCheck(G_KEY_K))
@@ -7442,140 +7464,6 @@ int CGameMangerSystem::RealLevelUpdate()
 	pcAudioSystem->SetRTPCVolume(AK::GAME_PARAMETERS::MUSIC_VOLUME, m_fMusicVolume);
 
 #endif
-#if !INPUT_ABSTRACTED_ON
-	hoverPoint = { -1, -1 };
-	//POINT hoverPoint;
-	GetCursorPos(&hoverPoint);
-	ScreenToClient(cApplicationWindow, &hoverPoint);
-
-	//POINT 
-	clickPoint = { -1, -1 };
-
-	if (pcInputSystem->InputCheck(G_BUTTON_LEFT) == 1 && mouseUp)
-	{
-
-		GetCursorPos(&startDragPoint);
-		ScreenToClient(cApplicationWindow, &startDragPoint);
-
-		GetCursorPos(&dragPoint);
-		ScreenToClient(cApplicationWindow, &dragPoint);
-
-		mouseUp = false;
-		mouseDown = true;
-	}
-	else if (pcInputSystem->InputCheck(G_BUTTON_LEFT) == 1 && mouseDown)
-	{
-		GetCursorPos(&dragPoint);
-		ScreenToClient(cApplicationWindow, &dragPoint);
-	}
-	else if (pcInputSystem->InputCheck(G_BUTTON_LEFT) == 0 && mouseDown)
-	{
-		GetCursorPos(&clickPoint);
-		ScreenToClient(cApplicationWindow, &clickPoint);
-
-		mouseUp = true;
-		mouseDown = false;
-
-		click = true;
-
-		startDragPoint = { -1, -1 };
-		dragPoint = { -1, -1 };
-	}
-
-	if (pcInputSystem->InputCheck(G_KEY_P) && !GameOver)
-	{
-		GamePaused = true;
-		if (!pauseInit)
-		{
-			pauseInit = true;
-			ShowCursor(true);
-		}
-	}
-	if (pcInputSystem->InputCheck(G_KEY_U) && !GameOver)
-	{
-		GamePaused = false;
-		options = false;
-		if (pauseInit)
-		{
-			pauseInit = false;
-			ShowCursor(false);
-		}
-	}
-
-
-
-	//Camera Functions here will move to a input system function when all behaviors are finalized - ZFB
-	if (GamePaused == false && GameOver == false)
-	{
-		// Walk mode not needed in demo at the moment - ZFB
-		if (tCameraMode.bWalkMode == true)
-		{
-
-			if (tCameraMode.bSwitch == true)
-			{
-				m_d3d_ResultMatrix = pcInputSystem->CameraOrientationReset(m_d3d_ResultMatrix);
-				tCameraMode.bSwitch = false;
-			}
-
-
-
-			m_d3d_ResultMatrix = pcInputSystem->WalkCameraControls(XMVectorSet(0, 1.0f, 0, 0), m_d3d_ResultMatrix, bMoving);
-
-			walkCamera->d3d_Position = XMMatrixMultiply(m_d3d_ResultMatrix, m_d3dPlayerMatrix);
-			walkCamera->d3d_Position = XMMatrixMultiply(m_d3dOffsetMatrix, walkCamera->d3d_Position);
-
-			tMyVertexBufferTemp.m_d3dViewMatrix = walkCamera->d3d_Position;
-			tTempVertexBuffer.m_d3dViewMatrix = walkCamera->d3d_Position;
-		}
-		//Aim Mode Functions are Here - ZFB 
-		else if (tCameraMode.bAimMode == true)
-		{
-			m_d3dOffsetMatrix = pcGraphicsSystem->ResetAimModeCameraOffset();
-			if (tCameraMode.bSwitch == true)
-			{
-				//m_d3dOffsetMatrix = pcGraphicsSystem->ResetAimModeCameraOffset();
-				m_d3d_ResultMatrix = pcInputSystem->CameraOrientationReset(m_d3d_ResultMatrix);
-				//CameraNewPosition = pcInputSystem->CameraBehaviorLerp(m_d3d_ResultMatrix, m_d3dPlayerMatrix);
-				//CameraNewPosition = XMMatrixMultiply(m_d3d_ResultMatrix, m_d3dPlayerMatrix);
-
-				//CameraNewPosition = XMMatrixMultiply(m_d3dOffsetMatrix, CameraNewPosition);
-				//aimCamera->d3d_Position = pcInputSystem->CameraBehaviorLerp(walkCamera->d3d_Position, CameraNewPosition, scale);
-				//scale += 0.001;
-				//if (scale > 1) {
-				tCameraMode.bSwitch = false;
-				scale = 0;
-			}
-
-			m_RealTimeFov = pcInputSystem->ZoomSight(m_RealTimeFov);
-			// Camera rotation Done here
-			aimCamera->d3d_Position = pcInputSystem->AimMode(aimCamera, m_d3d_ResultMatrix);
-			//Does Character Rotation and Movement
-			m_d3dPlayerMatrix = pcInputSystem->CharacterMovement(m_d3dPlayerMatrix);
-
-			aimCamera->d3d_Position = XMMatrixMultiply(aimCamera->d3d_Position, m_d3dPlayerMatrix);
-			// for shoulder offset 
-			aimCamera->d3d_Position = XMMatrixMultiply(m_d3dOffsetMatrix, aimCamera->d3d_Position);
-
-			tMyVertexBufferTemp.m_d3dViewMatrix = aimCamera->d3d_Position;
-			tTempVertexBuffer.m_d3dViewMatrix = aimCamera->d3d_Position;
-		}
-		//This is Debug Camera Function here - ZFB
-		else
-		{
-			if (tCameraMode.bSwitch == true)
-			{
-				m_d3d_ResultMatrix = pcInputSystem->CameraOrientationReset(m_d3d_ResultMatrix);
-				tCameraMode.bSwitch = false;
-			}
-			m_d3d_ResultMatrix = pcInputSystem->DebugCamera(m_d3d_ResultMatrix, m_d3dWorldMatrix);
-
-			debugCamera->d3d_Position = XMMatrixMultiply(m_d3d_ResultMatrix, m_d3dWorldMatrix);
-			tMyVertexBufferTemp.m_d3dViewMatrix = debugCamera->d3d_Position;
-			tTempVertexBuffer.m_d3dViewMatrix = debugCamera->d3d_Position;
-		}
-	}
-	tTempPixelBuffer.m_d3dCollisionColor = XMFLOAT4(1.0f, 0.0f, 0.0f, 0.0f);
-#endif // !INPUT_ABSTRACTED_ON
 
 
 #pragma region Render To Texture Pass
@@ -7667,7 +7555,7 @@ int CGameMangerSystem::RealLevelUpdate()
 		m_d3d_ResultMatrix, m_d3dCalytonMatrix, m_d3dOffsetMatrix, m_d3dWorldMatrix,
 		tMyVertexBufferTemp.m_d3dViewMatrix, tTempVertexBuffer.m_d3dViewMatrix,
 		tTempPixelBuffer.m_d3dCollisionColor, delta, pcAudioSystem, tThisWorld.atClayton[PlayerStartIndex], tThisWorld.atRigidBody[PlayerStartIndex].velocity, m_d3dCaelisMatrix, PlayerStartIndex
-	,CaelisIndex, ClaytonIndex,tThisWorld.atCaelis[CaelisIndex]);
+	,CaelisIndex, ClaytonIndex,tThisWorld.atCaelis[CaelisIndex], pcAudioSystem);
 	
 #endif // INPUT_ABSTRACTED_ON
 	pcGraphicsSystem->UpdateD3D();
@@ -7740,65 +7628,6 @@ int CGameMangerSystem::RealLevelUpdate()
 			pcGraphicsSystem->ExecutePipeline(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atMesh[nCurrentEntity].m_nIndexCount, tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask, tThisWorld.atShaderID[nCurrentEntity].m_nShaderID);
 		}
 		//Extraction Beam & related functions are here - ZFB
-		if (tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_DEBUGMESH | COMPONENT_SHADERID | COMPONENT_BEAM))
-		{
-			if (pcInputSystem->InputCheck(G_KEY_Q) == 1 && tCameraMode.bAimMode == true)
-			{
-				//Get Gun Matrix position 
-				atBeamVerts.clear();
-				XMVECTOR startPoint = XMVectorSet(0, 0, 0, 1);
-				XMVECTOR endPoint;
-
-				// Create the start of the Beam and put it in a vertex buffer & other intilized values
-
-				//Creates the end point an infinite ray to farthest point of frustum and need to now find a way to intersect with objects
-				endPoint = pcProjectileSystem->FindBeamEndPoint(aimCamera->d3d_Position, m_d3dProjectionMatrix, cApplicationWindow, pcGraphicsSystem->m_d3dViewport);
-				// updateing the next frame should delete itself 
-				XMVECTOR BeamDirection = endPoint - startPoint;
-				XMFLOAT4 toGeoShaderPoint;
-				XMStoreFloat4(&toGeoShaderPoint, endPoint);
-
-				pcGraphicsSystem->InitLineShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, m_d3dViewMatrix, m_d3dProjectionMatrix, tThisWorld.atDebugMesh[nCurrentEntity], aimCamera->d3d_Position, atBeamVerts);
-
-			}
-			else
-			{
-				//atBeamVerts.clear();
-				//XMVECTOR startPoint = XMVectorSet(0, 0, 0, 1);
-				////Zero Out Variables at Init
-				//XMVECTOR endPoint = XMVectorZero();
-				//endPoint = startPoint;//pcProjectileSystem->FindBeamEndPoint(aimCamera->d3d_Position, m_d3dProjectionMatrix, cApplicationWindow, pcGraphicsSystem->m_d3dViewport);
-
-				//XMVECTOR BeamDirection = endPoint - startPoint;
-
-
-				//XMFLOAT4 Point2 = XMFLOAT4(0, 0, 0, 0);
-				//XMFLOAT3 Point1 = XMFLOAT3(0, 0, 0);
-				////XMStoreFloat4(&Points, startPoint);
-				//XMStoreFloat3(&Point1, startPoint);
-				//XMStoreFloat4(&Point2, endPoint);
-				////Stores points into vector of primal vert types
-				//pcGraphicsSystem->StartBeam->m_d3dfPosition = Point1;
-				//pcGraphicsSystem->StartBeam->m_d3dfColor = XMFLOAT4(0, 1, 1, 1);
-				//atBeamVerts.push_back(pcGraphicsSystem->StartBeam);
-
-				//pcGraphicsSystem->endBeam->m_d3dfPosition.x = Point2.x;
-				//pcGraphicsSystem->endBeam->m_d3dfPosition.y = Point2.y;
-				//pcGraphicsSystem->endBeam->m_d3dfPosition.z = 10.0f;
-				//pcGraphicsSystem->endBeam->m_d3dfColor = XMFLOAT4(0, 1, 1, 1);
-				//atBeamVerts.push_back(pcGraphicsSystem->endBeam);
-
-
-
-			}
-			if (pcCollisionSystem->aabb_to_frustum(tThisWorld.atAABB[nCurrentEntity], tThisWorld.atClaytonVision.eyes0))
-			{
-				//pcGraphicsSystem->InitLineShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atWorldMatrix[ExtractionBeamIndex].worldMatrix, m_d3dViewMatrix, m_d3dProjectionMatrix, tThisWorld.atDebugMesh[ExtractionBeamIndex], aimCamera->d3d_Position, atBeamVerts);
-				//pcGraphicsSystem->ExecutePipeline(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atDebugMesh[ExtractionBeamIndex].m_nVertexCount, tThisWorld.atGraphicsMask[ExtractionBeamIndex].m_tnGraphicsMask, tThisWorld.atShaderID[ExtractionBeamIndex].m_nShaderID);
-			}
-
-
-		}
 		if (tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_DEBUGMESH | COMPONENT_SHADERID))
 		{
 			if (tThisWorld.atBar[nCurrentEntity].entityToFollow != -1 || pcCollisionSystem->aabb_to_frustum(tThisWorld.atAABB[nCurrentEntity], tThisWorld.atClaytonVision.eyes0))
@@ -7860,23 +7689,102 @@ int CGameMangerSystem::RealLevelUpdate()
 					pcGraphicsSystem->ExecutePipeline(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atDebugMesh[nCurrentEntity].m_nVertexCount, tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask, tThisWorld.atShaderID[nCurrentEntity].m_nShaderID);
 				}
 			}
+#if MUSIC_ON
+			
+			
+#endif
+			//Extraction Beam & related functions are here - ZFB
+			if ((pcInputSystem->InputCheck(G_KEY_Q) == 1 
+				&& tCameraMode.bAimMode == true 
+				&& nCurrentEntity == ExtractionBeamIndex))
+			{
+				//Get Gun Matrix position 
+				atBeamVerts.clear();
+				tThisWorld.atDebugMesh[nCurrentEntity].m_VertexData.clear();
+
+				XMVECTOR unProjectedFar = XMVectorSet(0, 0, 1, 1);
+
+				XMMATRIX t1 = XMMatrixMultiply(XMMatrixTranslation(0, 0, 150), aimCamera->d3d_Position);
+
+				unProjectedFar = XMVector3Transform(unProjectedFar, t1);
+
+				XMVECTOR startPoint = XMVectorSet(0, 0, 0, 1);
+				startPoint = XMVector3Transform(startPoint,tThisWorld.atWorldMatrix[GunIndexForClayton].worldMatrix);
+				XMFLOAT3 Point1, Point2;
+				XMStoreFloat3(&Point1, startPoint);
+				XMStoreFloat3(&Point2, unProjectedFar);
+
+				//std::cout << "Start Point:\t" << 
+				//	Point1.x << ", " << 
+				//	Point1.y << ", " << 
+				//	Point1.z << "\n";
+
+				//std::cout << "End Point:\t" << 
+				//	Point2.x << ", " << 
+				//	Point2.y << ", " << 
+				//	Point2.z << "\n";
+
+				tThisWorld.atDebugMesh[nCurrentEntity].m_VertexData.push_back(startPoint);
+				tThisWorld.atDebugMesh[nCurrentEntity].m_VertexData.push_back(unProjectedFar);
+
+				uvScroll += .01f;
+
+				pcGraphicsSystem->StoreBeamPoints(Point1, Point2, atBeamVerts, uvScroll);
+				pcGraphicsSystem->UpdateLineVTBuffer(&tThisWorld.atDebugMesh[ExtractionBeamIndex].m_d3dVertexBufferDesc, tThisWorld.atDebugMesh[ExtractionBeamIndex].m_pd3dVertexBuffer, atBeamVerts);
+
+				pcGraphicsSystem->InitLineShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, m_d3dViewMatrix, m_d3dProjectionMatrix, tThisWorld.atDebugMesh[nCurrentEntity], aimCamera->d3d_Position, atBeamVerts, particleSRV);
+				pcGraphicsSystem->ExecutePipeline(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atDebugMesh[ExtractionBeamIndex].m_nVertexCount, tThisWorld.atGraphicsMask[ExtractionBeamIndex].m_tnGraphicsMask, tThisWorld.atShaderID[ExtractionBeamIndex].m_nShaderID);
+#if MUSIC_ON
+				if (pcInputSystem->InputCheck(G_KEY_Q) == 1 && pcAudioSystem->m_BeamSoundOn == false)
+				{
+					pcAudioSystem->SendSoundsToEngine(AK::EVENTS::PLAY_EXTRACT, pcAudioSystem->m_Extract);
+					pcAudioSystem->m_BeamSoundOn = true;
+
+				}
+				
+#endif
+			}
+			else if (nCurrentEntity == ExtractionBeamIndex)
+			{
+				atBeamVerts.clear();
+				tThisWorld.atDebugMesh[nCurrentEntity].m_VertexData.clear();
+
+				XMVECTOR startPoint = XMVectorSet(0, 0, 0, 1);
+				XMVECTOR endPoint;
+				startPoint = XMVector3Transform(startPoint, tThisWorld.atWorldMatrix[GunIndexForClayton].worldMatrix);
+				endPoint = startPoint;
+				
+				XMVECTOR BeamDirection = endPoint - startPoint;
 
 
+				XMFLOAT4 Points;
+				XMFLOAT3 Point1, Point2;;
+				XMStoreFloat3(&Point1, startPoint);
+				XMStoreFloat3(&Point2, endPoint);
+
+				tThisWorld.atDebugMesh[nCurrentEntity].m_VertexData.push_back(startPoint);
+				tThisWorld.atDebugMesh[nCurrentEntity].m_VertexData.push_back(endPoint);
+				
+	//Stores points into vector of primal vert types
+				pcGraphicsSystem->StoreBeamPoints(Point1, Point2, atBeamVerts, uvScroll);
+				pcGraphicsSystem->UpdateLineVTBuffer(&tThisWorld.atDebugMesh[ExtractionBeamIndex].m_d3dVertexBufferDesc, tThisWorld.atDebugMesh[ExtractionBeamIndex].m_pd3dVertexBuffer, atBeamVerts);
+
+				pcGraphicsSystem->InitLineShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atWorldMatrix[ExtractionBeamIndex].worldMatrix, m_d3dViewMatrix, m_d3dProjectionMatrix, tThisWorld.atDebugMesh[ExtractionBeamIndex], aimCamera->d3d_Position, atBeamVerts, particleSRV);
+				pcGraphicsSystem->ExecutePipeline(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atDebugMesh[ExtractionBeamIndex].m_nVertexCount, tThisWorld.atGraphicsMask[ExtractionBeamIndex].m_tnGraphicsMask, tThisWorld.atShaderID[ExtractionBeamIndex].m_nShaderID);
+			}
+			 if (pcInputSystem->InputCheck(G_KEY_Q) == 0 && pcAudioSystem->m_BeamSoundOn == true)
+			{
+				pcAudioSystem->m_BeamSoundOn = false;
+			}
 		}
-
-
-		if (tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_SHADERID)
+		
+		if (tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_SHADERID) 
 			&& tThisWorld.atUIMask[nCurrentEntity].m_tnUIMask == (COMPONENT_UIMASK))
 		{
 			if (tCameraMode.bWalkMode == true)
 			{
 				tMyVertexBufferTemp.m_d3dViewMatrix = walkCamera->d3d_Position;
 				tTempVertexBuffer.m_d3dViewMatrix = walkCamera->d3d_Position;
-			}
-			else if (tCameraMode.bAimMode == true)
-			{
-			tTempVertexBuffer.m_d3dViewMatrix = aimCamera->d3d_Position;
-			tMyVertexBufferTemp.m_d3dViewMatrix = aimCamera->d3d_Position;
 			}
 			else if (tCameraMode.bDebugMode == true)
 			{
@@ -8504,9 +8412,10 @@ int CGameMangerSystem::RealLevelUpdate()
 							for (int meshIndex = 0; meshIndex < bulletMesh.meshCount; ++meshIndex)
 							{
 								newbullet = CreateBulletMesh(&tThisWorld, gunMatrix, bulletToCopyFrom);
-							
-
-
+								if (materialGunProjectileSRV != nullptr)
+								{
+									tThisWorld.atMesh[newbullet].m_d3dSRVDiffuse = materialGunProjectileSRV;
+								}
 								//newbullet = CreateBulletMesh(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, gunMatrix, tThisWorld.atClip[nCurrentEntity].currentMaterial, bulletType, bulletMesh.vtMeshes[meshIndex], bulletMesh.vtMaterials[meshIndex]);
 							}
 							tThisWorld.atClip[newbullet].gunIndex = nCurrentEntity;
@@ -8646,6 +8555,7 @@ int CGameMangerSystem::RealLevelUpdate()
 			{
 				tThisWorld.atClip[nCurrentEntity].fShootingCoolDown -= fpsTimer.GetDelta() * 100;
 			}
+
 			if (tThisWorld.atPathPlanining[tThisWorld.atClip[nCurrentEntity].gunHolder].movementPausedTimer > 0) {
 				tThisWorld.atPathPlanining[tThisWorld.atClip[nCurrentEntity].gunHolder].movementPausedTimer -= fpsTimer.GetDelta() * 100;
 			}
@@ -8675,16 +8585,20 @@ int CGameMangerSystem::RealLevelUpdate()
 		}
 		if (GamePaused == false && GameOver == false)
 		{
+			
 			// bullet check 
 			if (tThisWorld.atProjectiles[nCurrentEntity].m_tnProjectileMask == (COMPONENT_PROJECTILESMASK | COMPONENT_RAYGUN))
 			{
 				float CloseEstObject = 10000000000000000000.0f;
-				float* distanceCalucaltion = new float();
+				float distanceCalucaltion = 0;
+				XMVECTOR gunVector = XMVector3Transform(XMVectorZero(), tThisWorld.atWorldMatrix[GunIndexForClayton].worldMatrix);
+				XMVECTOR intersectVector = XMVectorZero();
+				XMVECTOR diff = XMVectorZero();
+				
 				//ptr is the collided entity index compared to current entit index. - ZFB
 				for (list<TAABB>::iterator ptr = pcCollisionSystem->m_AAbb.begin(); ptr != pcCollisionSystem->m_AAbb.end(); ++ptr)
 				{
-
-					if (ptr->m_IndexLocation != PlayerStartIndex && ptr->m_IndexLocation != GunIndexForPlayer)
+					if (ptr->m_IndexLocation != PlayerStartIndex && ptr->m_IndexLocation != GunIndexForClayton)
 					{
 						if (pcCollisionSystem->intersectRayAABox2(
 							XMVector3Transform(tThisWorld.atDebugMesh[nCurrentEntity].m_VertexData[0],
@@ -8693,15 +8607,39 @@ int CGameMangerSystem::RealLevelUpdate()
 								tThisWorld.atWorldMatrix[PlayerStartIndex].worldMatrix), *ptr
 						) == true)
 						{
-							//CloseEstObject = *distanceCalucaltion;
-							tThisWorld.atClip[GunIndexForPlayer].currentMaterial = 0;
-							cout << "turtle" << '/n';
-							tThisWorld.atClip[GunIndexForPlayer].colorofBullets = tThisWorld.atSimpleMesh[ptr->m_IndexLocation].m_nColor;
+							if (tThisWorld.atMesh[ptr->m_IndexLocation].m_VertexData.size())
+							{
+								intersectVector = XMLoadFloat3(&(tThisWorld.atMesh[ptr->m_IndexLocation].m_VertexData[0]));
+								intersectVector = XMVector3Transform(intersectVector, tThisWorld.atWorldMatrix[ptr->m_IndexLocation].worldMatrix);
+								std::cout << "Gun Vector:\t";
+								for (int i = 0; i < 3; i++)
+								{
+									std::cout << gunVector.m128_f32[i] << ", ";
+								}
+								std::cout << "\n";
+
+								std::cout << "Intersect Vector:\t";
+								for (int i = 0; i < 3; i++)
+								{
+									std::cout << intersectVector.m128_f32[i] << ", ";
+								}
+								std::cout << "\n";
+
+								distanceCalucaltion = sqrt((gunVector.m128_f32[0] - intersectVector.m128_f32[0]) * (gunVector.m128_f32[0] - intersectVector.m128_f32[0]) +
+									(gunVector.m128_f32[1] - intersectVector.m128_f32[1]) * (gunVector.m128_f32[1] - intersectVector.m128_f32[1]) +
+									(gunVector.m128_f32[2] - intersectVector.m128_f32[2]) * (gunVector.m128_f32[2] - intersectVector.m128_f32[2]));
+								std::cout << "Intersected Entity #:\t" << ptr->m_IndexLocation << "\n\tDistance From Gun:\t" << distanceCalucaltion <<"\n";
+								if (CloseEstObject > distanceCalucaltion)
+								{
+									CloseEstObject = distanceCalucaltion;
+									materialGunProjectileSRV = tThisWorld.atMesh[ptr->m_IndexLocation].m_d3dSRVDiffuse;
+									//Make Load Sound
+								}
+							}
 						}
 
 					}
 				}
-				delete distanceCalucaltion;
 			}
 		}
 
@@ -8742,8 +8680,7 @@ int CGameMangerSystem::RealLevelUpdate()
 				}
 			}
 		}
-
-
+					
 		if (tThisWorld.atParentWorldMatrix[nCurrentEntity] != -1)
 		{
 			if (nCurrentEntity != GunIndexForPlayer)

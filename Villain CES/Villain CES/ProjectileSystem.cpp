@@ -50,13 +50,16 @@ int CProjectileSystem::ExtractMaterial(TWorld *tThisWorld, Clips* Gun, int curre
 	return tmp_Material;
 }
 
-XMVECTOR CProjectileSystem::FindBeamEndPoint(XMMATRIX in_ViewMatrix, XMMATRIX in_ProjectionMatrix, HWND in_WindowHandle ,D3D11_VIEWPORT m_d3dViewport)
-{   //Vecotr of Position in the middle of screen in screen space
-	XMVECTOR pointInScreenSpace = XMVectorSet(0, 0, 1.0f, 0);
-
+XMVECTOR CProjectileSystem::FindBeamEndPoint(XMVECTOR pointInScreenSpace, XMMATRIX in_WorldMatrix, XMMATRIX in_ViewMatrix, XMMATRIX in_ProjectionMatrix, HWND in_WindowHandle ,D3D11_VIEWPORT m_d3dViewport)
+{   
+	//Vector of Position in the middle of screen in screen space
 	XMVECTOR endPoint;
-	// puts screen space into object space  & the reason i pass a identity matrix is that way this coordinate stays in world space because if you pass it your changed world matrix then it would usually output the point in object space
-	endPoint = XMVector3Unproject(pointInScreenSpace, m_d3dViewport.TopLeftX, m_d3dViewport.TopLeftY, m_d3dViewport.Width, m_d3dViewport.Height, m_d3dViewport.MinDepth, m_d3dViewport.MaxDepth, in_ProjectionMatrix, in_ViewMatrix, XMMatrixIdentity());
+	// Transforms screen space coordinate to world space coordinate
+	endPoint = XMVector3Unproject(pointInScreenSpace, 
+		m_d3dViewport.TopLeftX, m_d3dViewport.TopLeftY,
+		m_d3dViewport.Width, m_d3dViewport.Height, 
+		0, 1, 
+		in_ProjectionMatrix, in_ViewMatrix, XMMatrixIdentity());
 
 	//endPoint = XMVector3Normalize(endPoint);
 	//additional notes:
