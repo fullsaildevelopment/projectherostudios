@@ -4791,7 +4791,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	m_d3dPlayerMatrix.r[3].m128_f32[2] = tThisWorld.atWorldMatrix[ClaytonIndex].worldMatrix.r[3].m128_f32[2] = 10.8;
 
 	//Put Caelis Import Data here 
-	tempImport = pcGraphicsSystem->ReadMesh("meshData_Caelis2.txt");
+	tempImport = pcGraphicsSystem->ReadMesh("meshData_CaelisWingsBack.txt");
 	for (int meshIndex = 0;  meshIndex < tempImport.meshCount; meshIndex++)
 	{
 		CaelisIndex = CreateCaelis(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, tempImport.vtMeshes[meshIndex], tempImport.vtMaterials[meshIndex]);
