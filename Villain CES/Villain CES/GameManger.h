@@ -114,7 +114,7 @@ private:
 	float prevHealth = 0;
 	float fallingHealth = 0;
 	float hitmarkerTime = 1;
-
+	float uvScroll = 0.0f;
 	int fpsIndex = -1;
 	int objLogoIndex = -1;
 	int hitmarkerIndex = -1;
@@ -134,6 +134,7 @@ private:
 
 	ID3D11ShaderResourceView* fontTexture = nullptr;
 	ID3D11ShaderResourceView* materialGunProjectileSRV = nullptr;
+	ID3D11ShaderResourceView* particleSRV = nullptr;
 	std::vector<TUIVert*> atUIVertices;
 	std::vector<short*> atUIIndices;
 	CFPS fpsTimer;

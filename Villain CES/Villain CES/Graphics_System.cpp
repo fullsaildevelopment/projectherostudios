@@ -1063,13 +1063,13 @@ void CGraphicsSystem::UpdateLineVTBuffer(D3D11_BUFFER_DESC* bufDesc,ID3D11Buffer
 	
 }
 
-void CGraphicsSystem::StoreBeamPoints(XMFLOAT3 startPoint, XMFLOAT3 endPoint, std::vector<TPrimalVert>& BeamPoints)
+void CGraphicsSystem::StoreBeamPoints(XMFLOAT3 startPoint, XMFLOAT3 endPoint, std::vector<TPrimalVert>& BeamPoints, float timeScroll)
 {
 	TPrimalVert Point0, Point1, Point2, Point3;
 	
 
-	Point0.m_d3dfColor = XMFLOAT4( 0.0f, 1.0f, 0, 1 );
-	Point1.m_d3dfColor = XMFLOAT4( 0.0f, 0.0f, 0.0f, 1 );
+	Point0.m_d3dfColor = XMFLOAT4( 0.0f, 1.0f + timeScroll, 0, 1 );
+	Point1.m_d3dfColor = XMFLOAT4( 0.0f, 0.0f + timeScroll, 0.0f, 1 );
 
 	Point0.m_d3dfPosition.x = startPoint.x;
 	Point0.m_d3dfPosition.y = startPoint.y;
@@ -1080,8 +1080,8 @@ void CGraphicsSystem::StoreBeamPoints(XMFLOAT3 startPoint, XMFLOAT3 endPoint, st
 	Point2 = Point0;
 	Point3 = Point1;
 
-	Point2.m_d3dfColor = XMFLOAT4(1.0f, 0.0f, 0, 1);
-	Point3.m_d3dfColor = XMFLOAT4(1.0f, 1.0f, 0.0f, 1);
+	Point2.m_d3dfColor = XMFLOAT4(1.0f, 0.0f + timeScroll, 0, 1);
+	Point3.m_d3dfColor = XMFLOAT4(1.0f, 1.0f + timeScroll, 0.0f, 1);
 
 	Point2.m_d3dfPosition.x = startPoint.x + .1;
 	Point3.m_d3dfPosition.x = endPoint.x + .1;
@@ -2017,7 +2017,7 @@ void CGraphicsSystem::InitQuadShaderData(ID3D11DeviceContext * pd3dDeviceContext
 	pd3dDeviceContext->IASetVertexBuffers(0, 1, &tDebugMesh.m_pd3dVertexBuffer, &tDebugMesh.m_nVertexBufferStride, &tDebugMesh.m_nVertexBufferOffset);
 }
 
-void CGraphicsSystem::InitLineShaderData(ID3D11DeviceContext * pd3dDeviceContext, XMMATRIX d3dWorldMatrix, XMMATRIX d3dViewMatrix, XMMATRIX d3dProjectionMatrix,  TDebugMesh tDebugMesh, XMMATRIX CameraMatrix, std::vector<TPrimalVert> m_verts)
+void CGraphicsSystem::InitLineShaderData(ID3D11DeviceContext * pd3dDeviceContext, XMMATRIX d3dWorldMatrix, XMMATRIX d3dViewMatrix, XMMATRIX d3dProjectionMatrix,  TDebugMesh tDebugMesh, XMMATRIX CameraMatrix, std::vector<TPrimalVert> m_verts, ID3D11ShaderResourceView * ParticleTexture)
 {
 	D3D11_MAPPED_SUBRESOURCE d3dLineMappedResource;
 	D3D11_MAPPED_SUBRESOURCE d3dLineMatrixMappedResource;
@@ -2070,6 +2070,10 @@ void CGraphicsSystem::InitLineShaderData(ID3D11DeviceContext * pd3dDeviceContext
 	// Set the constant buffer in the Geometry shader with the updated values.
 	//pd3dDeviceContext->GSSetConstantBuffers(0, 1, &m_pd3dLineGeometryBuffer);
 	pd3dDeviceContext->IASetVertexBuffers(0, 1, &tDebugMesh.m_pd3dVertexBuffer, &tDebugMesh.m_nVertexBufferStride, &tDebugMesh.m_nVertexBufferOffset);
+	if (&ParticleTexture != NULL)
+	{
+		pd3dDeviceContext->PSSetShaderResources(0, 1, &ParticleTexture);
+	}
 }
 
 enum
