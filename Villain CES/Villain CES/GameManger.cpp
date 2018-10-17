@@ -4621,10 +4621,19 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	m_d3dViewMatrix = pcGraphicsSystem->SetDefaultViewMatrix();
 	//Init Walk Camera to Default Position
 	walkCamera->d3d_Position = pcGraphicsSystem->SetDefaultCameraMatrix();
+	walkCamera->fPitch = 0;
+	walkCamera->fRoll = 0;
+	walkCamera->fYaw = 0;
 	//Init Aim Camera to Default Position
 	aimCamera->d3d_Position = pcGraphicsSystem->SetDefaultCameraMatrix();
+	aimCamera->fPitch = 0;
+	aimCamera->fRoll = 0;
+	aimCamera->fYaw = 0;
 	//Init Debug Camera to Default Position
 	debugCamera->d3d_Position = pcGraphicsSystem->SetDefaultCameraMatrix();
+	debugCamera->fPitch = 0;
+	debugCamera->fRoll = 0;
+	debugCamera->fYaw = 0;
 	// Init Projection Matrix with 90.0f
 	m_d3dProjectionMatrix = pcGraphicsSystem->SetDefaultPerspective(m_RealTimeFov);
 
