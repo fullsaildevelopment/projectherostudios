@@ -7655,7 +7655,6 @@ int CGameMangerSystem::RealLevelUpdate()
 		tMyVertexBufferTemp.m_d3dViewMatrix, tTempVertexBuffer.m_d3dViewMatrix,
 		tTempPixelBuffer.m_d3dCollisionColor, delta, pcAudioSystem, tThisWorld.atClayton[PlayerStartIndex], tThisWorld.atRigidBody[PlayerStartIndex].velocity, m_d3dCaelisMatrix, PlayerStartIndex
 	,CaelisIndex, ClaytonIndex,tThisWorld.atCaelis[CaelisIndex]);
-	std::cout << PlayerStartIndex << endl;
 	
 #endif // INPUT_ABSTRACTED_ON
 	pcGraphicsSystem->UpdateD3D();
