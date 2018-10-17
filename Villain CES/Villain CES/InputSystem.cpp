@@ -68,7 +68,8 @@ void CInputSystem::gameManagerCodeAbstracted(
 	TCamera* tWalkCamera, TCamera* tAimCamera, TCamera* tDebugCamera,
 	XMMATRIX &d3dResultMatrix, XMMATRIX &d3dPlayerMatrix, XMMATRIX &d3dOffsetMatrix, XMMATRIX &d3dWorldMatrix,
 	XMMATRIX &tMyViewMatrix, XMMATRIX &tTempViewMatrix,
-	XMFLOAT4 &d3dCollisionColor, double &delta, CAudioSystem* in_Audio, TClayton &clayton, XMVECTOR &playerVeclocity, XMMATRIX &Caelis_Matrix, int PlayerIndex)
+	XMFLOAT4 &d3dCollisionColor, double &delta, CAudioSystem* in_Audio, TClayton &clayton, XMVECTOR &playerVeclocity, 
+	XMMATRIX &Caelis_Matrix, int PlayerIndex, int CaelisIndex, int ClaytonIndex)
 {
 	cHoverPoint = { -1, -1 };
 	//POINT hoverPoint;
@@ -133,8 +134,8 @@ void CInputSystem::gameManagerCodeAbstracted(
 	if (bGamePaused == false && bGameOver == false)
 	{
 		// Walk mode not needed in demo at the moment - ZFB
-		//Clayton 
-		if (PlayerIndex == 919)
+		//Clayton Movement & Camera Attachment
+		if (PlayerIndex == ClaytonIndex)
 		{
 			if (tCameraMode.bWalkMode == true)
 			{
@@ -191,8 +192,8 @@ void CInputSystem::gameManagerCodeAbstracted(
 				tTempViewMatrix = tDebugCamera->d3d_Position;
 			}
 		}
-
-		else if (PlayerIndex == 920)
+		//Caelsi Movement & Camera Attachment 
+		else if (PlayerIndex == CaelisIndex)
 		{
 			if (tCameraMode.bAimMode == true)
 			{

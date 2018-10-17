@@ -4417,7 +4417,7 @@ unsigned int CreateCaelis(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMeshIm
 	ptWorld->atMesh[nThisEntity].m_d3dIndexData.pSysMem = tMesh.indexBuffer;
 	ptWorld->atMesh[nThisEntity].m_d3dIndexData.SysMemPitch = 0;
 	ptWorld->atMesh[nThisEntity].m_d3dIndexData.SysMemSlicePitch = 0;
-
+	ptWorld->atParentWorldMatrix[nThisEntity] = -1;
 	ptWorld->atWorldMatrix[nThisEntity].worldMatrix = XMMatrixIdentity();
 	ptWorld->atWorldMatrix[nThisEntity].worldMatrix = XMMatrixMultiply(XMMatrixTranslation(4, 0, 0),ptWorld->atWorldMatrix[nThisEntity].worldMatrix);
 	ptWorld->atWorldMatrix[nThisEntity].worldMatrix = XMMatrixMultiply(ptWorld->atWorldMatrix[nThisEntity].worldMatrix, XMMatrixRotationRollPitchYaw(tMesh.worldRotation[0], tMesh.worldRotation[1], tMesh.worldRotation[2]));

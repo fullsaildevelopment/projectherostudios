@@ -4757,7 +4757,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 		ClaytonIndex = createClayton(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, tempImport.vtMeshes[meshIndex], tempImport.vtMaterials[meshIndex]);
 	}
 	//pcInputSystem->m_Companion1 = ClaytonIndex;
-	PlayerStartIndex = ClaytonIndex;
+	pcInputSystem->m_Companion1 = ClaytonIndex;
 	//Put Caelis Import Data here 
 	tempImport = pcGraphicsSystem->ReadMesh("meshData_Caelis2.txt");
 	for (int meshIndex = 0;  meshIndex < tempImport.meshCount; meshIndex++)
@@ -4765,7 +4765,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 		CaelisIndex = CreateCaelis(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, tempImport.vtMeshes[meshIndex], tempImport.vtMaterials[meshIndex]);
 	}
 	// CreateHealingAI(&tThisWorld);
-	pcInputSystem->m_Companion1 = CaelisIndex;
+	PlayerStartIndex = CaelisIndex;
 	m_d3dCaelisMatrix = tThisWorld.atWorldMatrix[CaelisIndex].worldMatrix;
 	//PlayerStartIndex = CaelisIndex;
 
@@ -7315,6 +7315,15 @@ int CGameMangerSystem::RealLevelUpdate()
 	{
 		PlayerStartIndex = pcInputSystem->CharacterSwitch(PlayerStartIndex);
 		pcInputSystem->m_buttonPressed = true;
+		if (PlayerStartIndex == ClaytonIndex)
+		{
+			m_d3dPlayerMatrix = tThisWorld.atWorldMatrix[ClaytonIndex].worldMatrix;
+			
+		}
+		else if(PlayerStartIndex == CaelisIndex)
+		{
+			m_d3dCaelisMatrix = tThisWorld.atWorldMatrix[CaelisIndex].worldMatrix;
+		}
 	}
 	else if	(pcInputSystem->InputCheck(G_KEY_0) == 0 && pcInputSystem->InputCheck(G_KEY_5) == 0 && pcInputSystem->m_buttonPressed == true)
 	{
@@ -7571,7 +7580,9 @@ int CGameMangerSystem::RealLevelUpdate()
 		walkCamera, aimCamera, debugCamera,
 		m_d3d_ResultMatrix, m_d3dPlayerMatrix, m_d3dOffsetMatrix, m_d3dWorldMatrix,
 		tMyVertexBufferTemp.m_d3dViewMatrix, tTempVertexBuffer.m_d3dViewMatrix,
-		tTempPixelBuffer.m_d3dCollisionColor, delta, pcAudioSystem, tThisWorld.atClayton[PlayerStartIndex], tThisWorld.atRigidBody[PlayerStartIndex].velocity, m_d3dCaelisMatrix, PlayerStartIndex);
+		tTempPixelBuffer.m_d3dCollisionColor, delta, pcAudioSystem, tThisWorld.atClayton[PlayerStartIndex], tThisWorld.atRigidBody[PlayerStartIndex].velocity, m_d3dCaelisMatrix, PlayerStartIndex
+	,CaelisIndex, ClaytonIndex);
+	std::cout << PlayerStartIndex << endl;
 	
 #endif // INPUT_ABSTRACTED_ON
 	pcGraphicsSystem->UpdateD3D();
@@ -7843,14 +7854,16 @@ int CGameMangerSystem::RealLevelUpdate()
 					}
 					else if (tCameraMode.bAimMode == true)
 					{
-						tTempVertexBuffer.m_d3dWorldMatrix = tThisWorld.atWorldMatrix[ClaytonIndex].worldMatrix;
-						tMyVertexBufferTemp.m_d3dWorldMatrix = tThisWorld.atWorldMatrix[ClaytonIndex].worldMatrix;
 
 						//m_d3dPlayerMatrix = pcInputSystem->CharacterMovement(m_d3dPlayerMatrix, fpsTimer.GetDelta(), pcAudioSystem, tThisWorld.atClayton[PlayerStartIndex], tThisWorld.atRigidBody[PlayerStartIndex].velocity, bNoMoving);
 						tThisWorld.atWorldMatrix[ClaytonIndex].worldMatrix = m_d3dPlayerMatrix;
 						tThisWorld.atWorldMatrix[ClaytonIndex].worldMatrix = pcPhysicsSystem->ResolveForces(&tThisWorld.atRigidBody[ClaytonIndex], tThisWorld.atWorldMatrix[ClaytonIndex].worldMatrix, false);
 						m_d3dPlayerMatrix = tThisWorld.atWorldMatrix[ClaytonIndex].worldMatrix;
-						XMVECTOR temp = XMVectorZero();
+
+						tTempVertexBuffer.m_d3dWorldMatrix = tThisWorld.atWorldMatrix[ClaytonIndex].worldMatrix;
+						tMyVertexBufferTemp.m_d3dWorldMatrix = tThisWorld.atWorldMatrix[ClaytonIndex].worldMatrix;
+
+					/*	XMVECTOR temp = XMVectorZero();
 
 						temp = XMVector3Transform(temp, tThisWorld.atWorldMatrix[CaelisIndex].worldMatrix);
 						std::cout << "\nCaelis Vector:\t";
@@ -7866,7 +7879,7 @@ int CGameMangerSystem::RealLevelUpdate()
 						{
 							std::cout << temp.m128_f32[i] << ", ";
 
-						}
+						}*/
 						XMMATRIX claytonFrustumMatrix = aimCamera->d3d_Position;
 						claytonFrustumMatrix = XMMatrixMultiply(XMMatrixTranslation(0, 0, -15), claytonFrustumMatrix);
 
@@ -7980,8 +7993,10 @@ int CGameMangerSystem::RealLevelUpdate()
 						tThisWorld.atWorldMatrix[CaelisIndex].worldMatrix = m_d3dCaelisMatrix;
 						tThisWorld.atWorldMatrix[CaelisIndex].worldMatrix = pcPhysicsSystem->ResolveForces(&tThisWorld.atRigidBody[CaelisIndex], tThisWorld.atWorldMatrix[CaelisIndex].worldMatrix, false);
 						m_d3dCaelisMatrix = tThisWorld.atWorldMatrix[CaelisIndex].worldMatrix;
-
-						XMVECTOR temp = XMVectorZero();
+						
+						tTempVertexBuffer.m_d3dWorldMatrix = tThisWorld.atWorldMatrix[CaelisIndex].worldMatrix;
+						tMyVertexBufferTemp.m_d3dWorldMatrix = tThisWorld.atWorldMatrix[CaelisIndex].worldMatrix;
+						/*XMVECTOR temp = XMVectorZero();
 
 						temp = XMVector3Transform(temp, tThisWorld.atWorldMatrix[CaelisIndex].worldMatrix);
 						std::cout << "\nCaelis Vector:\t";
@@ -7997,7 +8012,7 @@ int CGameMangerSystem::RealLevelUpdate()
 						{
 							std::cout << temp.m128_f32[i] << ", ";
 
-						}
+						}*/
 
 						XMMATRIX claytonFrustumMatrix = aimCamera->d3d_Position;
 						claytonFrustumMatrix = XMMatrixMultiply(XMMatrixTranslation(0, 0, -15), claytonFrustumMatrix);
@@ -8468,8 +8483,8 @@ int CGameMangerSystem::RealLevelUpdate()
 						if (tThisWorld.atClip[GunIndexForPlayer].nBulletsAvailables.size() == 0 && tThisWorld.atClip[GunIndexForPlayer].empty == true)
 						{
 							#if MUSIC_ON
-							pcAudioSystem->SendSoundsToEngine(AK::EVENTS::PLAY_AMMODEPLETED, pcAudioSystem->m_GunEmpty);
-							pcAudioSystem->SetRTPCVolume(AK::GAME_PARAMETERS::SFX_VOLUME, m_fSFXVolume);
+							//pcAudioSystem->SendSoundsToEngine(AK::EVENTS::PLAY_AMMODEPLETED, pcAudioSystem->m_GunEmpty);
+							//pcAudioSystem->SetRTPCVolume(AK::GAME_PARAMETERS::SFX_VOLUME, m_fSFXVolume);
 							#endif
 							tThisWorld.atClip[GunIndexForPlayer].empty = false;
 
