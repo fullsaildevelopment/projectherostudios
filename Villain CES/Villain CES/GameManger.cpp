@@ -4734,10 +4734,19 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	m_d3dViewMatrix = pcGraphicsSystem->SetDefaultViewMatrix();
 	//Init Walk Camera to Default Position
 	walkCamera->d3d_Position = pcGraphicsSystem->SetDefaultCameraMatrix();
+	walkCamera->fPitch = 0;
+	walkCamera->fRoll = 0;
+	walkCamera->fYaw = 0;
 	//Init Aim Camera to Default Position
 	aimCamera->d3d_Position = pcGraphicsSystem->SetDefaultCameraMatrix();
+	aimCamera->fPitch = 0;
+	aimCamera->fRoll = 0;
+	aimCamera->fYaw = 0;
 	//Init Debug Camera to Default Position
 	debugCamera->d3d_Position = pcGraphicsSystem->SetDefaultCameraMatrix();
+	debugCamera->fPitch = 0;
+	debugCamera->fRoll = 0;
+	debugCamera->fYaw = 0;
 	// Init Projection Matrix with 90.0f
 	m_d3dProjectionMatrix = pcGraphicsSystem->SetDefaultPerspective(m_RealTimeFov);
 
@@ -4832,12 +4841,24 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 
 	for (int meshIndex = 0; meshIndex < gunImport.meshCount; ++meshIndex)
 	{
-		GunIndexForPlayer = CreateClaytonGun(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, tThisWorld.atWorldMatrix[ClaytonIndex].worldMatrix, ClaytonIndex, -.7, 1, 10.4, 3, 130, gunImport.vtMeshes[meshIndex], gunImport.vtMaterials[meshIndex]);
+		GunIndexForClayton = CreateClaytonGun(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, tThisWorld.atWorldMatrix[ClaytonIndex].worldMatrix, ClaytonIndex, -.7, 1, 10.4, 3, 130, gunImport.vtMeshes[meshIndex], gunImport.vtMaterials[meshIndex]);
+	}
+	GunIndexForPlayer = GunIndexForClayton;
+
+	tThisWorld.atAABB[GunIndexForClayton] = pcCollisionSystem->createAABBS(tThisWorld.atMesh[GunIndexForClayton].m_VertexData, tThisWorld.atAABB[GunIndexForClayton]);
+	tThisWorld.atAABB[GunIndexForClayton].m_IndexLocation = GunIndexForClayton;
+	pcCollisionSystem->AddAABBCollider(tThisWorld.atAABB[GunIndexForClayton], GunIndexForClayton);
+
+	gunImport = pcGraphicsSystem->ReadMesh("meshData_CaelisGun.txt");
+
+	for (int meshIndex = 0; meshIndex < gunImport.meshCount; ++meshIndex)
+	{
+		GunIndexForCaelis = CreateCaelisGun(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, m_d3dWorldMatrix, CaelisIndex, -.7, 1, 10.4, 3, 130, gunImport.vtMeshes[meshIndex], gunImport.vtMaterials[meshIndex]);
 	}
 
-	tThisWorld.atAABB[GunIndexForPlayer] = pcCollisionSystem->createAABBS(tThisWorld.atMesh[GunIndexForPlayer].m_VertexData, tThisWorld.atAABB[GunIndexForPlayer]);
-	tThisWorld.atAABB[GunIndexForPlayer].m_IndexLocation = GunIndexForPlayer;
-	pcCollisionSystem->AddAABBCollider(tThisWorld.atAABB[GunIndexForPlayer], GunIndexForPlayer);
+	tThisWorld.atAABB[GunIndexForCaelis] = pcCollisionSystem->createAABBS(tThisWorld.atMesh[GunIndexForCaelis].m_VertexData, tThisWorld.atAABB[GunIndexForCaelis]);
+	tThisWorld.atAABB[GunIndexForCaelis].m_IndexLocation = GunIndexForCaelis;
+	pcCollisionSystem->AddAABBCollider(tThisWorld.atAABB[GunIndexForCaelis], GunIndexForCaelis);
 
 	//for (int meshIndex = 0; meshIndex < tempImport.meshCount; meshIndex++)
 	//{
@@ -6294,6 +6315,8 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 
 	pcGraphicsSystem->CreateBuffers(&tThisWorld);
 
+	moveTime = 0;
+	bNoMoving = true;
 	loading = true;
 	fpsTimer.Restart();
 	fpsTimer.Init_FPSReader();
@@ -7634,7 +7657,6 @@ int CGameMangerSystem::RealLevelUpdate()
 		tMyVertexBufferTemp.m_d3dViewMatrix, tTempVertexBuffer.m_d3dViewMatrix,
 		tTempPixelBuffer.m_d3dCollisionColor, delta, pcAudioSystem, tThisWorld.atClayton[PlayerStartIndex], tThisWorld.atRigidBody[PlayerStartIndex].velocity, m_d3dCaelisMatrix, PlayerStartIndex
 	,CaelisIndex, ClaytonIndex,tThisWorld.atCaelis[CaelisIndex]);
-	std::cout << PlayerStartIndex << endl;
 	
 #endif // INPUT_ABSTRACTED_ON
 	pcGraphicsSystem->UpdateD3D();
@@ -8448,7 +8470,7 @@ int CGameMangerSystem::RealLevelUpdate()
 
 						int bulletType = -1;
 						// Metal Fired Sound in Here -ZFB
-						if (nCurrentEntity == GunIndexForPlayer)
+						if (nCurrentEntity == GunIndexForClayton)
 						{
 							pcCollisionSystem->updateAABB(tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, tThisWorld.atAABB[nCurrentEntity]);
 
@@ -8507,6 +8529,20 @@ int CGameMangerSystem::RealLevelUpdate()
 							pcGraphicsSystem->CreateEntityBuffer(&tThisWorld, newbullet);*/
 #pragma endregion        
 					}
+						else if (nCurrentEntity == GunIndexForCaelis)
+						{
+							pcCollisionSystem->updateAABB(tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, tThisWorld.atAABB[nCurrentEntity]);
+
+							foward.m128_f32[0] = 0;
+							foward.m128_f32[1] = 0;
+							foward.m128_f32[2] = 1;
+
+							localMatrix2 = XMMatrixTranslationFromVector(foward);
+							gunMatrix = tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix;
+							gunMatrix = XMMatrixMultiply(XMMatrixRotationX(XMConvertToRadians(90)), gunMatrix);
+							gunMatrix = XMMatrixMultiply(XMMatrixRotationZ(XMConvertToRadians(90)), gunMatrix);
+							gunMatrix = XMMatrixMultiply(localMatrix2, gunMatrix);
+						}
 						else
 						{
 							pcCollisionSystem->updateAABB(tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, tThisWorld.atAABB[nCurrentEntity]);
@@ -8717,15 +8753,22 @@ int CGameMangerSystem::RealLevelUpdate()
 
 			tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = XMMatrixMultiply(tThisWorld.atOffSetMatrix[nCurrentEntity], tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix);
 
-			if (nCurrentEntity != GunIndexForPlayer)
+			if (nCurrentEntity == GunIndexForClayton)
 			{
-				tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = XMMatrixMultiply(XMMatrixRotationY(XMConvertToRadians(-90)), tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix);
-				
+				tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = XMMatrixMultiply(XMMatrixRotationY(XMConvertToRadians(90)), tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix);
+
+				tThisWorld.atAABB[nCurrentEntity] = pcCollisionSystem->updateAABB(tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, tThisWorld.atAABB[nCurrentEntity]);
+			}
+			else if (nCurrentEntity == GunIndexForCaelis)
+			{
+				tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = XMMatrixMultiply(XMMatrixRotationX(XMConvertToRadians(-90)), tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix);
+				//tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = XMMatrixMultiply(XMMatrixRotationZ(XMConvertToRadians(-90)), tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix);
+
 				tThisWorld.atAABB[nCurrentEntity] = pcCollisionSystem->updateAABB(tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, tThisWorld.atAABB[nCurrentEntity]);
 			}
 			else
 			{
-				tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = XMMatrixMultiply(XMMatrixRotationY(XMConvertToRadians(90)), tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix);
+				tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = XMMatrixMultiply(XMMatrixRotationY(XMConvertToRadians(-90)), tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix);
 
 				tThisWorld.atAABB[nCurrentEntity] = pcCollisionSystem->updateAABB(tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, tThisWorld.atAABB[nCurrentEntity]);
 			}
@@ -9201,14 +9244,19 @@ int CGameMangerSystem::RealLevelUpdate()
 	clickTime += delta;
 	lerpTime += delta;
 	hitmarkerTime += delta;
-
 	tThisWorld.atCaelis[CaelisIndex].m_tfSpecialCooldown -= delta * 10;
+	moveTime += delta;
+
+	if (moveTime > 1 && bNoMoving)
+	{
+		bNoMoving = false;
+	}
 
 	pcUISystem->UpdateFPS(&tThisWorld, pcGraphicsSystem, fpsTimer, fpsIndex, tUIVertexBuffer, tUIPixelBuffer, atUIVertices, menuCamera);
 
 	pcGraphicsSystem->m_pd3dSwapchain->Present(0, 0);
 	zValue += 0.001;
-	bNoMoving = false;
+	//bNoMoving = false;
 	return 14;
 }
 
