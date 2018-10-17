@@ -4658,6 +4658,12 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	}
 	PlayerStartIndex = ClaytonIndex;
 
+	m_d3dPlayerMatrix = tThisWorld.atWorldMatrix[ClaytonIndex].worldMatrix = XMMatrixRotationRollPitchYaw(0, XMConvertToRadians(180), 0);
+
+	m_d3dPlayerMatrix.r[3].m128_f32[0] = tThisWorld.atWorldMatrix[ClaytonIndex].worldMatrix.r[3].m128_f32[0] = -4;
+	m_d3dPlayerMatrix.r[3].m128_f32[1] = tThisWorld.atWorldMatrix[ClaytonIndex].worldMatrix.r[3].m128_f32[1] = -1.2;
+	m_d3dPlayerMatrix.r[3].m128_f32[2] = tThisWorld.atWorldMatrix[ClaytonIndex].worldMatrix.r[3].m128_f32[2] = 10.8;
+
 	//Put Caelis Import Data here 
 	tempImport = pcGraphicsSystem->ReadMesh("meshData_Caelis2.txt");
 	for (int meshIndex = 0;  meshIndex < tempImport.meshCount; meshIndex++)
@@ -9044,11 +9050,11 @@ int CGameMangerSystem::ResetLevel()
 					tCameraMode.bWalkMode = false;
 					tCameraMode.bSwitch = true;
 
-					//m_d3dPlayerMatrix = tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = XMMatrixRotationRollPitchYaw(0, XMConvertToRadians(180), 0);
+					m_d3dPlayerMatrix = tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = XMMatrixRotationRollPitchYaw(0, XMConvertToRadians(180), 0);
 					
-					m_d3dPlayerMatrix.r[3].m128_f32[0] = tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix.r[3].m128_f32[0] = 0;
+					m_d3dPlayerMatrix.r[3].m128_f32[0] = tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix.r[3].m128_f32[0] = -4;
 					m_d3dPlayerMatrix.r[3].m128_f32[1] = tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix.r[3].m128_f32[1] = -1.2;
-					m_d3dPlayerMatrix.r[3].m128_f32[2] = tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix.r[3].m128_f32[2] = 0;
+					m_d3dPlayerMatrix.r[3].m128_f32[2] = tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix.r[3].m128_f32[2] = 10.8;
 
 					debugCamera->d3d_Position = pcGraphicsSystem->SetDefaultCameraMatrix();
 					debugCamera->fPitch = 0;
