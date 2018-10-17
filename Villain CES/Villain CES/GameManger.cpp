@@ -5508,7 +5508,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 
 	// ai next to tree
 	AILocation = pcGraphicsSystem->SetDefaultWorldPosition();
-	AILocation.r[3].m128_f32[2] -= 90;
+	AILocation.r[3].m128_f32[2] -= 100;
 	AILocation.r[3].m128_f32[0] -= 10;
 	AILocation.r[3].m128_f32[1] -= 1;
 	AiLookPosition = AILocation;
@@ -6209,6 +6209,11 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	rectangle.r[3].m128_f32[1] -= 1.0f;
 	rectangle.r[3].m128_f32[0] -= 1.0f;
 	int cylinder=CreateCylinder(&tThisWorld, rectangle);
+	tThisWorld.atCollisionMask[218].m_tnCollisionMask = 1;
+	tThisWorld.atCollisionMask[233].m_tnCollisionMask = 1;
+
+	tThisWorld.atCollisionMask[118].m_tnCollisionMask = 1;
+
 	#pragma region COLLISION INIT
 	for (int nCurrentEntity = 0; nCurrentEntity < ENTITYCOUNT; nCurrentEntity++)
 	{
@@ -6216,12 +6221,18 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 		if (cylinder == nCurrentEntity) {
 			float x = 0;
 		}
-		if (tThisWorld.atCollisionMask[nCurrentEntity].m_tnCollisionMask > 1&&nCurrentEntity!=216&&nCurrentEntity!=215)
+		if (tThisWorld.atCollisionMask[nCurrentEntity].m_tnCollisionMask > 1&&nCurrentEntity!=216&&nCurrentEntity!=215&&nCurrentEntity!=218&&nCurrentEntity!=118&&nCurrentEntity!=233 && nCurrentEntity != 133 && nCurrentEntity != 33)// && nCurrentEntity != 18)
 		{
 
 			if (tThisWorld.atSimpleMesh[nCurrentEntity].m_nVertexCount > tThisWorld.atDebugMesh[nCurrentEntity].m_nVertexCount)
 			{
-				
+				if (nCurrentEntity == 218) {
+					TAABB MyAbb = pcCollisionSystem->createAABBS(tThisWorld.atSimpleMesh[nCurrentEntity].m_VertexData, tThisWorld.atAABB[nCurrentEntity]);
+					MyAbb.m_IndexLocation = nCurrentEntity;
+					tThisWorld.atAABB[nCurrentEntity] = MyAbb;
+					pcCollisionSystem->AddAABBCollider(MyAbb, nCurrentEntity);
+					
+				}
 				TAABB MyAbb = pcCollisionSystem->createAABBS(tThisWorld.atSimpleMesh[nCurrentEntity].m_VertexData, tThisWorld.atAABB[nCurrentEntity]);
 				MyAbb.m_IndexLocation = nCurrentEntity;
 				tThisWorld.atAABB[nCurrentEntity] = MyAbb;
@@ -6289,7 +6300,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 			}
 		}
 
-		if (tThisWorld.atProjectiles[nCurrentEntity].m_tnProjectileMask == (COMPONENT_PROJECTILESMASK | COMPONENT_CLIP))
+		if (tThisWorld.atProjectiles[nCurrentEntity].m_tnProjectileMask == (COMPONENT_PROJECTILESMASK | COMPONENT_CLIP)&&nCurrentEntity!=218)
 		{
 			if (tThisWorld.atMesh[nCurrentEntity].m_nVertexCount > tThisWorld.atDebugMesh[nCurrentEntity].m_nVertexCount)
 			{
@@ -7672,7 +7683,7 @@ int CGameMangerSystem::RealLevelUpdate()
 					tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = tThisWorld.atWorldMatrix[PlayerStartIndex].worldMatrix;
 				}
 
-			//	if (tThisWorld.atUIMask[nCurrentEntity].m_tnUIMask != (COMPONENT_UIMASK | COMPONENT_NOSHOW))
+				if (tThisWorld.atUIMask[nCurrentEntity].m_tnUIMask != (COMPONENT_UIMASK | COMPONENT_NOSHOW))
 				{
 					pcGraphicsSystem->InitPrimalShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, debugCamera->d3d_Position, m_d3dProjectionMatrix, tThisWorld.atDebugMesh[nCurrentEntity], debugCamera->d3d_Position);
 					pcGraphicsSystem->ExecutePipeline(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atDebugMesh[nCurrentEntity].m_nVertexCount, tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask, tThisWorld.atShaderID[nCurrentEntity].m_nShaderID);
@@ -7761,10 +7772,12 @@ int CGameMangerSystem::RealLevelUpdate()
 				pcGraphicsSystem->InitLineShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atWorldMatrix[ExtractionBeamIndex].worldMatrix, m_d3dViewMatrix, m_d3dProjectionMatrix, tThisWorld.atDebugMesh[ExtractionBeamIndex], aimCamera->d3d_Position, atBeamVerts, particleSRV);
 				pcGraphicsSystem->ExecutePipeline(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atDebugMesh[ExtractionBeamIndex].m_nVertexCount, tThisWorld.atGraphicsMask[ExtractionBeamIndex].m_tnGraphicsMask, tThisWorld.atShaderID[ExtractionBeamIndex].m_nShaderID);
 			}
+#if MUSIC_ON
 			 if (pcInputSystem->InputCheck(G_KEY_Q) == 0 && pcAudioSystem->m_BeamSoundOn == true)
 			{
 				pcAudioSystem->m_BeamSoundOn = false;
 			}
+#endif
 		}
 		
 		if (tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_SHADERID) 
@@ -8084,7 +8097,7 @@ int CGameMangerSystem::RealLevelUpdate()
 					tThisWorld.atAABB[nCurrentEntity] = pcCollisionSystem->updateAABB(tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, tThisWorld.atAABB[nCurrentEntity]);
 				}
 			}
-			if (pcCollisionSystem->aabb_to_frustum(tThisWorld.atAABB[nCurrentEntity], tThisWorld.atClaytonVision.eyes0))
+			if (pcCollisionSystem->aabb_to_frustum(tThisWorld.atAABB[nCurrentEntity], tThisWorld.atClaytonVision.eyes0)||nCurrentEntity==33)
 			{
 				if (tThisWorld.atProjectiles[nCurrentEntity].m_tnProjectileMask == (COMPONENT_PROJECTILESMASK | COMPONENT_METAL | COMPONENT_ENEMY))
 				{
@@ -8303,15 +8316,15 @@ int CGameMangerSystem::RealLevelUpdate()
 							playerGravity.m128_f32[2] = 0;
 							playerGravity.m128_f32[3] = 0;
 						//	tThisWorld.atRigidBody[nCurrentEntity].gravity = playerGravity;
-							cout << tThisWorld.atPathPlanining[nCurrentEntity].startingNode<<"start"<<std::endl;
+							/*cout << tThisWorld.atPathPlanining[nCurrentEntity].startingNode<<"start"<<std::endl;
 							cout << tThisWorld.atPathPlanining[nCurrentEntity].Goal<<"goal"<<std::endl;
 
 							cout << "AITRYINGTOMOVE" << nCurrentEntity << std::endl;
-							cout << tThisWorld.atPathPlanining[nCurrentEntity].pauseMovement;
+							cout << tThisWorld.atPathPlanining[nCurrentEntity].pauseMovement;*/
 							if(tThisWorld.atPathPlanining[nCurrentEntity].startingNode!= tThisWorld.atPathPlanining[nCurrentEntity].Goal&&tThisWorld.atPathPlanining[nCurrentEntity].pauseMovement==false)
 							pcAiSystem->PathPlaningMovement(&tThisWorld.atPathPlanining[nCurrentEntity], &tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, fpsTimer.GetDelta());
 							else {
-								cout << " penguin " << std::endl;
+							//	cout << " penguin " << std::endl;
 							}
 						}
 						else
@@ -8752,7 +8765,7 @@ int CGameMangerSystem::RealLevelUpdate()
 		{
 			tTempPixelBuffer.m_d3dCollisionColor = XMFLOAT4(0, 1.0f, 0, 1.0f);
 		
-		//	if (tThisWorld.atUIMask[nCurrentEntity].m_tnUIMask != (COMPONENT_UIMASK | COMPONENT_NOSHOW))
+			if (tThisWorld.atUIMask[nCurrentEntity].m_tnUIMask != (COMPONENT_UIMASK | COMPONENT_NOSHOW))
 			{
 				if (pcCollisionSystem->aabb_to_frustum(tThisWorld.atAABB[nCurrentEntity], tThisWorld.atClaytonVision.eyes0))
 				{
