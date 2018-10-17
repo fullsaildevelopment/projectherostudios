@@ -441,8 +441,9 @@ void CAISystem::PathPlaningMovement(TAIPathFinding* path, XMMATRIX* worldMatrix)
 	if (path->index <path->directions.size()) {
 		XMVECTOR direction =path->directions[path->index] - worldMatrix->r[3];
 	//	direction = XMVector3Transform(direction, *worldMatrix);
+
 		direction = XMVector3Normalize(direction);
-		direction *= 0.01f;//Frame Dependent
+		direction *= 0.5f;//Frame Dependent
 		
 		XMMATRIX localMatrix2 = XMMatrixTranslationFromVector(direction);
 		XMMATRIX idenity = XMMatrixIdentity();
@@ -451,11 +452,12 @@ void CAISystem::PathPlaningMovement(TAIPathFinding* path, XMMATRIX* worldMatrix)
 		idenity.r[3].m128_f32[2] = beforeMutplcation.r[3].m128_f32[2];
 		idenity.r[3].m128_f32[3] = beforeMutplcation.r[3].m128_f32[3];
 		*worldMatrix = XMMatrixMultiply(localMatrix2, idenity);
+		worldMatrix->r[3].m128_f32[1] -= 1;
 		if (sqrtf(
 			((path->directions[path->index].m128_f32[0] - worldMatrix->r[3].m128_f32[0])*(path->directions[path->index].m128_f32[0] - worldMatrix->r[3].m128_f32[0])) +
 			((path->directions[path->index].m128_f32[1] - worldMatrix->r[3].m128_f32[1])*(path->directions[path->index].m128_f32[1] - worldMatrix->r[3].m128_f32[1])) +
 			((path->directions[path->index].m128_f32[2] - worldMatrix->r[3].m128_f32[2])*(path->directions[path->index].m128_f32[2] - worldMatrix->r[3].m128_f32[2]))
-		) < 1) {
+		) < 2) {
 			path->index++;
 		}
 	}
@@ -463,7 +465,10 @@ void CAISystem::PathPlaningMovement(TAIPathFinding* path, XMMATRIX* worldMatrix)
 		path->index = 0;
 		path->directions.clear();
 		path->foundDestination = true;
+		path->testingPathFinding = true;
+		int previousstart = path->startingNode;
 		path->startingNode = path->Goal;
+		path->Goal = previousstart;
 		open.clear();
 		visited.clear();
 		path->InterRuptPathPlanning = true;
@@ -518,6 +523,40 @@ float CAISystem::CalculateDistanceMatrix(XMMATRIX matrix1, XMMATRIX matrix2)
 	);
 }
 
+bool CAISystem::ActiveShooterCheck(int AiIndex,float cooldownofGun)
+{
+	if(CurrentShooter!=AiIndex)
+	return false;
+	else if (cooldownofGun <= 0) {
+		chooseAnotherShooter = true;
+	
+
+	}
+	return true;
+}
+
+int CAISystem::ChooseRandomSHooter()
+{
+
+	chooseAnotherShooter = false;
+	return  ShootingActiveAI[rand() % ShootingActiveAI.size()];;
+}
+
+bool CAISystem::GetCanWechooseShooter()
+{
+	return chooseAnotherShooter;
+}
+
+void CAISystem::SetCanWeChooseShooter(bool _chooseAnotherShooter)
+{
+	chooseAnotherShooter = _chooseAnotherShooter;
+}
+
+void CAISystem::SetActiveShooter(int activeSHooter)
+{
+	CurrentShooter = activeSHooter;
+}
+
 void CAISystem::MakeDirections(vector<XMVECTOR>* directions, PlannerNode* current)
 {
 	if (current != nullptr) {
@@ -541,6 +580,7 @@ void CAISystem::MoveAiToCoverLocation(TCoverTrigger Cover,TWorld * ptWorld,int P
 		if (ptWorld->atPathPlanining[Cover.AItoMove[i]].InterRuptPathPlanning == true) {
 			if (ptWorld->atPathPlanining[Cover.AItoMove[i]].DelayMovement <= 0) {
 				ptWorld->atAIMask[Cover.AItoMove[i]].m_tnAIMask = COMPONENT_AIMASK | COMPONENT_SEARCH | COMPONENT_PATHFINDTEST;
+				if(Cover.coverAiCanGoTo[0].CoverPositions[index] != ptWorld->atPathPlanining[Cover.AItoMove[i]].startingNode)
 				ptWorld->atPathPlanining[Cover.AItoMove[i]].Goal = Cover.coverAiCanGoTo[0].CoverPositions[index];
 				ptWorld->atPathPlanining[Cover.AItoMove[i]].testingPathFinding = true;
 				ptWorld->atPathPlanining[Cover.AItoMove[i]].DelayMovement = 0;//rand() % 100 + 50;
@@ -553,15 +593,40 @@ void CAISystem::MoveAiToCoverLocation(TCoverTrigger Cover,TWorld * ptWorld,int P
 	}
 }
 
-void CAISystem::AddAiInCombat(int aiEnitity)
+void CAISystem::AddShootingActiveAI(int aiEnitity)
 {
 	
-	/*for (int i = 0; AIInCombat.size(); ++i) {
-		if (AIInCombat[i] == aiEnitity) {
+	for (int i = 0;i< ShootingActiveAI.size(); ++i) {
+		if (ShootingActiveAI[i] == aiEnitity) {
 			return;
 		}
 	}
-	AIInCombat.push_back(aiEnitity);*/
+	ShootingActiveAI.push_back(aiEnitity);
+	cout << "Size of AI Active List" << ShootingActiveAI.size() << " " << std::endl;
+
+}
+
+void CAISystem::RemoveeShootingActiveAI(int aiEnitity)
+{
+	for (int i = 0;i< ShootingActiveAI.size(); ++i) {
+		if (ShootingActiveAI[i] == aiEnitity) {
+	
+			ShootingActiveAI.erase(ShootingActiveAI.begin() + i);
+			cout << "Size of AI Active List" << ShootingActiveAI.size() << " " << std::endl;
+		}
+	}
+
+	//ShootingActiveAI.push_back(aiEnitity);
+}
+
+void CAISystem::ClearShootingActiveAI()
+{
+	ShootingActiveAI.clear();
+}
+
+int CAISystem::GetActiveShooter()
+{
+	return CurrentShooter;
 }
 
 void CAISystem::CLeanPathPlaning()

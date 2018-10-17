@@ -135,7 +135,7 @@ bool CCollisionSystem::AiVisionCheck(frustum_t eyeSight,vector<int>* index)
 	return seesomething;
 }
 
-void CCollisionSystem::TestThreading(TWorld * ptWorld, int nCurrentEntity, CGraphicsSystem* pcGraphicsSystem, CGraphicsSystem::TPrimalVertexBufferType* tTempVertexBuffer, XMMATRIX& tMyVertexBufferWorldMatrix, XMMATRIX* m_d3dPlayerMatrix, CPhysicsSystem* pcPhysicsSystem, CAISystem* pcAiSystem,int PlayerStartIndex, float& playerDamage, float& pirateDamage, float& prevHealth, float& fallingHealth, float& lerpTime, float in_MasterVolume, float in_SFXVolume, float in_MusicVolume, CAudioSystem* pcAudioSystem, XMMATRIX(*doorEventListener)(int), void(*doorEventChanger)(int), float &hitmarkerTime)
+void CCollisionSystem::TestThreading(TWorld * ptWorld, int nCurrentEntity, CGraphicsSystem* pcGraphicsSystem, CGraphicsSystem::TPrimalVertexBufferType* tTempVertexBuffer, XMMATRIX& tMyVertexBufferWorldMatrix, XMMATRIX* m_d3dPlayerMatrix, CPhysicsSystem* pcPhysicsSystem, CAISystem* pcAiSystem,int PlayerStartIndex, float& playerDamage, float& pirateDamage, float& prevHealth, float& fallingHealth, float& lerpTime, float in_MasterVolume, float in_SFXVolume, float in_MusicVolume, CAudioSystem* pcAudioSystem, XMMATRIX(*doorEventListener)(int, bool), void(*doorEventChanger)(int), float &hitmarkerTime)
 {
 	ptWorld->atAABB[nCurrentEntity].theeadmade = true;
 	if (ptWorld->atCollisionMask[nCurrentEntity].m_tnCollisionMask == (COMPONENT_COLLISIONMASK | COMPONENT_TRIGGER | COMPONENT_AABB | COMPONENT_NONSTATIC)
@@ -160,7 +160,7 @@ void CCollisionSystem::TestThreading(TWorld * ptWorld, int nCurrentEntity, CGrap
 				{
 					for (int doorindex = 0;doorindex< ptWorld->atAABB[otherCollisionsIndex[i]].doorPeices.size(); ++doorindex) {
 						doorEventChanger(ptWorld->atShaderID[otherCollisionsIndex[i]].m_nShaderID);
-						ptWorld->atWorldMatrix[ptWorld->atAABB[otherCollisionsIndex[i]].doorPeices[doorindex]].worldMatrix = XMMatrixMultiply(doorEventListener(ptWorld->atShaderID[ptWorld->atAABB[otherCollisionsIndex[i]].doorPeices[doorindex]].m_nShaderID), ptWorld->atWorldMatrix[ptWorld->atAABB[otherCollisionsIndex[i]].doorPeices[doorindex]].worldMatrix);
+						ptWorld->atWorldMatrix[ptWorld->atAABB[otherCollisionsIndex[i]].doorPeices[doorindex]].worldMatrix = XMMatrixMultiply(doorEventListener(ptWorld->atShaderID[ptWorld->atAABB[otherCollisionsIndex[i]].doorPeices[doorindex]].m_nShaderID, true), ptWorld->atWorldMatrix[ptWorld->atAABB[otherCollisionsIndex[i]].doorPeices[doorindex]].worldMatrix);
 						ptWorld->atAABB[ptWorld->atAABB[otherCollisionsIndex[i]].doorPeices[doorindex]] = updateAABB(ptWorld->atWorldMatrix[ptWorld->atAABB[otherCollisionsIndex[i]].doorPeices[doorindex]].worldMatrix, ptWorld->atAABB[ptWorld->atAABB[otherCollisionsIndex[i]].doorPeices[doorindex]]);
 					}
 				}
@@ -201,7 +201,10 @@ void CCollisionSystem::TestThreading(TWorld * ptWorld, int nCurrentEntity, CGrap
 					{
 						*m_d3dPlayerMatrix = ptWorld->atWorldMatrix[nCurrentEntity].worldMatrix;
 					}
-
+					else if (ptWorld->atInputMask[nCurrentEntity].m_tnInputMask == (COMPONENT_CAELIS | COMPONENT_INPUTMASK))
+					{
+						*m_d3dPlayerMatrix = ptWorld->atWorldMatrix[nCurrentEntity].worldMatrix;
+					}
 				}
 				if (ptWorld->atRigidBody[nCurrentEntity].ground == false
 					&& ptWorld->atRigidBody[otherCollisionsIndex[i]].ground == false
@@ -220,9 +223,11 @@ void CCollisionSystem::TestThreading(TWorld * ptWorld, int nCurrentEntity, CGrap
 							{
 								pcAiSystem->SetNumberOfAI(pcAiSystem->GetNumberOfAI() - 1);
 
-								if (ptWorld->atClip[nCurrentEntity].gunIndex != -1)
-								{
-
+								
+									if (ptWorld->atAIMask[otherCollisionsIndex[i]].GunIndex == pcAiSystem->GetActiveShooter()) {
+										pcAiSystem->chooseAnotherShooter = true;
+										pcAiSystem->SetActiveShooter(0);
+									}
 
 									RemoveAABBCollider(nCurrentEntity);
 
@@ -231,7 +236,7 @@ void CCollisionSystem::TestThreading(TWorld * ptWorld, int nCurrentEntity, CGrap
 									pcGraphicsSystem->CleanD3DObject(ptWorld, nCurrentEntity);
 
 
-								}
+								
 								RemoveAABBCollider(otherCollisionsIndex[i]);
 								pcGraphicsSystem->CleanD3DObject(ptWorld, otherCollisionsIndex[i]);
 								pcGraphicsSystem->CleanD3DObject(ptWorld, ptWorld->atAIMask[otherCollisionsIndex[i]].GunIndex);
@@ -249,11 +254,15 @@ void CCollisionSystem::TestThreading(TWorld * ptWorld, int nCurrentEntity, CGrap
 
 								hitmarkerTime = 0;
 
-								//pcAiSystem->AddAiInCombat(nCurrentEntity);
+								//pcAiSystem->AddShootingActiveAI(nCurrentEntity);
 								ptWorld->atActiveAI[otherCollisionsIndex[i]].active = true;
-								for (int activate = 0; activate < ptWorld->atActiveAI[otherCollisionsIndex[i]].NoctifyOtherAi.size(); ++activate) {
-									ptWorld->atActiveAI[ptWorld->atActiveAI[otherCollisionsIndex[i]].NoctifyOtherAi[activate]].active = true;
-									ptWorld->atAIVision[ptWorld->atActiveAI[otherCollisionsIndex[i]].NoctifyOtherAi[activate]].indexLookingAt = PlayerStartIndex;
+								for (int activate = 0; activate < ptWorld->atActiveAI[otherCollisionsIndex[i]].NoctifyOtherAi.size(); ++activate) 
+								{
+									if (ptWorld->atAIVision[ptWorld->atActiveAI[otherCollisionsIndex[i]].NoctifyOtherAi[activate]].stopSearching == false)
+									{
+										ptWorld->atActiveAI[ptWorld->atActiveAI[otherCollisionsIndex[i]].NoctifyOtherAi[activate]].active = true;
+										ptWorld->atAIVision[ptWorld->atActiveAI[otherCollisionsIndex[i]].NoctifyOtherAi[activate]].indexLookingAt = PlayerStartIndex;
+									}
 
 								}
 								ptWorld->atAIVision[otherCollisionsIndex[i]].indexLookingAt = PlayerStartIndex;
@@ -264,13 +273,36 @@ void CCollisionSystem::TestThreading(TWorld * ptWorld, int nCurrentEntity, CGrap
 
 								if (ptWorld->atAiHeath[otherCollisionsIndex[i]].heath <= 0)
 								{
+									cout << pcAiSystem->GetActiveShooter();
+									if (ptWorld->atAIMask[otherCollisionsIndex[i]].GunIndex == pcAiSystem->GetActiveShooter()) {
+										pcAiSystem->chooseAnotherShooter = true;
+										pcAiSystem->SetActiveShooter(0);
+									}
 									pcAiSystem->SetNumberOfAI(pcAiSystem->GetNumberOfAI() - 1);
 									RemoveAABBCollider(otherCollisionsIndex[i]);
-									pcGraphicsSystem->CleanD3DObject(ptWorld, otherCollisionsIndex[i]);
-									pcGraphicsSystem->CleanD3DObject(ptWorld, ptWorld->atAIMask[otherCollisionsIndex[i]].GunIndex);
 
-									pcGraphicsSystem->CleanD3DObject(ptWorld, otherCollisionsIndex[i] + 1);
-									pcGraphicsSystem->CleanD3DObject(ptWorld, otherCollisionsIndex[i] + 2);
+									ptWorld->atAABB[otherCollisionsIndex[i]].m_IndexLocation = -1;
+									ptWorld->atAABB[otherCollisionsIndex[i]].m_dMaxPoint = XMFLOAT3(0, 0, 0);
+									ptWorld->atAABB[otherCollisionsIndex[i]].m_dMaxPointOrginal = XMFLOAT3(0, 0, 0);
+									ptWorld->atAABB[otherCollisionsIndex[i]].m_dMinPoint = XMFLOAT3(0, 0, 0);
+									ptWorld->atAABB[otherCollisionsIndex[i]].m_dMinPointOrginal = XMFLOAT3(0, 0, 0);
+
+									ptWorld->atAiHeath[otherCollisionsIndex[i]].heath = 0;
+									ptWorld->atActiveAI[otherCollisionsIndex[i]].active = false;
+									ptWorld->atAIVision[otherCollisionsIndex[i]].stopSearching = true;
+									//ptWorld->atAIVision[otherCollisionsIndex[i]].indexLookingAt = 0;
+
+									ptWorld->atClip[otherCollisionsIndex[i]].tryToShoot = false;
+									ptWorld->atClip[otherCollisionsIndex[i]].tryToReload = false;
+
+									//ptWorld->atRigidBody[otherCollisionsIndex[i]].gravity.m128_f32[1] = 0.0002;
+
+									//pcGraphicsSystem->CleanD3DObject(ptWorld, otherCollisionsIndex[i]);
+									//pcGraphicsSystem->CleanD3DObject(ptWorld, ptWorld->atAIMask[otherCollisionsIndex[i]].GunIndex);
+									
+									//pcGraphicsSystem->CleanD3DObject(ptWorld, otherCollisionsIndex[i] + 1);
+									//pcGraphicsSystem->CleanD3DObject(ptWorld, otherCollisionsIndex[i] + 2);
+									pcAiSystem->RemoveeShootingActiveAI(otherCollisionsIndex[i]);
 								}
 
 							}

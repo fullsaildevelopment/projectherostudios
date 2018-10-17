@@ -3,8 +3,8 @@
 #include<malloc.h>
 #include"AK/SoundEngine/Common/AkMemoryMgr.h"
 #include"AK/SoundEngine/Common/AkModule.h"
-#include"AK/SoundEngine/Common/IAkStreamMgr.h"
 #include"AK/SoundEngine/Common/AkTypes.h"
+#include"AK/SoundEngine/Common/IAkStreamMgr.h"
 #include"AK/SoundEngine/Platforms/Windows/AkWinSoundEngine.h"
 #include"AK/SoundEngine/Common/AkStreamMgrModule.h"
 #include"AK/MusicEngine/Common/AkMusicEngine.h"
@@ -12,9 +12,6 @@
 #include"AK/SpatialAudio/Common/AkSpatialAudio.h"
 #include"AK/Tools/Win32/AkPlatformFuncs.h"
 #include"WwiseSounds/Wwise_IDs.h"
-//#ifndef AK_OPTIMIZED
-//#include <AK/Comm/AkCommunication.h>
-//#endif 
 //File Package
 #include"Win32/AkDefaultIOHookBlocking.h"
 #include"Common/AkFilePackageLowLevelIO.h"
@@ -27,6 +24,7 @@
 #define INIT_BNK L"Init.bnk"
 #define MAINMENU_BNK L"Augur_MusicBank.bnk"
 #define SFX L"Augur_SFX.bnk"
+#define STORY_BNK L"Augur_Story.bnk"
 //#define AK_OPTIMIZED
 //#ifndef AK_OPTIMIZED
 //// Only needed for debug mode
@@ -69,9 +67,6 @@ namespace AK
 }
 using namespace AK;
 using namespace AKPLATFORM;
-//Forward Declaration to reduce include size - Wwise tip
-class CAkFilePackageLowLevelIOBlocking;
-
 class CAudioSystem 
 {
 public:
@@ -97,6 +92,7 @@ public:
 	AkBankID init_bnkID;
 	AkGameObjectID Listener;
 	//Music Objects
+
 	AkGameObjectID m_AkMainMenuMusic;
 	AkGameObjectID m_AkHallwayBattle;
 	AkBankID MainMenu_bnkID;
@@ -106,16 +102,22 @@ public:
 	AkGameObjectID m_AkMetalFired;
 	AkGameObjectID m_Laser_Fire;
 	AkGameObjectID m_Human_Hurt;
-	AkGameObjectID m_Syclian_Death;
 	AkGameObjectID m_Scylian_Hurt;
 	AkGameObjectID m_WalkSound;
 	AkGameObjectID m_HoverSound;
 	AkGameObjectID m_GunEmpty;
-	bool hoverDone;
+	AkGameObjectID m_Story1;
+	AkGameObjectID m_Story2;
+	AkGameObjectID m_Story3;
+	AkGameObjectID m_Story4;
+	bool playOnce1 = false;
+	bool playOnce2 = false;
+	bool playOnce3 = false;
+	bool playOnce4 = false;
 	AkBankID m_SFX_bnkID;
+	AkBankID m_Story_bnkID;
 private:
-	CAkFilePackageLowLevelIOBlocking *m_LowIOHook;
-	//CAkDefaultIOHookBlocking *m_LowIOHook;
+	CAkFilePackageLowLevelIOBlocking * m_LowIOHook;
 };
 // C:\Program Files %28x86%29\Audiokinetic\Wwise 2018.1.0.6714\SDK\x64_vc150\Debug\lib
 

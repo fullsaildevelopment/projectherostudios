@@ -68,11 +68,22 @@ public:
 	void LookAtObject(XMMATRIX thingToLookAt, XMMATRIX* AIMatrix);
 	void Strafe(XMMATRIX* AiMatrix);
 	void MoveAiToCoverLocation(TCoverTrigger Cover, TWorld * ptWorld,int PlayerStartIndex);
-	void AddAiInCombat(int aiEnitity);
+	void AddShootingActiveAI(int aiEnitity);
+	void RemoveeShootingActiveAI(int aiEnitity);
+	int GetActiveShooter();
 	void CLeanPathPlaning();
 	float CalculateDistanceMatrix(XMMATRIX matrix1, XMMATRIX matrix2);
+	bool ActiveShooterCheck(int AiIndex, float cooldownofGun);
+	int ChooseRandomSHooter();
+	bool GetCanWechooseShooter();
+	void SetCanWeChooseShooter(bool _chooseAnotherShooter);
+	void SetActiveShooter(int activeSHooter);
+	void ClearShootingActiveAI();
+	bool chooseAnotherShooter = true;
 private:
-	vector<int> AIInCombat;
+
+	int CurrentShooter;
+	vector<int> ShootingActiveAI;
 
 	int numberofAI;
 	struct tiledata 

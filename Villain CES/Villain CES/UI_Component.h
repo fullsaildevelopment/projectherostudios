@@ -62,7 +62,6 @@ struct TButton
 	RECT boundingBox;
 	int sceneIndex;
 	bool enabled;
-	//added by ZFB
 	bool hovered = false;
 };
 #endif
