@@ -4724,12 +4724,24 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 
 	for (int meshIndex = 0; meshIndex < gunImport.meshCount; ++meshIndex)
 	{
-		GunIndexForPlayer = CreateClaytonGun(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, m_d3dWorldMatrix, PlayerStartIndex, -.7, 1, 10.4, 3, 130, gunImport.vtMeshes[meshIndex], gunImport.vtMaterials[meshIndex]);
+		GunIndexForClayton = CreateClaytonGun(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, m_d3dWorldMatrix, PlayerStartIndex, -.7, 1, 10.4, 3, 130, gunImport.vtMeshes[meshIndex], gunImport.vtMaterials[meshIndex]);
+	}
+	GunIndexForPlayer = GunIndexForClayton;
+
+	tThisWorld.atAABB[GunIndexForClayton] = pcCollisionSystem->createAABBS(tThisWorld.atMesh[GunIndexForClayton].m_VertexData, tThisWorld.atAABB[GunIndexForClayton]);
+	tThisWorld.atAABB[GunIndexForClayton].m_IndexLocation = GunIndexForClayton;
+	pcCollisionSystem->AddAABBCollider(tThisWorld.atAABB[GunIndexForClayton], GunIndexForClayton);
+
+	gunImport = pcGraphicsSystem->ReadMesh("meshData_CaelisGun.txt");
+
+	for (int meshIndex = 0; meshIndex < gunImport.meshCount; ++meshIndex)
+	{
+		GunIndexForCaelis = CreateCaelisGun(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, m_d3dWorldMatrix, CaelisIndex, -.7, 1, 10.4, 3, 130, gunImport.vtMeshes[meshIndex], gunImport.vtMaterials[meshIndex]);
 	}
 
-	tThisWorld.atAABB[GunIndexForPlayer] = pcCollisionSystem->createAABBS(tThisWorld.atMesh[GunIndexForPlayer].m_VertexData, tThisWorld.atAABB[GunIndexForPlayer]);
-	tThisWorld.atAABB[GunIndexForPlayer].m_IndexLocation = GunIndexForPlayer;
-	pcCollisionSystem->AddAABBCollider(tThisWorld.atAABB[GunIndexForPlayer], GunIndexForPlayer);
+	tThisWorld.atAABB[GunIndexForCaelis] = pcCollisionSystem->createAABBS(tThisWorld.atMesh[GunIndexForCaelis].m_VertexData, tThisWorld.atAABB[GunIndexForCaelis]);
+	tThisWorld.atAABB[GunIndexForCaelis].m_IndexLocation = GunIndexForCaelis;
+	pcCollisionSystem->AddAABBCollider(tThisWorld.atAABB[GunIndexForCaelis], GunIndexForCaelis);
 
 	//for (int meshIndex = 0; meshIndex < tempImport.meshCount; meshIndex++)
 	//{
@@ -8286,7 +8298,7 @@ int CGameMangerSystem::RealLevelUpdate()
 
 						int bulletType = -1;
 						// Metal Fired Sound in Here -ZFB
-						if (nCurrentEntity == GunIndexForPlayer)
+						if (nCurrentEntity == GunIndexForClayton)
 						{
 							pcCollisionSystem->updateAABB(tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, tThisWorld.atAABB[nCurrentEntity]);
 
@@ -8342,6 +8354,20 @@ int CGameMangerSystem::RealLevelUpdate()
 							pcGraphicsSystem->CreateEntityBuffer(&tThisWorld, newbullet);*/
 #pragma endregion        
 					}
+						else if (nCurrentEntity == GunIndexForCaelis)
+						{
+							pcCollisionSystem->updateAABB(tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, tThisWorld.atAABB[nCurrentEntity]);
+
+							foward.m128_f32[0] = 0;
+							foward.m128_f32[1] = 0;
+							foward.m128_f32[2] = 1;
+
+							localMatrix2 = XMMatrixTranslationFromVector(foward);
+							gunMatrix = tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix;
+							gunMatrix = XMMatrixMultiply(XMMatrixRotationX(XMConvertToRadians(90)), gunMatrix);
+							gunMatrix = XMMatrixMultiply(XMMatrixRotationZ(XMConvertToRadians(90)), gunMatrix);
+							gunMatrix = XMMatrixMultiply(localMatrix2, gunMatrix);
+						}
 						else
 						{
 							pcCollisionSystem->updateAABB(tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, tThisWorld.atAABB[nCurrentEntity]);
@@ -8541,15 +8567,22 @@ int CGameMangerSystem::RealLevelUpdate()
 
 			tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = XMMatrixMultiply(tThisWorld.atOffSetMatrix[nCurrentEntity], tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix);
 
-			if (nCurrentEntity != GunIndexForPlayer)
+			if (nCurrentEntity == GunIndexForClayton)
 			{
-				tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = XMMatrixMultiply(XMMatrixRotationY(XMConvertToRadians(-90)), tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix);
-				
+				tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = XMMatrixMultiply(XMMatrixRotationY(XMConvertToRadians(90)), tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix);
+
+				tThisWorld.atAABB[nCurrentEntity] = pcCollisionSystem->updateAABB(tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, tThisWorld.atAABB[nCurrentEntity]);
+			}
+			else if (nCurrentEntity == GunIndexForCaelis)
+			{
+				tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = XMMatrixMultiply(XMMatrixRotationX(XMConvertToRadians(-90)), tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix);
+				//tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = XMMatrixMultiply(XMMatrixRotationZ(XMConvertToRadians(-90)), tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix);
+
 				tThisWorld.atAABB[nCurrentEntity] = pcCollisionSystem->updateAABB(tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, tThisWorld.atAABB[nCurrentEntity]);
 			}
 			else
 			{
-				tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = XMMatrixMultiply(XMMatrixRotationY(XMConvertToRadians(90)), tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix);
+				tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = XMMatrixMultiply(XMMatrixRotationY(XMConvertToRadians(-90)), tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix);
 
 				tThisWorld.atAABB[nCurrentEntity] = pcCollisionSystem->updateAABB(tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, tThisWorld.atAABB[nCurrentEntity]);
 			}

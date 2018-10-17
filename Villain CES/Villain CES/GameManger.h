@@ -91,6 +91,8 @@ private:
 	int CaelisIndex = -10;
 	int SethIndex = -10;
 	int GunIndexForPlayer = -10;
+	int GunIndexForClayton = -10;
+	int GunIndexForCaelis = -10;
 	int rayindex = -10;
 	int frustumIndex;
 	float zValue = 5;
