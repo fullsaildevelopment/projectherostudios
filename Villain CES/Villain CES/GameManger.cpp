@@ -2221,10 +2221,10 @@ void CGameMangerSystem::InitializeHUD()
 
 	{
 		wchar_t textBuffer[] =
-		{ L"3" };
+		{ L"00" };
 
 		nThisEntity = createEntityReverse(&tThisWorld);
-		CreateUILabelForText2(&tThisWorld, menuCamera->d3d_Position, .5, 1, 6.75, -7.5, &atUIVertices, &atUIIndices, textBuffer, ARRAYSIZE(textBuffer), &windowRect, 24, nThisEntity, .075);
+		CreateUILabelForText2(&tThisWorld, menuCamera->d3d_Position, .5, 1, 6.55, -7.5, &atUIVertices, &atUIIndices, textBuffer, ARRAYSIZE(textBuffer), &windowRect, 24, nThisEntity, .075);
 		pcUISystem->AddTextureToUI(&tThisWorld, nThisEntity, pcGraphicsSystem->m_pd3dDevice, nullptr, fontTexture);
 
 		pcUISystem->AddMaskToUI(&tThisWorld, nThisEntity, COMPONENT_HUD);
@@ -2245,6 +2245,8 @@ void CGameMangerSystem::InitializeHUD()
 		pcUISystem->AddMaskToUI(&tThisWorld, nThisEntity, COMPONENT_HUD);
 
 		tThisWorld.atLabel[nThisEntity].color = XMFLOAT4(0, 0, 0, 1);
+
+		gunImageIndex = nThisEntity;
 	}
 
 	{
@@ -4854,7 +4856,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 
 	for (int meshIndex = 0; meshIndex < gunImport.meshCount; ++meshIndex)
 	{
-		GunIndexForCaelis = CreateCaelisGun(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, m_d3dWorldMatrix, CaelisIndex, -.7, 1, 10.4, 3, 130, gunImport.vtMeshes[meshIndex], gunImport.vtMaterials[meshIndex]);
+		GunIndexForCaelis = CreateCaelisGun(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, m_d3dWorldMatrix, CaelisIndex, -.7, 1, 10.4, 10, 30, gunImport.vtMeshes[meshIndex], gunImport.vtMaterials[meshIndex]);
 	}
 
 	tThisWorld.atAABB[GunIndexForCaelis] = pcCollisionSystem->createAABBS(tThisWorld.atMesh[GunIndexForCaelis].m_VertexData, tThisWorld.atAABB[GunIndexForCaelis]);
@@ -4961,7 +4963,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	//int GunINdexai = CreateGun(&tThisWorld, m_d3dWorldMatrix, spacePirate, -1.1, 0.5, 12.5, 10, 30);
 	for (int meshIndex = 0; meshIndex < gunImport.meshCount; ++meshIndex)
 	{
-	 GunINdexai = CreateScyllianGun(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, m_d3dWorldMatrix, spacePirate, -1, 1, 11.5, 10, 200, gunImport.vtMeshes[meshIndex], gunImport.vtMaterials[meshIndex]);
+		GunINdexai = CreateScyllianGun(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, m_d3dWorldMatrix, spacePirate, -1, 1, 11.5, 10, 200, gunImport.vtMeshes[meshIndex], gunImport.vtMaterials[meshIndex]);
 	}
 
 	#pragma region More AI Init
@@ -6329,6 +6331,24 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 
 	pcGraphicsSystem->CreateBuffers(&tThisWorld);
 
+	int textSize = 2;
+	wchar_t* textBuffer = new wchar_t[textSize];
+
+	if (tThisWorld.atClip[GunIndexForPlayer].nBulletsAvailables.size() <= 9)
+	{
+		textBuffer[0] = 0;
+		textBuffer[1] = tThisWorld.atClip[GunIndexForPlayer].nBulletsAvailables.size();
+	}
+	else
+	{
+		textBuffer[0] = tThisWorld.atClip[GunIndexForPlayer].nBulletsAvailables.size() * .1;
+		textBuffer[1] = tThisWorld.atClip[GunIndexForPlayer].nBulletsAvailables.size() % 10;
+	}
+
+	pcUISystem->UpdateText(&tThisWorld, pcGraphicsSystem, ammoIndex, &atUIVertices, textBuffer, textSize, atUIVertices.at(tThisWorld.atLabel[ammoIndex].vIndex));
+
+	delete[] textBuffer;
+
 	moveTime = 0;
 	bNoMoving = true;
 	loading = true;
@@ -7380,11 +7400,6 @@ void DoorEventChanger(int shaderID)
 
 int CGameMangerSystem::RealLevelUpdate()
 {
-	if (pcInputSystem->InputCheck(G_KEY_K))
-	{
-		tThisWorld.atClayton[PlayerStartIndex].health -= 1;
-	}
-
 	if (tThisWorld.atClayton[PlayerStartIndex].health <= 0 && !endInit)
 	{
 		GameOver = true;
@@ -7408,14 +7423,44 @@ int CGameMangerSystem::RealLevelUpdate()
 		{
 			m_d3dCalytonMatrix = tThisWorld.atWorldMatrix[ClaytonIndex].worldMatrix;
 			m_d3dPlayerMatrix = tThisWorld.atWorldMatrix[ClaytonIndex].worldMatrix;
-			
+
+			GunIndexForPlayer = GunIndexForClayton;
+		
+			wchar_t filePath[] =
+			{ L"UI_Textures.fbm/Material_Gun_Paint.png" };
+
+			pcUISystem->AddTextureToUI(&tThisWorld, gunImageIndex, pcGraphicsSystem->m_pd3dDevice, filePath);
 		}
-		else if(PlayerStartIndex == CaelisIndex)
+		else if (PlayerStartIndex == CaelisIndex)
 		{
 			m_d3dCaelisMatrix = tThisWorld.atWorldMatrix[CaelisIndex].worldMatrix;
 			m_d3dPlayerMatrix = tThisWorld.atWorldMatrix[CaelisIndex].worldMatrix;
 
+			GunIndexForPlayer = GunIndexForCaelis;
+
+			wchar_t filePath[] =
+			{ L"UI_Textures.fbm/CaelisGun_Paint.png" };
+
+			pcUISystem->AddTextureToUI(&tThisWorld, gunImageIndex, pcGraphicsSystem->m_pd3dDevice, filePath);
 		}
+
+		int textSize = 2;
+		wchar_t* textBuffer = new wchar_t[textSize];
+
+		if (tThisWorld.atClip[GunIndexForPlayer].nBulletsAvailables.size() <= 9)
+		{
+			textBuffer[0] = 0;
+			textBuffer[1] = tThisWorld.atClip[GunIndexForPlayer].nBulletsAvailables.size();
+		}
+		else
+		{
+			textBuffer[0] = tThisWorld.atClip[GunIndexForPlayer].nBulletsAvailables.size() * .1;
+			textBuffer[1] = tThisWorld.atClip[GunIndexForPlayer].nBulletsAvailables.size() % 10;
+		}
+
+		pcUISystem->UpdateText(&tThisWorld, pcGraphicsSystem, ammoIndex, &atUIVertices, textBuffer, textSize, atUIVertices.at(tThisWorld.atLabel[ammoIndex].vIndex));
+
+		delete[] textBuffer;
 	}
 	else if	(pcInputSystem->InputCheck(G_KEY_0) == 0 && pcInputSystem->InputCheck(G_KEY_5) == 0 && pcInputSystem->m_buttonPressed == true)
 	{
@@ -7613,7 +7658,7 @@ int CGameMangerSystem::RealLevelUpdate()
 			pcGraphicsSystem->ExecutePipeline(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atMesh[nCurrentEntity].m_nIndexCount, tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask, tThisWorld.atShaderID[nCurrentEntity].m_nShaderID);
 		}
 		//Extraction Beam & related functions are here - ZFB
-		if (tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_DEBUGMESH | COMPONENT_SHADERID))
+		if (tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_DEBUGMESH | COMPONENT_SHADERID) && tThisWorld.atUIMask[nCurrentEntity].m_tnUIMask != (COMPONENT_UIMASK | COMPONENT_NOSHOW))
 		{
 			if (tThisWorld.atBar[nCurrentEntity].entityToFollow != -1 || pcCollisionSystem->aabb_to_frustum(tThisWorld.atAABB[nCurrentEntity], tThisWorld.atClaytonVision.eyes0))
 			{
@@ -8337,10 +8382,19 @@ int CGameMangerSystem::RealLevelUpdate()
 					{
 						if (nCurrentEntity == GunIndexForPlayer)
 						{
-							int textSize = 1;
+							int textSize = 2;
 							wchar_t* textBuffer = new wchar_t[textSize];
 
-							textBuffer[0] = (tThisWorld.atClip[nCurrentEntity].nBulletsAvailables.size() - 1);
+							if (tThisWorld.atClip[nCurrentEntity].nBulletsAvailables.size() - 1 <= 9)
+							{
+								textBuffer[0] = 0;
+								textBuffer[1] = (tThisWorld.atClip[nCurrentEntity].nBulletsAvailables.size() - 1);
+							}
+							else
+							{
+								textBuffer[0] = (int)(((tThisWorld.atClip[nCurrentEntity].nBulletsAvailables.size() - 1) * .1) + 1);
+								textBuffer[1] = (tThisWorld.atClip[nCurrentEntity].nBulletsAvailables.size() - 1) % 10;
+							}
 
 							pcUISystem->UpdateText(&tThisWorld, pcGraphicsSystem, ammoIndex, &atUIVertices, textBuffer, textSize, atUIVertices.at(tThisWorld.atLabel[ammoIndex].vIndex));
 
@@ -8428,8 +8482,29 @@ int CGameMangerSystem::RealLevelUpdate()
 							localMatrix2 = XMMatrixTranslationFromVector(foward);
 							gunMatrix = tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix;
 							gunMatrix = XMMatrixMultiply(XMMatrixRotationX(XMConvertToRadians(90)), gunMatrix);
-							gunMatrix = XMMatrixMultiply(XMMatrixRotationZ(XMConvertToRadians(90)), gunMatrix);
 							gunMatrix = XMMatrixMultiply(localMatrix2, gunMatrix);
+
+							bulletType = 0;
+
+							int newbullet = -1;
+							for (int meshIndex = 0; meshIndex < bulletMesh.meshCount; ++meshIndex)
+							{
+								newbullet = CreateBulletMesh(&tThisWorld, gunMatrix, bulletToCopyFrom);
+								if (materialGunProjectileSRV != nullptr)
+								{
+									tThisWorld.atMesh[newbullet].m_d3dSRVDiffuse = materialGunProjectileSRV;
+								}
+							}
+							tThisWorld.atClip[newbullet].gunIndex = nCurrentEntity;
+							tThisWorld.atSimpleMesh[newbullet].m_nColor = tThisWorld.atClip[nCurrentEntity].colorofBullets;
+							tThisWorld.atClip[newbullet].indexInclip = pcProjectileSystem->CreateBulletProjectile(newbullet, &tThisWorld.atClip[nCurrentEntity]);
+							tThisWorld.atAABB[newbullet] = pcCollisionSystem->createAABBS(tThisWorld.atMesh[newbullet].m_VertexData, tThisWorld.atAABB[newbullet]);
+							tThisWorld.atAABB[newbullet].m_IndexLocation = newbullet;
+
+							tThisWorld.atClip[newbullet].maxLifeTime = 2.4;
+
+							pcCollisionSystem->AddAABBCollider(tThisWorld.atAABB[newbullet], newbullet);
+							pcGraphicsSystem->CreateEntityBuffer(&tThisWorld, newbullet);
 						}
 						else
 						{
@@ -8505,10 +8580,19 @@ int CGameMangerSystem::RealLevelUpdate()
 
 						if (nCurrentEntity == GunIndexForPlayer)
 						{
-							int textSize = 1;
+							int textSize = 2;
 							wchar_t* textBuffer = new wchar_t[textSize];
 
-							textBuffer[0] = (tThisWorld.atClip[nCurrentEntity].nBulletsAvailables.size());
+							if (tThisWorld.atClip[nCurrentEntity].nBulletsAvailables.size() <= 9)
+							{
+								textBuffer[0] = 0;
+								textBuffer[1] = tThisWorld.atClip[nCurrentEntity].nBulletsAvailables.size();
+							}
+							else
+							{
+								textBuffer[0] = tThisWorld.atClip[nCurrentEntity].nBulletsAvailables.size() * .1;
+								textBuffer[1] = tThisWorld.atClip[nCurrentEntity].nBulletsAvailables.size() % 10;
+							}
 
 							pcUISystem->UpdateText(&tThisWorld, pcGraphicsSystem, ammoIndex, &atUIVertices, textBuffer, textSize, atUIVertices.at(tThisWorld.atLabel[ammoIndex].vIndex));
 

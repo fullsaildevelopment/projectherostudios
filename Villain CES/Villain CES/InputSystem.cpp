@@ -258,6 +258,19 @@ void CInputSystem::gameManagerCodeAbstracted(
 				tMyViewMatrix = tAimCamera->d3d_Position;
 				tTempViewMatrix = tAimCamera->d3d_Position;
 			}
+			else
+			{
+				if (tCameraMode.bSwitch == true)
+				{
+					d3dResultMatrix = this->CameraOrientationReset(d3dResultMatrix);
+					tCameraMode.bSwitch = false;
+				}
+				d3dResultMatrix = this->DebugCamera(d3dResultMatrix, d3dWorldMatrix, delta);
+
+				tDebugCamera->d3d_Position = XMMatrixMultiply(d3dResultMatrix, d3dWorldMatrix);
+				tMyViewMatrix = tDebugCamera->d3d_Position;
+				tTempViewMatrix = tDebugCamera->d3d_Position;
+			}
 		}
 	}
 
