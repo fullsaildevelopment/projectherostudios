@@ -5,7 +5,7 @@
 #define MAIN_LEVEL_ON true
 #define INPUT_ABSTRACTED_ON true
 
-#define NUMBER_OF_AI 8
+#define NUMBER_OF_AI 5
 //Don't forget to comment out PlaySoundInBank() call in VillCES.cpp if MUSIC_ON is False - ZFB
 CGameMangerSystem::CGameMangerSystem(HWND window, CInputSystem* _pcInputSystem)
 {
@@ -6324,6 +6324,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 			tThisWorld.atAABB[nCurrentEntity] = pcCollisionSystem->updateAABB(tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, tThisWorld.atAABB[nCurrentEntity]);
 		}
 	}
+	pcAiSystem->SetCanWeChooseShooter(true);
 
 #pragma endregion
 	TPrimalVert x;
