@@ -82,3 +82,8 @@ void CFPS::StableFrameRate()
 	}
 }
 
+double CFPS::GetTotalTime()
+{
+	return m_frameRate->TotalTimeExact() - m_startTime;
+}
+

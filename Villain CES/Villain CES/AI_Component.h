@@ -37,7 +37,7 @@ struct TAIVision {
 	bool keepSearching = true;
 	unsigned int indexLookingAt;
 	
-
+	bool stopSearching = false;
 };
 struct TAIMovement {
 	float strafeCoolDown = 0;
@@ -56,6 +56,8 @@ struct TAIPathFinding {
 	bool foundDestination = false;
 	int DelayMovement = 0;
 	bool InterRuptPathPlanning=true;
+	bool pauseMovement;
+	float movementPausedTimer;
 	
 
 };

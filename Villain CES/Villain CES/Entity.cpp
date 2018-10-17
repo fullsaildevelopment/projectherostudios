@@ -1090,7 +1090,7 @@ unsigned int CreateBulletMesh(TWorld* ptWorld, ID3D11Device* m_pd3dDevice, XMMAT
 	return nThisEntity;
 }
 
-unsigned int CreateBulletMesh(TWorld* ptWorld, XMMATRIX BulletSpawnLocation, BulletInfo& bulletToCopyFrom)
+unsigned int CreateBulletMesh(TWorld* ptWorld, XMMATRIX BulletSpawnLocation, BulletInfo& bulletToCopyFrom, int bulletType)
 {
 	unsigned int nThisEntity = createEntity(ptWorld);
 
@@ -1102,6 +1102,22 @@ unsigned int CreateBulletMesh(TWorld* ptWorld, XMMATRIX BulletSpawnLocation, Bul
 	ptWorld->atProjectiles[nThisEntity] = bulletToCopyFrom.atProjectiles;
 
 	ptWorld->atWorldMatrix[nThisEntity].worldMatrix = BulletSpawnLocation;
+
+	switch (bulletType)
+	{
+	case 0:
+	{
+		ptWorld->atProjectiles[nThisEntity].m_tnProjectileMask = (COMPONENT_PROJECTILESMASK | COMPONENT_METAL | COMPONENT_FRIENDLY);
+	}
+	break;
+	case 1:
+	{
+		ptWorld->atProjectiles[nThisEntity].m_tnProjectileMask = (COMPONENT_PROJECTILESMASK | COMPONENT_METAL | COMPONENT_ENEMY);
+	}
+	break;
+	default:
+		break;
+	}
 
 	return nThisEntity;
 }
@@ -1712,6 +1728,215 @@ unsigned int CreateClaytonGun(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, XMM
 		{
 			tmp.pos[j] = tMesh.meshArrays[i].pos[j];
 			tmp.pos[j] *= 0.01;
+			if (j < 2)
+			{
+				tmp.uv[j] = tMesh.meshArrays[i].uv[j];
+			}
+		}
+		pMesh[i] = tmp;
+		ptWorld->atMesh[nThisEntity].m_VertexData.push_back(XMFLOAT3(tmp.pos[0], tmp.pos[1], tmp.pos[2]));
+	}
+
+	ptWorld->atMesh[nThisEntity].m_nVertexCount = tMesh.nUniqueVertexCount;
+	ptWorld->atMesh[nThisEntity].m_nVertexBufferStride = sizeof(TPrimitiveMesh);
+	ptWorld->atMesh[nThisEntity].m_nVertexBufferOffset = 0;
+	ptWorld->atMesh[nThisEntity].m_d3dVertexBufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
+	ptWorld->atMesh[nThisEntity].m_d3dVertexBufferDesc.ByteWidth = sizeof(TPrimitiveMesh) * ptWorld->atMesh[nThisEntity].m_nVertexCount;
+	ptWorld->atMesh[nThisEntity].m_d3dVertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	ptWorld->atMesh[nThisEntity].m_d3dVertexBufferDesc.CPUAccessFlags = 0;
+	ptWorld->atMesh[nThisEntity].m_d3dVertexBufferDesc.MiscFlags = 0;
+	ptWorld->atMesh[nThisEntity].m_d3dVertexBufferDesc.StructureByteStride = 0;
+
+	ptWorld->atMesh[nThisEntity].m_d3dVertexData.pSysMem = pMesh;
+	ptWorld->atMesh[nThisEntity].m_d3dVertexData.SysMemPitch = 0;
+	ptWorld->atMesh[nThisEntity].m_d3dVertexData.SysMemSlicePitch = 0;
+
+	ptWorld->atMesh[nThisEntity].m_nIndexCount = tMesh.nPolygonVertexCount;
+	ptWorld->atMesh[nThisEntity].m_d3dIndexBufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
+	ptWorld->atMesh[nThisEntity].m_d3dIndexBufferDesc.ByteWidth = sizeof(unsigned int) * ptWorld->atMesh[nThisEntity].m_nIndexCount;
+	ptWorld->atMesh[nThisEntity].m_d3dIndexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+	ptWorld->atMesh[nThisEntity].m_d3dIndexBufferDesc.CPUAccessFlags = 0;
+	ptWorld->atMesh[nThisEntity].m_d3dIndexBufferDesc.MiscFlags = 0;
+	ptWorld->atMesh[nThisEntity].m_d3dIndexBufferDesc.StructureByteStride = 0;
+
+	ptWorld->atMesh[nThisEntity].m_d3dIndexData.pSysMem = tMesh.indexBuffer;
+	ptWorld->atMesh[nThisEntity].m_d3dIndexData.SysMemPitch = 0;
+	ptWorld->atMesh[nThisEntity].m_d3dIndexData.SysMemSlicePitch = 0;
+
+	ptWorld->atWorldMatrix[nThisEntity].worldMatrix = BulletSpawnLocation;
+	ptWorld->atParentWorldMatrix[nThisEntity] = parentWorldMatrixIndex;
+	ptWorld->atOffSetMatrix[nThisEntity] = XMMatrixTranslation(xoffset, yoffset, zoffset);
+
+	return nThisEntity;
+}
+
+unsigned int CreateCaelisGun(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, XMMATRIX BulletSpawnLocation, int parentWorldMatrixIndex, float xoffset, float yoffset, float zoffset, int clipSize, float shootingCOooldown, TMeshImport tMesh, TMaterialImport tMaterial)
+{
+	unsigned int nThisEntity = createEntity(ptWorld);
+
+	wchar_t fnPBR[9][260];
+	wchar_t fnTRAD[5][260];
+	size_t result = 0;
+	mbstate_t d;
+	TMaterialImport tTempMaterial = tMaterial;
+
+	for (unsigned int i = 0; i < 9; i++)
+	{
+		if (i < 5 && tTempMaterial.m_tFileNames[i])
+		{
+			tTempMaterial.m_tFileNames[i] = &tMaterial.m_tFileNames[i][1];
+			mbsrtowcs_s(&result, fnTRAD[i], 260, (const char **)(&tTempMaterial.m_tFileNames[i]), tTempMaterial.m_tFileNameSizes[i], &d);
+		}
+		if (tTempMaterial.m_tPBRFileNames[i])
+		{
+			tTempMaterial.m_tPBRFileNames[i] = &tMaterial.m_tPBRFileNames[i][1];
+			mbsrtowcs_s(&result, fnPBR[i], 260, (const char **)(&tTempMaterial.m_tPBRFileNames[i]), tTempMaterial.m_tPBRFileNameSizes[i], &d);
+		}
+	}
+
+	ID3D11Resource * defaultDiffuseTexture;
+
+	ID3D11Resource * ambientTexture;
+	ID3D11Resource * diffuseTexture;
+	ID3D11Resource * specularTexture;
+	ID3D11Resource * emissiveTexture;
+	ID3D11Resource * normalTexture;
+	ID3D11Resource * bumpTexture;
+
+	ID3D11Resource * d3dColorMap;
+	ID3D11Resource * d3dNormalMap;
+	ID3D11Resource * d3dEmissiveMap;
+	ID3D11Resource * d3dMetallicMap;
+	ID3D11Resource * d3dRoughnessMap;
+	ID3D11Resource * d3dAmbientOcclusionMap;
+	ID3D11Resource * d3dGlobalDiffuseCubeMap;
+	ID3D11Resource * d3dGlobalSpecularCubeMap;
+	ID3D11Resource * d3dIBLCubeMap;
+
+	ID3D11ShaderResourceView * srv;
+
+	for (unsigned int i = 0; i < 9; i++)
+	{
+		if (tMaterial.m_tPBRFileNames[i])
+		{
+			if (tMaterial.m_tPBRFileNames[i][0] == 'c')
+			{
+				result = CreateWICTextureFromFile(m_pd3dDevice, fnPBR[i], &d3dColorMap, &srv, NULL);
+				ptWorld->atMesh[nThisEntity].m_d3dSRVDiffuse = srv;
+			}
+			if (tMaterial.m_tPBRFileNames[i][0] == 'n')
+			{
+				result = CreateWICTextureFromFile(m_pd3dDevice, fnPBR[i], &d3dNormalMap, nullptr, NULL);
+			}
+			if (tMaterial.m_tPBRFileNames[i][0] == 'e')
+			{
+				result = CreateWICTextureFromFile(m_pd3dDevice, fnPBR[i], &d3dEmissiveMap, nullptr, NULL);
+			}
+			if (tMaterial.m_tPBRFileNames[i][0] == 'm')
+			{
+				result = CreateWICTextureFromFile(m_pd3dDevice, fnPBR[i], &d3dMetallicMap, nullptr, NULL);
+			}
+			if (tMaterial.m_tPBRFileNames[i][0] == 'r')
+			{
+				result = CreateWICTextureFromFile(m_pd3dDevice, fnPBR[i], &d3dRoughnessMap, nullptr, NULL);
+			}
+			if (tMaterial.m_tPBRFileNames[i][0] == 'a')
+			{
+				result = CreateWICTextureFromFile(m_pd3dDevice, fnPBR[i], &d3dAmbientOcclusionMap, nullptr, NULL);
+			}
+			if (tMaterial.m_tPBRFileNames[i][0] == 'd')
+			{
+				result = CreateDDSTextureFromFile(m_pd3dDevice, fnPBR[i], &d3dGlobalDiffuseCubeMap, nullptr, NULL);
+			}
+			if (tMaterial.m_tPBRFileNames[i][0] == 's')
+			{
+				result = CreateDDSTextureFromFile(m_pd3dDevice, fnPBR[i], &d3dGlobalSpecularCubeMap, nullptr, NULL);
+			}
+			if (tMaterial.m_tPBRFileNames[i][0] == 'l')
+			{
+				result = CreateDDSTextureFromFile(m_pd3dDevice, fnPBR[i], &d3dIBLCubeMap, nullptr, NULL);
+			}
+		}
+
+		if (tMaterial.m_tFileNames[i] && i < 5)
+		{
+			if (tMaterial.m_tFileNames[i][0] == 'a')
+			{
+				result = CreateWICTextureFromFile(m_pd3dDevice, fnTRAD[i], &ambientTexture, nullptr, NULL);
+			}
+			if (tMaterial.m_tFileNames[i][0] == 'b')
+			{
+				result = CreateWICTextureFromFile(m_pd3dDevice, fnTRAD[i], &bumpTexture, nullptr, NULL);
+			}
+			if (tMaterial.m_tFileNames[i][0] == 'd')
+			{
+				result = CreateWICTextureFromFile(m_pd3dDevice, fnTRAD[i], &diffuseTexture, &srv, NULL);
+				ptWorld->atMesh[nThisEntity].m_d3dSRVDiffuse = srv;
+			}
+			if (tMaterial.m_tFileNames[i][0] == 'e')
+			{
+				result = CreateWICTextureFromFile(m_pd3dDevice, fnTRAD[i], &emissiveTexture, nullptr, NULL);
+			}
+			if (tMaterial.m_tFileNames[i][0] == 'n')
+			{
+				result = CreateWICTextureFromFile(m_pd3dDevice, fnTRAD[i], &normalTexture, nullptr, NULL);
+			}
+			if (tMaterial.m_tFileNames[i][0] == 's')
+			{
+				result = CreateWICTextureFromFile(m_pd3dDevice, fnTRAD[i], &specularTexture, nullptr, NULL);
+			}
+		}
+	}
+#pragma endregion
+
+	if (tMaterial.m_tPBRFileNames[0] == NULL && tMaterial.m_tFileNames[0] == NULL)
+	{
+		result = CreateWICTextureFromFile(m_pd3dDevice, L"TestScene_V1.fbm\\Wood01_col.jpg", &diffuseTexture, &srv, NULL);
+		ptWorld->atMesh[nThisEntity].m_d3dSRVDiffuse = srv;
+	}
+	ptWorld->atGraphicsMask[nThisEntity].m_tnGraphicsMask = (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_SHADERID);
+	ptWorld->atCollisionMask[nThisEntity].m_tnCollisionMask = (COMPONENT_COLLISIONMASK);
+	ptWorld->atAIMask[nThisEntity].m_tnAIMask = (COMPONENT_AIMASK);
+	ptWorld->atUIMask[nThisEntity].m_tnUIMask = (COMPONENT_UIMASK);
+	ptWorld->atPhysicsMask[nThisEntity].m_tnPhysicsMask = (COMPONENT_PHYSICSMASK);
+	ptWorld->atProjectiles[nThisEntity].m_tnProjectileMask = (COMPONENT_PROJECTILESMASK | COMPONENT_CLIP);
+	ptWorld->atClip[nThisEntity].nSizeofClipl = clipSize;
+	ptWorld->atClip[nThisEntity].FValueOfCoolDown = shootingCOooldown;
+	ptWorld->atClip[nThisEntity].fShootingCoolDown = 0;
+	ptWorld->atClip[nThisEntity].GunMode = true;
+	for (int i = 0; i < ptWorld->atClip[nThisEntity].nSizeofClipl; ++i)
+	{
+		ptWorld->atClip[nThisEntity].nBulletsAvailables.push_back(false);
+	}
+
+	switch (tMaterial.lambert)
+	{
+	case 0:
+	{
+		ptWorld->atShaderID[nThisEntity].m_nShaderID = 4;
+		break;//Phong
+	}
+	case 1:
+	{
+		ptWorld->atShaderID[nThisEntity].m_nShaderID = 5;
+		break;//Lambert
+	}
+	case 2:
+	{
+		ptWorld->atShaderID[nThisEntity].m_nShaderID = 6;
+		break;//PBR
+	}
+	default:
+		break;
+	}
+	TPrimitiveMesh *pMesh = new TPrimitiveMesh[tMesh.nUniqueVertexCount];
+	for (int i = 0; i < tMesh.nUniqueVertexCount; i++)
+	{
+		TPrimitiveMesh tmp;
+		for (int j = 0; j < 4; j++)
+		{
+			tmp.pos[j] = tMesh.meshArrays[i].pos[j];
+			tmp.pos[j] *= 0.1;
 			if (j < 2)
 			{
 				tmp.uv[j] = tMesh.meshArrays[i].uv[j];
@@ -2852,6 +3077,89 @@ unsigned int CreateCoverTriggerZone(TWorld * ptWorld, XMMATRIX SpawnPosition, in
 	return nThisEntity;
 }
 
+unsigned int CreateHealingAI(TWorld * ptWorld)
+{
+	unsigned int nThisEntity = createEntity(ptWorld);
+	ptWorld->atGraphicsMask[nThisEntity].m_tnGraphicsMask = (COMPONENT_GRAPHICSMASK | COMPONENT_SIMPLEMESH | COMPONENT_SHADERID);
+	ptWorld->atCollisionMask[nThisEntity].m_tnCollisionMask = (COMPONENT_COLLISIONMASK | COMPONENT_AABB | COMPONENT_NONSTATIC | COMPONENT_NONTRIGGER);
+	ptWorld->atAIMask[nThisEntity].m_tnAIMask = (COMPONENT_AIMASK);
+	ptWorld->atUIMask[nThisEntity].m_tnUIMask = (COMPONENT_UIMASK);
+	ptWorld->atPhysicsMask[nThisEntity].m_tnPhysicsMask = (COMPONENT_PHYSICSMASK | COMPONENT_RIGIDBODY);
+	ptWorld->atInputMask[nThisEntity].m_tnInputMask = (COMPONENT_INPUTMASK | COMPONENT_CAELIS);
+
+	static TPrimalVert atCubeVertices[]
+	{
+		TPrimalVert{ XMFLOAT3(-0, 0.2f, 0.5f),		XMFLOAT4(0, 1.0f, 0, 1.0f) },//0 Top F Left
+		TPrimalVert{ XMFLOAT3(0.2f, 0.2f, 0.5f),	XMFLOAT4(0, 1.0f, 0, 1.0f) },//1 Top F Right
+		TPrimalVert{ XMFLOAT3(-0, -0, 0.5f),		XMFLOAT4(0, 1.0f, 0, 1.0f) },//2 Bottom F Left
+		TPrimalVert{ XMFLOAT3(0.2f, -0, 0.5f),		XMFLOAT4(0, 1.0f, 0, 1.0f) },//3 Bottom F Right
+		TPrimalVert{ XMFLOAT3(-0, 0.2f, -0.5f),		XMFLOAT4(0, 1.0f, 0, 1.0f) },//4 Top B Left
+		TPrimalVert{ XMFLOAT3(0.2f, 0.2f, -0.5f),	XMFLOAT4(0, 1.0f, 0, 1.0f) },//5 Top B Right
+		TPrimalVert{ XMFLOAT3(-0, -0, -0.5f),		XMFLOAT4(0, 1.0f, 0, 1.0f) },//6 Bottom B Left
+		TPrimalVert{ XMFLOAT3(0.2f, -0, -0.5f),		XMFLOAT4(0, 1.0f, 0, 1.0f) },//7 Bottom B Right
+
+		TPrimalVert{ XMFLOAT3(0.2f, 0.2f, 0.5f),	XMFLOAT4(0, 1.0f, 0, 1.0f) },//8 //Top F Right
+		TPrimalVert{ XMFLOAT3(-0, 0.2f, 0.5f),		XMFLOAT4(0, 1.0f, 0, 1.0f) },//9 // Top F Left
+		TPrimalVert{ XMFLOAT3(-0, -0, -0.5f),		XMFLOAT4(0, 1.0f, 0, 1.0f) },//10 Bottom B Left
+		TPrimalVert{ XMFLOAT3(0.2f, -0, -0.5f),		XMFLOAT4(0, 1.0f, 0, 1.0f) },//11 Bottom B Right
+		TPrimalVert{ XMFLOAT3(-0, -0, 0.5f),		XMFLOAT4(0, 1.0f, 0, 1.0f) },//12 Bottom F Left
+		TPrimalVert{ XMFLOAT3(-0, 0.2f, 0.5f),		XMFLOAT4(0, 1.0f, 0, 1.0f) },//13 Top F Left
+		TPrimalVert{ XMFLOAT3(0.2f, 0.2f, 0.5f),	XMFLOAT4(0, 1.0f, 0, 1.0f) },//14 Top F Right
+		TPrimalVert{ XMFLOAT3(0.2f, -0, 0.5f),		XMFLOAT4(0, 1.0f, 0, 1.0f) }//15 Bottm F Right
+	};
+	static short cubeIndices[]
+	{
+		3,1,0,0,2,3,
+		4,5,7,7,6,4,
+		4,8,5,4,9,8,
+		11,3,10,10,3,2,
+		12,13,4,4,6,12,
+		14,7,5,14,15,7
+	};
+
+	XMVECTOR playerGravity;
+	playerGravity.m128_f32[1] = 0;
+	playerGravity.m128_f32[0] = 0;
+	playerGravity.m128_f32[2] = 0;
+	playerGravity.m128_f32[3] = 0;
+	ptWorld->atRigidBody[nThisEntity].gravity = playerGravity;
+
+	ptWorld->atSimpleMesh[nThisEntity].m_nIndexCount = 36;
+	ptWorld->atSimpleMesh[nThisEntity].m_nVertexCount = 16;
+
+	ptWorld->atSimpleMesh[nThisEntity].m_nVertexBufferStride = sizeof(TPrimalVert);
+	ptWorld->atSimpleMesh[nThisEntity].m_nVertexBufferOffset = 0;
+
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dVertexBufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dVertexBufferDesc.ByteWidth = sizeof(TPrimalVert) * ptWorld->atSimpleMesh[nThisEntity].m_nVertexCount;
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dVertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dVertexBufferDesc.CPUAccessFlags = 0;
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dVertexBufferDesc.MiscFlags = 0;
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dVertexBufferDesc.StructureByteStride = 0;
+
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexBufferDesc.ByteWidth = sizeof(short) * ptWorld->atSimpleMesh[nThisEntity].m_nIndexCount;
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexBufferDesc.CPUAccessFlags = 0;
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexBufferDesc.MiscFlags = 0;
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexBufferDesc.StructureByteStride = 0;
+
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dVertexData.pSysMem = atCubeVertices;
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexData.pSysMem = cubeIndices;
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dVertexData.SysMemPitch = 0;
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dVertexData.SysMemSlicePitch = 0;
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexData.SysMemPitch = 0;
+	ptWorld->atSimpleMesh[nThisEntity].m_d3dIndexData.SysMemSlicePitch = 0;
+	ptWorld->atWorldMatrix[nThisEntity].worldMatrix = XMMatrixIdentity();
+	ptWorld->atWorldMatrix[nThisEntity].worldMatrix = XMMatrixMultiply(XMMatrixTranslation(0, 0, 0), ptWorld->atWorldMatrix[nThisEntity].worldMatrix);
+
+	ptWorld->atShaderID[nThisEntity].m_nShaderID = 3;
+	for (unsigned int i = 0; i < ptWorld->atSimpleMesh[nThisEntity].m_nVertexCount; ++i) {
+		ptWorld->atSimpleMesh[nThisEntity].m_VertexData.push_back(atCubeVertices[i].m_d3dfPosition);
+	}
+	return nThisEntity;
+}
+
 unsigned int CreateFriendlySwordsMan(TWorld * ptWorld, XMMATRIX SpawnPosition, unsigned int playerIndex)
 {
 	unsigned int nThisEntity = createEntity(ptWorld);
@@ -3448,7 +3756,7 @@ unsigned int createMesh(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMeshImpo
 		}
 		else {
 			ptWorld->atCollisionMask[nThisEntity].m_tnCollisionMask = (COMPONENT_COLLISIONMASK | COMPONENT_TRIGGER | COMPONENT_AABB | COMPONENT_STATIC);
-			ptWorld->atRigidBody[nThisEntity].ground = true;
+			ptWorld->atRigidBody[nThisEntity].ground = false;
 
 
 		}
@@ -4117,6 +4425,217 @@ unsigned int CreateCylinder(TWorld * ptWorld, XMMATRIX SpawnPosition)
 	return nThisEntity;
 }
 
+unsigned int CreateCaelis(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMeshImport tMesh, TMaterialImport tMaterial)
+{
+	unsigned int nThisEntity = createEntity(ptWorld);
+
+	wchar_t fnPBR[9][260];
+	wchar_t fnTRAD[5][260];
+	size_t result = 0;
+	mbstate_t d;
+	TMaterialImport tTempMaterial = tMaterial;
+
+	for (unsigned int i = 0; i < 9; i++)
+	{
+		if (i < 5 && tTempMaterial.m_tFileNames[i])
+		{
+			tTempMaterial.m_tFileNames[i] = &tMaterial.m_tFileNames[i][1];
+			mbsrtowcs_s(&result, fnTRAD[i], 260, (const char **)(&tTempMaterial.m_tFileNames[i]), tTempMaterial.m_tFileNameSizes[i], &d);
+		}
+		if (tTempMaterial.m_tPBRFileNames[i])
+		{
+			tTempMaterial.m_tPBRFileNames[i] = &tMaterial.m_tPBRFileNames[i][1];
+			mbsrtowcs_s(&result, fnPBR[i], 260, (const char **)(&tTempMaterial.m_tPBRFileNames[i]), tTempMaterial.m_tPBRFileNameSizes[i], &d);
+		}
+	}
+
+	ID3D11Resource * defaultDiffuseTexture;
+
+	ID3D11Resource * ambientTexture;
+	ID3D11Resource * diffuseTexture;
+	ID3D11Resource * specularTexture;
+	ID3D11Resource * emissiveTexture;
+	ID3D11Resource * normalTexture;
+	ID3D11Resource * bumpTexture;
+
+	ID3D11Resource * d3dColorMap;
+	ID3D11Resource * d3dNormalMap;
+	ID3D11Resource * d3dEmissiveMap;
+	ID3D11Resource * d3dMetallicMap;
+	ID3D11Resource * d3dRoughnessMap;
+	ID3D11Resource * d3dAmbientOcclusionMap;
+	ID3D11Resource * d3dGlobalDiffuseCubeMap;
+	ID3D11Resource * d3dGlobalSpecularCubeMap;
+	ID3D11Resource * d3dIBLCubeMap;
+
+	ID3D11ShaderResourceView * srv;
+
+	for (unsigned int i = 0; i < 9; i++)
+	{
+		if (tMaterial.m_tPBRFileNames[i])
+		{
+			if (tMaterial.m_tPBRFileNames[i][0] == 'c')
+			{
+				result = CreateWICTextureFromFile(m_pd3dDevice, fnPBR[i], &d3dColorMap, &srv, NULL);
+				ptWorld->atMesh[nThisEntity].m_d3dSRVDiffuse = srv;
+			}
+			if (tMaterial.m_tPBRFileNames[i][0] == 'n')
+			{
+				result = CreateWICTextureFromFile(m_pd3dDevice, fnPBR[i], &d3dNormalMap, nullptr, NULL);
+			}
+			if (tMaterial.m_tPBRFileNames[i][0] == 'e')
+			{
+				result = CreateWICTextureFromFile(m_pd3dDevice, fnPBR[i], &d3dEmissiveMap, nullptr, NULL);
+			}
+			if (tMaterial.m_tPBRFileNames[i][0] == 'm')
+			{
+				result = CreateWICTextureFromFile(m_pd3dDevice, fnPBR[i], &d3dMetallicMap, nullptr, NULL);
+			}
+			if (tMaterial.m_tPBRFileNames[i][0] == 'r')
+			{
+				result = CreateWICTextureFromFile(m_pd3dDevice, fnPBR[i], &d3dRoughnessMap, nullptr, NULL);
+			}
+			if (tMaterial.m_tPBRFileNames[i][0] == 'a')
+			{
+				result = CreateWICTextureFromFile(m_pd3dDevice, fnPBR[i], &d3dAmbientOcclusionMap, nullptr, NULL);
+			}
+			if (tMaterial.m_tPBRFileNames[i][0] == 'd')
+			{
+				result = CreateDDSTextureFromFile(m_pd3dDevice, fnPBR[i], &d3dGlobalDiffuseCubeMap, nullptr, NULL);
+			}
+			if (tMaterial.m_tPBRFileNames[i][0] == 's')
+			{
+				result = CreateDDSTextureFromFile(m_pd3dDevice, fnPBR[i], &d3dGlobalSpecularCubeMap, nullptr, NULL);
+			}
+			if (tMaterial.m_tPBRFileNames[i][0] == 'l')
+			{
+				result = CreateDDSTextureFromFile(m_pd3dDevice, fnPBR[i], &d3dIBLCubeMap, nullptr, NULL);
+			}
+		}
+
+		if (tMaterial.m_tFileNames[i] && i < 5)
+		{
+			if (tMaterial.m_tFileNames[i][0] == 'a')
+			{
+				result = CreateWICTextureFromFile(m_pd3dDevice, fnTRAD[i], &ambientTexture, nullptr, NULL);
+			}
+			if (tMaterial.m_tFileNames[i][0] == 'b')
+			{
+				result = CreateWICTextureFromFile(m_pd3dDevice, fnTRAD[i], &bumpTexture, nullptr, NULL);
+			}
+			if (tMaterial.m_tFileNames[i][0] == 'd')
+			{
+				result = CreateWICTextureFromFile(m_pd3dDevice, fnTRAD[i], &diffuseTexture, &srv, NULL);
+				ptWorld->atMesh[nThisEntity].m_d3dSRVDiffuse = srv;
+			}
+			if (tMaterial.m_tFileNames[i][0] == 'e')
+			{
+				result = CreateWICTextureFromFile(m_pd3dDevice, fnTRAD[i], &emissiveTexture, nullptr, NULL);
+			}
+			if (tMaterial.m_tFileNames[i][0] == 'n')
+			{
+				result = CreateWICTextureFromFile(m_pd3dDevice, fnTRAD[i], &normalTexture, nullptr, NULL);
+			}
+			if (tMaterial.m_tFileNames[i][0] == 's')
+			{
+				result = CreateWICTextureFromFile(m_pd3dDevice, fnTRAD[i], &specularTexture, nullptr, NULL);
+			}
+		}
+	}
+#pragma endregion
+
+	if (tMaterial.m_tPBRFileNames[0] == NULL && tMaterial.m_tFileNames[0] == NULL)
+	{
+		result = CreateWICTextureFromFile(m_pd3dDevice, L"TestScene_V1.fbm\\Wood01_col.jpg", &diffuseTexture, &srv, NULL);
+		ptWorld->atMesh[nThisEntity].m_d3dSRVDiffuse = srv;
+	}
+	ptWorld->atGraphicsMask[nThisEntity].m_tnGraphicsMask = COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_SHADERID;
+	ptWorld->atCollisionMask[nThisEntity].m_tnCollisionMask = COMPONENT_COLLISIONMASK | COMPONENT_AABB | COMPONENT_NONSTATIC | COMPONENT_NONTRIGGER;
+	ptWorld->atAIMask[nThisEntity].m_tnAIMask = COMPONENT_AIMASK;
+	ptWorld->atUIMask[nThisEntity].m_tnUIMask = COMPONENT_UIMASK;
+	ptWorld->atPhysicsMask[nThisEntity].m_tnPhysicsMask = COMPONENT_PHYSICSMASK | COMPONENT_RIGIDBODY;
+	ptWorld->atInputMask[nThisEntity].m_tnInputMask = COMPONENT_INPUTMASK | COMPONENT_CAELIS;
+	
+
+	switch (tMaterial.lambert)
+	{
+	case 0:
+	{
+		ptWorld->atShaderID[nThisEntity].m_nShaderID = 4;
+		break;//Phong
+	}
+	case 1:
+	{
+		ptWorld->atShaderID[nThisEntity].m_nShaderID = 5;
+		break;//Lambert
+	}
+	case 2:
+	{
+		ptWorld->atShaderID[nThisEntity].m_nShaderID = 6;
+		break;//PBR
+	}
+	default:
+		break;
+	}
+	TPrimitiveMesh *pMesh = new TPrimitiveMesh[tMesh.nUniqueVertexCount];
+	for (int i = 0; i < tMesh.nUniqueVertexCount; i++)
+	{
+		TPrimitiveMesh tmp;
+		for (int j = 0; j < 4; j++)
+		{
+			tmp.pos[j] = tMesh.meshArrays[i].pos[j];
+			//tmp.pos[j] *= 0.01;
+			if (j < 2)
+			{
+				tmp.uv[j] = tMesh.meshArrays[i].uv[j];
+			}
+		}
+		pMesh[i] = tmp;
+		ptWorld->atMesh[nThisEntity].m_VertexData.push_back(XMFLOAT3(tmp.pos[0], tmp.pos[1], tmp.pos[2]));
+	}
+
+	XMVECTOR playerGravity;
+	playerGravity.m128_f32[0] = 0;
+	playerGravity.m128_f32[1] = -0.0001;
+	playerGravity.m128_f32[2] = 0;
+	playerGravity.m128_f32[3] = 0;
+	ptWorld->atRigidBody[nThisEntity].gravity = playerGravity;
+
+	ptWorld->atMesh[nThisEntity].m_nVertexCount = tMesh.nUniqueVertexCount;
+	ptWorld->atMesh[nThisEntity].m_nVertexBufferStride = sizeof(TPrimitiveMesh);
+	ptWorld->atMesh[nThisEntity].m_nVertexBufferOffset = 0;
+	ptWorld->atMesh[nThisEntity].m_d3dVertexBufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
+	ptWorld->atMesh[nThisEntity].m_d3dVertexBufferDesc.ByteWidth = sizeof(TPrimitiveMesh) * ptWorld->atMesh[nThisEntity].m_nVertexCount;
+	ptWorld->atMesh[nThisEntity].m_d3dVertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	ptWorld->atMesh[nThisEntity].m_d3dVertexBufferDesc.CPUAccessFlags = 0;
+	ptWorld->atMesh[nThisEntity].m_d3dVertexBufferDesc.MiscFlags = 0;
+	ptWorld->atMesh[nThisEntity].m_d3dVertexBufferDesc.StructureByteStride = 0;
+
+	ptWorld->atMesh[nThisEntity].m_d3dVertexData.pSysMem = pMesh;
+	ptWorld->atMesh[nThisEntity].m_d3dVertexData.SysMemPitch = 0;
+	ptWorld->atMesh[nThisEntity].m_d3dVertexData.SysMemSlicePitch = 0;
+
+	ptWorld->atMesh[nThisEntity].m_nIndexCount = tMesh.nPolygonVertexCount;
+	ptWorld->atMesh[nThisEntity].m_d3dIndexBufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
+	ptWorld->atMesh[nThisEntity].m_d3dIndexBufferDesc.ByteWidth = sizeof(unsigned int) * ptWorld->atMesh[nThisEntity].m_nIndexCount;
+	ptWorld->atMesh[nThisEntity].m_d3dIndexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+	ptWorld->atMesh[nThisEntity].m_d3dIndexBufferDesc.CPUAccessFlags = 0;
+	ptWorld->atMesh[nThisEntity].m_d3dIndexBufferDesc.MiscFlags = 0;
+	ptWorld->atMesh[nThisEntity].m_d3dIndexBufferDesc.StructureByteStride = 0;
+
+	ptWorld->atMesh[nThisEntity].m_d3dIndexData.pSysMem = tMesh.indexBuffer;
+	ptWorld->atMesh[nThisEntity].m_d3dIndexData.SysMemPitch = 0;
+	ptWorld->atMesh[nThisEntity].m_d3dIndexData.SysMemSlicePitch = 0;
+	ptWorld->atParentWorldMatrix[nThisEntity] = -1;
+	ptWorld->atWorldMatrix[nThisEntity].worldMatrix = XMMatrixIdentity();
+	ptWorld->atWorldMatrix[nThisEntity].worldMatrix = XMMatrixMultiply(XMMatrixTranslation(4, 0, 0),ptWorld->atWorldMatrix[nThisEntity].worldMatrix);
+	ptWorld->atWorldMatrix[nThisEntity].worldMatrix = XMMatrixMultiply(ptWorld->atWorldMatrix[nThisEntity].worldMatrix, XMMatrixRotationRollPitchYaw(tMesh.worldRotation[0], tMesh.worldRotation[1], tMesh.worldRotation[2]));
+	//ptWorld->atWorldMatrix[nThisEntity].worldMatrix = XMMatrixMultiply(ptWorld->atWorldMatrix[nThisEntity].worldMatrix, XMMatrixScaling(.01, .01, .01));
+
+	return nThisEntity;
+}
+
+
 unsigned int createClayton(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMeshImport tMesh, TMaterialImport tMaterial)
 {
 	unsigned int nThisEntity = createEntity(ptWorld);
@@ -4293,7 +4812,7 @@ unsigned int createClayton(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMeshI
 	playerGravity.m128_f32[3] = 0;
 	ptWorld->atRigidBody[nThisEntity].gravity = playerGravity;
 
-	ptWorld->atClayton[nThisEntity].jumpTime = 1;
+	ptWorld->atClayton[nThisEntity].jumpTime = .5;
 
 	ptWorld->atMesh[nThisEntity].m_nVertexCount = tMesh.nUniqueVertexCount;
 	ptWorld->atMesh[nThisEntity].m_nVertexBufferStride = sizeof(TPrimitiveMesh);
@@ -4321,9 +4840,10 @@ unsigned int createClayton(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMeshI
 	ptWorld->atMesh[nThisEntity].m_d3dIndexData.SysMemPitch = 0;
 	ptWorld->atMesh[nThisEntity].m_d3dIndexData.SysMemSlicePitch = 0;
 
+	
 	ptWorld->atWorldMatrix[nThisEntity].worldMatrix = XMMatrixMultiply(ptWorld->atWorldMatrix[nThisEntity].worldMatrix, XMMatrixTranslation(0, 0, 0));
 	ptWorld->atWorldMatrix[nThisEntity].worldMatrix = XMMatrixMultiply(ptWorld->atWorldMatrix[nThisEntity].worldMatrix, XMMatrixRotationRollPitchYaw(tMesh.worldRotation[0], tMesh.worldRotation[1], tMesh.worldRotation[2]));
-	ptWorld->atWorldMatrix[nThisEntity].worldMatrix = XMMatrixMultiply(ptWorld->atWorldMatrix[nThisEntity].worldMatrix, XMMatrixScaling(.01, .01, .01));
+	//ptWorld->atWorldMatrix[nThisEntity].worldMatrix = XMMatrixMultiply(ptWorld->atWorldMatrix[nThisEntity].worldMatrix, XMMatrixScaling(.01, .01, .01));
 	
 	return nThisEntity;
 }
@@ -5065,572 +5585,588 @@ void GetUVsForCharacter(wchar_t* character, XMFLOAT2* UVs)
 	{
 	case ' ':
 	{
-		UVs[0] = XMFLOAT2{ 0 / 950.0f, 4 / 20.0f };
-		UVs[1] = XMFLOAT2{ 10 / 950.0f, 4 / 20.0f };
-		UVs[2] = XMFLOAT2{ 0 / 950.0f, 14 / 20.0f };
-		UVs[3] = XMFLOAT2{ 10 / 950.0f, 14 / 20.0f };
+		UVs[0] = XMFLOAT2{ 0 / 960.0f, 4 / 20.0f };
+		UVs[1] = XMFLOAT2{ 10 / 960.0f, 4 / 20.0f };
+		UVs[2] = XMFLOAT2{ 0 / 960.0f, 14 / 20.0f };
+		UVs[3] = XMFLOAT2{ 10 / 960.0f, 14 / 20.0f };
 	}
 	break;
 	case '!':
 	{
-		UVs[0] = XMFLOAT2{ 10 / 950.0f, 4 / 20.0f };
-		UVs[1] = XMFLOAT2{ 20 / 950.0f, 4 / 20.0f };
-		UVs[2] = XMFLOAT2{ 10 / 950.0f, 14 / 20.0f };
-		UVs[3] = XMFLOAT2{ 20 / 950.0f, 14 / 20.0f };
+		UVs[0] = XMFLOAT2{ 10 / 960.0f, 4 / 20.0f };
+		UVs[1] = XMFLOAT2{ 20 / 960.0f, 4 / 20.0f };
+		UVs[2] = XMFLOAT2{ 10 / 960.0f, 14 / 20.0f };
+		UVs[3] = XMFLOAT2{ 20 / 960.0f, 14 / 20.0f };
 	}
 	break;
 	case '\'':
 	{
-		UVs[0] = XMFLOAT2{ 70 / 950.0f, 4 / 20.0f };
-		UVs[1] = XMFLOAT2{ 80 / 950.0f, 4 / 20.0f };
-		UVs[2] = XMFLOAT2{ 70 / 950.0f, 14 / 20.0f };
-		UVs[3] = XMFLOAT2{ 80 / 950.0f, 14 / 20.0f };
+		UVs[0] = XMFLOAT2{ 70 / 960.0f, 4 / 20.0f };
+		UVs[1] = XMFLOAT2{ 80 / 960.0f, 4 / 20.0f };
+		UVs[2] = XMFLOAT2{ 70 / 960.0f, 14 / 20.0f };
+		UVs[3] = XMFLOAT2{ 80 / 960.0f, 14 / 20.0f };
+	}
+	break;
+	case '\"':
+	{
+		UVs[0] = XMFLOAT2{ 950 / 960.0f, 4 / 20.0f };
+		UVs[1] = XMFLOAT2{ 960 / 960.0f, 4 / 20.0f };
+		UVs[2] = XMFLOAT2{ 950 / 960.0f, 14 / 20.0f };
+		UVs[3] = XMFLOAT2{ 960 / 960.0f, 14 / 20.0f };
 	}
 	break;
 	case '(':
 	{
-		UVs[0] = XMFLOAT2{ 80 / 950.0f, 4 / 20.0f };
-		UVs[1] = XMFLOAT2{ 90 / 950.0f, 4 / 20.0f };
-		UVs[2] = XMFLOAT2{ 80 / 950.0f, 14 / 20.0f };
-		UVs[3] = XMFLOAT2{ 90 / 950.0f, 14 / 20.0f };
+		UVs[0] = XMFLOAT2{ 80 / 960.0f, 4 / 20.0f };
+		UVs[1] = XMFLOAT2{ 90 / 960.0f, 4 / 20.0f };
+		UVs[2] = XMFLOAT2{ 80 / 960.0f, 14 / 20.0f };
+		UVs[3] = XMFLOAT2{ 90 / 960.0f, 14 / 20.0f };
 	}
 	break;
 	case ')':
 	{
-		UVs[0] = XMFLOAT2{ 90 / 950.0f, 4 / 20.0f };
-		UVs[1] = XMFLOAT2{ 100 / 950.0f, 4 / 20.0f };
-		UVs[2] = XMFLOAT2{ 90 / 950.0f, 14 / 20.0f };
-		UVs[3] = XMFLOAT2{ 100 / 950.0f, 14 / 20.0f };
+		UVs[0] = XMFLOAT2{ 90 / 960.0f, 4 / 20.0f };
+		UVs[1] = XMFLOAT2{ 100 / 960.0f, 4 / 20.0f };
+		UVs[2] = XMFLOAT2{ 90 / 960.0f, 14 / 20.0f };
+		UVs[3] = XMFLOAT2{ 100 / 960.0f, 14 / 20.0f };
 	}
 	break;
 	case ',':
 	{
-		UVs[0] = XMFLOAT2{ 120 / 950.0f, 6 / 20.0f };
-		UVs[1] = XMFLOAT2{ 130 / 950.0f, 6 / 20.0f };
-		UVs[2] = XMFLOAT2{ 120 / 950.0f, 16 / 20.0f };
-		UVs[3] = XMFLOAT2{ 130 / 950.0f, 16 / 20.0f };
+		UVs[0] = XMFLOAT2{ 120 / 960.0f, 6 / 20.0f };
+		UVs[1] = XMFLOAT2{ 130 / 960.0f, 6 / 20.0f };
+		UVs[2] = XMFLOAT2{ 120 / 960.0f, 16 / 20.0f };
+		UVs[3] = XMFLOAT2{ 130 / 960.0f, 16 / 20.0f };
 	}
 	break;
 	case '.':
 	{
-		UVs[0] = XMFLOAT2{ 140 / 950.0f, 4 / 20.0f };
-		UVs[1] = XMFLOAT2{ 150 / 950.0f, 4 / 20.0f };
-		UVs[2] = XMFLOAT2{ 140 / 950.0f, 14 / 20.0f };
-		UVs[3] = XMFLOAT2{ 150 / 950.0f, 14 / 20.0f };
+		UVs[0] = XMFLOAT2{ 140 / 960.0f, 4 / 20.0f };
+		UVs[1] = XMFLOAT2{ 150 / 960.0f, 4 / 20.0f };
+		UVs[2] = XMFLOAT2{ 140 / 960.0f, 14 / 20.0f };
+		UVs[3] = XMFLOAT2{ 150 / 960.0f, 14 / 20.0f };
 	}
 	break;
 	case 0:
 	case '0':
 	{
-		UVs[0] = XMFLOAT2{ 160 / 950.0f, 3 / 20.0f };
-		UVs[1] = XMFLOAT2{ 170 / 950.0f, 3 / 20.0f };
-		UVs[2] = XMFLOAT2{ 160 / 950.0f, 15 / 20.0f };
-		UVs[3] = XMFLOAT2{ 170 / 950.0f, 15 / 20.0f };
+		UVs[0] = XMFLOAT2{ 160 / 960.0f, 3 / 20.0f };
+		UVs[1] = XMFLOAT2{ 170 / 960.0f, 3 / 20.0f };
+		UVs[2] = XMFLOAT2{ 160 / 960.0f, 15 / 20.0f };
+		UVs[3] = XMFLOAT2{ 170 / 960.0f, 15 / 20.0f };
 	}
 	break;
 	case 1:
 	case '1':
 	{
-		UVs[0] = XMFLOAT2{ 170 / 950.0f, 3 / 20.0f };
-		UVs[1] = XMFLOAT2{ 180 / 950.0f, 3 / 20.0f };
-		UVs[2] = XMFLOAT2{ 170 / 950.0f, 15 / 20.0f };
-		UVs[3] = XMFLOAT2{ 180 / 950.0f, 15 / 20.0f };
+		UVs[0] = XMFLOAT2{ 170 / 960.0f, 3 / 20.0f };
+		UVs[1] = XMFLOAT2{ 180 / 960.0f, 3 / 20.0f };
+		UVs[2] = XMFLOAT2{ 170 / 960.0f, 15 / 20.0f };
+		UVs[3] = XMFLOAT2{ 180 / 960.0f, 15 / 20.0f };
 	}
 	break;
 	case 2:
 	case '2':
 	{
-		UVs[0] = XMFLOAT2{ 180 / 950.0f, 3 / 20.0f };
-		UVs[1] = XMFLOAT2{ 190 / 950.0f, 3 / 20.0f };
-		UVs[2] = XMFLOAT2{ 180 / 950.0f, 15 / 20.0f };
-		UVs[3] = XMFLOAT2{ 190 / 950.0f, 15 / 20.0f };
+		UVs[0] = XMFLOAT2{ 180 / 960.0f, 3 / 20.0f };
+		UVs[1] = XMFLOAT2{ 190 / 960.0f, 3 / 20.0f };
+		UVs[2] = XMFLOAT2{ 180 / 960.0f, 15 / 20.0f };
+		UVs[3] = XMFLOAT2{ 190 / 960.0f, 15 / 20.0f };
 	}
 	break;
 	case 3:
 	case '3':
 	{
-		UVs[0] = XMFLOAT2{ 190 / 950.0f, 3 / 20.0f };
-		UVs[1] = XMFLOAT2{ 200 / 950.0f, 3 / 20.0f };
-		UVs[2] = XMFLOAT2{ 190 / 950.0f, 15 / 20.0f };
-		UVs[3] = XMFLOAT2{ 200 / 950.0f, 15 / 20.0f };
+		UVs[0] = XMFLOAT2{ 190 / 960.0f, 3 / 20.0f };
+		UVs[1] = XMFLOAT2{ 200 / 960.0f, 3 / 20.0f };
+		UVs[2] = XMFLOAT2{ 190 / 960.0f, 15 / 20.0f };
+		UVs[3] = XMFLOAT2{ 200 / 960.0f, 15 / 20.0f };
 	}
 	break;
 	case 4:
 	case '4':
 	{
-		UVs[0] = XMFLOAT2{ 200 / 950.0f, 3 / 20.0f };
-		UVs[1] = XMFLOAT2{ 210 / 950.0f, 3 / 20.0f };
-		UVs[2] = XMFLOAT2{ 200 / 950.0f, 15 / 20.0f };
-		UVs[3] = XMFLOAT2{ 210 / 950.0f, 15 / 20.0f };
+		UVs[0] = XMFLOAT2{ 200 / 960.0f, 3 / 20.0f };
+		UVs[1] = XMFLOAT2{ 210 / 960.0f, 3 / 20.0f };
+		UVs[2] = XMFLOAT2{ 200 / 960.0f, 15 / 20.0f };
+		UVs[3] = XMFLOAT2{ 210 / 960.0f, 15 / 20.0f };
 	}
 	break;
 	case 5:
 	case '5':
 	{
-		UVs[0] = XMFLOAT2{ 210 / 950.0f, 3 / 20.0f };
-		UVs[1] = XMFLOAT2{ 220 / 950.0f, 3 / 20.0f };
-		UVs[2] = XMFLOAT2{ 210 / 950.0f, 15 / 20.0f };
-		UVs[3] = XMFLOAT2{ 220 / 950.0f, 15 / 20.0f };
+		UVs[0] = XMFLOAT2{ 210 / 960.0f, 3 / 20.0f };
+		UVs[1] = XMFLOAT2{ 220 / 960.0f, 3 / 20.0f };
+		UVs[2] = XMFLOAT2{ 210 / 960.0f, 15 / 20.0f };
+		UVs[3] = XMFLOAT2{ 220 / 960.0f, 15 / 20.0f };
 	}
 	break;
 	case 6:
 	case '6':
 	{
-		UVs[0] = XMFLOAT2{ 220 / 950.0f, 3 / 20.0f };
-		UVs[1] = XMFLOAT2{ 230 / 950.0f, 3 / 20.0f };
-		UVs[2] = XMFLOAT2{ 220 / 950.0f, 15 / 20.0f };
-		UVs[3] = XMFLOAT2{ 230 / 950.0f, 15 / 20.0f };
+		UVs[0] = XMFLOAT2{ 220 / 960.0f, 3 / 20.0f };
+		UVs[1] = XMFLOAT2{ 230 / 960.0f, 3 / 20.0f };
+		UVs[2] = XMFLOAT2{ 220 / 960.0f, 15 / 20.0f };
+		UVs[3] = XMFLOAT2{ 230 / 960.0f, 15 / 20.0f };
 	}
 	break;
 	case 7:
 	case '7':
 	{
-		UVs[0] = XMFLOAT2{ 230 / 950.0f, 3 / 20.0f };
-		UVs[1] = XMFLOAT2{ 240 / 950.0f, 3 / 20.0f };
-		UVs[2] = XMFLOAT2{ 230 / 950.0f, 15 / 20.0f };
-		UVs[3] = XMFLOAT2{ 240 / 950.0f, 15 / 20.0f };
+		UVs[0] = XMFLOAT2{ 230 / 960.0f, 3 / 20.0f };
+		UVs[1] = XMFLOAT2{ 240 / 960.0f, 3 / 20.0f };
+		UVs[2] = XMFLOAT2{ 230 / 960.0f, 15 / 20.0f };
+		UVs[3] = XMFLOAT2{ 240 / 960.0f, 15 / 20.0f };
 	}
 	break;
 	case 8:
 	case '8':
 	{
-		UVs[0] = XMFLOAT2{ 240 / 950.0f, 3 / 20.0f };
-		UVs[1] = XMFLOAT2{ 250 / 950.0f, 3 / 20.0f };
-		UVs[2] = XMFLOAT2{ 240 / 950.0f, 15 / 20.0f };
-		UVs[3] = XMFLOAT2{ 250 / 950.0f, 15 / 20.0f };
+		UVs[0] = XMFLOAT2{ 240 / 960.0f, 3 / 20.0f };
+		UVs[1] = XMFLOAT2{ 250 / 960.0f, 3 / 20.0f };
+		UVs[2] = XMFLOAT2{ 240 / 960.0f, 15 / 20.0f };
+		UVs[3] = XMFLOAT2{ 250 / 960.0f, 15 / 20.0f };
 	}
 	break;
 	case 9:
 	case '9':
 	{
-		UVs[0] = XMFLOAT2{ 250 / 950.0f, 3 / 20.0f };
-		UVs[1] = XMFLOAT2{ 260 / 950.0f, 3 / 20.0f };
-		UVs[2] = XMFLOAT2{ 250 / 950.0f, 15 / 20.0f };
-		UVs[3] = XMFLOAT2{ 260 / 950.0f, 15 / 20.0f };
+		UVs[0] = XMFLOAT2{ 250 / 960.0f, 3 / 20.0f };
+		UVs[1] = XMFLOAT2{ 260 / 960.0f, 3 / 20.0f };
+		UVs[2] = XMFLOAT2{ 250 / 960.0f, 15 / 20.0f };
+		UVs[3] = XMFLOAT2{ 260 / 960.0f, 15 / 20.0f };
 	}
 	break;
 	case ':':
 	{
-		UVs[0] = XMFLOAT2{ 260 / 950.0f, 4 / 20.0f };
-		UVs[1] = XMFLOAT2{ 270 / 950.0f, 4 / 20.0f };
-		UVs[2] = XMFLOAT2{ 260 / 950.0f, 14 / 20.0f };
-		UVs[3] = XMFLOAT2{ 270 / 950.0f, 14 / 20.0f };
+		UVs[0] = XMFLOAT2{ 260 / 960.0f, 4 / 20.0f };
+		UVs[1] = XMFLOAT2{ 270 / 960.0f, 4 / 20.0f };
+		UVs[2] = XMFLOAT2{ 260 / 960.0f, 14 / 20.0f };
+		UVs[3] = XMFLOAT2{ 270 / 960.0f, 14 / 20.0f };
+	}
+	break;
+	case '?':
+	{
+		UVs[0] = XMFLOAT2{ 310 / 960.0f, 4 / 20.0f };
+		UVs[1] = XMFLOAT2{ 320 / 960.0f, 4 / 20.0f };
+		UVs[2] = XMFLOAT2{ 310 / 960.0f, 14 / 20.0f };
+		UVs[3] = XMFLOAT2{ 320 / 960.0f, 14 / 20.0f };
 	}
 	break;
 	case 'A':
 	{
-		UVs[0] = XMFLOAT2{ 330 / 950.0f, 3 / 20.0f };
-		UVs[1] = XMFLOAT2{ 340 / 950.0f, 3 / 20.0f };
-		UVs[2] = XMFLOAT2{ 330 / 950.0f, 15 / 20.0f };
-		UVs[3] = XMFLOAT2{ 340 / 950.0f, 15 / 20.0f };
+		UVs[0] = XMFLOAT2{ 330 / 960.0f, 3 / 20.0f };
+		UVs[1] = XMFLOAT2{ 340 / 960.0f, 3 / 20.0f };
+		UVs[2] = XMFLOAT2{ 330 / 960.0f, 15 / 20.0f };
+		UVs[3] = XMFLOAT2{ 340 / 960.0f, 15 / 20.0f };
 	}
 	break;
 	case 'B':
 	{
-		UVs[0] = XMFLOAT2{ 340 / 950.0f, 3 / 20.0f };
-		UVs[1] = XMFLOAT2{ 350 / 950.0f, 3 / 20.0f };
-		UVs[2] = XMFLOAT2{ 340 / 950.0f, 15 / 20.0f };
-		UVs[3] = XMFLOAT2{ 350 / 950.0f, 15 / 20.0f };
+		UVs[0] = XMFLOAT2{ 340 / 960.0f, 3 / 20.0f };
+		UVs[1] = XMFLOAT2{ 350 / 960.0f, 3 / 20.0f };
+		UVs[2] = XMFLOAT2{ 340 / 960.0f, 15 / 20.0f };
+		UVs[3] = XMFLOAT2{ 350 / 960.0f, 15 / 20.0f };
 	}
 	break;
 	case 'C':
 	{
-		UVs[0] = XMFLOAT2{ 350 / 950.0f, 3 / 20.0f };
-		UVs[1] = XMFLOAT2{ 360 / 950.0f, 3 / 20.0f };
-		UVs[2] = XMFLOAT2{ 350 / 950.0f, 15 / 20.0f };
-		UVs[3] = XMFLOAT2{ 360 / 950.0f, 15 / 20.0f };
+		UVs[0] = XMFLOAT2{ 350 / 960.0f, 3 / 20.0f };
+		UVs[1] = XMFLOAT2{ 360 / 960.0f, 3 / 20.0f };
+		UVs[2] = XMFLOAT2{ 350 / 960.0f, 15 / 20.0f };
+		UVs[3] = XMFLOAT2{ 360 / 960.0f, 15 / 20.0f };
 	}
 	break;
 	case 'D':
 	{
-		UVs[0] = XMFLOAT2{ 360 / 950.0f, 3 / 20.0f };
-		UVs[1] = XMFLOAT2{ 370 / 950.0f, 3 / 20.0f };
-		UVs[2] = XMFLOAT2{ 360 / 950.0f, 15 / 20.0f };
-		UVs[3] = XMFLOAT2{ 370 / 950.0f, 15 / 20.0f };
+		UVs[0] = XMFLOAT2{ 360 / 960.0f, 3 / 20.0f };
+		UVs[1] = XMFLOAT2{ 370 / 960.0f, 3 / 20.0f };
+		UVs[2] = XMFLOAT2{ 360 / 960.0f, 15 / 20.0f };
+		UVs[3] = XMFLOAT2{ 370 / 960.0f, 15 / 20.0f };
 	}
 	break;
 	case 'E':
 	{
-		UVs[0] = XMFLOAT2{ 370 / 950.0f, 3 / 20.0f };
-		UVs[1] = XMFLOAT2{ 380 / 950.0f, 3 / 20.0f };
-		UVs[2] = XMFLOAT2{ 370 / 950.0f, 15 / 20.0f };
-		UVs[3] = XMFLOAT2{ 380 / 950.0f, 15 / 20.0f };
+		UVs[0] = XMFLOAT2{ 370 / 960.0f, 3 / 20.0f };
+		UVs[1] = XMFLOAT2{ 380 / 960.0f, 3 / 20.0f };
+		UVs[2] = XMFLOAT2{ 370 / 960.0f, 15 / 20.0f };
+		UVs[3] = XMFLOAT2{ 380 / 960.0f, 15 / 20.0f };
 	}
 	break;
 	case 'F':
 	{
-		UVs[0] = XMFLOAT2{ 380 / 950.0f, 3 / 20.0f };
-		UVs[1] = XMFLOAT2{ 390 / 950.0f, 3 / 20.0f };
-		UVs[2] = XMFLOAT2{ 380 / 950.0f, 15 / 20.0f };
-		UVs[3] = XMFLOAT2{ 390 / 950.0f, 15 / 20.0f };
+		UVs[0] = XMFLOAT2{ 380 / 960.0f, 3 / 20.0f };
+		UVs[1] = XMFLOAT2{ 390 / 960.0f, 3 / 20.0f };
+		UVs[2] = XMFLOAT2{ 380 / 960.0f, 15 / 20.0f };
+		UVs[3] = XMFLOAT2{ 390 / 960.0f, 15 / 20.0f };
 	}
 	break;
 	case 'G':
 	{
-		UVs[0] = XMFLOAT2{ 390 / 950.0f, 3 / 20.0f };
-		UVs[1] = XMFLOAT2{ 400 / 950.0f, 3 / 20.0f };
-		UVs[2] = XMFLOAT2{ 390 / 950.0f, 15 / 20.0f };
-		UVs[3] = XMFLOAT2{ 400 / 950.0f, 15 / 20.0f };
+		UVs[0] = XMFLOAT2{ 390 / 960.0f, 3 / 20.0f };
+		UVs[1] = XMFLOAT2{ 400 / 960.0f, 3 / 20.0f };
+		UVs[2] = XMFLOAT2{ 390 / 960.0f, 15 / 20.0f };
+		UVs[3] = XMFLOAT2{ 400 / 960.0f, 15 / 20.0f };
 	}
 	break;
 	case 'H':
 	{
-		UVs[0] = XMFLOAT2{ 400 / 950.0f, 3 / 20.0f };
-		UVs[1] = XMFLOAT2{ 410 / 950.0f, 3 / 20.0f };
-		UVs[2] = XMFLOAT2{ 400 / 950.0f, 15 / 20.0f };
-		UVs[3] = XMFLOAT2{ 410 / 950.0f, 15 / 20.0f };
+		UVs[0] = XMFLOAT2{ 400 / 960.0f, 3 / 20.0f };
+		UVs[1] = XMFLOAT2{ 410 / 960.0f, 3 / 20.0f };
+		UVs[2] = XMFLOAT2{ 400 / 960.0f, 15 / 20.0f };
+		UVs[3] = XMFLOAT2{ 410 / 960.0f, 15 / 20.0f };
 	}
 	break;
 	case 'I':
 	{
-		UVs[0] = XMFLOAT2{ 410 / 950.0f, 3 / 20.0f };
-		UVs[1] = XMFLOAT2{ 420 / 950.0f, 3 / 20.0f };
-		UVs[2] = XMFLOAT2{ 410 / 950.0f, 15 / 20.0f };
-		UVs[3] = XMFLOAT2{ 420 / 950.0f, 15 / 20.0f };
+		UVs[0] = XMFLOAT2{ 410 / 960.0f, 3 / 20.0f };
+		UVs[1] = XMFLOAT2{ 420 / 960.0f, 3 / 20.0f };
+		UVs[2] = XMFLOAT2{ 410 / 960.0f, 15 / 20.0f };
+		UVs[3] = XMFLOAT2{ 420 / 960.0f, 15 / 20.0f };
 	}
 	break;
 	case 'J':
 	{
-		UVs[0] = XMFLOAT2{ 420 / 950.0f, 3 / 20.0f };
-		UVs[1] = XMFLOAT2{ 430 / 950.0f, 3 / 20.0f };
-		UVs[2] = XMFLOAT2{ 420 / 950.0f, 15 / 20.0f };
-		UVs[3] = XMFLOAT2{ 430 / 950.0f, 15 / 20.0f };
+		UVs[0] = XMFLOAT2{ 420 / 960.0f, 3 / 20.0f };
+		UVs[1] = XMFLOAT2{ 430 / 960.0f, 3 / 20.0f };
+		UVs[2] = XMFLOAT2{ 420 / 960.0f, 15 / 20.0f };
+		UVs[3] = XMFLOAT2{ 430 / 960.0f, 15 / 20.0f };
 	}
 	break;
 	case 'K':
 	{
-		UVs[0] = XMFLOAT2{ 430 / 950.0f, 3 / 20.0f };
-		UVs[1] = XMFLOAT2{ 440 / 950.0f, 3 / 20.0f };
-		UVs[2] = XMFLOAT2{ 430 / 950.0f, 15 / 20.0f };
-		UVs[3] = XMFLOAT2{ 440 / 950.0f, 15 / 20.0f };
+		UVs[0] = XMFLOAT2{ 430 / 960.0f, 3 / 20.0f };
+		UVs[1] = XMFLOAT2{ 440 / 960.0f, 3 / 20.0f };
+		UVs[2] = XMFLOAT2{ 430 / 960.0f, 15 / 20.0f };
+		UVs[3] = XMFLOAT2{ 440 / 960.0f, 15 / 20.0f };
 	}
 	break;
 	case 'L':
 	{
-		UVs[0] = XMFLOAT2{ 440 / 950.0f, 3 / 20.0f };
-		UVs[1] = XMFLOAT2{ 450 / 950.0f, 3 / 20.0f };
-		UVs[2] = XMFLOAT2{ 440 / 950.0f, 15 / 20.0f };
-		UVs[3] = XMFLOAT2{ 450 / 950.0f, 15 / 20.0f };
+		UVs[0] = XMFLOAT2{ 440 / 960.0f, 3 / 20.0f };
+		UVs[1] = XMFLOAT2{ 450 / 960.0f, 3 / 20.0f };
+		UVs[2] = XMFLOAT2{ 440 / 960.0f, 15 / 20.0f };
+		UVs[3] = XMFLOAT2{ 450 / 960.0f, 15 / 20.0f };
 	}
 	break;
 	case 'M':
 	{
-		UVs[0] = XMFLOAT2{ 450 / 950.0f, 3 / 20.0f };
-		UVs[1] = XMFLOAT2{ 460 / 950.0f, 3 / 20.0f };
-		UVs[2] = XMFLOAT2{ 450 / 950.0f, 15 / 20.0f };
-		UVs[3] = XMFLOAT2{ 460 / 950.0f, 15 / 20.0f };
+		UVs[0] = XMFLOAT2{ 450 / 960.0f, 3 / 20.0f };
+		UVs[1] = XMFLOAT2{ 460 / 960.0f, 3 / 20.0f };
+		UVs[2] = XMFLOAT2{ 450 / 960.0f, 15 / 20.0f };
+		UVs[3] = XMFLOAT2{ 460 / 960.0f, 15 / 20.0f };
 	}
 	break;
 	case 'N':
 	{
-		UVs[0] = XMFLOAT2{ 460 / 950.0f, 3 / 20.0f };
-		UVs[1] = XMFLOAT2{ 470 / 950.0f, 3 / 20.0f };
-		UVs[2] = XMFLOAT2{ 460 / 950.0f, 15 / 20.0f };
-		UVs[3] = XMFLOAT2{ 470 / 950.0f, 15 / 20.0f };
+		UVs[0] = XMFLOAT2{ 460 / 960.0f, 3 / 20.0f };
+		UVs[1] = XMFLOAT2{ 470 / 960.0f, 3 / 20.0f };
+		UVs[2] = XMFLOAT2{ 460 / 960.0f, 15 / 20.0f };
+		UVs[3] = XMFLOAT2{ 470 / 960.0f, 15 / 20.0f };
 	}
 	break;
 	case 'O':
 	{
-		UVs[0] = XMFLOAT2{ 470 / 950.0f, 3 / 20.0f };
-		UVs[1] = XMFLOAT2{ 480 / 950.0f, 3 / 20.0f };
-		UVs[2] = XMFLOAT2{ 470 / 950.0f, 15 / 20.0f };
-		UVs[3] = XMFLOAT2{ 480 / 950.0f, 15 / 20.0f };
+		UVs[0] = XMFLOAT2{ 470 / 960.0f, 3 / 20.0f };
+		UVs[1] = XMFLOAT2{ 480 / 960.0f, 3 / 20.0f };
+		UVs[2] = XMFLOAT2{ 470 / 960.0f, 15 / 20.0f };
+		UVs[3] = XMFLOAT2{ 480 / 960.0f, 15 / 20.0f };
 	}
 	break;
 	case 'P':
 	{
-		UVs[0] = XMFLOAT2{ 480 / 950.0f, 3 / 20.0f };
-		UVs[1] = XMFLOAT2{ 490 / 950.0f, 3 / 20.0f };
-		UVs[2] = XMFLOAT2{ 480 / 950.0f, 15 / 20.0f };
-		UVs[3] = XMFLOAT2{ 490 / 950.0f, 15 / 20.0f };
+		UVs[0] = XMFLOAT2{ 480 / 960.0f, 3 / 20.0f };
+		UVs[1] = XMFLOAT2{ 490 / 960.0f, 3 / 20.0f };
+		UVs[2] = XMFLOAT2{ 480 / 960.0f, 15 / 20.0f };
+		UVs[3] = XMFLOAT2{ 490 / 960.0f, 15 / 20.0f };
 	}
 	break;
 	case 'Q':
 	{
-		UVs[0] = XMFLOAT2{ 490 / 950.0f, 3 / 20.0f };
-		UVs[1] = XMFLOAT2{ 500 / 950.0f, 3 / 20.0f };
-		UVs[2] = XMFLOAT2{ 490 / 950.0f, 15 / 20.0f };
-		UVs[3] = XMFLOAT2{ 500 / 950.0f, 15 / 20.0f };
+		UVs[0] = XMFLOAT2{ 490 / 960.0f, 3 / 20.0f };
+		UVs[1] = XMFLOAT2{ 500 / 960.0f, 3 / 20.0f };
+		UVs[2] = XMFLOAT2{ 490 / 960.0f, 15 / 20.0f };
+		UVs[3] = XMFLOAT2{ 500 / 960.0f, 15 / 20.0f };
 	}
 	break;
 	case 'R':
 	{
-		UVs[0] = XMFLOAT2{ 500 / 950.0f, 3 / 20.0f };
-		UVs[1] = XMFLOAT2{ 510 / 950.0f, 3 / 20.0f };
-		UVs[2] = XMFLOAT2{ 500 / 950.0f, 15 / 20.0f };
-		UVs[3] = XMFLOAT2{ 510 / 950.0f, 15 / 20.0f };
+		UVs[0] = XMFLOAT2{ 500 / 960.0f, 3 / 20.0f };
+		UVs[1] = XMFLOAT2{ 510 / 960.0f, 3 / 20.0f };
+		UVs[2] = XMFLOAT2{ 500 / 960.0f, 15 / 20.0f };
+		UVs[3] = XMFLOAT2{ 510 / 960.0f, 15 / 20.0f };
 	}
 	break;
 	case 'S':
 	{
-		UVs[0] = XMFLOAT2{ 510 / 950.0f, 3 / 20.0f };
-		UVs[1] = XMFLOAT2{ 520 / 950.0f, 3 / 20.0f };
-		UVs[2] = XMFLOAT2{ 510 / 950.0f, 15 / 20.0f };
-		UVs[3] = XMFLOAT2{ 520 / 950.0f, 15 / 20.0f };
+		UVs[0] = XMFLOAT2{ 510 / 960.0f, 3 / 20.0f };
+		UVs[1] = XMFLOAT2{ 520 / 960.0f, 3 / 20.0f };
+		UVs[2] = XMFLOAT2{ 510 / 960.0f, 15 / 20.0f };
+		UVs[3] = XMFLOAT2{ 520 / 960.0f, 15 / 20.0f };
 	}
 	break;
 	case 'T':
 	{
-		UVs[0] = XMFLOAT2{ 520 / 950.0f, 3 / 20.0f };
-		UVs[1] = XMFLOAT2{ 530 / 950.0f, 3 / 20.0f };
-		UVs[2] = XMFLOAT2{ 520 / 950.0f, 15 / 20.0f };
-		UVs[3] = XMFLOAT2{ 530 / 950.0f, 15 / 20.0f };
+		UVs[0] = XMFLOAT2{ 520 / 960.0f, 3 / 20.0f };
+		UVs[1] = XMFLOAT2{ 530 / 960.0f, 3 / 20.0f };
+		UVs[2] = XMFLOAT2{ 520 / 960.0f, 15 / 20.0f };
+		UVs[3] = XMFLOAT2{ 530 / 960.0f, 15 / 20.0f };
 	}
 	break;
 	case 'U':
 	{
-		UVs[0] = XMFLOAT2{ 530 / 950.0f, 3 / 20.0f };
-		UVs[1] = XMFLOAT2{ 540 / 950.0f, 3 / 20.0f };
-		UVs[2] = XMFLOAT2{ 530 / 950.0f, 15 / 20.0f };
-		UVs[3] = XMFLOAT2{ 540 / 950.0f, 15 / 20.0f };
+		UVs[0] = XMFLOAT2{ 530 / 960.0f, 3 / 20.0f };
+		UVs[1] = XMFLOAT2{ 540 / 960.0f, 3 / 20.0f };
+		UVs[2] = XMFLOAT2{ 530 / 960.0f, 15 / 20.0f };
+		UVs[3] = XMFLOAT2{ 540 / 960.0f, 15 / 20.0f };
 	}
 	break;
 	case 'V':
 	{
-		UVs[0] = XMFLOAT2{ 540 / 950.0f, 3 / 20.0f };
-		UVs[1] = XMFLOAT2{ 550 / 950.0f, 3 / 20.0f };
-		UVs[2] = XMFLOAT2{ 540 / 950.0f, 15 / 20.0f };
-		UVs[3] = XMFLOAT2{ 550 / 950.0f, 15 / 20.0f };
+		UVs[0] = XMFLOAT2{ 540 / 960.0f, 3 / 20.0f };
+		UVs[1] = XMFLOAT2{ 550 / 960.0f, 3 / 20.0f };
+		UVs[2] = XMFLOAT2{ 540 / 960.0f, 15 / 20.0f };
+		UVs[3] = XMFLOAT2{ 550 / 960.0f, 15 / 20.0f };
 	}
 	break;
 	case 'W':
 	{
-		UVs[0] = XMFLOAT2{ 550 / 950.0f, 3 / 20.0f };
-		UVs[1] = XMFLOAT2{ 560 / 950.0f, 3 / 20.0f };
-		UVs[2] = XMFLOAT2{ 550 / 950.0f, 15 / 20.0f };
-		UVs[3] = XMFLOAT2{ 560 / 950.0f, 15 / 20.0f };
+		UVs[0] = XMFLOAT2{ 550 / 960.0f, 3 / 20.0f };
+		UVs[1] = XMFLOAT2{ 560 / 960.0f, 3 / 20.0f };
+		UVs[2] = XMFLOAT2{ 550 / 960.0f, 15 / 20.0f };
+		UVs[3] = XMFLOAT2{ 560 / 960.0f, 15 / 20.0f };
 	}
 	break;
 	case 'X':
 	{
-		UVs[0] = XMFLOAT2{ 560 / 950.0f, 3 / 20.0f };
-		UVs[1] = XMFLOAT2{ 570 / 950.0f, 3 / 20.0f };
-		UVs[2] = XMFLOAT2{ 560 / 950.0f, 15 / 20.0f };
-		UVs[3] = XMFLOAT2{ 570 / 950.0f, 15 / 20.0f };
+		UVs[0] = XMFLOAT2{ 560 / 960.0f, 3 / 20.0f };
+		UVs[1] = XMFLOAT2{ 570 / 960.0f, 3 / 20.0f };
+		UVs[2] = XMFLOAT2{ 560 / 960.0f, 15 / 20.0f };
+		UVs[3] = XMFLOAT2{ 570 / 960.0f, 15 / 20.0f };
 	}
 	break;
 	case 'Y':
 	{
-		UVs[0] = XMFLOAT2{ 570 / 950.0f, 3 / 20.0f };
-		UVs[1] = XMFLOAT2{ 580 / 950.0f, 3 / 20.0f };
-		UVs[2] = XMFLOAT2{ 570 / 950.0f, 15 / 20.0f };
-		UVs[3] = XMFLOAT2{ 580 / 950.0f, 15 / 20.0f };
+		UVs[0] = XMFLOAT2{ 570 / 960.0f, 3 / 20.0f };
+		UVs[1] = XMFLOAT2{ 580 / 960.0f, 3 / 20.0f };
+		UVs[2] = XMFLOAT2{ 570 / 960.0f, 15 / 20.0f };
+		UVs[3] = XMFLOAT2{ 580 / 960.0f, 15 / 20.0f };
 	}
 	break;
 	case 'Z':
 	{
-		UVs[0] = XMFLOAT2{ 580 / 950.0f, 3 / 20.0f };
-		UVs[1] = XMFLOAT2{ 590 / 950.0f, 3 / 20.0f };
-		UVs[2] = XMFLOAT2{ 580 / 950.0f, 15 / 20.0f };
-		UVs[3] = XMFLOAT2{ 590 / 950.0f, 15 / 20.0f };
+		UVs[0] = XMFLOAT2{ 580 / 960.0f, 3 / 20.0f };
+		UVs[1] = XMFLOAT2{ 590 / 960.0f, 3 / 20.0f };
+		UVs[2] = XMFLOAT2{ 580 / 960.0f, 15 / 20.0f };
+		UVs[3] = XMFLOAT2{ 590 / 960.0f, 15 / 20.0f };
 	}
 	break;
 	case 'a':
 	{
-		UVs[0] = XMFLOAT2{ 650 / 950.0f, 3 / 20.0f };
-		UVs[1] = XMFLOAT2{ 660 / 950.0f, 3 / 20.0f };
-		UVs[2] = XMFLOAT2{ 650 / 950.0f, 15 / 20.0f };
-		UVs[3] = XMFLOAT2{ 660 / 950.0f, 15 / 20.0f };
+		UVs[0] = XMFLOAT2{ 650 / 960.0f, 3 / 20.0f };
+		UVs[1] = XMFLOAT2{ 660 / 960.0f, 3 / 20.0f };
+		UVs[2] = XMFLOAT2{ 650 / 960.0f, 15 / 20.0f };
+		UVs[3] = XMFLOAT2{ 660 / 960.0f, 15 / 20.0f };
 	}
 	break;
 	case 'b':
 	{
-		UVs[0] = XMFLOAT2{ 660 / 950.0f, 3 / 20.0f };
-		UVs[1] = XMFLOAT2{ 670 / 950.0f, 3 / 20.0f };
-		UVs[2] = XMFLOAT2{ 660 / 950.0f, 15 / 20.0f };
-		UVs[3] = XMFLOAT2{ 670 / 950.0f, 15 / 20.0f };
+		UVs[0] = XMFLOAT2{ 660 / 960.0f, 3 / 20.0f };
+		UVs[1] = XMFLOAT2{ 670 / 960.0f, 3 / 20.0f };
+		UVs[2] = XMFLOAT2{ 660 / 960.0f, 15 / 20.0f };
+		UVs[3] = XMFLOAT2{ 670 / 960.0f, 15 / 20.0f };
 	}
 	break;
 	case 'c':
 	{
-		UVs[0] = XMFLOAT2{ 670 / 950.0f, 3 / 20.0f };
-		UVs[1] = XMFLOAT2{ 680 / 950.0f, 3 / 20.0f };
-		UVs[2] = XMFLOAT2{ 670 / 950.0f, 15 / 20.0f };
-		UVs[3] = XMFLOAT2{ 680 / 950.0f, 15 / 20.0f };
+		UVs[0] = XMFLOAT2{ 670 / 960.0f, 3 / 20.0f };
+		UVs[1] = XMFLOAT2{ 680 / 960.0f, 3 / 20.0f };
+		UVs[2] = XMFLOAT2{ 670 / 960.0f, 15 / 20.0f };
+		UVs[3] = XMFLOAT2{ 680 / 960.0f, 15 / 20.0f };
 	}
 	break;
 	case 'd':
 	{
-		UVs[0] = XMFLOAT2{ 680 / 950.0f, 3 / 20.0f };
-		UVs[1] = XMFLOAT2{ 690 / 950.0f, 3 / 20.0f };
-		UVs[2] = XMFLOAT2{ 680 / 950.0f, 15 / 20.0f };
-		UVs[3] = XMFLOAT2{ 690 / 950.0f, 15 / 20.0f };
+		UVs[0] = XMFLOAT2{ 680 / 960.0f, 3 / 20.0f };
+		UVs[1] = XMFLOAT2{ 690 / 960.0f, 3 / 20.0f };
+		UVs[2] = XMFLOAT2{ 680 / 960.0f, 15 / 20.0f };
+		UVs[3] = XMFLOAT2{ 690 / 960.0f, 15 / 20.0f };
 	}
 	break;
 	case 'e':
 	{
-		UVs[0] = XMFLOAT2{ 690 / 950.0f, 3 / 20.0f };
-		UVs[1] = XMFLOAT2{ 700 / 950.0f, 3 / 20.0f };
-		UVs[2] = XMFLOAT2{ 690 / 950.0f, 15 / 20.0f };
-		UVs[3] = XMFLOAT2{ 700 / 950.0f, 15 / 20.0f };
+		UVs[0] = XMFLOAT2{ 690 / 960.0f, 3 / 20.0f };
+		UVs[1] = XMFLOAT2{ 700 / 960.0f, 3 / 20.0f };
+		UVs[2] = XMFLOAT2{ 690 / 960.0f, 15 / 20.0f };
+		UVs[3] = XMFLOAT2{ 700 / 960.0f, 15 / 20.0f };
 	}
 	break;
 	case 'f':
 	{
-		UVs[0] = XMFLOAT2{ 700 / 950.0f, 3 / 20.0f };
-		UVs[1] = XMFLOAT2{ 710 / 950.0f, 3 / 20.0f };
-		UVs[2] = XMFLOAT2{ 700 / 950.0f, 15 / 20.0f };
-		UVs[3] = XMFLOAT2{ 710 / 950.0f, 15 / 20.0f };
+		UVs[0] = XMFLOAT2{ 700 / 960.0f, 3 / 20.0f };
+		UVs[1] = XMFLOAT2{ 710 / 960.0f, 3 / 20.0f };
+		UVs[2] = XMFLOAT2{ 700 / 960.0f, 15 / 20.0f };
+		UVs[3] = XMFLOAT2{ 710 / 960.0f, 15 / 20.0f };
 	}
 	break;
 	case 'g':
 	{
-		UVs[0] = XMFLOAT2{ 710 / 950.0f, 2.5 / 20.0f };
-		UVs[1] = XMFLOAT2{ 720 / 950.0f, 2.5 / 20.0f };
-		UVs[2] = XMFLOAT2{ 710 / 950.0f, 16 / 20.0f };
-		UVs[3] = XMFLOAT2{ 720 / 950.0f, 16 / 20.0f };
+		UVs[0] = XMFLOAT2{ 710 / 960.0f, 2.5 / 20.0f };
+		UVs[1] = XMFLOAT2{ 720 / 960.0f, 2.5 / 20.0f };
+		UVs[2] = XMFLOAT2{ 710 / 960.0f, 16 / 20.0f };
+		UVs[3] = XMFLOAT2{ 720 / 960.0f, 16 / 20.0f };
 	}
 	break;
 	case 'h':
 	{
-		UVs[0] = XMFLOAT2{ 720 / 950.0f, 3 / 20.0f };
-		UVs[1] = XMFLOAT2{ 730 / 950.0f, 3 / 20.0f };
-		UVs[2] = XMFLOAT2{ 720 / 950.0f, 15 / 20.0f };
-		UVs[3] = XMFLOAT2{ 730 / 950.0f, 15 / 20.0f };
+		UVs[0] = XMFLOAT2{ 720 / 960.0f, 3 / 20.0f };
+		UVs[1] = XMFLOAT2{ 730 / 960.0f, 3 / 20.0f };
+		UVs[2] = XMFLOAT2{ 720 / 960.0f, 15 / 20.0f };
+		UVs[3] = XMFLOAT2{ 730 / 960.0f, 15 / 20.0f };
 	}
 	break;
 	case 'i':
 	{
-		UVs[0] = XMFLOAT2{ 730 / 950.0f, 3 / 20.0f };
-		UVs[1] = XMFLOAT2{ 740 / 950.0f, 3 / 20.0f };
-		UVs[2] = XMFLOAT2{ 730 / 950.0f, 15 / 20.0f };
-		UVs[3] = XMFLOAT2{ 740 / 950.0f, 15 / 20.0f };
+		UVs[0] = XMFLOAT2{ 730 / 960.0f, 3 / 20.0f };
+		UVs[1] = XMFLOAT2{ 740 / 960.0f, 3 / 20.0f };
+		UVs[2] = XMFLOAT2{ 730 / 960.0f, 15 / 20.0f };
+		UVs[3] = XMFLOAT2{ 740 / 960.0f, 15 / 20.0f };
 	}
 	break;
 	case 'j':
 	{
-		UVs[0] = XMFLOAT2{ 740 / 950.0f, 2.5 / 20.0f };
-		UVs[1] = XMFLOAT2{ 750 / 950.0f, 2.5 / 20.0f };
-		UVs[2] = XMFLOAT2{ 740 / 950.0f, 16 / 20.0f };
-		UVs[3] = XMFLOAT2{ 750 / 950.0f, 16 / 20.0f };
+		UVs[0] = XMFLOAT2{ 740 / 960.0f, 2.5 / 20.0f };
+		UVs[1] = XMFLOAT2{ 750 / 960.0f, 2.5 / 20.0f };
+		UVs[2] = XMFLOAT2{ 740 / 960.0f, 16 / 20.0f };
+		UVs[3] = XMFLOAT2{ 750 / 960.0f, 16 / 20.0f };
 	}
 	break;
 	case 'k':
 	{
-		UVs[0] = XMFLOAT2{ 750 / 950.0f, 3 / 20.0f };
-		UVs[1] = XMFLOAT2{ 760 / 950.0f, 3 / 20.0f };
-		UVs[2] = XMFLOAT2{ 750 / 950.0f, 15 / 20.0f };
-		UVs[3] = XMFLOAT2{ 760 / 950.0f, 15 / 20.0f };
+		UVs[0] = XMFLOAT2{ 750 / 960.0f, 3 / 20.0f };
+		UVs[1] = XMFLOAT2{ 760 / 960.0f, 3 / 20.0f };
+		UVs[2] = XMFLOAT2{ 750 / 960.0f, 15 / 20.0f };
+		UVs[3] = XMFLOAT2{ 760 / 960.0f, 15 / 20.0f };
 	}
 	break;
 	case 'l':
 	{
-		UVs[0] = XMFLOAT2{ 760 / 950.0f, 3 / 20.0f };
-		UVs[1] = XMFLOAT2{ 770 / 950.0f, 3 / 20.0f };
-		UVs[2] = XMFLOAT2{ 760 / 950.0f, 15 / 20.0f };
-		UVs[3] = XMFLOAT2{ 770 / 950.0f, 15 / 20.0f };
+		UVs[0] = XMFLOAT2{ 760 / 960.0f, 3 / 20.0f };
+		UVs[1] = XMFLOAT2{ 770 / 960.0f, 3 / 20.0f };
+		UVs[2] = XMFLOAT2{ 760 / 960.0f, 15 / 20.0f };
+		UVs[3] = XMFLOAT2{ 770 / 960.0f, 15 / 20.0f };
 	}
 	break;
 	case 'm':
 	{
-		UVs[0] = XMFLOAT2{ 770 / 950.0f, 3 / 20.0f };
-		UVs[1] = XMFLOAT2{ 780 / 950.0f, 3 / 20.0f };
-		UVs[2] = XMFLOAT2{ 770 / 950.0f, 15 / 20.0f };
-		UVs[3] = XMFLOAT2{ 780 / 950.0f, 15 / 20.0f };
+		UVs[0] = XMFLOAT2{ 770 / 960.0f, 3 / 20.0f };
+		UVs[1] = XMFLOAT2{ 780 / 960.0f, 3 / 20.0f };
+		UVs[2] = XMFLOAT2{ 770 / 960.0f, 15 / 20.0f };
+		UVs[3] = XMFLOAT2{ 780 / 960.0f, 15 / 20.0f };
 	}
 	break;
 	case 'n':
 	{
-		UVs[0] = XMFLOAT2{ 780 / 950.0f, 3 / 20.0f };
-		UVs[1] = XMFLOAT2{ 790 / 950.0f, 3 / 20.0f };
-		UVs[2] = XMFLOAT2{ 780 / 950.0f, 15 / 20.0f };
-		UVs[3] = XMFLOAT2{ 790 / 950.0f, 15 / 20.0f };
+		UVs[0] = XMFLOAT2{ 780 / 960.0f, 3 / 20.0f };
+		UVs[1] = XMFLOAT2{ 790 / 960.0f, 3 / 20.0f };
+		UVs[2] = XMFLOAT2{ 780 / 960.0f, 15 / 20.0f };
+		UVs[3] = XMFLOAT2{ 790 / 960.0f, 15 / 20.0f };
 	}
 	break;
 	case 'o':
 	{
-		UVs[0] = XMFLOAT2{ 790 / 950.0f, 3 / 20.0f };
-		UVs[1] = XMFLOAT2{ 800 / 950.0f, 3 / 20.0f };
-		UVs[2] = XMFLOAT2{ 790 / 950.0f, 15 / 20.0f };
-		UVs[3] = XMFLOAT2{ 800 / 950.0f, 15 / 20.0f };
+		UVs[0] = XMFLOAT2{ 790 / 960.0f, 3 / 20.0f };
+		UVs[1] = XMFLOAT2{ 800 / 960.0f, 3 / 20.0f };
+		UVs[2] = XMFLOAT2{ 790 / 960.0f, 15 / 20.0f };
+		UVs[3] = XMFLOAT2{ 800 / 960.0f, 15 / 20.0f };
 	}
 	break;
 	case 'p':
 	{
-		UVs[0] = XMFLOAT2{ 800 / 950.0f, 2.5 / 20.0f };
-		UVs[1] = XMFLOAT2{ 810 / 950.0f, 2.5 / 20.0f };
-		UVs[2] = XMFLOAT2{ 800 / 950.0f, 16 / 20.0f };
-		UVs[3] = XMFLOAT2{ 810 / 950.0f, 16 / 20.0f };
+		UVs[0] = XMFLOAT2{ 800 / 960.0f, 2.5 / 20.0f };
+		UVs[1] = XMFLOAT2{ 810 / 960.0f, 2.5 / 20.0f };
+		UVs[2] = XMFLOAT2{ 800 / 960.0f, 16 / 20.0f };
+		UVs[3] = XMFLOAT2{ 810 / 960.0f, 16 / 20.0f };
 	}
 	break;
 	case 'q':
 	{
-		UVs[0] = XMFLOAT2{ 810 / 950.0f, 2.5 / 20.0f };
-		UVs[1] = XMFLOAT2{ 820 / 950.0f, 2.5 / 20.0f };
-		UVs[2] = XMFLOAT2{ 810 / 950.0f, 16 / 20.0f };
-		UVs[3] = XMFLOAT2{ 820 / 950.0f, 16 / 20.0f };
+		UVs[0] = XMFLOAT2{ 810 / 960.0f, 2.5 / 20.0f };
+		UVs[1] = XMFLOAT2{ 820 / 960.0f, 2.5 / 20.0f };
+		UVs[2] = XMFLOAT2{ 810 / 960.0f, 16 / 20.0f };
+		UVs[3] = XMFLOAT2{ 820 / 960.0f, 16 / 20.0f };
 	}
 	break;
 	case 'r':
 	{
-		UVs[0] = XMFLOAT2{ 820 / 950.0f, 3 / 20.0f };
-		UVs[1] = XMFLOAT2{ 830 / 950.0f, 3 / 20.0f };
-		UVs[2] = XMFLOAT2{ 820 / 950.0f, 15 / 20.0f };
-		UVs[3] = XMFLOAT2{ 830 / 950.0f, 15 / 20.0f };
+		UVs[0] = XMFLOAT2{ 820 / 960.0f, 3 / 20.0f };
+		UVs[1] = XMFLOAT2{ 830 / 960.0f, 3 / 20.0f };
+		UVs[2] = XMFLOAT2{ 820 / 960.0f, 15 / 20.0f };
+		UVs[3] = XMFLOAT2{ 830 / 960.0f, 15 / 20.0f };
 	}
 	break;
 	case 's':
 	{
-		UVs[0] = XMFLOAT2{ 830 / 950.0f, 3 / 20.0f };
-		UVs[1] = XMFLOAT2{ 840 / 950.0f, 3 / 20.0f };
-		UVs[2] = XMFLOAT2{ 830 / 950.0f, 15 / 20.0f };
-		UVs[3] = XMFLOAT2{ 840 / 950.0f, 15 / 20.0f };
+		UVs[0] = XMFLOAT2{ 830 / 960.0f, 3 / 20.0f };
+		UVs[1] = XMFLOAT2{ 840 / 960.0f, 3 / 20.0f };
+		UVs[2] = XMFLOAT2{ 830 / 960.0f, 15 / 20.0f };
+		UVs[3] = XMFLOAT2{ 840 / 960.0f, 15 / 20.0f };
 	}
 	break;
 	case 't':
 	{
-		UVs[0] = XMFLOAT2{ 840 / 950.0f, 3 / 20.0f };
-		UVs[1] = XMFLOAT2{ 850 / 950.0f, 3 / 20.0f };
-		UVs[2] = XMFLOAT2{ 840 / 950.0f, 15 / 20.0f };
-		UVs[3] = XMFLOAT2{ 850 / 950.0f, 15 / 20.0f };
+		UVs[0] = XMFLOAT2{ 840 / 960.0f, 3 / 20.0f };
+		UVs[1] = XMFLOAT2{ 850 / 960.0f, 3 / 20.0f };
+		UVs[2] = XMFLOAT2{ 840 / 960.0f, 15 / 20.0f };
+		UVs[3] = XMFLOAT2{ 850 / 960.0f, 15 / 20.0f };
 	}
 	break;
 	case 'u':
 	{
-		UVs[0] = XMFLOAT2{ 850 / 950.0f, 3 / 20.0f };
-		UVs[1] = XMFLOAT2{ 860 / 950.0f, 3 / 20.0f };
-		UVs[2] = XMFLOAT2{ 850 / 950.0f, 15 / 20.0f };
-		UVs[3] = XMFLOAT2{ 860 / 950.0f, 15 / 20.0f };
+		UVs[0] = XMFLOAT2{ 850 / 960.0f, 3 / 20.0f };
+		UVs[1] = XMFLOAT2{ 860 / 960.0f, 3 / 20.0f };
+		UVs[2] = XMFLOAT2{ 850 / 960.0f, 15 / 20.0f };
+		UVs[3] = XMFLOAT2{ 860 / 960.0f, 15 / 20.0f };
 	}
 	break;
 	case 'v':
 	{
-		UVs[0] = XMFLOAT2{ 860 / 950.0f, 3 / 20.0f };
-		UVs[1] = XMFLOAT2{ 870 / 950.0f, 3 / 20.0f };
-		UVs[2] = XMFLOAT2{ 860 / 950.0f, 15 / 20.0f };
-		UVs[3] = XMFLOAT2{ 870 / 950.0f, 15 / 20.0f };
+		UVs[0] = XMFLOAT2{ 860 / 960.0f, 3 / 20.0f };
+		UVs[1] = XMFLOAT2{ 870 / 960.0f, 3 / 20.0f };
+		UVs[2] = XMFLOAT2{ 860 / 960.0f, 15 / 20.0f };
+		UVs[3] = XMFLOAT2{ 870 / 960.0f, 15 / 20.0f };
 	}
 	break;
 	case 'w':
 	{
-		UVs[0] = XMFLOAT2{ 870 / 950.0f, 3 / 20.0f };
-		UVs[1] = XMFLOAT2{ 880 / 950.0f, 3 / 20.0f };
-		UVs[2] = XMFLOAT2{ 870 / 950.0f, 15 / 20.0f };
-		UVs[3] = XMFLOAT2{ 880 / 950.0f, 15 / 20.0f };
+		UVs[0] = XMFLOAT2{ 870 / 960.0f, 3 / 20.0f };
+		UVs[1] = XMFLOAT2{ 880 / 960.0f, 3 / 20.0f };
+		UVs[2] = XMFLOAT2{ 870 / 960.0f, 15 / 20.0f };
+		UVs[3] = XMFLOAT2{ 880 / 960.0f, 15 / 20.0f };
 	}
 	break;
 	case 'x':
 	{
-		UVs[0] = XMFLOAT2{ 880 / 950.0f, 3 / 20.0f };
-		UVs[1] = XMFLOAT2{ 890 / 950.0f, 3 / 20.0f };
-		UVs[2] = XMFLOAT2{ 880 / 950.0f, 15 / 20.0f };
-		UVs[3] = XMFLOAT2{ 890 / 950.0f, 15 / 20.0f };
+		UVs[0] = XMFLOAT2{ 880 / 960.0f, 3 / 20.0f };
+		UVs[1] = XMFLOAT2{ 890 / 960.0f, 3 / 20.0f };
+		UVs[2] = XMFLOAT2{ 880 / 960.0f, 15 / 20.0f };
+		UVs[3] = XMFLOAT2{ 890 / 960.0f, 15 / 20.0f };
 	}
 	break;
 	case 'y':
 	{
-		UVs[0] = XMFLOAT2{ 890 / 950.0f, 2.5 / 20.0f };
-		UVs[1] = XMFLOAT2{ 900 / 950.0f, 2.5 / 20.0f };
-		UVs[2] = XMFLOAT2{ 890 / 950.0f, 16 / 20.0f };
-		UVs[3] = XMFLOAT2{ 900 / 950.0f, 16 / 20.0f };
+		UVs[0] = XMFLOAT2{ 890 / 960.0f, 2.5 / 20.0f };
+		UVs[1] = XMFLOAT2{ 900 / 960.0f, 2.5 / 20.0f };
+		UVs[2] = XMFLOAT2{ 890 / 960.0f, 16 / 20.0f };
+		UVs[3] = XMFLOAT2{ 900 / 960.0f, 16 / 20.0f };
 	}
 	break;
 	case 'z':
 	{
-		UVs[0] = XMFLOAT2{ 900 / 950.0f, 3 / 20.0f };
-		UVs[1] = XMFLOAT2{ 910 / 950.0f, 3 / 20.0f };
-		UVs[2] = XMFLOAT2{ 900 / 950.0f, 15 / 20.0f };
-		UVs[3] = XMFLOAT2{ 910 / 950.0f, 15 / 20.0f };
+		UVs[0] = XMFLOAT2{ 900 / 960.0f, 3 / 20.0f };
+		UVs[1] = XMFLOAT2{ 910 / 960.0f, 3 / 20.0f };
+		UVs[2] = XMFLOAT2{ 900 / 960.0f, 15 / 20.0f };
+		UVs[3] = XMFLOAT2{ 910 / 960.0f, 15 / 20.0f };
 	}
 	break;
 	default:

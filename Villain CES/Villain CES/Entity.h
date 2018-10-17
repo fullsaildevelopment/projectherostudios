@@ -123,7 +123,7 @@ unsigned int CreateClayTon(TWorld * ptWorld);
 unsigned int CreateMaterialBullet(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMeshImport tMesh, TMaterialOptimized tMaterial, XMMATRIX BulletSpawnLocation, int meshIndex, int bulletType);
 unsigned int CreateBullet(TWorld * ptWorld, XMMATRIX bulletSpawnLocation, int MaterialID, int bulletType);
 unsigned int CreateBulletMesh(TWorld* ptWorld, ID3D11Device * m_pd3dDevice, XMMATRIX BulletSpawnLocation, int MaterialID, int bulletType, TMeshImport tMesh, TMaterialImport tMaterial);
-unsigned int CreateBulletMesh(TWorld* ptWorld, XMMATRIX BulletSpawnLocation, BulletInfo& bulletToCopyFrom);
+unsigned int CreateBulletMesh(TWorld* ptWorld, XMMATRIX BulletSpawnLocation, BulletInfo& bulletToCopyFrom, int bulletType = 0);
 unsigned int CreateExtractionBeam(TWorld * ptWorld, XMMATRIX BulletSpawnLocation, int parentWorldMatrixIndex,std::vector<TPrimalVert> atBeamVerts);
 unsigned int AimingLine(TWorld * ptWorld, XMMATRIX BulletSpawnLocation, int parentWorldMatrixIndex, float xoffset, float yoffset, float zoffset);
 unsigned int createDebugCamera(TWorld * ptWorld, XMMATRIX debugCamera);
@@ -132,6 +132,7 @@ unsigned int CreateWall(TWorld* ptWorld, XMMATRIX SpawnPosition);
 unsigned int CreateCelling(TWorld* ptWorld, XMMATRIX SpawnPosition);
 unsigned int CreateGun(TWorld* ptWorld, XMMATRIX BulletSpawnLocation, int parentWorldMatrixIndex, float xoffset, float yoffset, float zoffset,int clipSize, float shootingCOooldown);
 unsigned int CreateClaytonGun(TWorld* ptWorld, ID3D11Device * m_pd3dDevice, XMMATRIX BulletSpawnLocation, int parentWorldMatrixIndex, float xoffset, float yoffset, float zoffset, int clipSize, float shootingCOooldown, TMeshImport tMesh, TMaterialImport tMaterial);
+unsigned int CreateCaelisGun(TWorld* ptWorld, ID3D11Device * m_pd3dDevice, XMMATRIX BulletSpawnLocation, int parentWorldMatrixIndex, float xoffset, float yoffset, float zoffset, int clipSize, float shootingCOooldown, TMeshImport tMesh, TMaterialImport tMaterial);
 unsigned int CreateScyllianGun(TWorld* ptWorld, ID3D11Device * m_pd3dDevice, XMMATRIX BulletSpawnLocation, int parentWorldMatrixIndex, float xoffset, float yoffset, float zoffset,int clipSize, float shootingCOooldown, TMeshImport tMesh, TMaterialImport tMaterial);
 unsigned int createMesh(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMeshImport tMesh, TMaterialOptimized tMaterial, int meshIndex);
 unsigned int createMesh(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMeshImport tMesh, TMaterialOptimized tMaterial, int meshIndex, int shaderID);
@@ -157,7 +158,7 @@ unsigned int CreateSpacePirate(TWorld * ptWorld, XMMATRIX SpawnPosition);
 
 unsigned int CreateCover(TWorld * ptWorld, XMMATRIX SpawnPosition, vector<int> coverNodes);
 
-unsigned int CreateHealingAI(TWorld * ptWorld, XMMATRIX SpawnPosition, unsigned int playerIndex);
+unsigned int CreateHealingAI(TWorld * ptWorld);
 unsigned int CreateFriendlySwordsMan(TWorld * ptWorld, XMMATRIX SpawnPosition, unsigned int playerIndex);
 unsigned int CreateCoverTriggerZone(TWorld * ptWorld, XMMATRIX SpawnPosition);
 unsigned int CreateCoverTriggerZone(TWorld * ptWorld, XMMATRIX SpawnPosition,int longway);
@@ -169,4 +170,4 @@ unsigned int CreateStoneObstacleHorizontal(TWorld * ptWorld, XMMATRIX SpawnPosit
 unsigned int CreateStairCase(TWorld * ptWorld, XMMATRIX SpawnPosition);
 unsigned int CreateTree(TWorld * ptWorld, XMMATRIX SpawnPosition);
 unsigned int CreateCylinder(TWorld * ptWorld, XMMATRIX SpawnPosition);
-
+unsigned int CreateCaelis(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMeshImport tMesh, TMaterialImport tMaterial);

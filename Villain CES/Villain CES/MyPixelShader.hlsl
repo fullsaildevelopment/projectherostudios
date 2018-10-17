@@ -10,6 +10,8 @@ struct TPixelInputType
 {
 	float4 d3dPosition : SV_POSITION;
 	float2 d3dTexture : TEXCOORD;
+
+	float4 d3dColor : COLOR;
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -23,6 +25,11 @@ float4 MyPixelShader(TPixelInputType tInput) : SV_TARGET
 	d3dAmbientLightColor.x = 0.0f;
 	d3dAmbientLightColor.y = 0.0f;
 	d3dAmbientLightColor.z = 0.0f;
+
+	if (tInput.d3dColor.x != 0)
+	{
+		d3dDiffuseColor = d3dDiffuseColor * tInput.d3dColor;
+	}
 
 	return float4(saturate(
 		d3dAmbientLightColor.xyz +

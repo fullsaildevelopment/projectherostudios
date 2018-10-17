@@ -33,12 +33,14 @@ public:
 	void InitializeMainMenu();
 	int LoadTitleScreen();
 	void InitializeTitleScreen();
+	void CleanStory();
 	int LoadStory();
 	void InitializeStory();
 	void CleanLoadingScreen();
 	int LoadLoadingScreen(bool _continue);
 	void InitializeLoadingScreen();
 	void InitializePauseScreen();
+	void CleanEndScreen(bool playerWin);
 	void InitializeEndScreen(bool playerWin);
 	void InitializeOptionsMenu();
 	void InitializeCredits();
@@ -53,7 +55,7 @@ public:
 	
 	void LoadLevelWithMapInIt();
 	int RealLevelUpdate();
-	void ResetLevel();
+	int ResetLevel();
 
 	//XMMATRIX DoorEventListener(int shaderID);
 	//const int DoorEventChanger(int shaderID);
@@ -85,7 +87,12 @@ private:
 	HWND cApplicationWindow;
 	vector<int> UIIndex;
 	int PlayerStartIndex = -10;
+	int ClaytonIndex = -10;
+	int CaelisIndex = -10;
+	int SethIndex = -10;
 	int GunIndexForPlayer = -10;
+	int GunIndexForClayton = -10;
+	int GunIndexForCaelis = -10;
 	int rayindex = -10;
 	int frustumIndex;
 	float zValue = 5;
@@ -115,6 +122,11 @@ private:
 	float fallingHealth = 0;
 	float hitmarkerTime = 1;
 	float uvScroll = 0.0f;
+	int loadingImage = 0;
+	int loadingImageIndex = -1;
+	int loadingTextIndex = -1;
+	int endScreenBackgroundIndex = -1;
+
 	int fpsIndex = -1;
 	int objLogoIndex = -1;
 	int hitmarkerIndex = -1;
@@ -142,6 +154,8 @@ private:
 	float fadeTime;
 	float lerpTime;
 	float blinkTime;
+	float timeOutTime;
+	float moveTime;
 
 	POINT startDragPoint;
 	POINT dragPoint;
@@ -157,6 +171,8 @@ private:
 	XMMATRIX m_d3dViewMatrix;
 	XMMATRIX m_d3dProjectionMatrix;
 	XMMATRIX m_d3dPlayerMatrix;
+	XMMATRIX m_d3dCaelisMatrix;
+	XMMATRIX m_d3dCalytonMatrix;
 
 	std::vector<TPrimalVert> atBeamVerts;
 
@@ -179,7 +195,8 @@ private:
 	bool makeBeamBuffer;
 	int ExtractionBeamIndex;
 	float m_RealTimeFov;
-	bool bMoving;
+	bool bNoMoving;
+	bool soundOff = false;
 	float Health = 1.0f;
 	XTime frameLock;
 };

@@ -11,7 +11,7 @@ CUISystem::~CUISystem()
 {
 }
 
-void CUISystem::AddTextureToUI(TWorld* tThisWorld, unsigned int& nThisEntity, ID3D11Device* device, wchar_t* filepath, ID3D11ShaderResourceView* srvDiffuse)
+void CUISystem::AddTextureToUI(TWorld* tThisWorld, int& nThisEntity, ID3D11Device* device, wchar_t* filepath, ID3D11ShaderResourceView* srvDiffuse)
 {
 	if (srvDiffuse == nullptr)
 	{
@@ -30,7 +30,7 @@ void CUISystem::AddTextureToUI(TWorld* tThisWorld, unsigned int& nThisEntity, ID
 	}
 }
 
-void CUISystem::AddButtonToUI(HWND* cApplicationWindow, TWorld* tThisWorld, unsigned int& nThisEntity, int sceneIndex, bool enabled)
+void CUISystem::AddButtonToUI(HWND* cApplicationWindow, TWorld* tThisWorld, int& nThisEntity, int sceneIndex, bool enabled)
 {
 	RECT window;
 	GetWindowRect(*cApplicationWindow, &window);
@@ -81,7 +81,7 @@ void CUISystem::AddTextToUI(HWND* cApplicationWindow, TWorld* tThisWorld, unsign
 	tThisWorld->atUIMask[nThisEntity].m_tnUIMask = tThisWorld->atUIMask[nThisEntity].m_tnUIMask | COMPONENT_TEXT;
 }
 
-void CUISystem::AddMaskToUI(TWorld* tThisWorld, unsigned int& nThisEntity, eUIComponent mask)
+void CUISystem::AddMaskToUI(TWorld* tThisWorld, int& nThisEntity, eUIComponent mask)
 {
 	tThisWorld->atUIMask[nThisEntity].m_tnUIMask = tThisWorld->atUIMask[nThisEntity].m_tnUIMask | mask;
 }
@@ -213,7 +213,7 @@ void CUISystem::AdjustBoundingBox(HWND* cApplicationWindow, TWorld* tThisWorld, 
 	ReleaseDC(*cApplicationWindow, tHDC);
 }
 
-void CUISystem::AddBarToUI(HWND* cApplicationWindow, TWorld* tThisWorld, unsigned int& nThisEntity, XMFLOAT4* backgroundColor, char* function, unsigned int textSize, float ratio)
+void CUISystem::AddBarToUI(HWND* cApplicationWindow, TWorld* tThisWorld, int& nThisEntity, XMFLOAT4* backgroundColor, char* function, unsigned int textSize, float ratio)
 {
 	if (function != nullptr)
 	{
@@ -442,7 +442,7 @@ void CUISystem::ScrollText(TWorld* tThisWorld, CGraphicsSystem* pcGraphicsSystem
 	pcGraphicsSystem->CreateEntityBuffer(tThisWorld, nThisEntity);
 }
 
-void CUISystem::UpdateHUDBars(TWorld * tThisWorld, int & nThisEntity, CGraphicsSystem::TUIVertexBufferType& tUIVertexBuffer, int& screenWidth, int& PlayerStartIndex, int& GunIndexForPlayer)
+void CUISystem::UpdateHUDBars(TWorld * tThisWorld, int & nThisEntity, CGraphicsSystem::TUIVertexBufferType& tUIVertexBuffer, int& screenWidth, int& PlayerStartIndex, int& GunIndexForPlayer, int& CaelisIndex)
 {
 	if (this->CheckIfStringsAreTheSame(tThisWorld->atBar[nThisEntity].valueToChange, tThisWorld->atBar[nThisEntity].valueToChangeSize, "Health"))
 	{
@@ -468,6 +468,12 @@ void CUISystem::UpdateHUDBars(TWorld * tThisWorld, int & nThisEntity, CGraphicsS
 		tUIVertexBuffer.start = (tThisWorld->atBar[nThisEntity].barBoundingBox.left + 14 - (screenWidth * .5)) / (screenWidth * .5);
 		tUIVertexBuffer.end = (tThisWorld->atBar[nThisEntity].barBoundingBox.right + 4 - (screenWidth * .5)) / (screenWidth * .5);
 		tUIVertexBuffer.ratio = (tThisWorld->atClip[GunIndexForPlayer].fShootingCoolDown) * .01;
+	}
+	else if (this->CheckIfStringsAreTheSame(tThisWorld->atBar[nThisEntity].valueToChange, tThisWorld->atBar[nThisEntity].valueToChangeSize, "CaelisAbilityCooldown"))
+	{
+		tUIVertexBuffer.start = (tThisWorld->atBar[nThisEntity].barBoundingBox.left + 14 - (screenWidth * .5)) / (screenWidth * .5);
+		tUIVertexBuffer.end = (tThisWorld->atBar[nThisEntity].barBoundingBox.right + 4 - (screenWidth * .5)) / (screenWidth * .5);
+		tUIVertexBuffer.ratio = (100 - tThisWorld->atCaelis[CaelisIndex].m_tfSpecialCooldown) * .01;
 	}
 	else
 	{

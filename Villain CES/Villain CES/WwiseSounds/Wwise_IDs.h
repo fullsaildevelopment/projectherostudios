@@ -13,7 +13,9 @@ namespace AK
 {
     namespace EVENTS
     {
+        static const AkUniqueID PLAY_AMMODEPLETED = 3280679725U;
         static const AkUniqueID PLAY_HALLWAY_MUSIC = 2804017732U;
+        static const AkUniqueID PLAY_HOVERSOUND = 2244627757U;
         static const AkUniqueID PLAY_HURT_HUMAN = 2189107751U;
         static const AkUniqueID PLAY_HURT_SCYLIAN = 3600088999U;
         static const AkUniqueID PLAY_LASER_FIRE = 532216254U;
@@ -22,6 +24,10 @@ namespace AK
         static const AkUniqueID PLAY_METAL_FIRED = 372592918U;
         static const AkUniqueID PLAY_METAL_RELOAD = 4261380785U;
         static const AkUniqueID PLAY_SCYLIAN_DEATH = 3744242630U;
+        static const AkUniqueID PLAY_STORY_1 = 877548213U;
+        static const AkUniqueID PLAY_STORY_2 = 877548214U;
+        static const AkUniqueID PLAY_STORY_3 = 877548215U;
+        static const AkUniqueID PLAY_STORY_4 = 877548208U;
         static const AkUniqueID PLAY_WALK = 1589278981U;
         static const AkUniqueID PLAY_XURIOUS___LIFTWAFFE = 1838748612U;
     } // namespace EVENTS
@@ -49,6 +55,7 @@ namespace AK
         static const AkUniqueID INIT = 1355168291U;
         static const AkUniqueID AUGUR_MUSICBANK = 1527088201U;
         static const AkUniqueID AUGUR_SFX = 2726633543U;
+        static const AkUniqueID AUGUR_STORY = 2376717261U;
     } // namespace BANKS
 
     namespace BUSSES

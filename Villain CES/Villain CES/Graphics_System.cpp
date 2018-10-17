@@ -409,6 +409,18 @@ void CGraphicsSystem::CleanD3DObject(TWorld * ptPlanet, int nEntityIndex)
 		ptPlanet->atSimpleMesh[nEntityIndex].m_pd3dVertexBuffer->Release();
 		ptPlanet->atSimpleMesh[nEntityIndex].m_pd3dIndexBuffer->Release();
 	}
+
+	if (ptPlanet->atGraphicsMask[nEntityIndex].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_SHADERID))
+	{
+		ptPlanet->atMesh[nEntityIndex].m_pd3dVertexBuffer->Release();
+		ptPlanet->atMesh[nEntityIndex].m_pd3dIndexBuffer->Release();
+	}
+
+	if (ptPlanet->atGraphicsMask[nEntityIndex].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_SHADERID))
+	{
+		ptPlanet->atMesh[nEntityIndex].m_pd3dVertexBuffer->Release();
+		ptPlanet->atMesh[nEntityIndex].m_pd3dIndexBuffer->Release();
+	}
 	destroyEntity(ptPlanet, nEntityIndex);
 }
 
@@ -1650,9 +1662,9 @@ void CGraphicsSystem::InitPrimalShaderData2(ID3D11DeviceContext * pd3dDeviceCont
 	//XMMATRIX d3dTmpViewM;
 
 	//d3dTmpViewM = XMMatrixInverse(NULL, );
-	m_fCameraXPosition = CameraMatrix.r[3].m128_f32[0];// d3dTmpViewM.r[3].m128_f32[0];
-	m_fCameraYPosition = CameraMatrix.r[3].m128_f32[1];//d3dTmpViewM.r[3].m128_f32[1];
-	m_fCameraZPosition = CameraMatrix.r[3].m128_f32[2];//d3dTmpViewM.r[3].m128_f32[2];
+	//m_fCameraXPosition = CameraMatrix.r[3].m128_f32[0];// d3dTmpViewM.r[3].m128_f32[0];
+	//m_fCameraYPosition = CameraMatrix.r[3].m128_f32[1];//d3dTmpViewM.r[3].m128_f32[1];
+	//m_fCameraZPosition = CameraMatrix.r[3].m128_f32[2];//d3dTmpViewM.r[3].m128_f32[2];
 
 	XMMATRIX d3dView;
 	XMMATRIX tempWorld = d3dVertexBuffer.m_d3dWorldMatrix;
@@ -1878,6 +1890,8 @@ void CGraphicsSystem::InitMyShaderData(ID3D11DeviceContext * pd3dDeviceContext, 
 	ptMyVertexBufferDataPointer->m_d3dWorldMatrix = tempWorld;
 	ptMyVertexBufferDataPointer->m_d3dViewMatrix = d3dView;
 	ptMyVertexBufferDataPointer->m_d3dProjectionMatrix = tempProj;
+
+	ptMyVertexBufferDataPointer->m_d3dColor = d3dVertexBuffer.m_d3dColor;
 
 	// Unlock the constant buffer.
 	pd3dDeviceContext->Unmap(m_pd3dMyVertexBuffer, 0);

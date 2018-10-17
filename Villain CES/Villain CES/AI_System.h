@@ -64,15 +64,26 @@ public:
 	void FindBestPath(int start, int end, vector<XMVECTOR>* directions);
 	void AddNodeToPathFinding(int index, XMFLOAT3 pos, float weight);
 	void AddEdgestoNode(int nodeyouAreChanging, vector<int> edges);
-	void PathPlaningMovement(TAIPathFinding* path, XMMATRIX* worldMatrix);
+	void PathPlaningMovement(TAIPathFinding* path, XMMATRIX* worldMatrix, float delta);
 	void LookAtObject(XMMATRIX thingToLookAt, XMMATRIX* AIMatrix);
 	void Strafe(XMMATRIX* AiMatrix);
 	void MoveAiToCoverLocation(TCoverTrigger Cover, TWorld * ptWorld,int PlayerStartIndex);
-	void AddAiInCombat(int aiEnitity);
+	void AddShootingActiveAI(int aiEnitity);
+	void RemoveeShootingActiveAI(int aiEnitity);
+	int GetActiveShooter();
 	void CLeanPathPlaning();
 	float CalculateDistanceMatrix(XMMATRIX matrix1, XMMATRIX matrix2);
+	bool ActiveShooterCheck(int AiIndex, float cooldownofGun);
+	int ChooseRandomSHooter();
+	bool GetCanWechooseShooter();
+	void SetCanWeChooseShooter(bool _chooseAnotherShooter);
+	void SetActiveShooter(int activeSHooter);
+	void ClearShootingActiveAI();
+	bool chooseAnotherShooter = true;
 private:
-	vector<int> AIInCombat;
+
+	int CurrentShooter;
+	vector<int> ShootingActiveAI;
 
 	int numberofAI;
 	struct tiledata 

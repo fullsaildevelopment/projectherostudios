@@ -1,7 +1,8 @@
 #pragma once
-//#include "Entity.h"
 #include "stdafx.h"
 #include "Input_Component.h"
+#include<string>
+//#include"Entity.h"
 #include "AudioSystem.h"
 #include"Gateware Redistribution R5B/Interface/G_System/GInput.h"
 #include"Gateware Redistribution R5B/Interface/G_System/GKeyDefines.h"
@@ -17,19 +18,20 @@ public:
 	*/
 
 	void gameManagerCodeAbstracted(
-		const int nButtonLeft, const int nButtonMiddle, const int nKeyP, const int nKeyU, const int nKeyR,
+		const int nButtonLeft, const int nButtonMiddle, const int nKeyP, const int nKeyU, const int nKeyR, const int nKeyE,
 		const HWND cApplicationWindow, const XMMATRIX d3dResetAimModeCameraOffset,
 		bool &bGunMode, bool &bTryToShoot, bool &bTryToReload,
 		bool &bMouseUp, bool &bMouseDown, bool &bClick,
 		bool &bGamePaused, bool &bGameOver, bool &bPauseInit, bool &bOptions,
-		bool &bMoving,
+		bool &bNoMoving,
 		float &fRealTimeFov,
 		POINT &cStartDragPoint, POINT &cDragPoint, POINT &cHoverPoint, POINT &cClickPoint,
 		TCameraToggle &tCameraMode,
 		TCamera* tWalkCamera, TCamera* tAimCamera, TCamera* tDebugCamera,
 		XMMATRIX &d3dResultMatrix, XMMATRIX &d3dPlayerMatrix, XMMATRIX &d3dOffsetMatrix, XMMATRIX &d3dWorldMatrix,
 		XMMATRIX &tMyViewMatrix, XMMATRIX &tTempViewMatrix,
-		XMFLOAT4 &d3dCollisionColor, double &delta, CAudioSystem* in_Audio, TClayton &clayton, XMVECTOR &playerVeclocity);
+		XMFLOAT4 &d3dCollisionColor, double &delta, CAudioSystem* in_Audio, TClayton &clayton, XMVECTOR &playerVeclocity, 
+		XMMATRIX &Caelis_Matrix, int PlayerIndex, int CaelisIndex, int ClaytonIndex, TCaelis  &caelis);
 	GReturn InitializeGInput(HWND cTheWindow);																																																													
 	
 
@@ -49,7 +51,7 @@ public:
 
 	XMMATRIX DebugCamera(XMMATRIX d3d_ViewM, XMMATRIX d3d_WorldM, double delta);
 
-	XMMATRIX CharacterMovement(XMMATRIX d3dplayerMatrix, double delta, CAudioSystem* in_Audio, TClayton &clayton, XMVECTOR &playerVeclocity);
+	XMMATRIX CharacterMovement(XMMATRIX d3dplayerMatrix, double delta, CAudioSystem* in_Audio, TClayton &clayton, XMVECTOR &playerVeclocity, bool move);
 
 	/*
 	* WalkCamera(): This fuction makes a camera follow an in-game object.
@@ -81,7 +83,7 @@ public:
 	* Mod. Initials:          ZFB
 	*/
 	
-	XMMATRIX AimMode(TCamera* in_AimCamera, XMMATRIX d3dplayerMatrix, double delta);
+	XMMATRIX AimMode(TCamera * in_AimCamera, XMMATRIX d3dplayerMatrix, double delta, bool move);
 	XMMATRIX WalkCameraControls(XMVECTOR U, XMMATRIX viewM, bool &_movement, double delta);
 	XMMATRIX CameraUpdate(TCamera* in_walkCamera, TCamera* in_aimMode, TCamera* in_debugCamera, XMMATRIX in_resultMatrix, XMMATRIX offsetMatrix);
 	XMMATRIX CameraBehaviorLerp(XMMATRIX m1, XMMATRIX m2, float scale);
@@ -91,7 +93,8 @@ public:
 	void GetMousePosition();
 	XMMATRIX CameraOrientationReset(XMMATRIX m1);
 	XMMATRIX MyTurnTo(XMMATRIX M, XMVECTOR T, float s, XMMATRIX world);
-/*
+	int CharacterSwitch(int characterIndex);
+/*	
 	*AimMode() : This fuction does camera rotation on Yaw(Y Axis) & Pitch(X Axis) for combat.
 		*
 		* Ins :
@@ -132,6 +135,12 @@ public:
 	TCameraToggle CameraModeListen(TCameraToggle tMyCam);
 
 	GInput * m_pcMyInput;
+	int m_Companion1;
+	int m_Companion2;
+	bool m_buttonPressed = false;
+	bool m_characterSwitch = false;
+	bool m_ToCompanion1 = false;
+	bool m_ToCompanion2 = false;
 
 private:
 	float				m_fMouseRotationSpeed;
@@ -139,6 +148,8 @@ private:
 	float				m_fDistance;
 	float fXchange;
 	float fYchange;
+	float prev_X;
+	float prev_Y;
 	float fXEnd;
 	float fYEnd;
 	XMVECTOR m_PlayerForwardV;
