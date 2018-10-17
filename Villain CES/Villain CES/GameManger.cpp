@@ -7772,10 +7772,12 @@ int CGameMangerSystem::RealLevelUpdate()
 				pcGraphicsSystem->InitLineShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atWorldMatrix[ExtractionBeamIndex].worldMatrix, m_d3dViewMatrix, m_d3dProjectionMatrix, tThisWorld.atDebugMesh[ExtractionBeamIndex], aimCamera->d3d_Position, atBeamVerts, particleSRV);
 				pcGraphicsSystem->ExecutePipeline(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atDebugMesh[ExtractionBeamIndex].m_nVertexCount, tThisWorld.atGraphicsMask[ExtractionBeamIndex].m_tnGraphicsMask, tThisWorld.atShaderID[ExtractionBeamIndex].m_nShaderID);
 			}
+#if MUSIC_ON
 			 if (pcInputSystem->InputCheck(G_KEY_Q) == 0 && pcAudioSystem->m_BeamSoundOn == true)
 			{
 				pcAudioSystem->m_BeamSoundOn = false;
 			}
+#endif
 		}
 		
 		if (tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_SHADERID) 
