@@ -3756,7 +3756,7 @@ unsigned int createMesh(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMeshImpo
 		}
 		else {
 			ptWorld->atCollisionMask[nThisEntity].m_tnCollisionMask = (COMPONENT_COLLISIONMASK | COMPONENT_TRIGGER | COMPONENT_AABB | COMPONENT_STATIC);
-			ptWorld->atRigidBody[nThisEntity].ground = true;
+			ptWorld->atRigidBody[nThisEntity].ground = false;
 
 
 		}

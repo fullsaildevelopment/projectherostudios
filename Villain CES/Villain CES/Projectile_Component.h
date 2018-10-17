@@ -39,5 +39,6 @@ struct Clips
 	float lifeTime;
 	float maxLifeTime;
 	bool empty = false;
+	int gunHolder;
 };
 #endif

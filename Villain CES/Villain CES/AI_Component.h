@@ -56,6 +56,8 @@ struct TAIPathFinding {
 	bool foundDestination = false;
 	int DelayMovement = 0;
 	bool InterRuptPathPlanning=true;
+	bool pauseMovement;
+	float movementPausedTimer;
 	
 
 };

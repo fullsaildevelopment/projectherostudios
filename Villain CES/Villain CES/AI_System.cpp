@@ -435,7 +435,7 @@ void CAISystem::AddEdgestoNode(int nodeyouAreChanging, vector<int> edges)
 	}
 }
 
-void CAISystem::PathPlaningMovement(TAIPathFinding* path, XMMATRIX* worldMatrix)
+void CAISystem::PathPlaningMovement(TAIPathFinding* path, XMMATRIX* worldMatrix,float delta)
 {
 	XMMATRIX beforeMutplcation = *worldMatrix;
 	if (path->index <path->directions.size()) {
@@ -443,7 +443,7 @@ void CAISystem::PathPlaningMovement(TAIPathFinding* path, XMMATRIX* worldMatrix)
 	//	direction = XMVector3Transform(direction, *worldMatrix);
 
 		direction = XMVector3Normalize(direction);
-		direction *= 0.5f;//Frame Dependent
+		direction *= 0.6f*delta;//Frame Dependent
 		
 		XMMATRIX localMatrix2 = XMMatrixTranslationFromVector(direction);
 		XMMATRIX idenity = XMMatrixIdentity();
