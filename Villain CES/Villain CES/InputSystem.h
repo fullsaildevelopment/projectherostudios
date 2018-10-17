@@ -30,7 +30,7 @@ public:
 		TCamera* tWalkCamera, TCamera* tAimCamera, TCamera* tDebugCamera,
 		XMMATRIX &d3dResultMatrix, XMMATRIX &d3dPlayerMatrix, XMMATRIX &d3dOffsetMatrix, XMMATRIX &d3dWorldMatrix,
 		XMMATRIX &tMyViewMatrix, XMMATRIX &tTempViewMatrix,
-		XMFLOAT4 &d3dCollisionColor, double &delta, CAudioSystem* in_Audio, TClayton &clayton, XMVECTOR &playerVeclocity);
+		XMFLOAT4 &d3dCollisionColor, double &delta, CAudioSystem* in_Audio, TClayton &clayton, XMVECTOR &playerVeclocity, XMMATRIX &Caelis_Matrix, int PlayerIndex);
 	GReturn InitializeGInput(HWND cTheWindow);																																																													
 	
 
@@ -92,7 +92,7 @@ public:
 	void GetMousePosition();
 	XMMATRIX CameraOrientationReset(XMMATRIX m1);
 	XMMATRIX MyTurnTo(XMMATRIX M, XMVECTOR T, float s, XMMATRIX world);
-	int CharacterSwitch(int characterIndex, int companionOneIndex, int companionTwoIndex, bool&characterSwitch);
+	int CharacterSwitch(int characterIndex);
 /*	
 	*AimMode() : This fuction does camera rotation on Yaw(Y Axis) & Pitch(X Axis) for combat.
 		*

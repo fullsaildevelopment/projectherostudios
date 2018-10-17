@@ -167,7 +167,7 @@ private:
 	XMMATRIX m_d3dViewMatrix;
 	XMMATRIX m_d3dProjectionMatrix;
 	XMMATRIX m_d3dPlayerMatrix;
-
+	XMMATRIX m_d3dCaelisMatrix;
 	std::vector<TPrimalVert> atBeamVerts;
 
 	XTime PausedTimer;
@@ -190,6 +190,7 @@ private:
 	int ExtractionBeamIndex;
 	float m_RealTimeFov;
 	bool bNoMoving;
+	bool soundOff = false;
 	float Health = 1.0f;
 	XTime frameLock;
 };

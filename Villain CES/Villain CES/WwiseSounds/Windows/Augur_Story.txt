@@ -1,0 +1,12 @@
+Event	ID	Name			Wwise Object Path	Notes
+	877548208	Play_Story_4			\Default Work Unit\Play_Story_4	
+	877548213	Play_Story_1			\Default Work Unit\Play_Story_1	
+	877548214	Play_Story_2			\Default Work Unit\Play_Story_2	
+	877548215	Play_Story_3			\Default Work Unit\Play_Story_3	
+
+In Memory Audio	ID	Name	Audio source file		Wwise Object Path	Notes	Data Size
+	61659941	Image_1	C:\Users\world\Documents\WwiseProjects\Augur_Sounds\.cache\Windows\SFX\Image_1_56D34C19.wem		\Actor-Mixer Hierarchy\Default Work Unit\Image_1		1730624
+	100634698	Image_2	C:\Users\world\Documents\WwiseProjects\Augur_Sounds\.cache\Windows\SFX\Image_2_56D34C19.wem		\Actor-Mixer Hierarchy\Default Work Unit\Image_2		1325120
+	784929343	Image_4	C:\Users\world\Documents\WwiseProjects\Augur_Sounds\.cache\Windows\SFX\Image_4_56D34C19.wem		\Actor-Mixer Hierarchy\Default Work Unit\Image_4		1459264
+	972710559	Image_3	C:\Users\world\Documents\WwiseProjects\Augur_Sounds\.cache\Windows\SFX\Image_3_56D34C19.wem		\Actor-Mixer Hierarchy\Default Work Unit\Image_3		1676864
+

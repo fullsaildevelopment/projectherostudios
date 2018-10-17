@@ -4387,7 +4387,7 @@ unsigned int CreateCaelis(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMeshIm
 
 	XMVECTOR playerGravity;
 	playerGravity.m128_f32[0] = 0;
-	playerGravity.m128_f32[1] = 0;
+	playerGravity.m128_f32[1] = -0.0001;
 	playerGravity.m128_f32[2] = 0;
 	playerGravity.m128_f32[3] = 0;
 	ptWorld->atRigidBody[nThisEntity].gravity = playerGravity;
@@ -4634,7 +4634,7 @@ unsigned int createClayton(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMeshI
 	
 	ptWorld->atWorldMatrix[nThisEntity].worldMatrix = XMMatrixMultiply(ptWorld->atWorldMatrix[nThisEntity].worldMatrix, XMMatrixTranslation(0, 0, 0));
 	ptWorld->atWorldMatrix[nThisEntity].worldMatrix = XMMatrixMultiply(ptWorld->atWorldMatrix[nThisEntity].worldMatrix, XMMatrixRotationRollPitchYaw(tMesh.worldRotation[0], tMesh.worldRotation[1], tMesh.worldRotation[2]));
-	ptWorld->atWorldMatrix[nThisEntity].worldMatrix = XMMatrixMultiply(ptWorld->atWorldMatrix[nThisEntity].worldMatrix, XMMatrixScaling(.01, .01, .01));
+	//ptWorld->atWorldMatrix[nThisEntity].worldMatrix = XMMatrixMultiply(ptWorld->atWorldMatrix[nThisEntity].worldMatrix, XMMatrixScaling(.01, .01, .01));
 	
 	return nThisEntity;
 }
