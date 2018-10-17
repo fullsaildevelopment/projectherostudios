@@ -69,7 +69,7 @@ void CInputSystem::gameManagerCodeAbstracted(
 	XMMATRIX &d3dResultMatrix, XMMATRIX &d3dPlayerMatrix, XMMATRIX &d3dOffsetMatrix, XMMATRIX &d3dWorldMatrix,
 	XMMATRIX &tMyViewMatrix, XMMATRIX &tTempViewMatrix,
 	XMFLOAT4 &d3dCollisionColor, double &delta, CAudioSystem* in_Audio, TClayton &clayton, XMVECTOR &playerVeclocity, 
-	XMMATRIX &Caelis_Matrix, int PlayerIndex, int CaelisIndex, int ClaytonIndex, TCaelis &caelis)
+	XMMATRIX &Caelis_Matrix, int PlayerIndex, int CaelisIndex, int ClaytonIndex, TCaelis &caelis, CAudioSystem *audio)
 {
 	cHoverPoint = { -1, -1 };
 	//POINT hoverPoint;
@@ -133,6 +133,9 @@ void CInputSystem::gameManagerCodeAbstracted(
 		clayton.health += caelis.healthGiven += 30 * delta;
 		caelis.healing = true;
 		caelis.m_tfSpecialCooldown = 100;
+#if MUSIC_ON
+		audio->SendSoundsToEngine(AK::EVENTS::PLAY_HEAL, audio->m_Heal);
+#endif 
 	}
 	else if (!bGameOver && !bGamePaused && caelis.healing == true)
 	{
@@ -237,7 +240,7 @@ void CInputSystem::gameManagerCodeAbstracted(
 		{
 			if (tCameraMode.bAimMode == true)
 			{
-				d3dOffsetMatrix = d3dResetAimModeCameraOffset;
+				d3dOffsetMatrix = CaelisAimOffSet();
 				if (tCameraMode.bSwitch == true)
 				{
 					d3dResultMatrix = this->CameraOrientationReset(d3dResultMatrix);
@@ -754,6 +757,11 @@ XMMATRIX CInputSystem::WalkCameraControls(XMVECTOR U, XMMATRIX viewM, bool &_mov
 	
 	
 }
+
+	XMMATRIX CInputSystem::CaelisAimOffSet()
+	{
+		return XMMatrixTranslationFromVector(XMVectorSet(-0.5, 2.0f, 8.85f, 1.0f));
+	}
 
 XMMATRIX CInputSystem::CameraBehaviorLerp(XMMATRIX m1, XMMATRIX m2,float scale)
 {

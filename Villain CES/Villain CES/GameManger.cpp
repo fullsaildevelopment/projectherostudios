@@ -454,6 +454,8 @@ void CGameMangerSystem::InitializeMainMenu()
 		pcAudioSystem->UnRegisterGameObj(pcAudioSystem->m_Scylian_Hurt);
 		pcAudioSystem->UnRegisterGameObj(pcAudioSystem->m_GunEmpty);
 		pcAudioSystem->UnRegisterGameObj(pcAudioSystem->m_WalkSound);
+		pcAudioSystem->UnRegisterGameObj(pcAudioSystem->m_Extract);
+		pcAudioSystem->UnRegisterGameObj(pcAudioSystem->m_Heal);
 		pcAudioSystem->RegisterGameObj(pcAudioSystem->m_AkMainMenuMusic);
 		soundOff = false;
 	}
@@ -462,10 +464,10 @@ void CGameMangerSystem::InitializeMainMenu()
 		pcAudioSystem->RegisterGameObj(pcAudioSystem->m_HoverSound);
 		pcAudioSystem->RegisterGameObj(pcAudioSystem->m_AkMainMenuMusic);
 	}
-	pcAudioSystem->playOnce1 = false;
-	pcAudioSystem->playOnce2 = false;
-	pcAudioSystem->playOnce3 = false;
-	pcAudioSystem->playOnce4 = false;
+	pcAudioSystem->m_playOnce1 = false;
+	pcAudioSystem->m_playOnce2 = false;
+	pcAudioSystem->m_playOnce3 = false;
+	pcAudioSystem->m_playOnce4 = false;
 	pcAudioSystem->SendSoundsToEngine(AK::EVENTS::PLAY_MAIN_MENU_MUSIC, pcAudioSystem->m_AkMainMenuMusic);
 #endif
 	
@@ -764,32 +766,32 @@ int CGameMangerSystem::LoadStory()
 				tUIPixelBuffer.hoverColor = XMFLOAT4(0, 0, 0, 0);
 			}
 #if MUSIC_ON
-			if (loadingImage == 0 && pcAudioSystem->playOnce1 == false)
+			if (loadingImage == 0 && pcAudioSystem->m_playOnce1 == false)
 			{
 
 				AK::SoundEngine::StopAll();
 				pcAudioSystem->SendSoundsToEngine(AK::EVENTS::PLAY_STORY_1, pcAudioSystem->m_Story1);
-				pcAudioSystem->playOnce1 = true;
+				pcAudioSystem->m_playOnce1 = true;
 			}
-			else if (loadingImage == 1 && pcAudioSystem->playOnce2 == false)
+			else if (loadingImage == 1 && pcAudioSystem->m_playOnce2 == false)
 			{
 				AK::SoundEngine::StopAll();
 				pcAudioSystem->SendSoundsToEngine(AK::EVENTS::PLAY_STORY_2, pcAudioSystem->m_Story2);
-				pcAudioSystem->playOnce2 = true;
+				pcAudioSystem->m_playOnce2 = true;
 
 			}
-			else if (loadingImage == 2 && pcAudioSystem->playOnce3 == false)
+			else if (loadingImage == 2 && pcAudioSystem->m_playOnce3 == false)
 			{
 				AK::SoundEngine::StopAll();
 				pcAudioSystem->SendSoundsToEngine(AK::EVENTS::PLAY_STORY_3, pcAudioSystem->m_Story3);
-				pcAudioSystem->playOnce3 = true;
+				pcAudioSystem->m_playOnce3 = true;
 
 			}
-			else if (loadingImage == 3 && pcAudioSystem->playOnce4 == false)
+			else if (loadingImage == 3 && pcAudioSystem->m_playOnce4 == false)
 			{
 				AK::SoundEngine::StopAll();
 				pcAudioSystem->SendSoundsToEngine(AK::EVENTS::PLAY_STORY_4, pcAudioSystem->m_Story4);
-				pcAudioSystem->playOnce4 = true;
+				pcAudioSystem->m_playOnce4 = true;
 
 			}
 #endif
@@ -4648,6 +4650,8 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 		pcAudioSystem->RegisterGameObj(pcAudioSystem->m_Scylian_Hurt);
 		pcAudioSystem->RegisterGameObj(pcAudioSystem->m_GunEmpty);
 		pcAudioSystem->RegisterGameObj(pcAudioSystem->m_WalkSound);
+		pcAudioSystem->RegisterGameObj(pcAudioSystem->m_Extract);
+		pcAudioSystem->RegisterGameObj(pcAudioSystem->m_Heal);
 		soundOff = true;
 	}
 	
@@ -4789,7 +4793,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	m_d3dPlayerMatrix.r[3].m128_f32[2] = tThisWorld.atWorldMatrix[ClaytonIndex].worldMatrix.r[3].m128_f32[2] = 10.8;
 
 	//Put Caelis Import Data here 
-	tempImport = pcGraphicsSystem->ReadMesh("meshData_Caelis2.txt");
+	tempImport = pcGraphicsSystem->ReadMesh("meshData_CaelisWingsBack.txt");
 	for (int meshIndex = 0;  meshIndex < tempImport.meshCount; meshIndex++)
 	{
 		CaelisIndex = CreateCaelis(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, tempImport.vtMeshes[meshIndex], tempImport.vtMaterials[meshIndex]);
@@ -4852,7 +4856,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	tThisWorld.atAABB[GunIndexForClayton].m_IndexLocation = GunIndexForClayton;
 	pcCollisionSystem->AddAABBCollider(tThisWorld.atAABB[GunIndexForClayton], GunIndexForClayton);
 
-	gunImport = pcGraphicsSystem->ReadMesh("meshData_CaelisGun.txt");
+	gunImport = pcGraphicsSystem->ReadMesh("meshData_CaelisGun.txt"); 
 
 	for (int meshIndex = 0; meshIndex < gunImport.meshCount; ++meshIndex)
 	{
@@ -5400,7 +5404,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	//int GunINdexai = CreateGun(&tThisWorld, m_d3dWorldMatrix, spacePirate, -1.1, 0.5, 12.5, 10, 30);
 	for (int meshIndex = 0; meshIndex < tempImport.meshCount; ++meshIndex)
 	{
-	 GunINdexai = CreateScyllianGun(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, m_d3dWorldMatrix, spacePirate, -1, 1, 12, 10, 200, gunImport.vtMeshes[meshIndex], gunImport.vtMaterials[meshIndex]);
+	 GunINdexai = CreateScyllianGun(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, m_d3dWorldMatrix, spacePirate, -1, 1.5, 12, 10, 200, gunImport.vtMeshes[meshIndex], gunImport.vtMaterials[meshIndex]);
 	}
 #pragma region MORE AI Init
 	tThisWorld.atAIMask[spacePirate].GunIndex = GunINdexai;
@@ -5506,7 +5510,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 
 	// ai next to tree
 	AILocation = pcGraphicsSystem->SetDefaultWorldPosition();
-	AILocation.r[3].m128_f32[2] -= 90;
+	AILocation.r[3].m128_f32[2] -= 100;
 	AILocation.r[3].m128_f32[0] -= 10;
 	AILocation.r[3].m128_f32[1] -= 1;
 	AiLookPosition = AILocation;
@@ -6207,6 +6211,11 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	rectangle.r[3].m128_f32[1] -= 1.0f;
 	rectangle.r[3].m128_f32[0] -= 1.0f;
 	int cylinder=CreateCylinder(&tThisWorld, rectangle);
+	tThisWorld.atCollisionMask[218].m_tnCollisionMask = 1;
+	tThisWorld.atCollisionMask[233].m_tnCollisionMask = 1;
+
+	tThisWorld.atCollisionMask[118].m_tnCollisionMask = 1;
+
 	#pragma region COLLISION INIT
 	for (int nCurrentEntity = 0; nCurrentEntity < ENTITYCOUNT; nCurrentEntity++)
 	{
@@ -6214,12 +6223,18 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 		if (cylinder == nCurrentEntity) {
 			float x = 0;
 		}
-		if (tThisWorld.atCollisionMask[nCurrentEntity].m_tnCollisionMask > 1&&nCurrentEntity!=216&&nCurrentEntity!=215)
+		if (tThisWorld.atCollisionMask[nCurrentEntity].m_tnCollisionMask > 1&&nCurrentEntity!=216&&nCurrentEntity!=215&&nCurrentEntity!=218&&nCurrentEntity!=118&&nCurrentEntity!=233 && nCurrentEntity != 133 && nCurrentEntity != 33)// && nCurrentEntity != 18)
 		{
 
 			if (tThisWorld.atSimpleMesh[nCurrentEntity].m_nVertexCount > tThisWorld.atDebugMesh[nCurrentEntity].m_nVertexCount)
 			{
-				
+				if (nCurrentEntity == 218) {
+					TAABB MyAbb = pcCollisionSystem->createAABBS(tThisWorld.atSimpleMesh[nCurrentEntity].m_VertexData, tThisWorld.atAABB[nCurrentEntity]);
+					MyAbb.m_IndexLocation = nCurrentEntity;
+					tThisWorld.atAABB[nCurrentEntity] = MyAbb;
+					pcCollisionSystem->AddAABBCollider(MyAbb, nCurrentEntity);
+					
+				}
 				TAABB MyAbb = pcCollisionSystem->createAABBS(tThisWorld.atSimpleMesh[nCurrentEntity].m_VertexData, tThisWorld.atAABB[nCurrentEntity]);
 				MyAbb.m_IndexLocation = nCurrentEntity;
 				tThisWorld.atAABB[nCurrentEntity] = MyAbb;
@@ -6287,7 +6302,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 			}
 		}
 
-		if (tThisWorld.atProjectiles[nCurrentEntity].m_tnProjectileMask == (COMPONENT_PROJECTILESMASK | COMPONENT_CLIP))
+		if (tThisWorld.atProjectiles[nCurrentEntity].m_tnProjectileMask == (COMPONENT_PROJECTILESMASK | COMPONENT_CLIP)&&nCurrentEntity!=218)
 		{
 			if (tThisWorld.atMesh[nCurrentEntity].m_nVertexCount > tThisWorld.atDebugMesh[nCurrentEntity].m_nVertexCount)
 			{
@@ -7585,7 +7600,7 @@ int CGameMangerSystem::RealLevelUpdate()
 		m_d3d_ResultMatrix, m_d3dCalytonMatrix, m_d3dOffsetMatrix, m_d3dWorldMatrix,
 		tMyVertexBufferTemp.m_d3dViewMatrix, tTempVertexBuffer.m_d3dViewMatrix,
 		tTempPixelBuffer.m_d3dCollisionColor, delta, pcAudioSystem, tThisWorld.atClayton[PlayerStartIndex], tThisWorld.atRigidBody[PlayerStartIndex].velocity, m_d3dCaelisMatrix, PlayerStartIndex
-	,CaelisIndex, ClaytonIndex,tThisWorld.atCaelis[CaelisIndex]);
+	,CaelisIndex, ClaytonIndex,tThisWorld.atCaelis[CaelisIndex], pcAudioSystem);
 	
 #endif // INPUT_ABSTRACTED_ON
 	pcGraphicsSystem->UpdateD3D();
@@ -7713,12 +7728,16 @@ int CGameMangerSystem::RealLevelUpdate()
 					tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = tThisWorld.atWorldMatrix[PlayerStartIndex].worldMatrix;
 				}
 
-			//	if (tThisWorld.atUIMask[nCurrentEntity].m_tnUIMask != (COMPONENT_UIMASK | COMPONENT_NOSHOW))
+				if (tThisWorld.atUIMask[nCurrentEntity].m_tnUIMask != (COMPONENT_UIMASK | COMPONENT_NOSHOW))
 				{
 					pcGraphicsSystem->InitPrimalShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, debugCamera->d3d_Position, m_d3dProjectionMatrix, tThisWorld.atDebugMesh[nCurrentEntity], debugCamera->d3d_Position);
 					pcGraphicsSystem->ExecutePipeline(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atDebugMesh[nCurrentEntity].m_nVertexCount, tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask, tThisWorld.atShaderID[nCurrentEntity].m_nShaderID);
 				}
 			}
+#if MUSIC_ON
+			
+			
+#endif
 			//Extraction Beam & related functions are here - ZFB
 			if ((pcInputSystem->InputCheck(G_KEY_Q) == 1 
 				&& tCameraMode.bAimMode == true 
@@ -7727,6 +7746,7 @@ int CGameMangerSystem::RealLevelUpdate()
 				//Get Gun Matrix position 
 				atBeamVerts.clear();
 				tThisWorld.atDebugMesh[nCurrentEntity].m_VertexData.clear();
+
 				XMVECTOR unProjectedFar = XMVectorSet(0, 0, 1, 1);
 
 				XMMATRIX t1 = XMMatrixMultiply(XMMatrixTranslation(0, 0, 150), aimCamera->d3d_Position);
@@ -7759,7 +7779,15 @@ int CGameMangerSystem::RealLevelUpdate()
 
 				pcGraphicsSystem->InitLineShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, m_d3dViewMatrix, m_d3dProjectionMatrix, tThisWorld.atDebugMesh[nCurrentEntity], aimCamera->d3d_Position, atBeamVerts, particleSRV);
 				pcGraphicsSystem->ExecutePipeline(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atDebugMesh[ExtractionBeamIndex].m_nVertexCount, tThisWorld.atGraphicsMask[ExtractionBeamIndex].m_tnGraphicsMask, tThisWorld.atShaderID[ExtractionBeamIndex].m_nShaderID);
+#if MUSIC_ON
+				if (pcInputSystem->InputCheck(G_KEY_Q) == 1 && pcAudioSystem->m_BeamSoundOn == false)
+				{
+					pcAudioSystem->SendSoundsToEngine(AK::EVENTS::PLAY_EXTRACT, pcAudioSystem->m_Extract);
+					pcAudioSystem->m_BeamSoundOn = true;
 
+				}
+				
+#endif
 			}
 			else if (nCurrentEntity == ExtractionBeamIndex)
 			{
@@ -7789,6 +7817,12 @@ int CGameMangerSystem::RealLevelUpdate()
 				pcGraphicsSystem->InitLineShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atWorldMatrix[ExtractionBeamIndex].worldMatrix, m_d3dViewMatrix, m_d3dProjectionMatrix, tThisWorld.atDebugMesh[ExtractionBeamIndex], aimCamera->d3d_Position, atBeamVerts, particleSRV);
 				pcGraphicsSystem->ExecutePipeline(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atDebugMesh[ExtractionBeamIndex].m_nVertexCount, tThisWorld.atGraphicsMask[ExtractionBeamIndex].m_tnGraphicsMask, tThisWorld.atShaderID[ExtractionBeamIndex].m_nShaderID);
 			}
+#if MUSIC_ON
+			 if (pcInputSystem->InputCheck(G_KEY_Q) == 0 && pcAudioSystem->m_BeamSoundOn == true)
+			{
+				pcAudioSystem->m_BeamSoundOn = false;
+			}
+#endif
 		}
 		
 		if (tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_SHADERID) 
@@ -8108,7 +8142,7 @@ int CGameMangerSystem::RealLevelUpdate()
 					tThisWorld.atAABB[nCurrentEntity] = pcCollisionSystem->updateAABB(tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, tThisWorld.atAABB[nCurrentEntity]);
 				}
 			}
-			if (pcCollisionSystem->aabb_to_frustum(tThisWorld.atAABB[nCurrentEntity], tThisWorld.atClaytonVision.eyes0))
+			if (pcCollisionSystem->aabb_to_frustum(tThisWorld.atAABB[nCurrentEntity], tThisWorld.atClaytonVision.eyes0)||nCurrentEntity==33)
 			{
 				if (tThisWorld.atProjectiles[nCurrentEntity].m_tnProjectileMask == (COMPONENT_PROJECTILESMASK | COMPONENT_METAL | COMPONENT_ENEMY))
 				{
@@ -8161,7 +8195,7 @@ int CGameMangerSystem::RealLevelUpdate()
 					if (pcAiSystem->GetCanWechooseShooter() == true) {
 					//	tThisWorld.atClip[tThisWorld.atAIMask[pcAiSystem->ChooseRandomSHooter()].GunIndex].fsReloadingCoolDown=100;
 						pcAiSystem->SetActiveShooter(tThisWorld.atAIMask[pcAiSystem->ChooseRandomSHooter()].GunIndex);
-						tThisWorld.atClip[pcAiSystem->GetActiveShooter()].fShootingCoolDown = 500;
+						tThisWorld.atClip[pcAiSystem->GetActiveShooter()].fShootingCoolDown = 200;
 						tThisWorld.atClip[pcAiSystem->GetActiveShooter()].tryToShoot = true;
 					}
 					else {
@@ -8327,15 +8361,15 @@ int CGameMangerSystem::RealLevelUpdate()
 							playerGravity.m128_f32[2] = 0;
 							playerGravity.m128_f32[3] = 0;
 						//	tThisWorld.atRigidBody[nCurrentEntity].gravity = playerGravity;
-							cout << tThisWorld.atPathPlanining[nCurrentEntity].startingNode<<"start"<<std::endl;
+							/*cout << tThisWorld.atPathPlanining[nCurrentEntity].startingNode<<"start"<<std::endl;
 							cout << tThisWorld.atPathPlanining[nCurrentEntity].Goal<<"goal"<<std::endl;
 
 							cout << "AITRYINGTOMOVE" << nCurrentEntity << std::endl;
-							cout << tThisWorld.atPathPlanining[nCurrentEntity].pauseMovement;
+							cout << tThisWorld.atPathPlanining[nCurrentEntity].pauseMovement;*/
 							if(tThisWorld.atPathPlanining[nCurrentEntity].startingNode!= tThisWorld.atPathPlanining[nCurrentEntity].Goal&&tThisWorld.atPathPlanining[nCurrentEntity].pauseMovement==false)
 							pcAiSystem->PathPlaningMovement(&tThisWorld.atPathPlanining[nCurrentEntity], &tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, fpsTimer.GetDelta());
 							else {
-								cout << " penguin " << std::endl;
+							//	cout << " penguin " << std::endl;
 							}
 						}
 						else
@@ -8607,6 +8641,7 @@ int CGameMangerSystem::RealLevelUpdate()
 			{
 				tThisWorld.atClip[nCurrentEntity].fShootingCoolDown -= fpsTimer.GetDelta() * 100;
 			}
+
 			if (tThisWorld.atPathPlanining[tThisWorld.atClip[nCurrentEntity].gunHolder].movementPausedTimer > 0) {
 				tThisWorld.atPathPlanining[tThisWorld.atClip[nCurrentEntity].gunHolder].movementPausedTimer -= fpsTimer.GetDelta() * 100;
 			}
@@ -8814,7 +8849,7 @@ int CGameMangerSystem::RealLevelUpdate()
 		{
 			tTempPixelBuffer.m_d3dCollisionColor = XMFLOAT4(0, 1.0f, 0, 1.0f);
 		
-		//	if (tThisWorld.atUIMask[nCurrentEntity].m_tnUIMask != (COMPONENT_UIMASK | COMPONENT_NOSHOW))
+			if (tThisWorld.atUIMask[nCurrentEntity].m_tnUIMask != (COMPONENT_UIMASK | COMPONENT_NOSHOW))
 			{
 				if (pcCollisionSystem->aabb_to_frustum(tThisWorld.atAABB[nCurrentEntity], tThisWorld.atClaytonVision.eyes0))
 				{

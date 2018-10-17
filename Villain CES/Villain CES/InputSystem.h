@@ -31,7 +31,7 @@ public:
 		XMMATRIX &d3dResultMatrix, XMMATRIX &d3dPlayerMatrix, XMMATRIX &d3dOffsetMatrix, XMMATRIX &d3dWorldMatrix,
 		XMMATRIX &tMyViewMatrix, XMMATRIX &tTempViewMatrix,
 		XMFLOAT4 &d3dCollisionColor, double &delta, CAudioSystem* in_Audio, TClayton &clayton, XMVECTOR &playerVeclocity, 
-		XMMATRIX &Caelis_Matrix, int PlayerIndex, int CaelisIndex, int ClaytonIndex, TCaelis  &caelis);
+		XMMATRIX &Caelis_Matrix, int PlayerIndex, int CaelisIndex, int ClaytonIndex, TCaelis  &caelis, CAudioSystem *audio);
 	GReturn InitializeGInput(HWND cTheWindow);																																																													
 	
 
@@ -85,7 +85,7 @@ public:
 	
 	XMMATRIX AimMode(TCamera * in_AimCamera, XMMATRIX d3dplayerMatrix, double delta, bool move);
 	XMMATRIX WalkCameraControls(XMVECTOR U, XMMATRIX viewM, bool &_movement, double delta);
-	XMMATRIX CameraUpdate(TCamera* in_walkCamera, TCamera* in_aimMode, TCamera* in_debugCamera, XMMATRIX in_resultMatrix, XMMATRIX offsetMatrix);
+	XMMATRIX CaelisAimOffSet();
 	XMMATRIX CameraBehaviorLerp(XMMATRIX m1, XMMATRIX m2, float scale);
 	XMMATRIX MyLookAt(XMVECTOR EyePos, XMVECTOR TargetPos, XMVECTOR Up);
 	void StoreInitCameraForwardV(XMVECTOR in_prevPos);
