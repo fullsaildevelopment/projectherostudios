@@ -40,6 +40,35 @@
 				</File>
 			</IncludedMemoryFiles>
 		</SoundBank>
+		<SoundBank Id="2376717261" Language="SFX">
+			<ObjectPath>\SoundBanks\Default Work Unit\Augur_Story</ObjectPath>
+			<ShortName>Augur_Story</ShortName>
+			<Path>Augur_Story.bnk</Path>
+			<IncludedEvents>
+				<Event Id="877548213" Name="Play_Story_1" ObjectPath="\Events\Default Work Unit\Play_Story_1"/>
+				<Event Id="877548214" Name="Play_Story_2" ObjectPath="\Events\Default Work Unit\Play_Story_2"/>
+				<Event Id="877548215" Name="Play_Story_3" ObjectPath="\Events\Default Work Unit\Play_Story_3"/>
+				<Event Id="877548208" Name="Play_Story_4" ObjectPath="\Events\Default Work Unit\Play_Story_4"/>
+			</IncludedEvents>
+			<IncludedMemoryFiles>
+				<File Id="61659941" Language="SFX">
+					<ShortName>Image_1.wav</ShortName>
+					<Path>SFX\Image_1_56D34C19.wem</Path>
+				</File>
+				<File Id="100634698" Language="SFX">
+					<ShortName>Image_2.wav</ShortName>
+					<Path>SFX\Image_2_56D34C19.wem</Path>
+				</File>
+				<File Id="784929343" Language="SFX">
+					<ShortName>Image_4.wav</ShortName>
+					<Path>SFX\Image_4_56D34C19.wem</Path>
+				</File>
+				<File Id="972710559" Language="SFX">
+					<ShortName>Image_3.wav</ShortName>
+					<Path>SFX\Image_3_56D34C19.wem</Path>
+				</File>
+			</IncludedMemoryFiles>
+		</SoundBank>
 		<SoundBank Id="2726633543" Language="SFX">
 			<ObjectPath>\SoundBanks\Default Work Unit\Augur_SFX</ObjectPath>
 			<ShortName>Augur_SFX</ShortName>

@@ -68,8 +68,8 @@ void CInputSystem::gameManagerCodeAbstracted(
 	TCamera* tWalkCamera, TCamera* tAimCamera, TCamera* tDebugCamera,
 	XMMATRIX &d3dResultMatrix, XMMATRIX &d3dPlayerMatrix, XMMATRIX &d3dOffsetMatrix, XMMATRIX &d3dWorldMatrix,
 	XMMATRIX &tMyViewMatrix, XMMATRIX &tTempViewMatrix,
-	XMFLOAT4 &d3dCollisionColor, double &delta, CAudioSystem* in_Audio, TClayton &clayton, XMVECTOR &playerVeclocity,
-	TCaelis &caelis)
+	XMFLOAT4 &d3dCollisionColor, double &delta, CAudioSystem* in_Audio, TClayton &clayton, XMVECTOR &playerVeclocity, 
+	XMMATRIX &Caelis_Matrix, int PlayerIndex, int CaelisIndex, int ClaytonIndex, TCaelis &caelis)
 {
 	cHoverPoint = { -1, -1 };
 	//POINT hoverPoint;
@@ -174,59 +174,90 @@ void CInputSystem::gameManagerCodeAbstracted(
 	if (bGamePaused == false && bGameOver == false)
 	{
 		// Walk mode not needed in demo at the moment - ZFB
-		if (tCameraMode.bWalkMode == true)
+		//Clayton Movement & Camera Attachment
+		if (PlayerIndex == ClaytonIndex)
 		{
-			if (tCameraMode.bSwitch == true)
+			if (tCameraMode.bWalkMode == true)
 			{
-				d3dResultMatrix = this->CameraOrientationReset(d3dResultMatrix);
-				tCameraMode.bSwitch = false;
+				if (tCameraMode.bSwitch == true)
+				{
+					d3dResultMatrix = this->CameraOrientationReset(d3dResultMatrix);
+					tCameraMode.bSwitch = false;
+				}
+
+				d3dResultMatrix = this->WalkCameraControls(XMVectorSet(0, 1.0f, 0, 0), d3dResultMatrix, bNoMoving, delta);
+
+				tWalkCamera->d3d_Position = XMMatrixMultiply(d3dResultMatrix, d3dPlayerMatrix);
+				tWalkCamera->d3d_Position = XMMatrixMultiply(d3dOffsetMatrix, tWalkCamera->d3d_Position);
+
+				tMyViewMatrix = tWalkCamera->d3d_Position;
+				tTempViewMatrix = tWalkCamera->d3d_Position;
 			}
+			//Aim Mode Functions are Here - ZFB 
+			else if (tCameraMode.bAimMode == true)
+			{
+				d3dOffsetMatrix = d3dResetAimModeCameraOffset;
+				if (tCameraMode.bSwitch == true)
+				{
+					d3dResultMatrix = this->CameraOrientationReset(d3dResultMatrix);
 
-			d3dResultMatrix = this->WalkCameraControls(XMVectorSet(0, 1.0f, 0, 0), d3dResultMatrix, bNoMoving, delta);
+					tCameraMode.bSwitch = false;
+				}
 
-			tWalkCamera->d3d_Position = XMMatrixMultiply(d3dResultMatrix, d3dPlayerMatrix);
-			tWalkCamera->d3d_Position = XMMatrixMultiply(d3dOffsetMatrix, tWalkCamera->d3d_Position);
+				fRealTimeFov = this->ZoomSight(fRealTimeFov);
+				// Camera rotation Done here
+				tAimCamera->d3d_Position = this->AimMode(tAimCamera, d3dResultMatrix, delta, bNoMoving);
+				//Does Character Rotation and Movement
+				d3dPlayerMatrix = this->CharacterMovement(d3dPlayerMatrix, delta, in_Audio, clayton, playerVeclocity, bNoMoving);
 
-			tMyViewMatrix = tWalkCamera->d3d_Position;
-			tTempViewMatrix = tWalkCamera->d3d_Position;
+				tAimCamera->d3d_Position = XMMatrixMultiply(tAimCamera->d3d_Position, d3dPlayerMatrix);
+				// for shoulder offset 
+				tAimCamera->d3d_Position = XMMatrixMultiply(d3dOffsetMatrix, tAimCamera->d3d_Position);
+
+				tMyViewMatrix = tAimCamera->d3d_Position;
+				tTempViewMatrix = tAimCamera->d3d_Position;
+			}
+			//This is Debug Camera Function here - ZFB
+			else
+			{
+				if (tCameraMode.bSwitch == true)
+				{
+					d3dResultMatrix = this->CameraOrientationReset(d3dResultMatrix);
+					tCameraMode.bSwitch = false;
+				}
+				d3dResultMatrix = this->DebugCamera(d3dResultMatrix, d3dWorldMatrix, delta);
+
+				tDebugCamera->d3d_Position = XMMatrixMultiply(d3dResultMatrix, d3dWorldMatrix);
+				tMyViewMatrix = tDebugCamera->d3d_Position;
+				tTempViewMatrix = tDebugCamera->d3d_Position;
+			}
 		}
-		//Aim Mode Functions are Here - ZFB 
-		else if (tCameraMode.bAimMode == true)
+		//Caelsi Movement & Camera Attachment 
+		else if (PlayerIndex == CaelisIndex)
 		{
-			d3dOffsetMatrix = d3dResetAimModeCameraOffset;
-			if (tCameraMode.bSwitch == true)
+			if (tCameraMode.bAimMode == true)
 			{
-				d3dResultMatrix = this->CameraOrientationReset(d3dResultMatrix);
+				d3dOffsetMatrix = d3dResetAimModeCameraOffset;
+				if (tCameraMode.bSwitch == true)
+				{
+					d3dResultMatrix = this->CameraOrientationReset(d3dResultMatrix);
 
-				tCameraMode.bSwitch = false;
+					tCameraMode.bSwitch = false;
+				}
+
+				fRealTimeFov = this->ZoomSight(fRealTimeFov);
+				// Camera rotation Done here
+				tAimCamera->d3d_Position = this->AimMode(tAimCamera, d3dResultMatrix, delta, bNoMoving);
+				//Does Character Rotation and Movement
+				Caelis_Matrix = this->CharacterMovement(Caelis_Matrix, delta, in_Audio, clayton, playerVeclocity, bNoMoving);
+
+				tAimCamera->d3d_Position = XMMatrixMultiply(tAimCamera->d3d_Position, Caelis_Matrix);
+				// for shoulder offset 
+				tAimCamera->d3d_Position = XMMatrixMultiply(d3dOffsetMatrix, tAimCamera->d3d_Position);
+
+				tMyViewMatrix = tAimCamera->d3d_Position;
+				tTempViewMatrix = tAimCamera->d3d_Position;
 			}
-
-			fRealTimeFov = this->ZoomSight(fRealTimeFov);
-			// Camera rotation Done here
-			tAimCamera->d3d_Position = this->AimMode(tAimCamera, d3dResultMatrix, delta, bNoMoving);
-			//Does Character Rotation and Movement
-			d3dPlayerMatrix = this->CharacterMovement(d3dPlayerMatrix, delta, in_Audio, clayton, playerVeclocity, bNoMoving);
-
-			tAimCamera->d3d_Position = XMMatrixMultiply(tAimCamera->d3d_Position, d3dPlayerMatrix);
-			// for shoulder offset 
-			tAimCamera->d3d_Position = XMMatrixMultiply(d3dOffsetMatrix, tAimCamera->d3d_Position);
-
-			tMyViewMatrix = tAimCamera->d3d_Position;
-			tTempViewMatrix = tAimCamera->d3d_Position;
-		}
-		//This is Debug Camera Function here - ZFB
-		else
-		{
-			if (tCameraMode.bSwitch == true)
-			{
-				d3dResultMatrix = this->CameraOrientationReset(d3dResultMatrix);
-				tCameraMode.bSwitch = false;
-			}
-			d3dResultMatrix = this->DebugCamera(d3dResultMatrix, d3dWorldMatrix, delta);
-
-			tDebugCamera->d3d_Position = XMMatrixMultiply(d3dResultMatrix, d3dWorldMatrix);
-			tMyViewMatrix = tDebugCamera->d3d_Position;
-			tTempViewMatrix = tDebugCamera->d3d_Position;
 		}
 	}
 
@@ -470,6 +501,7 @@ XMMATRIX CInputSystem::CharacterMovement(XMMATRIX d3dplayerMatrix, double delta,
 			stepCount = 0;
 		}
 	}
+
 	return d3dTmpViewM;
 }
 
@@ -802,16 +834,16 @@ XMMATRIX CInputSystem::MyTurnTo(XMMATRIX M, XMVECTOR T, float s, XMMATRIX world)
 	return M;
 }
 
-int CInputSystem::CharacterSwitch(int characterIndex, int companionOneIndex, int companionTwoIndex, bool &characterSwitch)
+int CInputSystem::CharacterSwitch(int characterIndex)
 {
 	int m_CurrentPlayerIndex = characterIndex;
-	m_Companion1 = companionOneIndex;
-	m_Companion2 = companionTwoIndex;
+	int CurrentCompanion1 = m_Companion1;
+	int currentCompanion2 = m_Companion2;
 	// Switch to Companion 1
 	if (InputCheck(G_KEY_0) == 1 && m_buttonPressed == false)
 	{
 		// switch playerStartIndex to companion 1 
-		m_CurrentPlayerIndex = companionOneIndex;
+		m_CurrentPlayerIndex = CurrentCompanion1;
 		//Switch previous character index to be Companion 1
 		m_Companion1 = characterIndex;
 		m_ToCompanion1 = true;
@@ -820,12 +852,12 @@ int CInputSystem::CharacterSwitch(int characterIndex, int companionOneIndex, int
 	else if (InputCheck(G_KEY_5) == 1 && m_buttonPressed == false)
 	{
 		// switch playerStartIndex to companion 2
-		m_CurrentPlayerIndex = companionTwoIndex;
+		m_CurrentPlayerIndex = currentCompanion2;
 		//Switch previous character index to be Companion 2
 		m_Companion2 = characterIndex;
 		m_ToCompanion2 = true;
 	}
-	characterSwitch = true;
+	m_characterSwitch = true;
 	return  m_CurrentPlayerIndex;
 }
 
