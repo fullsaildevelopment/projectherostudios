@@ -4604,6 +4604,8 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 
 	#pragma region More AI Init
 	tThisWorld.atAIMask[spacePirate].GunIndex = GunINdexai;
+	tThisWorld.atClip[GunINdexai].gunHolder = spacePirate;
+
 
 	tThisWorld.atClip[GunINdexai].bulletSpeed = 0.0001;//Frame Dependent
 	std::array<plane_t, 6> planes;
@@ -4727,6 +4729,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	tThisWorld.atAIMask[spacePirate].GunIndex = GunINdexai;
 
 	tThisWorld.atClip[GunINdexai].bulletSpeed = 0.01;//Frame Dependent
+	tThisWorld.atClip[GunINdexai].gunHolder = spacePirate;
 
 
 	AiFrustum.row1.x = tThisWorld.atWorldMatrix[spacePirate].worldMatrix.r[0].m128_f32[0];
@@ -4855,6 +4858,8 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	}
 #pragma region MORE AI Init
 	tThisWorld.atAIMask[spacePirate].GunIndex = GunINdexai;
+	tThisWorld.atClip[GunINdexai].gunHolder = spacePirate;
+
 
 	tThisWorld.atClip[GunINdexai].bulletSpeed = 0.01;//Frame Dependent
 
@@ -5031,6 +5036,8 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	tThisWorld.atAIMask[spacePirate].GunIndex = GunINdexai;
 
 	tThisWorld.atClip[GunINdexai].bulletSpeed = 0.01;//Frame Dependent
+	tThisWorld.atClip[GunINdexai].gunHolder = spacePirate;
+
 
 
 	AiFrustum.row1.x = tThisWorld.atWorldMatrix[spacePirate].worldMatrix.r[0].m128_f32[0];
@@ -5206,7 +5213,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	tThisWorld.atAIMask[spacePirate].GunIndex = GunINdexai;
 
 	tThisWorld.atClip[GunINdexai].bulletSpeed = 0.01;//Frame Dependent
-
+	tThisWorld.atClip[GunINdexai].gunHolder = spacePirate;
 
 	AiFrustum.row1.x = tThisWorld.atWorldMatrix[spacePirate].worldMatrix.r[0].m128_f32[0];
 	AiFrustum.row1.y = tThisWorld.atWorldMatrix[spacePirate].worldMatrix.r[0].m128_f32[1];
@@ -7121,7 +7128,7 @@ int CGameMangerSystem::RealLevelUpdate()
 					if (pcAiSystem->GetCanWechooseShooter() == true) {
 					//	tThisWorld.atClip[tThisWorld.atAIMask[pcAiSystem->ChooseRandomSHooter()].GunIndex].fsReloadingCoolDown=100;
 						pcAiSystem->SetActiveShooter(tThisWorld.atAIMask[pcAiSystem->ChooseRandomSHooter()].GunIndex);
-						tThisWorld.atClip[pcAiSystem->GetActiveShooter()].fShootingCoolDown = 100;
+						tThisWorld.atClip[pcAiSystem->GetActiveShooter()].fShootingCoolDown = 500;
 						tThisWorld.atClip[pcAiSystem->GetActiveShooter()].tryToShoot = true;
 					}
 					else {
@@ -7286,12 +7293,16 @@ int CGameMangerSystem::RealLevelUpdate()
 							playerGravity.m128_f32[2] = 0;
 							playerGravity.m128_f32[3] = 0;
 						//	tThisWorld.atRigidBody[nCurrentEntity].gravity = playerGravity;
-						/*	cout << tThisWorld.atPathPlanining[nCurrentEntity].startingNode<<"start"<<std::endl;
+							cout << tThisWorld.atPathPlanining[nCurrentEntity].startingNode<<"start"<<std::endl;
 							cout << tThisWorld.atPathPlanining[nCurrentEntity].Goal<<"goal"<<std::endl;
 
-							cout << "AITRYINGTOMOVE" << nCurrentEntity << std::endl;*/
-							if(tThisWorld.atPathPlanining[nCurrentEntity].startingNode!= tThisWorld.atPathPlanining[nCurrentEntity].Goal)
+							cout << "AITRYINGTOMOVE" << nCurrentEntity << std::endl;
+							cout << tThisWorld.atPathPlanining[nCurrentEntity].pauseMovement;
+							if(tThisWorld.atPathPlanining[nCurrentEntity].startingNode!= tThisWorld.atPathPlanining[nCurrentEntity].Goal&&tThisWorld.atPathPlanining[nCurrentEntity].pauseMovement==false)
 							pcAiSystem->PathPlaningMovement(&tThisWorld.atPathPlanining[nCurrentEntity], &tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, fpsTimer.GetDelta());
+							else {
+								cout << " penguin " << std::endl;
+							}
 						}
 						else
 						{
@@ -7378,6 +7389,9 @@ int CGameMangerSystem::RealLevelUpdate()
 							for (int meshIndex = 0; meshIndex < bulletMesh.meshCount; ++meshIndex)
 							{
 								newbullet = CreateBulletMesh(&tThisWorld, gunMatrix, bulletToCopyFrom);
+							
+
+
 								//newbullet = CreateBulletMesh(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, gunMatrix, tThisWorld.atClip[nCurrentEntity].currentMaterial, bulletType, bulletMesh.vtMeshes[meshIndex], bulletMesh.vtMaterials[meshIndex]);
 							}
 							tThisWorld.atClip[newbullet].gunIndex = nCurrentEntity;
@@ -7432,6 +7446,10 @@ int CGameMangerSystem::RealLevelUpdate()
 							{
 								//newbullet = CreateBulletMesh(&tThisWorld, gunMatrix, bulletToCopyFrom);
 								newbullet = CreateBulletMesh(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, gunMatrix, tThisWorld.atClip[nCurrentEntity].currentMaterial, bulletType, bulletMesh.vtMeshes[meshIndex], bulletMesh.vtMaterials[meshIndex]);
+								tThisWorld.atPathPlanining[tThisWorld.atClip[nCurrentEntity].gunHolder].pauseMovement = true;
+								cout << tThisWorld.atPathPlanining[tThisWorld.atClip[nCurrentEntity].gunHolder].movementPausedTimer << std::endl;
+								tThisWorld.atPathPlanining[tThisWorld.atClip[nCurrentEntity].gunHolder].movementPausedTimer = 100;
+							
 							}
 							tThisWorld.atClip[newbullet].gunIndex = nCurrentEntity;
 							tThisWorld.atSimpleMesh[newbullet].m_nColor = tThisWorld.atClip[nCurrentEntity].colorofBullets;
@@ -7495,6 +7513,12 @@ int CGameMangerSystem::RealLevelUpdate()
 			if (tThisWorld.atClip[nCurrentEntity].fShootingCoolDown > 0)
 			{
 				tThisWorld.atClip[nCurrentEntity].fShootingCoolDown -= fpsTimer.GetDelta() * 100;
+			}
+			if (tThisWorld.atPathPlanining[tThisWorld.atClip[nCurrentEntity].gunHolder].movementPausedTimer > 0) {
+				tThisWorld.atPathPlanining[tThisWorld.atClip[nCurrentEntity].gunHolder].movementPausedTimer -= fpsTimer.GetDelta() * 100;
+			}
+			else {
+				tThisWorld.atPathPlanining[tThisWorld.atClip[nCurrentEntity].gunHolder].pauseMovement = false;
 			}
 		}
 	}
