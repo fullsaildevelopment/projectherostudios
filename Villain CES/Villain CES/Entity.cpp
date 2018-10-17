@@ -3443,7 +3443,7 @@ unsigned int createMesh(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMeshImpo
 		if (shaderID != 20 && shaderID != 30 && shaderID != 40 && shaderID != 50) {
 			ptWorld->atCollisionMask[nThisEntity].m_tnCollisionMask = (COMPONENT_COLLISIONMASK | COMPONENT_NONTRIGGER | COMPONENT_AABB | COMPONENT_STATIC);
 
-			ptWorld->atRigidBody[nThisEntity].ground = true;
+			ptWorld->atRigidBody[nThisEntity].ground = false;
 
 		}
 		else {
