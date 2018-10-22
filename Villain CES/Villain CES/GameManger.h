@@ -9,6 +9,7 @@
 #include "AI_System.h"
 #include "UI_System.h"
 #include "CAnimationSystem.h"
+#include "Particle_System.h"
 #include"AudioSystem.h"
 #include <array>
 #include <exception>
@@ -85,6 +86,7 @@ private:
 	CAISystem		*pcAiSystem;
 	CUISystem		*pcUISystem;
 	HWND cApplicationWindow;
+	Particle_System *pcParticleSystem;
 	vector<int> UIIndex;
 	int PlayerStartIndex = -10;
 	int ClaytonIndex = -10;
