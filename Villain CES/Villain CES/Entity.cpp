@@ -5746,6 +5746,14 @@ void GetUVsForCharacter(wchar_t* character, XMFLOAT2* UVs)
 		UVs[3] = XMFLOAT2{ 130 / 960.0f, 16 / 20.0f };
 	}
 	break;
+	case '-':
+	{
+		UVs[0] = XMFLOAT2{ 130 / 960.0f, 6 / 20.0f };
+		UVs[1] = XMFLOAT2{ 140 / 960.0f, 6 / 20.0f };
+		UVs[2] = XMFLOAT2{ 130 / 960.0f, 16 / 20.0f };
+		UVs[3] = XMFLOAT2{ 140 / 960.0f, 16 / 20.0f };
+	}
+	break;
 	case '.':
 	{
 		UVs[0] = XMFLOAT2{ 140 / 960.0f, 4 / 20.0f };

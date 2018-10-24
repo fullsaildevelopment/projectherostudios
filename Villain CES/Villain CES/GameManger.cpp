@@ -1737,11 +1737,96 @@ void CGameMangerSystem::InitializeCredits()
 		tThisWorld.atLabel[nThisEntity].color = XMFLOAT4(1, 0, 0, 0);
 	}
 
+	/*{
+		wchar_t textBuffer[] =
+		{ L"Annemarie Soto - \nArthur Parker - AI Programmer, Gameplay Programmer\nJonah Rogers - UI Programmer, Gameplay Programmer\nMicheal Manahan - Lead Developer, Graphics Programmer\nZayne Bakir - Audio SDK Integration, Input System Integration, Gameplay Programmer\nWalker Hoisington - Game Designer, Artist, Sound Designer, Voice Actor" };
+
+		nThisEntity = createEntityReverse(&tThisWorld);
+		CreateUILabelForText2(&tThisWorld, menuCamera->d3d_Position, 10, 6, 0, -8, &atUIVertices, &atUIIndices, textBuffer, ARRAYSIZE(textBuffer), &windowRect, 16, nThisEntity, 0.1);
+		pcUISystem->AddTextureToUI(&tThisWorld, nThisEntity, pcGraphicsSystem->m_pd3dDevice, nullptr, fontTexture);
+
+		pcUISystem->AddMaskToUI(&tThisWorld, nThisEntity, COMPONENT_CREDITS);
+
+		tThisWorld.atLabel[nThisEntity].color = XMFLOAT4(1, 0, 0, 0);
+	}*/
+	{
+		wchar_t textBuffer[] =
+		{ L"Annemarie Soto - 3D Artist" };
+
+		nThisEntity = createEntityReverse(&tThisWorld);
+		CreateUILabelForText2(&tThisWorld, menuCamera->d3d_Position, 10, 1, 0, 2.4, &atUIVertices, &atUIIndices, textBuffer, ARRAYSIZE(textBuffer), &windowRect, 16, nThisEntity, 0.1);
+		pcUISystem->AddTextureToUI(&tThisWorld, nThisEntity, pcGraphicsSystem->m_pd3dDevice, nullptr, fontTexture);
+
+		pcUISystem->AddMaskToUI(&tThisWorld, nThisEntity, COMPONENT_CREDITS);
+
+		tThisWorld.atLabel[nThisEntity].color = XMFLOAT4(1, 0, 0, 0);
+	}
+	{
+		wchar_t textBuffer[] =
+		{ L"Arthur Parker - AI Programmer, Gameplay Programmer" };
+
+		nThisEntity = createEntityReverse(&tThisWorld);
+		CreateUILabelForText2(&tThisWorld, menuCamera->d3d_Position, 10, 1, 0, 1.2, &atUIVertices, &atUIIndices, textBuffer, ARRAYSIZE(textBuffer), &windowRect, 16, nThisEntity, 0.1);
+		pcUISystem->AddTextureToUI(&tThisWorld, nThisEntity, pcGraphicsSystem->m_pd3dDevice, nullptr, fontTexture);
+
+		pcUISystem->AddMaskToUI(&tThisWorld, nThisEntity, COMPONENT_CREDITS);
+
+		tThisWorld.atLabel[nThisEntity].color = XMFLOAT4(1, 0, 0, 0);
+	}
+	{
+		wchar_t textBuffer[] =
+		{ L"Jonah Rogers - UI Programmer, Gameplay Programmer" };
+
+		nThisEntity = createEntityReverse(&tThisWorld);
+		CreateUILabelForText2(&tThisWorld, menuCamera->d3d_Position, 10, 1, 0, 0, &atUIVertices, &atUIIndices, textBuffer, ARRAYSIZE(textBuffer), &windowRect, 16, nThisEntity, 0.1);
+		pcUISystem->AddTextureToUI(&tThisWorld, nThisEntity, pcGraphicsSystem->m_pd3dDevice, nullptr, fontTexture);
+
+		pcUISystem->AddMaskToUI(&tThisWorld, nThisEntity, COMPONENT_CREDITS);
+
+		tThisWorld.atLabel[nThisEntity].color = XMFLOAT4(1, 0, 0, 0);
+	}
+	{
+		wchar_t textBuffer[] =
+		{ L"Micheal Manahan - Lead Developer, Graphics Programmer" };
+
+		nThisEntity = createEntityReverse(&tThisWorld);
+		CreateUILabelForText2(&tThisWorld, menuCamera->d3d_Position, 10, 1, 0, -1.2, &atUIVertices, &atUIIndices, textBuffer, ARRAYSIZE(textBuffer), &windowRect, 16, nThisEntity, 0.1);
+		pcUISystem->AddTextureToUI(&tThisWorld, nThisEntity, pcGraphicsSystem->m_pd3dDevice, nullptr, fontTexture);
+
+		pcUISystem->AddMaskToUI(&tThisWorld, nThisEntity, COMPONENT_CREDITS);
+
+		tThisWorld.atLabel[nThisEntity].color = XMFLOAT4(1, 0, 0, 0);
+	}
+	{
+		wchar_t textBuffer[] =
+		{ L"Zayn Bakir - Audio SDK Integration, Input System Integration, Gameplay Programmer" };
+
+		nThisEntity = createEntityReverse(&tThisWorld);
+		CreateUILabelForText2(&tThisWorld, menuCamera->d3d_Position, 10, 2, 0, -3, &atUIVertices, &atUIIndices, textBuffer, ARRAYSIZE(textBuffer), &windowRect, 16, nThisEntity, 0.1);
+		pcUISystem->AddTextureToUI(&tThisWorld, nThisEntity, pcGraphicsSystem->m_pd3dDevice, nullptr, fontTexture);
+
+		pcUISystem->AddMaskToUI(&tThisWorld, nThisEntity, COMPONENT_CREDITS);
+
+		tThisWorld.atLabel[nThisEntity].color = XMFLOAT4(1, 0, 0, 0);
+	}
+	{
+		wchar_t textBuffer[] =
+		{ L"Walker Hoisington - Game Designer, 3D Artist, 2D Artist, Sound Designer, Voice Actor" };
+
+		nThisEntity = createEntityReverse(&tThisWorld);
+		CreateUILabelForText2(&tThisWorld, menuCamera->d3d_Position, 10, 2, 0, -5.4, &atUIVertices, &atUIIndices, textBuffer, ARRAYSIZE(textBuffer), &windowRect, 16, nThisEntity, 0.1);
+		pcUISystem->AddTextureToUI(&tThisWorld, nThisEntity, pcGraphicsSystem->m_pd3dDevice, nullptr, fontTexture);
+
+		pcUISystem->AddMaskToUI(&tThisWorld, nThisEntity, COMPONENT_CREDITS);
+
+		tThisWorld.atLabel[nThisEntity].color = XMFLOAT4(1, 0, 0, 0);
+	}
+
 	{
 		wchar_t textBuffer[] =
 		{ L"BACK" };
 
-		nThisEntity = CreateUILabelForText2(&tThisWorld, menuCamera->d3d_Position, 1, 1, 0, -2.4, &atUIVertices, &atUIIndices, textBuffer, ARRAYSIZE(textBuffer), &windowRect, 20, -1, 0.1);
+		nThisEntity = CreateUILabelForText2(&tThisWorld, menuCamera->d3d_Position, 1, 1, -9, -9, &atUIVertices, &atUIIndices, textBuffer, ARRAYSIZE(textBuffer), &windowRect, 20, -1, 0.1);
 		pcUISystem->AddTextureToUI(&tThisWorld, nThisEntity, pcGraphicsSystem->m_pd3dDevice, nullptr, fontTexture);
 		pcUISystem->AddButtonToUI(&cApplicationWindow, &tThisWorld, nThisEntity, nCurrentScene + 1, true);
 
