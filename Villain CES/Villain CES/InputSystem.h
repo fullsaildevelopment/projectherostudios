@@ -31,7 +31,7 @@ public:
 		XMMATRIX &d3dResultMatrix, XMMATRIX &d3dPlayerMatrix, XMMATRIX &d3dOffsetMatrix, XMMATRIX &d3dWorldMatrix,
 		XMMATRIX &tMyViewMatrix, XMMATRIX &tTempViewMatrix,
 		XMFLOAT4 &d3dCollisionColor, double &delta, CAudioSystem* in_Audio, TClayton &clayton, XMVECTOR &playerVeclocity, 
-		XMMATRIX &Caelis_Matrix, int PlayerIndex, int CaelisIndex, int ClaytonIndex, TCaelis  &caelis, CAudioSystem *audio);
+		XMMATRIX &Caelis_Matrix, int PlayerIndex, int CaelisIndex, int ClaytonIndex, TCaelis  &caelis, CAudioSystem *audio,bool* didweHeal);
 	GReturn InitializeGInput(HWND cTheWindow);																																																													
 	
 

@@ -185,7 +185,7 @@ void CCollisionSystem::TestThreading(TWorld * ptWorld, int nCurrentEntity, CGrap
 
 
 					ptWorld->atRigidBody[nCurrentEntity].totalForce = -ptWorld->atRigidBody[nCurrentEntity].velocity;
-					tTempVertexBuffer->m_d3dWorldMatrix = pcPhysicsSystem->ResolveForces(&ptWorld->atRigidBody[nCurrentEntity], ptWorld->atWorldMatrix[nCurrentEntity].worldMatrix, false);
+					tTempVertexBuffer->m_d3dWorldMatrix = pcPhysicsSystem->ResolveForces(&ptWorld->atRigidBody[nCurrentEntity], ptWorld->atWorldMatrix[nCurrentEntity].worldMatrix, false,1.01);
 					ptWorld->atWorldMatrix[nCurrentEntity].worldMatrix = WalkingThrewObjectCheck(tTempVertexBuffer->m_d3dWorldMatrix, ptWorld->atAABB[otherCollisionsIndex[i]], ptWorld->atAABB[nCurrentEntity]);
 					ptWorld->atWorldMatrix[nCurrentEntity].worldMatrix = tTempVertexBuffer->m_d3dWorldMatrix;
 				}
