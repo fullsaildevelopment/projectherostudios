@@ -320,13 +320,13 @@ int CGameMangerSystem::LoadMainMenu()
 				{
 					tThisWorld.atBar[nCurrentEntity].ratio = (clickPoint.x - tThisWorld.atBar[nCurrentEntity].barBoundingBox.left - 5.0) / (tThisWorld.atBar[nCurrentEntity].barBoundingBox.right - tThisWorld.atBar[nCurrentEntity].barBoundingBox.left - 10);
 				
-					pcUISystem->CheckOptionsBars(&tThisWorld, pcInputSystem, nCurrentEntity, m_fMasterVolume, m_fMusicVolume, m_fSFXVolume, masterIndex, musicIndex, fxIndex);
+					pcUISystem->CheckOptionsBars(&tThisWorld, pcInputSystem, nCurrentEntity, pcAudioSystem->m_fMasterVolume, pcAudioSystem->m_fMusicVolume, pcAudioSystem->m_fSFXVolume, masterIndex, musicIndex, fxIndex);
 				}
 				else if (PtInRect(&tThisWorld.atBar[nCurrentEntity].barBoundingBox, dragPoint))
 				{
 					tThisWorld.atBar[nCurrentEntity].ratio = (dragPoint.x - tThisWorld.atBar[nCurrentEntity].barBoundingBox.left - 5.0) / (tThisWorld.atBar[nCurrentEntity].barBoundingBox.right - tThisWorld.atBar[nCurrentEntity].barBoundingBox.left - 10);
 
-					pcUISystem->CheckOptionsBars(&tThisWorld, pcInputSystem, nCurrentEntity, m_fMasterVolume, m_fMusicVolume, m_fSFXVolume, masterIndex, musicIndex, fxIndex);
+					pcUISystem->CheckOptionsBars(&tThisWorld, pcInputSystem, nCurrentEntity, pcAudioSystem->m_fMasterVolume, pcAudioSystem->m_fMusicVolume, pcAudioSystem->m_fSFXVolume, masterIndex, musicIndex, fxIndex);
 				}
 
 				if (tThisWorld.atBar[nCurrentEntity].backgroundColor.x == 1 &&
@@ -1914,7 +1914,7 @@ void CGameMangerSystem::InitializePauseScreen()
 		pcUISystem->AddMaskToUI(&tThisWorld, nThisEntity, COMPONENT_OPTIONS);
 	}
 
-	/*{
+	{
 		wchar_t textBuffer[] =
 		{ L"DIALOGUE VOLUME:" };
 
@@ -1946,7 +1946,7 @@ void CGameMangerSystem::InitializePauseScreen()
 		pcUISystem->AddBarToUI(&cApplicationWindow, &tThisWorld, nThisEntity, &XMFLOAT4(0, 0, 0, 1), nullptr);
 
 		pcUISystem->AddMaskToUI(&tThisWorld, nThisEntity, COMPONENT_OPTIONS);
-	}*/
+	}
 
 	{
 		wchar_t textBuffer[] =
@@ -4642,10 +4642,10 @@ int CGameMangerSystem::MikesGraphicsSandbox()
 
 	pcGraphicsSystem->m_pd3dSwapchain->Present(0, 0);
 
-	//tThisWorld.atAnimation[0].tTimer.GetLocalTime(tThisWorld.atAnimation[0].tTimer.tSceneTimer, tThisWorld.atAnimation[0].tTimer.localTime);
-	//tThisWorld.atAnimation[0].tTimer.DisplayTimes(pcInputSystem);
+	tThisWorld.atAnimation[0].tTimer.GetLocalTime(tThisWorld.atAnimation[0].tTimer.tSceneTimer, tThisWorld.atAnimation[0].tTimer.localTime);
+	tThisWorld.atAnimation[0].tTimer.DisplayTimes(pcInputSystem);
 
-	if (pcInputSystem->InputCheck(G_KEY_M) == 1 && !buttonPressed)
+	/*if (pcInputSystem->InputCheck(G_KEY_M) == 1 && !buttonPressed)
 	{
 		if (tThisWorld.atAnimation[904].m_tAnim.m_vtKeyFrames[tThisWorld.atAnimationVariant[904].tClaytonAnim.nextFrame].dTime == 0 && tThisWorld.atAnimation[904].m_tAnim.m_vtKeyFrames[tThisWorld.atAnimationVariant[904].tClaytonAnim.currentFrame].dTime != 0)
 		{
@@ -4664,7 +4664,7 @@ int CGameMangerSystem::MikesGraphicsSandbox()
 	else if (pcInputSystem->InputCheck(G_KEY_M) == 0 && buttonPressed)
 	{
 		buttonPressed = false;
-	}
+	}*/
 
 	//End Time
 	return 10;
@@ -9122,14 +9122,14 @@ int CGameMangerSystem::RealLevelUpdate()
 					{
 						tThisWorld.atBar[nCurrentEntity].ratio = (clickPoint.x - tThisWorld.atBar[nCurrentEntity].barBoundingBox.left - 5.0) / (tThisWorld.atBar[nCurrentEntity].barBoundingBox.right - tThisWorld.atBar[nCurrentEntity].barBoundingBox.left - 10);
 
-						pcUISystem->CheckOptionsBars(&tThisWorld, pcInputSystem, nCurrentEntity, m_fMasterVolume, m_fMusicVolume, m_fSFXVolume, masterIndex, musicIndex, fxIndex);
+						pcUISystem->CheckOptionsBars(&tThisWorld, pcInputSystem, nCurrentEntity, pcAudioSystem->m_fMasterVolume, pcAudioSystem->m_fMusicVolume, pcAudioSystem->m_fSFXVolume, masterIndex, musicIndex, fxIndex);
 					}
 					else if (PtInRect(&tThisWorld.atBar[nCurrentEntity].barBoundingBox, dragPoint) && clickTime > TIMEUNTILCLICK)
 					{
 						// bar manipulation with mouse click try and use for enemy health bar - ZB                   
 						tThisWorld.atBar[nCurrentEntity].ratio = (dragPoint.x - tThisWorld.atBar[nCurrentEntity].barBoundingBox.left - 5.0) / (tThisWorld.atBar[nCurrentEntity].barBoundingBox.right - tThisWorld.atBar[nCurrentEntity].barBoundingBox.left - 10);
 
-						pcUISystem->CheckOptionsBars(&tThisWorld, pcInputSystem, nCurrentEntity, m_fMasterVolume, m_fMusicVolume, m_fSFXVolume, masterIndex, musicIndex, fxIndex);
+						pcUISystem->CheckOptionsBars(&tThisWorld, pcInputSystem, nCurrentEntity, pcAudioSystem->m_fMasterVolume, pcAudioSystem->m_fMusicVolume, pcAudioSystem->m_fSFXVolume, masterIndex, musicIndex, fxIndex);
 					}
 
 					if (tThisWorld.atBar[nCurrentEntity].backgroundColor.x == 1 &&
