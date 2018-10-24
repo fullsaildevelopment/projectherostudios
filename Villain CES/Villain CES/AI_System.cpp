@@ -624,6 +624,31 @@ void CAISystem::ClearShootingActiveAI()
 	ShootingActiveAI.clear();
 }
 
+int CAISystem::GiveRandomBetweenNegative1and1()
+{
+	int randNum = rand() % (1 - -1 + 1) + -1;
+	
+	float random = ((float)rand()) / (float)RAND_MAX;
+	float diff = 1- -1;
+	float r = random * diff;
+	randNum += -1 + r;
+	
+	return randNum;
+}
+
+int CAISystem::GiveRandomNuberBetweenzeroand1()
+{
+	int randNum = rand() % (1 - 0 + 1) + 0;
+
+	float random = ((float)rand()) / (float)RAND_MAX;
+	float diff = 1 - 0;
+	float r = random * diff;
+	randNum += 0 + r;
+
+	return randNum;
+	
+}
+
 int CAISystem::GetActiveShooter()
 {
 	return CurrentShooter;

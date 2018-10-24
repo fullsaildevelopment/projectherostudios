@@ -308,8 +308,10 @@ void CCollisionSystem::TestThreading(TWorld * ptWorld, int nCurrentEntity, CGrap
 								}
 
 							}
-							int cubeindex = pcParticleSystem->CreateCube15(ptWorld->atWorldMatrix[nCurrentEntity].worldMatrix, ptWorld);
-							pcGraphicsSystem->CreateEntityBuffer(ptWorld, cubeindex);
+						//	int cubeindex = pcParticleSystem->CreateCube15(ptWorld->atWorldMatrix[nCurrentEntity].worldMatrix, ptWorld);
+						//	pcGraphicsSystem->CreateEntityBuffer(ptWorld, cubeindex);
+						    pcParticleSystem->CreateAlotofCubes(ptWorld->atWorldMatrix[nCurrentEntity].worldMatrix, ptWorld,100,pcGraphicsSystem,pcAiSystem);
+
 							cout << "WheremyCube" << std::endl;
 
 
@@ -322,7 +324,7 @@ void CCollisionSystem::TestThreading(TWorld * ptWorld, int nCurrentEntity, CGrap
 						{
 
 
-
+							pcParticleSystem->CreateAlotofCubes(ptWorld->atWorldMatrix[nCurrentEntity].worldMatrix, ptWorld, 100, pcGraphicsSystem, pcAiSystem);
 
 							RemoveAABBCollider(nCurrentEntity);
 
