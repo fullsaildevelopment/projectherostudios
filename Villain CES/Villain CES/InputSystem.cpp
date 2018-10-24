@@ -261,6 +261,19 @@ void CInputSystem::gameManagerCodeAbstracted(
 				tMyViewMatrix = tAimCamera->d3d_Position;
 				tTempViewMatrix = tAimCamera->d3d_Position;
 			}
+			else
+			{
+				if (tCameraMode.bSwitch == true)
+				{
+					d3dResultMatrix = this->CameraOrientationReset(d3dResultMatrix);
+					tCameraMode.bSwitch = false;
+				}
+				d3dResultMatrix = this->DebugCamera(d3dResultMatrix, d3dWorldMatrix, delta);
+
+				tDebugCamera->d3d_Position = XMMatrixMultiply(d3dResultMatrix, d3dWorldMatrix);
+				tMyViewMatrix = tDebugCamera->d3d_Position;
+				tTempViewMatrix = tDebugCamera->d3d_Position;
+			}
 		}
 	}
 
@@ -747,7 +760,7 @@ XMMATRIX CInputSystem::WalkCameraControls(XMVECTOR U, XMMATRIX viewM, bool &_mov
 
 	XMMATRIX CInputSystem::CaelisAimOffSet()
 	{
-		return XMMatrixTranslationFromVector(XMVectorSet(-0.5, 1.7f, 9.0f, 1.0f));
+		return XMMatrixTranslationFromVector(XMVectorSet(-0.5, 2.0f, 8.85f, 1.0f));
 	}
 
 XMMATRIX CInputSystem::CameraBehaviorLerp(XMMATRIX m1, XMMATRIX m2,float scale)

@@ -467,7 +467,7 @@ void CUISystem::UpdateHUDBars(TWorld * tThisWorld, int & nThisEntity, CGraphicsS
 	{
 		tUIVertexBuffer.start = (tThisWorld->atBar[nThisEntity].barBoundingBox.left + 14 - (screenWidth * .5)) / (screenWidth * .5);
 		tUIVertexBuffer.end = (tThisWorld->atBar[nThisEntity].barBoundingBox.right + 4 - (screenWidth * .5)) / (screenWidth * .5);
-		tUIVertexBuffer.ratio = (tThisWorld->atClip[GunIndexForPlayer].fShootingCoolDown) * .01;
+		tUIVertexBuffer.ratio = (tThisWorld->atClip[GunIndexForPlayer].fShootingCoolDown) / tThisWorld->atClip[GunIndexForPlayer].FValueOfCoolDown;
 	}
 	else if (this->CheckIfStringsAreTheSame(tThisWorld->atBar[nThisEntity].valueToChange, tThisWorld->atBar[nThisEntity].valueToChangeSize, "CaelisAbilityCooldown"))
 	{

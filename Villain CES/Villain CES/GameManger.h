@@ -132,6 +132,7 @@ private:
 	int fpsIndex = -1;
 	int objLogoIndex = -1;
 	int hitmarkerIndex = -1;
+	int gunImageIndex = -1;
 	int ammoIndex = -1;
 	int masterIndex = -1;
 	int musicIndex = -1;
@@ -175,7 +176,7 @@ private:
 	XMMATRIX m_d3dProjectionMatrix;
 	XMMATRIX m_d3dPlayerMatrix;
 	XMMATRIX m_d3dCaelisMatrix;
-	XMMATRIX m_d3dCalytonMatrix;
+	XMMATRIX m_d3dClaytonMatrix;
 
 	std::vector<TPrimalVert> atBeamVerts;
 
