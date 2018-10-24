@@ -189,7 +189,6 @@ unsigned int createEntityReverse(TWorld * ptWorld)
 	//Return the index of this marked entity
 	for (nCurrentEntity = ENTITYCOUNT - 1; nCurrentEntity >= 0; --nCurrentEntity)
 	{
-
 		if (ptWorld->atGraphicsMask[nCurrentEntity].m_tnGraphicsMask == COMPONENT_NONE)
 		{
 			printf("Entity created: %d\n", nCurrentEntity);
@@ -4955,7 +4954,7 @@ unsigned int createClaytonAnim(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TM
 {
 	unsigned int nThisEntity = createEntity(ptWorld);
 
-	ptWorld->atShaderID[nThisEntity].m_nShaderID = 11;
+	ptWorld->atShaderID[nThisEntity].m_nShaderID = 12;
 	TMaterialOptimized temp = tMaterial;
 
 	int entityMatIndex = temp.materialIndex[meshIndex];
@@ -4990,6 +4989,11 @@ unsigned int createClaytonAnim(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TM
 			tmp.pos[j] = tMesh.meshArrays[i].pos[j];
 			tmp.joints[j] = tMesh.meshArrays[i].joints[j];
 			tmp.weights[j] = tMesh.meshArrays[i].weights[j];
+
+			tmp.pos[j] *= 0.01;
+			//tmp.joints[j] *= 0.01;
+			//tmp.weights[j] *= 0.01;
+
 			if (j < 2)
 			{
 				tmp.uv[j] = tMesh.meshArrays[i].uv[j];
@@ -5010,7 +5014,7 @@ unsigned int createClaytonAnim(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TM
 	ptWorld->atMesh[nThisEntity].m_nVertexBufferStride = sizeof(TAnimatedMesh);
 	ptWorld->atMesh[nThisEntity].m_nVertexBufferOffset = 0;
 	ptWorld->atMesh[nThisEntity].m_d3dVertexBufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
-	ptWorld->atMesh[nThisEntity].m_d3dVertexBufferDesc.ByteWidth = sizeof(TAnimatedMesh) * ptWorld->atMesh[nThisEntity].m_nVertexCount;
+	ptWorld->atMesh[nThisEntity].m_d3dVertexBufferDesc.ByteWidth = (sizeof(TAnimatedMesh)) * ptWorld->atMesh[nThisEntity].m_nVertexCount;
 	ptWorld->atMesh[nThisEntity].m_d3dVertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	ptWorld->atMesh[nThisEntity].m_d3dVertexBufferDesc.CPUAccessFlags = 0;
 	ptWorld->atMesh[nThisEntity].m_d3dVertexBufferDesc.MiscFlags = 0;
@@ -5040,7 +5044,8 @@ unsigned int createClaytonAnim(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TM
 	ptWorld->atAnimation[nThisEntity].invBindPosesForJoints = tAnim.invBindPosesForJoints;
 	ptWorld->atAnimation[nThisEntity].m_tAnim = tAnim.animClip;
 
-	ptWorld->atWorldMatrix[nThisEntity].worldMatrix = XMMatrixIdentity();//XMMatrixMultiply(ptWorld->atWorldMatrix[nThisEntity].worldMatrix, XMMatrixTranslation(0, 0, 0));
+	ptWorld->atWorldMatrix[nThisEntity].worldMatrix = XMMatrixIdentity();
+	//XMMatrixMultiply(ptWorld->atWorldMatrix[nThisEntity].worldMatrix, XMMatrixTranslation(0, 0, 0));
 	//ptWorld->atWorldMatrix[nThisEntity].worldMatrix = XMMatrixMultiply(ptWorld->atWorldMatrix[nThisEntity].worldMatrix, XMMatrixRotationRollPitchYaw(tMesh.worldRotation[0], tMesh.worldRotation[1], tMesh.worldRotation[2]));
 	//ptWorld->atWorldMatrix[nThisEntity].worldMatrix = XMMatrixMultiply(ptWorld->atWorldMatrix[nThisEntity].worldMatrix, XMMatrixScaling(.01, .01, .01));
 	return nThisEntity;
@@ -5334,7 +5339,6 @@ unsigned int CreateUILabel(TWorld * ptWorld, XMMATRIX SpawnPosition, float width
 	ptWorld->atMesh[nThisEntity].m_d3dIndexBufferDesc.CPUAccessFlags = 0;
 	ptWorld->atMesh[nThisEntity].m_d3dIndexBufferDesc.MiscFlags = 0;
 	ptWorld->atMesh[nThisEntity].m_d3dIndexBufferDesc.StructureByteStride = 0;
-
 
 	ptWorld->atMesh[nThisEntity].m_d3dVertexData.pSysMem = &atUIVertices->at(index)[0];
 	ptWorld->atMesh[nThisEntity].m_d3dIndexData.pSysMem = rectIndices;
@@ -5740,6 +5744,14 @@ void GetUVsForCharacter(wchar_t* character, XMFLOAT2* UVs)
 		UVs[1] = XMFLOAT2{ 130 / 960.0f, 6 / 20.0f };
 		UVs[2] = XMFLOAT2{ 120 / 960.0f, 16 / 20.0f };
 		UVs[3] = XMFLOAT2{ 130 / 960.0f, 16 / 20.0f };
+	}
+	break;
+	case '-':
+	{
+		UVs[0] = XMFLOAT2{ 130 / 960.0f, 6 / 20.0f };
+		UVs[1] = XMFLOAT2{ 140 / 960.0f, 6 / 20.0f };
+		UVs[2] = XMFLOAT2{ 130 / 960.0f, 16 / 20.0f };
+		UVs[3] = XMFLOAT2{ 140 / 960.0f, 16 / 20.0f };
 	}
 	break;
 	case '.':

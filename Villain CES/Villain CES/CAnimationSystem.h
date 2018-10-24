@@ -16,10 +16,10 @@ public:
 		joint data
 		forward or back
 	*/
-	XMFLOAT4X4* PlayAnimation(TAnimationVariant claytonsAnimation, TAnimation theAnimation, float realTime);
+	XMFLOAT4X4* PlayAnimation(TAnimationVariant& claytonsAnimation, TAnimation& theAnimation, float& realTime);
 
 private:
-	void CalculateFrameCount(TAnimationVariant claytonsAnimation, TAnimation theAnimation, float realTime);
+	void CalculateFrameCount(TAnimationVariant& claytonsAnimation, TAnimation& theAnimation, float& realTime);
 	/*
 		int frameCount = myAnim.frames.size();
 		double animLength = myAnim.duration / 1000;

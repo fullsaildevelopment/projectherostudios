@@ -120,6 +120,8 @@ private:
 	bool mouseUp = true;
 	bool click = false;
 
+	bool buttonPressed = false;
+
 	float prevHealth = 0;
 	float fallingHealth = 0;
 	float hitmarkerTime = 1;

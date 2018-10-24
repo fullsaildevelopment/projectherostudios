@@ -42,7 +42,7 @@ PixelInputType AnimatedVertexShader(VertexInputType input)
 	}
 	skinned_pos.w = 1;
 	// Calculate the position of the vertex against the world, view, and projection matrices.
-	output.Position = mul(input.Position, worldMatrix);
+	output.Position = mul(skinned_pos, worldMatrix);
 	output.Position = mul(output.Position, viewMatrix);
 	output.Position = mul(output.Position, projectionMatrix);
 

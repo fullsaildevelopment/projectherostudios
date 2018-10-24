@@ -2235,6 +2235,7 @@ void CGraphicsSystem::ExecutePipeline(ID3D11DeviceContext *pd3dDeviceContext, in
 	{
 		//Set Input_Layout
 		pd3dDeviceContext->IASetInputLayout(m_pd3dUIInputLayout);
+		pd3dDeviceContext->PSSetSamplers(0, 1, &m_pd3dSamplerState);
 		//Set Shader
 		pd3dDeviceContext->VSSetShader(m_pd3dUIVertexShader, NULL, 0);
 		pd3dDeviceContext->PSSetShader(m_pd3dUIPixelShader, NULL, 0);
