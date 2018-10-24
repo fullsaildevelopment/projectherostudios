@@ -129,6 +129,12 @@
     <ClInclude Include="WwiseSounds\Wwise_IDs.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Particle_System.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ParticleCompoent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -204,6 +210,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Timer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Particle_System.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ParticleCompoent.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
