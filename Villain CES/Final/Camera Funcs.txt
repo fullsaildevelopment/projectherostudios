@@ -1,0 +1,367 @@
+
+Input component Hfile:
+struct TCameraToggle
+{
+	bool bDebugMode;
+	bool bWalkMode;
+	bool bAimMode;
+	bool bSwitch;
+};
+
+struct TCamera
+{
+public:
+
+	XMMATRIX d3d_Position;
+	float fPitch;
+	float fYaw;
+	float fRoll;
+
+	XMVECTOR getCameraPOS()
+	{
+		return d3d_Position.r[3];
+	}
+
+	float getPitch()
+	{
+		return fPitch;
+	}
+
+	float getYaw()
+	{
+		return fYaw;
+	}
+
+	float getRoll()
+	{
+		return fRoll;
+	}
+
+
+	float SetPitch(float pitch)
+	{
+		fPitch = pitch;
+		return fPitch;
+	}
+
+	float SetRoll(float roll)
+	{
+		fRoll = roll;
+		return fRoll;
+	}
+
+};
+
+Walk Camera Controls:
+XMMATRIX CInputSystem::WalkCameraControls(XMVECTOR U, XMMATRIX viewM) {
+	//XMVECTOR X, Y, Z, X2, Y2, Z2, W;
+	XMVECTOR d3d_newX, d3d_newY, d3d_existingZ;
+	XMMATRIX d3dTmpViewM,d3dRotation;
+	float fXchange = 0, fYchange = 0, fXEnd = 0, fYEnd = 0;
+
+	d3dTmpViewM = viewM;
+	m_pcMyInput->GetMouseDelta(fXchange, fYchange);
+	if (fXchange == 0) {
+		float x = 0;
+	}
+
+	m_pcMyInput->GetMousePosition(fXEnd, fYEnd);
+	
+// Left Rotation
+d3dRotation = XMMatrixRotationY(fXchange * m_fMouseRotationSpeed);
+
+d3dTmpViewM = XMMatrixMultiply(d3dTmpViewM, d3dRotation);
+
+d3d_existingZ = d3dTmpViewM.r[2];
+d3d_newX = XMVector3Cross(XMVectorSet(0, 1, 0, 0), d3d_existingZ);
+d3d_newY = XMVector3Cross(d3d_existingZ, d3d_newX);
+
+d3d_newX = XMVector3Normalize(d3d_newX);
+d3d_newY = XMVector3Normalize(d3d_newY);
+
+d3d_existingZ = XMVector3Normalize(d3d_existingZ);
+
+d3dTmpViewM.r[0] = d3d_newX;
+d3dTmpViewM.r[1] = d3d_newY;
+d3dTmpViewM.r[2] = d3d_existingZ;
+d3dRotation = XMMatrixRotationX(-1*fYchange * m_fMouseRotationSpeed);
+
+d3dTmpViewM = XMMatrixMultiply(d3dTmpViewM, d3dRotation);
+
+
+d3d_existingZ = d3dTmpViewM.r[2];
+d3d_newX = XMVector3Cross(XMVectorSet(0, 1, 0, 0), d3d_existingZ);
+d3d_newY = XMVector3Cross(d3d_existingZ, d3d_newX);
+
+d3d_newX = XMVector3Normalize(d3d_newX);
+d3d_newY = XMVector3Normalize(d3d_newY);
+
+d3d_existingZ = XMVector3Normalize(d3d_existingZ);
+
+d3dTmpViewM.r[0] = d3d_newX;
+d3dTmpViewM.r[1] = d3d_newY;
+d3dTmpViewM.r[2] = d3d_existingZ;
+	
+
+	return d3dTmpViewM;
+}
+
+float CInputSystem::ZoomSight(float fFov)
+{
+	float ftmpFov = fFov;
+
+	if (InputCheck(G_BUTTON_RIGHT) == 1)
+	{
+		if (ftmpFov <= 90.0f && ftmpFov >= 120.0f)
+		{
+
+			ftmpFov += 0.1f;
+			if (ftmpFov > 120.f)
+			{
+				ftmpFov = 120.0f;
+			}
+			else if (ftmpFov < 90.0f)
+			{
+				ftmpFov = 90.0f;
+			}
+		}
+		
+	}
+	else
+	{
+		if (ftmpFov <= 90.0f && ftmpFov >= 120.0f)
+		{
+			ftmpFov -= 0.1f;
+		}
+		else if (ftmpFov >= 120.f)
+		{
+			ftmpFov = 120.0f;
+		}
+		else if (ftmpFov < 90.0f)
+		{
+			ftmpFov = 90.0f;
+		}
+	}
+	return ftmpFov;
+}
+XMMATRIX CInputSystem::CameraBehaviorLerp(XMMATRIX m1, XMMATRIX m2)
+{
+	XMMATRIX lerpedMatrix;
+
+	lerpedMatrix.r[0] = (m2.r[0] - m1.r[0]) * 0.1f + m1.r[0];
+	lerpedMatrix.r[1] = (m2.r[1] - m1.r[1]) * 0.1f + m1.r[1];
+	lerpedMatrix.r[2] = (m2.r[2] - m1.r[2]) * 0.1f + m1.r[2];
+	lerpedMatrix.r[3] = (m2.r[3] - m1.r[3]) * 0.1f + m1.r[3];
+
+
+
+	return lerpedMatrix;
+}
+XMMATRIX CInputSystem::CameraOrientationReset(XMMATRIX m1)
+{
+	XMMATRIX tmpMatrix = XMMatrixIdentity();
+
+	tmpMatrix.r[3] = XMVectorSet(1.0f,0,-10.0f, 1.0f);
+	return tmpMatrix;
+}
+XMMATRIX CInputSystem::DebugCamera(XMMATRIX d3d_ViewM, XMMATRIX d3d_WorldM)
+{
+	XMMATRIX d3dTmpViewM, d3dMovementM, d3dRotation;
+	float fXchange = 0, fYchange = 0, fXEnd = 0, fYEnd = 0;
+
+	//m_d3dTmpWorldM.r[0].m128_f32[0] = 0;
+
+
+	d3dTmpViewM = d3d_ViewM;
+
+	XMVECTOR d3d_newX, d3d_newY, d3d_existingZ;
+	m_pcMyInput->GetMouseDelta(fXchange, fYchange);
+
+	m_pcMyInput->GetMousePosition(fXEnd, fYEnd);
+
+
+	//Forward && Back Movement
+
+	// up key movement
+
+	if (InputCheck(G_KEY_W) == 1) {
+		d3dMovementM = XMMatrixTranslation(0, 0, m_fMouseMovementSpeed);
+		d3dTmpViewM = XMMatrixMultiply(d3dMovementM, d3dTmpViewM);
+
+	}
+	// down key movement
+	if (InputCheck(G_KEY_S) == 1) {
+		d3dMovementM = XMMatrixTranslation(0, 0, -m_fMouseMovementSpeed);
+
+		d3dTmpViewM = XMMatrixMultiply(d3dMovementM, d3dTmpViewM);
+
+	}
+	// left key movement
+	if (InputCheck(G_KEY_A) == 1) {
+		d3dMovementM = XMMatrixTranslation(-m_fMouseMovementSpeed, 0, 0);
+		d3dTmpViewM = XMMatrixMultiply(d3dMovementM, d3dTmpViewM);
+
+	}
+	// right key movement
+	if (InputCheck(G_KEY_D) == 1) {
+		d3dMovementM = XMMatrixTranslation(m_fMouseMovementSpeed, 0, 0);
+		d3dTmpViewM = XMMatrixMultiply(d3dMovementM, d3dTmpViewM);
+
+	}
+	if (InputCheck(G_KEY_SPACE) == 1) {
+		d3dMovementM = XMMatrixTranslation(0, m_fMouseMovementSpeed, 0);
+		d3dTmpViewM = XMMatrixMultiply(d3dMovementM, d3dTmpViewM);
+
+	}
+	if (InputCheck(G_KEY_DOWN) == 1) {
+		d3dMovementM = XMMatrixTranslation(0, -m_fMouseMovementSpeed, 0);
+		d3dTmpViewM = XMMatrixMultiply(d3dMovementM, d3dTmpViewM);
+	}
+
+	//Up && Down Rotation(keybord implemented, soon to be changed in the mouse)
+
+	//Right && Left Rotation(keybord implemented, soon to be changed in the mouse)
+	if (fXchange < 0 && fYchange < 0)
+	{
+		d3dRotation = XMMatrixRotationY(fXchange * m_fMouseRotationSpeed);
+
+		d3dTmpViewM = XMMatrixMultiply(d3dRotation, d3dTmpViewM);
+
+		d3d_existingZ = d3dTmpViewM.r[2];
+		d3d_newX = XMVector3Cross(d3d_WorldM.r[1], d3d_existingZ);
+		d3d_newY = XMVector3Cross(d3d_existingZ, d3d_newX);
+
+		d3d_newX = XMVector3Normalize(d3d_newX);
+		d3d_newY = XMVector3Normalize(d3d_newY);
+
+		d3d_existingZ = XMVector3Normalize(d3d_existingZ);
+
+		d3dTmpViewM.r[0] = d3d_newX;
+		d3dTmpViewM.r[1] = d3d_newY;
+		d3dTmpViewM.r[2] = d3d_existingZ;
+		
+
+	}
+
+	if (fXchange > 0 && fYchange < 0)
+	{
+		d3dRotation = XMMatrixRotationY(fXchange * m_fMouseRotationSpeed);
+
+		d3dTmpViewM = XMMatrixMultiply(d3dRotation, d3dTmpViewM);
+
+		d3d_existingZ = d3dTmpViewM.r[2];
+		d3d_newX = XMVector3Cross(d3d_WorldM.r[1], d3d_existingZ);
+		d3d_newY = XMVector3Cross(d3d_existingZ, d3d_newX);
+
+		d3d_newX = XMVector3Normalize(d3d_newX);
+		d3d_newY = XMVector3Normalize(d3d_newY);
+
+		d3d_existingZ = XMVector3Normalize(d3d_existingZ);
+
+		d3dTmpViewM.r[0] = d3d_newX;
+		d3dTmpViewM.r[1] = d3d_newY;
+		d3dTmpViewM.r[2] = d3d_existingZ;
+		
+
+	}
+
+	if (fXchange < 0 && fYchange > 0)
+	{
+		d3dRotation = XMMatrixRotationY(fXchange * m_fMouseRotationSpeed);
+
+		d3dTmpViewM = XMMatrixMultiply(d3dRotation, d3dTmpViewM);
+
+		d3d_existingZ = d3dTmpViewM.r[2];
+		d3d_newX = XMVector3Cross(d3d_WorldM.r[1], d3d_existingZ);
+		d3d_newY = XMVector3Cross(d3d_existingZ, d3d_newX);
+
+		d3d_newX = XMVector3Normalize(d3d_newX);
+		d3d_newY = XMVector3Normalize(d3d_newY);
+
+		d3d_existingZ = XMVector3Normalize(d3d_existingZ);
+
+		d3dTmpViewM.r[0] = d3d_newX;
+		d3dTmpViewM.r[1] = d3d_newY;
+		d3dTmpViewM.r[2] = d3d_existingZ;
+		
+
+	}
+	if (fXchange > 0 && fYchange > 0)
+	{
+		d3dRotation = XMMatrixRotationY(fXchange * m_fMouseRotationSpeed);
+
+		d3dTmpViewM = XMMatrixMultiply(d3dRotation, d3dTmpViewM);
+		d3d_existingZ = d3dTmpViewM.r[2];
+		d3d_newX = XMVector3Cross(d3d_WorldM.r[1], d3d_existingZ);
+		d3d_newY = XMVector3Cross(d3d_existingZ, d3d_newX);
+
+		d3d_newX = XMVector3Normalize(d3d_newX);
+		d3d_newY = XMVector3Normalize(d3d_newY);
+
+		d3d_existingZ = XMVector3Normalize(d3d_existingZ);
+
+		d3dTmpViewM.r[0] = d3d_newX;
+		d3dTmpViewM.r[1] = d3d_newY;
+		d3dTmpViewM.r[2] = d3d_existingZ;
+
+		
+
+	}
+
+	return d3dTmpViewM;
+}
+TCameraToggle CInputSystem::CameraModeListen(TCameraToggle tMyCam)
+{	
+	TCameraToggle tTempCamMode = tMyCam;
+	if (InputCheck(G_KEY_9) == 1)
+	{
+		tTempCamMode.bDebugMode = true;
+		tTempCamMode.bWalkMode = false;
+		tTempCamMode.bAimMode = false;
+		tTempCamMode.bSwitch = true;
+
+	}
+
+	if (InputCheck(G_KEY_8) == 1)
+	{
+		tTempCamMode.bWalkMode = true;
+		tTempCamMode.bDebugMode = false;
+		tTempCamMode.bAimMode = false;
+		tTempCamMode.bSwitch = true;
+
+	}
+	if (InputCheck(G_BUTTON_RIGHT) == 1)
+	{
+		tTempCamMode.bAimMode = true;
+		tTempCamMode.bDebugMode = false;
+		tTempCamMode.bWalkMode = false;
+		tTempCamMode.bSwitch = true;
+
+	}
+
+	return tTempCamMode;
+}
+
+GameManager.cpp:
+Constructor:
+tAugerTimers = new Timers();
+	tTimerInfo = new System_Times();
+	aimCamera = new TCamera();
+	walkCamera = new TCamera();
+	debugCamera = new TCamera();
+	menuCamera = new TCamera();
+	m_RealTimeFov = 90.0f;
+	
+	LoadLevel():
+	walkCamera->d3d_Position = pcGraphicsSystem->SetDefaultCameraMatrix();
+    aimCamera->d3d_Position = pcGraphicsSystem->SetDefaultCameraMatrix();
+    debugCamera->d3d_Position = pcGraphicsSystem->SetDefaultCameraMatrix();
+    m_d3dCameraMatrix = pcGraphicsSystem->SetDefaultCameraMatrix();
+    
+    m_d3dProjectionMatrix = pcGraphicsSystem->SetDefaultPerspective(m_RealTimeFov);
+	
+	tCameraMode.bDebugMode = false;
+	tCameraMode.bAimMode = false;
+	tCameraMode.bWalkMode = true;
+	tCameraMode.bSwitch = false;
+	m_d3dPlayerMatrix = pcGraphicsSystem->SetDefaultWorldPosition();

@@ -112,6 +112,10 @@ public:
 	AkGameObjectID m_Story2;
 	AkGameObjectID m_Story3;
 	AkGameObjectID m_Story4;
+	float m_fMasterVolume;
+	float m_fMusicVolume;
+	float m_fSFXVolume;
+	float m_fDialogueVolume;
 	bool m_playOnce1 = false;
 	bool m_playOnce2 = false;
 	bool m_playOnce3 = false;

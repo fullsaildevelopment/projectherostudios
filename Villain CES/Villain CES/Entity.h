@@ -5,6 +5,7 @@
 #include "UI_Component.h"
 #include "Collision_Component.h"
 #include "Physics_Component.h"
+#include"ParticleCompoent.h"
 
 #include "Input_Component.h"
 #include "Projectile_Component.h"
@@ -64,6 +65,9 @@ struct TWorld
 	Clips			atClip[ENTITYCOUNT];
 
 	TAIVision		atClaytonVision;
+	//Particles
+	Particle		atParticle[ENTITYCOUNT];
+	TParticleMask	atParticleMask[ENTITYCOUNT];
 };
 
 struct BulletInfo
@@ -171,3 +175,4 @@ unsigned int CreateStairCase(TWorld * ptWorld, XMMATRIX SpawnPosition);
 unsigned int CreateTree(TWorld * ptWorld, XMMATRIX SpawnPosition);
 unsigned int CreateCylinder(TWorld * ptWorld, XMMATRIX SpawnPosition);
 unsigned int CreateCaelis(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMeshImport tMesh, TMaterialImport tMaterial);
+unsigned int ParticleTest(TWorld * ptWorld, XMMATRIX SpawnPosition);

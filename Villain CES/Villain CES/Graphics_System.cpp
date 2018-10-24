@@ -668,7 +668,7 @@ void CGraphicsSystem::CreateShaders(ID3D11Device * device)
 	};
 	//Get a count of the elements in the layout.
 	nElements = sizeof(m_d3dAnimatedLayoutDesc) / sizeof(m_d3dAnimatedLayoutDesc[0]);
-
+	cout << nElements;
 	//Create the input layout.
 	device->CreateInputLayout(m_d3dAnimatedLayoutDesc, nElements, AnimatedVertexShader,
 		sizeof(AnimatedVertexShader), &m_pd3dAnimatedInputLayout);

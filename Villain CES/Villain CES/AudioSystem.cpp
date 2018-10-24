@@ -4,6 +4,7 @@ CAudioSystem::CAudioSystem()
 {
 	m_LowIOHook = NULL;
 	m_LowIOHook = new CAkFilePackageLowLevelIOBlocking();
+	m_fMasterVolume = m_fDialogueVolume = m_fMusicVolume = m_fSFXVolume = 100;
 }
 
 CAudioSystem::~CAudioSystem()
