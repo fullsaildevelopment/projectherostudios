@@ -1,0 +1,37 @@
+#pragma pack_matrix( row_major )
+
+cbuffer MatrixBuffer : register(b0)
+{
+	matrix d3dWorldMatrix;
+	matrix d3dViewMatrix;
+	matrix d3dProjectionMatrix;
+	float4 endPoint;
+};
+
+struct TLineGeoInputType
+{
+	float4 pos : SV_POSITION;
+	float4 color : POSITION1;
+};
+
+struct TQuadPixelInputType
+{
+	float4 pos : SV_POSITION;
+	float4 color : POSITION1;
+	uint PrimID : SV_PrimitiveID;
+};
+
+[maxvertexcount(2)]
+void main(point TLineGeoInputType input[1], uint primID : SV_PrimitiveID, inout LineStream<TQuadPixelInputType> output)
+{
+
+	for (uint i = 0; i < 2; i++)
+	{
+		TQuadPixelInputType element;
+		element.pos = input[0].pos;
+		element.color = input[0].color
+		element.PrimID = primID;
+		output.Append(element);
+	}
+}
+AkAudioInputSource.lib;AkAutobahn.lib;AkCompressorFX.lib;AkDelayFX.lib;AkExpanderFX.lib;AkFlangerFx.lib;AkGainFX.lib;AkGuitarDistortionFX.lib;AkHarmonizerFX.lib;AkMatrixReverbFX.lib;AkMeterFX.lib;AkMotionSink.lib;AkMotionGeneratorSource.lib;AkMotionSourceSource.lib;AkOpusDecoder.lib;AkPeakLimiterFX.lib;AkParametricEQFX.lib;AkPitchShifterFX.lib;AkRecorderFX.lib;AkRoomVerbFX.lib;AkSilenceSource.lib;AkSineSource.lib;AkSoundSeedImpactFX.lib;AkSoundSeedWindSource.lib;AkSoundSeedWooshSource.lib;AkSpatialAudio.lib;AkStereoDelayFX.lib;AkSynthOneSource.lib;AkTimeStretchFX.lib;AkToneSource.lib;AkTremoloFX.lib;AkVorbisDecoder.lib;AuroHeadphoneFX.lib;iZHybridReverbFX.lib;iZTrashBoxModelerFX.lib;iZTrashDelayFX.lib;iZTrashDistortionFX.lib;iZTrashDynamicsFX.lib;iZTrashFiltersFX.lib;iZTrashMultibandDistortionFX.lib;McDSPFutzBoxFX.lib;McDSPLimiterFX.lib;SFLib.lib;AkSoundEngine.lib;AkMemoryMgr.lib;AkStreamMgr.lib;AkMusicEngine.lib;CommunicationCentral.lib

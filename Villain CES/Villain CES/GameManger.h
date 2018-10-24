@@ -188,10 +188,7 @@ private:
 	System_Times * tAugerTimers;
 	System_Times *tTimerInfo;
 
-	float m_fMasterVolume;
-	float m_fMusicVolume;
-	float m_fSFXVolume;
-	float m_fDialogueVolume;
+	
 	AKRESULT ErrorResult;
 
 	bool makeBeamBuffer;

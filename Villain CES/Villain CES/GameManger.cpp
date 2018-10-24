@@ -27,7 +27,7 @@ CGameMangerSystem::CGameMangerSystem(HWND window, CInputSystem* _pcInputSystem)
 	menuCamera = new TCamera();
 #if MUSIC_ON
 	pcAudioSystem = new CAudioSystem();
-	m_fMasterVolume = m_fDialogueVolume = m_fMusicVolume = m_fSFXVolume = 100;
+	
 #endif
 
 	GetWindowRect(cApplicationWindow, &windowRect);
@@ -68,14 +68,14 @@ int CGameMangerSystem::LoadMainMenu()
 #if MUSIC_ON
 	if (pcInputSystem->InputCheck(G_KEY_F9) == 1)
 	{
-		m_fMusicVolume += 1.0f;
+		pcAudioSystem->m_fMusicVolume += 1.0f;
 
 	}
 	else if (pcInputSystem->InputCheck(G_KEY_F8) == 1)
 	{
-		m_fMusicVolume -= 1.0f;
+		pcAudioSystem->m_fMusicVolume -= 1.0f;
 	}
-	pcAudioSystem->SetRTPCVolume(AK::GAME_PARAMETERS::MUSIC_VOLUME, m_fMusicVolume);
+	pcAudioSystem->SetRTPCVolume(AK::GAME_PARAMETERS::MUSIC_VOLUME, pcAudioSystem->m_fMusicVolume);
 #endif
 
 	//////////
@@ -186,7 +186,7 @@ int CGameMangerSystem::LoadMainMenu()
 					{
 #if MUSIC_ON
 						pcAudioSystem->SendSoundsToEngine(AK::EVENTS::PLAY_MENU_CLICK, pcAudioSystem->m_MenuClick);
-						pcAudioSystem->SetRTPCVolume(AK::GAME_PARAMETERS::SFX_VOLUME, m_fSFXVolume);
+						pcAudioSystem->SetRTPCVolume(AK::GAME_PARAMETERS::SFX_VOLUME, pcAudioSystem->m_fSFXVolume);
 #endif
 						clickTime = 0;
 
@@ -232,7 +232,7 @@ int CGameMangerSystem::LoadMainMenu()
 						{
 #if MUSIC_ON
 							pcAudioSystem->SendSoundsToEngine(AK::EVENTS::PLAY_HOVERSOUND, pcAudioSystem->m_HoverSound);
-							pcAudioSystem->SetRTPCVolume(AK::GAME_PARAMETERS::SFX_VOLUME, m_fSFXVolume);
+							pcAudioSystem->SetRTPCVolume(AK::GAME_PARAMETERS::SFX_VOLUME, pcAudioSystem->m_fSFXVolume);
 #endif
 						}
 						tThisWorld.atButton[nCurrentEntity].hovered = true;
@@ -267,7 +267,7 @@ int CGameMangerSystem::LoadMainMenu()
 						//Click sound for menus here - ZFB
 #if MUSIC_ON
 						pcAudioSystem->SendSoundsToEngine(AK::EVENTS::PLAY_MENU_CLICK, pcAudioSystem->m_MenuClick);
-						pcAudioSystem->SetRTPCVolume(AK::GAME_PARAMETERS::SFX_VOLUME, m_fSFXVolume);
+						pcAudioSystem->SetRTPCVolume(AK::GAME_PARAMETERS::SFX_VOLUME, pcAudioSystem->m_fSFXVolume);
 #endif
 						if (tThisWorld.atButton[nCurrentEntity].sceneIndex == 3)
 						{
@@ -284,7 +284,7 @@ int CGameMangerSystem::LoadMainMenu()
 						{
 #if MUSIC_ON
 							pcAudioSystem->SendSoundsToEngine(AK::EVENTS::PLAY_HOVERSOUND, pcAudioSystem->m_HoverSound);
-							pcAudioSystem->SetRTPCVolume(AK::GAME_PARAMETERS::SFX_VOLUME, m_fSFXVolume);
+							pcAudioSystem->SetRTPCVolume(AK::GAME_PARAMETERS::SFX_VOLUME, pcAudioSystem->m_fSFXVolume);
 #endif
 						}
 						tThisWorld.atButton[nCurrentEntity].hovered = true;
@@ -319,13 +319,13 @@ int CGameMangerSystem::LoadMainMenu()
 				{
 					tThisWorld.atBar[nCurrentEntity].ratio = (clickPoint.x - tThisWorld.atBar[nCurrentEntity].barBoundingBox.left - 5.0) / (tThisWorld.atBar[nCurrentEntity].barBoundingBox.right - tThisWorld.atBar[nCurrentEntity].barBoundingBox.left - 10);
 				
-					pcUISystem->CheckOptionsBars(&tThisWorld, pcInputSystem, nCurrentEntity, m_fMasterVolume, m_fDialogueVolume, m_fMusicVolume, m_fSFXVolume, masterIndex, dialogueIndex, musicIndex, fxIndex);
+					pcUISystem->CheckOptionsBars(&tThisWorld, pcInputSystem, nCurrentEntity, pcAudioSystem->m_fMasterVolume, pcAudioSystem->m_fDialogueVolume, pcAudioSystem->m_fMusicVolume, pcAudioSystem->m_fSFXVolume, masterIndex, dialogueIndex, musicIndex, fxIndex);
 				}
 				else if (PtInRect(&tThisWorld.atBar[nCurrentEntity].barBoundingBox, dragPoint))
 				{
 					tThisWorld.atBar[nCurrentEntity].ratio = (dragPoint.x - tThisWorld.atBar[nCurrentEntity].barBoundingBox.left - 5.0) / (tThisWorld.atBar[nCurrentEntity].barBoundingBox.right - tThisWorld.atBar[nCurrentEntity].barBoundingBox.left - 10);
 
-					pcUISystem->CheckOptionsBars(&tThisWorld, pcInputSystem, nCurrentEntity, m_fMasterVolume, m_fDialogueVolume, m_fMusicVolume, m_fSFXVolume, masterIndex, dialogueIndex, musicIndex, fxIndex);
+					pcUISystem->CheckOptionsBars(&tThisWorld, pcInputSystem, nCurrentEntity, pcAudioSystem->m_fMasterVolume, pcAudioSystem->m_fDialogueVolume, pcAudioSystem->m_fMusicVolume, pcAudioSystem->m_fSFXVolume, masterIndex, dialogueIndex, musicIndex, fxIndex);
 				}
 
 				if (tThisWorld.atBar[nCurrentEntity].backgroundColor.x == 1 &&
@@ -384,7 +384,7 @@ int CGameMangerSystem::LoadMainMenu()
 						//Click soud for menus here - ZFB
 #if MUSIC_ON
 						pcAudioSystem->SendSoundsToEngine(AK::EVENTS::PLAY_MENU_CLICK, pcAudioSystem->m_MenuClick);
-						pcAudioSystem->SetRTPCVolume(AK::GAME_PARAMETERS::SFX_VOLUME, m_fSFXVolume);
+						pcAudioSystem->SetRTPCVolume(AK::GAME_PARAMETERS::SFX_VOLUME, pcAudioSystem->m_fSFXVolume);
 #endif
 						if (tThisWorld.atButton[nCurrentEntity].sceneIndex == 3)
 						{
@@ -401,7 +401,7 @@ int CGameMangerSystem::LoadMainMenu()
 						{
 #if MUSIC_ON
 							pcAudioSystem->SendSoundsToEngine(AK::EVENTS::PLAY_HOVERSOUND, pcAudioSystem->m_HoverSound);
-							pcAudioSystem->SetRTPCVolume(AK::GAME_PARAMETERS::SFX_VOLUME, m_fSFXVolume);
+							pcAudioSystem->SetRTPCVolume(AK::GAME_PARAMETERS::SFX_VOLUME, pcAudioSystem->m_fSFXVolume);
 #endif
 						}
 						tThisWorld.atButton[nCurrentEntity].hovered = true;
@@ -771,12 +771,14 @@ int CGameMangerSystem::LoadStory()
 
 				AK::SoundEngine::StopAll();
 				pcAudioSystem->SendSoundsToEngine(AK::EVENTS::PLAY_STORY_1, pcAudioSystem->m_Story1);
+				pcAudioSystem->SetRTPCVolume(AK::GAME_PARAMETERS::SFX_VOLUME, pcAudioSystem->m_fSFXVolume);
 				pcAudioSystem->m_playOnce1 = true;
 			}
 			else if (loadingImage == 1 && pcAudioSystem->m_playOnce2 == false)
 			{
 				AK::SoundEngine::StopAll();
 				pcAudioSystem->SendSoundsToEngine(AK::EVENTS::PLAY_STORY_2, pcAudioSystem->m_Story2);
+				pcAudioSystem->SetRTPCVolume(AK::GAME_PARAMETERS::SFX_VOLUME, pcAudioSystem->m_fSFXVolume);
 				pcAudioSystem->m_playOnce2 = true;
 
 			}
@@ -784,6 +786,8 @@ int CGameMangerSystem::LoadStory()
 			{
 				AK::SoundEngine::StopAll();
 				pcAudioSystem->SendSoundsToEngine(AK::EVENTS::PLAY_STORY_3, pcAudioSystem->m_Story3);
+				pcAudioSystem->SetRTPCVolume(AK::GAME_PARAMETERS::SFX_VOLUME, pcAudioSystem->m_fSFXVolume);
+
 				pcAudioSystem->m_playOnce3 = true;
 
 			}
@@ -791,6 +795,7 @@ int CGameMangerSystem::LoadStory()
 			{
 				AK::SoundEngine::StopAll();
 				pcAudioSystem->SendSoundsToEngine(AK::EVENTS::PLAY_STORY_4, pcAudioSystem->m_Story4);
+				pcAudioSystem->SetRTPCVolume(AK::GAME_PARAMETERS::SFX_VOLUME, pcAudioSystem->m_fSFXVolume);
 				pcAudioSystem->m_playOnce4 = true;
 
 			}
@@ -1494,7 +1499,7 @@ void CGameMangerSystem::InitializeOptionsMenu()
 
 		pcUISystem->AddMaskToUI(&tThisWorld, nThisEntity, COMPONENT_OPTIONS);
 
-		tThisWorld.atBar[nThisEntity].ratio = m_fMasterVolume * .01;
+		tThisWorld.atBar[nThisEntity].ratio = pcAudioSystem->m_fMasterVolume * .01;
 		masterIndex = nThisEntity;
 	}
 
@@ -1527,7 +1532,7 @@ void CGameMangerSystem::InitializeOptionsMenu()
 
 		pcUISystem->AddMaskToUI(&tThisWorld, nThisEntity, COMPONENT_OPTIONS);
 
-		tThisWorld.atBar[nThisEntity].ratio = m_fDialogueVolume * .01;
+		tThisWorld.atBar[nThisEntity].ratio = pcAudioSystem->m_fDialogueVolume * .01;
 		dialogueIndex = nThisEntity;
 	}
 
@@ -1560,7 +1565,7 @@ void CGameMangerSystem::InitializeOptionsMenu()
 
 		pcUISystem->AddMaskToUI(&tThisWorld, nThisEntity, COMPONENT_OPTIONS);
 
-		tThisWorld.atBar[nThisEntity].ratio = m_fMusicVolume * .01;
+		tThisWorld.atBar[nThisEntity].ratio = pcAudioSystem->m_fMusicVolume * .01;
 		musicIndex = nThisEntity;
 	}
 
@@ -1593,7 +1598,7 @@ void CGameMangerSystem::InitializeOptionsMenu()
 
 		pcUISystem->AddMaskToUI(&tThisWorld, nThisEntity, COMPONENT_OPTIONS);
 
-		tThisWorld.atBar[nThisEntity].ratio = m_fSFXVolume * .01;
+		tThisWorld.atBar[nThisEntity].ratio = pcAudioSystem->m_fSFXVolume * .01;
 		fxIndex = nThisEntity;
 	}
 
@@ -1897,7 +1902,7 @@ void CGameMangerSystem::InitializePauseScreen()
 
 		pcUISystem->AddMaskToUI(&tThisWorld, nThisEntity, COMPONENT_OPTIONS);
 
-		tThisWorld.atBar[nThisEntity].ratio = m_fMasterVolume * .01;
+		tThisWorld.atBar[nThisEntity].ratio = pcAudioSystem->m_fMasterVolume * .01;
 		masterIndex = nThisEntity;
 	}
 
@@ -1931,7 +1936,7 @@ void CGameMangerSystem::InitializePauseScreen()
 
 		pcUISystem->AddMaskToUI(&tThisWorld, nThisEntity, COMPONENT_OPTIONS);
 
-		tThisWorld.atBar[nThisEntity].ratio = m_fDialogueVolume * .01;
+		tThisWorld.atBar[nThisEntity].ratio = pcAudioSystem->m_fDialogueVolume * .01;
 		dialogueIndex = nThisEntity;
 	}
 
@@ -1965,7 +1970,7 @@ void CGameMangerSystem::InitializePauseScreen()
 
 		pcUISystem->AddMaskToUI(&tThisWorld, nThisEntity, COMPONENT_OPTIONS);
 
-		tThisWorld.atBar[nThisEntity].ratio = m_fMusicVolume * .01;
+		tThisWorld.atBar[nThisEntity].ratio = pcAudioSystem->m_fMusicVolume * .01;
 		musicIndex = nThisEntity;
 	}
 
@@ -1999,7 +2004,7 @@ void CGameMangerSystem::InitializePauseScreen()
 
 		pcUISystem->AddMaskToUI(&tThisWorld, nThisEntity, COMPONENT_OPTIONS);
 
-		tThisWorld.atBar[nThisEntity].ratio = m_fSFXVolume * .01;
+		tThisWorld.atBar[nThisEntity].ratio = pcAudioSystem->m_fSFXVolume * .01;
 		fxIndex = nThisEntity;
 	}
 
@@ -4657,6 +4662,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	
 	
 	pcAudioSystem->SendSoundsToEngine(AK::EVENTS::PLAY_HALLWAY_MUSIC, pcAudioSystem->m_AkHallwayBattle);
+	pcAudioSystem->SetRTPCVolume(AK::GAME_PARAMETERS::MUSIC_VOLUME, pcAudioSystem->m_fMusicVolume);
 #endif
 
 	/*while (ShowCursor(false) > -1)
@@ -7416,6 +7422,9 @@ void DoorEventChanger(int shaderID)
 
 int CGameMangerSystem::RealLevelUpdate()
 {
+#if MUSIC_ON
+	pcAudioSystem->SetRTPCVolume(AK::GAME_PARAMETERS::MUSIC_VOLUME, pcAudioSystem->m_fMusicVolume);
+#endif
 	if (tThisWorld.atClayton[PlayerStartIndex].health <= 0 && !endInit)
 	{
 		GameOver = true;
@@ -7500,14 +7509,14 @@ int CGameMangerSystem::RealLevelUpdate()
 #if MUSIC_ON
 	if (pcInputSystem->InputCheck(G_KEY_F9) == 1)
 	{
-		m_fMusicVolume += 1.0f;
+		pcAudioSystem->m_fMusicVolume += 1.0f;
 
 	}
 	else if (pcInputSystem->InputCheck(G_KEY_F8) == 1)
 	{
-		m_fMusicVolume -= 1.0f;
+		pcAudioSystem->m_fMusicVolume -= 1.0f;
 	}
-	pcAudioSystem->SetRTPCVolume(AK::GAME_PARAMETERS::MUSIC_VOLUME, m_fMusicVolume);
+	pcAudioSystem->SetRTPCVolume(AK::GAME_PARAMETERS::MUSIC_VOLUME, pcAudioSystem->m_fMusicVolume);
 
 #endif
 
@@ -7784,6 +7793,8 @@ int CGameMangerSystem::RealLevelUpdate()
 				if (pcInputSystem->InputCheck(G_KEY_Q) == 1 && pcAudioSystem->m_BeamSoundOn == false)
 				{
 					pcAudioSystem->SendSoundsToEngine(AK::EVENTS::PLAY_EXTRACT, pcAudioSystem->m_Extract);
+					pcAudioSystem->SetRTPCVolume(AK::GAME_PARAMETERS::SFX_VOLUME, pcAudioSystem->m_fSFXVolume);
+
 					pcAudioSystem->m_BeamSoundOn = true;
 
 				}
@@ -8460,7 +8471,7 @@ int CGameMangerSystem::RealLevelUpdate()
 							gunMatrix = XMMatrixMultiply(localMatrix2, gunMatrix);
 #if MUSIC_ON
 							pcAudioSystem->SendSoundsToEngine(AK::EVENTS::PLAY_METAL_FIRED, pcAudioSystem->m_AkMetalFired);
-							pcAudioSystem->SetRTPCVolume(AK::GAME_PARAMETERS::SFX_VOLUME, m_fSFXVolume);
+							pcAudioSystem->SetRTPCVolume(AK::GAME_PARAMETERS::SFX_VOLUME, pcAudioSystem->m_fSFXVolume);
 #endif
 
 							bulletType = 0;
@@ -8556,7 +8567,7 @@ int CGameMangerSystem::RealLevelUpdate()
 							//Laser Fire sound is here - ZFB
 #if MUSIC_ON
 							pcAudioSystem->SendSoundsToEngine(AK::EVENTS::PLAY_LASER_FIRE, pcAudioSystem->m_Laser_Fire);
-							pcAudioSystem->SetRTPCVolume(AK::GAME_PARAMETERS::SFX_VOLUME, m_fSFXVolume);
+							pcAudioSystem->SetRTPCVolume(AK::GAME_PARAMETERS::SFX_VOLUME, pcAudioSystem->m_fSFXVolume);
 #endif
 							bulletType = 1;
 							int newbullet;
@@ -8585,19 +8596,20 @@ int CGameMangerSystem::RealLevelUpdate()
 					else if (tThisWorld.atClip[nCurrentEntity].tryToShoot == true)
 					{
 						tThisWorld.atClip[nCurrentEntity].tryToShoot = false;
-						if (tThisWorld.atClip[GunIndexForPlayer].nBulletsAvailables.size() == 0 && tThisWorld.atClip[GunIndexForPlayer].empty == true)
+#if MUSIC_ON
+						if (tThisWorld.atClip[GunIndexForPlayer].nBulletsAvailables.size() == 0 && pcInputSystem->InputCheck(G_BUTTON_LEFT) == 1)
 						{
-							#if MUSIC_ON
-							//pcAudioSystem->SendSoundsToEngine(AK::EVENTS::PLAY_AMMODEPLETED, pcAudioSystem->m_GunEmpty);
-							//pcAudioSystem->SetRTPCVolume(AK::GAME_PARAMETERS::SFX_VOLUME, m_fSFXVolume);
-							#endif
+							//Remember to ask chris about wwise property to check when sound is done playing
+							pcAudioSystem->SendSoundsToEngine(AK::EVENTS::PLAY_AMMODEPLETED, pcAudioSystem->m_GunEmpty);
+							pcAudioSystem->SetRTPCVolume(AK::GAME_PARAMETERS::SFX_VOLUME, pcAudioSystem->m_fSFXVolume);
 							tThisWorld.atClip[GunIndexForPlayer].empty = false;
 
 						}
-						else
+						/*else if(tThisWorld.atClip[GunIndexForPlayer].empty == false)
 						{
 							tThisWorld.atClip[GunIndexForPlayer].empty = true;
-						}
+						}*/
+#endif
 				}
 					if (tThisWorld.atClip[nCurrentEntity].tryToReload == true)
 					{
@@ -8606,7 +8618,7 @@ int CGameMangerSystem::RealLevelUpdate()
 						if (tThisWorld.atClip[GunIndexForPlayer].nBulletsAvailables.size() < 3 && tThisWorld.atClip[GunIndexForPlayer].nBulletsAvailables.size() < 3)
 						{
 							pcAudioSystem->SendSoundsToEngine(AK::EVENTS::PLAY_METAL_RELOAD, pcAudioSystem->m_MetalReload);
-							pcAudioSystem->SetRTPCVolume(AK::GAME_PARAMETERS::SFX_VOLUME, m_fSFXVolume);
+							pcAudioSystem->SetRTPCVolume(AK::GAME_PARAMETERS::SFX_VOLUME, pcAudioSystem->m_fSFXVolume);
 						}
 
 #endif
@@ -8752,7 +8764,7 @@ int CGameMangerSystem::RealLevelUpdate()
 					&tTempVertexBuffer, std::ref(tMyVertexBufferTemp.m_d3dWorldMatrix), &m_d3dPlayerMatrix, pcPhysicsSystem, pcAiSystem,
 					PlayerStartIndex, std::ref(playerDamage), std::ref(pirateDamage),
 					std::ref(prevHealth), std::ref(fallingHealth), std::ref(lerpTime)
-					, m_fMasterVolume, m_fSFXVolume, m_fMusicVolume, pcAudioSystem,
+					, pcAudioSystem->m_fMasterVolume, pcAudioSystem->m_fSFXVolume, pcAudioSystem->m_fMusicVolume, pcAudioSystem,
 					doorEventListenerPointer, doorEventChangerPointer, std::ref(hitmarkerTime), &m_d3dClaytonMatrix, &m_d3dCaelisMatrix));
 				
 
@@ -8953,7 +8965,7 @@ int CGameMangerSystem::RealLevelUpdate()
 							//Click soud for menus here - ZFB
 #if MUSIC_ON
 							pcAudioSystem->SendSoundsToEngine(AK::EVENTS::PLAY_MENU_CLICK, pcAudioSystem->m_MenuClick);
-							pcAudioSystem->SetRTPCVolume(AK::GAME_PARAMETERS::SFX_VOLUME, m_fSFXVolume);
+							pcAudioSystem->SetRTPCVolume(AK::GAME_PARAMETERS::SFX_VOLUME, pcAudioSystem->m_fSFXVolume);
 #endif
 							if (tThisWorld.atButton[nCurrentEntity].sceneIndex == OPTIONS_INDEX)
 							{
@@ -8991,7 +9003,7 @@ int CGameMangerSystem::RealLevelUpdate()
 							{
 #if MUSIC_ON
 								pcAudioSystem->SendSoundsToEngine(AK::EVENTS::PLAY_HOVERSOUND, pcAudioSystem->m_HoverSound);
-								pcAudioSystem->SetRTPCVolume(AK::GAME_PARAMETERS::SFX_VOLUME, m_fSFXVolume);
+								pcAudioSystem->SetRTPCVolume(AK::GAME_PARAMETERS::SFX_VOLUME, pcAudioSystem->m_fSFXVolume);
 #endif
 							}
 							tThisWorld.atButton[nCurrentEntity].hovered = true;
@@ -9025,7 +9037,7 @@ int CGameMangerSystem::RealLevelUpdate()
 							//Click soud for menus here - ZFB
 #if MUSIC_ON
 							pcAudioSystem->SendSoundsToEngine(AK::EVENTS::PLAY_MENU_CLICK, pcAudioSystem->m_MenuClick);
-							pcAudioSystem->SetRTPCVolume(AK::GAME_PARAMETERS::SFX_VOLUME, m_fSFXVolume);
+							pcAudioSystem->SetRTPCVolume(AK::GAME_PARAMETERS::SFX_VOLUME, pcAudioSystem->m_fSFXVolume);
 #endif
 							if (tThisWorld.atButton[nCurrentEntity].sceneIndex == nCurrentScene)
 							{
@@ -9042,7 +9054,7 @@ int CGameMangerSystem::RealLevelUpdate()
 							{
 #if MUSIC_ON
 								pcAudioSystem->SendSoundsToEngine(AK::EVENTS::PLAY_HOVERSOUND, pcAudioSystem->m_HoverSound);
-								pcAudioSystem->SetRTPCVolume(AK::GAME_PARAMETERS::SFX_VOLUME, m_fSFXVolume);
+								pcAudioSystem->SetRTPCVolume(AK::GAME_PARAMETERS::SFX_VOLUME, pcAudioSystem->m_fSFXVolume);
 #endif
 							}
 							tThisWorld.atButton[nCurrentEntity].hovered = true;
@@ -9066,14 +9078,14 @@ int CGameMangerSystem::RealLevelUpdate()
 					{
 						tThisWorld.atBar[nCurrentEntity].ratio = (clickPoint.x - tThisWorld.atBar[nCurrentEntity].barBoundingBox.left - 5.0) / (tThisWorld.atBar[nCurrentEntity].barBoundingBox.right - tThisWorld.atBar[nCurrentEntity].barBoundingBox.left - 10);
 
-						pcUISystem->CheckOptionsBars(&tThisWorld, pcInputSystem, nCurrentEntity, m_fMasterVolume, m_fDialogueVolume, m_fMusicVolume, m_fSFXVolume, masterIndex, dialogueIndex, musicIndex, fxIndex);
+						pcUISystem->CheckOptionsBars(&tThisWorld, pcInputSystem, nCurrentEntity, pcAudioSystem->m_fMasterVolume, pcAudioSystem->m_fDialogueVolume, pcAudioSystem->m_fMusicVolume, pcAudioSystem->m_fSFXVolume, masterIndex, dialogueIndex, musicIndex, fxIndex);
 					}
 					else if (PtInRect(&tThisWorld.atBar[nCurrentEntity].barBoundingBox, dragPoint) && clickTime > TIMEUNTILCLICK)
 					{
 						// bar manipulation with mouse click try and use for enemy health bar - ZB                   
 						tThisWorld.atBar[nCurrentEntity].ratio = (dragPoint.x - tThisWorld.atBar[nCurrentEntity].barBoundingBox.left - 5.0) / (tThisWorld.atBar[nCurrentEntity].barBoundingBox.right - tThisWorld.atBar[nCurrentEntity].barBoundingBox.left - 10);
 
-						pcUISystem->CheckOptionsBars(&tThisWorld, pcInputSystem, nCurrentEntity, m_fMasterVolume, m_fDialogueVolume, m_fMusicVolume, m_fSFXVolume, masterIndex, dialogueIndex, musicIndex, fxIndex);
+						pcUISystem->CheckOptionsBars(&tThisWorld, pcInputSystem, nCurrentEntity, pcAudioSystem->m_fMasterVolume, pcAudioSystem->m_fDialogueVolume, pcAudioSystem->m_fMusicVolume, pcAudioSystem->m_fSFXVolume, masterIndex, dialogueIndex, musicIndex, fxIndex);
 					}
 
 					if (tThisWorld.atBar[nCurrentEntity].backgroundColor.x == 1 &&
@@ -9122,7 +9134,7 @@ int CGameMangerSystem::RealLevelUpdate()
 							//Click soud for menus here - ZFB
 #if MUSIC_ON
 							pcAudioSystem->SendSoundsToEngine(AK::EVENTS::PLAY_MENU_CLICK, pcAudioSystem->m_MenuClick);
-							pcAudioSystem->SetRTPCVolume(AK::GAME_PARAMETERS::SFX_VOLUME, m_fSFXVolume);
+							pcAudioSystem->SetRTPCVolume(AK::GAME_PARAMETERS::SFX_VOLUME, pcAudioSystem->m_fSFXVolume);
 #endif
 
 							if (tThisWorld.atButton[nCurrentEntity].sceneIndex < SAVE_INDEX)
@@ -9140,7 +9152,7 @@ int CGameMangerSystem::RealLevelUpdate()
 							{
 #if MUSIC_ON
 								pcAudioSystem->SendSoundsToEngine(AK::EVENTS::PLAY_HOVERSOUND, pcAudioSystem->m_HoverSound);
-								pcAudioSystem->SetRTPCVolume(AK::GAME_PARAMETERS::SFX_VOLUME, m_fSFXVolume);
+								pcAudioSystem->SetRTPCVolume(AK::GAME_PARAMETERS::SFX_VOLUME, pcAudioSystem->m_fSFXVolume);
 #endif
 							}
 							tThisWorld.atButton[nCurrentEntity].hovered = true;
