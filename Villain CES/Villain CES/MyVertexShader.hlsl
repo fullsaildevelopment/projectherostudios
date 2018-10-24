@@ -44,6 +44,16 @@ TPixelInputType MyVertexShader(TVertexInputType tInput)
 	// Store the texture coordinates for the pixel shader.
 	output.d3dUVs = tInput.d3dUVs;
 
-	output.d3dColor = d3dColor;
+	//output.d3dColor = d3dColor;
+	
+	if (d3dColor.x < 0)
+	{
+		output.d3dColor = float4(0, 0, 0, 0);
+	}
+	else
+	{
+		output.d3dColor = d3dColor;
+	}
+
 	return output;
 }
