@@ -1787,7 +1787,7 @@ void CGameMangerSystem::InitializeCredits()
 	}
 	{
 		wchar_t textBuffer[] =
-		{ L"Micheal Manahan - Lead Developer, Graphics Programmer" };
+		{ L"Michael Manahan - Lead Developer, Graphics Programmer" };
 
 		nThisEntity = createEntityReverse(&tThisWorld);
 		CreateUILabelForText2(&tThisWorld, menuCamera->d3d_Position, 10, 1, 0, -1.2, &atUIVertices, &atUIIndices, textBuffer, ARRAYSIZE(textBuffer), &windowRect, 16, nThisEntity, 0.1);
