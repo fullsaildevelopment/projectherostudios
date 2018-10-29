@@ -135,6 +135,8 @@ void CInputSystem::gameManagerCodeAbstracted(
 		caelis.m_tfSpecialCooldown = 100;
 #if MUSIC_ON
 		audio->SendSoundsToEngine(AK::EVENTS::PLAY_HEAL, audio->m_Heal);
+		audio->SetRTPCVolume(AK::GAME_PARAMETERS::SFX_VOLUME, audio->m_fSFXVolume);
+
 #endif 
 	}
 	else if (!bGameOver && !bGamePaused && caelis.healing == true)
@@ -511,6 +513,8 @@ XMMATRIX CInputSystem::CharacterMovement(XMMATRIX d3dplayerMatrix, double delta,
 		{
 #if MUSIC_ON
 			in_Audio->SendSoundsToEngine(AK::EVENTS::PLAY_WALK, in_Audio->m_WalkSound);
+			in_Audio->SetRTPCVolume(AK::GAME_PARAMETERS::SFX_VOLUME, in_Audio->m_fSFXVolume);
+
 			stepCount = 0;
 #endif
 		}
@@ -799,7 +803,7 @@ float CInputSystem::ZoomSight(float fFov)
 	{
 		if (ftmpFov >= 45.0f)
 		{
-			ftmpFov -= 0.1f;
+			ftmpFov -= 3.0f;
 			
 			 if (ftmpFov < 45.0f)
 			{
@@ -813,9 +817,9 @@ float CInputSystem::ZoomSight(float fFov)
 	}	
 	else
 	{
-		if (ftmpFov <= 90.0f)
+		if (ftmpFov < 90.0f)
 		{
-			ftmpFov += 0.1f;
+			ftmpFov += 3.0f;
 		}
 		else if (ftmpFov >= 90.f)
 		{

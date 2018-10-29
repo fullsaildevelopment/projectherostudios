@@ -1,0 +1,284 @@
+Entity.h:
+struct TCamera
+{
+public:
+	
+	XMMATRIX d3d_Position;
+	float fPitch;
+	float fYaw;
+	float fRoll;
+
+	XMVECTOR getCameraPOS()
+	{
+		return d3d_Position.r[3];
+	}
+
+	float getPitch()
+	{
+		return fPitch;
+	}
+
+	float getYaw()
+	{
+		return fYaw;
+	}
+
+	float getRoll()
+	{
+		return fRoll;
+	}
+
+
+	float SetPitch(float pitch)
+	{
+		fPitch = pitch;
+		return fPitch;
+	}
+
+	float SetRoll(float roll)
+	{
+		fRoll = roll;
+		return fRoll;
+	}
+	
+};
+struct TCameraToggle
+{
+	bool bDebugMode;
+	bool bWalkMode;
+	bool bAimMode;
+	bool bSwitch;
+	//bool bDebugMode;
+};
+
+
+GameManager.h:
+//ZB Variables
+	TCameraToggle tCameraMode;
+	XMMATRIX m_d3dWorldMatrix;
+	XMMATRIX m_d3dViewMatrix;
+	XMMATRIX m_d3dProjectionMatrix;
+	XMMATRIX m_d3dPlayerMatrix;
+	XMMATRIX m_d3dCameraMatrix;
+	
+	//TCamera* CameraSelect[6];
+	TCamera *walkCamera;
+	TCamera *aimCamera;
+	TCamera *debugCamera;
+	TCamera * menuCamera;
+	Timers * tAugerTimers;
+	System_Times *tTimerInfo;
+	float m_RealTimeFov;
+
+GameManager.cpp:
+Constructor():
+tAugerTimers = new Timers();
+	tTimerInfo = new System_Times();
+	aimCamera = new TCamera();
+	walkCamera = new TCamera();
+	debugCamera = new TCamera();
+	menuCamera = new TCamera();
+
+	m_RealTimeFov = 90.0f;
+Destructor():
+delete tAugerTimers;
+	delete tTimerInfo;
+	delete aimCamera;
+	delete debugCamera;
+	delete walkCamera;
+	delete menuCamera;
+LoadLevel():
+	tTimerInfo->StartClock(tAugerTimers->tSceneTimer);
+
+	m_d3dWorldMatrix = pcGraphicsSystem->SetDefaultWorldPosition();//Call some sort of function from the graphics system to create this matrix
+	m_d3dViewMatrix = pcGraphicsSystem->SetDefaultViewMatrix();//Call some sort of function from the graphics system to create this matrix
+	walkCamera->d3d_Position = pcGraphicsSystem->SetDefaultCameraMatrix();
+	aimCamera->d3d_Position = pcGraphicsSystem->SetDefaultCameraMatrix();
+	debugCamera->d3d_Position = pcGraphicsSystem->SetDefaultCameraMatrix();
+	
+
+	m_d3dProjectionMatrix = pcGraphicsSystem->SetDefaultPerspective(m_RealTimeFov);
+	
+	tCameraMode.bDebugMode = false;
+	tCameraMode.bAimMode = false;
+	tCameraMode.bWalkMode = true;
+	tCameraMode.bSwitch = false;
+	
+	
+InGameUpdate():
+m_d3dProjectionMatrix = pcGraphicsSystem->SetDefaultPerspective(m_RealTimeFov);
+
+	tTimerInfo->applicationTime = tTimerInfo->GetTime(tAugerTimers->tAppTimer, tTimerInfo->applicationTime);
+	tTimerInfo->sceneTime = tTimerInfo->GetTime(tAugerTimers->tSceneTimer, tTimerInfo->sceneTime);
+	
+	tCameraMode = pcInputSystem->CameraModeListen(tCameraMode);
+	
+	static XMMATRIX m_d3d_ResultMatrix = pcGraphicsSystem->SetDefaultWorldPosition();
+	static XMMATRIX m_d3dOffsetMatrix = pcGraphicsSystem->SetDefaultOffset();
+
+	if (tCameraMode.bWalkMode == true)
+	{
+		if (tCameraMode.bSwitch == true)
+		{
+			m_d3d_ResultMatrix = pcInputSystem->CameraOrientationReset(m_d3d_ResultMatrix);
+			tCameraMode.bSwitch = false;
+		}
+		//pcInputSystem->CameraBehaviorLerp(walkCamera->d3d_Position, m_d3dPlayerMatrix);
+
+		m_d3d_ResultMatrix = pcInputSystem->WalkCameraControls(XMVectorSet(0, 1.0f, 0, 0), m_d3d_ResultMatrix);
+		m_d3d_ResultMatrix = XMMatrixMultiply(m_d3dPlayerMatrix, m_d3d_ResultMatrix);
+
+		walkCamera->d3d_Position = XMMatrixMultiply(m_d3dOffsetMatrix, m_d3d_ResultMatrix);
+	}
+
+	else if (tCameraMode.bAimMode == true)
+	{
+		//m_RealTimeFov = pcInputSystem->ZoomSight(m_RealTimeFov);
+		if (tCameraMode.bSwitch == true)
+		{
+			m_d3d_ResultMatrix = pcInputSystem->CameraOrientationReset(m_d3d_ResultMatrix);
+			tCameraMode.bSwitch = false;
+		}
+
+		//pcInputSystem->CameraBehaviorLerp(aimCamera->d3d_Position, m_d3dPlayerMatrix);
+
+		m_d3dPlayerMatrix = pcInputSystem->AimMode(m_d3dPlayerMatrix);
+
+		_d3d_ResultMatrix = XMMatrixMultiply(m_d3d_ResultMatrix, m_d3dPlayerMatrix);
+
+		aimCamera->d3d_Position = XMMatrixMultiply(m_d3dOffsetMatrix, aimCamera->d3d_Position);
+		
+	}
+	else
+	{
+		
+		if (tCameraMode.bSwitch == true)
+		{
+			m_d3d_ResultMatrix = pcInputSystem->CameraOrientationReset(m_d3d_ResultMatrix);
+			tCameraMode.bSwitch = false;
+		}
+		m_d3d_ResultMatrix = pcInputSystem->DebugCamera(m_d3d_ResultMatrix, m_d3dWorldMatrix);
+
+	
+
+		debugCamera->d3d_Position = XMMatrixMultiply(m_d3d_ResultMatrix, m_d3dWorldMatrix);
+		
+	}
+	
+	//in entity for loop
+	tTempVertexBuffer.m_d3dWorldMatrix = tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix;
+		tMyVertexBufferTemp.m_d3dWorldMatrix = tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix;
+		tTempVertexBuffer.m_d3dProjectionMatrix = m_d3dProjectionMatrix;
+		tMyVertexBufferTemp.m_d3dProjectionMatrix = m_d3dProjectionMatrix;
+		if (tCameraMode.bWalkMode == true)
+		{
+			tTempVertexBuffer.m_d3dViewMatrix = walkCamera->d3d_Position;
+			tMyVertexBufferTemp.m_d3dViewMatrix = walkCamera->d3d_Position;
+		}
+		else if (tCameraMode.bAimMode == true)
+		{
+
+			tTempVertexBuffer.m_d3dViewMatrix = aimCamera->d3d_Position;
+			tMyVertexBufferTemp.m_d3dViewMatrix = aimCamera->d3d_Position;
+
+		}
+		else if (tCameraMode.bDebugMode == true)
+		{
+			tTempVertexBuffer.m_d3dWorldMatrix = m_d3dWorldMatrix;
+
+			tTempVertexBuffer.m_d3dViewMatrix = debugCamera->d3d_Position;
+
+
+			// ai code would run here
+		}
+		else
+		{
+			tTempVertexBuffer.m_d3dWorldMatrix = tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix;
+
+			tTempVertexBuffer.m_d3dViewMatrix = m_d3dViewMatrix;
+			tMyVertexBufferTemp.m_d3dViewMatrix = m_d3dViewMatrix;
+		}
+		
+		if (tCameraMode.bWalkMode == true)
+					{
+						m_d3dPlayerMatrix = pcInputSystem->CubeMovement(m_d3dPlayerMatrix);
+
+						tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = m_d3dPlayerMatrix;
+						tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = pcPhysicsSystem->ResolveForces(&tThisWorld.atRigidBody[nCurrentEntity], tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, false);
+						m_d3dPlayerMatrix = tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix;
+
+					}
+
+					else if (tCameraMode.bAimMode == true)
+					{
+						tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = m_d3dPlayerMatrix;
+						tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = pcPhysicsSystem->ResolveForces(&tThisWorld.atRigidBody[nCurrentEntity], tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, false);
+						m_d3dPlayerMatrix = tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix;
+
+					}
+					/*if (tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix.r[3].m128_f32[1] < -10)
+					{
+						return -1;
+					}*/
+					if (tCameraMode.bWalkMode == true)
+					{
+						pcGraphicsSystem->InitPrimalShaderData2(pcGraphicsSystem->m_pd3dDeviceContext, tTempVertexBuffer, tTempPixelBuffer, tThisWorld.atSimpleMesh[nCurrentEntity], walkCamera->d3d_Position);
+
+					}
+					else if(tCameraMode.bAimMode == true)
+					{
+						pcGraphicsSystem->InitPrimalShaderData2(pcGraphicsSystem->m_pd3dDeviceContext, tTempVertexBuffer, tTempPixelBuffer, tThisWorld.atSimpleMesh[nCurrentEntity], aimCamera->d3d_Position);
+
+					}
+					else
+					{
+						pcGraphicsSystem->InitPrimalShaderData2(pcGraphicsSystem->m_pd3dDeviceContext, tTempVertexBuffer, tTempPixelBuffer, tThisWorld.atSimpleMesh[nCurrentEntity], debugCamera->d3d_Position);
+					}
+					pcGraphicsSystem->ExecutePipeline(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atSimpleMesh[nCurrentEntity].m_nIndexCount, tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask, tThisWorld.atShaderID[nCurrentEntity].m_nShaderID);
+					
+					
+					// out of for loop at the end 
+	tTimerInfo->DisplayTimes(tTimerInfo, pcInputSystem);
+					
+,MMATRIX m_d3d_ResultMatrix2 = pcGraphicsSystem->SetDefaultWorldPosition();
+				static XMMATRIX m_d3dOffsetMatrix2 = pcGraphicsSystem->SetDefaultOffset();
+				
+				
+				pcGraphicsSystem->InitPrimalShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, tTempVertexBuffer.m_d3dProjectionMatrix, m_d3dProjectionMatrix, tThisWorld.atDebugMesh[nCurrentEntity], menuCamera->d3d_Position);
+
+						pcGraphicsSystem->ExecutePipeline(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atDebugMesh[nCurrentEntity].m_nVertexCount, tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask, tThisWorld.atShaderID[nCurrentEntity].m_nShaderID);
+					
+					if (tThisWorld.atInputMask[nCurrentEntity].m_tnInputMask == (COMPONENT_CLAYTON | COMPONENT_INPUTMASK))
+						{
+
+
+							m_d3dPlayerMatrix = pcInputSystem->CubeMovement(m_d3dPlayerMatrix);
+
+							m_d3dViewMatrix = menuCamera->d3d_Position;
+							tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = m_d3dPlayerMatrix;
+							tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = pcPhysicsSystem->ResolveForces(&tThisWorld.atRigidBody[nCurrentEntity], tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, false);
+							m_d3dPlayerMatrix = tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix;
+
+
+
+
+						}
+						
+						tTempVertexBuffer.m_d3dWorldMatrix = tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix;
+						tTempVertexBuffer.m_d3dProjectionMatrix = m_d3dProjectionMatrix;
+						tTempVertexBuffer.m_d3dViewMatrix = m_d3dViewMatrix;
+
+						pcGraphicsSystem->InitPrimalShaderData2(pcGraphicsSystem->m_pd3dDeviceContext, tTempVertexBuffer, tTempPixelBuffer, tThisWorld.atSimpleMesh[nCurrentEntity], menuCamera->d3d_Position);
+						pcGraphicsSystem->ExecutePipeline(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atSimpleMesh[nCurrentEntity].m_nIndexCount, tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask, tThisWorld.atShaderID[nCurrentEntity].m_nShaderID);
+						
+						IntializeMainMenu():
+						
+						m_d3dWorldMatrix = pcGraphicsSystem->SetDefaultWorldPosition();//Call some sort of function from the graphics system to create this matrix
+				m_d3dViewMatrix = pcGraphicsSystem->SetDefaultViewMatrix();//Call some sort of function from the graphics system to create this matrix
+				menuCamera->d3d_Position = pcGraphicsSystem->SetDefaultCameraMatrix();
+				m_d3dProjectionMatrix = pcGraphicsSystem->SetDefaultPerspective(90.0f);
+				tCameraMode.bDebugMode = false;
+				tCameraMode.bAimMode = false;
+				tCameraMode.bWalkMode = true;
+				tCameraMode.bSwitch = false;
+				m_d3dPlayerMatrix = pcGraphicsSystem->SetDefaultWorldPosition();

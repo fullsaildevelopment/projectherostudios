@@ -13,19 +13,19 @@ Particle_System::~Particle_System()
 
 int Particle_System::CreateCube15(XMMATRIX LocationofParticle, TWorld * ptWorld)
 {
-	return ParticleTest(ptWorld, LocationofParticle,0.1f);
+	//return ParticleTest(ptWorld, LocationofParticle,0.1f);
 }
 
-void Particle_System::CreateAlotofCubes(XMMATRIX locationofParticles, TWorld * ptWorld, int numberofblood, CGraphicsSystem* pcGraphicsSystem, CAISystem* pcAisystem,float delta)
+void Particle_System::CreateAlotofCubes(XMMATRIX locationofParticles, TWorld * ptWorld, int numberofblood, CGraphicsSystem* pcGraphicsSystem, CAISystem* pcAisystem,float delta,bool color)
 {
 	for (int i = 0; i < numberofblood; i++) {
-		int cubeindex =ParticleTest(ptWorld, locationofParticles,0.1);
+		int cubeindex =ParticleTest(ptWorld, locationofParticles,0.1,color);
 		ptWorld->atRigidBody[cubeindex].velocity.m128_f32[0] += (pcAisystem->GiveRandomBetweenNegative1and1()*3)*delta;
 		ptWorld->atRigidBody[cubeindex].velocity.m128_f32[1] += (pcAisystem->GiveRandomBetweenNegative1and1()*3)*delta;
 		ptWorld->atRigidBody[cubeindex].velocity.m128_f32[2] += -10*delta;//pcAisystem->GiveRandomNuberBetweenzeroand1()*1;
 		ptWorld->atWorldMatrix[cubeindex].worldMatrix.r[3].m128_f32[0] += pcAisystem->GiveRandomBetweenNegative1and1()*0.2;
 		ptWorld->atWorldMatrix[cubeindex].worldMatrix.r[3].m128_f32[2] += pcAisystem->GiveRandomBetweenNegative1and1()*0.2;
-		ptWorld->atWorldMatrix[cubeindex].worldMatrix.r[3].m128_f32[1] += pcAisystem->GiveRandomBetweenNegative1and1()*0.2+5;
+		ptWorld->atWorldMatrix[cubeindex].worldMatrix.r[3].m128_f32[1] += pcAisystem->GiveRandomBetweenNegative1and1()*0.2;
 		ptWorld->atParticle[cubeindex].AliveTime = 10;
 
 
@@ -36,7 +36,7 @@ void Particle_System::CreateAlotofCubes(XMMATRIX locationofParticles, TWorld * p
 void Particle_System::CreateColorFulHealing(XMMATRIX locationofParticles, TWorld * ptWorld, int numberofblood, CGraphicsSystem * pcGraphicsSystem, CAISystem * pcAisystem,float delta)
 {
 	for (int i = 0; i < numberofblood; i++) {
-		int cubeindex = ParticleTest(ptWorld, locationofParticles,0.07f);
+		int cubeindex = ParticleTest(ptWorld, locationofParticles,0.07f,false);
 		ptWorld->atRigidBody[cubeindex].gravity = DirectX::XMVectorZero();
 	//	ptWorld->atRigidBody[cubeindex].velocity.m128_f32[0] += pcAisystem->GiveRandomBetweenNegative1and1()*0.2;
 		ptWorld->atRigidBody[cubeindex].velocity.m128_f32[1] += (pcAisystem->GiveRandomNuberBetweenzeroand1()*0.6)*delta;

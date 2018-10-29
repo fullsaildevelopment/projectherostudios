@@ -120,6 +120,8 @@ private:
 	bool mouseUp = true;
 	bool click = false;
 
+	bool buttonPressed = false;
+
 	float prevHealth = 0;
 	float fallingHealth = 0;
 	float hitmarkerTime = 1;
@@ -190,10 +192,7 @@ private:
 	System_Times * tAugerTimers;
 	System_Times *tTimerInfo;
 
-	float m_fMasterVolume;
-	float m_fMusicVolume;
-	float m_fSFXVolume;
-	float m_fDialogueVolume;
+	
 	AKRESULT ErrorResult;
 
 	bool makeBeamBuffer;

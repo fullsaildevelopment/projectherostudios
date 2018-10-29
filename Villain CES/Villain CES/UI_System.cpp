@@ -43,8 +43,8 @@ void CUISystem::AddButtonToUI(HWND* cApplicationWindow, TWorld* tThisWorld, int&
 	float ratioRightX = (screenWidth / 2) * ((tThisWorld->atLabel[nThisEntity].x + (tThisWorld->atLabel[nThisEntity].width / 2)) * .1);
 	float ratioBottomY = (screenHeight / 2) * ((tThisWorld->atLabel[nThisEntity].y - (tThisWorld->atLabel[nThisEntity].height / 2)) * .1);
 
-	tThisWorld->atButton[nThisEntity].boundingBox.bottom = (screenHeight / 2) + (ratioBottomY * -1) - 17 + tThisWorld->atLabel[nThisEntity].y;
-	tThisWorld->atButton[nThisEntity].boundingBox.top = (screenHeight / 2) + (ratioTopY * -1) - 17 + tThisWorld->atLabel[nThisEntity].y;
+	tThisWorld->atButton[nThisEntity].boundingBox.bottom = (screenHeight / 2) + (ratioBottomY * -1) + tThisWorld->atLabel[nThisEntity].y;
+	tThisWorld->atButton[nThisEntity].boundingBox.top = (screenHeight / 2) + (ratioTopY * -1) + tThisWorld->atLabel[nThisEntity].y;
 	tThisWorld->atButton[nThisEntity].boundingBox.left = (screenWidth / 2) + ratioLeftX - 9;
 	tThisWorld->atButton[nThisEntity].boundingBox.right = (screenWidth / 2) + ratioRightX - 9;
 
@@ -236,13 +236,13 @@ void CUISystem::AddBarToUI(HWND* cApplicationWindow, TWorld* tThisWorld, int& nT
 	float ratioRightX = (screenWidth / 2) * ((tThisWorld->atLabel[nThisEntity].x + (tThisWorld->atLabel[nThisEntity].width / 2)) * .1);
 	float ratioBottomY = (screenHeight / 2) * ((tThisWorld->atLabel[nThisEntity].y - (tThisWorld->atLabel[nThisEntity].height / 2)) * .1);
 
-	tThisWorld->atBar[nThisEntity].start.y = (screenHeight / 2) + (ratioTopY * -1) - 17 + tThisWorld->atLabel[nThisEntity].y;
-	tThisWorld->atBar[nThisEntity].end.y = (screenHeight / 2) + (ratioBottomY * -1) - 17 + tThisWorld->atLabel[nThisEntity].y;
+	tThisWorld->atBar[nThisEntity].start.y = (screenHeight / 2) + (ratioTopY * -1) + tThisWorld->atLabel[nThisEntity].y;
+	tThisWorld->atBar[nThisEntity].end.y = (screenHeight / 2) + (ratioBottomY * -1) + tThisWorld->atLabel[nThisEntity].y;
 	tThisWorld->atBar[nThisEntity].start.x = (screenWidth / 2) + ratioLeftX - 9;
 	tThisWorld->atBar[nThisEntity].end.x = (screenWidth / 2) + ratioRightX - 9;
 
-	tThisWorld->atBar[nThisEntity].barBoundingBox.top = (screenHeight / 2) + (ratioTopY * -1) - 17 + tThisWorld->atLabel[nThisEntity].y;
-	tThisWorld->atBar[nThisEntity].barBoundingBox.bottom = (screenHeight / 2) + (ratioBottomY * -1) - 17 + tThisWorld->atLabel[nThisEntity].y;
+	tThisWorld->atBar[nThisEntity].barBoundingBox.top = (screenHeight / 2) + (ratioTopY * -1) + tThisWorld->atLabel[nThisEntity].y;
+	tThisWorld->atBar[nThisEntity].barBoundingBox.bottom = (screenHeight / 2) + (ratioBottomY * -1) + tThisWorld->atLabel[nThisEntity].y;
 	tThisWorld->atBar[nThisEntity].barBoundingBox.left = (screenWidth / 2) + ratioLeftX - 14;
 	tThisWorld->atBar[nThisEntity].barBoundingBox.right = (screenWidth / 2) + ratioRightX - 4;
 
@@ -311,7 +311,7 @@ bool CUISystem::CheckIfStringsAreTheSame(char* string1, int& textSize1, const ch
 	}
 }
 
-void CUISystem::CheckOptionsBars(TWorld* tThisWorld, CInputSystem* pcInputSystem, int& nThisEntity, float& m_fMasterVolume, float& m_fDialogueVolume, float& m_fMusicVolume, float& m_fSFXVolume, int& masterIndex, int& dialogueIndex, int& musicIndex, int& fxIndex)
+void CUISystem::CheckOptionsBars(TWorld* tThisWorld, CInputSystem* pcInputSystem, int& nThisEntity, float& m_fMasterVolume/*, float& m_fDialogueVolume*/, float& m_fMusicVolume, float& m_fSFXVolume, int& masterIndex/*, int& dialogueIndex*/, int& musicIndex, int& fxIndex)
 {
 	if (this->CheckIfStringsAreTheSame(tThisWorld->atBar[nThisEntity].valueToChange, tThisWorld->atBar[nThisEntity].valueToChangeSize, "Sensitivity"))
 	{
@@ -321,11 +321,11 @@ void CUISystem::CheckOptionsBars(TWorld* tThisWorld, CInputSystem* pcInputSystem
 	{
 		m_fMasterVolume = tThisWorld->atBar[nThisEntity].ratio * 100;
 
-		if (m_fMasterVolume < m_fDialogueVolume)
+		/*if (m_fMasterVolume < m_fDialogueVolume)
 		{
 			m_fDialogueVolume = m_fMasterVolume;
 			tThisWorld->atBar[dialogueIndex].ratio = m_fMasterVolume * .01;
-		}
+		}*/
 
 		if (m_fMasterVolume < m_fMusicVolume)
 		{
@@ -359,7 +359,7 @@ void CUISystem::CheckOptionsBars(TWorld* tThisWorld, CInputSystem* pcInputSystem
 			tThisWorld->atBar[fxIndex].ratio = m_fMasterVolume * .01;
 		}
 	}
-	else if (this->CheckIfStringsAreTheSame(tThisWorld->atBar[nThisEntity].valueToChange, tThisWorld->atBar[nThisEntity].valueToChangeSize, "Dialogue Volume"))
+	/*else if (this->CheckIfStringsAreTheSame(tThisWorld->atBar[nThisEntity].valueToChange, tThisWorld->atBar[nThisEntity].valueToChangeSize, "Dialogue Volume"))
 	{
 		m_fDialogueVolume = tThisWorld->atBar[nThisEntity].ratio * 100;
 
@@ -368,7 +368,7 @@ void CUISystem::CheckOptionsBars(TWorld* tThisWorld, CInputSystem* pcInputSystem
 			m_fDialogueVolume = m_fMasterVolume;
 			tThisWorld->atBar[dialogueIndex].ratio = m_fMasterVolume * .01;
 		}
-	}
+	}*/
 }
 
 void CUISystem::UpdateFPS(TWorld* tThisWorld, CGraphicsSystem* pcGraphicsSystem, CFPS& fpsTimer, int& fpsIndex, CGraphicsSystem::TUIVertexBufferType& tUIVertexBuffer, CGraphicsSystem::TUIPixelBufferType& tUIPixelBuffer, std::vector<TUIVert*>& atUIVertices, TCamera* menuCamera)
