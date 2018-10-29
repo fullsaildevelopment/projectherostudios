@@ -45,7 +45,7 @@ public:
 	vector<TAABB> AiFrustumCheck;
 	bool aabb_to_frustum(TAABB& aabb, frustum_t& frustum);
 	bool AiVisionCheck(frustum_t eyeSight, vector<int>* index);
-	void TestThreading(TWorld * ptWorld, int nCurrentEntity, CGraphicsSystem* pcGraphicsSystem, CGraphicsSystem::TPrimalVertexBufferType* tTempVertexBuffer, XMMATRIX& tMyVertexBufferWorldMatrix, XMMATRIX* m_d3dPlayerMatrix, CPhysicsSystem* pcPhysicsSystem, CAISystem* pcAiSystem, int PlayerStartIndex, float& playerDamage, float& pirateDamage, float& prevHealth, float& fallingHealth, float& lerpTime, float in_MasterVolume, float in_SFXVolume, float in_MusicVolume, CAudioSystem* pcAudioSystem, XMMATRIX(*doorEventListener)(int, bool), void(*doorEventChanger)(int), float &hitmarkerTime, XMMATRIX* m_d3dClaytonMatrix, XMMATRIX* m_d3dCaelisMatrix,Particle_System * pcParticleSystem);
+	void TestThreading(TWorld * ptWorld, int nCurrentEntity, CGraphicsSystem* pcGraphicsSystem, CGraphicsSystem::TPrimalVertexBufferType* tTempVertexBuffer, XMMATRIX& tMyVertexBufferWorldMatrix, XMMATRIX* m_d3dPlayerMatrix, CPhysicsSystem* pcPhysicsSystem, CAISystem* pcAiSystem, int PlayerStartIndex, float& playerDamage, float& pirateDamage, float& prevHealth, float& fallingHealth, float& lerpTime, float in_MasterVolume, float in_SFXVolume, float in_MusicVolume, CAudioSystem* pcAudioSystem, XMMATRIX(*doorEventListener)(int, bool), void(*doorEventChanger)(int), float &hitmarkerTime, XMMATRIX* m_d3dClaytonMatrix, XMMATRIX* m_d3dCaelisMatrix,Particle_System * pcParticleSystem, float delta);
 	
 private:
 	bool ContainAABB(int nIndex);

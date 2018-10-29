@@ -135,7 +135,7 @@ bool CCollisionSystem::AiVisionCheck(frustum_t eyeSight,vector<int>* index)
 	return seesomething;
 }
 
-void CCollisionSystem::TestThreading(TWorld * ptWorld, int nCurrentEntity, CGraphicsSystem* pcGraphicsSystem, CGraphicsSystem::TPrimalVertexBufferType* tTempVertexBuffer, XMMATRIX& tMyVertexBufferWorldMatrix, XMMATRIX* m_d3dPlayerMatrix, CPhysicsSystem* pcPhysicsSystem, CAISystem* pcAiSystem,int PlayerStartIndex, float& playerDamage, float& pirateDamage, float& prevHealth, float& fallingHealth, float& lerpTime, float in_MasterVolume, float in_SFXVolume, float in_MusicVolume, CAudioSystem* pcAudioSystem, XMMATRIX(*doorEventListener)(int, bool), void(*doorEventChanger)(int), float &hitmarkerTime, XMMATRIX* m_d3dClaytonMatrix, XMMATRIX* m_d3dCaelisMatrix, Particle_System * pcParticleSystem)
+void CCollisionSystem::TestThreading(TWorld * ptWorld, int nCurrentEntity, CGraphicsSystem* pcGraphicsSystem, CGraphicsSystem::TPrimalVertexBufferType* tTempVertexBuffer, XMMATRIX& tMyVertexBufferWorldMatrix, XMMATRIX* m_d3dPlayerMatrix, CPhysicsSystem* pcPhysicsSystem, CAISystem* pcAiSystem,int PlayerStartIndex, float& playerDamage, float& pirateDamage, float& prevHealth, float& fallingHealth, float& lerpTime, float in_MasterVolume, float in_SFXVolume, float in_MusicVolume, CAudioSystem* pcAudioSystem, XMMATRIX(*doorEventListener)(int, bool), void(*doorEventChanger)(int), float &hitmarkerTime, XMMATRIX* m_d3dClaytonMatrix, XMMATRIX* m_d3dCaelisMatrix, Particle_System * pcParticleSystem,float delta)
 {
 	ptWorld->atAABB[nCurrentEntity].theeadmade = true;
 	if (ptWorld->atCollisionMask[nCurrentEntity].m_tnCollisionMask == (COMPONENT_COLLISIONMASK | COMPONENT_TRIGGER | COMPONENT_AABB | COMPONENT_NONSTATIC)
@@ -185,7 +185,7 @@ void CCollisionSystem::TestThreading(TWorld * ptWorld, int nCurrentEntity, CGrap
 
 
 					ptWorld->atRigidBody[nCurrentEntity].totalForce = -ptWorld->atRigidBody[nCurrentEntity].velocity;
-					tTempVertexBuffer->m_d3dWorldMatrix = pcPhysicsSystem->ResolveForces(&ptWorld->atRigidBody[nCurrentEntity], ptWorld->atWorldMatrix[nCurrentEntity].worldMatrix, false,1.01);
+					tTempVertexBuffer->m_d3dWorldMatrix = pcPhysicsSystem->ResolveForces(&ptWorld->atRigidBody[nCurrentEntity], ptWorld->atWorldMatrix[nCurrentEntity].worldMatrix, false);
 					ptWorld->atWorldMatrix[nCurrentEntity].worldMatrix = WalkingThrewObjectCheck(tTempVertexBuffer->m_d3dWorldMatrix, ptWorld->atAABB[otherCollisionsIndex[i]], ptWorld->atAABB[nCurrentEntity]);
 					ptWorld->atWorldMatrix[nCurrentEntity].worldMatrix = tTempVertexBuffer->m_d3dWorldMatrix;
 				}
@@ -307,7 +307,7 @@ void CCollisionSystem::TestThreading(TWorld * ptWorld, int nCurrentEntity, CGrap
 							}
 						//	int cubeindex = pcParticleSystem->CreateCube15(ptWorld->atWorldMatrix[nCurrentEntity].worldMatrix, ptWorld);
 						//	pcGraphicsSystem->CreateEntityBuffer(ptWorld, cubeindex);
-						    pcParticleSystem->CreateAlotofCubes(ptWorld->atWorldMatrix[nCurrentEntity].worldMatrix, ptWorld,100,pcGraphicsSystem,pcAiSystem);
+						    pcParticleSystem->CreateAlotofCubes(ptWorld->atWorldMatrix[nCurrentEntity].worldMatrix, ptWorld,50,pcGraphicsSystem,pcAiSystem,delta);
 
 							cout << "WheremyCube" << std::endl;
 
@@ -321,7 +321,7 @@ void CCollisionSystem::TestThreading(TWorld * ptWorld, int nCurrentEntity, CGrap
 						{
 
 
-							pcParticleSystem->CreateAlotofCubes(ptWorld->atWorldMatrix[nCurrentEntity].worldMatrix, ptWorld, 100, pcGraphicsSystem, pcAiSystem);
+							pcParticleSystem->CreateAlotofCubes(ptWorld->atWorldMatrix[nCurrentEntity].worldMatrix, ptWorld, 50, pcGraphicsSystem, pcAiSystem,delta);
 
 							RemoveAABBCollider(nCurrentEntity);
 

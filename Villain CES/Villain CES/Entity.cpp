@@ -4637,7 +4637,7 @@ unsigned int CreateCaelis(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMeshIm
 	return nThisEntity;
 }
 
-unsigned int ParticleTest(TWorld * ptWorld, XMMATRIX SpawnPosition)
+unsigned int ParticleTest(TWorld * ptWorld, XMMATRIX SpawnPosition,float scaler)
 {
 	unsigned int nThisEntity = createEntity(ptWorld);
 
@@ -4672,9 +4672,9 @@ unsigned int ParticleTest(TWorld * ptWorld, XMMATRIX SpawnPosition)
 
 	for (int i = 0; i < 16; ++i) {
 		atcopyvertices[i].m_d3dfPosition = atCubeVertices[i].m_d3dfPosition;
-		atcopyvertices[i].m_d3dfPosition.x *= 0.1f;
-		atcopyvertices[i].m_d3dfPosition.y *= 0.1f;
-		atcopyvertices[i].m_d3dfPosition.z *= 0.1f;
+		atcopyvertices[i].m_d3dfPosition.x *= scaler;
+		atcopyvertices[i].m_d3dfPosition.y *= scaler;
+		atcopyvertices[i].m_d3dfPosition.z *= scaler;
 
 	}
 

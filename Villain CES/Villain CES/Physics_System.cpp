@@ -22,7 +22,7 @@ CPhysicsSystem::~CPhysicsSystem()
 * Mod. Date:              07/18/2018
 * Mod. Initials:          AP
 */
-XMMATRIX CPhysicsSystem::ResolveForces(TRigidbody* _myRigbody, XMMATRIX worldMatrix, bool RotationWithForce,float delta)
+XMMATRIX CPhysicsSystem::ResolveForces(TRigidbody* _myRigbody, XMMATRIX worldMatrix, bool RotationWithForce)
 {
 	XMMATRIX newWorldMatrix = XMMatrixIdentity();
 	if (RotationWithForce == false) {
@@ -37,7 +37,7 @@ XMMATRIX CPhysicsSystem::ResolveForces(TRigidbody* _myRigbody, XMMATRIX worldMat
 
 	//	tThisWorld.atWorldMatrix[*ptr].worldMatrix = XMMatrixMultiply(localMatrix, tThisWorld.atWorldMatrix[*ptr].worldMatrix);
 	_myRigbody->totalForce += _myRigbody->gravity + _myRigbody->velocity;
-	_myRigbody->velocity = _myRigbody->totalForce * delta;
+	_myRigbody->velocity = _myRigbody->totalForce;
 	XMMATRIX localMatrix2 = XMMatrixTranslationFromVector(_myRigbody->totalForce);
 
 	XMMATRIX FinalMatrix;
