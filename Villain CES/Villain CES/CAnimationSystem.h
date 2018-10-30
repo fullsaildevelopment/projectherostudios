@@ -20,7 +20,9 @@ public:
 
 private:
 	void CalculateFrameCount(TAnimationVariant& claytonsAnimation, TAnimation& theAnimation, float& realTime);
-	/*
+
+	XMMATRIX NLerp(XMMATRIX m1, XMMATRIX m2, double timeRatio);
+		/*
 		int frameCount = myAnim.frames.size();
 		double animLength = myAnim.duration / 1000;
 		//Start Clock

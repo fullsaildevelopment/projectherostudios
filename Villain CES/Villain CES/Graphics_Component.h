@@ -280,4 +280,15 @@ struct TWorldMatrix
 {
 	XMMATRIX worldMatrix = XMMatrixIdentity();
 };
+
+struct Simple_Vert
+{
+	float4 pos;
+	float4 norm;
+	float4 color;
+	float tex_coord[2];
+
+	int joints[4];
+	float4 weights;
+};
 #endif
