@@ -4636,7 +4636,7 @@ unsigned int CreateCaelis(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMeshIm
 	return nThisEntity;
 }
 
-unsigned int ParticleTest(TWorld * ptWorld, XMMATRIX SpawnPosition)
+unsigned int ParticleTest(TWorld * ptWorld, XMMATRIX SpawnPosition,float scaler,bool yellow)
 {
 	unsigned int nThisEntity = createEntity(ptWorld);
 
@@ -4671,13 +4671,17 @@ unsigned int ParticleTest(TWorld * ptWorld, XMMATRIX SpawnPosition)
 
 	for (int i = 0; i < 16; ++i) {
 		atcopyvertices[i].m_d3dfPosition = atCubeVertices[i].m_d3dfPosition;
-		atcopyvertices[i].m_d3dfPosition.x *= 0.1f;
-		atcopyvertices[i].m_d3dfPosition.y *= 0.1f;
-		atcopyvertices[i].m_d3dfPosition.z *= 0.1f;
+		atcopyvertices[i].m_d3dfPosition.x *= scaler;
+		atcopyvertices[i].m_d3dfPosition.y *= scaler;
+		atcopyvertices[i].m_d3dfPosition.z *= scaler;
 
 	}
-
+	if(yellow==false)
 	ptWorld->atSimpleMesh[nThisEntity].m_nColor = XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f);
+	else {
+		ptWorld->atSimpleMesh[nThisEntity].m_nColor = XMFLOAT4(1.0f, 1.0f, 0.0f, 1.0f);
+
+	}
 	XMVECTOR gravity;
 	gravity.m128_f32[0] = 0;
 	gravity.m128_f32[1] = -0.1;
@@ -4735,6 +4739,11 @@ unsigned int ParticleTest(TWorld * ptWorld, XMMATRIX SpawnPosition)
 		ptWorld->atSimpleMesh[nThisEntity].m_VertexData.push_back(atCubeVertices[i].m_d3dfPosition);
 	}
 	return nThisEntity;
+}
+
+unsigned int CreatePlayActiveFightingTrigger(TWorld * ptWorld, XMMATRIX SpawnPosition)
+{
+	return 0;
 }
 
 

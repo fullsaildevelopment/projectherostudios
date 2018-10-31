@@ -80,8 +80,8 @@ public:
 	void SetActiveShooter(int activeSHooter);
 	void ClearShootingActiveAI();
 	bool chooseAnotherShooter = true;
-	int GiveRandomBetweenNegative1and1();
-	int GiveRandomNuberBetweenzeroand1();
+	float GiveRandomBetweenNegative1and1();
+	float GiveRandomNuberBetweenzeroand1();
 private:
 
 	int CurrentShooter;
