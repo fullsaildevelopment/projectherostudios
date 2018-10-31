@@ -309,6 +309,7 @@ void CCollisionSystem::TestThreading(TWorld * ptWorld, int nCurrentEntity, CGrap
 									//pcGraphicsSystem->CleanD3DObject(ptWorld, otherCollisionsIndex[i] + 1);
 									//pcGraphicsSystem->CleanD3DObject(ptWorld, otherCollisionsIndex[i] + 2);
 									pcAiSystem->RemoveeShootingActiveAI(otherCollisionsIndex[i]);
+
 								}
 
 							}
@@ -680,7 +681,7 @@ XMMATRIX CCollisionSystem::WalkingThrewObjectCheck(XMMATRIX worldPos, TAABB othe
 			//d3d_ResultMatrix = pcGraphicsSystem->SetDefaultWorldPosition();;
 			XMMATRIX moveback;
 			moveback = D3DMatrix;
-			moveback.r[3].m128_f32[1] += 0.0001f;
+			moveback.r[3].m128_f32[1] += 0.001f;
 			D3DMatrix = moveback;
 			UpdateCollision = updateAABB(D3DMatrix, UpdateCollision);
 			numberofLoops += 1;

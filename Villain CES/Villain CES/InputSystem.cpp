@@ -365,9 +365,9 @@ XMMATRIX CInputSystem::DebugCamera(XMMATRIX d3d_ViewM, XMMATRIX d3d_WorldM, doub
 
 	}
 	if (InputCheck(G_KEY_SPACE) == 1) {
-		d3dMovementM = XMMatrixTranslation(0, m_fMouseMovementSpeed * delta, 0);
+	/*	d3dMovementM = XMMatrixTranslation(0, m_fMouseMovementSpeed * delta, 0);
 		d3dTmpViewM = XMMatrixMultiply(d3dMovementM, d3dTmpViewM);
-
+*/
 	}
 	if (InputCheck(G_KEY_LEFTSHIFT) == 1) {
 		d3dMovementM = XMMatrixTranslation(0, -m_fMouseMovementSpeed * delta, 0);
@@ -489,7 +489,7 @@ XMMATRIX CInputSystem::CharacterMovement(XMMATRIX d3dplayerMatrix, double delta,
 		}
 		if (InputCheck(G_KEY_SPACE) == 1 && clayton.jumpTime > 0 && playerVeclocity.m128_f32[1] > -.1)
 		{
-			d3dMovementM = XMMatrixTranslation(0, m_fMouseMovementSpeed * delta, 0);
+		/*	d3dMovementM = XMMatrixTranslation(0, m_fMouseMovementSpeed * delta, 0);
 			d3dTmpViewM = XMMatrixMultiply(d3dMovementM, d3dTmpViewM);
 			keyPressed = true;
 			stepCount++;
@@ -499,7 +499,7 @@ XMMATRIX CInputSystem::CharacterMovement(XMMATRIX d3dplayerMatrix, double delta,
 			if (clayton.jumpTime <= 0)
 			{
 				clayton.jumpCooldown = .6;
-			}
+			}*/
 		}
 		else if (InputCheck(G_KEY_SPACE) == 0 && clayton.jumpTime > 0)
 		{
