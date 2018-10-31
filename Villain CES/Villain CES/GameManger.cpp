@@ -1,8 +1,8 @@
 #include "GameManger.h"
 #define AI_ON true
-#define MIKES_SANDBOX_ON true
+#define MIKES_SANDBOX_ON false
 #define SKELETON_LOAD_ON false
-#define MAIN_LEVEL_ON false
+#define MAIN_LEVEL_ON true
 #define INPUT_ABSTRACTED_ON true
 
 #define NUMBER_OF_AI 5
@@ -7738,8 +7738,10 @@ int CGameMangerSystem::RealLevelUpdate()
 		tMyVertexBufferTemp.m_d3dViewMatrix, tTempVertexBuffer.m_d3dViewMatrix,
 		tTempPixelBuffer.m_d3dCollisionColor, delta, pcAudioSystem, tThisWorld.atClayton[PlayerStartIndex], tThisWorld.atRigidBody[PlayerStartIndex].velocity, m_d3dCaelisMatrix, PlayerStartIndex
 	,CaelisIndex, ClaytonIndex,tThisWorld.atCaelis[CaelisIndex], pcAudioSystem,&healing);
+
 	if (healing == true) {
 		pcParticleSystem->CreateColorFulHealing(m_d3dClaytonMatrix, &tThisWorld, 50, pcGraphicsSystem, pcAiSystem,fpsTimer.GetDelta());
+		healing = false;
 	}
 	
 #endif // INPUT_ABSTRACTED_ON

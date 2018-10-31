@@ -177,7 +177,7 @@ void CCollisionSystem::TestThreading(TWorld * ptWorld, int nCurrentEntity, CGrap
 					if (ptWorld->atProjectiles[nCurrentEntity].m_tnProjectileMask == (COMPONENT_PROJECTILESMASK | COMPONENT_METAL | COMPONENT_FRIENDLY) ||
 						ptWorld->atProjectiles[nCurrentEntity].m_tnProjectileMask == (COMPONENT_PROJECTILESMASK | COMPONENT_METAL | COMPONENT_ENEMY))
 					{
-						pcParticleSystem->CreateAlotofCubes(ptWorld->atWorldMatrix[nCurrentEntity].worldMatrix, ptWorld, 50, pcGraphicsSystem, pcAiSystem, delta,true);
+						pcParticleSystem->CreateAlotofCubes(ptWorld->atWorldMatrix[nCurrentEntity].worldMatrix, ptWorld, 30, pcGraphicsSystem, pcAiSystem, delta,true);
 						cout << otherCollisionsIndex[i] <<" ObjectHitting" <<std::endl;
 						RemoveAABBCollider(nCurrentEntity);
 
@@ -315,7 +315,7 @@ void CCollisionSystem::TestThreading(TWorld * ptWorld, int nCurrentEntity, CGrap
 							}
 						//	int cubeindex = pcParticleSystem->CreateCube15(ptWorld->atWorldMatrix[nCurrentEntity].worldMatrix, ptWorld);
 						//	pcGraphicsSystem->CreateEntityBuffer(ptWorld, cubeindex);
-						    pcParticleSystem->CreateAlotofCubes(ptWorld->atWorldMatrix[nCurrentEntity].worldMatrix, ptWorld,50,pcGraphicsSystem,pcAiSystem,delta,false);
+						    pcParticleSystem->CreateAlotofCubes(ptWorld->atWorldMatrix[nCurrentEntity].worldMatrix, ptWorld,30,pcGraphicsSystem,pcAiSystem,delta,false);
 
 							cout << "WheremyCube" << std::endl;
 
@@ -329,7 +329,7 @@ void CCollisionSystem::TestThreading(TWorld * ptWorld, int nCurrentEntity, CGrap
 						{
 
 
-							pcParticleSystem->CreateAlotofCubes(ptWorld->atWorldMatrix[nCurrentEntity].worldMatrix, ptWorld, 50, pcGraphicsSystem, pcAiSystem,delta,false);
+							pcParticleSystem->CreateAlotofCubes(ptWorld->atWorldMatrix[nCurrentEntity].worldMatrix, ptWorld, 30, pcGraphicsSystem, pcAiSystem,delta,false);
 
 							RemoveAABBCollider(nCurrentEntity);
 

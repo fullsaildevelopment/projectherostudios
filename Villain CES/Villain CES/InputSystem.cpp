@@ -132,6 +132,7 @@ void CInputSystem::gameManagerCodeAbstracted(
 	{
 		clayton.health += caelis.healthGiven += 30 * delta;
 		caelis.healing = true;
+		*didweHeal = true;
 		caelis.m_tfSpecialCooldown = 100;
 #if MUSIC_ON
 		audio->SendSoundsToEngine(AK::EVENTS::PLAY_HEAL, audio->m_Heal);
@@ -146,7 +147,7 @@ void CInputSystem::gameManagerCodeAbstracted(
 		if (caelis.healthGiven + amount > 30)
 		{
 			float decreaseBy = caelis.healthGiven + amount - 30;
-			*didweHeal = true;
+		
 			amount -= decreaseBy;
 
 			clayton.health += amount;
@@ -154,8 +155,6 @@ void CInputSystem::gameManagerCodeAbstracted(
 		}
 		else
 		{
-			*didweHeal = true;
-
 			clayton.health += amount;
 			caelis.healthGiven += amount;
 		}
@@ -499,7 +498,7 @@ XMMATRIX CInputSystem::CharacterMovement(XMMATRIX d3dplayerMatrix, double delta,
 			if (clayton.jumpTime <= 0)
 			{
 				clayton.jumpCooldown = .6;
-			}*/
+			}
 		}
 		else if (InputCheck(G_KEY_SPACE) == 0 && clayton.jumpTime > 0)
 		{
