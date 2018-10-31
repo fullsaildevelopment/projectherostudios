@@ -6347,7 +6347,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 		if (cylinder == nCurrentEntity) {
 			float x = 0;
 		}
-		if (tThisWorld.atCollisionMask[nCurrentEntity].m_tnCollisionMask > 1 && nCurrentEntity != 216 && nCurrentEntity != 215 && nCurrentEntity != 218 && nCurrentEntity != 118 && nCurrentEntity != 233 && nCurrentEntity != 133 && nCurrentEntity != 33)// && nCurrentEntity != 18)
+		if (tThisWorld.atCollisionMask[nCurrentEntity].m_tnCollisionMask > 1 && /*nCurrentEntity != 216 */nCurrentEntity != 215 && nCurrentEntity != 218 && nCurrentEntity != 118 && nCurrentEntity != 233 && nCurrentEntity != 133 && nCurrentEntity != 33)// && nCurrentEntity != 18)
 		{
 
 			if (tThisWorld.atSimpleMesh[nCurrentEntity].m_nVertexCount > tThisWorld.atDebugMesh[nCurrentEntity].m_nVertexCount)
@@ -7782,7 +7782,13 @@ int CGameMangerSystem::RealLevelUpdate()
 		tMyVertexBufferTemp.m_d3dWorldMatrix = tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix;
 		tMyVertexBufferTemp.m_d3dProjectionMatrix = m_d3dProjectionMatrix;
 		tTempVertexBuffer.m_d3dProjectionMatrix = m_d3dProjectionMatrix;
-
+		if (tThisWorld.atAABB[nCurrentEntity].disabledabb == true&tThisWorld.atAABB[nCurrentEntity].TimeColiderIsDIsabled>0) {
+			tThisWorld.atAABB[nCurrentEntity].TimeColiderIsDIsabled -= fpsTimer.GetDelta() + 10;
+		}
+		else if (nCurrentEntity==216&& tThisWorld.atAABB[nCurrentEntity].disabledabb == true) {
+			tThisWorld.atAABB[nCurrentEntity].disabledabb = false;
+			pcCollisionSystem->replaceAABB(nCurrentEntity, tThisWorld.atAABB[nCurrentEntity]);
+		}
 		if (tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_SKYBOX | COMPONENT_TEXTURE | COMPONENT_SHADERID))
 		{
 			tMyVertexBufferTemp.m_d3dWorldMatrix = tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix;

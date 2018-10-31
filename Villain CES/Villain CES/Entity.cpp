@@ -4741,6 +4741,11 @@ unsigned int ParticleTest(TWorld * ptWorld, XMMATRIX SpawnPosition,float scaler,
 	return nThisEntity;
 }
 
+unsigned int CreatePlayActiveFightingTrigger(TWorld * ptWorld, XMMATRIX SpawnPosition)
+{
+	return 0;
+}
+
 
 unsigned int createClayton(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMeshImport tMesh, TMaterialImport tMaterial)
 {

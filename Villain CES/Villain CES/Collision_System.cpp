@@ -158,10 +158,16 @@ void CCollisionSystem::TestThreading(TWorld * ptWorld, int nCurrentEntity, CGrap
 					&& ptWorld->atInputMask[nCurrentEntity].m_tnInputMask >1 
 					)
 				{
+					ptWorld->atAABB[216].disabledabb = true;
+					ptWorld->atAABB[216].TimeColiderIsDIsabled = 100;
+					replaceAABB(216, ptWorld->atAABB[216]);
+
+
 					for (int doorindex = 0;doorindex< ptWorld->atAABB[otherCollisionsIndex[i]].doorPeices.size(); ++doorindex) {
 						doorEventChanger(ptWorld->atShaderID[otherCollisionsIndex[i]].m_nShaderID);
 						ptWorld->atWorldMatrix[ptWorld->atAABB[otherCollisionsIndex[i]].doorPeices[doorindex]].worldMatrix = XMMatrixMultiply(doorEventListener(ptWorld->atShaderID[ptWorld->atAABB[otherCollisionsIndex[i]].doorPeices[doorindex]].m_nShaderID, true), ptWorld->atWorldMatrix[ptWorld->atAABB[otherCollisionsIndex[i]].doorPeices[doorindex]].worldMatrix);
 						ptWorld->atAABB[ptWorld->atAABB[otherCollisionsIndex[i]].doorPeices[doorindex]] = updateAABB(ptWorld->atWorldMatrix[ptWorld->atAABB[otherCollisionsIndex[i]].doorPeices[doorindex]].worldMatrix, ptWorld->atAABB[ptWorld->atAABB[otherCollisionsIndex[i]].doorPeices[doorindex]]);
+					
 					}
 				}
 				if (ptWorld->atRigidBody[otherCollisionsIndex[i]].ground == true
@@ -759,6 +765,7 @@ bool CCollisionSystem::replaceAABB(int nIndex, TAABB m_AABB2)
 				{
 					ptr->m_dMaxPoint = m_AABB2.m_dMaxPoint;
 					ptr->m_dMinPoint = m_AABB2.m_dMinPoint;
+					ptr->disabledabb = m_AABB2.disabledabb;
 					return true;
 				}
 			}
@@ -953,16 +960,18 @@ bool CCollisionSystem::AABBtoAABBCollisionCheck(TAABB m_AABB2, vector<int>* m_Ot
 
 	for (list<TAABB>::iterator ptr = m_AAbb.begin(); ptr != m_AAbb.end(); ++ptr) 
 	{
-		if (m_AABB2.m_IndexLocation != ptr->m_IndexLocation) 
+		if (m_AABB2.m_IndexLocation != ptr->m_IndexLocation&&ptr->disabledabb==false) 
 		{
-			if (ptr->m_IndexLocation == 933)
-			{
-				float x = 0;
-			}
+			
 			if (classify_aabb_to_aabb(m_AABB2, *ptr) == true) 
 			{
 				
 				m_OtherColision->push_back(ptr->m_IndexLocation);
+				if (ptr->m_IndexLocation == 216)
+				{
+					float x = 0;
+ 					m_OtherColision->push_back(216);
+				}
 			}
 		}
 	}
