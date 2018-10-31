@@ -1,5 +1,6 @@
 Event	ID	Name			Wwise Object Path	Notes
 	372592918	Play_Metal_Fired			\Default Work Unit\Play_Metal_Fired	
+	491912207	Play_Caelis_Reload			\Default Work Unit\Play_Caelis_Reload	
 	532216254	Play_Laser_Fire			\Default Work Unit\Play_Laser_Fire	
 	1306210889	Play_Extract			\Default Work Unit\Play_Extract	
 	1357778998	Play_Menu_Click			\Default Work Unit\Play_Menu_Click	
@@ -9,6 +10,7 @@ Event	ID	Name			Wwise Object Path	Notes
 	2639148008	Play_Heal			\Default Work Unit\Play_Heal	
 	3280679725	Play_AmmoDepleted			\Default Work Unit\Play_AmmoDepleted	
 	3600088999	Play_Hurt_Scylian			\Default Work Unit\Play_Hurt_Scylian	
+	3602664484	Play_Caelis_Fire			\Default Work Unit\Play_Caelis_Fire	
 	3744242630	Play_Scylian_Death			\Default Work Unit\Play_Scylian_Death	
 	4261380785	Play_Metal_Reload			\Default Work Unit\Play_Metal_Reload	
 
@@ -22,7 +24,9 @@ In Memory Audio	ID	Name	Audio source file		Wwise Object Path	Notes	Data Size
 	214970038	Scyllian Death Cry	C:\Users\world\Documents\WwiseProjects\Augur_Sounds\.cache\Windows\SFX\Scyllian Death Cry_56D34C19.wem		\Actor-Mixer Hierarchy\Default Work Unit\Scyllian Death Cry		526400
 	245692687	Scyllian Growl 2 (Deeper)	C:\Users\world\Documents\WwiseProjects\Augur_Sounds\.cache\Windows\SFX\Scyllian Growl 2 (Deeper)_56D34C19.wem		\Actor-Mixer Hierarchy\Default Work Unit\Scyllian Growl 2 (Deeper)		332352
 	303155662	Glass Reload	C:\Users\world\Documents\WwiseProjects\Augur_Sounds\.cache\Windows\SFX\Glass Reload_56D34C19.wem		\Actor-Mixer Hierarchy\Default Work Unit\Glass Reload		411024
+	598566666	Caelis Reload	C:\Users\world\Documents\WwiseProjects\Augur_Sounds\.cache\Windows\SFX\Caelis Reload_56D34C19.wem		\Actor-Mixer Hierarchy\Default Work Unit\Caelis Reload		413328
 	654863545	Menu Tick	C:\Users\world\Documents\WwiseProjects\Augur_Sounds\.cache\Windows\SFX\Menu Tick_56D34C19.wem		\Actor-Mixer Hierarchy\Default Work Unit\Menu Tick		7796
+	670238279	Caelis Firing	C:\Users\world\Documents\WwiseProjects\Augur_Sounds\.cache\Windows\SFX\Caelis Firing_06EEDDDA.wem		\Actor-Mixer Hierarchy\Default Work Unit\Caelis Firing		238364
 	697282732	MaterialGun_Analyze (1) (online-audio-converter_com)	C:\Users\world\Documents\WwiseProjects\Augur_Sounds\.cache\Windows\SFX\MaterialGun_Analyze (1) (online-audio-converter.com)_56D34C19.wem		\Actor-Mixer Hierarchy\Default Work Unit\MaterialGun_Analyze (1) (online-audio-converter_com)		221248
 	709819371	Flintlock Fired	C:\Users\world\Documents\WwiseProjects\Augur_Sounds\.cache\Windows\SFX\Flintlock Fired_56D34C19.wem		\Actor-Mixer Hierarchy\Default Work Unit\Flintlock Fired		416720
 	728176999	Grunt-Human Male	C:\Users\world\Documents\WwiseProjects\Augur_Sounds\.cache\Windows\SFX\Grunt-Human Male_56D34C19.wem		\Actor-Mixer Hierarchy\Default Work Unit\Grunt-Human Male		57352

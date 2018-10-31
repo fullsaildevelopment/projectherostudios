@@ -457,6 +457,9 @@ void CGameMangerSystem::InitializeMainMenu()
 		pcAudioSystem->UnRegisterGameObj(pcAudioSystem->m_WalkSound);
 		pcAudioSystem->UnRegisterGameObj(pcAudioSystem->m_Extract);
 		pcAudioSystem->UnRegisterGameObj(pcAudioSystem->m_Heal);
+		pcAudioSystem->UnRegisterGameObj(pcAudioSystem->m_Caelis_Walk);
+		pcAudioSystem->UnRegisterGameObj(pcAudioSystem->m_Caelis_Fire);
+		pcAudioSystem->UnRegisterGameObj(pcAudioSystem->m_Caelis_Reload);
 		pcAudioSystem->RegisterGameObj(pcAudioSystem->m_AkMainMenuMusic);
 		soundOff = false;
 	}
@@ -4776,6 +4779,10 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 		pcAudioSystem->RegisterGameObj(pcAudioSystem->m_WalkSound);
 		pcAudioSystem->RegisterGameObj(pcAudioSystem->m_Extract);
 		pcAudioSystem->RegisterGameObj(pcAudioSystem->m_Heal);
+		pcAudioSystem->RegisterGameObj(pcAudioSystem->m_Caelis_Walk);
+		pcAudioSystem->RegisterGameObj(pcAudioSystem->m_Caelis_Fire);
+		pcAudioSystem->RegisterGameObj(pcAudioSystem->m_Caelis_Reload);
+
 		soundOff = true;
 	}
 

@@ -142,6 +142,7 @@ public:
 	bool m_ToCompanion1 = false;
 	bool m_ToCompanion2 = false;
 
+
 private:
 	float				m_fMouseRotationSpeed;
 	float				m_fMouseMovementSpeed;

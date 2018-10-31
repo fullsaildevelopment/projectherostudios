@@ -112,6 +112,9 @@ public:
 	AkGameObjectID m_Story2;
 	AkGameObjectID m_Story3;
 	AkGameObjectID m_Story4;
+	AkGameObjectID m_Caelis_Walk;
+	AkGameObjectID m_Caelis_Fire;
+	AkGameObjectID m_Caelis_Reload;
 	float m_fMasterVolume;
 	float m_fMusicVolume;
 	float m_fSFXVolume;

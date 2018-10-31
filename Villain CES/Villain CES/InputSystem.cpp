@@ -485,7 +485,7 @@ XMMATRIX CInputSystem::CharacterMovement(XMMATRIX d3dplayerMatrix, double delta,
 			keyPressed = true;
 			stepCount++;
 		}
-		if (InputCheck(G_KEY_SPACE) == 1 && clayton.jumpTime > 0 && playerVeclocity.m128_f32[1] > -.1)
+		/*if (InputCheck(G_KEY_SPACE) == 1 && clayton.jumpTime > 0 && playerVeclocity.m128_f32[1] > -.1)
 		{
 			d3dMovementM = XMMatrixTranslation(0, m_fMouseMovementSpeed * delta, 0);
 			d3dTmpViewM = XMMatrixMultiply(d3dMovementM, d3dTmpViewM);
@@ -505,7 +505,7 @@ XMMATRIX CInputSystem::CharacterMovement(XMMATRIX d3dplayerMatrix, double delta,
 			{
 				clayton.jumpTime += delta;
 			}
-		}
+		}*/
 
 		if (keyPressed == true && stepCount == 20)
 		{
