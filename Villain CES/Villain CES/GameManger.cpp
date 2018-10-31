@@ -1,8 +1,8 @@
 #include "GameManger.h"
 #define AI_ON true
-#define MIKES_SANDBOX_ON false
+#define MIKES_SANDBOX_ON true
 #define SKELETON_LOAD_ON false
-#define MAIN_LEVEL_ON true
+#define MAIN_LEVEL_ON false
 #define INPUT_ABSTRACTED_ON true
 
 #define NUMBER_OF_AI 5
@@ -4554,7 +4554,8 @@ void CGameMangerSystem::LoadMikesGraphicsSandbox()
 	//}
 
 	//Create Clayton Animated
-	tempImport = pcGraphicsSystem->ReadMesh("meshData_PirateMoveForward.txt");
+	//tempImport = pcGraphicsSystem->ReadMesh("meshData_PirateMoveForward.txt");
+	tempImport = pcGraphicsSystem->ReadMesh2("MoveForward_Clayton_output_animation.mesh");
 	matOpt = pcGraphicsSystem->CreateTexturesFromFile(tempImport.vtMaterials, tempImport.meshCount);
 
 	int myMesh;
@@ -4705,7 +4706,7 @@ int CGameMangerSystem::MikesGraphicsSandbox()
 
 			XMFLOAT4X4 * tweenJoints = pcAnimationSystem->PlayAnimation(tThisWorld.atAnimationVariant[nCurrentEntity], tThisWorld.atAnimation[nCurrentEntity], tThisWorld.atAnimation[0].tTimer.localTime);
 
-			for (int i = 0; i < 59; ++i)
+			for (int i = 0; i < 62; ++i)
 			{
 				memcpy(&tAnimVertexBuffer.m_d3dJointsForVS[i], &tweenJoints[i], sizeof(tweenJoints[i]));
 			}
@@ -4727,10 +4728,10 @@ int CGameMangerSystem::MikesGraphicsSandbox()
 
 	pcGraphicsSystem->m_pd3dSwapchain->Present(0, 0);
 
-	tThisWorld.atAnimation[0].tTimer.GetLocalTime(tThisWorld.atAnimation[0].tTimer.tSceneTimer, tThisWorld.atAnimation[0].tTimer.localTime);
-	tThisWorld.atAnimation[0].tTimer.DisplayTimes(pcInputSystem);
+	//tThisWorld.atAnimation[0].tTimer.GetLocalTime(tThisWorld.atAnimation[0].tTimer.tSceneTimer, tThisWorld.atAnimation[0].tTimer.localTime);
+	//tThisWorld.atAnimation[0].tTimer.DisplayTimes(pcInputSystem);
 
-	/*if (pcInputSystem->InputCheck(G_KEY_M) == 1 && !buttonPressed)
+	if (pcInputSystem->InputCheck(G_KEY_M) == 1 && !buttonPressed)
 	{
 		if (tThisWorld.atAnimation[904].m_tAnim.m_vtKeyFrames[tThisWorld.atAnimationVariant[904].tClaytonAnim.nextFrame].dTime == 0 && tThisWorld.atAnimation[904].m_tAnim.m_vtKeyFrames[tThisWorld.atAnimationVariant[904].tClaytonAnim.currentFrame].dTime != 0)
 		{
@@ -4741,7 +4742,7 @@ int CGameMangerSystem::MikesGraphicsSandbox()
 		}
 		else
 		{
-			tThisWorld.atAnimation[0].tTimer.localTime = tThisWorld.atAnimation[904].m_tAnim.m_vtKeyFrames[tThisWorld.atAnimationVariant[904].tClaytonAnim.nextFrame].dTime;
+			tThisWorld.atAnimation[0].tTimer.localTime = tThisWorld.atAnimation[904].m_tAnim.m_vtKeyFrames[tThisWorld.atAnimationVariant[904].tClaytonAnim.nextFrame].dTime - .001;
 		}
 
 		buttonPressed = true;
@@ -4749,7 +4750,7 @@ int CGameMangerSystem::MikesGraphicsSandbox()
 	else if (pcInputSystem->InputCheck(G_KEY_M) == 0 && buttonPressed)
 	{
 		buttonPressed = false;
-	}*/
+	}
 
 	//End Time
 	return 10;

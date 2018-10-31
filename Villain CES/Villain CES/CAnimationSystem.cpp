@@ -12,7 +12,7 @@ CAnimationSystem::~CAnimationSystem()
 XMFLOAT4X4 * CAnimationSystem::PlayAnimation(TAnimationVariant& animationVariant, TAnimation& theAnimation, float& realTime)
 {
 	CalculateFrameCount(animationVariant, theAnimation, realTime);
-	static XMFLOAT4X4 jointsForVS[59];//Clayton Joints
+	static XMFLOAT4X4 jointsForVS[62];//Clayton Joints
 	std::vector<XMMATRIX> thisFramesTweenJointMatrix;
 
 	if (animationVariant.tClaytonAnim.forward)
@@ -44,11 +44,17 @@ XMFLOAT4X4 * CAnimationSystem::PlayAnimation(TAnimationVariant& animationVariant
 				//Cur Frame and next Frame Position Vectors
 			XMVECTOR x, y;
 			//Cur Frame and next Frame Joint Matrices in 3x3 format
-			XMFLOAT3X3 format;
-			XMStoreFloat3x3(&format, theAnimation.m_tAnim.m_vtKeyFrames[animationVariant.tClaytonAnim.currentFrame].m_vd3dJointMatrices[i]);
-			XMMATRIX qOne = XMLoadFloat3x3(&format);
-			XMStoreFloat3x3(&format, theAnimation.m_tAnim.m_vtKeyFrames[animationVariant.tClaytonAnim.nextFrame].m_vd3dJointMatrices[i]);
-			XMMATRIX qTwo = XMLoadFloat3x3(&format);
+			XMFLOAT4X4 format;
+			XMStoreFloat4x4(&format, theAnimation.m_tAnim.m_vtKeyFrames[animationVariant.tClaytonAnim.currentFrame].m_vd3dJointMatrices[i]);
+			XMMATRIX qOne = XMLoadFloat4x4(&format);
+			XMStoreFloat4x4(&format, theAnimation.m_tAnim.m_vtKeyFrames[animationVariant.tClaytonAnim.nextFrame].m_vd3dJointMatrices[i]);
+			XMMATRIX qTwo = XMLoadFloat4x4(&format);
+			//qOne = NLerp(qOne, qTwo, t);
+			//qOne *= (1 - t);
+			//qTwo *= t;
+			//
+			//qOne += qTwo;
+
 			//Converted 3x3 matrices into quaternions
 			XMVECTOR qOneI = XMQuaternionRotationMatrix(qOne);
 			XMVECTOR qTwoI = XMQuaternionRotationMatrix(qTwo);
@@ -61,7 +67,8 @@ XMFLOAT4X4 * CAnimationSystem::PlayAnimation(TAnimationVariant& animationVariant
 			//Set tween position
 			tween.r[3] = XMVectorLerp(x, y, t);
 			//Set simpleMesh position now that it's been tweened
-			thisFramesTweenJointMatrix.push_back(tween);
+			//thisFramesTweenJointMatrix.push_back(tween);
+			thisFramesTweenJointMatrix.push_back(theAnimation.m_tAnim.m_vtKeyFrames[animationVariant.tClaytonAnim.currentFrame].m_vd3dJointMatrices[i]);
 
 			//memcpy(&temp.pos, &tween.r[3].m128_f32, sizeof(temp.pos));
 			//Set simpleMesh normal now that it's been tweened
@@ -130,7 +137,7 @@ XMFLOAT4X4 * CAnimationSystem::PlayAnimation(TAnimationVariant& animationVariant
 	//Transpose joints to send to shader
 	for (int i = 0; i < theAnimation.invBindPosesForJoints.size(); i++)
 	{
-		XMStoreFloat4x4(&jointsForVS[i], XMMatrixMultiply(XMMatrixInverse(nullptr, theAnimation.invBindPosesForJoints[i]), thisFramesTweenJointMatrix[i]));
+		XMStoreFloat4x4(&jointsForVS[i], XMMatrixMultiply(theAnimation.invBindPosesForJoints[i], thisFramesTweenJointMatrix[i]));
 	}
 
 	return jointsForVS;
@@ -187,4 +194,17 @@ void CAnimationSystem::CalculateFrameCount(TAnimationVariant& animationVariant, 
 	animationVariant.tClaytonAnim.nextFrame %= theAnimation.m_tAnim.m_vtKeyFrames.size();
 }
 
+XMMATRIX CAnimationSystem::NLerp(XMMATRIX m1, XMMATRIX m2, double timeRatio)
+{
+	XMMATRIX resultMatrix;
+	for (size_t i = 0; i < 4; i++)
+	{
+		for (size_t p = 0; p < 4; p++)
+		{
+			resultMatrix.r[i].m128_f32[p] = (m2.r[i].m128_f32[p] - m1.r[i].m128_f32[p]) * timeRatio + m1.r[i].m128_f32[p];
+		}
 
+	}
+
+	return resultMatrix;
+}

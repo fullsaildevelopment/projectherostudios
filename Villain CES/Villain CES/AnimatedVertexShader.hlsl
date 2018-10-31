@@ -8,7 +8,7 @@ cbuffer MatrixBuffer : register(b0)
 	matrix worldMatrix;
 	matrix viewMatrix;
 	matrix projectionMatrix;
-	float4x4 joints[59];//large number
+	float4x4 joints[62];//large number
 };
 
 //////////////

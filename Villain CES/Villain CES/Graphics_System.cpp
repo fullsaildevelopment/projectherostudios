@@ -1587,6 +1587,278 @@ ImporterData CGraphicsSystem::ReadMesh(const char * input_file_path)
 	return tImportMe;
 }
 
+ImporterData CGraphicsSystem::ReadMesh2(const char* input_file_path)
+{
+#pragma region Declarations
+	int * lamberts = nullptr;
+	TMyAmbientColor * ambientColor = nullptr;
+	TMyDiffuseColor * diffuseColor = nullptr;
+	TMySpecularColor* specularColor = nullptr;
+	TMyEmissiveColor* emmissiveColor = nullptr;
+	TMyFileNameSizes* fileNameSizes = nullptr;
+	TMyFileNames* fileNames = nullptr;
+	TPBRFileNameSizes* pbrfileNameSizes = nullptr;
+	TPBRFileNames* pbrfileNames = nullptr;
+	double *dTransparencyOrShininess = nullptr;
+	float *fMetallicness = nullptr;
+	float *fRoughness = nullptr;
+	int hasMaterial = 0;
+	int bufferSize = 0;
+	int materialCount = 0;
+	int bSize = sizeof(int);
+	unsigned int * indexBuf = nullptr;
+	TMeshFormat * meshArray = nullptr;
+	int polyVertCount = 0;
+	int uniqueVertexCount = 0;
+	int hasPolygon = 0;
+	int animFrameCount = 0;
+	int nodeCount = 0;
+	double duration = 0;
+	int hasPose = 0;
+	double worldTranslation[3];
+	double worldRotation[3];
+	double worldScaling[3];
+	std::vector<int> parent_Indices;
+	std::vector<XMMATRIX> invBindPosesForJoints;
+	TAnimationClip myAnim;
+
+	int meshCount = 1;
+	
+	int vertCount = 0;
+#pragma endregion
+
+#pragma region ImportDataMemoryAllocations
+
+	ImporterData tImportMe;
+	// Has Vertex type and Joints
+	tImportMe.vtMeshes = new TMeshImport[meshCount];
+	tImportMe.vtMaterials = new TMaterialImport[meshCount];
+	tImportMe.vtAnimations = new TAnimationImport[meshCount];
+	tImportMe.meshCount = meshCount;
+#pragma endregion
+
+	std::fstream file;
+
+	file.open(input_file_path, std::ios_base::binary | std::ios_base::in);
+
+	if (file.is_open())
+	{
+#pragma region Import code from ReadFile
+		file.read((char*)&tImportMe.vtMeshes[meshCount - 1].nUniqueVertexCount, sizeof(uint32_t));
+		file.read((char*)&tImportMe.vtMeshes[meshCount - 1].nPolygonVertexCount, sizeof(uint32_t));
+
+		//mesh->verts = new simple_vert[mesh->vert_count];
+		//mesh->indices = new uint32_t[mesh->index_count];
+		//uint32_t* tempIndices = new uint32_t[tImportMe.vtMeshes[meshCount - 1].nPolygonVertexCount];
+
+		tImportMe.vtMeshes[meshCount - 1].meshArrays = new TMeshFormat[tImportMe.vtMeshes[meshCount - 1].nUniqueVertexCount];
+		tImportMe.vtMeshes[meshCount - 1].indexBuffer = new unsigned int[tImportMe.vtMeshes[meshCount - 1].nPolygonVertexCount];
+
+		for (int i = 0; i < tImportMe.vtMeshes[meshCount - 1].nUniqueVertexCount; ++i)
+		{
+			Simple_Vert tempVert;
+			float4 tempColor;
+			float4 tempUV;
+
+			//file.read((char*)&tempVert, sizeof(Simple_Vert));
+			file.read((char*)&tImportMe.vtMeshes[meshCount - 1].meshArrays[i].pos, sizeof(float4));
+			file.read((char*)&tImportMe.vtMeshes[meshCount - 1].meshArrays[i].norm, sizeof(float4));
+			file.read((char*)&tempColor, sizeof(float4));
+			file.read((char*)&tImportMe.vtMeshes[meshCount - 1].meshArrays[i].uv, sizeof(float) * 2);
+			file.read((char*)&tImportMe.vtMeshes[meshCount - 1].meshArrays[i].joints, sizeof(int) * 4);
+			file.read((char*)&tempUV, sizeof(float) * 2);
+			file.read((char*)&tImportMe.vtMeshes[meshCount - 1].meshArrays[i].weights, sizeof(float4));
+
+			//memcpy(&tImportMe.vtMeshes[meshCount].meshArrays[i].pos, &tempVert.pos, sizeof(float4));
+			//memcpy(&tImportMe.vtMeshes[meshCount].meshArrays[i].norm, &tempVert.norm, sizeof(float4));
+			//memcpy(&tImportMe.vtMeshes[meshCount].meshArrays[i].uv, &tempVert.tex_coord, sizeof(float) * 2);
+			//memcpy(&tImportMe.vtMeshes[meshCount].meshArrays[i].joints, &tempVert.joints, sizeof(int) * 4);
+			//memcpy(&tImportMe.vtMeshes[meshCount].meshArrays[i].weights, &tempVert.weights, sizeof(float4));
+
+			//tImportMe.vtMeshes[i].meshArrays->pos[0] = tempVert.pos.x;
+			//tImportMe.vtMeshes[i].meshArrays->pos[1] = tempVert.pos.y;
+			//tImportMe.vtMeshes[i].meshArrays->pos[2] = tempVert.pos.z;
+			//tImportMe.vtMeshes[i].meshArrays->pos[3] = tempVert.pos.w;
+			//tImportMe.vtMeshes[i].meshArrays->norm[0] = tempVert.norm.x;
+			//tImportMe.vtMeshes[i].meshArrays->norm[1] = tempVert.norm.y;
+			//tImportMe.vtMeshes[i].meshArrays->norm[2] = tempVert.norm.z;
+			//tImportMe.vtMeshes[i].meshArrays->norm[3] = tempVert.norm.w;
+			//tImportMe.vtMeshes[i].meshArrays->uv[0] = tempVert.tex_coord[0];
+			//tImportMe.vtMeshes[i].meshArrays->uv[1] = tempVert.tex_coord[1];
+			//tImportMe.vtMeshes[i].meshArrays->joints[0] = tempVert.joints[0];
+			//tImportMe.vtMeshes[i].meshArrays->joints[1] = tempVert.joints[1];
+			//tImportMe.vtMeshes[i].meshArrays->joints[2] = tempVert.joints[2];
+			//tImportMe.vtMeshes[i].meshArrays->joints[3] = tempVert.joints[3];
+			//tImportMe.vtMeshes[i].meshArrays->weights[0] = tempVert.weights.x;
+			//tImportMe.vtMeshes[i].meshArrays->weights[1] = tempVert.weights.y;
+			//tImportMe.vtMeshes[i].meshArrays->weights[2] = tempVert.weights.z;
+			//tImportMe.vtMeshes[i].meshArrays->weights[3] = tempVert.weights.w;
+
+			//mesh->verts[i].color[0] = 0;
+			//mesh->verts[i].color[1] = 1;
+			//mesh->verts[i].color[2] = 0;
+			//mesh->verts[i].color[3] = 1;
+		}
+		for (int i = 0; i < tImportMe.vtMeshes[meshCount - 1].nPolygonVertexCount; ++i)
+		{
+			file.read((char*)&tImportMe.vtMeshes[meshCount - 1].indexBuffer[i], sizeof(uint32_t));
+		}
+
+		//int writeSizeIn;
+
+		//file.read((char*)&writeSizeIn, sizeof(int));
+
+		//char* tempbuffer = new char[writeSizeIn];
+
+		//file.read(tempbuffer, writeSizeIn);
+
+		//size_t size = writeSizeIn + 1;
+		//wchar_t* finalBuff = new wchar_t[size];
+		//size_t sizeOut;
+		//mbstowcs_s(&sizeOut, finalBuff, size, tempbuffer, size - 1);
+
+		////tImportMe.vtMaterials->m_tFileNameSizes.fileNameSize1 = size;
+		////tImportMe.vtMaterials->m_tFileNames.fileName1 = finalBuff;
+
+		////material[0][material_t::DIFFUSE].input.file_path = finalBuff;
+
+		//float4 tempColor;
+
+		//file.read((char*)&tempColor, sizeof(float4));
+		//delete[] tempbuffer;
+
+		//tImportMe.vtMaterials->m_tDiffuseColor.r = tempColor.x;
+		//tImportMe.vtMaterials->m_tDiffuseColor.g = tempColor.y;
+		//tImportMe.vtMaterials->m_tDiffuseColor.b = tempColor.z;
+
+		//file.read((char*)&writeSizeIn, sizeof(int));
+
+		//tempbuffer = new char[writeSizeIn];
+
+		//file.read(tempbuffer, writeSizeIn);
+
+		//size = writeSizeIn + 1;
+		//finalBuff = new wchar_t[size];
+		//mbstowcs_s(&sizeOut, finalBuff, size, tempbuffer, size - 1);
+
+		////tImportMe.vtMaterials->m_tFileNameSizes.fileNameSize2 = size;
+		////tImportMe.vtMaterials->m_tFileNames.fileName2 = finalBuff;
+
+		////material[0][material_t::EMISSIVE].input.file_path = finalBuff;
+		//file.read((char*)&tempColor, sizeof(float4));
+		//delete[] tempbuffer;
+
+		////tImportMe.vtMaterials->m_tDiffuseColor.r = tempColor.x;
+		////tImportMe.vtMaterials->m_tDiffuseColor.g = tempColor.y;
+		////tImportMe.vtMaterials->m_tDiffuseColor.b = tempColor.z;
+
+		//file.read((char*)&writeSizeIn, sizeof(int));
+
+		//tempbuffer = new char[writeSizeIn];
+
+		//file.read(tempbuffer, writeSizeIn);
+
+		//size = writeSizeIn + 1;
+		//finalBuff = new wchar_t[size];
+		//mbstowcs_s(&sizeOut, finalBuff, size, tempbuffer, size - 1);
+
+		////tImportMe.vtMaterials->m_tFileNameSizes.fileNameSize3 = size;
+		////tImportMe.vtMaterials->m_tFileNames.fileName3 = finalBuff;
+
+		////material[0][material_t::SPECULAR].input.file_path = finalBuff;
+		//file.read((char*)&tempColor, sizeof(float4));
+		//delete[] tempbuffer;
+
+		////tImportMe.vtMaterials->m_tDiffuseColor.r = tempColor.x;
+		////tImportMe.vtMaterials->m_tDiffuseColor.g = tempColor.y;
+		////tImportMe.vtMaterials->m_tDiffuseColor.b = tempColor.z;
+
+		//file.read((char*)&tempColor, sizeof(float4));
+
+		//file.close();
+
+		//MakeVertexBuffer(vBuffer, mesh->vert_count, mesh->verts);
+		//MakeIndexBuffer(iBuffer, mesh->index_count, mesh->indices);
+#pragma endregion
+
+		int jointCount = 0;
+		file.read((char*)&jointCount, sizeof(int));
+
+		for (int i = 0; i < jointCount; ++i)
+		{
+			XMMATRIX temp_Joint;
+			int tempParentIndex = 0;
+
+			float tempFloat = 0;
+
+			file.read((char*)&temp_Joint.r[0].m128_f32[0], sizeof(float));
+			file.read((char*)&temp_Joint.r[0].m128_f32[1], sizeof(float));
+			file.read((char*)&temp_Joint.r[0].m128_f32[2], sizeof(float));
+			file.read((char*)&temp_Joint.r[0].m128_f32[3], sizeof(float));
+			file.read((char*)&temp_Joint.r[1].m128_f32[0], sizeof(float));
+			file.read((char*)&temp_Joint.r[1].m128_f32[1], sizeof(float));
+			file.read((char*)&temp_Joint.r[1].m128_f32[2], sizeof(float));
+			file.read((char*)&temp_Joint.r[1].m128_f32[3], sizeof(float));
+			file.read((char*)&temp_Joint.r[2].m128_f32[0], sizeof(float));
+			file.read((char*)&temp_Joint.r[2].m128_f32[1], sizeof(float));
+			file.read((char*)&temp_Joint.r[2].m128_f32[2], sizeof(float));
+			file.read((char*)&temp_Joint.r[2].m128_f32[3], sizeof(float));
+			file.read((char*)&temp_Joint.r[3].m128_f32[0], sizeof(float));
+			file.read((char*)&temp_Joint.r[3].m128_f32[1], sizeof(float));
+			file.read((char*)&temp_Joint.r[3].m128_f32[2], sizeof(float));
+			file.read((char*)&temp_Joint.r[3].m128_f32[3], sizeof(float));
+
+			file.read((char*)&tempParentIndex, sizeof(int));
+
+			tImportMe.vtAnimations[meshCount - 1].animClip.m_vnParentIndicies.push_back(tempParentIndex);
+			tImportMe.vtAnimations[meshCount - 1].invBindPosesForJoints.push_back(XMMatrixInverse(nullptr, temp_Joint));
+		}
+
+		file.read((char*)&tImportMe.vtAnimations[meshCount - 1].animClip.dDuration, sizeof(double));
+
+		int animationFrameCount = 0;
+		file.read((char*)&animationFrameCount, sizeof(int));
+
+		for (int i = 0; i < animationFrameCount; ++i)
+		{
+			TKeyframe tempKeyframe;
+			XMMATRIX tempJoint;
+
+			file.read((char*)&tempKeyframe.dTime, sizeof(double));
+
+			file.read((char*)&jointCount, sizeof(int));
+
+			for (int j = 0; j < jointCount; ++j)
+			{
+				file.read((char*)&tempJoint.r[0].m128_f32[0], sizeof(float));
+				file.read((char*)&tempJoint.r[0].m128_f32[1], sizeof(float));
+				file.read((char*)&tempJoint.r[0].m128_f32[2], sizeof(float));
+				file.read((char*)&tempJoint.r[0].m128_f32[3], sizeof(float));
+				file.read((char*)&tempJoint.r[1].m128_f32[0], sizeof(float));
+				file.read((char*)&tempJoint.r[1].m128_f32[1], sizeof(float));
+				file.read((char*)&tempJoint.r[1].m128_f32[2], sizeof(float));
+				file.read((char*)&tempJoint.r[1].m128_f32[3], sizeof(float));
+				file.read((char*)&tempJoint.r[2].m128_f32[0], sizeof(float));
+				file.read((char*)&tempJoint.r[2].m128_f32[1], sizeof(float));
+				file.read((char*)&tempJoint.r[2].m128_f32[2], sizeof(float));
+				file.read((char*)&tempJoint.r[2].m128_f32[3], sizeof(float));
+				file.read((char*)&tempJoint.r[3].m128_f32[0], sizeof(float));
+				file.read((char*)&tempJoint.r[3].m128_f32[1], sizeof(float));
+				file.read((char*)&tempJoint.r[3].m128_f32[2], sizeof(float));
+				file.read((char*)&tempJoint.r[3].m128_f32[3], sizeof(float));
+
+				tempKeyframe.m_vd3dJointMatrices.push_back(tempJoint);
+			}
+
+			tImportMe.vtAnimations[meshCount - 1].animClip.m_vtKeyFrames.push_back(tempKeyframe);
+		}
+
+		file.close();
+	}
+
+	return tImportMe;
+}
+
 XMVECTOR CGraphicsSystem::GetCameraPos()
 {
 	XMVECTOR campos;

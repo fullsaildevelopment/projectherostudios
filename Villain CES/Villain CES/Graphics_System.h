@@ -74,7 +74,7 @@ public:
 		XMMATRIX m_d3dWorldMatrix;
 		XMMATRIX m_d3dViewMatrix;
 		XMMATRIX m_d3dProjectionMatrix;
-		XMFLOAT4X4 m_d3dJointsForVS[59];
+		XMFLOAT4X4 m_d3dJointsForVS[62];
 	};
 
 	struct TMyPixelBufferType
@@ -165,6 +165,7 @@ public:
 	void UpdateLineVTBuffer(D3D11_BUFFER_DESC* bufDesc, ID3D11Buffer* &vertexBuffer, std::vector<TPrimalVert> lineVector);
 	void StoreBeamPoints(XMFLOAT3 startPoint, XMFLOAT3 endPoint, std::vector<TPrimalVert> &BeamPoints, float timeScroll);
 	ImporterData ReadMesh(const char * input_file_path);
+	ImporterData ReadMesh2(const char * input_file_path);
 	XMVECTOR GetCameraPos();
 	XMMATRIX SetDefaultCameraMatrix();
 	XMMATRIX ResetAimModeCameraOffset();
