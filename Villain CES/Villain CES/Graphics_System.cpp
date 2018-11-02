@@ -1671,6 +1671,8 @@ ImporterData CGraphicsSystem::ReadMesh2(const char* input_file_path)
 			file.read((char*)&tempUV, sizeof(float) * 2);
 			file.read((char*)&tImportMe.vtMeshes[meshCount - 1].meshArrays[i].weights, sizeof(float4));
 
+			tImportMe.vtMeshes[meshCount - 1].meshArrays[i].uv[1] *= -1;
+
 			//tImportMe.vtMeshes[meshCount - 1].meshArrays[i].pos[2] *= -1;
 
 			//memcpy(&tImportMe.vtMeshes[meshCount].meshArrays[i].pos, &tempVert.pos, sizeof(float4));
@@ -1717,18 +1719,19 @@ ImporterData CGraphicsSystem::ReadMesh2(const char* input_file_path)
 		file.read(tempbuffer, writeSizeIn);
 
 		//size_t size = writeSizeIn + 1;
-		char* finalBuff = new char[writeSizeIn + 1];
+		char* finalBuff = new char[writeSizeIn + 2];
 		//size_t sizeOut;
 		//mbstowcs_s(&sizeOut, finalBuff, size, tempbuffer, size - 1);
 
 		for (int i = 0; i < writeSizeIn; ++i)
 		{
-			finalBuff[i] = tempbuffer[i];
+			finalBuff[i + 1] = tempbuffer[i];
 		}
-		finalBuff[writeSizeIn] = '\0';
+		finalBuff[0] = 'd';
+		finalBuff[writeSizeIn + 1] = '\0';
 
-		//tImportMe.vtMaterials->m_tFileNameSizes.fileNameSize1 = writeSizeIn;
-		//tImportMe.vtMaterials->m_tFileNames.fileName1 = finalBuff;
+		tImportMe.vtMaterials->m_tFileNameSizes.fileNameSize1 = writeSizeIn;
+		tImportMe.vtMaterials->m_tFileNames.fileName1 = finalBuff;
 
 		//material[0][material_t::DIFFUSE].input.file_path = finalBuff;
 
@@ -1748,17 +1751,18 @@ ImporterData CGraphicsSystem::ReadMesh2(const char* input_file_path)
 		file.read(tempbuffer, writeSizeIn);
 
 		//size = writeSizeIn + 1;
-		finalBuff = new char[writeSizeIn + 1];
+		finalBuff = new char[writeSizeIn + 2];
 		//mbstowcs_s(&sizeOut, finalBuff, size, tempbuffer, size - 1);
 
 		for (int i = 0; i < writeSizeIn; ++i)
 		{
-			finalBuff[i] = tempbuffer[i];
+			finalBuff[i + 1] = tempbuffer[i];
 		}
-		finalBuff[writeSizeIn] = '\0';
+		finalBuff[0] = 'd';
+		finalBuff[writeSizeIn + 1] = '\0';
 
-		//tImportMe.vtMaterials->m_tFileNameSizes.fileNameSize2 = writeSizeIn;
-		//tImportMe.vtMaterials->m_tFileNames.fileName2 = finalBuff;
+		tImportMe.vtMaterials->m_tFileNameSizes.fileNameSize2 = writeSizeIn;
+		tImportMe.vtMaterials->m_tFileNames.fileName2 = finalBuff;
 
 		//material[0][material_t::EMISSIVE].input.file_path = finalBuff;
 		file.read((char*)&tempColor, sizeof(float4));
@@ -1775,17 +1779,18 @@ ImporterData CGraphicsSystem::ReadMesh2(const char* input_file_path)
 		file.read(tempbuffer, writeSizeIn);
 
 		//size = writeSizeIn + 1;
-		finalBuff = new char[writeSizeIn + 1];
+		finalBuff = new char[writeSizeIn + 2];
 		//mbstowcs_s(&sizeOut, finalBuff, size, tempbuffer, size - 1);
 
 		for (int i = 0; i < writeSizeIn; ++i)
 		{
-			finalBuff[i] = tempbuffer[i];
+			finalBuff[i + 1] = tempbuffer[i];
 		}
-		finalBuff[writeSizeIn] = '\0';
+		finalBuff[0] = 'd';
+		finalBuff[writeSizeIn + 1] = '\0';
 
-		//tImportMe.vtMaterials->m_tFileNameSizes.fileNameSize3 = writeSizeIn;
-		//tImportMe.vtMaterials->m_tFileNames.fileName3 = finalBuff;
+		tImportMe.vtMaterials->m_tFileNameSizes.fileNameSize3 = writeSizeIn;
+		tImportMe.vtMaterials->m_tFileNames.fileName3 = finalBuff;
 
 		//material[0][material_t::SPECULAR].input.file_path = finalBuff;
 		file.read((char*)&tempColor, sizeof(float4));

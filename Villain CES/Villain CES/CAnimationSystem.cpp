@@ -67,8 +67,8 @@ XMFLOAT4X4 * CAnimationSystem::PlayAnimation(TAnimationVariant& animationVariant
 			//Set tween position
 			tween.r[3] = XMVectorLerp(x, y, t);
 			//Set simpleMesh position now that it's been tweened
-			//thisFramesTweenJointMatrix.push_back(tween);
-			thisFramesTweenJointMatrix.push_back(theAnimation.m_tAnim.m_vtKeyFrames[animationVariant.tClaytonAnim.currentFrame].m_vd3dJointMatrices[i]);
+			thisFramesTweenJointMatrix.push_back(tween);
+			//thisFramesTweenJointMatrix.push_back(theAnimation.m_tAnim.m_vtKeyFrames[animationVariant.tClaytonAnim.currentFrame].m_vd3dJointMatrices[i]);
 			//thisFramesTweenJointMatrix.push_back(XMMatrixInverse(nullptr, theAnimation.invBindPosesForJoints[i]));
 
 			//memcpy(&temp.pos, &tween.r[3].m128_f32, sizeof(temp.pos));
@@ -139,6 +139,23 @@ XMFLOAT4X4 * CAnimationSystem::PlayAnimation(TAnimationVariant& animationVariant
 	for (int i = 0; i < theAnimation.invBindPosesForJoints.size(); i++)
 	{
 		XMStoreFloat4x4(&jointsForVS[i], XMMatrixMultiply(theAnimation.invBindPosesForJoints[i], thisFramesTweenJointMatrix[i]));
+
+		jointsForVS[i]._11 *= .01;
+		jointsForVS[i]._12 *= .01;
+		jointsForVS[i]._13 *= .01;
+		jointsForVS[i]._14 *= .01;
+		jointsForVS[i]._21 *= .01;
+		jointsForVS[i]._22 *= .01;
+		jointsForVS[i]._23 *= .01;
+		jointsForVS[i]._24 *= .01;
+		jointsForVS[i]._31 *= .01;
+		jointsForVS[i]._32 *= .01;
+		jointsForVS[i]._33 *= .01;
+		jointsForVS[i]._34 *= .01;
+		jointsForVS[i]._41 *= .01;
+		jointsForVS[i]._42 *= .01;
+		jointsForVS[i]._43 *= .01;
+		jointsForVS[i]._44 *= .01;
 	}
 
 	return jointsForVS;
