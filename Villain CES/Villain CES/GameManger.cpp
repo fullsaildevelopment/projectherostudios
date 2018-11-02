@@ -4912,7 +4912,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 #pragma endregion
 
 	//Clayton Import Data - ZFB
-	tempImport = pcGraphicsSystem->ReadMesh2("MoveForward_Clayton_output_animation.mesh");
+	tempImport = pcGraphicsSystem->ReadMesh2("meshData_PirateMoveForward.txt", 1);
 	matOpt = pcGraphicsSystem->CreateTexturesFromFile(tempImport.vtMaterials, tempImport.meshCount);
 	for (int meshIndex = 0; meshIndex < tempImport.meshCount; meshIndex++)
 	{
@@ -6369,6 +6369,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 
 				}*/
 				TAABB MyAbb = pcCollisionSystem->createAABBS(tThisWorld.atSimpleMesh[nCurrentEntity].m_VertexData, tThisWorld.atAABB[nCurrentEntity]);
+				
 				MyAbb.m_IndexLocation = nCurrentEntity;
 				tThisWorld.atAABB[nCurrentEntity] = MyAbb;
 				pcCollisionSystem->AddAABBCollider(MyAbb, nCurrentEntity);
@@ -6385,9 +6386,29 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 
 				TAABB MyAbb = pcCollisionSystem->createAABBS(tThisWorld.atMesh[nCurrentEntity].m_VertexData, tThisWorld.atAABB[nCurrentEntity]);
 				MyAbb.m_IndexLocation = nCurrentEntity;
+				if (nCurrentEntity == ClaytonIndex)
+				{
+					MyAbb.m_dMaxPoint.x *= 0.01f;
+					MyAbb.m_dMaxPoint.y *= 0.01f;
+					MyAbb.m_dMaxPoint.z *= 0.01f;
+
+					MyAbb.m_dMinPoint.x *= 0.01f;
+					MyAbb.m_dMinPoint.y *= 0.01f;
+					MyAbb.m_dMinPoint.z *= 0.01f;
+
+					MyAbb.m_dMinPointOrginal.x *= 0.01f;
+					MyAbb.m_dMinPointOrginal.y *= 0.01f;
+					MyAbb.m_dMinPointOrginal.z *= 0.01f;
+
+					MyAbb.m_dMaxPointOrginal.x *= 0.01f;
+					MyAbb.m_dMaxPointOrginal.y *= 0.01f;
+					MyAbb.m_dMaxPointOrginal.z *= 0.01f;
+
+
+				}
 				tThisWorld.atAABB[nCurrentEntity] = MyAbb;
 				pcCollisionSystem->AddAABBCollider(MyAbb, nCurrentEntity);
-
+				
 				if (tThisWorld.atShaderID[nCurrentEntity].m_nShaderID == 20) {
 					vector<int> DoorPices;
 					DoorPices.push_back(nCurrentEntity - 1);
