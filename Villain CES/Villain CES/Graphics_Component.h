@@ -250,7 +250,7 @@ struct TSimpleMesh
 
 struct TAnimation
 {
-	TAnimationClip m_tAnim;
+	TAnimationClip* m_tAnim = nullptr;
 	std::vector<XMMATRIX> invBindPosesForJoints;
 	System_Times tTimer;
 };

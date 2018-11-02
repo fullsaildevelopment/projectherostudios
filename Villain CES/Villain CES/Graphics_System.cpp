@@ -1822,7 +1822,7 @@ ImporterData CGraphicsSystem::ReadMesh(const char * input_file_path)
 	return tImportMe;
 }
 
-ImporterData CGraphicsSystem::ReadMesh2(const char* input_file_path, int texture)
+ImporterData CGraphicsSystem::ReadMesh2(const char* input_file_path, int texture, ImporterData* tImportMe2)
 {
 #pragma region Declarations
 	int * lamberts = nullptr;
@@ -1868,8 +1868,17 @@ ImporterData CGraphicsSystem::ReadMesh2(const char* input_file_path, int texture
 	// Has Vertex type and Joints
 	tImportMe.vtMeshes = new TMeshImport[meshCount];
 	tImportMe.vtMaterials = new TMaterialImport[meshCount];
-	tImportMe.vtAnimations = new TAnimationImport[meshCount];
-	tImportMe.meshCount = meshCount;
+
+	if (tImportMe2 != nullptr)
+	{
+		tImportMe.vtAnimations = new TAnimationImport[meshCount + tImportMe2->meshCount];
+		tImportMe.meshCount = meshCount + tImportMe2->meshCount;
+	}
+	else
+	{
+		tImportMe.vtAnimations = new TAnimationImport[meshCount];
+		tImportMe.meshCount = meshCount;
+	}
 #pragma endregion
 
 	std::fstream file;
@@ -1907,38 +1916,6 @@ ImporterData CGraphicsSystem::ReadMesh2(const char* input_file_path, int texture
 			file.read((char*)&tImportMe.vtMeshes[meshCount - 1].meshArrays[i].weights, sizeof(float4));
 
 			tImportMe.vtMeshes[meshCount - 1].meshArrays[i].uv[1] *= -1;
-
-			//tImportMe.vtMeshes[meshCount - 1].meshArrays[i].pos[2] *= -1;
-
-			//memcpy(&tImportMe.vtMeshes[meshCount].meshArrays[i].pos, &tempVert.pos, sizeof(float4));
-			//memcpy(&tImportMe.vtMeshes[meshCount].meshArrays[i].norm, &tempVert.norm, sizeof(float4));
-			//memcpy(&tImportMe.vtMeshes[meshCount].meshArrays[i].uv, &tempVert.tex_coord, sizeof(float) * 2);
-			//memcpy(&tImportMe.vtMeshes[meshCount].meshArrays[i].joints, &tempVert.joints, sizeof(int) * 4);
-			//memcpy(&tImportMe.vtMeshes[meshCount].meshArrays[i].weights, &tempVert.weights, sizeof(float4));
-
-			//tImportMe.vtMeshes[i].meshArrays->pos[0] = tempVert.pos.x;
-			//tImportMe.vtMeshes[i].meshArrays->pos[1] = tempVert.pos.y;
-			//tImportMe.vtMeshes[i].meshArrays->pos[2] = tempVert.pos.z;
-			//tImportMe.vtMeshes[i].meshArrays->pos[3] = tempVert.pos.w;
-			//tImportMe.vtMeshes[i].meshArrays->norm[0] = tempVert.norm.x;
-			//tImportMe.vtMeshes[i].meshArrays->norm[1] = tempVert.norm.y;
-			//tImportMe.vtMeshes[i].meshArrays->norm[2] = tempVert.norm.z;
-			//tImportMe.vtMeshes[i].meshArrays->norm[3] = tempVert.norm.w;
-			//tImportMe.vtMeshes[i].meshArrays->uv[0] = tempVert.tex_coord[0];
-			//tImportMe.vtMeshes[i].meshArrays->uv[1] = tempVert.tex_coord[1];
-			//tImportMe.vtMeshes[i].meshArrays->joints[0] = tempVert.joints[0];
-			//tImportMe.vtMeshes[i].meshArrays->joints[1] = tempVert.joints[1];
-			//tImportMe.vtMeshes[i].meshArrays->joints[2] = tempVert.joints[2];
-			//tImportMe.vtMeshes[i].meshArrays->joints[3] = tempVert.joints[3];
-			//tImportMe.vtMeshes[i].meshArrays->weights[0] = tempVert.weights.x;
-			//tImportMe.vtMeshes[i].meshArrays->weights[1] = tempVert.weights.y;
-			//tImportMe.vtMeshes[i].meshArrays->weights[2] = tempVert.weights.z;
-			//tImportMe.vtMeshes[i].meshArrays->weights[3] = tempVert.weights.w;
-
-			//mesh->verts[i].color[0] = 0;
-			//mesh->verts[i].color[1] = 1;
-			//mesh->verts[i].color[2] = 0;
-			//mesh->verts[i].color[3] = 1;
 		}
 		for (int i = 0; i < tImportMe.vtMeshes[meshCount - 1].nPolygonVertexCount; ++i)
 		{
@@ -2116,6 +2093,14 @@ ImporterData CGraphicsSystem::ReadMesh2(const char* input_file_path, int texture
 		}
 
 		file.close();
+	}
+
+	if (tImportMe2 != nullptr)
+	{
+		for (int i = 1; i < tImportMe.meshCount; ++i)
+		{
+			tImportMe.vtAnimations[i] = tImportMe2->vtAnimations[i - 1];
+		}
 	}
 
 	return tImportMe;
