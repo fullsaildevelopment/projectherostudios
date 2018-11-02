@@ -4990,7 +4990,7 @@ unsigned int createClaytonAnim(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TM
 			tmp.joints[j] = tMesh.meshArrays[i].joints[j];
 			tmp.weights[j] = tMesh.meshArrays[i].weights[j];
 
-			tmp.pos[j] *= 0.01;
+			//tmp.pos[j] *= 0.01;
 			//tmp.joints[j] *= 0.01;
 			//tmp.weights[j] *= 0.01;
 

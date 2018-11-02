@@ -12,7 +12,7 @@ CAnimationSystem::~CAnimationSystem()
 XMFLOAT4X4 * CAnimationSystem::PlayAnimation(TAnimationVariant& animationVariant, TAnimation& theAnimation, float& realTime)
 {
 	CalculateFrameCount(animationVariant, theAnimation, realTime);
-	static XMFLOAT4X4 jointsForVS[62];//Clayton Joints
+	static XMFLOAT4X4 jointsForVS[63];//Clayton Joints
 	std::vector<XMMATRIX> thisFramesTweenJointMatrix;
 
 	if (animationVariant.tClaytonAnim.forward)
@@ -69,6 +69,7 @@ XMFLOAT4X4 * CAnimationSystem::PlayAnimation(TAnimationVariant& animationVariant
 			//Set simpleMesh position now that it's been tweened
 			//thisFramesTweenJointMatrix.push_back(tween);
 			thisFramesTweenJointMatrix.push_back(theAnimation.m_tAnim.m_vtKeyFrames[animationVariant.tClaytonAnim.currentFrame].m_vd3dJointMatrices[i]);
+			//thisFramesTweenJointMatrix.push_back(XMMatrixInverse(nullptr, theAnimation.invBindPosesForJoints[i]));
 
 			//memcpy(&temp.pos, &tween.r[3].m128_f32, sizeof(temp.pos));
 			//Set simpleMesh normal now that it's been tweened
