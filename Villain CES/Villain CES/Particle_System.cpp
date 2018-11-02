@@ -13,7 +13,7 @@ Particle_System::~Particle_System()
 
 int Particle_System::CreateCube15(XMMATRIX LocationofParticle, TWorld * ptWorld)
 {
-	//return ParticleTest(ptWorld, LocationofParticle,0.1f);
+	return 0;//ParticleTest(ptWorld, LocationofParticle,0.1f);
 }
 
 void Particle_System::CreateAlotofCubes(XMMATRIX locationofParticles, TWorld * ptWorld, int numberofblood, CGraphicsSystem* pcGraphicsSystem, CAISystem* pcAisystem,float delta,bool color)

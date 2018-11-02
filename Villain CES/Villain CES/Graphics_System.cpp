@@ -853,7 +853,7 @@ TMaterialOptimized CGraphicsSystem::CreateTexturesFromFile(TMaterialImport * arr
 			const char * name = mapItr->second.c_str();
 			int size = mapItr->second.size();
 			mbsrtowcs_s(&result, fnPBR, 260, (const char **)(&name), size, &d);
-			CreateWICTextureFromFile(m_pd3dDevice, &fnPBR[1], NULL, &SRVArrayOfMaterials[count], NULL);
+			HRESULT result = CreateWICTextureFromFile(m_pd3dDevice, &fnPBR[1], NULL, &SRVArrayOfMaterials[count], NULL);
 			Map_SRVIndex_EntityIndex.insert(pair<int, int>(count, mapItr->first));
 			count++;
 			int test = 0;
@@ -1659,15 +1659,21 @@ ImporterData CGraphicsSystem::ReadMesh2(const char* input_file_path)
 			Simple_Vert tempVert;
 			float4 tempColor;
 			float4 tempUV;
+			float WforNorm;
 
 			//file.read((char*)&tempVert, sizeof(Simple_Vert));
 			file.read((char*)&tImportMe.vtMeshes[meshCount - 1].meshArrays[i].pos, sizeof(float4));
-			file.read((char*)&tImportMe.vtMeshes[meshCount - 1].meshArrays[i].norm, sizeof(float4));
+			file.read((char*)&tImportMe.vtMeshes[meshCount - 1].meshArrays[i].norm, sizeof(float3));
+			file.read((char*)&WforNorm, sizeof(float));
 			file.read((char*)&tempColor, sizeof(float4));
 			file.read((char*)&tImportMe.vtMeshes[meshCount - 1].meshArrays[i].uv, sizeof(float) * 2);
 			file.read((char*)&tImportMe.vtMeshes[meshCount - 1].meshArrays[i].joints, sizeof(int) * 4);
 			file.read((char*)&tempUV, sizeof(float) * 2);
 			file.read((char*)&tImportMe.vtMeshes[meshCount - 1].meshArrays[i].weights, sizeof(float4));
+
+			tImportMe.vtMeshes[meshCount - 1].meshArrays[i].uv[1] *= -1;
+
+			//tImportMe.vtMeshes[meshCount - 1].meshArrays[i].pos[2] *= -1;
 
 			//memcpy(&tImportMe.vtMeshes[meshCount].meshArrays[i].pos, &tempVert.pos, sizeof(float4));
 			//memcpy(&tImportMe.vtMeshes[meshCount].meshArrays[i].norm, &tempVert.norm, sizeof(float4));
@@ -1704,76 +1710,97 @@ ImporterData CGraphicsSystem::ReadMesh2(const char* input_file_path)
 			file.read((char*)&tImportMe.vtMeshes[meshCount - 1].indexBuffer[i], sizeof(uint32_t));
 		}
 
-		//int writeSizeIn;
+		int writeSizeIn;
 
-		//file.read((char*)&writeSizeIn, sizeof(int));
+		file.read((char*)&writeSizeIn, sizeof(int));
 
-		//char* tempbuffer = new char[writeSizeIn];
+		char* tempbuffer = new char[writeSizeIn];
 
-		//file.read(tempbuffer, writeSizeIn);
+		file.read(tempbuffer, writeSizeIn);
 
 		//size_t size = writeSizeIn + 1;
-		//wchar_t* finalBuff = new wchar_t[size];
+		char* finalBuff = new char[writeSizeIn + 2];
 		//size_t sizeOut;
 		//mbstowcs_s(&sizeOut, finalBuff, size, tempbuffer, size - 1);
 
-		////tImportMe.vtMaterials->m_tFileNameSizes.fileNameSize1 = size;
-		////tImportMe.vtMaterials->m_tFileNames.fileName1 = finalBuff;
+		for (int i = 0; i < writeSizeIn; ++i)
+		{
+			finalBuff[i + 1] = tempbuffer[i];
+		}
+		finalBuff[0] = 'd';
+		finalBuff[writeSizeIn + 1] = '\0';
 
-		////material[0][material_t::DIFFUSE].input.file_path = finalBuff;
+		tImportMe.vtMaterials->m_tFileNameSizes.fileNameSize1 = writeSizeIn;
+		tImportMe.vtMaterials->m_tFileNames.fileName1 = finalBuff;
 
-		//float4 tempColor;
+		//material[0][material_t::DIFFUSE].input.file_path = finalBuff;
 
-		//file.read((char*)&tempColor, sizeof(float4));
-		//delete[] tempbuffer;
+		float4 tempColor;
 
-		//tImportMe.vtMaterials->m_tDiffuseColor.r = tempColor.x;
-		//tImportMe.vtMaterials->m_tDiffuseColor.g = tempColor.y;
-		//tImportMe.vtMaterials->m_tDiffuseColor.b = tempColor.z;
+		file.read((char*)&tempColor, sizeof(float4));
+		delete[] tempbuffer;
 
-		//file.read((char*)&writeSizeIn, sizeof(int));
+		tImportMe.vtMaterials->m_tDiffuseColor.r = tempColor.x;
+		tImportMe.vtMaterials->m_tDiffuseColor.g = tempColor.y;
+		tImportMe.vtMaterials->m_tDiffuseColor.b = tempColor.z;
 
-		//tempbuffer = new char[writeSizeIn];
+		file.read((char*)&writeSizeIn, sizeof(int));
 
-		//file.read(tempbuffer, writeSizeIn);
+		tempbuffer = new char[writeSizeIn];
 
-		//size = writeSizeIn + 1;
-		//finalBuff = new wchar_t[size];
-		//mbstowcs_s(&sizeOut, finalBuff, size, tempbuffer, size - 1);
-
-		////tImportMe.vtMaterials->m_tFileNameSizes.fileNameSize2 = size;
-		////tImportMe.vtMaterials->m_tFileNames.fileName2 = finalBuff;
-
-		////material[0][material_t::EMISSIVE].input.file_path = finalBuff;
-		//file.read((char*)&tempColor, sizeof(float4));
-		//delete[] tempbuffer;
-
-		////tImportMe.vtMaterials->m_tDiffuseColor.r = tempColor.x;
-		////tImportMe.vtMaterials->m_tDiffuseColor.g = tempColor.y;
-		////tImportMe.vtMaterials->m_tDiffuseColor.b = tempColor.z;
-
-		//file.read((char*)&writeSizeIn, sizeof(int));
-
-		//tempbuffer = new char[writeSizeIn];
-
-		//file.read(tempbuffer, writeSizeIn);
+		file.read(tempbuffer, writeSizeIn);
 
 		//size = writeSizeIn + 1;
-		//finalBuff = new wchar_t[size];
+		finalBuff = new char[writeSizeIn + 2];
 		//mbstowcs_s(&sizeOut, finalBuff, size, tempbuffer, size - 1);
 
-		////tImportMe.vtMaterials->m_tFileNameSizes.fileNameSize3 = size;
-		////tImportMe.vtMaterials->m_tFileNames.fileName3 = finalBuff;
+		for (int i = 0; i < writeSizeIn; ++i)
+		{
+			finalBuff[i + 1] = tempbuffer[i];
+		}
+		finalBuff[0] = 'd';
+		finalBuff[writeSizeIn + 1] = '\0';
 
-		////material[0][material_t::SPECULAR].input.file_path = finalBuff;
-		//file.read((char*)&tempColor, sizeof(float4));
-		//delete[] tempbuffer;
+		tImportMe.vtMaterials->m_tFileNameSizes.fileNameSize2 = writeSizeIn;
+		tImportMe.vtMaterials->m_tFileNames.fileName2 = finalBuff;
 
-		////tImportMe.vtMaterials->m_tDiffuseColor.r = tempColor.x;
-		////tImportMe.vtMaterials->m_tDiffuseColor.g = tempColor.y;
-		////tImportMe.vtMaterials->m_tDiffuseColor.b = tempColor.z;
+		//material[0][material_t::EMISSIVE].input.file_path = finalBuff;
+		file.read((char*)&tempColor, sizeof(float4));
+		delete[] tempbuffer;
 
-		//file.read((char*)&tempColor, sizeof(float4));
+		tImportMe.vtMaterials->m_tEmissiveColor.r = tempColor.x;
+		tImportMe.vtMaterials->m_tEmissiveColor.g = tempColor.y;
+		tImportMe.vtMaterials->m_tEmissiveColor.b = tempColor.z;
+
+		file.read((char*)&writeSizeIn, sizeof(int));
+
+		tempbuffer = new char[writeSizeIn];
+
+		file.read(tempbuffer, writeSizeIn);
+
+		//size = writeSizeIn + 1;
+		finalBuff = new char[writeSizeIn + 2];
+		//mbstowcs_s(&sizeOut, finalBuff, size, tempbuffer, size - 1);
+
+		for (int i = 0; i < writeSizeIn; ++i)
+		{
+			finalBuff[i + 1] = tempbuffer[i];
+		}
+		finalBuff[0] = 'd';
+		finalBuff[writeSizeIn + 1] = '\0';
+
+		tImportMe.vtMaterials->m_tFileNameSizes.fileNameSize3 = writeSizeIn;
+		tImportMe.vtMaterials->m_tFileNames.fileName3 = finalBuff;
+
+		//material[0][material_t::SPECULAR].input.file_path = finalBuff;
+		file.read((char*)&tempColor, sizeof(float4));
+		delete[] tempbuffer;
+
+		tImportMe.vtMaterials->m_tSpecularColor.r = tempColor.x;
+		tImportMe.vtMaterials->m_tSpecularColor.g = tempColor.y;
+		tImportMe.vtMaterials->m_tSpecularColor.b = tempColor.z;
+
+		file.read((char*)&tempColor, sizeof(float4));
 
 		//file.close();
 

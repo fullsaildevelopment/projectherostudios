@@ -12,7 +12,7 @@ CAnimationSystem::~CAnimationSystem()
 XMFLOAT4X4 * CAnimationSystem::PlayAnimation(TAnimationVariant& animationVariant, TAnimation& theAnimation, float& realTime)
 {
 	CalculateFrameCount(animationVariant, theAnimation, realTime);
-	static XMFLOAT4X4 jointsForVS[62];//Clayton Joints
+	static XMFLOAT4X4 jointsForVS[63];//Clayton Joints
 	std::vector<XMMATRIX> thisFramesTweenJointMatrix;
 
 	if (animationVariant.tClaytonAnim.forward)
@@ -22,19 +22,15 @@ XMFLOAT4X4 * CAnimationSystem::PlayAnimation(TAnimationVariant& animationVariant
 		//std::cout << "Next Frame:\t" << nextFrame << "\n";
 		//thisFramesJointVec.clear();//Vector of positions/normals for joint animation
 		//updateNormal.clear();
-		const float frameDelta = theAnimation.m_tAnim.m_vtKeyFrames[1].dTime - theAnimation.m_tAnim.m_vtKeyFrames[0].dTime;
-		float t = (realTime - theAnimation.m_tAnim.m_vtKeyFrames[animationVariant.tClaytonAnim.currentFrame].dTime) / 
-			frameDelta;
 
-		/*if (realTime <= theAnimation.m_tAnim.m_vtKeyFrames[animationVariant.tClaytonAnim.nextFrame].dTime)
+		float t = (realTime - theAnimation.m_tAnim.m_vtKeyFrames[animationVariant.tClaytonAnim.currentFrame].dTime) / (theAnimation.m_tAnim.m_vtKeyFrames[animationVariant.tClaytonAnim.nextFrame].dTime - theAnimation.m_tAnim.m_vtKeyFrames[animationVariant.tClaytonAnim.currentFrame].dTime);
+		if (realTime <= theAnimation.m_tAnim.m_vtKeyFrames[animationVariant.tClaytonAnim.nextFrame].dTime)
 		{
 			if (realTime > theAnimation.m_tAnim.m_vtKeyFrames[animationVariant.tClaytonAnim.currentFrame].dTime)
-				t = (realTime - theAnimation.m_tAnim.m_vtKeyFrames[animationVariant.tClaytonAnim.currentFrame].dTime) / 
-				(theAnimation.m_tAnim.m_vtKeyFrames[animationVariant.tClaytonAnim.nextFrame].dTime + theAnimation.m_tAnim.dDuration - theAnimation.m_tAnim.m_vtKeyFrames[animationVariant.tClaytonAnim.currentFrame].dTime);
+				t = (realTime - theAnimation.m_tAnim.m_vtKeyFrames[animationVariant.tClaytonAnim.currentFrame].dTime) / (theAnimation.m_tAnim.m_vtKeyFrames[animationVariant.tClaytonAnim.nextFrame].dTime + theAnimation.m_tAnim.dDuration - theAnimation.m_tAnim.m_vtKeyFrames[animationVariant.tClaytonAnim.currentFrame].dTime);
 			else
-				t = (realTime + theAnimation.m_tAnim.dDuration - theAnimation.m_tAnim.m_vtKeyFrames[animationVariant.tClaytonAnim.currentFrame].dTime) / 
-				(theAnimation.m_tAnim.m_vtKeyFrames[animationVariant.tClaytonAnim.nextFrame].dTime + theAnimation.m_tAnim.dDuration - theAnimation.m_tAnim.m_vtKeyFrames[animationVariant.tClaytonAnim.currentFrame].dTime);
-		}*/
+				t = (realTime + theAnimation.m_tAnim.dDuration - theAnimation.m_tAnim.m_vtKeyFrames[animationVariant.tClaytonAnim.currentFrame].dTime) / (theAnimation.m_tAnim.m_vtKeyFrames[animationVariant.tClaytonAnim.nextFrame].dTime + theAnimation.m_tAnim.dDuration - theAnimation.m_tAnim.m_vtKeyFrames[animationVariant.tClaytonAnim.currentFrame].dTime);
+		}
 
 		thisFramesTweenJointMatrix.clear();//Vector of XMMatrix's
 		for (int i = 0; i < theAnimation.invBindPosesForJoints.size(); i++)
@@ -46,10 +42,7 @@ XMFLOAT4X4 * CAnimationSystem::PlayAnimation(TAnimationVariant& animationVariant
 			//for (int j = 0; j < theAnimation.invBindPosesForJoints.size(); j++)
 			//{
 				//Cur Frame and next Frame Position Vectors
-			XMVECTOR x, y, finalPos;
-			x = theAnimation.m_tAnim.m_vtKeyFrames[animationVariant.tClaytonAnim.currentFrame].m_vd3dJointMatrices[i].r[3];
-			y = theAnimation.m_tAnim.m_vtKeyFrames[animationVariant.tClaytonAnim.nextFrame].m_vd3dJointMatrices[i].r[3];
-			finalPos = XMVectorLerp(x, y, t);
+			XMVECTOR x, y;
 			//Cur Frame and next Frame Joint Matrices in 3x3 format
 			XMFLOAT4X4 format;
 			XMStoreFloat4x4(&format, theAnimation.m_tAnim.m_vtKeyFrames[animationVariant.tClaytonAnim.currentFrame].m_vd3dJointMatrices[i]);
@@ -65,15 +58,19 @@ XMFLOAT4X4 * CAnimationSystem::PlayAnimation(TAnimationVariant& animationVariant
 			//Converted 3x3 matrices into quaternions
 			XMVECTOR qOneI = XMQuaternionRotationMatrix(qOne);
 			XMVECTOR qTwoI = XMQuaternionRotationMatrix(qTwo);
+			x = theAnimation.m_tAnim.m_vtKeyFrames[animationVariant.tClaytonAnim.currentFrame].m_vd3dJointMatrices[i].r[3];
+			y = theAnimation.m_tAnim.m_vtKeyFrames[animationVariant.tClaytonAnim.nextFrame].m_vd3dJointMatrices[i].r[3];
 			//get the time for the next frame
 			//float t = theAnimation.m_tAnim.m_vtKeyFrames[ animationVariant.tClaytonAnim.currentFrame].dTime - realTime;
 			//Convert tween quaternion back to a matrix
 			XMMATRIX tween = XMMatrixRotationQuaternion(XMQuaternionSlerp(qOneI, qTwoI, t));
 			//Set tween position
+			tween.r[3] = XMVectorLerp(x, y, t);
 			//Set simpleMesh position now that it's been tweened
-			//thisFramesTweenJointMatrix.push_back(tween);
 			thisFramesTweenJointMatrix.push_back(tween);
-			tween.r[3] = finalPos;
+			//thisFramesTweenJointMatrix.push_back(theAnimation.m_tAnim.m_vtKeyFrames[animationVariant.tClaytonAnim.currentFrame].m_vd3dJointMatrices[i]);
+			//thisFramesTweenJointMatrix.push_back(XMMatrixInverse(nullptr, theAnimation.invBindPosesForJoints[i]));
+
 			//memcpy(&temp.pos, &tween.r[3].m128_f32, sizeof(temp.pos));
 			//Set simpleMesh normal now that it's been tweened
 			//memcpy(&temp.norm, &XMQuaternionSlerp(qOneI, qTwoI, t - realTime).m128_f32, sizeof(temp.norm));
@@ -142,6 +139,23 @@ XMFLOAT4X4 * CAnimationSystem::PlayAnimation(TAnimationVariant& animationVariant
 	for (int i = 0; i < theAnimation.invBindPosesForJoints.size(); i++)
 	{
 		XMStoreFloat4x4(&jointsForVS[i], XMMatrixMultiply(theAnimation.invBindPosesForJoints[i], thisFramesTweenJointMatrix[i]));
+
+		jointsForVS[i]._11 *= .01;
+		jointsForVS[i]._12 *= .01;
+		jointsForVS[i]._13 *= .01;
+		jointsForVS[i]._14 *= .01;
+		jointsForVS[i]._21 *= .01;
+		jointsForVS[i]._22 *= .01;
+		jointsForVS[i]._23 *= .01;
+		jointsForVS[i]._24 *= .01;
+		jointsForVS[i]._31 *= .01;
+		jointsForVS[i]._32 *= .01;
+		jointsForVS[i]._33 *= .01;
+		jointsForVS[i]._34 *= .01;
+		jointsForVS[i]._41 *= .01;
+		jointsForVS[i]._42 *= .01;
+		jointsForVS[i]._43 *= .01;
+		jointsForVS[i]._44 *= .01;
 	}
 
 	return jointsForVS;
