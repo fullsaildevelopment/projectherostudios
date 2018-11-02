@@ -4557,8 +4557,8 @@ void CGameMangerSystem::LoadMikesGraphicsSandbox()
 	//}
 
 	//Create Clayton Animated
-	//tempImport = pcGraphicsSystem->ReadMesh("meshData_PirateMoveForward.txt");
-	tempImport = pcGraphicsSystem->ReadMesh2("MoveForward_Clayton_output_animation.mesh");
+	tempImport = pcGraphicsSystem->ReadMesh2("meshData_PirateMoveBackward.txt", 1);
+	//tempImport = pcGraphicsSystem->ReadMesh2("MoveForward_Clayton_output_animation.mesh", 1);
 	//tempImport = pcGraphicsSystem->ReadMesh2("Run_Mage_output_animation.mesh");
 	matOpt = pcGraphicsSystem->CreateTexturesFromFile(tempImport.vtMaterials, tempImport.meshCount);
 
