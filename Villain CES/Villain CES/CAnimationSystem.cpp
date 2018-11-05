@@ -133,7 +133,7 @@ XMFLOAT4X4 * CAnimationSystem::PlayAnimation(TAnimationVariant& animationVariant
 	{
 		XMStoreFloat4x4(&jointsForVS[i], XMMatrixMultiply(theAnimation.invBindPosesForJoints[i], thisFramesTweenJointMatrix[i]));
 
-		jointsForVS[i]._11 *= .01;
+		/*jointsForVS[i]._11 *= .01;
 		jointsForVS[i]._12 *= .01;
 		jointsForVS[i]._13 *= .01;
 		jointsForVS[i]._14 *= .01;
@@ -148,7 +148,7 @@ XMFLOAT4X4 * CAnimationSystem::PlayAnimation(TAnimationVariant& animationVariant
 		jointsForVS[i]._41 *= .01;
 		jointsForVS[i]._42 *= .01;
 		jointsForVS[i]._43 *= .01;
-		jointsForVS[i]._44 *= .01;
+		jointsForVS[i]._44 *= .01;*/
 	}
 
 	return jointsForVS;
