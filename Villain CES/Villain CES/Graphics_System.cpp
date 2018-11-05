@@ -424,7 +424,7 @@ void CGraphicsSystem::CleanD3DObject(TWorld * ptPlanet, int nEntityIndex)
 	destroyEntity(ptPlanet, nEntityIndex);
 }
 
-bool CGraphicsSystem::GetTexturePathHelper(fstream& file, ImporterData& tImportMe, int textureNumber, int texture)
+void CGraphicsSystem::GetTexturePathHelper(fstream& file, ImporterData& tImportMe, int textureNumber, int texture)
 {
 	int writeSizeIn;
 
@@ -612,6 +612,10 @@ bool CGraphicsSystem::GetTexturePathHelper(fstream& file, ImporterData& tImportM
 			break;
 		}
 	}
+	float4 tempColor;
+
+	file.read((char*)&tempColor, sizeof(float4));
+	delete[] tempbuffer;
 
 	switch (textureNumber)
 	{
@@ -619,12 +623,20 @@ bool CGraphicsSystem::GetTexturePathHelper(fstream& file, ImporterData& tImportM
 	{
 		tImportMe.vtMaterials->m_tFileNameSizes.fileNameSize1 = writeSizeIn;
 		tImportMe.vtMaterials->m_tFileNames.fileName1 = finalBuff;
+
+		tImportMe.vtMaterials->m_tDiffuseColor.r = tempColor.x;
+		tImportMe.vtMaterials->m_tDiffuseColor.g = tempColor.y;
+		tImportMe.vtMaterials->m_tDiffuseColor.b = tempColor.z;
 	}
 	break;
 	case 1:
 	{
 		tImportMe.vtMaterials->m_tFileNameSizes.fileNameSize2 = writeSizeIn;
 		tImportMe.vtMaterials->m_tFileNames.fileName2 = finalBuff;
+		tImportMe.vtMaterials->m_tEmissiveColor.r = tempColor.x;
+		tImportMe.vtMaterials->m_tEmissiveColor.g = tempColor.y;
+		tImportMe.vtMaterials->m_tEmissiveColor.b = tempColor.z;
+		
 	}
 	break;
 	case 2:
@@ -635,28 +647,21 @@ bool CGraphicsSystem::GetTexturePathHelper(fstream& file, ImporterData& tImportM
 	break;
 	case 3:
 	{
+		
 		tImportMe.vtMaterials->m_tFileNameSizes.fileNameSize4 = writeSizeIn;
 		tImportMe.vtMaterials->m_tFileNames.fileName4 = finalBuff;
+		tImportMe.vtMaterials->m_tSpecularColor.r = tempColor.x;
+		tImportMe.vtMaterials->m_tSpecularColor.g = tempColor.y;
+		tImportMe.vtMaterials->m_tSpecularColor.b = tempColor.z;
 	}
 	break;
 	default:
 		break;
 	}
-	//tImportMe.vtMaterials->m_tFileNameSizes.fileNameSize1 = writeSizeIn;
-	//tImportMe.vtMaterials->m_tFileNames.fileName1 = finalBuff;
 
-	//material[0][material_t::DIFFUSE].input.file_path = finalBuff;
+	
 
-	float4 tempColor;
-
-	file.read((char*)&tempColor, sizeof(float4));
-	delete[] tempbuffer;
-
-	tImportMe.vtMaterials->m_tDiffuseColor.r = tempColor.x;
-	tImportMe.vtMaterials->m_tDiffuseColor.g = tempColor.y;
-	tImportMe.vtMaterials->m_tDiffuseColor.b = tempColor.z;
-
-	return false;
+	
 }
 
 void CGraphicsSystem::CreateShaders(ID3D11Device * device)
@@ -920,6 +925,20 @@ void CGraphicsSystem::CreateShaders(ID3D11Device * device)
 	//Create the constant buffer pointer so we can access the vertex shader constant buffer from within this class.
 	device->CreateBuffer(&d3dAnimatedVertexBufferDesc, NULL, &m_pd3dAnimatedVertexBuffer);
 #pragma endregion
+
+
+#pragma region Light Buffer
+	D3D11_BUFFER_DESC d3dLightPixelBufferDesc;
+
+	d3dLightPixelBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+	d3dLightPixelBufferDesc.ByteWidth = sizeof(TLightBufferType);
+	d3dLightPixelBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	d3dLightPixelBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	d3dLightPixelBufferDesc.MiscFlags = 0;
+	d3dLightPixelBufferDesc.StructureByteStride = 0;
+
+	device->CreateBuffer(&d3dLightPixelBufferDesc, NULL, &m_pd3dLightPixelBuffer);
+#pragma endregion  
 }
 
 TMaterialOptimized CGraphicsSystem::CreateTexturesFromFile(TMaterialImport * arrayOfMaterials, int numberOfEntities)
@@ -1823,7 +1842,7 @@ ImporterData CGraphicsSystem::ReadMesh(const char * input_file_path)
 	return tImportMe;
 }
 
-ImporterData CGraphicsSystem::ReadMesh2(const char* input_file_path, int texture)
+ImporterData CGraphicsSystem::ReadMesh2(const char* input_file_path, int texture, ImporterData* tImportMe2)
 {
 #pragma region Declarations
 	int * lamberts = nullptr;
@@ -1869,7 +1888,18 @@ ImporterData CGraphicsSystem::ReadMesh2(const char* input_file_path, int texture
 	// Has Vertex type and Joints
 	tImportMe.vtMeshes = new TMeshImport[meshCount];
 	tImportMe.vtMaterials = new TMaterialImport[meshCount];
-	tImportMe.vtAnimations = new TAnimationImport[meshCount];
+
+	if (tImportMe2 != nullptr)
+	{
+		tImportMe.vtAnimations = new TAnimationImport[meshCount + tImportMe2->animationCount];
+		tImportMe.animationCount = meshCount + tImportMe2->animationCount;
+	}
+	else
+	{
+		tImportMe.vtAnimations = new TAnimationImport[meshCount];
+		tImportMe.animationCount = meshCount;
+	}
+
 	tImportMe.meshCount = meshCount;
 #pragma endregion
 
@@ -1908,38 +1938,6 @@ ImporterData CGraphicsSystem::ReadMesh2(const char* input_file_path, int texture
 			file.read((char*)&tImportMe.vtMeshes[meshCount - 1].meshArrays[i].weights, sizeof(float4));
 
 			tImportMe.vtMeshes[meshCount - 1].meshArrays[i].uv[1] *= -1;
-
-			//tImportMe.vtMeshes[meshCount - 1].meshArrays[i].pos[2] *= -1;
-
-			//memcpy(&tImportMe.vtMeshes[meshCount].meshArrays[i].pos, &tempVert.pos, sizeof(float4));
-			//memcpy(&tImportMe.vtMeshes[meshCount].meshArrays[i].norm, &tempVert.norm, sizeof(float4));
-			//memcpy(&tImportMe.vtMeshes[meshCount].meshArrays[i].uv, &tempVert.tex_coord, sizeof(float) * 2);
-			//memcpy(&tImportMe.vtMeshes[meshCount].meshArrays[i].joints, &tempVert.joints, sizeof(int) * 4);
-			//memcpy(&tImportMe.vtMeshes[meshCount].meshArrays[i].weights, &tempVert.weights, sizeof(float4));
-
-			//tImportMe.vtMeshes[i].meshArrays->pos[0] = tempVert.pos.x;
-			//tImportMe.vtMeshes[i].meshArrays->pos[1] = tempVert.pos.y;
-			//tImportMe.vtMeshes[i].meshArrays->pos[2] = tempVert.pos.z;
-			//tImportMe.vtMeshes[i].meshArrays->pos[3] = tempVert.pos.w;
-			//tImportMe.vtMeshes[i].meshArrays->norm[0] = tempVert.norm.x;
-			//tImportMe.vtMeshes[i].meshArrays->norm[1] = tempVert.norm.y;
-			//tImportMe.vtMeshes[i].meshArrays->norm[2] = tempVert.norm.z;
-			//tImportMe.vtMeshes[i].meshArrays->norm[3] = tempVert.norm.w;
-			//tImportMe.vtMeshes[i].meshArrays->uv[0] = tempVert.tex_coord[0];
-			//tImportMe.vtMeshes[i].meshArrays->uv[1] = tempVert.tex_coord[1];
-			//tImportMe.vtMeshes[i].meshArrays->joints[0] = tempVert.joints[0];
-			//tImportMe.vtMeshes[i].meshArrays->joints[1] = tempVert.joints[1];
-			//tImportMe.vtMeshes[i].meshArrays->joints[2] = tempVert.joints[2];
-			//tImportMe.vtMeshes[i].meshArrays->joints[3] = tempVert.joints[3];
-			//tImportMe.vtMeshes[i].meshArrays->weights[0] = tempVert.weights.x;
-			//tImportMe.vtMeshes[i].meshArrays->weights[1] = tempVert.weights.y;
-			//tImportMe.vtMeshes[i].meshArrays->weights[2] = tempVert.weights.z;
-			//tImportMe.vtMeshes[i].meshArrays->weights[3] = tempVert.weights.w;
-
-			//mesh->verts[i].color[0] = 0;
-			//mesh->verts[i].color[1] = 1;
-			//mesh->verts[i].color[2] = 0;
-			//mesh->verts[i].color[3] = 1;
 		}
 		for (int i = 0; i < tImportMe.vtMeshes[meshCount - 1].nPolygonVertexCount; ++i)
 		{
@@ -2041,6 +2039,7 @@ ImporterData CGraphicsSystem::ReadMesh2(const char* input_file_path, int texture
 		//tImportMe.vtMaterials->m_tSpecularColor.b = tempColor.z;
 
 		file.read((char*)&tempColor, sizeof(float4));
+		tImportMe.vtMaterials[meshCount - 1].dTransparencyOrShininess = tempColor.x;
 
 #pragma endregion
 
@@ -2117,6 +2116,14 @@ ImporterData CGraphicsSystem::ReadMesh2(const char* input_file_path, int texture
 		}
 
 		file.close();
+	}
+
+	if (tImportMe2 != nullptr)
+	{
+		for (int i = 1; i < tImportMe.animationCount; ++i)
+		{
+			tImportMe.vtAnimations[i] = tImportMe2->vtAnimations[i - 1];
+		}
 	}
 
 	return tImportMe;
@@ -2355,12 +2362,12 @@ void CGraphicsSystem::InitSkyboxShaderData(ID3D11DeviceContext * pd3dDeviceConte
 	}
 }
 
-void CGraphicsSystem::InitAnimShaderData(ID3D11DeviceContext * pd3dDeviceContext, TAnimatedVertexBufferType d3dVertexBuffer, TMesh tMesh, XMMATRIX CameraMatrix)
+void CGraphicsSystem::InitAnimShaderData(ID3D11DeviceContext * pd3dDeviceContext, TAnimatedVertexBufferType d3dVertexBuffer, TMesh tMesh, TLightMaterials tMaterials,  XMMATRIX CameraMatrix)
 {
-	D3D11_MAPPED_SUBRESOURCE d3dAnimatedVertexMappedResource;
+	D3D11_MAPPED_SUBRESOURCE d3dAnimatedVertexMappedResource, d3dLightPixelMappedResource;
 
 	TAnimatedVertexBufferType *ptAnimatedVertexBufferDataPointer = nullptr;
-
+	TLightBufferType *ptLightPixelBufferDataPointer = nullptr;
 	XMMATRIX d3dView;
 	d3dView = d3dVertexBuffer.m_d3dViewMatrix;
 	d3dView = XMMatrixInverse(nullptr, CameraMatrix);
@@ -2385,6 +2392,19 @@ void CGraphicsSystem::InitAnimShaderData(ID3D11DeviceContext * pd3dDeviceContext
 	memcpy(&ptAnimatedVertexBufferDataPointer->m_d3dJointsForVS, &d3dVertexBuffer.m_d3dJointsForVS, sizeof(d3dVertexBuffer.m_d3dJointsForVS));
 	// Unlock the constant buffer.
 	pd3dDeviceContext->Unmap(m_pd3dAnimatedVertexBuffer, 0);
+
+#pragma endregion
+
+#pragma region Map to Light Constant Buffer
+	pd3dDeviceContext->Map(m_pd3dLightPixelBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &d3dLightPixelMappedResource);
+	ptLightPixelBufferDataPointer = (TLightBufferType*)d3dLightPixelMappedResource.pData;
+
+	ptLightPixelBufferDataPointer->Ambience = XMFLOAT4(0, 1, 0, 0);
+	ptLightPixelBufferDataPointer->lightEyePos = XMFLOAT4();
+	ptLightPixelBufferDataPointer->m_Proprties.m_Diffuse = tMaterials.m_Diffuse;
+	ptLightPixelBufferDataPointer->m_Proprties.m_Emissive = tMaterials.m_Emissive;
+	ptLightPixelBufferDataPointer->m_Proprties.m_Specular = tMaterials.m_Specular;
+	ptLightPixelBufferDataPointer->m_Proprties.shininess = tMaterials.shininess;
 
 #pragma endregion
 

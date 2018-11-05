@@ -195,6 +195,7 @@ struct TAnimationImport
 
 struct ImporterData
 {
+	int animationCount = 0;
 	int meshCount = 0;
 	TMeshImport* vtMeshes;
 	TMaterialImport* vtMaterials;
@@ -251,17 +252,27 @@ struct TSimpleMesh
 
 struct TAnimation
 {
-	TAnimationClip m_tAnim;
+	TAnimationClip* m_tAnim = nullptr;
 	std::vector<XMMATRIX> invBindPosesForJoints;
 	System_Times tTimer;
 };
 
-struct TMaterial
+struct TLights
 {
-	/*
-		TODO:
-		Fill out Material Struct
-	*/
+	XMFLOAT4 m_d3dLightPosition;
+	XMFLOAT4 m_Direction;
+	XMFLOAT4 m_d3dLightColor;
+	int m_lightType;
+	int enabled;
+	XMFLOAT2 m_padding;
+
+};
+struct TLightMaterials
+{
+	XMFLOAT4 m_Emissive;
+	XMFLOAT4 m_Diffuse;
+	XMFLOAT4 m_Specular;
+	XMFLOAT4 shininess;
 };
 
 struct TTexture
@@ -281,6 +292,7 @@ struct TWorldMatrix
 {
 	XMMATRIX worldMatrix = XMMatrixIdentity();
 };
+
 
 struct Simple_Vert
 {

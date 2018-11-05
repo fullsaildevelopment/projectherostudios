@@ -4557,15 +4557,19 @@ void CGameMangerSystem::LoadMikesGraphicsSandbox()
 	//}
 
 	//Create Clayton Animated
-	tempImport = pcGraphicsSystem->ReadMesh2("meshData_PirateMoveBackward.txt", 1);
+	tempImport = pcGraphicsSystem->ReadMesh2("meshData_PirateStrafeRight.txt", 1);
+	tempImport = pcGraphicsSystem->ReadMesh2("meshData_PirateStrafeLeft.txt", 1, &tempImport);
+	tempImport = pcGraphicsSystem->ReadMesh2("meshData_PirateMoveBackward.txt", 1, &tempImport);
+	tempImport = pcGraphicsSystem->ReadMesh2("meshData_PirateMoveForward.txt", 1, &tempImport);
+	tempImport = pcGraphicsSystem->ReadMesh2("meshData_PirateIdle.txt", 1, &tempImport);
 	//tempImport = pcGraphicsSystem->ReadMesh2("MoveForward_Clayton_output_animation.mesh", 1);
 	//tempImport = pcGraphicsSystem->ReadMesh2("Run_Mage_output_animation.mesh");
-	matOpt = pcGraphicsSystem->CreateTexturesFromFile(tempImport.vtMaterials, tempImport.meshCount);
+	matOpt = pcGraphicsSystem->CreateTexturesFromFile(tempImport.vtMaterials, 1);
 
 	int myMesh;
 	for (int meshIndex = 0; meshIndex < tempImport.meshCount; meshIndex++)
 	{
-		myMesh = createClaytonAnim(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, tempImport.vtMeshes[meshIndex], matOpt, tempImport.vtAnimations[meshIndex], meshIndex);
+		myMesh = createClaytonAnim(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, tempImport.vtMeshes[meshIndex], matOpt, tempImport.vtAnimations[meshIndex], meshIndex, tempImport.animationCount);
 	}
 
 	tThisWorld.atWorldMatrix[myMesh].worldMatrix.r[3].m128_f32[0] = -4;
@@ -4590,18 +4594,6 @@ int CGameMangerSystem::MikesGraphicsSandbox()
 	static XMMATRIX m_d3d_ResultMatrix = pcGraphicsSystem->SetDefaultWorldPosition();
 	static XMMATRIX m_d3dOffsetMatrix = pcGraphicsSystem->SetDefaultOffset();
 	tCameraMode = pcInputSystem->CameraModeListen(tCameraMode);
-	if (pcInputSystem->InputCheck(G_KEY_P))
-	{
-		return 3;
-	}
-
-	if (pcInputSystem->InputCheck(G_KEY_Y))
-	{
-		if (Health > 0)
-		{
-			Health -= .1f;
-		}
-	}
 
 	if (tCameraMode.bSwitch == true)
 	{
@@ -4732,8 +4724,66 @@ int CGameMangerSystem::MikesGraphicsSandbox()
 
 	pcGraphicsSystem->m_pd3dSwapchain->Present(0, 0);
 
-	tThisWorld.atAnimation[0].tTimer.GetLocalTime(tThisWorld.atAnimation[0].tTimer.tSceneTimer, tThisWorld.atAnimation[0].tTimer.localTime);
-	tThisWorld.atAnimation[0].tTimer.DisplayTimes(pcInputSystem);
+	tThisWorld.atAnimation[904].tTimer.GetLocalTime(tThisWorld.atAnimation[904].tTimer.tSceneTimer, tThisWorld.atAnimation[904].tTimer.localTime);
+	tThisWorld.atAnimation[904].tTimer.DisplayTimes(pcInputSystem);
+
+	if (pcInputSystem->InputCheck(G_KEY_I))
+	{
+		if (tThisWorld.atAnimationVariant[904].tClaytonAnim.animType != 1)
+		{
+			tThisWorld.atAnimation[904].tTimer.localTime = 0;
+
+			tThisWorld.atAnimationVariant[904].tClaytonAnim.currentFrame = 0;
+			tThisWorld.atAnimationVariant[904].tClaytonAnim.nextFrame = 1;
+		}
+
+		tThisWorld.atAnimationVariant[904].tClaytonAnim.animType = 1;
+	}
+	else if(pcInputSystem->InputCheck(G_KEY_K))
+	{
+		if (tThisWorld.atAnimationVariant[904].tClaytonAnim.animType != 2)
+		{
+			tThisWorld.atAnimation[904].tTimer.localTime = 0;
+
+			tThisWorld.atAnimationVariant[904].tClaytonAnim.currentFrame = 0;
+			tThisWorld.atAnimationVariant[904].tClaytonAnim.nextFrame = 1;
+		}
+
+		tThisWorld.atAnimationVariant[904].tClaytonAnim.animType = 2;
+	}
+	else if (pcInputSystem->InputCheck(G_KEY_J))
+	{
+		if (tThisWorld.atAnimationVariant[904].tClaytonAnim.animType != 4)
+		{
+			tThisWorld.atAnimation[904].tTimer.localTime = 0;
+
+			tThisWorld.atAnimationVariant[904].tClaytonAnim.currentFrame = 0;
+			tThisWorld.atAnimationVariant[904].tClaytonAnim.nextFrame = 1;
+		}
+
+		tThisWorld.atAnimationVariant[904].tClaytonAnim.animType = 4;
+	}
+	else if (pcInputSystem->InputCheck(G_KEY_L))
+	{
+		if (tThisWorld.atAnimationVariant[904].tClaytonAnim.animType != 3)
+		{
+			tThisWorld.atAnimation[904].tTimer.localTime = 0;
+
+			tThisWorld.atAnimationVariant[904].tClaytonAnim.currentFrame = 0;
+			tThisWorld.atAnimationVariant[904].tClaytonAnim.nextFrame = 1;
+		}
+
+		tThisWorld.atAnimationVariant[904].tClaytonAnim.animType = 3;
+	}
+	else if(tThisWorld.atAnimationVariant[904].tClaytonAnim.animType != 0)
+	{
+		tThisWorld.atAnimationVariant[904].tClaytonAnim.animType = 0;
+
+		tThisWorld.atAnimation[904].tTimer.localTime = 0;
+
+		tThisWorld.atAnimationVariant[904].tClaytonAnim.currentFrame = 0;
+		tThisWorld.atAnimationVariant[904].tClaytonAnim.nextFrame = 1;
+	}
 
 	//if (pcInputSystem->InputCheck(G_KEY_M) == 1 && !buttonPressed)
 	//{
@@ -4742,11 +4792,11 @@ int CGameMangerSystem::MikesGraphicsSandbox()
 	//		tThisWorld.atAnimationVariant[904].tClaytonAnim.currentFrame = 0;
 	//		tThisWorld.atAnimationVariant[904].tClaytonAnim.nextFrame = 1;
 	//
-	//		tThisWorld.atAnimation[0].tTimer.localTime = tThisWorld.atAnimation[904].m_tAnim.m_vtKeyFrames[tThisWorld.atAnimationVariant[904].tClaytonAnim.currentFrame].dTime;
+	//		tThisWorld.atAnimation[904].tTimer.localTime = tThisWorld.atAnimation[904].m_tAnim.m_vtKeyFrames[tThisWorld.atAnimationVariant[904].tClaytonAnim.currentFrame].dTime;
 	//	}
 	//	else
 	//	{
-	//		tThisWorld.atAnimation[0].tTimer.localTime = tThisWorld.atAnimation[904].m_tAnim.m_vtKeyFrames[tThisWorld.atAnimationVariant[904].tClaytonAnim.nextFrame].dTime - .001;
+	//		tThisWorld.atAnimation[904].tTimer.localTime = tThisWorld.atAnimation[904].m_tAnim.m_vtKeyFrames[tThisWorld.atAnimationVariant[904].tClaytonAnim.nextFrame].dTime - .001;
 	//	}
 	//
 	//	buttonPressed = true;
@@ -4916,7 +4966,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	matOpt = pcGraphicsSystem->CreateTexturesFromFile(tempImport.vtMaterials, tempImport.meshCount);
 	for (int meshIndex = 0; meshIndex < tempImport.meshCount; meshIndex++)
 	{
-		ClaytonIndex = createClaytonAnim(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, tempImport.vtMeshes[meshIndex], matOpt, tempImport.vtAnimations[meshIndex], meshIndex);
+		ClaytonIndex = createClaytonAnim(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, tempImport.vtMeshes[meshIndex], matOpt, tempImport.vtMaterials[meshIndex], tempImport.vtAnimations, meshIndex, tempImport.animationCount);
 	}
 	//pcInputSystem->m_Companion1 = ClaytonIndex;
 	m_d3dPlayerMatrix = tThisWorld.atWorldMatrix[ClaytonIndex].worldMatrix = XMMatrixRotationRollPitchYaw(0, XMConvertToRadians(180), 0);
@@ -6356,7 +6406,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 		if (cylinder == nCurrentEntity) {
 			float x = 0;
 		}
-		if (tThisWorld.atCollisionMask[nCurrentEntity].m_tnCollisionMask > 1 && /*nCurrentEntity != 216 */nCurrentEntity != 215 && nCurrentEntity != 218 && nCurrentEntity != 118 && nCurrentEntity != 233 && nCurrentEntity != 133 && nCurrentEntity != 33)// && nCurrentEntity != 18)
+		if (tThisWorld.atCollisionMask[nCurrentEntity].m_tnCollisionMask > 1 && nCurrentEntity != 210&& nCurrentEntity != 215 && nCurrentEntity != 218 && nCurrentEntity != 118 && nCurrentEntity != 233 && nCurrentEntity != 133 && nCurrentEntity != 33)// && nCurrentEntity != 18)
 		{
 
 			if (tThisWorld.atSimpleMesh[nCurrentEntity].m_nVertexCount > tThisWorld.atDebugMesh[nCurrentEntity].m_nVertexCount)
@@ -6467,6 +6517,16 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 			}
 		}
 	}
+	tThisWorld.atAABB[208].m_dMaxPoint.x *= 2;
+	tThisWorld.atAABB[208].m_dMaxPoint.y *= 2;
+	tThisWorld.atAABB[208].m_dMaxPoint.z *= 2;
+	tThisWorld.atAABB[208].m_dMinPoint.z *= -2;
+	tThisWorld.atAABB[208].m_dMinPoint.x *= -2;
+	tThisWorld.atAABB[208].m_dMinPoint.y *= -2;
+	pcCollisionSystem->replaceAABB(208, tThisWorld.atAABB[208]);
+
+
+
 
 	for (int nCurrentEntity = 0; nCurrentEntity < ENTITYCOUNT; nCurrentEntity++)
 	{
@@ -8450,7 +8510,7 @@ int CGameMangerSystem::RealLevelUpdate()
 					pcAiSystem->UpdateFrustum(tThisWorld.atClaytonVision.eyes0, ClaytonFrustum, 60, 1, 0.1, 150);
 
 					tThisWorld.atWorldMatrix[claytonFrustumIndex].worldMatrix = claytonFrustumMatrix;
-					pcGraphicsSystem->InitAnimShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tAnimVertexBuffer, tThisWorld.atMesh[nCurrentEntity], aimCamera->d3d_Position);
+					pcGraphicsSystem->InitAnimShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tAnimVertexBuffer, tThisWorld.atMesh[nCurrentEntity],tThisWorld.atMaterial[nCurrentEntity], aimCamera->d3d_Position);
 
 				}
 				else
@@ -9178,7 +9238,15 @@ int CGameMangerSystem::RealLevelUpdate()
 				tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = empty;
 			}
 		}
+		if (tThisWorld.atAABB[nCurrentEntity].TimeColiderIsDIsabled > 0 && tThisWorld.atAABB[nCurrentEntity].disabledabb == true) {
+			tThisWorld.atAABB[nCurrentEntity].TimeColiderIsDIsabled -= fpsTimer.GetDelta() + 1;
+			cout << "disabled timer" << tThisWorld.atAABB[nCurrentEntity].TimeColiderIsDIsabled;
 
+		}
+		else {
+			tThisWorld.atAABB[nCurrentEntity].disabledabb = false;
+			pcCollisionSystem->replaceAABB(nCurrentEntity, tThisWorld.atAABB[nCurrentEntity]);
+		}
 		if (tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_SIMPLEMESH | COMPONENT_SHADERID))
 		{
 			tTempPixelBuffer.m_d3dCollisionColor = tThisWorld.atSimpleMesh[nCurrentEntity].m_nColor;

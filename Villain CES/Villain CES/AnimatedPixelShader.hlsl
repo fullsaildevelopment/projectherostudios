@@ -36,6 +36,8 @@ struct MATERIAL
     float4 emissive;
     float4 diffuse;
     float4 specular;
+    // X element holds actual shininess to save on padding that why its a float4 when it would only need a float or double
+
     float4 shininess;
 
 	//int specularPower;
