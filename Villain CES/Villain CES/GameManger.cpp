@@ -9000,7 +9000,15 @@ int CGameMangerSystem::RealLevelUpdate()
 				tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = empty;
 			}
 		}
+		if (tThisWorld.atAABB[nCurrentEntity].TimeColiderIsDIsabled > 0 && tThisWorld.atAABB[nCurrentEntity].disabledabb == true) {
+			tThisWorld.atAABB[nCurrentEntity].TimeColiderIsDIsabled -= fpsTimer.GetDelta() + 1;
+			cout << "disabled timer" << tThisWorld.atAABB[nCurrentEntity].TimeColiderIsDIsabled;
 
+		}
+		else {
+			tThisWorld.atAABB[nCurrentEntity].disabledabb = false;
+			pcCollisionSystem->replaceAABB(nCurrentEntity, tThisWorld.atAABB[nCurrentEntity]);
+		}
 		if (tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_SIMPLEMESH | COMPONENT_SHADERID))
 		{
 			tTempPixelBuffer.m_d3dCollisionColor = tThisWorld.atSimpleMesh[nCurrentEntity].m_nColor;
