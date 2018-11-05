@@ -1,8 +1,8 @@
 #include "GameManger.h"
 #define AI_ON true
-#define MIKES_SANDBOX_ON false
+#define MIKES_SANDBOX_ON true
 #define SKELETON_LOAD_ON false
-#define MAIN_LEVEL_ON true
+#define MAIN_LEVEL_ON false
 #define INPUT_ABSTRACTED_ON true
 
 #define NUMBER_OF_AI 5
@@ -4557,14 +4557,19 @@ void CGameMangerSystem::LoadMikesGraphicsSandbox()
 	//}
 
 	//Create Clayton Animated
-	//tempImport = pcGraphicsSystem->ReadMesh("meshData_PirateMoveForward.txt");
-	tempImport = pcGraphicsSystem->ReadMesh2("MoveForward_Clayton_output_animation.mesh");
-	matOpt = pcGraphicsSystem->CreateTexturesFromFile(tempImport.vtMaterials, tempImport.meshCount);
+	tempImport = pcGraphicsSystem->ReadMesh2("meshData_PirateStrafeRight.txt", 1);
+	tempImport = pcGraphicsSystem->ReadMesh2("meshData_PirateStrafeLeft.txt", 1, &tempImport);
+	tempImport = pcGraphicsSystem->ReadMesh2("meshData_PirateMoveBackward.txt", 1, &tempImport);
+	tempImport = pcGraphicsSystem->ReadMesh2("meshData_PirateMoveForward.txt", 1, &tempImport);
+	tempImport = pcGraphicsSystem->ReadMesh2("meshData_PirateIdle.txt", 1, &tempImport);
+	//tempImport = pcGraphicsSystem->ReadMesh2("MoveForward_Clayton_output_animation.mesh", 1);
+	//tempImport = pcGraphicsSystem->ReadMesh2("Run_Mage_output_animation.mesh");
+	matOpt = pcGraphicsSystem->CreateTexturesFromFile(tempImport.vtMaterials, 1);
 
 	int myMesh;
 	for (int meshIndex = 0; meshIndex < tempImport.meshCount; meshIndex++)
 	{
-		myMesh = createClaytonAnim(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, tempImport.vtMeshes[meshIndex], matOpt, tempImport.vtAnimations[meshIndex], meshIndex);
+		myMesh = createClaytonAnim(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, tempImport.vtMeshes[meshIndex], matOpt, tempImport.vtAnimations, meshIndex, tempImport.animationCount);
 	}
 
 	tThisWorld.atWorldMatrix[myMesh].worldMatrix.r[3].m128_f32[0] = -4;
@@ -4589,18 +4594,6 @@ int CGameMangerSystem::MikesGraphicsSandbox()
 	static XMMATRIX m_d3d_ResultMatrix = pcGraphicsSystem->SetDefaultWorldPosition();
 	static XMMATRIX m_d3dOffsetMatrix = pcGraphicsSystem->SetDefaultOffset();
 	tCameraMode = pcInputSystem->CameraModeListen(tCameraMode);
-	if (pcInputSystem->InputCheck(G_KEY_P))
-	{
-		return 3;
-	}
-
-	if (pcInputSystem->InputCheck(G_KEY_Y))
-	{
-		if (Health > 0)
-		{
-			Health -= .1f;
-		}
-	}
 
 	if (tCameraMode.bSwitch == true)
 	{
@@ -4670,7 +4663,7 @@ int CGameMangerSystem::MikesGraphicsSandbox()
 #pragma endregion
 
 	pcGraphicsSystem->UpdateD3D();
-	tThisWorld.atAnimation[0].tTimer.StartClock(tThisWorld.atAnimation[0].tTimer.tSceneTimer);
+	tThisWorld.atAnimation[904].tTimer.StartClock(tThisWorld.atAnimation[904].tTimer.tSceneTimer);
 	//Start Time
 
 	for (int nCurrentEntity = 0; nCurrentEntity < ENTITYCOUNT; nCurrentEntity++)
@@ -4707,9 +4700,9 @@ int CGameMangerSystem::MikesGraphicsSandbox()
 			tAnimVertexBuffer.m_d3dViewMatrix = debugCamera->d3d_Position;
 			tAnimVertexBuffer.m_d3dProjectionMatrix = m_d3dProjectionMatrix;
 
-			XMFLOAT4X4 * tweenJoints = pcAnimationSystem->PlayAnimation(tThisWorld.atAnimationVariant[nCurrentEntity], tThisWorld.atAnimation[nCurrentEntity], tThisWorld.atAnimation[0].tTimer.localTime);
+			XMFLOAT4X4 * tweenJoints = pcAnimationSystem->PlayAnimation(tThisWorld.atAnimationVariant[nCurrentEntity], tThisWorld.atAnimation[nCurrentEntity], tThisWorld.atAnimation[904].tTimer.localTime);
 
-			for (int i = 0; i < 62; ++i)
+			for (int i = 0; i < 63; ++i)
 			{
 				memcpy(&tAnimVertexBuffer.m_d3dJointsForVS[i], &tweenJoints[i], sizeof(tweenJoints[i]));
 			}
@@ -4731,29 +4724,87 @@ int CGameMangerSystem::MikesGraphicsSandbox()
 
 	pcGraphicsSystem->m_pd3dSwapchain->Present(0, 0);
 
-	//tThisWorld.atAnimation[0].tTimer.GetLocalTime(tThisWorld.atAnimation[0].tTimer.tSceneTimer, tThisWorld.atAnimation[0].tTimer.localTime);
-	//tThisWorld.atAnimation[0].tTimer.DisplayTimes(pcInputSystem);
+	tThisWorld.atAnimation[904].tTimer.GetLocalTime(tThisWorld.atAnimation[904].tTimer.tSceneTimer, tThisWorld.atAnimation[904].tTimer.localTime);
+	tThisWorld.atAnimation[904].tTimer.DisplayTimes(pcInputSystem);
 
-	if (pcInputSystem->InputCheck(G_KEY_M) == 1 && !buttonPressed)
+	if (pcInputSystem->InputCheck(G_KEY_I))
 	{
-		if (tThisWorld.atAnimation[904].m_tAnim.m_vtKeyFrames[tThisWorld.atAnimationVariant[904].tClaytonAnim.nextFrame].dTime == 0 && tThisWorld.atAnimation[904].m_tAnim.m_vtKeyFrames[tThisWorld.atAnimationVariant[904].tClaytonAnim.currentFrame].dTime != 0)
+		if (tThisWorld.atAnimationVariant[904].tClaytonAnim.animType != 1)
 		{
+			tThisWorld.atAnimation[904].tTimer.localTime = 0;
+
 			tThisWorld.atAnimationVariant[904].tClaytonAnim.currentFrame = 0;
 			tThisWorld.atAnimationVariant[904].tClaytonAnim.nextFrame = 1;
-
-			tThisWorld.atAnimation[0].tTimer.localTime = tThisWorld.atAnimation[904].m_tAnim.m_vtKeyFrames[tThisWorld.atAnimationVariant[904].tClaytonAnim.currentFrame].dTime;
-		}
-		else
-		{
-			tThisWorld.atAnimation[0].tTimer.localTime = tThisWorld.atAnimation[904].m_tAnim.m_vtKeyFrames[tThisWorld.atAnimationVariant[904].tClaytonAnim.nextFrame].dTime - .001;
 		}
 
-		buttonPressed = true;
+		tThisWorld.atAnimationVariant[904].tClaytonAnim.animType = 1;
 	}
-	else if (pcInputSystem->InputCheck(G_KEY_M) == 0 && buttonPressed)
+	else if(pcInputSystem->InputCheck(G_KEY_K))
 	{
-		buttonPressed = false;
+		if (tThisWorld.atAnimationVariant[904].tClaytonAnim.animType != 2)
+		{
+			tThisWorld.atAnimation[904].tTimer.localTime = 0;
+
+			tThisWorld.atAnimationVariant[904].tClaytonAnim.currentFrame = 0;
+			tThisWorld.atAnimationVariant[904].tClaytonAnim.nextFrame = 1;
+		}
+
+		tThisWorld.atAnimationVariant[904].tClaytonAnim.animType = 2;
 	}
+	else if (pcInputSystem->InputCheck(G_KEY_J))
+	{
+		if (tThisWorld.atAnimationVariant[904].tClaytonAnim.animType != 4)
+		{
+			tThisWorld.atAnimation[904].tTimer.localTime = 0;
+
+			tThisWorld.atAnimationVariant[904].tClaytonAnim.currentFrame = 0;
+			tThisWorld.atAnimationVariant[904].tClaytonAnim.nextFrame = 1;
+		}
+
+		tThisWorld.atAnimationVariant[904].tClaytonAnim.animType = 4;
+	}
+	else if (pcInputSystem->InputCheck(G_KEY_L))
+	{
+		if (tThisWorld.atAnimationVariant[904].tClaytonAnim.animType != 3)
+		{
+			tThisWorld.atAnimation[904].tTimer.localTime = 0;
+
+			tThisWorld.atAnimationVariant[904].tClaytonAnim.currentFrame = 0;
+			tThisWorld.atAnimationVariant[904].tClaytonAnim.nextFrame = 1;
+		}
+
+		tThisWorld.atAnimationVariant[904].tClaytonAnim.animType = 3;
+	}
+	else if(tThisWorld.atAnimationVariant[904].tClaytonAnim.animType != 0)
+	{
+		tThisWorld.atAnimationVariant[904].tClaytonAnim.animType = 0;
+
+		tThisWorld.atAnimation[904].tTimer.localTime = 0;
+
+		tThisWorld.atAnimationVariant[904].tClaytonAnim.currentFrame = 0;
+		tThisWorld.atAnimationVariant[904].tClaytonAnim.nextFrame = 1;
+	}
+
+	//if (pcInputSystem->InputCheck(G_KEY_M) == 1 && !buttonPressed)
+	//{
+	//	if (tThisWorld.atAnimation[904].m_tAnim.m_vtKeyFrames[tThisWorld.atAnimationVariant[904].tClaytonAnim.nextFrame].dTime == 0 && tThisWorld.atAnimation[904].m_tAnim.m_vtKeyFrames[tThisWorld.atAnimationVariant[904].tClaytonAnim.currentFrame].dTime != 0)
+	//	{
+	//		tThisWorld.atAnimationVariant[904].tClaytonAnim.currentFrame = 0;
+	//		tThisWorld.atAnimationVariant[904].tClaytonAnim.nextFrame = 1;
+	//
+	//		tThisWorld.atAnimation[904].tTimer.localTime = tThisWorld.atAnimation[904].m_tAnim.m_vtKeyFrames[tThisWorld.atAnimationVariant[904].tClaytonAnim.currentFrame].dTime;
+	//	}
+	//	else
+	//	{
+	//		tThisWorld.atAnimation[904].tTimer.localTime = tThisWorld.atAnimation[904].m_tAnim.m_vtKeyFrames[tThisWorld.atAnimationVariant[904].tClaytonAnim.nextFrame].dTime - .001;
+	//	}
+	//
+	//	buttonPressed = true;
+	//}
+	//else if (pcInputSystem->InputCheck(G_KEY_M) == 0 && buttonPressed)
+	//{
+	//	buttonPressed = false;
+	//}
 
 	//End Time
 	return 10;

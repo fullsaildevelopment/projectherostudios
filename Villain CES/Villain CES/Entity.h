@@ -141,7 +141,7 @@ unsigned int CreateScyllianGun(TWorld* ptWorld, ID3D11Device * m_pd3dDevice, XMM
 unsigned int createMesh(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMeshImport tMesh, TMaterialOptimized tMaterial, int meshIndex);
 unsigned int createMesh(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMeshImport tMesh, TMaterialOptimized tMaterial, int meshIndex, int shaderID);
 unsigned int createClayton(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMeshImport tMesh, TMaterialImport tMaterial);
-unsigned int createClaytonAnim(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMeshImport tMesh, TMaterialOptimized tMaterial, TAnimationImport tAnim, int meshIndex);
+unsigned int createClaytonAnim(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMeshImport tMesh, TMaterialOptimized tMaterial, TAnimationImport* tAnim, int meshIndex, int animationCount);
 unsigned int CreateScyllian(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMeshImport tMesh, TMaterialImport tMaterial, XMMATRIX SpawnPosition);
 unsigned int CreateScyllian(TWorld * ptWorld, XMMATRIX SpawnPosition, EnemyInfo& enemyToCopyFrom);
 unsigned int CreateTemptUIBox(TWorld * ptWorld, XMMATRIX SpawnPosition);

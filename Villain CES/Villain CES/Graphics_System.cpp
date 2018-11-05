@@ -424,6 +424,235 @@ void CGraphicsSystem::CleanD3DObject(TWorld * ptPlanet, int nEntityIndex)
 	destroyEntity(ptPlanet, nEntityIndex);
 }
 
+void CGraphicsSystem::GetTexturePathHelper(fstream& file, ImporterData& tImportMe, int textureNumber, int texture)
+{
+	int writeSizeIn;
+
+	file.read((char*)&writeSizeIn, sizeof(int));
+
+	char* tempbuffer = new char[writeSizeIn];
+
+	file.read(tempbuffer, writeSizeIn);
+
+	char* finalBuff = nullptr;
+	
+	if (texture == 0)
+	{
+		finalBuff = new char[writeSizeIn + 2];
+
+		for (int i = 0; i < writeSizeIn; ++i)
+		{
+			finalBuff[i + 1] = tempbuffer[i];
+		}
+		finalBuff[0] = 'd';
+		finalBuff[writeSizeIn + 1] = '\0';
+	}
+	else if (texture == 1)
+	{
+		switch (textureNumber)
+		{
+		case 0:
+		{
+			finalBuff = new char[33];
+
+			finalBuff[0] = 'd';
+			finalBuff[1] = 'I';
+			finalBuff[2] = 'd';
+			finalBuff[3] = 'l';
+			finalBuff[4] = 'e';
+			finalBuff[5] = '.';
+			finalBuff[6] = 'f';
+			finalBuff[7] = 'b';
+			finalBuff[8] = 'm';
+			finalBuff[9] = '/';
+			finalBuff[10] = '/';
+			finalBuff[11] = 'D';
+			finalBuff[12] = 'i';
+			finalBuff[13] = 'f';
+			finalBuff[14] = 'f';
+			finalBuff[15] = 'u';
+			finalBuff[16] = 's';
+			finalBuff[17] = 'e';
+			finalBuff[18] = 'M';
+			finalBuff[19] = 'a';
+			finalBuff[20] = 'p';
+			finalBuff[21] = '_';
+			finalBuff[22] = 'P';
+			finalBuff[23] = 'l';
+			finalBuff[24] = 'a';
+			finalBuff[25] = 'y';
+			finalBuff[26] = 'e';
+			finalBuff[27] = 'r';
+			finalBuff[28] = '.';
+			finalBuff[29] = 'p';
+			finalBuff[30] = 'n';
+			finalBuff[31] = 'g';
+			finalBuff[32] = '\0';
+		}
+		break;
+		case 1:
+		{
+			finalBuff = new char[34];
+
+			finalBuff[0] = 'd';
+			finalBuff[1] = 'I';
+			finalBuff[2] = 'd';
+			finalBuff[3] = 'l';
+			finalBuff[4] = 'e';
+			finalBuff[5] = '.';
+			finalBuff[6] = 'f';
+			finalBuff[7] = 'b';
+			finalBuff[8] = 'm';
+			finalBuff[9] = '/';
+			finalBuff[10] = '/';
+			finalBuff[11] = 'E';
+			finalBuff[12] = 'm';
+			finalBuff[13] = 'i';
+			finalBuff[14] = 's';
+			finalBuff[15] = 's';
+			finalBuff[16] = 'i';
+			finalBuff[17] = 'v';
+			finalBuff[18] = 'e';
+			finalBuff[19] = 'M';
+			finalBuff[20] = 'a';
+			finalBuff[21] = 'p';
+			finalBuff[22] = '_';
+			finalBuff[23] = 'P';
+			finalBuff[24] = 'l';
+			finalBuff[25] = 'a';
+			finalBuff[26] = 'y';
+			finalBuff[27] = 'e';
+			finalBuff[28] = 'r';
+			finalBuff[29] = '.';
+			finalBuff[30] = 'p';
+			finalBuff[31] = 'n';
+			finalBuff[32] = 'g';
+			finalBuff[33] = '\0';
+		}
+		break;
+		case 2:
+		{
+			finalBuff = new char[32];
+
+			finalBuff[0] = 'd';
+			finalBuff[1] = 'I';
+			finalBuff[2] = 'd';
+			finalBuff[3] = 'l';
+			finalBuff[4] = 'e';
+			finalBuff[5] = '.';
+			finalBuff[6] = 'f';
+			finalBuff[7] = 'b';
+			finalBuff[8] = 'm';
+			finalBuff[9] = '/';
+			finalBuff[10] = '/';
+			finalBuff[11] = 'N';
+			finalBuff[12] = 'o';
+			finalBuff[13] = 'r';
+			finalBuff[14] = 'm';
+			finalBuff[15] = 'a';
+			finalBuff[16] = 'l';
+			finalBuff[17] = 'M';
+			finalBuff[18] = 'a';
+			finalBuff[19] = 'p';
+			finalBuff[20] = '_';
+			finalBuff[21] = 'P';
+			finalBuff[22] = 'l';
+			finalBuff[23] = 'a';
+			finalBuff[24] = 'y';
+			finalBuff[25] = 'e';
+			finalBuff[26] = 'r';
+			finalBuff[27] = '.';
+			finalBuff[28] = 'p';
+			finalBuff[29] = 'n';
+			finalBuff[30] = 'g';
+			finalBuff[31] = '\0';
+		}
+		break;
+		case 3:
+		{
+			finalBuff = new char[34];
+
+			finalBuff[0] = 'd';
+			finalBuff[1] = 'I';
+			finalBuff[2] = 'd';
+			finalBuff[3] = 'l';
+			finalBuff[4] = 'e';
+			finalBuff[5] = '.';
+			finalBuff[6] = 'f';
+			finalBuff[7] = 'b';
+			finalBuff[8] = 'm';
+			finalBuff[9] = '/';
+			finalBuff[10] = '/';
+			finalBuff[11] = 'S';
+			finalBuff[12] = 'p';
+			finalBuff[13] = 'e';
+			finalBuff[14] = 'c';
+			finalBuff[15] = 'u';
+			finalBuff[16] = 'l';
+			finalBuff[17] = 'a';
+			finalBuff[18] = 'r';
+			finalBuff[19] = 'M';
+			finalBuff[20] = 'a';
+			finalBuff[21] = 'p';
+			finalBuff[22] = '_';
+			finalBuff[23] = 'P';
+			finalBuff[24] = 'l';
+			finalBuff[25] = 'a';
+			finalBuff[26] = 'y';
+			finalBuff[27] = 'e';
+			finalBuff[28] = 'r';
+			finalBuff[29] = '.';
+			finalBuff[30] = 'p';
+			finalBuff[31] = 'n';
+			finalBuff[32] = 'g';
+			finalBuff[33] = '\0';
+		}
+		break;
+		default:
+			break;
+		}
+	}
+
+	switch (textureNumber)
+	{
+	case 0:
+	{
+		tImportMe.vtMaterials->m_tFileNameSizes.fileNameSize1 = writeSizeIn;
+		tImportMe.vtMaterials->m_tFileNames.fileName1 = finalBuff;
+	}
+	break;
+	case 1:
+	{
+		tImportMe.vtMaterials->m_tFileNameSizes.fileNameSize2 = writeSizeIn;
+		tImportMe.vtMaterials->m_tFileNames.fileName2 = finalBuff;
+	}
+	break;
+	case 2:
+	{
+		tImportMe.vtMaterials->m_tFileNameSizes.fileNameSize3 = writeSizeIn;
+		tImportMe.vtMaterials->m_tFileNames.fileName3 = finalBuff;
+	}
+	break;
+	case 3:
+	{
+		tImportMe.vtMaterials->m_tFileNameSizes.fileNameSize4 = writeSizeIn;
+		tImportMe.vtMaterials->m_tFileNames.fileName4 = finalBuff;
+	}
+	break;
+	default:
+		break;
+	}
+
+	float4 tempColor;
+
+	file.read((char*)&tempColor, sizeof(float4));
+	delete[] tempbuffer;
+
+	tImportMe.vtMaterials->m_tDiffuseColor.r = tempColor.x;
+	tImportMe.vtMaterials->m_tDiffuseColor.g = tempColor.y;
+	tImportMe.vtMaterials->m_tDiffuseColor.b = tempColor.z;
+}
+
 void CGraphicsSystem::CreateShaders(ID3D11Device * device)
 {
 #pragma region MyShaders
@@ -853,7 +1082,7 @@ TMaterialOptimized CGraphicsSystem::CreateTexturesFromFile(TMaterialImport * arr
 			const char * name = mapItr->second.c_str();
 			int size = mapItr->second.size();
 			mbsrtowcs_s(&result, fnPBR, 260, (const char **)(&name), size, &d);
-			CreateWICTextureFromFile(m_pd3dDevice, &fnPBR[1], NULL, &SRVArrayOfMaterials[count], NULL);
+			HRESULT result = CreateWICTextureFromFile(m_pd3dDevice, &fnPBR[1], NULL, &SRVArrayOfMaterials[count], NULL);
 			Map_SRVIndex_EntityIndex.insert(pair<int, int>(count, mapItr->first));
 			count++;
 			int test = 0;
@@ -1587,7 +1816,7 @@ ImporterData CGraphicsSystem::ReadMesh(const char * input_file_path)
 	return tImportMe;
 }
 
-ImporterData CGraphicsSystem::ReadMesh2(const char* input_file_path)
+ImporterData CGraphicsSystem::ReadMesh2(const char* input_file_path, int texture, ImporterData* tImportMe2)
 {
 #pragma region Declarations
 	int * lamberts = nullptr;
@@ -1633,7 +1862,18 @@ ImporterData CGraphicsSystem::ReadMesh2(const char* input_file_path)
 	// Has Vertex type and Joints
 	tImportMe.vtMeshes = new TMeshImport[meshCount];
 	tImportMe.vtMaterials = new TMaterialImport[meshCount];
-	tImportMe.vtAnimations = new TAnimationImport[meshCount];
+
+	if (tImportMe2 != nullptr)
+	{
+		tImportMe.vtAnimations = new TAnimationImport[meshCount + tImportMe2->animationCount];
+		tImportMe.animationCount = meshCount + tImportMe2->animationCount;
+	}
+	else
+	{
+		tImportMe.vtAnimations = new TAnimationImport[meshCount];
+		tImportMe.animationCount = meshCount;
+	}
+
 	tImportMe.meshCount = meshCount;
 #pragma endregion
 
@@ -1659,50 +1899,28 @@ ImporterData CGraphicsSystem::ReadMesh2(const char* input_file_path)
 			Simple_Vert tempVert;
 			float4 tempColor;
 			float4 tempUV;
+			float WforNorm;
 
 			//file.read((char*)&tempVert, sizeof(Simple_Vert));
 			file.read((char*)&tImportMe.vtMeshes[meshCount - 1].meshArrays[i].pos, sizeof(float4));
-			file.read((char*)&tImportMe.vtMeshes[meshCount - 1].meshArrays[i].norm, sizeof(float4));
+			file.read((char*)&tImportMe.vtMeshes[meshCount - 1].meshArrays[i].norm, sizeof(float3));
+			file.read((char*)&WforNorm, sizeof(float));
 			file.read((char*)&tempColor, sizeof(float4));
 			file.read((char*)&tImportMe.vtMeshes[meshCount - 1].meshArrays[i].uv, sizeof(float) * 2);
 			file.read((char*)&tImportMe.vtMeshes[meshCount - 1].meshArrays[i].joints, sizeof(int) * 4);
 			file.read((char*)&tempUV, sizeof(float) * 2);
 			file.read((char*)&tImportMe.vtMeshes[meshCount - 1].meshArrays[i].weights, sizeof(float4));
 
-			//memcpy(&tImportMe.vtMeshes[meshCount].meshArrays[i].pos, &tempVert.pos, sizeof(float4));
-			//memcpy(&tImportMe.vtMeshes[meshCount].meshArrays[i].norm, &tempVert.norm, sizeof(float4));
-			//memcpy(&tImportMe.vtMeshes[meshCount].meshArrays[i].uv, &tempVert.tex_coord, sizeof(float) * 2);
-			//memcpy(&tImportMe.vtMeshes[meshCount].meshArrays[i].joints, &tempVert.joints, sizeof(int) * 4);
-			//memcpy(&tImportMe.vtMeshes[meshCount].meshArrays[i].weights, &tempVert.weights, sizeof(float4));
-
-			//tImportMe.vtMeshes[i].meshArrays->pos[0] = tempVert.pos.x;
-			//tImportMe.vtMeshes[i].meshArrays->pos[1] = tempVert.pos.y;
-			//tImportMe.vtMeshes[i].meshArrays->pos[2] = tempVert.pos.z;
-			//tImportMe.vtMeshes[i].meshArrays->pos[3] = tempVert.pos.w;
-			//tImportMe.vtMeshes[i].meshArrays->norm[0] = tempVert.norm.x;
-			//tImportMe.vtMeshes[i].meshArrays->norm[1] = tempVert.norm.y;
-			//tImportMe.vtMeshes[i].meshArrays->norm[2] = tempVert.norm.z;
-			//tImportMe.vtMeshes[i].meshArrays->norm[3] = tempVert.norm.w;
-			//tImportMe.vtMeshes[i].meshArrays->uv[0] = tempVert.tex_coord[0];
-			//tImportMe.vtMeshes[i].meshArrays->uv[1] = tempVert.tex_coord[1];
-			//tImportMe.vtMeshes[i].meshArrays->joints[0] = tempVert.joints[0];
-			//tImportMe.vtMeshes[i].meshArrays->joints[1] = tempVert.joints[1];
-			//tImportMe.vtMeshes[i].meshArrays->joints[2] = tempVert.joints[2];
-			//tImportMe.vtMeshes[i].meshArrays->joints[3] = tempVert.joints[3];
-			//tImportMe.vtMeshes[i].meshArrays->weights[0] = tempVert.weights.x;
-			//tImportMe.vtMeshes[i].meshArrays->weights[1] = tempVert.weights.y;
-			//tImportMe.vtMeshes[i].meshArrays->weights[2] = tempVert.weights.z;
-			//tImportMe.vtMeshes[i].meshArrays->weights[3] = tempVert.weights.w;
-
-			//mesh->verts[i].color[0] = 0;
-			//mesh->verts[i].color[1] = 1;
-			//mesh->verts[i].color[2] = 0;
-			//mesh->verts[i].color[3] = 1;
+			tImportMe.vtMeshes[meshCount - 1].meshArrays[i].uv[1] *= -1;
 		}
 		for (int i = 0; i < tImportMe.vtMeshes[meshCount - 1].nPolygonVertexCount; ++i)
 		{
 			file.read((char*)&tImportMe.vtMeshes[meshCount - 1].indexBuffer[i], sizeof(uint32_t));
 		}
+
+		GetTexturePathHelper(file, tImportMe, 0, texture);
+		GetTexturePathHelper(file, tImportMe, 1, texture);
+		GetTexturePathHelper(file, tImportMe, 2, texture);
 
 		//int writeSizeIn;
 
@@ -1712,17 +1930,24 @@ ImporterData CGraphicsSystem::ReadMesh2(const char* input_file_path)
 
 		//file.read(tempbuffer, writeSizeIn);
 
-		//size_t size = writeSizeIn + 1;
-		//wchar_t* finalBuff = new wchar_t[size];
-		//size_t sizeOut;
-		//mbstowcs_s(&sizeOut, finalBuff, size, tempbuffer, size - 1);
+		////size_t size = writeSizeIn + 1;
+		//char* finalBuff = new char[writeSizeIn + 2];
+		////size_t sizeOut;
+		////mbstowcs_s(&sizeOut, finalBuff, size, tempbuffer, size - 1);
 
-		////tImportMe.vtMaterials->m_tFileNameSizes.fileNameSize1 = size;
-		////tImportMe.vtMaterials->m_tFileNames.fileName1 = finalBuff;
+		//for (int i = 0; i < writeSizeIn; ++i)
+		//{
+		//	finalBuff[i + 1] = tempbuffer[i];
+		//}
+		//finalBuff[0] = 'd';
+		//finalBuff[writeSizeIn + 1] = '\0';
+
+		//tImportMe.vtMaterials->m_tFileNameSizes.fileNameSize1 = writeSizeIn;
+		//tImportMe.vtMaterials->m_tFileNames.fileName1 = finalBuff;
 
 		////material[0][material_t::DIFFUSE].input.file_path = finalBuff;
 
-		//float4 tempColor;
+		float4 tempColor;
 
 		//file.read((char*)&tempColor, sizeof(float4));
 		//delete[] tempbuffer;
@@ -1737,20 +1962,27 @@ ImporterData CGraphicsSystem::ReadMesh2(const char* input_file_path)
 
 		//file.read(tempbuffer, writeSizeIn);
 
-		//size = writeSizeIn + 1;
-		//finalBuff = new wchar_t[size];
-		//mbstowcs_s(&sizeOut, finalBuff, size, tempbuffer, size - 1);
+		////size = writeSizeIn + 1;
+		//finalBuff = new char[writeSizeIn + 2];
+		////mbstowcs_s(&sizeOut, finalBuff, size, tempbuffer, size - 1);
 
-		////tImportMe.vtMaterials->m_tFileNameSizes.fileNameSize2 = size;
-		////tImportMe.vtMaterials->m_tFileNames.fileName2 = finalBuff;
+		//for (int i = 0; i < writeSizeIn; ++i)
+		//{
+		//	finalBuff[i + 1] = tempbuffer[i];
+		//}
+		//finalBuff[0] = 'd';
+		//finalBuff[writeSizeIn + 1] = '\0';
+
+		//tImportMe.vtMaterials->m_tFileNameSizes.fileNameSize2 = writeSizeIn;
+		//tImportMe.vtMaterials->m_tFileNames.fileName2 = finalBuff;
 
 		////material[0][material_t::EMISSIVE].input.file_path = finalBuff;
 		//file.read((char*)&tempColor, sizeof(float4));
 		//delete[] tempbuffer;
 
-		////tImportMe.vtMaterials->m_tDiffuseColor.r = tempColor.x;
-		////tImportMe.vtMaterials->m_tDiffuseColor.g = tempColor.y;
-		////tImportMe.vtMaterials->m_tDiffuseColor.b = tempColor.z;
+		//tImportMe.vtMaterials->m_tEmissiveColor.r = tempColor.x;
+		//tImportMe.vtMaterials->m_tEmissiveColor.g = tempColor.y;
+		//tImportMe.vtMaterials->m_tEmissiveColor.b = tempColor.z;
 
 		//file.read((char*)&writeSizeIn, sizeof(int));
 
@@ -1758,27 +1990,30 @@ ImporterData CGraphicsSystem::ReadMesh2(const char* input_file_path)
 
 		//file.read(tempbuffer, writeSizeIn);
 
-		//size = writeSizeIn + 1;
-		//finalBuff = new wchar_t[size];
-		//mbstowcs_s(&sizeOut, finalBuff, size, tempbuffer, size - 1);
+		////size = writeSizeIn + 1;
+		//finalBuff = new char[writeSizeIn + 2];
+		////mbstowcs_s(&sizeOut, finalBuff, size, tempbuffer, size - 1);
 
-		////tImportMe.vtMaterials->m_tFileNameSizes.fileNameSize3 = size;
-		////tImportMe.vtMaterials->m_tFileNames.fileName3 = finalBuff;
+		//for (int i = 0; i < writeSizeIn; ++i)
+		//{
+		//	finalBuff[i + 1] = tempbuffer[i];
+		//}
+		//finalBuff[0] = 'd';
+		//finalBuff[writeSizeIn + 1] = '\0';
+
+		//tImportMe.vtMaterials->m_tFileNameSizes.fileNameSize3 = writeSizeIn;
+		//tImportMe.vtMaterials->m_tFileNames.fileName3 = finalBuff;
 
 		////material[0][material_t::SPECULAR].input.file_path = finalBuff;
 		//file.read((char*)&tempColor, sizeof(float4));
 		//delete[] tempbuffer;
 
-		////tImportMe.vtMaterials->m_tDiffuseColor.r = tempColor.x;
-		////tImportMe.vtMaterials->m_tDiffuseColor.g = tempColor.y;
-		////tImportMe.vtMaterials->m_tDiffuseColor.b = tempColor.z;
+		//tImportMe.vtMaterials->m_tSpecularColor.r = tempColor.x;
+		//tImportMe.vtMaterials->m_tSpecularColor.g = tempColor.y;
+		//tImportMe.vtMaterials->m_tSpecularColor.b = tempColor.z;
 
-		//file.read((char*)&tempColor, sizeof(float4));
+		file.read((char*)&tempColor, sizeof(float4));
 
-		//file.close();
-
-		//MakeVertexBuffer(vBuffer, mesh->vert_count, mesh->verts);
-		//MakeIndexBuffer(iBuffer, mesh->index_count, mesh->indices);
 #pragma endregion
 
 		int jointCount = 0;
@@ -1854,6 +2089,14 @@ ImporterData CGraphicsSystem::ReadMesh2(const char* input_file_path)
 		}
 
 		file.close();
+	}
+
+	if (tImportMe2 != nullptr)
+	{
+		for (int i = 1; i < tImportMe.animationCount; ++i)
+		{
+			tImportMe.vtAnimations[i] = tImportMe2->vtAnimations[i - 1];
+		}
 	}
 
 	return tImportMe;

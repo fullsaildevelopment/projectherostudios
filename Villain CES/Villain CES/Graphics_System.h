@@ -74,7 +74,7 @@ public:
 		XMMATRIX m_d3dWorldMatrix;
 		XMMATRIX m_d3dViewMatrix;
 		XMMATRIX m_d3dProjectionMatrix;
-		XMFLOAT4X4 m_d3dJointsForVS[62];
+		XMFLOAT4X4 m_d3dJointsForVS[63];
 	};
 
 	struct TMyPixelBufferType
@@ -165,7 +165,7 @@ public:
 	void UpdateLineVTBuffer(D3D11_BUFFER_DESC* bufDesc, ID3D11Buffer* &vertexBuffer, std::vector<TPrimalVert> lineVector);
 	void StoreBeamPoints(XMFLOAT3 startPoint, XMFLOAT3 endPoint, std::vector<TPrimalVert> &BeamPoints, float timeScroll);
 	ImporterData ReadMesh(const char * input_file_path);
-	ImporterData ReadMesh2(const char * input_file_path);
+	ImporterData ReadMesh2(const char * input_file_path, int thingBeingTextured = 0, ImporterData* tImportMe2 = nullptr);
 	XMVECTOR GetCameraPos();
 	XMMATRIX SetDefaultCameraMatrix();
 	XMMATRIX ResetAimModeCameraOffset();
@@ -232,4 +232,11 @@ private:
 	float				m_fMouseRotationSpeed;
 	float				m_fMouseMovementSpeed;
 
+	/* 
+		Helper function that reads the texture filepaths for Jonah's exporter.
+
+		textureNumber - where the path gets saved in the array of filepaths
+		thingBeingTextured - determines if the object has its own .fbm folder or if it's a dulicate of another object
+	*/
+	void GetTexturePathHelper(fstream& file, ImporterData& tImportMe, int textureNumber, int thingBeingTextured = 0);
 };

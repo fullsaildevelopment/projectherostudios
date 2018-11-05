@@ -13,6 +13,7 @@ Particle_System::~Particle_System()
 
 int Particle_System::CreateCube15(XMMATRIX LocationofParticle, TWorld * ptWorld)
 {
+	return 0;
 	//return ParticleTest(ptWorld, LocationofParticle,0.1f);
 }
 
