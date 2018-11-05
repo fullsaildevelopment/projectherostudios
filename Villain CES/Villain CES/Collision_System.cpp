@@ -158,9 +158,9 @@ void CCollisionSystem::TestThreading(TWorld * ptWorld, int nCurrentEntity, CGrap
 					&& ptWorld->atInputMask[nCurrentEntity].m_tnInputMask >1 
 					)
 				{
-					ptWorld->atAABB[216].disabledabb = true;
-					ptWorld->atAABB[216].TimeColiderIsDIsabled = 100;
-					replaceAABB(216, ptWorld->atAABB[216]);
+					ptWorld->atAABB[209].disabledabb = true;
+					ptWorld->atAABB[209].TimeColiderIsDIsabled = 100;
+					replaceAABB(209, ptWorld->atAABB[209]);
 
 
 					for (int doorindex = 0;doorindex< ptWorld->atAABB[otherCollisionsIndex[i]].doorPeices.size(); ++doorindex) {
@@ -195,6 +195,7 @@ void CCollisionSystem::TestThreading(TWorld * ptWorld, int nCurrentEntity, CGrap
 					tTempVertexBuffer->m_d3dWorldMatrix = pcPhysicsSystem->ResolveForces(&ptWorld->atRigidBody[nCurrentEntity], ptWorld->atWorldMatrix[nCurrentEntity].worldMatrix, false);
 					ptWorld->atWorldMatrix[nCurrentEntity].worldMatrix = WalkingThrewObjectCheck(tTempVertexBuffer->m_d3dWorldMatrix, ptWorld->atAABB[otherCollisionsIndex[i]], ptWorld->atAABB[nCurrentEntity]);
 					ptWorld->atWorldMatrix[nCurrentEntity].worldMatrix = tTempVertexBuffer->m_d3dWorldMatrix;
+					cout << otherCollisionsIndex[i] << " ObjectHitting" << std::endl;
 				}
 				if (ptWorld->atRigidBody[nCurrentEntity].ground == false
 					&& ptWorld->atRigidBody[nCurrentEntity].wall == false

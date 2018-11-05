@@ -4858,7 +4858,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	pcGraphicsSystem->CreateEntityBuffer(&tThisWorld, tempBullet);
 	pcGraphicsSystem->CleanD3DObject(&tThisWorld, tempBullet);
 
-	tempImport = pcGraphicsSystem->ReadMesh("meshData_DemoDoors.txt");
+	tempImport = pcGraphicsSystem->ReadMesh("meshData_OctoberDemo.txt");
 	matOpt = pcGraphicsSystem->CreateTexturesFromFile(tempImport.vtMaterials, tempImport.meshCount);
 	for (int meshIndex = 0; meshIndex < tempImport.meshCount; meshIndex++)
 	{
@@ -6355,7 +6355,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 		if (cylinder == nCurrentEntity) {
 			float x = 0;
 		}
-		if (tThisWorld.atCollisionMask[nCurrentEntity].m_tnCollisionMask > 1 && /*nCurrentEntity != 216 */nCurrentEntity != 215 && nCurrentEntity != 218 && nCurrentEntity != 118 && nCurrentEntity != 233 && nCurrentEntity != 133 && nCurrentEntity != 33)// && nCurrentEntity != 18)
+		if (tThisWorld.atCollisionMask[nCurrentEntity].m_tnCollisionMask > 1 && nCurrentEntity != 210&& nCurrentEntity != 215 && nCurrentEntity != 218 && nCurrentEntity != 118 && nCurrentEntity != 233 && nCurrentEntity != 133 && nCurrentEntity != 33)// && nCurrentEntity != 18)
 		{
 
 			if (tThisWorld.atSimpleMesh[nCurrentEntity].m_nVertexCount > tThisWorld.atDebugMesh[nCurrentEntity].m_nVertexCount)
