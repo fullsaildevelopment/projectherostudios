@@ -75,6 +75,8 @@
 			<Path>Augur_SFX.bnk</Path>
 			<IncludedEvents>
 				<Event Id="3280679725" Name="Play_AmmoDepleted" ObjectPath="\Events\Default Work Unit\Play_AmmoDepleted"/>
+				<Event Id="3602664484" Name="Play_Caelis_Fire" ObjectPath="\Events\Default Work Unit\Play_Caelis_Fire"/>
+				<Event Id="491912207" Name="Play_Caelis_Reload" ObjectPath="\Events\Default Work Unit\Play_Caelis_Reload"/>
 				<Event Id="1306210889" Name="Play_Extract" ObjectPath="\Events\Default Work Unit\Play_Extract"/>
 				<Event Id="2639148008" Name="Play_Heal" ObjectPath="\Events\Default Work Unit\Play_Heal"/>
 				<Event Id="2244627757" Name="Play_HoverSound" ObjectPath="\Events\Default Work Unit\Play_HoverSound"/>
@@ -112,9 +114,17 @@
 					<ShortName>Glass Reload.wav</ShortName>
 					<Path>SFX\Glass Reload_56D34C19.wem</Path>
 				</File>
+				<File Id="598566666" Language="SFX">
+					<ShortName>Caelis Reload.wav</ShortName>
+					<Path>SFX\Caelis Reload_56D34C19.wem</Path>
+				</File>
 				<File Id="654863545" Language="SFX">
 					<ShortName>Menu Tick.wav</ShortName>
 					<Path>SFX\Menu Tick_56D34C19.wem</Path>
+				</File>
+				<File Id="670238279" Language="SFX">
+					<ShortName>Caelis Firing.wav</ShortName>
+					<Path>SFX\Caelis Firing_06EEDDDA.wem</Path>
 				</File>
 				<File Id="697282732" Language="SFX">
 					<ShortName>MaterialGun_Analyze (1) (online-audio-converter.com).wav</ShortName>

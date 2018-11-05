@@ -5,6 +5,7 @@ enum eParticleComponent
 {
 	COMPONENT_Particles = 1 << 0,
 	COMPONENT_Active = 1 << 1,
+	COMPONENT_ChangeColor = 1 << 2,
 
 };
 struct TParticleMask

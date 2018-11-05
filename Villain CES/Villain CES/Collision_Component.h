@@ -34,6 +34,8 @@ struct TAABB
 	int		 m_SceneChange = -30;
 	bool theeadmade = false;
 	vector<int> doorPeices;
+	float TimeColiderIsDIsabled;
+	bool disabledabb=false;
 //	thread myThread;
 };
 

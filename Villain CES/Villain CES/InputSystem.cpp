@@ -69,7 +69,7 @@ void CInputSystem::gameManagerCodeAbstracted(
 	XMMATRIX &d3dResultMatrix, XMMATRIX &d3dPlayerMatrix, XMMATRIX &d3dOffsetMatrix, XMMATRIX &d3dWorldMatrix,
 	XMMATRIX &tMyViewMatrix, XMMATRIX &tTempViewMatrix,
 	XMFLOAT4 &d3dCollisionColor, double &delta, CAudioSystem* in_Audio, TClayton &clayton, XMVECTOR &playerVeclocity, 
-	XMMATRIX &Caelis_Matrix, int PlayerIndex, int CaelisIndex, int ClaytonIndex, TCaelis &caelis, CAudioSystem *audio)
+	XMMATRIX &Caelis_Matrix, int PlayerIndex, int CaelisIndex, int ClaytonIndex, TCaelis &caelis, CAudioSystem *audio, bool* didweHeal)
 {
 	cHoverPoint = { -1, -1 };
 	//POINT hoverPoint;
@@ -132,6 +132,7 @@ void CInputSystem::gameManagerCodeAbstracted(
 	{
 		clayton.health += caelis.healthGiven += 30 * delta;
 		caelis.healing = true;
+		*didweHeal = true;
 		caelis.m_tfSpecialCooldown = 100;
 #if MUSIC_ON
 		audio->SendSoundsToEngine(AK::EVENTS::PLAY_HEAL, audio->m_Heal);
@@ -146,7 +147,7 @@ void CInputSystem::gameManagerCodeAbstracted(
 		if (caelis.healthGiven + amount > 30)
 		{
 			float decreaseBy = caelis.healthGiven + amount - 30;
-
+		
 			amount -= decreaseBy;
 
 			clayton.health += amount;
@@ -363,9 +364,9 @@ XMMATRIX CInputSystem::DebugCamera(XMMATRIX d3d_ViewM, XMMATRIX d3d_WorldM, doub
 
 	}
 	if (InputCheck(G_KEY_SPACE) == 1) {
-		d3dMovementM = XMMatrixTranslation(0, m_fMouseMovementSpeed * delta, 0);
+	/*	d3dMovementM = XMMatrixTranslation(0, m_fMouseMovementSpeed * delta, 0);
 		d3dTmpViewM = XMMatrixMultiply(d3dMovementM, d3dTmpViewM);
-
+*/
 	}
 	if (InputCheck(G_KEY_LEFTSHIFT) == 1) {
 		d3dMovementM = XMMatrixTranslation(0, -m_fMouseMovementSpeed * delta, 0);
@@ -485,9 +486,9 @@ XMMATRIX CInputSystem::CharacterMovement(XMMATRIX d3dplayerMatrix, double delta,
 			keyPressed = true;
 			stepCount++;
 		}
-		if (InputCheck(G_KEY_SPACE) == 1 && clayton.jumpTime > 0 && playerVeclocity.m128_f32[1] > -.1)
+		/*if (InputCheck(G_KEY_SPACE) == 1 && clayton.jumpTime > 0 && playerVeclocity.m128_f32[1] > -.1)
 		{
-			d3dMovementM = XMMatrixTranslation(0, m_fMouseMovementSpeed * delta, 0);
+		/*	d3dMovementM = XMMatrixTranslation(0, m_fMouseMovementSpeed * delta, 0);
 			d3dTmpViewM = XMMatrixMultiply(d3dMovementM, d3dTmpViewM);
 			keyPressed = true;
 			stepCount++;
@@ -505,7 +506,7 @@ XMMATRIX CInputSystem::CharacterMovement(XMMATRIX d3dplayerMatrix, double delta,
 			{
 				clayton.jumpTime += delta;
 			}
-		}
+		}*/
 
 		if (keyPressed == true && stepCount == 20)
 		{

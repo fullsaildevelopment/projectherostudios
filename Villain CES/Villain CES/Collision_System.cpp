@@ -135,7 +135,7 @@ bool CCollisionSystem::AiVisionCheck(frustum_t eyeSight,vector<int>* index)
 	return seesomething;
 }
 
-void CCollisionSystem::TestThreading(TWorld * ptWorld, int nCurrentEntity, CGraphicsSystem* pcGraphicsSystem, CGraphicsSystem::TPrimalVertexBufferType* tTempVertexBuffer, XMMATRIX& tMyVertexBufferWorldMatrix, XMMATRIX* m_d3dPlayerMatrix, CPhysicsSystem* pcPhysicsSystem, CAISystem* pcAiSystem,int PlayerStartIndex, float& playerDamage, float& pirateDamage, float& prevHealth, float& fallingHealth, float& lerpTime, float in_MasterVolume, float in_SFXVolume, float in_MusicVolume, CAudioSystem* pcAudioSystem, XMMATRIX(*doorEventListener)(int, bool), void(*doorEventChanger)(int), float &hitmarkerTime, XMMATRIX* m_d3dClaytonMatrix, XMMATRIX* m_d3dCaelisMatrix, Particle_System * pcParticleSystem)
+void CCollisionSystem::TestThreading(TWorld * ptWorld, int nCurrentEntity, CGraphicsSystem* pcGraphicsSystem, CGraphicsSystem::TPrimalVertexBufferType* tTempVertexBuffer, XMMATRIX& tMyVertexBufferWorldMatrix, XMMATRIX* m_d3dPlayerMatrix, CPhysicsSystem* pcPhysicsSystem, CAISystem* pcAiSystem,int PlayerStartIndex, float& playerDamage, float& pirateDamage, float& prevHealth, float& fallingHealth, float& lerpTime, float in_MasterVolume, float in_SFXVolume, float in_MusicVolume, CAudioSystem* pcAudioSystem, XMMATRIX(*doorEventListener)(int, bool), void(*doorEventChanger)(int), float &hitmarkerTime, XMMATRIX* m_d3dClaytonMatrix, XMMATRIX* m_d3dCaelisMatrix, Particle_System * pcParticleSystem,float delta)
 {
 	ptWorld->atAABB[nCurrentEntity].theeadmade = true;
 	if (ptWorld->atCollisionMask[nCurrentEntity].m_tnCollisionMask == (COMPONENT_COLLISIONMASK | COMPONENT_TRIGGER | COMPONENT_AABB | COMPONENT_NONSTATIC)
@@ -158,10 +158,16 @@ void CCollisionSystem::TestThreading(TWorld * ptWorld, int nCurrentEntity, CGrap
 					&& ptWorld->atInputMask[nCurrentEntity].m_tnInputMask >1 
 					)
 				{
+					ptWorld->atAABB[216].disabledabb = true;
+					ptWorld->atAABB[216].TimeColiderIsDIsabled = 100;
+					replaceAABB(216, ptWorld->atAABB[216]);
+
+
 					for (int doorindex = 0;doorindex< ptWorld->atAABB[otherCollisionsIndex[i]].doorPeices.size(); ++doorindex) {
 						doorEventChanger(ptWorld->atShaderID[otherCollisionsIndex[i]].m_nShaderID);
 						ptWorld->atWorldMatrix[ptWorld->atAABB[otherCollisionsIndex[i]].doorPeices[doorindex]].worldMatrix = XMMatrixMultiply(doorEventListener(ptWorld->atShaderID[ptWorld->atAABB[otherCollisionsIndex[i]].doorPeices[doorindex]].m_nShaderID, true), ptWorld->atWorldMatrix[ptWorld->atAABB[otherCollisionsIndex[i]].doorPeices[doorindex]].worldMatrix);
 						ptWorld->atAABB[ptWorld->atAABB[otherCollisionsIndex[i]].doorPeices[doorindex]] = updateAABB(ptWorld->atWorldMatrix[ptWorld->atAABB[otherCollisionsIndex[i]].doorPeices[doorindex]].worldMatrix, ptWorld->atAABB[ptWorld->atAABB[otherCollisionsIndex[i]].doorPeices[doorindex]]);
+					
 					}
 				}
 				if (ptWorld->atRigidBody[otherCollisionsIndex[i]].ground == true
@@ -171,6 +177,7 @@ void CCollisionSystem::TestThreading(TWorld * ptWorld, int nCurrentEntity, CGrap
 					if (ptWorld->atProjectiles[nCurrentEntity].m_tnProjectileMask == (COMPONENT_PROJECTILESMASK | COMPONENT_METAL | COMPONENT_FRIENDLY) ||
 						ptWorld->atProjectiles[nCurrentEntity].m_tnProjectileMask == (COMPONENT_PROJECTILESMASK | COMPONENT_METAL | COMPONENT_ENEMY))
 					{
+						pcParticleSystem->CreateAlotofCubes(ptWorld->atWorldMatrix[nCurrentEntity].worldMatrix, ptWorld, 30, pcGraphicsSystem, pcAiSystem, delta,true);
 						cout << otherCollisionsIndex[i] <<" ObjectHitting" <<std::endl;
 						RemoveAABBCollider(nCurrentEntity);
 
@@ -302,12 +309,13 @@ void CCollisionSystem::TestThreading(TWorld * ptWorld, int nCurrentEntity, CGrap
 									//pcGraphicsSystem->CleanD3DObject(ptWorld, otherCollisionsIndex[i] + 1);
 									//pcGraphicsSystem->CleanD3DObject(ptWorld, otherCollisionsIndex[i] + 2);
 									pcAiSystem->RemoveeShootingActiveAI(otherCollisionsIndex[i]);
+
 								}
 
 							}
 						//	int cubeindex = pcParticleSystem->CreateCube15(ptWorld->atWorldMatrix[nCurrentEntity].worldMatrix, ptWorld);
 						//	pcGraphicsSystem->CreateEntityBuffer(ptWorld, cubeindex);
-						    pcParticleSystem->CreateAlotofCubes(ptWorld->atWorldMatrix[nCurrentEntity].worldMatrix, ptWorld,100,pcGraphicsSystem,pcAiSystem);
+						    pcParticleSystem->CreateAlotofCubes(ptWorld->atWorldMatrix[nCurrentEntity].worldMatrix, ptWorld,30,pcGraphicsSystem,pcAiSystem,delta,false);
 
 							cout << "WheremyCube" << std::endl;
 
@@ -321,7 +329,7 @@ void CCollisionSystem::TestThreading(TWorld * ptWorld, int nCurrentEntity, CGrap
 						{
 
 
-							pcParticleSystem->CreateAlotofCubes(ptWorld->atWorldMatrix[nCurrentEntity].worldMatrix, ptWorld, 100, pcGraphicsSystem, pcAiSystem);
+							pcParticleSystem->CreateAlotofCubes(ptWorld->atWorldMatrix[nCurrentEntity].worldMatrix, ptWorld, 30, pcGraphicsSystem, pcAiSystem,delta,false);
 
 							RemoveAABBCollider(nCurrentEntity);
 
@@ -673,7 +681,7 @@ XMMATRIX CCollisionSystem::WalkingThrewObjectCheck(XMMATRIX worldPos, TAABB othe
 			//d3d_ResultMatrix = pcGraphicsSystem->SetDefaultWorldPosition();;
 			XMMATRIX moveback;
 			moveback = D3DMatrix;
-			moveback.r[3].m128_f32[1] += 0.01f;
+			moveback.r[3].m128_f32[1] += 0.001f;
 			D3DMatrix = moveback;
 			UpdateCollision = updateAABB(D3DMatrix, UpdateCollision);
 			numberofLoops += 1;
@@ -758,6 +766,7 @@ bool CCollisionSystem::replaceAABB(int nIndex, TAABB m_AABB2)
 				{
 					ptr->m_dMaxPoint = m_AABB2.m_dMaxPoint;
 					ptr->m_dMinPoint = m_AABB2.m_dMinPoint;
+					ptr->disabledabb = m_AABB2.disabledabb;
 					return true;
 				}
 			}
@@ -952,16 +961,18 @@ bool CCollisionSystem::AABBtoAABBCollisionCheck(TAABB m_AABB2, vector<int>* m_Ot
 
 	for (list<TAABB>::iterator ptr = m_AAbb.begin(); ptr != m_AAbb.end(); ++ptr) 
 	{
-		if (m_AABB2.m_IndexLocation != ptr->m_IndexLocation) 
+		if (m_AABB2.m_IndexLocation != ptr->m_IndexLocation&&ptr->disabledabb==false) 
 		{
-			if (ptr->m_IndexLocation == 933)
-			{
-				float x = 0;
-			}
+			
 			if (classify_aabb_to_aabb(m_AABB2, *ptr) == true) 
 			{
 				
 				m_OtherColision->push_back(ptr->m_IndexLocation);
+				if (ptr->m_IndexLocation == 216)
+				{
+					float x = 0;
+ 					m_OtherColision->push_back(216);
+				}
 			}
 		}
 	}
