@@ -4859,7 +4859,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	pcGraphicsSystem->CreateEntityBuffer(&tThisWorld, tempBullet);
 	pcGraphicsSystem->CleanD3DObject(&tThisWorld, tempBullet);
 
-	tempImport = pcGraphicsSystem->ReadMesh("meshData_DemoDoors.txt");
+	tempImport = pcGraphicsSystem->ReadMesh("meshData_OctoberDemo.txt");
 	matOpt = pcGraphicsSystem->CreateTexturesFromFile(tempImport.vtMaterials, tempImport.meshCount);
 	for (int meshIndex = 0; meshIndex < tempImport.meshCount; meshIndex++)
 	{

@@ -5002,11 +5002,17 @@ unsigned int createClaytonAnim(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TM
 			//tmp.pos[j] *= 0.01;
 			//tmp.joints[j] *= 0.01;
 			//tmp.weights[j] *= 0.01;
+			if (j < 3)
+				{
+				tmp.norm[j] = tMesh.meshArrays[i].norm[j];
 
+				}
 			if (j < 2)
 			{
 				tmp.uv[j] = tMesh.meshArrays[i].uv[j];
 			}
+			
+			
 		}
 		pMesh[i] = tmp;
 		ptWorld->atMesh[nThisEntity].m_VertexData.push_back(XMFLOAT3(tmp.pos[0], tmp.pos[1], tmp.pos[2]));
