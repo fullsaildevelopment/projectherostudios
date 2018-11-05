@@ -4564,9 +4564,9 @@ void CGameMangerSystem::LoadMikesGraphicsSandbox()
 	matOpt = pcGraphicsSystem->CreateTexturesFromFile(tempImport.vtMaterials, 1);
 
 	int myMesh;
-	for (int meshIndex = 0; meshIndex < 1; meshIndex++)
+	for (int meshIndex = 0; meshIndex < tempImport.meshCount; meshIndex++)
 	{
-		myMesh = createClaytonAnim(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, tempImport.vtMeshes[meshIndex], matOpt, tempImport.vtAnimations, meshIndex, tempImport.meshCount);
+		myMesh = createClaytonAnim(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, tempImport.vtMeshes[meshIndex], matOpt, tempImport.vtAnimations, meshIndex, tempImport.animationCount);
 	}
 
 	tThisWorld.atWorldMatrix[myMesh].worldMatrix.r[3].m128_f32[0] = -4;
@@ -4760,25 +4760,7 @@ int CGameMangerSystem::MikesGraphicsSandbox()
 
 		tThisWorld.atAnimationVariant[904].tClaytonAnim.animType = 2;
 	}
-	/*else if (tThisWorld.atAnimationVariant[904].tClaytonAnim.animType != 0)
-	{
-		tThisWorld.atAnimationVariant[904].tClaytonAnim.animType = 0;
-
-		tThisWorld.atAnimation[904].tTimer.localTime = 0;
-	}*/
 	else if (pcInputSystem->InputCheck(G_KEY_J))
-	{
-		if (tThisWorld.atAnimationVariant[904].tClaytonAnim.animType != 3)
-		{
-			tThisWorld.atAnimation[904].tTimer.localTime = 0;
-
-			tThisWorld.atAnimationVariant[904].tClaytonAnim.currentFrame = 0;
-			tThisWorld.atAnimationVariant[904].tClaytonAnim.nextFrame = 1;
-		}
-
-		tThisWorld.atAnimationVariant[904].tClaytonAnim.animType = 3;
-	}
-	else if (pcInputSystem->InputCheck(G_KEY_L))
 	{
 		if (tThisWorld.atAnimationVariant[904].tClaytonAnim.animType != 4)
 		{
@@ -4789,6 +4771,18 @@ int CGameMangerSystem::MikesGraphicsSandbox()
 		}
 
 		tThisWorld.atAnimationVariant[904].tClaytonAnim.animType = 4;
+	}
+	else if (pcInputSystem->InputCheck(G_KEY_L))
+	{
+		if (tThisWorld.atAnimationVariant[904].tClaytonAnim.animType != 3)
+		{
+			tThisWorld.atAnimation[904].tTimer.localTime = 0;
+
+			tThisWorld.atAnimationVariant[904].tClaytonAnim.currentFrame = 0;
+			tThisWorld.atAnimationVariant[904].tClaytonAnim.nextFrame = 1;
+		}
+
+		tThisWorld.atAnimationVariant[904].tClaytonAnim.animType = 3;
 	}
 	else if(tThisWorld.atAnimationVariant[904].tClaytonAnim.animType != 0)
 	{

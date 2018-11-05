@@ -49,11 +49,6 @@ XMFLOAT4X4 * CAnimationSystem::PlayAnimation(TAnimationVariant& animationVariant
 			XMMATRIX qOne = XMLoadFloat4x4(&format);
 			XMStoreFloat4x4(&format, theAnimation.m_tAnim[animationVariant.tClaytonAnim.animType].m_vtKeyFrames[animationVariant.tClaytonAnim.nextFrame].m_vd3dJointMatrices[i]);
 			XMMATRIX qTwo = XMLoadFloat4x4(&format);
-			//qOne = NLerp(qOne, qTwo, t);
-			//qOne *= (1 - t);
-			//qTwo *= t;
-			//
-			//qOne += qTwo;
 
 			//Converted 3x3 matrices into quaternions
 			XMVECTOR qOneI = XMQuaternionRotationMatrix(qOne);
@@ -68,8 +63,6 @@ XMFLOAT4X4 * CAnimationSystem::PlayAnimation(TAnimationVariant& animationVariant
 			tween.r[3] = XMVectorLerp(x, y, t);
 			//Set simpleMesh position now that it's been tweened
 			thisFramesTweenJointMatrix.push_back(tween);
-			//thisFramesTweenJointMatrix.push_back(theAnimation.m_tAnim[animationVariant.tClaytonAnim.animType].m_vtKeyFrames[animationVariant.tClaytonAnim.currentFrame].m_vd3dJointMatrices[i]);
-			//thisFramesTweenJointMatrix.push_back(XMMatrixInverse(nullptr, theAnimation.invBindPosesForJoints[i]));
 
 			//memcpy(&temp.pos, &tween.r[3].m128_f32, sizeof(temp.pos));
 			//Set simpleMesh normal now that it's been tweened

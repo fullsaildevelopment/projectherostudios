@@ -194,6 +194,7 @@ struct TAnimationImport
 
 struct ImporterData
 {
+	int animationCount = 0;
 	int meshCount = 0;
 	TMeshImport* vtMeshes;
 	TMaterialImport* vtMaterials;

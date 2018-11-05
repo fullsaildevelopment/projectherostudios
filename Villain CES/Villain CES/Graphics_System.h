@@ -238,5 +238,5 @@ private:
 		textureNumber - where the path gets saved in the array of filepaths
 		thingBeingTextured - determines if the object has its own .fbm folder or if it's a dulicate of another object
 	*/
-	bool GetTexturePathHelper(fstream& file, ImporterData& tImportMe, int textureNumber, int thingBeingTextured = 0);
+	void GetTexturePathHelper(fstream& file, ImporterData& tImportMe, int textureNumber, int thingBeingTextured = 0);
 };

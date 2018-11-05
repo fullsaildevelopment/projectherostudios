@@ -424,7 +424,7 @@ void CGraphicsSystem::CleanD3DObject(TWorld * ptPlanet, int nEntityIndex)
 	destroyEntity(ptPlanet, nEntityIndex);
 }
 
-bool CGraphicsSystem::GetTexturePathHelper(fstream& file, ImporterData& tImportMe, int textureNumber, int texture)
+void CGraphicsSystem::GetTexturePathHelper(fstream& file, ImporterData& tImportMe, int textureNumber, int texture)
 {
 	int writeSizeIn;
 
@@ -642,10 +642,6 @@ bool CGraphicsSystem::GetTexturePathHelper(fstream& file, ImporterData& tImportM
 	default:
 		break;
 	}
-	//tImportMe.vtMaterials->m_tFileNameSizes.fileNameSize1 = writeSizeIn;
-	//tImportMe.vtMaterials->m_tFileNames.fileName1 = finalBuff;
-
-	//material[0][material_t::DIFFUSE].input.file_path = finalBuff;
 
 	float4 tempColor;
 
@@ -655,8 +651,6 @@ bool CGraphicsSystem::GetTexturePathHelper(fstream& file, ImporterData& tImportM
 	tImportMe.vtMaterials->m_tDiffuseColor.r = tempColor.x;
 	tImportMe.vtMaterials->m_tDiffuseColor.g = tempColor.y;
 	tImportMe.vtMaterials->m_tDiffuseColor.b = tempColor.z;
-
-	return false;
 }
 
 void CGraphicsSystem::CreateShaders(ID3D11Device * device)
@@ -1871,14 +1865,16 @@ ImporterData CGraphicsSystem::ReadMesh2(const char* input_file_path, int texture
 
 	if (tImportMe2 != nullptr)
 	{
-		tImportMe.vtAnimations = new TAnimationImport[meshCount + tImportMe2->meshCount];
-		tImportMe.meshCount = meshCount + tImportMe2->meshCount;
+		tImportMe.vtAnimations = new TAnimationImport[meshCount + tImportMe2->animationCount];
+		tImportMe.animationCount = meshCount + tImportMe2->animationCount;
 	}
 	else
 	{
 		tImportMe.vtAnimations = new TAnimationImport[meshCount];
-		tImportMe.meshCount = meshCount;
+		tImportMe.animationCount = meshCount;
 	}
+
+	tImportMe.meshCount = meshCount;
 #pragma endregion
 
 	std::fstream file;
@@ -2097,7 +2093,7 @@ ImporterData CGraphicsSystem::ReadMesh2(const char* input_file_path, int texture
 
 	if (tImportMe2 != nullptr)
 	{
-		for (int i = 1; i < tImportMe.meshCount; ++i)
+		for (int i = 1; i < tImportMe.animationCount; ++i)
 		{
 			tImportMe.vtAnimations[i] = tImportMe2->vtAnimations[i - 1];
 		}
