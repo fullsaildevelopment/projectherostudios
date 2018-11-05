@@ -4908,7 +4908,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	pcGraphicsSystem->CreateEntityBuffer(&tThisWorld, tempBullet);
 	pcGraphicsSystem->CleanD3DObject(&tThisWorld, tempBullet);
 
-	tempImport = pcGraphicsSystem->ReadMesh("meshData_DemoDoors.txt");
+	tempImport = pcGraphicsSystem->ReadMesh("meshData_OctoberDemo.txt");
 	matOpt = pcGraphicsSystem->CreateTexturesFromFile(tempImport.vtMaterials, tempImport.meshCount);
 	for (int meshIndex = 0; meshIndex < tempImport.meshCount; meshIndex++)
 	{
@@ -6405,7 +6405,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 		if (cylinder == nCurrentEntity) {
 			float x = 0;
 		}
-		if (tThisWorld.atCollisionMask[nCurrentEntity].m_tnCollisionMask > 1 && /*nCurrentEntity != 216 */nCurrentEntity != 215 && nCurrentEntity != 218 && nCurrentEntity != 118 && nCurrentEntity != 233 && nCurrentEntity != 133 && nCurrentEntity != 33)// && nCurrentEntity != 18)
+		if (tThisWorld.atCollisionMask[nCurrentEntity].m_tnCollisionMask > 1 && nCurrentEntity != 210&& nCurrentEntity != 215 && nCurrentEntity != 218 && nCurrentEntity != 118 && nCurrentEntity != 233 && nCurrentEntity != 133 && nCurrentEntity != 33)// && nCurrentEntity != 18)
 		{
 
 			if (tThisWorld.atSimpleMesh[nCurrentEntity].m_nVertexCount > tThisWorld.atDebugMesh[nCurrentEntity].m_nVertexCount)
@@ -6495,6 +6495,16 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 			}
 		}
 	}
+	tThisWorld.atAABB[208].m_dMaxPoint.x *= 2;
+	tThisWorld.atAABB[208].m_dMaxPoint.y *= 2;
+	tThisWorld.atAABB[208].m_dMaxPoint.z *= 2;
+	tThisWorld.atAABB[208].m_dMinPoint.z *= -2;
+	tThisWorld.atAABB[208].m_dMinPoint.x *= -2;
+	tThisWorld.atAABB[208].m_dMinPoint.y *= -2;
+	pcCollisionSystem->replaceAABB(208, tThisWorld.atAABB[208]);
+
+
+
 
 	for (int nCurrentEntity = 0; nCurrentEntity < ENTITYCOUNT; nCurrentEntity++)
 	{
@@ -9054,7 +9064,15 @@ int CGameMangerSystem::RealLevelUpdate()
 				tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = empty;
 			}
 		}
+		if (tThisWorld.atAABB[nCurrentEntity].TimeColiderIsDIsabled > 0 && tThisWorld.atAABB[nCurrentEntity].disabledabb == true) {
+			tThisWorld.atAABB[nCurrentEntity].TimeColiderIsDIsabled -= fpsTimer.GetDelta() + 1;
+			cout << "disabled timer" << tThisWorld.atAABB[nCurrentEntity].TimeColiderIsDIsabled;
 
+		}
+		else {
+			tThisWorld.atAABB[nCurrentEntity].disabledabb = false;
+			pcCollisionSystem->replaceAABB(nCurrentEntity, tThisWorld.atAABB[nCurrentEntity]);
+		}
 		if (tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_SIMPLEMESH | COMPONENT_SHADERID))
 		{
 			tTempPixelBuffer.m_d3dCollisionColor = tThisWorld.atSimpleMesh[nCurrentEntity].m_nColor;
