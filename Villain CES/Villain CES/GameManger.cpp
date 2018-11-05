@@ -1,8 +1,8 @@
 #include "GameManger.h"
 #define AI_ON true
-#define MIKES_SANDBOX_ON true
+#define MIKES_SANDBOX_ON false
 #define SKELETON_LOAD_ON false
-#define MAIN_LEVEL_ON false
+#define MAIN_LEVEL_ON true
 #define INPUT_ABSTRACTED_ON true
 
 #define NUMBER_OF_AI 5
@@ -6503,6 +6503,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	tThisWorld.atAABB[208].m_dMinPoint.x *= -2;
 	tThisWorld.atAABB[208].m_dMinPoint.y *= -2;
 	pcCollisionSystem->replaceAABB(208, tThisWorld.atAABB[208]);
+
 
 
 

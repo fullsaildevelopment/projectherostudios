@@ -766,6 +766,9 @@ bool CCollisionSystem::replaceAABB(int nIndex, TAABB m_AABB2)
 				if (nIndex == ptr->m_IndexLocation) 
 				{
 					ptr->m_dMaxPoint = m_AABB2.m_dMaxPoint;
+			/*		ptr->m_dMaxPointOrginal = m_AABB2.m_dMaxPointOrginal;
+					ptr->m_dMinPointOrginal = m_AABB2.m_dMinPointOrginal;*/
+
 					ptr->m_dMinPoint = m_AABB2.m_dMinPoint;
 					ptr->disabledabb = m_AABB2.disabledabb;
 					return true;
