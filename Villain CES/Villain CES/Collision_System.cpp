@@ -701,7 +701,7 @@ XMMATRIX CCollisionSystem::WalkingThrewObjectCheck(XMMATRIX worldPos, TAABB othe
 			//d3d_ResultMatrix = pcGraphicsSystem->SetDefaultWorldPosition();;
 			XMMATRIX moveback;
 			moveback = D3DMatrix;
-			moveback.r[3].m128_f32[2] += 0.01f;
+			moveback.r[3].m128_f32[2] += 1;
 			D3DMatrix = moveback;
 			UpdateCollision = updateAABB(D3DMatrix, UpdateCollision);
 			numberofLoops += 1;
@@ -719,7 +719,7 @@ XMMATRIX CCollisionSystem::WalkingThrewObjectCheck(XMMATRIX worldPos, TAABB othe
 			//d3d_ResultMatrix = pcGraphicsSystem->SetDefaultWorldPosition();;
 			XMMATRIX moveback;
 			moveback = D3DMatrix;
-			moveback.r[3].m128_f32[2] -= 0.01f;
+			moveback.r[3].m128_f32[2] -= 1;
 			D3DMatrix = moveback;
 			UpdateCollision = updateAABB(D3DMatrix, UpdateCollision);
 			numberofLoops += 1;

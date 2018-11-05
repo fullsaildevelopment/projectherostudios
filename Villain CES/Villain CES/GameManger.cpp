@@ -6445,6 +6445,15 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 			}
 		}
 	}
+	tThisWorld.atAABB[208].m_dMaxPoint.x *= 2;
+	tThisWorld.atAABB[208].m_dMaxPoint.y *= 2;
+	tThisWorld.atAABB[208].m_dMaxPoint.z *= 2;
+	tThisWorld.atAABB[208].m_dMinPoint.z *= -2;
+	tThisWorld.atAABB[208].m_dMinPoint.x *= -2;
+	tThisWorld.atAABB[208].m_dMinPoint.y *= -2;
+	pcCollisionSystem->replaceAABB(208, tThisWorld.atAABB[208]);
+
+
 
 	for (int nCurrentEntity = 0; nCurrentEntity < ENTITYCOUNT; nCurrentEntity++)
 	{
