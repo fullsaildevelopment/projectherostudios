@@ -1,8 +1,8 @@
 #include "GameManger.h"
 #define AI_ON true
-#define MIKES_SANDBOX_ON true
+#define MIKES_SANDBOX_ON false
 #define SKELETON_LOAD_ON false
-#define MAIN_LEVEL_ON false
+#define MAIN_LEVEL_ON true
 #define INPUT_ABSTRACTED_ON true
 
 #define NUMBER_OF_AI 5
@@ -4890,7 +4890,6 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	for (int meshIndex = 0; meshIndex < tempImport.meshCount; meshIndex++)
 	{
 		BulletTexted = createMesh(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, bulletMesh.vtMeshes[meshIndex], matOpt, meshIndex);
-
 	}
 
 	int tempBullet;
@@ -6510,6 +6509,8 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	pcAiSystem->SetCanWeChooseShooter(true);
 
 #pragma endregion
+
+#if EXTRACTIONBEAM
 	TPrimalVert x;
 	x.m_d3dfColor = XMFLOAT4(1, 1, 0, 1);
 	x.m_d3dfPosition = XMFLOAT3(0, 0, 0);
@@ -6526,7 +6527,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	atBeamVerts.push_back(x);
 
 	ExtractionBeamIndex = CreateExtractionBeam(&tThisWorld, m_d3dWorldMatrix, PlayerStartIndex, atBeamVerts);
-
+#endif
 
 	pcGraphicsSystem->CreateBuffers(&tThisWorld);
 
@@ -7937,6 +7938,7 @@ int CGameMangerSystem::RealLevelUpdate()
 
 
 #endif
+#if EXTRACTIONBEAM
 			//Extraction Beam & related functions are here - ZFB
 			if ((pcInputSystem->InputCheck(G_KEY_Q) == 1
 				&& tCameraMode.bAimMode == true
@@ -8018,6 +8020,7 @@ int CGameMangerSystem::RealLevelUpdate()
 				pcGraphicsSystem->InitLineShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atWorldMatrix[ExtractionBeamIndex].worldMatrix, m_d3dViewMatrix, m_d3dProjectionMatrix, tThisWorld.atDebugMesh[ExtractionBeamIndex], aimCamera->d3d_Position, atBeamVerts, particleSRV);
 				pcGraphicsSystem->ExecutePipeline(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atDebugMesh[ExtractionBeamIndex].m_nVertexCount, tThisWorld.atGraphicsMask[ExtractionBeamIndex].m_tnGraphicsMask, tThisWorld.atShaderID[ExtractionBeamIndex].m_nShaderID);
 			}
+#endif
 #if MUSIC_ON
 			if (pcInputSystem->InputCheck(G_KEY_Q) == 0 && pcAudioSystem->m_BeamSoundOn == true)
 			{
@@ -9908,9 +9911,6 @@ int CGameMangerSystem::ResetLevel()
 	return 14;
 }
 
-
-
-
 /*
 If door[i] == 1
 	open door
@@ -9923,5 +9923,3 @@ If door[i] == 2
 If door[i] == -2
 	door is closed, do nothing
 */
-
-

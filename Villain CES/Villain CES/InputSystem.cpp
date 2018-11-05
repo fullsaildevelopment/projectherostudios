@@ -364,9 +364,9 @@ XMMATRIX CInputSystem::DebugCamera(XMMATRIX d3d_ViewM, XMMATRIX d3d_WorldM, doub
 
 	}
 	if (InputCheck(G_KEY_SPACE) == 1) {
-	/*	d3dMovementM = XMMatrixTranslation(0, m_fMouseMovementSpeed * delta, 0);
+		d3dMovementM = XMMatrixTranslation(0, m_fMouseMovementSpeed * delta, 0);
 		d3dTmpViewM = XMMatrixMultiply(d3dMovementM, d3dTmpViewM);
-*/
+
 	}
 	if (InputCheck(G_KEY_LEFTSHIFT) == 1) {
 		d3dMovementM = XMMatrixTranslation(0, -m_fMouseMovementSpeed * delta, 0);
@@ -486,6 +486,7 @@ XMMATRIX CInputSystem::CharacterMovement(XMMATRIX d3dplayerMatrix, double delta,
 			keyPressed = true;
 			stepCount++;
 		}
+#if JUMPING
 		/*if (InputCheck(G_KEY_SPACE) == 1 && clayton.jumpTime > 0 && playerVeclocity.m128_f32[1] > -.1)
 		{
 		/*	d3dMovementM = XMMatrixTranslation(0, m_fMouseMovementSpeed * delta, 0);
@@ -507,7 +508,7 @@ XMMATRIX CInputSystem::CharacterMovement(XMMATRIX d3dplayerMatrix, double delta,
 				clayton.jumpTime += delta;
 			}
 		}*/
-
+#endif
 		if (keyPressed == true && stepCount == 20)
 		{
 #if MUSIC_ON
