@@ -1,8 +1,8 @@
 #include "GameManger.h"
 #define AI_ON true
-#define MIKES_SANDBOX_ON false
+#define MIKES_SANDBOX_ON true
 #define SKELETON_LOAD_ON false
-#define MAIN_LEVEL_ON true
+#define MAIN_LEVEL_ON false
 #define INPUT_ABSTRACTED_ON true
 
 #define NUMBER_OF_AI 5
@@ -4594,18 +4594,6 @@ int CGameMangerSystem::MikesGraphicsSandbox()
 	static XMMATRIX m_d3d_ResultMatrix = pcGraphicsSystem->SetDefaultWorldPosition();
 	static XMMATRIX m_d3dOffsetMatrix = pcGraphicsSystem->SetDefaultOffset();
 	tCameraMode = pcInputSystem->CameraModeListen(tCameraMode);
-	if (pcInputSystem->InputCheck(G_KEY_P))
-	{
-		return 3;
-	}
-
-	if (pcInputSystem->InputCheck(G_KEY_Y))
-	{
-		if (Health > 0)
-		{
-			Health -= .1f;
-		}
-	}
 
 	if (tCameraMode.bSwitch == true)
 	{
