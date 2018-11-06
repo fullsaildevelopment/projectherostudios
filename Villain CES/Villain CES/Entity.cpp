@@ -5047,7 +5047,7 @@ unsigned int createClaytonAnim(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TM
 	ptWorld->atMesh[nThisEntity].m_d3dIndexData.SysMemSlicePitch = 0;
 
 	ptWorld->atAnimationVariant[nThisEntity].tClaytonAnim.forward = true;
-	ptWorld->atAnimationVariant[nThisEntity].tClaytonAnim.animType = 1;//Walking
+	ptWorld->atAnimationVariant[nThisEntity].tClaytonAnim.animType = 0;//Walking
 	ptWorld->atAnimationVariant[nThisEntity].tClaytonAnim.currentFrame = 0;//Walking
 	ptWorld->atAnimationVariant[nThisEntity].tClaytonAnim.nextFrame = 1;//Walking
 

@@ -4969,6 +4969,9 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	tempImport = pcGraphicsSystem->ReadMesh2("meshData_PirateMoveBackward.txt", 1, &tempImport);
 	tempImport = pcGraphicsSystem->ReadMesh2("meshData_PirateMoveForward.txt", 1, &tempImport);
 	tempImport = pcGraphicsSystem->ReadMesh2("meshData_PirateIdle.txt", 1, &tempImport);
+
+	matOpt = pcGraphicsSystem->CreateTexturesFromFile(tempImport.vtMaterials, 1);
+
 	for (int meshIndex = 0; meshIndex < tempImport.meshCount; meshIndex++)
 	{
 		//ClaytonIndex = createClayton(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, tempImport.vtMeshes[meshIndex], tempImport.vtMaterials[meshIndex]);
@@ -6441,6 +6444,26 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 
 				TAABB MyAbb = pcCollisionSystem->createAABBS(tThisWorld.atMesh[nCurrentEntity].m_VertexData, tThisWorld.atAABB[nCurrentEntity]);
 				MyAbb.m_IndexLocation = nCurrentEntity;
+
+				if (nCurrentEntity == ClaytonIndex)
+				{
+					MyAbb.m_dMaxPoint.x *= 0.01f;
+					MyAbb.m_dMaxPoint.y *= 0.01f;
+					MyAbb.m_dMaxPoint.z *= 0.01f;
+
+					MyAbb.m_dMinPoint.x *= 0.01f;
+					MyAbb.m_dMinPoint.y *= 0.01f;
+					MyAbb.m_dMinPoint.z *= 0.01f;
+
+					MyAbb.m_dMinPointOrginal.x *= 0.01f;
+					MyAbb.m_dMinPointOrginal.y *= 0.01f;
+					MyAbb.m_dMinPointOrginal.z *= 0.01f;
+
+					MyAbb.m_dMaxPointOrginal.x *= 0.01f;
+					MyAbb.m_dMaxPointOrginal.y *= 0.01f;
+					MyAbb.m_dMaxPointOrginal.z *= 0.01f;
+				}
+
 				tThisWorld.atAABB[nCurrentEntity] = MyAbb;
 				pcCollisionSystem->AddAABBCollider(MyAbb, nCurrentEntity);
 
@@ -7699,6 +7722,7 @@ int CGameMangerSystem::RealLevelUpdate()
 	CGraphicsSystem::TMyVertexBufferType tMyVertexBufferTemp;
 	CGraphicsSystem::TUIVertexBufferType tUIVertexBuffer;
 	CGraphicsSystem::TUIPixelBufferType tUIPixelBuffer;
+	CGraphicsSystem::TAnimatedVertexBufferType tAnimVertexBuffer;
 
 	tMyVertexBufferTemp.m_d3dColor = XMFLOAT4(0, 0, 0, 1);
 #if MUSIC_ON
@@ -7954,10 +7978,7 @@ int CGameMangerSystem::RealLevelUpdate()
 					pcGraphicsSystem->ExecutePipeline(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atDebugMesh[nCurrentEntity].m_nVertexCount, tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask, tThisWorld.atShaderID[nCurrentEntity].m_nShaderID);
 				}
 			}
-#if MUSIC_ON
 
-
-#endif
 #if EXTRACTIONBEAM
 			//Extraction Beam & related functions are here - ZFB
 			if ((pcInputSystem->InputCheck(G_KEY_Q) == 1
@@ -8040,16 +8061,19 @@ int CGameMangerSystem::RealLevelUpdate()
 				pcGraphicsSystem->InitLineShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atWorldMatrix[ExtractionBeamIndex].worldMatrix, m_d3dViewMatrix, m_d3dProjectionMatrix, tThisWorld.atDebugMesh[ExtractionBeamIndex], aimCamera->d3d_Position, atBeamVerts, particleSRV);
 				pcGraphicsSystem->ExecutePipeline(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atDebugMesh[ExtractionBeamIndex].m_nVertexCount, tThisWorld.atGraphicsMask[ExtractionBeamIndex].m_tnGraphicsMask, tThisWorld.atShaderID[ExtractionBeamIndex].m_nShaderID);
 			}
-#endif
+
 #if MUSIC_ON
+
 			if (pcInputSystem->InputCheck(G_KEY_Q) == 0 && pcAudioSystem->m_BeamSoundOn == true)
 			{
 				pcAudioSystem->m_BeamSoundOn = false;
 			}
 #endif
+#endif
 		}
 
-		if (tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_SHADERID)
+		if ((tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_SHADERID) 
+			|| tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_ANIMATION | COMPONENT_SHADERID))
 			&& tThisWorld.atUIMask[nCurrentEntity].m_tnUIMask == (COMPONENT_UIMASK))
 		{
 			if (tCameraMode.bWalkMode == true)
@@ -8075,6 +8099,9 @@ int CGameMangerSystem::RealLevelUpdate()
 				if (tThisWorld.atInputMask[nCurrentEntity].m_tnInputMask == (COMPONENT_CLAYTON | COMPONENT_INPUTMASK)
 					&& PlayerStartIndex == ClaytonIndex)
 				{
+					tAnimVertexBuffer.m_d3dWorldMatrix = tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix;
+					tAnimVertexBuffer.m_d3dProjectionMatrix = m_d3dProjectionMatrix;
+
 					if (tCameraMode.bWalkMode == true)
 					{
 						/*m_d3dPlayerMatrix = pcInputSystem->CharacterMovement(m_d3dPlayerMatrix, fpsTimer.GetDelta(), pcAudioSystem, tThisWorld.atClayton[PlayerStartIndex], tThisWorld.atRigidBody[PlayerStartIndex].velocity, bNoMoving);
@@ -8112,6 +8139,7 @@ int CGameMangerSystem::RealLevelUpdate()
 					}
 					else if (tCameraMode.bAimMode == true)
 					{
+						tAnimVertexBuffer.m_d3dViewMatrix = aimCamera->d3d_Position;
 
 						//m_d3dPlayerMatrix = pcInputSystem->CharacterMovement(m_d3dPlayerMatrix, fpsTimer.GetDelta(), pcAudioSystem, tThisWorld.atClayton[PlayerStartIndex], tThisWorld.atRigidBody[PlayerStartIndex].velocity, bNoMoving);
 						tThisWorld.atWorldMatrix[ClaytonIndex].worldMatrix = m_d3dClaytonMatrix;
@@ -8168,6 +8196,8 @@ int CGameMangerSystem::RealLevelUpdate()
 					}
 					else
 					{
+						tAnimVertexBuffer.m_d3dViewMatrix = debugCamera->d3d_Position;
+
 						XMMATRIX claytonFrustumMatrix = debugCamera->d3d_Position;
 						claytonFrustumMatrix = XMMatrixMultiply(XMMatrixTranslation(0, 0, -15), claytonFrustumMatrix);
 
@@ -8197,6 +8227,7 @@ int CGameMangerSystem::RealLevelUpdate()
 						tThisWorld.atWorldMatrix[claytonFrustumIndex].worldMatrix = claytonFrustumMatrix;
 					}
 
+#if JUMPING
 					if (tThisWorld.atClayton[nCurrentEntity].jumpTime <= 0)
 					{
 						tThisWorld.atClayton[nCurrentEntity].jumpCooldown -= fpsTimer.GetDelta();
@@ -8206,6 +8237,25 @@ int CGameMangerSystem::RealLevelUpdate()
 							tThisWorld.atClayton[nCurrentEntity].jumpTime = .5;
 						}
 					}
+#endif
+
+					XMFLOAT4X4 * tweenJoints = pcAnimationSystem->PlayAnimation(tThisWorld.atAnimationVariant[nCurrentEntity], tThisWorld.atAnimation[nCurrentEntity], tThisWorld.atAnimation[nCurrentEntity].tTimer.localTime);
+
+					for (int i = 0; i < 63; ++i)
+					{
+						memcpy(&tAnimVertexBuffer.m_d3dJointsForVS[i], &tweenJoints[i], sizeof(tweenJoints[i]));
+					}
+
+					if (tCameraMode.bAimMode == true)
+					{
+						pcGraphicsSystem->InitAnimShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tAnimVertexBuffer, tThisWorld.atMesh[nCurrentEntity], aimCamera->d3d_Position);
+					}
+					else if (tCameraMode.bDebugMode == true)
+					{
+						pcGraphicsSystem->InitAnimShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tAnimVertexBuffer, tThisWorld.atMesh[nCurrentEntity], debugCamera->d3d_Position);
+					}
+
+					tThisWorld.atAnimation[nCurrentEntity].tTimer.GetLocalTime(tThisWorld.atAnimation[nCurrentEntity].tTimer.tSceneTimer, tThisWorld.atAnimation[nCurrentEntity].tTimer.localTime);
 				}
 				else if (tThisWorld.atInputMask[nCurrentEntity].m_tnInputMask == (COMPONENT_CAELIS | COMPONENT_INPUTMASK)
 					&& PlayerStartIndex == CaelisIndex)
@@ -8379,13 +8429,16 @@ int CGameMangerSystem::RealLevelUpdate()
 					pcGraphicsSystem->InitMyShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tMyVertexBufferTemp, tThisWorld.atMesh[nCurrentEntity], walkCamera->d3d_Position);
 				}
 				//Calls Shader Function on Aim Camera If aim mode is active
-				else if (tCameraMode.bAimMode == true)
+				else if (tCameraMode.bAimMode == true && nCurrentEntity != ClaytonIndex)
 				{
 					pcGraphicsSystem->InitMyShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tMyVertexBufferTemp, tThisWorld.atMesh[nCurrentEntity], aimCamera->d3d_Position);
 				}
 				else
 				{
-					pcGraphicsSystem->InitMyShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tMyVertexBufferTemp, tThisWorld.atMesh[nCurrentEntity], debugCamera->d3d_Position);
+					if (nCurrentEntity != ClaytonIndex)
+					{
+						pcGraphicsSystem->InitMyShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tMyVertexBufferTemp, tThisWorld.atMesh[nCurrentEntity], debugCamera->d3d_Position);
+					}
 				}
 				pcGraphicsSystem->ExecutePipeline(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atMesh[nCurrentEntity].m_nIndexCount, tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask, tThisWorld.atShaderID[nCurrentEntity].m_nShaderID);
 
