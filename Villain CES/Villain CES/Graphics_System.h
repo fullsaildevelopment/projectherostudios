@@ -169,6 +169,7 @@ public:
 	XMVECTOR GetCameraPos();
 	XMMATRIX SetDefaultCameraMatrix();
 	XMMATRIX ResetAimModeCameraOffset();
+	void UpdateAnimationInfo(TAnimation &vtAnimation, TAnimationVariant &vtAnimationVariant, bool &forward, bool &backward, bool &left, bool &right);
 	//Last Frame
 	void CleanD3DLevel(TWorld * ptWorld);         //  releases memory
 	void CleanD3DObject(TWorld *ptPlanet, int nEntityIndex);

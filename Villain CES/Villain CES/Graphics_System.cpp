@@ -613,40 +613,54 @@ void CGraphicsSystem::GetTexturePathHelper(fstream& file, ImporterData& tImportM
 		}
 	}
 
+	float4 tempColor;
+
+	file.read((char*)&tempColor, sizeof(float4));
+	delete[] tempbuffer;
+
 	switch (textureNumber)
 	{
 	case 0:
 	{
 		tImportMe.vtMaterials->m_tFileNameSizes.fileNameSize1 = writeSizeIn;
 		tImportMe.vtMaterials->m_tFileNames.fileName1 = finalBuff;
+
+		tImportMe.vtMaterials->m_tDiffuseColor.r = tempColor.x;
+		tImportMe.vtMaterials->m_tDiffuseColor.g = tempColor.y;
+		tImportMe.vtMaterials->m_tDiffuseColor.b = tempColor.z;
 	}
 	break;
 	case 1:
 	{
 		tImportMe.vtMaterials->m_tFileNameSizes.fileNameSize2 = writeSizeIn;
 		tImportMe.vtMaterials->m_tFileNames.fileName2 = finalBuff;
+
+		tImportMe.vtMaterials->m_tEmissiveColor.r = tempColor.x;
+		tImportMe.vtMaterials->m_tEmissiveColor.g = tempColor.y;
+		tImportMe.vtMaterials->m_tEmissiveColor.b = tempColor.z;
 	}
 	break;
 	case 2:
 	{
 		tImportMe.vtMaterials->m_tFileNameSizes.fileNameSize3 = writeSizeIn;
 		tImportMe.vtMaterials->m_tFileNames.fileName3 = finalBuff;
+
+		
 	}
 	break;
 	case 3:
 	{
 		tImportMe.vtMaterials->m_tFileNameSizes.fileNameSize4 = writeSizeIn;
 		tImportMe.vtMaterials->m_tFileNames.fileName4 = finalBuff;
+
+		tImportMe.vtMaterials->m_tSpecularColor.r = tempColor.x;
+		tImportMe.vtMaterials->m_tSpecularColor.g = tempColor.y;
+		tImportMe.vtMaterials->m_tSpecularColor.b = tempColor.z;
 	}
 	break;
 	default:
 		break;
 	}
-
-	float4 tempColor;
-
-	file.read((char*)&tempColor, sizeof(float4));
-	delete[] tempbuffer;
 
 	tImportMe.vtMaterials->m_tDiffuseColor.r = tempColor.x;
 	tImportMe.vtMaterials->m_tDiffuseColor.g = tempColor.y;
@@ -2602,6 +2616,67 @@ void CGraphicsSystem::InitLineShaderData(ID3D11DeviceContext * pd3dDeviceContext
 	if (&ParticleTexture != NULL)
 	{
 		pd3dDeviceContext->PSSetShaderResources(0, 1, &ParticleTexture);
+	}
+}
+
+void CGraphicsSystem::UpdateAnimationInfo(TAnimation &vtAnimation, TAnimationVariant &vtAnimationVariant, bool &forward, bool &backward, bool &left, bool &right)
+{
+	if (forward)
+	{
+		if (vtAnimationVariant.tClaytonAnim.animType != 1)
+		{
+			vtAnimation.tTimer.localTime = 0;
+
+			vtAnimationVariant.tClaytonAnim.currentFrame = 0;
+			vtAnimationVariant.tClaytonAnim.nextFrame = 1;
+		}
+
+		vtAnimationVariant.tClaytonAnim.animType = 1;
+	}
+	else if (backward)
+	{
+		if (vtAnimationVariant.tClaytonAnim.animType != 2)
+		{
+			vtAnimation.tTimer.localTime = 0;
+
+			vtAnimationVariant.tClaytonAnim.currentFrame = 0;
+			vtAnimationVariant.tClaytonAnim.nextFrame = 1;
+		}
+
+		vtAnimationVariant.tClaytonAnim.animType = 2;
+	}
+	else if (left)
+	{
+		if (vtAnimationVariant.tClaytonAnim.animType != 4)
+		{
+			vtAnimation.tTimer.localTime = 0;
+
+			vtAnimationVariant.tClaytonAnim.currentFrame = 0;
+			vtAnimationVariant.tClaytonAnim.nextFrame = 1;
+		}
+
+		vtAnimationVariant.tClaytonAnim.animType = 4;
+	}
+	else if (right)
+	{
+		if (vtAnimationVariant.tClaytonAnim.animType != 3)
+		{
+			vtAnimation.tTimer.localTime = 0;
+
+			vtAnimationVariant.tClaytonAnim.currentFrame = 0;
+			vtAnimationVariant.tClaytonAnim.nextFrame = 1;
+		}
+
+		vtAnimationVariant.tClaytonAnim.animType = 3;
+	}
+	else if (vtAnimationVariant.tClaytonAnim.animType != 0)
+	{
+		vtAnimation.tTimer.localTime = 0;
+
+		vtAnimationVariant.tClaytonAnim.currentFrame = 0;
+		vtAnimationVariant.tClaytonAnim.nextFrame = 1;
+
+		vtAnimationVariant.tClaytonAnim.animType = 0;
 	}
 }
 

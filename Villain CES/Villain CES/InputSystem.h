@@ -4,6 +4,7 @@
 #include<string>
 //#include"Entity.h"
 #include "AudioSystem.h"
+//#include "Graphics_System.h"
 #include"Gateware Redistribution R5B/Interface/G_System/GInput.h"
 #include"Gateware Redistribution R5B/Interface/G_System/GKeyDefines.h"
 using namespace GW;
@@ -31,7 +32,7 @@ public:
 		XMMATRIX &d3dResultMatrix, XMMATRIX &d3dPlayerMatrix, XMMATRIX &d3dOffsetMatrix, XMMATRIX &d3dWorldMatrix,
 		XMMATRIX &tMyViewMatrix, XMMATRIX &tTempViewMatrix,
 		XMFLOAT4 &d3dCollisionColor, double &delta, CAudioSystem* in_Audio, TClayton &clayton, XMVECTOR &playerVeclocity, 
-		XMMATRIX &Caelis_Matrix, int PlayerIndex, int CaelisIndex, int ClaytonIndex, TCaelis  &caelis, CAudioSystem *audio,bool* didweHeal);
+		XMMATRIX &Caelis_Matrix, int PlayerIndex, int CaelisIndex, int ClaytonIndex, TCaelis &caelis, CAudioSystem *audio, bool* didweHeal, bool &forward, bool &backward, bool &left, bool &right);
 	GReturn InitializeGInput(HWND cTheWindow);																																																													
 	
 
@@ -51,7 +52,7 @@ public:
 
 	XMMATRIX DebugCamera(XMMATRIX d3d_ViewM, XMMATRIX d3d_WorldM, double delta);
 
-	XMMATRIX CharacterMovement(XMMATRIX d3dplayerMatrix, double delta, CAudioSystem* in_Audio, TClayton &clayton, XMVECTOR &playerVeclocity, bool move);
+	XMMATRIX CharacterMovement(XMMATRIX d3dplayerMatrix, double delta, CAudioSystem* in_Audio, TClayton &clayton, XMVECTOR &playerVeclocity, bool move, bool &forward, bool &backward, bool &left, bool &right);
 
 	/*
 	* WalkCamera(): This fuction makes a camera follow an in-game object.
