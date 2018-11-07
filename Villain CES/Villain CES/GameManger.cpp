@@ -8260,12 +8260,12 @@ int CGameMangerSystem::RealLevelUpdate()
 						pcGraphicsSystem->InitAnimShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tAnimVertexBuffer, tThisWorld.atMesh[nCurrentEntity], debugCamera->d3d_Position);
 					}
 
-					if (bNoMoving)
-					{
-						tThisWorld.atAnimation[nCurrentEntity].tTimer.GetLocalTime(tThisWorld.atAnimation[nCurrentEntity].tTimer.tSceneTimer, tThisWorld.atAnimation[nCurrentEntity].tTimer.localTime);
+						tThisWorld.atAnimation[nCurrentEntity].tTimer.GetLocalTime(tThisWorld.atAnimation[nCurrentEntity].tTimer.tSceneTimer, tThisWorld.atAnimation[nCurrentEntity].tTimer.localTime, 2);
 					
-						tThisWorld.atAnimation[nCurrentEntity].tTimer.localTime = 0;
-					}
+						if (bNoMoving)
+						{
+							tThisWorld.atAnimation[nCurrentEntity].tTimer.localTime = 0;
+						}
 				}
 #if CAELIS
 				else if (tThisWorld.atInputMask[nCurrentEntity].m_tnInputMask == (COMPONENT_CAELIS | COMPONENT_INPUTMASK)
