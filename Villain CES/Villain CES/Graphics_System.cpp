@@ -662,9 +662,9 @@ void CGraphicsSystem::GetTexturePathHelper(fstream& file, ImporterData& tImportM
 		break;
 	}
 
-	tImportMe.vtMaterials->m_tDiffuseColor.r = tempColor.x;
-	tImportMe.vtMaterials->m_tDiffuseColor.g = tempColor.y;
-	tImportMe.vtMaterials->m_tDiffuseColor.b = tempColor.z;
+	//tImportMe.vtMaterials->m_tDiffuseColor.r = tempColor.x;
+	//tImportMe.vtMaterials->m_tDiffuseColor.g = tempColor.y;
+	//tImportMe.vtMaterials->m_tDiffuseColor.b = tempColor.z;
 }
 
 void CGraphicsSystem::CreateShaders(ID3D11Device * device)
@@ -905,7 +905,7 @@ void CGraphicsSystem::CreateShaders(ID3D11Device * device)
 	D3D11_INPUT_ELEMENT_DESC m_d3dAnimatedLayoutDesc[] =
 	{
 		{ "POSITION", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		{ "NORM", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		//{ "NORM", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 		{ "BLENDWEIGHT", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 		{ "BLENDINDICES", 0, DXGI_FORMAT_R32G32B32A32_UINT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
@@ -2375,7 +2375,7 @@ void CGraphicsSystem::InitSkyboxShaderData(ID3D11DeviceContext * pd3dDeviceConte
 	}
 }
 
-void CGraphicsSystem::InitAnimShaderData(ID3D11DeviceContext * pd3dDeviceContext, TAnimatedVertexBufferType d3dVertexBuffer, TMesh tMesh, TLightMaterials tMaterials,  XMMATRIX CameraMatrix)
+void CGraphicsSystem::InitAnimShaderData(ID3D11DeviceContext * pd3dDeviceContext, TAnimatedVertexBufferType d3dVertexBuffer, TMesh tMesh, /*TLightMaterials tMaterials,*/  XMMATRIX CameraMatrix)
 {
 	D3D11_MAPPED_SUBRESOURCE d3dAnimatedVertexMappedResource, d3dLightPixelMappedResource;
 
@@ -2409,7 +2409,7 @@ void CGraphicsSystem::InitAnimShaderData(ID3D11DeviceContext * pd3dDeviceContext
 #pragma endregion
 
 #pragma region Map to Light Constant Buffer
-	pd3dDeviceContext->Map(m_pd3dLightPixelBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &d3dLightPixelMappedResource);
+	/*pd3dDeviceContext->Map(m_pd3dLightPixelBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &d3dLightPixelMappedResource);
 	ptLightPixelBufferDataPointer = (TLightBufferType*)d3dLightPixelMappedResource.pData;
 
 	ptLightPixelBufferDataPointer->Ambience = XMFLOAT4(0, 1, 0, 0);
@@ -2418,6 +2418,8 @@ void CGraphicsSystem::InitAnimShaderData(ID3D11DeviceContext * pd3dDeviceContext
 	ptLightPixelBufferDataPointer->m_Proprties.m_Emissive = tMaterials.m_Emissive;
 	ptLightPixelBufferDataPointer->m_Proprties.m_Specular = tMaterials.m_Specular;
 	ptLightPixelBufferDataPointer->m_Proprties.shininess = tMaterials.shininess;
+
+	pd3dDeviceContext->Unmap(m_pd3dAnimatedVertexBuffer, 0);*/
 
 #pragma endregion
 
