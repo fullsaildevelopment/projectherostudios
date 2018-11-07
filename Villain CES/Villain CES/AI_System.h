@@ -82,8 +82,12 @@ public:
 	bool chooseAnotherShooter = true;
 	float GiveRandomBetweenNegative1and1();
 	float GiveRandomNuberBetweenzeroand1();
-private:
+	void AiStopShooting(TWorld * ptWorld);
+	void AiStopShooting(TWorld * ptWorld,int currentinty);
 
+	vector<int> allAI;
+private:
+	
 	int CurrentShooter;
 	vector<int> ShootingActiveAI;
 

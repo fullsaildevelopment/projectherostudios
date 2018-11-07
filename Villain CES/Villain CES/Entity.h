@@ -177,3 +177,5 @@ unsigned int CreateCylinder(TWorld * ptWorld, XMMATRIX SpawnPosition);
 unsigned int CreateCaelis(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMeshImport tMesh, TMaterialImport tMaterial);
 unsigned int ParticleTest(TWorld * ptWorld, XMMATRIX SpawnPosition,float scaler,bool yellow);
 unsigned int CreatePlayActiveFightingTrigger(TWorld * ptWorld, XMMATRIX SpawnPosition);
+unsigned int CreateTriggerForAiVision(TWorld * ptWorld, XMMATRIX SpawnPosition);
+unsigned int CreateTriggerForAiVisionWithListofEnemeisthatcantsee(TWorld * ptWorld, XMMATRIX SpawnPosition);

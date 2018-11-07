@@ -649,6 +649,22 @@ float CAISystem::GiveRandomNuberBetweenzeroand1()
 	
 }
 
+void CAISystem::AiStopShooting(TWorld * ptWorld)
+{
+	for (int i = 0; i < allAI.size(); ++i) {
+		ptWorld->atActiveAI[allAI[i]].active=false;	
+		ptWorld->atAIVision[allAI[i]].keepSearching = false;
+	}	
+}
+
+void CAISystem::AiStopShooting(TWorld * ptWorld, int currentinty)
+{
+	for (int i = 0; i < ptWorld->atAIVision[currentinty].AIToTurnVisionOf.size(); ++i) {
+		ptWorld->atActiveAI[ptWorld->atAIVision[currentinty].AIToTurnVisionOf[i]].active = false;
+		ptWorld->atAIVision[ptWorld->atAIVision[currentinty].AIToTurnVisionOf[i]].keepSearching = false;
+	}
+}
+
 int CAISystem::GetActiveShooter()
 {
 	return CurrentShooter;
