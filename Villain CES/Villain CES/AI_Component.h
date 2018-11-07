@@ -10,10 +10,13 @@ enum eAIComponent
 	COMPONENT_SHOOT =  1 << 2,
 	COMPONENT_SEARCH = 1 << 3,
 	COMPONENT_SPOTEDPLAYER = 1 << 4,
-	COMPONENT_PATHFINDTEST  = 1<< 5,
+	COMPONENT_PATHFINDTEST  = 1 << 5,
 	COMPONENT_COVERTRIGGER	= 1 << 6,
 	COMPONENT_HEALINGAI		= 1 << 7,
-	COMPONENT_FIGHTINGAI	= 1 << 8
+	COMPONENT_FIGHTINGAI	= 1 << 8,
+	COMPONENT_CANTSEEPLAYERTRIGGER= 1 << 9,
+	COMPONENT_CANTSEEPLAYERTRIGGERVector = 1 << 10
+
 };
 
 struct TAIMask
@@ -36,6 +39,7 @@ struct TAIVision {
 	int		 wallIndex = -1;
 	bool keepSearching = true;
 	unsigned int indexLookingAt;
+	vector<int> AIToTurnVisionOf;
 	
 	bool stopSearching = false;
 };

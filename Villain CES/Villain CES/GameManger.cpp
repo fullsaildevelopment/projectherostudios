@@ -5153,7 +5153,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	{
 		spacePirate = CreateScyllian(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, tempImport.vtMeshes[meshIndex], tempImport.vtMaterials[meshIndex], AILocation);
 	}
-
+	pcAiSystem->allAI.push_back(spacePirate);
 	enemyToCopyFrom.atMesh = tThisWorld.atMesh[spacePirate];
 	enemyToCopyFrom.atRigidBody = tThisWorld.atRigidBody[spacePirate];
 	enemyToCopyFrom.atShaderID = tThisWorld.atShaderID[spacePirate];
@@ -5284,6 +5284,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 		spacePirate = CreateScyllian(&tThisWorld, AILocation, enemyToCopyFrom);
 		//spacePirate = CreateScyllian(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, tempImport.vtMeshes[meshIndex], tempImport.vtMaterials[meshIndex], AILocation);
 	}
+	pcAiSystem->allAI.push_back(spacePirate);
 	tThisWorld.atActiveAI[previousai].NoctifyOtherAi.push_back(spacePirate);
 	tThisWorld.atActiveAI[spacePirate].NoctifyOtherAi.push_back(previousai);
 
@@ -5293,7 +5294,115 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	tThisWorld.atAiHeath[spacePirate].heath = 100;
 	createGSQuad(&tThisWorld, XMFLOAT4(1, 0, 0, 1), spacePirate);
 	createGSQuad(&tThisWorld, XMFLOAT4(0, 0, 0, 1), spacePirate);
+	XMMATRIX VisionTriggerMatrix= m_d3dClaytonMatrix;
+	VisionTriggerMatrix .r[3].m128_f32[0]+= 7.3;
+	VisionTriggerMatrix.r[3].m128_f32[2] -= 11;
 
+	CreateTriggerForAiVision(&tThisWorld, VisionTriggerMatrix);
+	VisionTriggerMatrix.r[3].m128_f32[2] -= 1;
+
+	CreateTriggerForAiVision(&tThisWorld, VisionTriggerMatrix);
+	VisionTriggerMatrix.r[3].m128_f32[2] -= 1;
+
+	CreateTriggerForAiVision(&tThisWorld, VisionTriggerMatrix);
+	VisionTriggerMatrix.r[3].m128_f32[2] -= 1;
+
+	CreateTriggerForAiVision(&tThisWorld, VisionTriggerMatrix);
+	VisionTriggerMatrix.r[3].m128_f32[2] -= 1;
+
+	CreateTriggerForAiVision(&tThisWorld, VisionTriggerMatrix);
+	VisionTriggerMatrix.r[3].m128_f32[2] -= 1;
+
+	CreateTriggerForAiVision(&tThisWorld, VisionTriggerMatrix);
+	VisionTriggerMatrix.r[3].m128_f32[2] += 6;
+
+	CreateTriggerForAiVision(&tThisWorld, VisionTriggerMatrix);
+	VisionTriggerMatrix.r[3].m128_f32[2] += 1;
+
+	CreateTriggerForAiVision(&tThisWorld, VisionTriggerMatrix);
+	VisionTriggerMatrix.r[3].m128_f32[2] += 1;
+
+	CreateTriggerForAiVision(&tThisWorld, VisionTriggerMatrix);	VisionTriggerMatrix.r[3].m128_f32[2] += 1;
+
+	CreateTriggerForAiVision(&tThisWorld, VisionTriggerMatrix);	VisionTriggerMatrix.r[3].m128_f32[2] += 1;
+
+	CreateTriggerForAiVision(&tThisWorld, VisionTriggerMatrix);	VisionTriggerMatrix.r[3].m128_f32[2] += 1;
+
+	CreateTriggerForAiVision(&tThisWorld, VisionTriggerMatrix);	VisionTriggerMatrix.r[3].m128_f32[2] += 1;
+
+	CreateTriggerForAiVision(&tThisWorld, VisionTriggerMatrix);	VisionTriggerMatrix.r[3].m128_f32[2] += 1;
+
+	CreateTriggerForAiVision(&tThisWorld, VisionTriggerMatrix);	VisionTriggerMatrix.r[3].m128_f32[2] += 1;
+
+	CreateTriggerForAiVision(&tThisWorld, VisionTriggerMatrix);	VisionTriggerMatrix.r[3].m128_f32[2] += 1;
+
+	CreateTriggerForAiVision(&tThisWorld, VisionTriggerMatrix);	VisionTriggerMatrix.r[3].m128_f32[2] += 1;
+
+	CreateTriggerForAiVision(&tThisWorld, VisionTriggerMatrix);	VisionTriggerMatrix.r[3].m128_f32[2] += 1;
+
+	CreateTriggerForAiVision(&tThisWorld, VisionTriggerMatrix);	VisionTriggerMatrix.r[3].m128_f32[2] += 1;
+
+	CreateTriggerForAiVision(&tThisWorld, VisionTriggerMatrix);	VisionTriggerMatrix.r[3].m128_f32[2] += 1;
+
+	CreateTriggerForAiVision(&tThisWorld, VisionTriggerMatrix);
+
+
+	// right side of first door
+	VisionTriggerMatrix = m_d3dClaytonMatrix;
+	VisionTriggerMatrix.r[3].m128_f32[0] += -11;
+	VisionTriggerMatrix.r[3].m128_f32[2] -= 11;
+
+	CreateTriggerForAiVision(&tThisWorld, VisionTriggerMatrix);
+	VisionTriggerMatrix.r[3].m128_f32[2] -= 1;
+
+	CreateTriggerForAiVision(&tThisWorld, VisionTriggerMatrix);
+	VisionTriggerMatrix.r[3].m128_f32[2] -= 1;
+
+	CreateTriggerForAiVision(&tThisWorld, VisionTriggerMatrix);
+	VisionTriggerMatrix.r[3].m128_f32[2] -= 1;
+
+	CreateTriggerForAiVision(&tThisWorld, VisionTriggerMatrix);
+	VisionTriggerMatrix.r[3].m128_f32[2] -= 1;
+
+	CreateTriggerForAiVision(&tThisWorld, VisionTriggerMatrix);
+	VisionTriggerMatrix.r[3].m128_f32[2] -= 1;
+
+	CreateTriggerForAiVision(&tThisWorld, VisionTriggerMatrix);
+	VisionTriggerMatrix.r[3].m128_f32[2] += 6;
+
+	CreateTriggerForAiVision(&tThisWorld, VisionTriggerMatrix);
+	VisionTriggerMatrix.r[3].m128_f32[2] += 1;
+
+	CreateTriggerForAiVision(&tThisWorld, VisionTriggerMatrix);
+	VisionTriggerMatrix.r[3].m128_f32[2] += 1;
+
+	CreateTriggerForAiVision(&tThisWorld, VisionTriggerMatrix);	VisionTriggerMatrix.r[3].m128_f32[2] += 1;
+
+	CreateTriggerForAiVision(&tThisWorld, VisionTriggerMatrix);	VisionTriggerMatrix.r[3].m128_f32[2] += 1;
+
+	CreateTriggerForAiVision(&tThisWorld, VisionTriggerMatrix);	VisionTriggerMatrix.r[3].m128_f32[2] += 1;
+
+	CreateTriggerForAiVision(&tThisWorld, VisionTriggerMatrix);	VisionTriggerMatrix.r[3].m128_f32[2] += 1;
+
+	CreateTriggerForAiVision(&tThisWorld, VisionTriggerMatrix);	VisionTriggerMatrix.r[3].m128_f32[2] += 1;
+
+	CreateTriggerForAiVision(&tThisWorld, VisionTriggerMatrix);	VisionTriggerMatrix.r[3].m128_f32[2] += 1;
+
+	CreateTriggerForAiVision(&tThisWorld, VisionTriggerMatrix);	VisionTriggerMatrix.r[3].m128_f32[2] += 1;
+
+	CreateTriggerForAiVision(&tThisWorld, VisionTriggerMatrix);	VisionTriggerMatrix.r[3].m128_f32[2] += 1;
+
+	CreateTriggerForAiVision(&tThisWorld, VisionTriggerMatrix);	VisionTriggerMatrix.r[3].m128_f32[2] += 1;
+
+	CreateTriggerForAiVision(&tThisWorld, VisionTriggerMatrix);	VisionTriggerMatrix.r[3].m128_f32[2] += 1;
+
+	CreateTriggerForAiVision(&tThisWorld, VisionTriggerMatrix);	VisionTriggerMatrix.r[3].m128_f32[2] += 1;
+
+	CreateTriggerForAiVision(&tThisWorld, VisionTriggerMatrix);
+
+	VisionTriggerMatrix = m_d3dClaytonMatrix;
+	VisionTriggerMatrix.r[3].m128_f32[0] += 10;
+	VisionTriggerMatrix.r[3].m128_f32[2] -= 60;
 
 
 
@@ -5355,6 +5464,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 
 
 	// ai in the back left
+	
 
 	AILocation = pcGraphicsSystem->SetDefaultWorldPosition();
 	AILocation.r[3].m128_f32[2] -= 80;
@@ -5413,8 +5523,71 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	for (int meshIndex = 0; meshIndex < gunImport.meshCount; ++meshIndex)
 	{
 		spacePirate = CreateScyllian(&tThisWorld, AILocation, enemyToCopyFrom);
+		int CollisionofVisionIndex = CreateTriggerForAiVisionWithListofEnemeisthatcantsee(&tThisWorld, VisionTriggerMatrix);
+		tThisWorld.atAIVision[CollisionofVisionIndex].AIToTurnVisionOf.push_back(spacePirate);
+		CollisionofVisionIndex = CreateTriggerForAiVisionWithListofEnemeisthatcantsee(&tThisWorld, VisionTriggerMatrix);	VisionTriggerMatrix.r[3].m128_f32[2] -= 1;
+		tThisWorld.atAIVision[CollisionofVisionIndex].AIToTurnVisionOf.push_back(spacePirate);
+		CollisionofVisionIndex = CreateTriggerForAiVisionWithListofEnemeisthatcantsee(&tThisWorld, VisionTriggerMatrix);	VisionTriggerMatrix.r[3].m128_f32[2] -= 1;
+		tThisWorld.atAIVision[CollisionofVisionIndex].AIToTurnVisionOf.push_back(spacePirate);
+		CollisionofVisionIndex = CreateTriggerForAiVisionWithListofEnemeisthatcantsee(&tThisWorld, VisionTriggerMatrix);	VisionTriggerMatrix.r[3].m128_f32[2] -= 1;
+		tThisWorld.atAIVision[CollisionofVisionIndex].AIToTurnVisionOf.push_back(spacePirate);
+		CollisionofVisionIndex = CreateTriggerForAiVisionWithListofEnemeisthatcantsee(&tThisWorld, VisionTriggerMatrix);	VisionTriggerMatrix.r[3].m128_f32[2] -= 1;
+		tThisWorld.atAIVision[CollisionofVisionIndex].AIToTurnVisionOf.push_back(spacePirate);
+		CollisionofVisionIndex = CreateTriggerForAiVisionWithListofEnemeisthatcantsee(&tThisWorld, VisionTriggerMatrix);	VisionTriggerMatrix.r[3].m128_f32[2] -= 1;
+		tThisWorld.atAIVision[CollisionofVisionIndex].AIToTurnVisionOf.push_back(spacePirate);
+		CollisionofVisionIndex = CreateTriggerForAiVisionWithListofEnemeisthatcantsee(&tThisWorld, VisionTriggerMatrix);	VisionTriggerMatrix.r[3].m128_f32[2] -= 1;
+		tThisWorld.atAIVision[CollisionofVisionIndex].AIToTurnVisionOf.push_back(spacePirate);
+		CollisionofVisionIndex = CreateTriggerForAiVisionWithListofEnemeisthatcantsee(&tThisWorld, VisionTriggerMatrix);	VisionTriggerMatrix.r[3].m128_f32[2] -= 1;
+		tThisWorld.atAIVision[CollisionofVisionIndex].AIToTurnVisionOf.push_back(spacePirate);
+		CollisionofVisionIndex = CreateTriggerForAiVisionWithListofEnemeisthatcantsee(&tThisWorld, VisionTriggerMatrix);	VisionTriggerMatrix.r[3].m128_f32[2] -= 1;
+		tThisWorld.atAIVision[CollisionofVisionIndex].AIToTurnVisionOf.push_back(spacePirate);
+		CollisionofVisionIndex = CreateTriggerForAiVisionWithListofEnemeisthatcantsee(&tThisWorld, VisionTriggerMatrix);	VisionTriggerMatrix.r[3].m128_f32[2] -= 1;
+		tThisWorld.atAIVision[CollisionofVisionIndex].AIToTurnVisionOf.push_back(spacePirate);
+		CollisionofVisionIndex = CreateTriggerForAiVisionWithListofEnemeisthatcantsee(&tThisWorld, VisionTriggerMatrix);	VisionTriggerMatrix.r[3].m128_f32[2] -= 1;
+		tThisWorld.atAIVision[CollisionofVisionIndex].AIToTurnVisionOf.push_back(spacePirate);
+		CollisionofVisionIndex = CreateTriggerForAiVisionWithListofEnemeisthatcantsee(&tThisWorld, VisionTriggerMatrix);	VisionTriggerMatrix.r[3].m128_f32[2] -= 1;
+		tThisWorld.atAIVision[CollisionofVisionIndex].AIToTurnVisionOf.push_back(spacePirate);
+		CollisionofVisionIndex = CreateTriggerForAiVisionWithListofEnemeisthatcantsee(&tThisWorld, VisionTriggerMatrix);	VisionTriggerMatrix.r[3].m128_f32[2] -= 1;
+		tThisWorld.atAIVision[CollisionofVisionIndex].AIToTurnVisionOf.push_back(spacePirate);
+		CollisionofVisionIndex = CreateTriggerForAiVisionWithListofEnemeisthatcantsee(&tThisWorld, VisionTriggerMatrix);	VisionTriggerMatrix.r[3].m128_f32[2] -= 1;
+		tThisWorld.atAIVision[CollisionofVisionIndex].AIToTurnVisionOf.push_back(spacePirate);
+		CollisionofVisionIndex = CreateTriggerForAiVisionWithListofEnemeisthatcantsee(&tThisWorld, VisionTriggerMatrix);	VisionTriggerMatrix.r[3].m128_f32[2] -= 1;
+		tThisWorld.atAIVision[CollisionofVisionIndex].AIToTurnVisionOf.push_back(spacePirate);
+		CollisionofVisionIndex = CreateTriggerForAiVisionWithListofEnemeisthatcantsee(&tThisWorld, VisionTriggerMatrix);	VisionTriggerMatrix.r[3].m128_f32[2] -= 1;
+		tThisWorld.atAIVision[CollisionofVisionIndex].AIToTurnVisionOf.push_back(spacePirate);
+		CollisionofVisionIndex = CreateTriggerForAiVisionWithListofEnemeisthatcantsee(&tThisWorld, VisionTriggerMatrix);	VisionTriggerMatrix.r[3].m128_f32[2] -= 1;
+		tThisWorld.atAIVision[CollisionofVisionIndex].AIToTurnVisionOf.push_back(spacePirate);
+		CollisionofVisionIndex = CreateTriggerForAiVisionWithListofEnemeisthatcantsee(&tThisWorld, VisionTriggerMatrix);	VisionTriggerMatrix.r[3].m128_f32[2] -= 1;
+		tThisWorld.atAIVision[CollisionofVisionIndex].AIToTurnVisionOf.push_back(spacePirate);
+		CollisionofVisionIndex = CreateTriggerForAiVisionWithListofEnemeisthatcantsee(&tThisWorld, VisionTriggerMatrix);	VisionTriggerMatrix.r[3].m128_f32[2] -= 1;
+		tThisWorld.atAIVision[CollisionofVisionIndex].AIToTurnVisionOf.push_back(spacePirate);
+		CollisionofVisionIndex = CreateTriggerForAiVisionWithListofEnemeisthatcantsee(&tThisWorld, VisionTriggerMatrix);	VisionTriggerMatrix.r[3].m128_f32[2] -= 1;
+		tThisWorld.atAIVision[CollisionofVisionIndex].AIToTurnVisionOf.push_back(spacePirate);
+		CollisionofVisionIndex = CreateTriggerForAiVisionWithListofEnemeisthatcantsee(&tThisWorld, VisionTriggerMatrix);	VisionTriggerMatrix.r[3].m128_f32[2] -= 1;
+		tThisWorld.atAIVision[CollisionofVisionIndex].AIToTurnVisionOf.push_back(spacePirate);
+		CollisionofVisionIndex = CreateTriggerForAiVisionWithListofEnemeisthatcantsee(&tThisWorld, VisionTriggerMatrix);	VisionTriggerMatrix.r[3].m128_f32[2] -= 1;
+		tThisWorld.atAIVision[CollisionofVisionIndex].AIToTurnVisionOf.push_back(spacePirate);
+		CollisionofVisionIndex = CreateTriggerForAiVisionWithListofEnemeisthatcantsee(&tThisWorld, VisionTriggerMatrix);	VisionTriggerMatrix.r[3].m128_f32[2] -= 1;
+		tThisWorld.atAIVision[CollisionofVisionIndex].AIToTurnVisionOf.push_back(spacePirate);
+		CollisionofVisionIndex = CreateTriggerForAiVisionWithListofEnemeisthatcantsee(&tThisWorld, VisionTriggerMatrix);	VisionTriggerMatrix.r[3].m128_f32[2] -= 1;
+		tThisWorld.atAIVision[CollisionofVisionIndex].AIToTurnVisionOf.push_back(spacePirate);
+		CollisionofVisionIndex = CreateTriggerForAiVisionWithListofEnemeisthatcantsee(&tThisWorld, VisionTriggerMatrix);	VisionTriggerMatrix.r[3].m128_f32[2] -= 1;
+		tThisWorld.atAIVision[CollisionofVisionIndex].AIToTurnVisionOf.push_back(spacePirate);
+		CollisionofVisionIndex = CreateTriggerForAiVisionWithListofEnemeisthatcantsee(&tThisWorld, VisionTriggerMatrix);	VisionTriggerMatrix.r[3].m128_f32[2] -= 1;
+		tThisWorld.atAIVision[CollisionofVisionIndex].AIToTurnVisionOf.push_back(spacePirate);
+		CollisionofVisionIndex = CreateTriggerForAiVisionWithListofEnemeisthatcantsee(&tThisWorld, VisionTriggerMatrix);	VisionTriggerMatrix.r[3].m128_f32[2] -= 1;
+		tThisWorld.atAIVision[CollisionofVisionIndex].AIToTurnVisionOf.push_back(spacePirate);
+		CollisionofVisionIndex = CreateTriggerForAiVisionWithListofEnemeisthatcantsee(&tThisWorld, VisionTriggerMatrix);	VisionTriggerMatrix.r[3].m128_f32[2] -= 1;
+		tThisWorld.atAIVision[CollisionofVisionIndex].AIToTurnVisionOf.push_back(spacePirate);
+		CollisionofVisionIndex = CreateTriggerForAiVisionWithListofEnemeisthatcantsee(&tThisWorld, VisionTriggerMatrix);	VisionTriggerMatrix.r[3].m128_f32[2] -= 1;
+		tThisWorld.atAIVision[CollisionofVisionIndex].AIToTurnVisionOf.push_back(spacePirate);
+		CollisionofVisionIndex = CreateTriggerForAiVisionWithListofEnemeisthatcantsee(&tThisWorld, VisionTriggerMatrix);	VisionTriggerMatrix.r[3].m128_f32[2] -= 1;
+		tThisWorld.atAIVision[CollisionofVisionIndex].AIToTurnVisionOf.push_back(spacePirate);
+		CollisionofVisionIndex = CreateTriggerForAiVisionWithListofEnemeisthatcantsee(&tThisWorld, VisionTriggerMatrix);	VisionTriggerMatrix.r[3].m128_f32[2] -= 1;
+		tThisWorld.atAIVision[CollisionofVisionIndex].AIToTurnVisionOf.push_back(spacePirate);
 		//spacePirate = CreateScyllian(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, tempImport.vtMeshes[meshIndex], tempImport.vtMaterials[meshIndex], AILocation);
 	}
+	pcAiSystem->allAI.push_back(spacePirate);
 
 	tThisWorld.atOffSetMatrix[spacePirate] = AILocation;
 
@@ -5590,12 +5763,77 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	tempImport = pcGraphicsSystem->ReadMesh("meshData_Scyllian.txt");
 	//gunImport = pcGraphicsSystem->ReadMesh("meshData_LaserFlintlockTextured.txt");
 	//AILocation.r[3].m128_f32[0] += 7;
-
+	VisionTriggerMatrix = m_d3dClaytonMatrix;
+	VisionTriggerMatrix.r[3].m128_f32[0] += -9;
+	VisionTriggerMatrix.r[3].m128_f32[2] -= 60;
 	for (int meshIndex = 0; meshIndex < tempImport.meshCount; ++meshIndex)
 	{
 		spacePirate = CreateScyllian(&tThisWorld, AILocation, enemyToCopyFrom);
+		int CollisionofVisionIndex = CreateTriggerForAiVisionWithListofEnemeisthatcantsee(&tThisWorld, VisionTriggerMatrix);
+		tThisWorld.atAIVision[CollisionofVisionIndex].AIToTurnVisionOf.push_back(spacePirate);
+		CollisionofVisionIndex = CreateTriggerForAiVisionWithListofEnemeisthatcantsee(&tThisWorld, VisionTriggerMatrix);	VisionTriggerMatrix.r[3].m128_f32[2] -= 1;
+		tThisWorld.atAIVision[CollisionofVisionIndex].AIToTurnVisionOf.push_back(spacePirate);
+		CollisionofVisionIndex = CreateTriggerForAiVisionWithListofEnemeisthatcantsee(&tThisWorld, VisionTriggerMatrix);	VisionTriggerMatrix.r[3].m128_f32[2] -= 1;
+		tThisWorld.atAIVision[CollisionofVisionIndex].AIToTurnVisionOf.push_back(spacePirate);
+		CollisionofVisionIndex = CreateTriggerForAiVisionWithListofEnemeisthatcantsee(&tThisWorld, VisionTriggerMatrix);	VisionTriggerMatrix.r[3].m128_f32[2] -= 1;
+		tThisWorld.atAIVision[CollisionofVisionIndex].AIToTurnVisionOf.push_back(spacePirate);
+		CollisionofVisionIndex = CreateTriggerForAiVisionWithListofEnemeisthatcantsee(&tThisWorld, VisionTriggerMatrix);	VisionTriggerMatrix.r[3].m128_f32[2] -= 1;
+		tThisWorld.atAIVision[CollisionofVisionIndex].AIToTurnVisionOf.push_back(spacePirate);
+		CollisionofVisionIndex = CreateTriggerForAiVisionWithListofEnemeisthatcantsee(&tThisWorld, VisionTriggerMatrix);	VisionTriggerMatrix.r[3].m128_f32[2] -= 1;
+		tThisWorld.atAIVision[CollisionofVisionIndex].AIToTurnVisionOf.push_back(spacePirate);
+		CollisionofVisionIndex = CreateTriggerForAiVisionWithListofEnemeisthatcantsee(&tThisWorld, VisionTriggerMatrix);	VisionTriggerMatrix.r[3].m128_f32[2] -= 1;
+		tThisWorld.atAIVision[CollisionofVisionIndex].AIToTurnVisionOf.push_back(spacePirate);
+		CollisionofVisionIndex = CreateTriggerForAiVisionWithListofEnemeisthatcantsee(&tThisWorld, VisionTriggerMatrix);	VisionTriggerMatrix.r[3].m128_f32[2] -= 1;
+		tThisWorld.atAIVision[CollisionofVisionIndex].AIToTurnVisionOf.push_back(spacePirate);
+		CollisionofVisionIndex = CreateTriggerForAiVisionWithListofEnemeisthatcantsee(&tThisWorld, VisionTriggerMatrix);	VisionTriggerMatrix.r[3].m128_f32[2] -= 1;
+		tThisWorld.atAIVision[CollisionofVisionIndex].AIToTurnVisionOf.push_back(spacePirate);
+		CollisionofVisionIndex = CreateTriggerForAiVisionWithListofEnemeisthatcantsee(&tThisWorld, VisionTriggerMatrix);	VisionTriggerMatrix.r[3].m128_f32[2] -= 1;
+		tThisWorld.atAIVision[CollisionofVisionIndex].AIToTurnVisionOf.push_back(spacePirate);
+		CollisionofVisionIndex = CreateTriggerForAiVisionWithListofEnemeisthatcantsee(&tThisWorld, VisionTriggerMatrix);	VisionTriggerMatrix.r[3].m128_f32[2] -= 1;
+		tThisWorld.atAIVision[CollisionofVisionIndex].AIToTurnVisionOf.push_back(spacePirate);
+		CollisionofVisionIndex = CreateTriggerForAiVisionWithListofEnemeisthatcantsee(&tThisWorld, VisionTriggerMatrix);	VisionTriggerMatrix.r[3].m128_f32[2] -= 1;
+		tThisWorld.atAIVision[CollisionofVisionIndex].AIToTurnVisionOf.push_back(spacePirate);
+		CollisionofVisionIndex = CreateTriggerForAiVisionWithListofEnemeisthatcantsee(&tThisWorld, VisionTriggerMatrix);	VisionTriggerMatrix.r[3].m128_f32[2] -= 1;
+		tThisWorld.atAIVision[CollisionofVisionIndex].AIToTurnVisionOf.push_back(spacePirate);
+		CollisionofVisionIndex = CreateTriggerForAiVisionWithListofEnemeisthatcantsee(&tThisWorld, VisionTriggerMatrix);	VisionTriggerMatrix.r[3].m128_f32[2] -= 1;
+		tThisWorld.atAIVision[CollisionofVisionIndex].AIToTurnVisionOf.push_back(spacePirate);
+		CollisionofVisionIndex = CreateTriggerForAiVisionWithListofEnemeisthatcantsee(&tThisWorld, VisionTriggerMatrix);	VisionTriggerMatrix.r[3].m128_f32[2] -= 1;
+		tThisWorld.atAIVision[CollisionofVisionIndex].AIToTurnVisionOf.push_back(spacePirate);
+		CollisionofVisionIndex = CreateTriggerForAiVisionWithListofEnemeisthatcantsee(&tThisWorld, VisionTriggerMatrix);	VisionTriggerMatrix.r[3].m128_f32[2] -= 1;
+		tThisWorld.atAIVision[CollisionofVisionIndex].AIToTurnVisionOf.push_back(spacePirate);
+		CollisionofVisionIndex = CreateTriggerForAiVisionWithListofEnemeisthatcantsee(&tThisWorld, VisionTriggerMatrix);	VisionTriggerMatrix.r[3].m128_f32[2] -= 1;
+		tThisWorld.atAIVision[CollisionofVisionIndex].AIToTurnVisionOf.push_back(spacePirate);
+		CollisionofVisionIndex = CreateTriggerForAiVisionWithListofEnemeisthatcantsee(&tThisWorld, VisionTriggerMatrix);	VisionTriggerMatrix.r[3].m128_f32[2] -= 1;
+		tThisWorld.atAIVision[CollisionofVisionIndex].AIToTurnVisionOf.push_back(spacePirate);
+		CollisionofVisionIndex = CreateTriggerForAiVisionWithListofEnemeisthatcantsee(&tThisWorld, VisionTriggerMatrix);	VisionTriggerMatrix.r[3].m128_f32[2] -= 1;
+		tThisWorld.atAIVision[CollisionofVisionIndex].AIToTurnVisionOf.push_back(spacePirate);
+		CollisionofVisionIndex = CreateTriggerForAiVisionWithListofEnemeisthatcantsee(&tThisWorld, VisionTriggerMatrix);	VisionTriggerMatrix.r[3].m128_f32[2] -= 1;
+		tThisWorld.atAIVision[CollisionofVisionIndex].AIToTurnVisionOf.push_back(spacePirate);
+		CollisionofVisionIndex = CreateTriggerForAiVisionWithListofEnemeisthatcantsee(&tThisWorld, VisionTriggerMatrix);	VisionTriggerMatrix.r[3].m128_f32[2] -= 1;
+		tThisWorld.atAIVision[CollisionofVisionIndex].AIToTurnVisionOf.push_back(spacePirate);
+		CollisionofVisionIndex = CreateTriggerForAiVisionWithListofEnemeisthatcantsee(&tThisWorld, VisionTriggerMatrix);	VisionTriggerMatrix.r[3].m128_f32[2] -= 1;
+		tThisWorld.atAIVision[CollisionofVisionIndex].AIToTurnVisionOf.push_back(spacePirate);
+		CollisionofVisionIndex = CreateTriggerForAiVisionWithListofEnemeisthatcantsee(&tThisWorld, VisionTriggerMatrix);	VisionTriggerMatrix.r[3].m128_f32[2] -= 1;
+		tThisWorld.atAIVision[CollisionofVisionIndex].AIToTurnVisionOf.push_back(spacePirate);
+		CollisionofVisionIndex = CreateTriggerForAiVisionWithListofEnemeisthatcantsee(&tThisWorld, VisionTriggerMatrix);	VisionTriggerMatrix.r[3].m128_f32[2] -= 1;
+		tThisWorld.atAIVision[CollisionofVisionIndex].AIToTurnVisionOf.push_back(spacePirate);
+		CollisionofVisionIndex = CreateTriggerForAiVisionWithListofEnemeisthatcantsee(&tThisWorld, VisionTriggerMatrix);	VisionTriggerMatrix.r[3].m128_f32[2] -= 1;
+		tThisWorld.atAIVision[CollisionofVisionIndex].AIToTurnVisionOf.push_back(spacePirate);
+		CollisionofVisionIndex = CreateTriggerForAiVisionWithListofEnemeisthatcantsee(&tThisWorld, VisionTriggerMatrix);	VisionTriggerMatrix.r[3].m128_f32[2] -= 1;
+		tThisWorld.atAIVision[CollisionofVisionIndex].AIToTurnVisionOf.push_back(spacePirate);
+		CollisionofVisionIndex = CreateTriggerForAiVisionWithListofEnemeisthatcantsee(&tThisWorld, VisionTriggerMatrix);	VisionTriggerMatrix.r[3].m128_f32[2] -= 1;
+		tThisWorld.atAIVision[CollisionofVisionIndex].AIToTurnVisionOf.push_back(spacePirate);
+		CollisionofVisionIndex = CreateTriggerForAiVisionWithListofEnemeisthatcantsee(&tThisWorld, VisionTriggerMatrix);	VisionTriggerMatrix.r[3].m128_f32[2] -= 1;
+		tThisWorld.atAIVision[CollisionofVisionIndex].AIToTurnVisionOf.push_back(spacePirate);
+		CollisionofVisionIndex = CreateTriggerForAiVisionWithListofEnemeisthatcantsee(&tThisWorld, VisionTriggerMatrix);	VisionTriggerMatrix.r[3].m128_f32[2] -= 1;
+		tThisWorld.atAIVision[CollisionofVisionIndex].AIToTurnVisionOf.push_back(spacePirate);
+		CollisionofVisionIndex = CreateTriggerForAiVisionWithListofEnemeisthatcantsee(&tThisWorld, VisionTriggerMatrix);	VisionTriggerMatrix.r[3].m128_f32[2] -= 1;
+		tThisWorld.atAIVision[CollisionofVisionIndex].AIToTurnVisionOf.push_back(spacePirate);
+		CollisionofVisionIndex = CreateTriggerForAiVisionWithListofEnemeisthatcantsee(&tThisWorld, VisionTriggerMatrix);	VisionTriggerMatrix.r[3].m128_f32[2] -= 1;
+		tThisWorld.atAIVision[CollisionofVisionIndex].AIToTurnVisionOf.push_back(spacePirate);
 		//spacePirate = CreateScyllian(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, tempImport.vtMeshes[meshIndex], tempImport.vtMaterials[meshIndex], AILocation);
 	}
+	pcAiSystem->allAI.push_back(spacePirate);
 
 	tThisWorld.atOffSetMatrix[spacePirate] = AILocation;
 
@@ -5776,6 +6014,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 		spacePirate = CreateScyllian(&tThisWorld, AILocation, enemyToCopyFrom);
 		//spacePirate = CreateScyllian(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, tempImport.vtMeshes[meshIndex], tempImport.vtMaterials[meshIndex], AILocation);
 	}
+	pcAiSystem->allAI.push_back(spacePirate);
 
 	tThisWorld.atOffSetMatrix[spacePirate] = AILocation;
 
@@ -9203,6 +9442,7 @@ int CGameMangerSystem::RealLevelUpdate()
 				newthread.detach();*/
 				XMMATRIX(*doorEventListenerPointer)(int, bool) = DoorEventListener;
 				void(*doorEventChangerPointer)(int) = DoorEventChanger;
+				cout << nCurrentEntity << " active collision" << endl;
 
 				workers.push_back(thread(&CCollisionSystem::TestThreading, pcCollisionSystem,
 					&tThisWorld, nCurrentEntity, pcGraphicsSystem,
