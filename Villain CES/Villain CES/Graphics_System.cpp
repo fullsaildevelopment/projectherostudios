@@ -1830,7 +1830,7 @@ ImporterData CGraphicsSystem::ReadMesh(const char * input_file_path)
 	return tImportMe;
 }
 
-ImporterData CGraphicsSystem::ReadMesh2(const char* input_file_path, int texture, ImporterData* tImportMe2)
+ImporterData CGraphicsSystem::ReadMesh2(const char* input_file_path, int texture, ImporterData* tImportMe2, int numberOfPaths)
 {
 #pragma region Declarations
 	int * lamberts = nullptr;
@@ -1932,9 +1932,16 @@ ImporterData CGraphicsSystem::ReadMesh2(const char* input_file_path, int texture
 			file.read((char*)&tImportMe.vtMeshes[meshCount - 1].indexBuffer[i], sizeof(uint32_t));
 		}
 
-		GetTexturePathHelper(file, tImportMe, 0, texture);
-		GetTexturePathHelper(file, tImportMe, 1, texture);
-		GetTexturePathHelper(file, tImportMe, 2, texture);
+		if (numberOfPaths != 0)
+		{
+			for (int i = 0; i < numberOfPaths; ++i)
+			{
+				GetTexturePathHelper(file, tImportMe, i, texture);
+			}
+		}
+		//GetTexturePathHelper(file, tImportMe, 0, texture);
+		//GetTexturePathHelper(file, tImportMe, 1, texture);
+		//GetTexturePathHelper(file, tImportMe, 2, texture);
 
 		//int writeSizeIn;
 
@@ -2026,7 +2033,10 @@ ImporterData CGraphicsSystem::ReadMesh2(const char* input_file_path, int texture
 		//tImportMe.vtMaterials->m_tSpecularColor.g = tempColor.y;
 		//tImportMe.vtMaterials->m_tSpecularColor.b = tempColor.z;
 
-		file.read((char*)&tempColor, sizeof(float4));
+		if (numberOfPaths == 3)
+		{
+			file.read((char*)&tempColor, sizeof(float4));
+		}
 
 #pragma endregion
 

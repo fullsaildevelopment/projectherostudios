@@ -144,6 +144,7 @@ unsigned int createClayton(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMeshI
 unsigned int createClaytonAnim(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMeshImport tMesh, TMaterialOptimized tMaterial, TAnimationImport* tAnim, int meshIndex, int animationCount);
 unsigned int CreateScyllian(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMeshImport tMesh, TMaterialImport tMaterial, XMMATRIX SpawnPosition);
 unsigned int CreateScyllian(TWorld * ptWorld, XMMATRIX SpawnPosition, EnemyInfo& enemyToCopyFrom);
+unsigned int CreateScyllianAnim(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMeshImport tMesh, TMaterialOptimized tMaterial, XMMATRIX SpawnPosition, TAnimationImport* tAnim, int meshIndex, int animationCount);
 unsigned int CreateTemptUIBox(TWorld * ptWorld, XMMATRIX SpawnPosition);
 unsigned int CreateSimpleGunAi(TWorld * ptWorld, XMMATRIX SpawnPosition);
 unsigned int CreateSimpleSearchAi(TWorld* ptWorld, XMMATRIX SpawnPosition);
