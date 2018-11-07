@@ -612,7 +612,6 @@ void CGraphicsSystem::GetTexturePathHelper(fstream& file, ImporterData& tImportM
 			break;
 		}
 	}
-
 	float4 tempColor;
 
 	file.read((char*)&tempColor, sizeof(float4));
@@ -650,6 +649,7 @@ void CGraphicsSystem::GetTexturePathHelper(fstream& file, ImporterData& tImportM
 	break;
 	case 3:
 	{
+		
 		tImportMe.vtMaterials->m_tFileNameSizes.fileNameSize4 = writeSizeIn;
 		tImportMe.vtMaterials->m_tFileNames.fileName4 = finalBuff;
 
@@ -905,6 +905,7 @@ void CGraphicsSystem::CreateShaders(ID3D11Device * device)
 	D3D11_INPUT_ELEMENT_DESC m_d3dAnimatedLayoutDesc[] =
 	{
 		{ "POSITION", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "NORM", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 		{ "BLENDWEIGHT", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 		{ "BLENDINDICES", 0, DXGI_FORMAT_R32G32B32A32_UINT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
@@ -927,6 +928,20 @@ void CGraphicsSystem::CreateShaders(ID3D11Device * device)
 	//Create the constant buffer pointer so we can access the vertex shader constant buffer from within this class.
 	device->CreateBuffer(&d3dAnimatedVertexBufferDesc, NULL, &m_pd3dAnimatedVertexBuffer);
 #pragma endregion
+
+
+#pragma region Light Buffer
+	D3D11_BUFFER_DESC d3dLightPixelBufferDesc;
+
+	d3dLightPixelBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+	d3dLightPixelBufferDesc.ByteWidth = sizeof(TLightBufferType);
+	d3dLightPixelBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	d3dLightPixelBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	d3dLightPixelBufferDesc.MiscFlags = 0;
+	d3dLightPixelBufferDesc.StructureByteStride = 0;
+
+	device->CreateBuffer(&d3dLightPixelBufferDesc, NULL, &m_pd3dLightPixelBuffer);
+#pragma endregion  
 }
 
 TMaterialOptimized CGraphicsSystem::CreateTexturesFromFile(TMaterialImport * arrayOfMaterials, int numberOfEntities)
@@ -2037,6 +2052,7 @@ ImporterData CGraphicsSystem::ReadMesh2(const char* input_file_path, int texture
 		{
 			file.read((char*)&tempColor, sizeof(float4));
 		}
+		tImportMe.vtMaterials[meshCount - 1].dTransparencyOrShininess = tempColor.x;
 
 #pragma endregion
 
@@ -2359,12 +2375,12 @@ void CGraphicsSystem::InitSkyboxShaderData(ID3D11DeviceContext * pd3dDeviceConte
 	}
 }
 
-void CGraphicsSystem::InitAnimShaderData(ID3D11DeviceContext * pd3dDeviceContext, TAnimatedVertexBufferType d3dVertexBuffer, TMesh tMesh, XMMATRIX CameraMatrix)
+void CGraphicsSystem::InitAnimShaderData(ID3D11DeviceContext * pd3dDeviceContext, TAnimatedVertexBufferType d3dVertexBuffer, TMesh tMesh, TLightMaterials tMaterials,  XMMATRIX CameraMatrix)
 {
-	D3D11_MAPPED_SUBRESOURCE d3dAnimatedVertexMappedResource;
+	D3D11_MAPPED_SUBRESOURCE d3dAnimatedVertexMappedResource, d3dLightPixelMappedResource;
 
 	TAnimatedVertexBufferType *ptAnimatedVertexBufferDataPointer = nullptr;
-
+	TLightBufferType *ptLightPixelBufferDataPointer = nullptr;
 	XMMATRIX d3dView;
 	d3dView = d3dVertexBuffer.m_d3dViewMatrix;
 	d3dView = XMMatrixInverse(nullptr, CameraMatrix);
@@ -2389,6 +2405,19 @@ void CGraphicsSystem::InitAnimShaderData(ID3D11DeviceContext * pd3dDeviceContext
 	memcpy(&ptAnimatedVertexBufferDataPointer->m_d3dJointsForVS, &d3dVertexBuffer.m_d3dJointsForVS, sizeof(d3dVertexBuffer.m_d3dJointsForVS));
 	// Unlock the constant buffer.
 	pd3dDeviceContext->Unmap(m_pd3dAnimatedVertexBuffer, 0);
+
+#pragma endregion
+
+#pragma region Map to Light Constant Buffer
+	pd3dDeviceContext->Map(m_pd3dLightPixelBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &d3dLightPixelMappedResource);
+	ptLightPixelBufferDataPointer = (TLightBufferType*)d3dLightPixelMappedResource.pData;
+
+	ptLightPixelBufferDataPointer->Ambience = XMFLOAT4(0, 1, 0, 0);
+	ptLightPixelBufferDataPointer->lightEyePos = XMFLOAT4();
+	ptLightPixelBufferDataPointer->m_Proprties.m_Diffuse = tMaterials.m_Diffuse;
+	ptLightPixelBufferDataPointer->m_Proprties.m_Emissive = tMaterials.m_Emissive;
+	ptLightPixelBufferDataPointer->m_Proprties.m_Specular = tMaterials.m_Specular;
+	ptLightPixelBufferDataPointer->m_Proprties.shininess = tMaterials.shininess;
 
 #pragma endregion
 

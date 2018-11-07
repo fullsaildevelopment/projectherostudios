@@ -4960,7 +4960,7 @@ unsigned int createClayton(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMeshI
 	return nThisEntity;
 }
 
-unsigned int createClaytonAnim(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMeshImport tMesh, TMaterialOptimized tMaterial, TAnimationImport* tAnim, int meshIndex, int animationCount)
+unsigned int createClaytonAnim(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMeshImport tMesh, TMaterialOptimized tMaterial, TMaterialImport tLightMaterial, TAnimationImport* tAnim, int meshIndex, int animationCount)
 {
 	unsigned int nThisEntity = createEntity(ptWorld);
 
@@ -4989,6 +4989,22 @@ unsigned int createClaytonAnim(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TM
 	ptWorld->atInputMask[nThisEntity].m_tnInputMask = (COMPONENT_INPUTMASK | COMPONENT_CLAYTON);
 	ptWorld->atAnimationMask[nThisEntity].m_tnAnimationMask = (COMPONENT_ANIMATIONMASK | COMPONENT_CLAYTONANIM);
 
+	ptWorld->atMaterial[nThisEntity].m_Diffuse.x = tLightMaterial.m_tDiffuseColor.r;
+	ptWorld->atMaterial[nThisEntity].m_Diffuse.y = tLightMaterial.m_tDiffuseColor.g;
+	ptWorld->atMaterial[nThisEntity].m_Diffuse.z = tLightMaterial.m_tDiffuseColor.b;
+	
+
+	ptWorld->atMaterial[nThisEntity].m_Emissive.x = tLightMaterial.m_tEmissiveColor.r;
+	ptWorld->atMaterial[nThisEntity].m_Emissive.y = tLightMaterial.m_tEmissiveColor.g;
+	ptWorld->atMaterial[nThisEntity].m_Emissive.z = tLightMaterial.m_tEmissiveColor.b;
+
+	ptWorld->atMaterial[nThisEntity].m_Specular.x = tLightMaterial.m_tSpecularColor.r;
+	ptWorld->atMaterial[nThisEntity].m_Specular.y = tLightMaterial.m_tSpecularColor.g;
+	ptWorld->atMaterial[nThisEntity].m_Specular.z = tLightMaterial.m_tSpecularColor.b;
+
+	ptWorld->atMaterial[nThisEntity].shininess.x = tLightMaterial.dTransparencyOrShininess;
+
+
 
 	TAnimatedMesh *pMesh = new TAnimatedMesh[tMesh.nUniqueVertexCount];
 	for (int i = 0; i < tMesh.nUniqueVertexCount; i++)
@@ -5003,11 +5019,17 @@ unsigned int createClaytonAnim(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TM
 			//tmp.pos[j] *= 0.01;
 			//tmp.joints[j] *= 0.01;
 			//tmp.weights[j] *= 0.01;
+			if (j < 3)
+				{
+				tmp.norm[j] = tMesh.meshArrays[i].norm[j];
 
+				}
 			if (j < 2)
 			{
 				tmp.uv[j] = tMesh.meshArrays[i].uv[j];
 			}
+			
+			
 		}
 		pMesh[i] = tmp;
 		ptWorld->atMesh[nThisEntity].m_VertexData.push_back(XMFLOAT3(tmp.pos[0], tmp.pos[1], tmp.pos[2]));

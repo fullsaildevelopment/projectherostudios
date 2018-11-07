@@ -111,15 +111,16 @@ public:
 		XMFLOAT4 hoverColor;
 	};
 
-	struct TBlinnPhongType
+	
+
+	struct TLightBufferType
 	{
-		XMFLOAT3 m_d3dLightPosition;
-		XMFLOAT3 m_d3dCameraPosition;
-		float m_fShininess;
-		int m_nPadding;
+		TLightMaterials m_Proprties;
+		TLights m_allLights[2];
+		XMFLOAT4 Ambience;
+		XMFLOAT4 lightEyePos;
+
 	};
-
-
 
 	//First Frame
 	CGraphicsSystem();
@@ -156,7 +157,7 @@ public:
 	void InitPrimalShaderData2(ID3D11DeviceContext * pd3dDeviceContext, TPrimalVertexBufferType d3dVertexBuffer, TPrimalPixelBufferType d3dPixelBuffer, TSimpleMesh tSimpleMesh, XMMATRIX CameraMatrix);
 	void InitPrimalShaderData3(ID3D11DeviceContext * pd3dDeviceContext, TPrimalVertexBufferType d3dVertexBuffer, TPrimalPixelBufferType d3dPixelBuffer, TMesh tMesh, XMMATRIX CameraMatrix);
 	void InitSkyboxShaderData(ID3D11DeviceContext * pd3dDeviceContext, TMyVertexBufferType d3dVertexBuffer, TMesh tSimpleMesh, XMMATRIX CameraMatrix);
-	void InitAnimShaderData(ID3D11DeviceContext * pd3dDeviceContext, TAnimatedVertexBufferType d3dVertexBuffer, TMesh tSimpleMesh, XMMATRIX CameraMatrix);
+	void InitAnimShaderData(ID3D11DeviceContext * pd3dDeviceContext, TAnimatedVertexBufferType d3dVertexBuffer, TMesh tSimpleMesh, TLightMaterials tMaterials, XMMATRIX CameraMatrix);
 	void InitMyShaderData(ID3D11DeviceContext * pd3dDeviceContext, TMyVertexBufferType d3dVertexBuffer, TMesh tSimpleMesh, XMMATRIX CameraMatrix);
 	void InitUIShaderData(ID3D11DeviceContext * pd3dDeviceContext, TUIVertexBufferType d3dVertexBuffer, TUIPixelBufferType d3dPixelBuffer, TMesh tMesh, XMMATRIX CameraMatrix);
 	void InitLineShaderData(ID3D11DeviceContext * pd3dDeviceContext, XMMATRIX d3dWorldMatrix, XMMATRIX d3dViewMatrix, XMMATRIX d3dProjectionMatrix, TDebugMesh tDebugMesh, XMMATRIX CameraMatrix, std::vector<TPrimalVert> m_verts, ID3D11ShaderResourceView * ParticleTexture);
@@ -195,7 +196,7 @@ private:
 	ID3D11PixelShader	*m_pd3dLinePixelShader;
 	ID3D11VertexShader	*m_pd3dLineVertexShader;
 
-	//ID3D11Buffer		*m_pd3dLinePixelBuffer;
+	ID3D11Buffer		*m_pd3dLightPixelBuffer;
 
 	ID3D11VertexShader	*m_pd3dMyVertexShader;
 	ID3D11PixelShader	*m_pd3dMyPixelShader;

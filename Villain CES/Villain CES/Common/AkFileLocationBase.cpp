@@ -144,7 +144,7 @@ AKRESULT CAkFileLocationBase::GetFullFilePath(
 		AKASSERT( !"File name string too large" );
 		return AK_Fail;
 	}
-	AKPLATFORM::SafeStrCat( out_pszFullFilePath, in_pszFileName, AK_MAX_PATH );
+	AKPLATFORM::SafeStrCat( out_pszFullFilePath, in_pszFileName, AK_MAX_PATH);
 	return AK_Success;
 }
 
