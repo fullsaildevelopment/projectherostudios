@@ -612,6 +612,10 @@ void CGraphicsSystem::GetTexturePathHelper(fstream& file, ImporterData& tImportM
 			break;
 		}
 	}
+	float4 tempColor;
+
+	file.read((char*)&tempColor, sizeof(float4));
+	delete[] tempbuffer;
 
 	switch (textureNumber)
 	{
@@ -619,38 +623,48 @@ void CGraphicsSystem::GetTexturePathHelper(fstream& file, ImporterData& tImportM
 	{
 		tImportMe.vtMaterials->m_tFileNameSizes.fileNameSize1 = writeSizeIn;
 		tImportMe.vtMaterials->m_tFileNames.fileName1 = finalBuff;
+
+		tImportMe.vtMaterials->m_tDiffuseColor.r = tempColor.x;
+		tImportMe.vtMaterials->m_tDiffuseColor.g = tempColor.y;
+		tImportMe.vtMaterials->m_tDiffuseColor.b = tempColor.z;
 	}
 	break;
 	case 1:
 	{
 		tImportMe.vtMaterials->m_tFileNameSizes.fileNameSize2 = writeSizeIn;
 		tImportMe.vtMaterials->m_tFileNames.fileName2 = finalBuff;
+
+		tImportMe.vtMaterials->m_tEmissiveColor.r = tempColor.x;
+		tImportMe.vtMaterials->m_tEmissiveColor.g = tempColor.y;
+		tImportMe.vtMaterials->m_tEmissiveColor.b = tempColor.z;
 	}
 	break;
 	case 2:
 	{
 		tImportMe.vtMaterials->m_tFileNameSizes.fileNameSize3 = writeSizeIn;
 		tImportMe.vtMaterials->m_tFileNames.fileName3 = finalBuff;
+
+		
 	}
 	break;
 	case 3:
 	{
+		
 		tImportMe.vtMaterials->m_tFileNameSizes.fileNameSize4 = writeSizeIn;
 		tImportMe.vtMaterials->m_tFileNames.fileName4 = finalBuff;
+
+		tImportMe.vtMaterials->m_tSpecularColor.r = tempColor.x;
+		tImportMe.vtMaterials->m_tSpecularColor.g = tempColor.y;
+		tImportMe.vtMaterials->m_tSpecularColor.b = tempColor.z;
 	}
 	break;
 	default:
 		break;
 	}
 
-	float4 tempColor;
-
-	file.read((char*)&tempColor, sizeof(float4));
-	delete[] tempbuffer;
-
-	tImportMe.vtMaterials->m_tDiffuseColor.r = tempColor.x;
-	tImportMe.vtMaterials->m_tDiffuseColor.g = tempColor.y;
-	tImportMe.vtMaterials->m_tDiffuseColor.b = tempColor.z;
+	//tImportMe.vtMaterials->m_tDiffuseColor.r = tempColor.x;
+	//tImportMe.vtMaterials->m_tDiffuseColor.g = tempColor.y;
+	//tImportMe.vtMaterials->m_tDiffuseColor.b = tempColor.z;
 }
 
 void CGraphicsSystem::CreateShaders(ID3D11Device * device)
@@ -891,6 +905,7 @@ void CGraphicsSystem::CreateShaders(ID3D11Device * device)
 	D3D11_INPUT_ELEMENT_DESC m_d3dAnimatedLayoutDesc[] =
 	{
 		{ "POSITION", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		//{ "NORM", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 		{ "BLENDWEIGHT", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 		{ "BLENDINDICES", 0, DXGI_FORMAT_R32G32B32A32_UINT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
@@ -913,6 +928,20 @@ void CGraphicsSystem::CreateShaders(ID3D11Device * device)
 	//Create the constant buffer pointer so we can access the vertex shader constant buffer from within this class.
 	device->CreateBuffer(&d3dAnimatedVertexBufferDesc, NULL, &m_pd3dAnimatedVertexBuffer);
 #pragma endregion
+
+
+#pragma region Light Buffer
+	D3D11_BUFFER_DESC d3dLightPixelBufferDesc;
+
+	d3dLightPixelBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+	d3dLightPixelBufferDesc.ByteWidth = sizeof(TLightBufferType);
+	d3dLightPixelBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	d3dLightPixelBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	d3dLightPixelBufferDesc.MiscFlags = 0;
+	d3dLightPixelBufferDesc.StructureByteStride = 0;
+
+	device->CreateBuffer(&d3dLightPixelBufferDesc, NULL, &m_pd3dLightPixelBuffer);
+#pragma endregion  
 }
 
 TMaterialOptimized CGraphicsSystem::CreateTexturesFromFile(TMaterialImport * arrayOfMaterials, int numberOfEntities)
@@ -1816,7 +1845,7 @@ ImporterData CGraphicsSystem::ReadMesh(const char * input_file_path)
 	return tImportMe;
 }
 
-ImporterData CGraphicsSystem::ReadMesh2(const char* input_file_path, int texture, ImporterData* tImportMe2)
+ImporterData CGraphicsSystem::ReadMesh2(const char* input_file_path, int texture, ImporterData* tImportMe2, int numberOfPaths)
 {
 #pragma region Declarations
 	int * lamberts = nullptr;
@@ -1918,9 +1947,16 @@ ImporterData CGraphicsSystem::ReadMesh2(const char* input_file_path, int texture
 			file.read((char*)&tImportMe.vtMeshes[meshCount - 1].indexBuffer[i], sizeof(uint32_t));
 		}
 
-		GetTexturePathHelper(file, tImportMe, 0, texture);
-		GetTexturePathHelper(file, tImportMe, 1, texture);
-		GetTexturePathHelper(file, tImportMe, 2, texture);
+		if (numberOfPaths != 0)
+		{
+			for (int i = 0; i < numberOfPaths; ++i)
+			{
+				GetTexturePathHelper(file, tImportMe, i, texture);
+			}
+		}
+		//GetTexturePathHelper(file, tImportMe, 0, texture);
+		//GetTexturePathHelper(file, tImportMe, 1, texture);
+		//GetTexturePathHelper(file, tImportMe, 2, texture);
 
 		//int writeSizeIn;
 
@@ -2012,7 +2048,11 @@ ImporterData CGraphicsSystem::ReadMesh2(const char* input_file_path, int texture
 		//tImportMe.vtMaterials->m_tSpecularColor.g = tempColor.y;
 		//tImportMe.vtMaterials->m_tSpecularColor.b = tempColor.z;
 
-		file.read((char*)&tempColor, sizeof(float4));
+		if (numberOfPaths == 3)
+		{
+			file.read((char*)&tempColor, sizeof(float4));
+		}
+		tImportMe.vtMaterials[meshCount - 1].dTransparencyOrShininess = tempColor.x;
 
 #pragma endregion
 
@@ -2335,12 +2375,12 @@ void CGraphicsSystem::InitSkyboxShaderData(ID3D11DeviceContext * pd3dDeviceConte
 	}
 }
 
-void CGraphicsSystem::InitAnimShaderData(ID3D11DeviceContext * pd3dDeviceContext, TAnimatedVertexBufferType d3dVertexBuffer, TMesh tMesh, XMMATRIX CameraMatrix)
+void CGraphicsSystem::InitAnimShaderData(ID3D11DeviceContext * pd3dDeviceContext, TAnimatedVertexBufferType d3dVertexBuffer, TMesh tMesh, /*TLightMaterials tMaterials,*/  XMMATRIX CameraMatrix)
 {
-	D3D11_MAPPED_SUBRESOURCE d3dAnimatedVertexMappedResource;
+	D3D11_MAPPED_SUBRESOURCE d3dAnimatedVertexMappedResource, d3dLightPixelMappedResource;
 
 	TAnimatedVertexBufferType *ptAnimatedVertexBufferDataPointer = nullptr;
-
+	TLightBufferType *ptLightPixelBufferDataPointer = nullptr;
 	XMMATRIX d3dView;
 	d3dView = d3dVertexBuffer.m_d3dViewMatrix;
 	d3dView = XMMatrixInverse(nullptr, CameraMatrix);
@@ -2365,6 +2405,21 @@ void CGraphicsSystem::InitAnimShaderData(ID3D11DeviceContext * pd3dDeviceContext
 	memcpy(&ptAnimatedVertexBufferDataPointer->m_d3dJointsForVS, &d3dVertexBuffer.m_d3dJointsForVS, sizeof(d3dVertexBuffer.m_d3dJointsForVS));
 	// Unlock the constant buffer.
 	pd3dDeviceContext->Unmap(m_pd3dAnimatedVertexBuffer, 0);
+
+#pragma endregion
+
+#pragma region Map to Light Constant Buffer
+	/*pd3dDeviceContext->Map(m_pd3dLightPixelBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &d3dLightPixelMappedResource);
+	ptLightPixelBufferDataPointer = (TLightBufferType*)d3dLightPixelMappedResource.pData;
+
+	ptLightPixelBufferDataPointer->Ambience = XMFLOAT4(0, 1, 0, 0);
+	ptLightPixelBufferDataPointer->lightEyePos = XMFLOAT4();
+	ptLightPixelBufferDataPointer->m_Proprties.m_Diffuse = tMaterials.m_Diffuse;
+	ptLightPixelBufferDataPointer->m_Proprties.m_Emissive = tMaterials.m_Emissive;
+	ptLightPixelBufferDataPointer->m_Proprties.m_Specular = tMaterials.m_Specular;
+	ptLightPixelBufferDataPointer->m_Proprties.shininess = tMaterials.shininess;
+
+	pd3dDeviceContext->Unmap(m_pd3dAnimatedVertexBuffer, 0);*/
 
 #pragma endregion
 
@@ -2602,6 +2657,67 @@ void CGraphicsSystem::InitLineShaderData(ID3D11DeviceContext * pd3dDeviceContext
 	if (&ParticleTexture != NULL)
 	{
 		pd3dDeviceContext->PSSetShaderResources(0, 1, &ParticleTexture);
+	}
+}
+
+void CGraphicsSystem::UpdateAnimationInfo(TAnimation &vtAnimation, TAnimationVariant &vtAnimationVariant, bool &forward, bool &backward, bool &left, bool &right)
+{
+	if (forward)
+	{
+		if (vtAnimationVariant.tClaytonAnim.animType != 1)
+		{
+			vtAnimation.tTimer.localTime = 0;
+
+			vtAnimationVariant.tClaytonAnim.currentFrame = 0;
+			vtAnimationVariant.tClaytonAnim.nextFrame = 1;
+		}
+
+		vtAnimationVariant.tClaytonAnim.animType = 1;
+	}
+	else if (backward)
+	{
+		if (vtAnimationVariant.tClaytonAnim.animType != 2)
+		{
+			vtAnimation.tTimer.localTime = 0;
+
+			vtAnimationVariant.tClaytonAnim.currentFrame = 0;
+			vtAnimationVariant.tClaytonAnim.nextFrame = 1;
+		}
+
+		vtAnimationVariant.tClaytonAnim.animType = 2;
+	}
+	else if (left)
+	{
+		if (vtAnimationVariant.tClaytonAnim.animType != 4)
+		{
+			vtAnimation.tTimer.localTime = 0;
+
+			vtAnimationVariant.tClaytonAnim.currentFrame = 0;
+			vtAnimationVariant.tClaytonAnim.nextFrame = 1;
+		}
+
+		vtAnimationVariant.tClaytonAnim.animType = 4;
+	}
+	else if (right)
+	{
+		if (vtAnimationVariant.tClaytonAnim.animType != 3)
+		{
+			vtAnimation.tTimer.localTime = 0;
+
+			vtAnimationVariant.tClaytonAnim.currentFrame = 0;
+			vtAnimationVariant.tClaytonAnim.nextFrame = 1;
+		}
+
+		vtAnimationVariant.tClaytonAnim.animType = 3;
+	}
+	else if (vtAnimationVariant.tClaytonAnim.animType != 0)
+	{
+		vtAnimation.tTimer.localTime = 0;
+
+		vtAnimationVariant.tClaytonAnim.currentFrame = 0;
+		vtAnimationVariant.tClaytonAnim.nextFrame = 1;
+
+		vtAnimationVariant.tClaytonAnim.animType = 0;
 	}
 }
 

@@ -74,7 +74,7 @@ public:
 		XMMATRIX m_d3dWorldMatrix;
 		XMMATRIX m_d3dViewMatrix;
 		XMMATRIX m_d3dProjectionMatrix;
-		XMFLOAT4X4 m_d3dJointsForVS[63];
+		XMFLOAT4X4 m_d3dJointsForVS[MAX_JOINTS];
 	};
 
 	struct TMyPixelBufferType
@@ -111,15 +111,16 @@ public:
 		XMFLOAT4 hoverColor;
 	};
 
-	struct TBlinnPhongType
+	
+
+	struct TLightBufferType
 	{
-		XMFLOAT3 m_d3dLightPosition;
-		XMFLOAT3 m_d3dCameraPosition;
-		float m_fShininess;
-		int m_nPadding;
+		TLightMaterials m_Proprties;
+		TLights m_allLights[2];
+		XMFLOAT4 Ambience;
+		XMFLOAT4 lightEyePos;
+
 	};
-
-
 
 	//First Frame
 	CGraphicsSystem();
@@ -156,7 +157,7 @@ public:
 	void InitPrimalShaderData2(ID3D11DeviceContext * pd3dDeviceContext, TPrimalVertexBufferType d3dVertexBuffer, TPrimalPixelBufferType d3dPixelBuffer, TSimpleMesh tSimpleMesh, XMMATRIX CameraMatrix);
 	void InitPrimalShaderData3(ID3D11DeviceContext * pd3dDeviceContext, TPrimalVertexBufferType d3dVertexBuffer, TPrimalPixelBufferType d3dPixelBuffer, TMesh tMesh, XMMATRIX CameraMatrix);
 	void InitSkyboxShaderData(ID3D11DeviceContext * pd3dDeviceContext, TMyVertexBufferType d3dVertexBuffer, TMesh tSimpleMesh, XMMATRIX CameraMatrix);
-	void InitAnimShaderData(ID3D11DeviceContext * pd3dDeviceContext, TAnimatedVertexBufferType d3dVertexBuffer, TMesh tSimpleMesh, XMMATRIX CameraMatrix);
+	void InitAnimShaderData(ID3D11DeviceContext * pd3dDeviceContext, TAnimatedVertexBufferType d3dVertexBuffer, TMesh tSimpleMesh, /*TLightMaterials tMaterials,*/ XMMATRIX CameraMatrix);
 	void InitMyShaderData(ID3D11DeviceContext * pd3dDeviceContext, TMyVertexBufferType d3dVertexBuffer, TMesh tSimpleMesh, XMMATRIX CameraMatrix);
 	void InitUIShaderData(ID3D11DeviceContext * pd3dDeviceContext, TUIVertexBufferType d3dVertexBuffer, TUIPixelBufferType d3dPixelBuffer, TMesh tMesh, XMMATRIX CameraMatrix);
 	void InitLineShaderData(ID3D11DeviceContext * pd3dDeviceContext, XMMATRIX d3dWorldMatrix, XMMATRIX d3dViewMatrix, XMMATRIX d3dProjectionMatrix, TDebugMesh tDebugMesh, XMMATRIX CameraMatrix, std::vector<TPrimalVert> m_verts, ID3D11ShaderResourceView * ParticleTexture);
@@ -165,10 +166,11 @@ public:
 	void UpdateLineVTBuffer(D3D11_BUFFER_DESC* bufDesc, ID3D11Buffer* &vertexBuffer, std::vector<TPrimalVert> lineVector);
 	void StoreBeamPoints(XMFLOAT3 startPoint, XMFLOAT3 endPoint, std::vector<TPrimalVert> &BeamPoints, float timeScroll);
 	ImporterData ReadMesh(const char * input_file_path);
-	ImporterData ReadMesh2(const char * input_file_path, int thingBeingTextured = 0, ImporterData* tImportMe2 = nullptr);
+	ImporterData ReadMesh2(const char * input_file_path, int thingBeingTextured = 0, ImporterData* tImportMe2 = nullptr, int numberOfPaths = 1);
 	XMVECTOR GetCameraPos();
 	XMMATRIX SetDefaultCameraMatrix();
 	XMMATRIX ResetAimModeCameraOffset();
+	void UpdateAnimationInfo(TAnimation &vtAnimation, TAnimationVariant &vtAnimationVariant, bool &forward, bool &backward, bool &left, bool &right);
 	//Last Frame
 	void CleanD3DLevel(TWorld * ptWorld);         //  releases memory
 	void CleanD3DObject(TWorld *ptPlanet, int nEntityIndex);
@@ -194,7 +196,7 @@ private:
 	ID3D11PixelShader	*m_pd3dLinePixelShader;
 	ID3D11VertexShader	*m_pd3dLineVertexShader;
 
-	//ID3D11Buffer		*m_pd3dLinePixelBuffer;
+	ID3D11Buffer		*m_pd3dLightPixelBuffer;
 
 	ID3D11VertexShader	*m_pd3dMyVertexShader;
 	ID3D11PixelShader	*m_pd3dMyPixelShader;

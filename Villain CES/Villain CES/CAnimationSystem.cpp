@@ -9,10 +9,10 @@ CAnimationSystem::~CAnimationSystem()
 }
 
 //Returns XMFLOAT4X4 Array of Tweened Joint Positions
-XMFLOAT4X4 * CAnimationSystem::PlayAnimation(TAnimationVariant& animationVariant, TAnimation& theAnimation, float& realTime)
+XMFLOAT4X4 * CAnimationSystem::PlayAnimation(TAnimationVariant& animationVariant, TAnimation& theAnimation, float& realTime, bool scale)
 {
 	CalculateFrameCount(animationVariant, theAnimation, realTime);
-	static XMFLOAT4X4 jointsForVS[63];//Clayton Joints
+	static XMFLOAT4X4 jointsForVS[MAX_JOINTS];//Clayton Joints
 	std::vector<XMMATRIX> thisFramesTweenJointMatrix;
 
 	if (animationVariant.tClaytonAnim.forward)
@@ -133,22 +133,25 @@ XMFLOAT4X4 * CAnimationSystem::PlayAnimation(TAnimationVariant& animationVariant
 	{
 		XMStoreFloat4x4(&jointsForVS[i], XMMatrixMultiply(theAnimation.invBindPosesForJoints[i], thisFramesTweenJointMatrix[i]));
 
-		/*jointsForVS[i]._11 *= .01;
-		jointsForVS[i]._12 *= .01;
-		jointsForVS[i]._13 *= .01;
-		jointsForVS[i]._14 *= .01;
-		jointsForVS[i]._21 *= .01;
-		jointsForVS[i]._22 *= .01;
-		jointsForVS[i]._23 *= .01;
-		jointsForVS[i]._24 *= .01;
-		jointsForVS[i]._31 *= .01;
-		jointsForVS[i]._32 *= .01;
-		jointsForVS[i]._33 *= .01;
-		jointsForVS[i]._34 *= .01;
-		jointsForVS[i]._41 *= .01;
-		jointsForVS[i]._42 *= .01;
-		jointsForVS[i]._43 *= .01;
-		jointsForVS[i]._44 *= .01;*/
+		if (scale)
+		{
+			jointsForVS[i]._11 *= .01;
+			jointsForVS[i]._12 *= .01;
+			jointsForVS[i]._13 *= .01;
+			jointsForVS[i]._14 *= .01;
+			jointsForVS[i]._21 *= .01;
+			jointsForVS[i]._22 *= .01;
+			jointsForVS[i]._23 *= .01;
+			jointsForVS[i]._24 *= .01;
+			jointsForVS[i]._31 *= .01;
+			jointsForVS[i]._32 *= .01;
+			jointsForVS[i]._33 *= .01;
+			jointsForVS[i]._34 *= .01;
+			jointsForVS[i]._41 *= .01;
+			jointsForVS[i]._42 *= .01;
+			jointsForVS[i]._43 *= .01;
+			jointsForVS[i]._44 *= .01;
+		}
 	}
 
 	return jointsForVS;

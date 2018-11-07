@@ -16,7 +16,7 @@ public:
 		joint data
 		forward or back
 	*/
-	XMFLOAT4X4* PlayAnimation(TAnimationVariant& claytonsAnimation, TAnimation& theAnimation, float& realTime);
+	XMFLOAT4X4* PlayAnimation(TAnimationVariant& claytonsAnimation, TAnimation& theAnimation, float& realTime, bool scale);
 
 private:
 	void CalculateFrameCount(TAnimationVariant& claytonsAnimation, TAnimation& theAnimation, float& realTime);
