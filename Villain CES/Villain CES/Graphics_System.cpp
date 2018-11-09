@@ -6,10 +6,12 @@ CGraphicsSystem::CGraphicsSystem()
 	m_fCameraXPosition = 0;
 	m_fCameraYPosition = 0.5;
 	m_fCameraZPosition = -10;
+	m_worldAmbience = XMFLOAT4(0.5f, 0.5f, 0.5f, 0);
 }
 
 CGraphicsSystem::~CGraphicsSystem()
 {
+	//delete[] m_AllLights;
 }
 
 void CGraphicsSystem::InitD3D(HWND cTheWindow)
@@ -356,6 +358,7 @@ void CGraphicsSystem::CleanD3D(TWorld *ptPlanet)
 	m_pd3dLineVTConstantBuffer->Release();
 	m_pd3dLineInputLayout->Release();
 	m_pd3dLinePixelShader->Release();
+	m_pd3dLightPixelBuffer->Release();
 	if (debug != nullptr)
 	{
 		HRESULT result = debug->ReportLiveDeviceObjects(D3D11_RLDO_SUMMARY | D3D11_RLDO_DETAIL);
@@ -929,7 +932,7 @@ void CGraphicsSystem::CreateShaders(ID3D11Device * device)
 
 #pragma region Light Buffer
 	D3D11_BUFFER_DESC d3dLightPixelBufferDesc;
-
+	
 	d3dLightPixelBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
 	d3dLightPixelBufferDesc.ByteWidth = sizeof(TLightBufferType);
 	d3dLightPixelBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
@@ -940,6 +943,23 @@ void CGraphicsSystem::CreateShaders(ID3D11Device * device)
 	device->CreateBuffer(&d3dLightPixelBufferDesc, NULL, &m_pd3dLightPixelBuffer);
 #pragma endregion  
 }
+
+//void CGraphicsSystem::SetLights()
+//{
+//	m_worldAmbience = XMFLOAT4(0.3f, 0.3f, 0.3f, 1);
+//	
+//	for (int i = 0; i < MAX_LIGHTS; i++)
+//	{
+//		m_AllLights[i].m_d3dLightColor = XMFLOAT4(1, 0, 0, 0);
+//		m_AllLights[i].m_d3dLightPosition = XMFLOAT4(-4, 4, 10.8f, 1);
+//		m_AllLights[i].enabled = true;
+//		m_AllLights[i].m_lightType = 1;
+//		m_AllLights[i].m_Direction = XMFLOAT4(0, 0, 0, 1);
+//		m_AllLights[i].m_padding = XMFLOAT2(0, 0);
+//	}
+//
+//	
+//}
 
 TMaterialOptimized CGraphicsSystem::CreateTexturesFromFile(TMaterialImport * arrayOfMaterials, int numberOfEntities)
 {
@@ -2362,12 +2382,13 @@ void CGraphicsSystem::InitSkyboxShaderData(ID3D11DeviceContext * pd3dDeviceConte
 	}
 }
 
-void CGraphicsSystem::InitAnimShaderData(ID3D11DeviceContext * pd3dDeviceContext, TAnimatedVertexBufferType d3dVertexBuffer, TMesh tMesh, TLightMaterials tMaterials,  XMMATRIX CameraMatrix)
+void CGraphicsSystem::InitAnimShaderData(ID3D11DeviceContext * pd3dDeviceContext, TAnimatedVertexBufferType d3dVertexBuffer, TMesh tMesh, TLightBufferType tMaterials,  XMMATRIX CameraMatrix)
 {
 	D3D11_MAPPED_SUBRESOURCE d3dAnimatedVertexMappedResource, d3dLightPixelMappedResource;
 
 	TAnimatedVertexBufferType *ptAnimatedVertexBufferDataPointer = nullptr;
 	TLightBufferType *ptLightPixelBufferDataPointer = nullptr;
+	
 	XMMATRIX d3dView;
 	d3dView = d3dVertexBuffer.m_d3dViewMatrix;
 	d3dView = XMMatrixInverse(nullptr, CameraMatrix);
@@ -2394,21 +2415,46 @@ void CGraphicsSystem::InitAnimShaderData(ID3D11DeviceContext * pd3dDeviceContext
 	pd3dDeviceContext->Unmap(m_pd3dAnimatedVertexBuffer, 0);
 
 #pragma endregion
-
+	
 #pragma region Map to Light Constant Buffer
-	pd3dDeviceContext->Map(m_pd3dLightPixelBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &d3dLightPixelMappedResource);
-	ptLightPixelBufferDataPointer = (TLightBufferType*)d3dLightPixelMappedResource.pData;
+	XMFLOAT4 templightEye = XMFLOAT4(-4.0f, 4.0f, 10.8f, 1.0f);
 
-	ptLightPixelBufferDataPointer->Ambience = XMFLOAT4(0, 1, 0, 0);
-	ptLightPixelBufferDataPointer->lightEyePos = XMFLOAT4();
-	ptLightPixelBufferDataPointer->m_Proprties.m_Diffuse = tMaterials.m_Diffuse;
+
+	pd3dDeviceContext->Map(m_pd3dLightPixelBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &d3dLightPixelMappedResource);
+
+	ptLightPixelBufferDataPointer = (TLightBufferType*)d3dLightPixelMappedResource.pData;
+	memcpy(&ptLightPixelBufferDataPointer->m_allLights,&tMaterials.m_allLights, sizeof(tMaterials.m_allLights));
+	memcpy(&ptLightPixelBufferDataPointer->m_Proprties, &tMaterials.m_Proprties, sizeof(tMaterials.m_Proprties));
+	memcpy(&ptLightPixelBufferDataPointer->Ambience, &m_worldAmbience, sizeof(m_worldAmbience));
+	memcpy(&ptLightPixelBufferDataPointer->lightEyePos, &templightEye, sizeof(templightEye));
+
+	/* = tMaterials.m_allLights;
+	 = tMaterials.m_Proprties;*/
+	/*ptLightPixelBufferDataPointer->Ambience.x = m_worldAmbience.x;
+	ptLightPixelBufferDataPointer->Ambience.y = m_worldAmbience.y;
+	ptLightPixelBufferDataPointer->Ambience.z = m_worldAmbience.z;
+	ptLightPixelBufferDataPointer->Ambience.w = m_worldAmbience.w;*/
+	/*ptLightPixelBufferDataPointer->lightEyePos.x =  templightEye.x;
+	ptLightPixelBufferDataPointer->lightEyePos.y = templightEye.y;
+	ptLightPixelBufferDataPointer->lightEyePos.z = templightEye.z;
+	ptLightPixelBufferDataPointer->lightEyePos.w = templightEye.w;*/
+
+	//memcpy(&ptLightPixelBufferDataPointer->m_allLights, &tMaterials.m_allLights, sizeof(tMaterials.m_allLights)); 
+	
+	
+	pd3dDeviceContext->Unmap(m_pd3dLightPixelBuffer, 0);
+
+	
+	/*ptLightPixelBufferDataPointer->m_Proprties.m_Diffuse = tMaterials.m_Diffuse;
 	ptLightPixelBufferDataPointer->m_Proprties.m_Emissive = tMaterials.m_Emissive;
 	ptLightPixelBufferDataPointer->m_Proprties.m_Specular = tMaterials.m_Specular;
-	ptLightPixelBufferDataPointer->m_Proprties.shininess = tMaterials.shininess;
+	ptLightPixelBufferDataPointer->m_Proprties.shininess = tMaterials.shininess;*/
+
 
 #pragma endregion
 
 	pd3dDeviceContext->VSSetConstantBuffers(bufferNumber, 1, &m_pd3dAnimatedVertexBuffer);
+	pd3dDeviceContext->PSSetConstantBuffers(0,1, &m_pd3dLightPixelBuffer);
 	pd3dDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	pd3dDeviceContext->IASetVertexBuffers(0, 1, &tMesh.m_pd3dVertexBuffer, &tMesh.m_nVertexBufferStride, &tMesh.m_nVertexBufferOffset);
 	pd3dDeviceContext->IASetIndexBuffer(tMesh.m_pd3dIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
@@ -2585,6 +2631,11 @@ void CGraphicsSystem::InitQuadShaderData(ID3D11DeviceContext * pd3dDeviceContext
 	pd3dDeviceContext->GSSetConstantBuffers(0, 1, &m_pd3dQuadGeometryBuffer);
 	pd3dDeviceContext->IASetVertexBuffers(0, 1, &tDebugMesh.m_pd3dVertexBuffer, &tDebugMesh.m_nVertexBufferStride, &tDebugMesh.m_nVertexBufferOffset);
 }
+
+//TLights * CGraphicsSystem::GetLights()
+//{
+//	return m_AllLights;
+//}
 
 void CGraphicsSystem::InitLineShaderData(ID3D11DeviceContext * pd3dDeviceContext, XMMATRIX d3dWorldMatrix, XMMATRIX d3dViewMatrix, XMMATRIX d3dProjectionMatrix,  TDebugMesh tDebugMesh, XMMATRIX CameraMatrix, std::vector<TPrimalVert> m_verts, ID3D11ShaderResourceView * ParticleTexture)
 {

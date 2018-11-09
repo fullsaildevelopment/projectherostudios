@@ -2,6 +2,7 @@
 #include "Timer.h"
 #ifndef CES_GRAPHICS_COMPONENT_H
 #define CES_GRAPHICS_COMPONENT_H
+#define MAX_LIGHTS 1
 enum eGraphicsComponent
 {
 	COMPONENT_NONE = 0,
@@ -267,6 +268,7 @@ struct TLights
 	XMFLOAT2 m_padding;
 
 };
+
 struct TLightMaterials
 {
 	XMFLOAT4 m_Emissive;

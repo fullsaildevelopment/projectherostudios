@@ -1,8 +1,8 @@
 #include "GameManger.h"
 #define AI_ON true
-#define MIKES_SANDBOX_ON false
+#define MIKES_SANDBOX_ON true
 #define SKELETON_LOAD_ON false
-#define MAIN_LEVEL_ON true
+#define MAIN_LEVEL_ON false
 #define INPUT_ABSTRACTED_ON true
 
 #define NUMBER_OF_AI 5
@@ -1502,8 +1502,9 @@ void CGameMangerSystem::InitializeOptionsMenu()
 		pcUISystem->AddBarToUI(&cApplicationWindow, &tThisWorld, nThisEntity, &XMFLOAT4(1, 0, 0, 1), valueToChange, ARRAYSIZE(valueToChange));
 
 		pcUISystem->AddMaskToUI(&tThisWorld, nThisEntity, COMPONENT_OPTIONS);
-
+#if MUSIC_ON
 		tThisWorld.atBar[nThisEntity].ratio = pcAudioSystem->m_fMasterVolume * .01;
+#endif
 		masterIndex = nThisEntity;
 	}
 
@@ -1568,8 +1569,10 @@ void CGameMangerSystem::InitializeOptionsMenu()
 		pcUISystem->AddBarToUI(&cApplicationWindow, &tThisWorld, nThisEntity, &XMFLOAT4(1, 0, 0, 1), valueToChange, ARRAYSIZE(valueToChange));
 
 		pcUISystem->AddMaskToUI(&tThisWorld, nThisEntity, COMPONENT_OPTIONS);
-
+#if MUSIC_ON
 		tThisWorld.atBar[nThisEntity].ratio = pcAudioSystem->m_fMusicVolume * .01;
+#endif // MUSIC_ON
+
 		musicIndex = nThisEntity;
 	}
 
@@ -1601,8 +1604,9 @@ void CGameMangerSystem::InitializeOptionsMenu()
 		pcUISystem->AddBarToUI(&cApplicationWindow, &tThisWorld, nThisEntity, &XMFLOAT4(1, 0, 0, 1), valueToChange, ARRAYSIZE(valueToChange));
 
 		pcUISystem->AddMaskToUI(&tThisWorld, nThisEntity, COMPONENT_OPTIONS);
-
+#if MUSIC_ON
 		tThisWorld.atBar[nThisEntity].ratio = pcAudioSystem->m_fSFXVolume * .01;
+#endif
 		fxIndex = nThisEntity;
 	}
 
@@ -4569,7 +4573,7 @@ void CGameMangerSystem::LoadMikesGraphicsSandbox()
 	int myMesh;
 	for (int meshIndex = 0; meshIndex < tempImport.meshCount; meshIndex++)
 	{
-		myMesh = createClaytonAnim(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, tempImport.vtMeshes[meshIndex], matOpt, tempImport.vtAnimations[meshIndex], meshIndex, tempImport.animationCount);
+		myMesh = createClaytonAnim(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, tempImport.vtMeshes[meshIndex], matOpt, tempImport.vtMaterials[meshIndex],tempImport.vtAnimations, meshIndex, tempImport.animationCount);
 	}
 
 	tThisWorld.atWorldMatrix[myMesh].worldMatrix.r[3].m128_f32[0] = -4;
@@ -4578,7 +4582,7 @@ void CGameMangerSystem::LoadMikesGraphicsSandbox()
 
 	//createGSQuad(&tThisWorld, XMFLOAT4(1, 0, 0, 1) myMesh);
 	//createGSQuad(&tThisWorld, XMFLOAT4(1, 1, 1, 1) myMesh);
-
+	//pcGraphicsSystem->SetLights();
 	pcGraphicsSystem->CreateBuffers(&tThisWorld);
 	/*
 	loop through all entities
@@ -4611,6 +4615,7 @@ int CGameMangerSystem::MikesGraphicsSandbox()
 	CGraphicsSystem::TPrimalPixelBufferType tTempPixelBuffer;
 	CGraphicsSystem::TMyVertexBufferType tMyVertexBufferTemp;
 	CGraphicsSystem::TAnimatedVertexBufferType tAnimVertexBuffer;
+	CGraphicsSystem::TLightBufferType tLightBuffer;
 	tTempPixelBuffer.m_d3dCollisionColor = XMFLOAT4(1.0f, 0.0f, 0.0f, 0.0f);
 
 #pragma endregion
@@ -4707,7 +4712,22 @@ int CGameMangerSystem::MikesGraphicsSandbox()
 				memcpy(&tAnimVertexBuffer.m_d3dJointsForVS[i], &tweenJoints[i], sizeof(tweenJoints[i]));
 			}
 
-			pcGraphicsSystem->InitAnimShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tAnimVertexBuffer, tThisWorld.atMesh[nCurrentEntity], debugCamera->d3d_Position);
+			/*TLights* Lights_To_Send = pcGraphicsSystem->GetLights();
+			for  (int k = 0; k < MAX_LIGHTS; k++)
+			{
+				memcpy(&tLightBuffer.m_allLights[k], &Lights_To_Send[k], sizeof(Lights_To_Send[k]));
+			}*/
+			TLights testLight;
+			testLight.m_d3dLightColor = XMFLOAT4(1, 0, 0, 0);
+			testLight.m_d3dLightPosition = XMFLOAT4(-4, 4, 10.8f, 1);
+			testLight.enabled = true;
+			testLight.m_lightType = 1;
+			testLight.m_Direction = XMFLOAT4(0, 0, 0, 1);
+			testLight.m_padding = XMFLOAT2(0, 0);
+			tLightBuffer.m_allLights = testLight;
+
+			tLightBuffer.m_Proprties = tThisWorld.atMaterial[nCurrentEntity];
+			pcGraphicsSystem->InitAnimShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tAnimVertexBuffer, tThisWorld.atMesh[nCurrentEntity],tLightBuffer, debugCamera->d3d_Position);
 			pcGraphicsSystem->ExecutePipeline(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atMesh[nCurrentEntity].m_nIndexCount, tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask, tThisWorld.atShaderID[nCurrentEntity].m_nShaderID);
 		}
 
@@ -7713,6 +7733,7 @@ int CGameMangerSystem::RealLevelUpdate()
 	CGraphicsSystem::TAnimatedVertexBufferType tAnimVertexBuffer;
 	CGraphicsSystem::TUIVertexBufferType tUIVertexBuffer;
 	CGraphicsSystem::TUIPixelBufferType tUIPixelBuffer;
+	CGraphicsSystem::TLightBufferType tLightBuffer;
 
 	tMyVertexBufferTemp.m_d3dColor = XMFLOAT4(0, 0, 0, 1);
 #if MUSIC_ON
@@ -8484,6 +8505,26 @@ int CGameMangerSystem::RealLevelUpdate()
 							std::cout << temp.m128_f32[i] << ", ";
 
 						}*/
+
+					/*TLights* Lights_To_Send = pcGraphicsSystem->GetLights();
+					for (int k = 0; k < MAX_LIGHTS; k++)
+					{
+						memcpy(&tLightBuffer.m_allLights[k], &Lights_To_Send[k], sizeof(Lights_To_Send[k]));
+					}
+					tLightBuffer.m_Proprties = tThisWorld.atMaterial[nCurrentEntity];*/
+					TLights testLight;
+					testLight.m_d3dLightColor = XMFLOAT4(1, 0, 0, 0);
+					testLight.m_d3dLightPosition = XMFLOAT4(-4, 4, 10.8f, 1);
+					testLight.enabled = true;
+					testLight.m_lightType = 1;
+					testLight.m_Direction = XMFLOAT4(0, 0, 0, 1);
+					testLight.m_padding = XMFLOAT2(0, 0);
+
+					tLightBuffer.m_allLights = testLight;
+					tLightBuffer.m_Proprties = tThisWorld.atMaterial[nCurrentEntity];
+					tLightBuffer.lightEyePos = XMFLOAT4(-4, 4, 10.8f, 1);
+					tLightBuffer.Ambience = XMFLOAT4(0.5f, 0.5f, 0.5f, 1);
+
 					XMMATRIX claytonFrustumMatrix = aimCamera->d3d_Position;
 					claytonFrustumMatrix = XMMatrixMultiply(XMMatrixTranslation(0, 0, -15), claytonFrustumMatrix);
 					float4x4 ClaytonFrustum;
@@ -8510,7 +8551,7 @@ int CGameMangerSystem::RealLevelUpdate()
 					pcAiSystem->UpdateFrustum(tThisWorld.atClaytonVision.eyes0, ClaytonFrustum, 60, 1, 0.1, 150);
 
 					tThisWorld.atWorldMatrix[claytonFrustumIndex].worldMatrix = claytonFrustumMatrix;
-					pcGraphicsSystem->InitAnimShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tAnimVertexBuffer, tThisWorld.atMesh[nCurrentEntity],tThisWorld.atMaterial[nCurrentEntity], aimCamera->d3d_Position);
+					pcGraphicsSystem->InitAnimShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tAnimVertexBuffer, tThisWorld.atMesh[nCurrentEntity],tLightBuffer, aimCamera->d3d_Position);
 
 				}
 				else
@@ -8528,6 +8569,25 @@ int CGameMangerSystem::RealLevelUpdate()
 					tTempVertexBuffer.m_d3dWorldMatrix = tThisWorld.atWorldMatrix[ClaytonIndex].worldMatrix;
 					tMyVertexBufferTemp.m_d3dWorldMatrix = tThisWorld.atWorldMatrix[ClaytonIndex].worldMatrix;
 					tAnimVertexBuffer.m_d3dViewMatrix = debugCamera->d3d_Position;
+
+					/*TLights* Lights_To_Send = pcGraphicsSystem->GetLights();
+					for (int k = 0; k < MAX_LIGHTS; k++)
+					{
+						memcpy(&tLightBuffer.m_allLights[k], &Lights_To_Send[k], sizeof(Lights_To_Send[k]));
+					}
+					tLightBuffer.m_Proprties = tThisWorld.atMaterial[nCurrentEntity];*/
+					TLights testLight;
+					testLight.m_d3dLightColor = XMFLOAT4(1, 0, 0, 0);
+					testLight.m_d3dLightPosition = XMFLOAT4(-4, 4, 10.8f, 1);
+					testLight.enabled = true;
+					testLight.m_lightType = 1;
+					testLight.m_Direction = XMFLOAT4(0, 0, 0, 1);
+					testLight.m_padding = XMFLOAT2(0, 0);
+
+					tLightBuffer.m_allLights = testLight;
+					tLightBuffer.m_Proprties = tThisWorld.atMaterial[nCurrentEntity];
+					tLightBuffer.lightEyePos = XMFLOAT4(-4, 4, 10.8f, 1);
+					tLightBuffer.Ambience = XMFLOAT4(0.5f, 0.5f, 0.5f, 1);
 
 					float4x4 ClaytonFrustum;
 					ClaytonFrustum.row1.x = claytonFrustumMatrix.r[0].m128_f32[0];
@@ -8553,7 +8613,7 @@ int CGameMangerSystem::RealLevelUpdate()
 					pcAiSystem->UpdateFrustum(tThisWorld.atClaytonVision.eyes0, ClaytonFrustum, 60, 1, 0.1, 150);
 
 					tThisWorld.atWorldMatrix[claytonFrustumIndex].worldMatrix = claytonFrustumMatrix;
-					pcGraphicsSystem->InitAnimShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tAnimVertexBuffer, tThisWorld.atMesh[nCurrentEntity], debugCamera->d3d_Position);
+					pcGraphicsSystem->InitAnimShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tAnimVertexBuffer, tThisWorld.atMesh[nCurrentEntity], tLightBuffer, debugCamera->d3d_Position);
 				}
 				tThisWorld.atAnimation[ClaytonIndex].tTimer.GetLocalTime(tThisWorld.atAnimation[ClaytonIndex].tTimer.tSceneTimer, tThisWorld.atAnimation[ClaytonIndex].tTimer.localTime);
 				tThisWorld.atAnimation[ClaytonIndex].tTimer.DisplayTimes(pcInputSystem);

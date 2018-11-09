@@ -248,9 +248,6 @@
     <FxCompile Include="MyVertexShader.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
-    <FxCompile Include="AnimatedPixelShader.hlsl">
-      <Filter>Shaders</Filter>
-    </FxCompile>
     <FxCompile Include="AnimatedVertexShader.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
@@ -279,6 +276,9 @@
       <Filter>Shaders</Filter>
     </FxCompile>
     <FxCompile Include="LinePixelShader.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="AnimatedPixelShader.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
   </ItemGroup>
