@@ -143,6 +143,7 @@ void CCollisionSystem::TestThreading(TWorld * ptWorld, int nCurrentEntity, CGrap
 	{
 		ptWorld->atAABB[nCurrentEntity] = updateAABB(ptWorld->atWorldMatrix[nCurrentEntity].worldMatrix, ptWorld->atAABB[nCurrentEntity]);
 	}
+
 	
 	//ptWorld->atClayton[nCurrentEntity].health = 10;
 //	float x = 0;
@@ -278,6 +279,7 @@ void CCollisionSystem::TestThreading(TWorld * ptWorld, int nCurrentEntity, CGrap
 								pcAudioSystem->SendSoundsToEngine(AK::EVENTS::PLAY_HURT_SCYLIAN, pcAudioSystem->m_Scylian_Hurt);
 								pcAudioSystem->SetRTPCVolume(AK::GAME_PARAMETERS::SFX_VOLUME, in_SFXVolume);
 #endif
+								pcParticleSystem->CreateAlotofCubes(ptWorld->atWorldMatrix[nCurrentEntity].worldMatrix, ptWorld, 30, pcGraphicsSystem, pcAiSystem, delta, false);
 
 								if (ptWorld->atAiHeath[otherCollisionsIndex[i]].heath <= 0)
 								{
@@ -287,14 +289,14 @@ void CCollisionSystem::TestThreading(TWorld * ptWorld, int nCurrentEntity, CGrap
 										pcAiSystem->SetActiveShooter(0);
 									}
 									pcAiSystem->SetNumberOfAI(pcAiSystem->GetNumberOfAI() - 1);
-									RemoveAABBCollider(otherCollisionsIndex[i]);
+								//	RemoveAABBCollider(otherCollisionsIndex[i]);
 
 									ptWorld->atAABB[otherCollisionsIndex[i]].m_IndexLocation = -1;
 									ptWorld->atAABB[otherCollisionsIndex[i]].m_dMaxPoint = XMFLOAT3(0, 0, 0);
 									ptWorld->atAABB[otherCollisionsIndex[i]].m_dMaxPointOrginal = XMFLOAT3(0, 0, 0);
 									ptWorld->atAABB[otherCollisionsIndex[i]].m_dMinPoint = XMFLOAT3(0, 0, 0);
 									ptWorld->atAABB[otherCollisionsIndex[i]].m_dMinPointOrginal = XMFLOAT3(0, 0, 0);
-
+									updateAABB(ptWorld->atWorldMatrix[otherCollisionsIndex[i]].worldMatrix, ptWorld->atAABB[otherCollisionsIndex[i]]);
 									ptWorld->atAiHeath[otherCollisionsIndex[i]].heath = 0;
 									ptWorld->atActiveAI[otherCollisionsIndex[i]].active = false;
 									ptWorld->atAIVision[otherCollisionsIndex[i]].stopSearching = true;
@@ -304,11 +306,11 @@ void CCollisionSystem::TestThreading(TWorld * ptWorld, int nCurrentEntity, CGrap
 
 									ptWorld->atWorldMatrix[otherCollisionsIndex[i]].worldMatrix.r[3].m128_f32[1] -= 10;
 
-									//pcGraphicsSystem->CleanD3DObject(ptWorld, otherCollisionsIndex[i]);
-									//pcGraphicsSystem->CleanD3DObject(ptWorld, ptWorld->atAIMask[otherCollisionsIndex[i]].GunIndex);
+									/*pcGraphicsSystem->CleanD3DObject(ptWorld, otherCollisionsIndex[i]);
+									pcGraphicsSystem->CleanD3DObject(ptWorld, ptWorld->atAIMask[otherCollisionsIndex[i]].GunIndex);*/
 									
-									//pcGraphicsSystem->CleanD3DObject(ptWorld, otherCollisionsIndex[i] + 1);
-									//pcGraphicsSystem->CleanD3DObject(ptWorld, otherCollisionsIndex[i] + 2);
+								/*	pcGraphicsSystem->CleanD3DObject(ptWorld, otherCollisionsIndex[i] + 1);
+									pcGraphicsSystem->CleanD3DObject(ptWorld, otherCollisionsIndex[i] + 2);*/
 									pcAiSystem->RemoveeShootingActiveAI(otherCollisionsIndex[i]);
 
 								}
@@ -316,8 +318,7 @@ void CCollisionSystem::TestThreading(TWorld * ptWorld, int nCurrentEntity, CGrap
 							}
 						//	int cubeindex = pcParticleSystem->CreateCube15(ptWorld->atWorldMatrix[nCurrentEntity].worldMatrix, ptWorld);
 						//	pcGraphicsSystem->CreateEntityBuffer(ptWorld, cubeindex);
-						    pcParticleSystem->CreateAlotofCubes(ptWorld->atWorldMatrix[nCurrentEntity].worldMatrix, ptWorld,30,pcGraphicsSystem,pcAiSystem,delta,false);
-
+						
 							cout << "WheremyCube" << std::endl;
 
 
@@ -754,32 +755,38 @@ bool CCollisionSystem::replaceAABB(int nIndex, TAABB m_AABB2)
 	{
 		float x = 0;
 	}
-	for (list<TAABB>::iterator ptr = m_AAbb.begin(); ptr != m_AAbb.end(); ++ptr) 
+
 	{
-		if (nIndex == ptr->m_IndexLocation)
+		if (m_AAbb.size() > m_AABB2.locationinArray)
 		{
-			for (int i = 0; i < AiFrustumCheck.size(); ++i)
+			std::list<TAABB>::iterator it = m_AAbb.begin();
+			std::advance(it, m_AABB2.locationinArray);
+			// 'it' points to the element at index 'N'
+			if (nIndex == it->m_IndexLocation)
 			{
-				if (nIndex == AiFrustumCheck[i].m_IndexLocation)
-				{
-					AiFrustumCheck[i].m_dMaxPoint = m_AABB2.m_dMaxPoint;
-					AiFrustumCheck[i].m_dMinPoint = m_AABB2.m_dMinPoint;
+				it->m_dMaxPoint = m_AABB2.m_dMaxPoint;
+				/*		ptr->m_dMaxPointOrginal = m_AABB2.m_dMaxPointOrginal;
+						ptr->m_dMinPointOrginal = m_AABB2.m_dMinPointOrginal;*/
 
-				}
+				it->m_dMinPoint = m_AABB2.m_dMinPoint;
+				it->disabledabb = m_AABB2.disabledabb;
+				it->locationinArray = m_AABB2.locationinArray;
+
 			}
-			for (list<TAABB>::iterator ptr = m_AAbb.begin(); ptr != m_AAbb.end(); ++ptr)
+
 			{
-				if (nIndex == ptr->m_IndexLocation) 
+				for (int i = 0; i < AiFrustumCheck.size(); ++i)
 				{
-					ptr->m_dMaxPoint = m_AABB2.m_dMaxPoint;
-			/*		ptr->m_dMaxPointOrginal = m_AABB2.m_dMaxPointOrginal;
-					ptr->m_dMinPointOrginal = m_AABB2.m_dMinPointOrginal;*/
+					if (nIndex == AiFrustumCheck[i].m_IndexLocation)
+					{
+						AiFrustumCheck[i].m_dMaxPoint = m_AABB2.m_dMaxPoint;
+						AiFrustumCheck[i].m_dMinPoint = m_AABB2.m_dMinPoint;
 
-					ptr->m_dMinPoint = m_AABB2.m_dMinPoint;
-					ptr->disabledabb = m_AABB2.disabledabb;
-					return true;
+					}
 				}
+
 			}
+			return true;
 		}
 	}
 
@@ -921,7 +928,7 @@ int CCollisionSystem::AddAABBCollider(TAABB m_AABB2, int nIndex)
 		m_AABB2.m_IndexLocation = nIndex;
 		m_AAbb.push_back(m_AABB2);
 
-		return (int)m_AAbb.size();
+		return (int)m_AAbb.size()-1;
 	}
 	else
 	{

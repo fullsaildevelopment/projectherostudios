@@ -5523,6 +5523,8 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	for (int meshIndex = 0; meshIndex < gunImport.meshCount; ++meshIndex)
 	{
 		spacePirate = CreateScyllian(&tThisWorld, AILocation, enemyToCopyFrom);
+		createGSQuad(&tThisWorld, XMFLOAT4(1, 0, 0, 1), spacePirate);
+		createGSQuad(&tThisWorld, XMFLOAT4(0, 0, 0, 1), spacePirate);
 		int CollisionofVisionIndex = CreateTriggerForAiVisionWithListofEnemeisthatcantsee(&tThisWorld, VisionTriggerMatrix);
 		tThisWorld.atAIVision[CollisionofVisionIndex].AIToTurnVisionOf.push_back(spacePirate);
 		CollisionofVisionIndex = CreateTriggerForAiVisionWithListofEnemeisthatcantsee(&tThisWorld, VisionTriggerMatrix);	VisionTriggerMatrix.r[3].m128_f32[2] -= 1;
@@ -5594,8 +5596,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	pcAiSystem->LookAtObject(AiLookPosition, &tThisWorld.atWorldMatrix[spacePirate].worldMatrix);
 	//spacePirate = CreateSpacePirate(&tThisWorld, AILocation);
 	tThisWorld.atAiHeath[spacePirate].heath = 100;
-	createGSQuad(&tThisWorld, XMFLOAT4(1, 0, 0, 1), spacePirate);
-	createGSQuad(&tThisWorld, XMFLOAT4(0, 0, 0, 1), spacePirate);
+	
 
 
 
@@ -5769,6 +5770,8 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	for (int meshIndex = 0; meshIndex < tempImport.meshCount; ++meshIndex)
 	{
 		spacePirate = CreateScyllian(&tThisWorld, AILocation, enemyToCopyFrom);
+		createGSQuad(&tThisWorld, XMFLOAT4(1, 0, 0, 1), spacePirate);
+		createGSQuad(&tThisWorld, XMFLOAT4(0, 0, 0, 1), spacePirate);
 		int CollisionofVisionIndex = CreateTriggerForAiVisionWithListofEnemeisthatcantsee(&tThisWorld, VisionTriggerMatrix);
 		tThisWorld.atAIVision[CollisionofVisionIndex].AIToTurnVisionOf.push_back(spacePirate);
 		CollisionofVisionIndex = CreateTriggerForAiVisionWithListofEnemeisthatcantsee(&tThisWorld, VisionTriggerMatrix);	VisionTriggerMatrix.r[3].m128_f32[2] -= 1;
@@ -5840,8 +5843,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	pcAiSystem->LookAtObject(AiLookPosition, &tThisWorld.atWorldMatrix[spacePirate].worldMatrix);
 	//spacePirate = CreateSpacePirate(&tThisWorld, AILocation);
 	tThisWorld.atAiHeath[spacePirate].heath = 100;
-	createGSQuad(&tThisWorld, XMFLOAT4(1, 0, 0, 1), spacePirate);
-	createGSQuad(&tThisWorld, XMFLOAT4(0, 0, 0, 1), spacePirate);
+
 
 
 
@@ -6685,8 +6687,9 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 				TAABB MyAbb = pcCollisionSystem->createAABBS(tThisWorld.atSimpleMesh[nCurrentEntity].m_VertexData, tThisWorld.atAABB[nCurrentEntity]);
 				
 				MyAbb.m_IndexLocation = nCurrentEntity;
+				MyAbb.locationinArray = pcCollisionSystem->AddAABBCollider(MyAbb, nCurrentEntity);
+
 				tThisWorld.atAABB[nCurrentEntity] = MyAbb;
-				pcCollisionSystem->AddAABBCollider(MyAbb, nCurrentEntity);
 
 
 				/*if (nCurrentEntity == door1Index || nCurrentEntity == door2Index || swordGuy == nCurrentEntity) {
@@ -6700,6 +6703,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 
 				TAABB MyAbb = pcCollisionSystem->createAABBS(tThisWorld.atMesh[nCurrentEntity].m_VertexData, tThisWorld.atAABB[nCurrentEntity]);
 				MyAbb.m_IndexLocation = nCurrentEntity;
+				MyAbb.locationinArray = pcCollisionSystem->AddAABBCollider(MyAbb, nCurrentEntity);
 
 				if (nCurrentEntity == ClaytonIndex)
 				{
@@ -6776,6 +6780,8 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 			{
 				TAABB MyAbb = pcCollisionSystem->createAABBS(tThisWorld.atMesh[nCurrentEntity].m_VertexData, tThisWorld.atAABB[nCurrentEntity]);
 				MyAbb.m_IndexLocation = nCurrentEntity;
+				MyAbb.locationinArray = pcCollisionSystem->AddAABBCollider(MyAbb, nCurrentEntity);
+
 				tThisWorld.atAABB[nCurrentEntity] = MyAbb;
 				pcCollisionSystem->AddAABBCollider(MyAbb, nCurrentEntity);
 			}
@@ -9172,7 +9178,7 @@ int CGameMangerSystem::RealLevelUpdate()
 							tThisWorld.atAABB[newbullet].m_IndexLocation = newbullet;
 
 							tThisWorld.atClip[newbullet].maxLifeTime = 2.4;
-
+							tThisWorld.atAABB[newbullet].locationinArray = pcCollisionSystem->AddAABBCollider(tThisWorld.atAABB[newbullet], newbullet);
 							pcCollisionSystem->AddAABBCollider(tThisWorld.atAABB[newbullet], newbullet);
 							pcGraphicsSystem->CreateEntityBuffer(&tThisWorld, newbullet);
 						
@@ -9229,7 +9235,8 @@ int CGameMangerSystem::RealLevelUpdate()
 
 							tThisWorld.atClip[newbullet].maxLifeTime = 2.4;
 
-							pcCollisionSystem->AddAABBCollider(tThisWorld.atAABB[newbullet], newbullet);
+							tThisWorld.atAABB[newbullet].locationinArray=pcCollisionSystem->AddAABBCollider(tThisWorld.atAABB[newbullet], newbullet);
+							pcCollisionSystem->updateAABB(tThisWorld.atWorldMatrix[newbullet].worldMatrix, tThisWorld.atAABB[newbullet]);
 							pcGraphicsSystem->CreateEntityBuffer(&tThisWorld, newbullet);
 						}
 						else
