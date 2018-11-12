@@ -238,13 +238,13 @@ void CUISystem::AddBarToUI(HWND* cApplicationWindow, TWorld* tThisWorld, int& nT
 
 	tThisWorld->atBar[nThisEntity].start.y = (screenHeight / 2) + (ratioTopY * -1) + tThisWorld->atLabel[nThisEntity].y;
 	tThisWorld->atBar[nThisEntity].end.y = (screenHeight / 2) + (ratioBottomY * -1) + tThisWorld->atLabel[nThisEntity].y;
-	tThisWorld->atBar[nThisEntity].start.x = (screenWidth / 2) + ratioLeftX - 9;
-	tThisWorld->atBar[nThisEntity].end.x = (screenWidth / 2) + ratioRightX - 9;
+	tThisWorld->atBar[nThisEntity].start.x = (screenWidth / 2) + ratioLeftX;
+	tThisWorld->atBar[nThisEntity].end.x = (screenWidth / 2) + ratioRightX;
 
 	tThisWorld->atBar[nThisEntity].barBoundingBox.top = (screenHeight / 2) + (ratioTopY * -1) + tThisWorld->atLabel[nThisEntity].y;
 	tThisWorld->atBar[nThisEntity].barBoundingBox.bottom = (screenHeight / 2) + (ratioBottomY * -1) + tThisWorld->atLabel[nThisEntity].y;
-	tThisWorld->atBar[nThisEntity].barBoundingBox.left = (screenWidth / 2) + ratioLeftX - 14;
-	tThisWorld->atBar[nThisEntity].barBoundingBox.right = (screenWidth / 2) + ratioRightX - 4;
+	tThisWorld->atBar[nThisEntity].barBoundingBox.left = (screenWidth / 2) + ratioLeftX - 5;
+	tThisWorld->atBar[nThisEntity].barBoundingBox.right = (screenWidth / 2) + ratioRightX + 6;
 
 	ClientToScreen(*cApplicationWindow, &tThisWorld->atBar[nThisEntity].start);
 	ClientToScreen(*cApplicationWindow, &tThisWorld->atBar[nThisEntity].end);
