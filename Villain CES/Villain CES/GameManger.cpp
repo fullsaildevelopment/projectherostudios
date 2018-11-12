@@ -8872,6 +8872,11 @@ int CGameMangerSystem::RealLevelUpdate()
 			InitializeEndScreen(true);
 			endInit = true;
 		}
+		if (pcAiSystem->ShootingActiveAI.size()>=1&& tThisWorld.atActiveAI[tThisWorld.atClip[ pcAiSystem->GetActiveShooter()].gunHolder].active == false) {
+			pcAiSystem->SetActiveShooter(tThisWorld.atAIMask[pcAiSystem->ChooseRandomSHooter()].GunIndex);
+			tThisWorld.atClip[pcAiSystem->GetActiveShooter()].fShootingCoolDown = 200;
+			tThisWorld.atClip[pcAiSystem->GetActiveShooter()].tryToShoot = true;
+		}
 		if (GamePaused == false && GameOver == false)
 		{
 			if (tThisWorld.atAIMask[nCurrentEntity].m_tnAIMask == (COMPONENT_AIMASK | COMPONENT_FOLLOW)
@@ -9162,7 +9167,8 @@ int CGameMangerSystem::RealLevelUpdate()
 							{
 								newbullet = CreateBulletMesh(&tThisWorld, gunMatrix, bulletToCopyFrom);
 						//		pcParticleSystem->CreateAlotofCubes(tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, &tThisWorld, 100, pcGraphicsSystem, pcAiSystem, fpsTimer.GetDelta());
-
+							
+								//tThisWorld.atWorldMatrix[box].
 								if (materialGunProjectileSRV != nullptr)
 								{
 									tThisWorld.atMesh[newbullet].m_d3dSRVDiffuse = materialGunProjectileSRV;
@@ -9275,7 +9281,7 @@ int CGameMangerSystem::RealLevelUpdate()
 							tThisWorld.atAABB[newbullet].m_IndexLocation = newbullet;
 
 							tThisWorld.atClip[newbullet].maxLifeTime = 2.4;
-
+							tThisWorld.atAABB[newbullet].locationinArray = pcCollisionSystem->AddAABBCollider(tThisWorld.atAABB[newbullet], newbullet);
 							pcCollisionSystem->AddAABBCollider(tThisWorld.atAABB[newbullet], newbullet);
 							pcGraphicsSystem->CreateEntityBuffer(&tThisWorld, newbullet);
 						}
@@ -9358,9 +9364,9 @@ int CGameMangerSystem::RealLevelUpdate()
 			tThisWorld.atProjectiles[nCurrentEntity].m_tnProjectileMask == (COMPONENT_PROJECTILESMASK | COMPONENT_METAL | COMPONENT_ENEMY))
 		{
 			//ADD FORCE TO EVERY BULLET
-			pcPhysicsSystem->AddBulletForce(&tThisWorld.atRigidBody[nCurrentEntity], fpsTimer.GetDelta() * 1.5);
+		/*	pcPhysicsSystem->AddBulletForce(&tThisWorld.atRigidBody[nCurrentEntity], fpsTimer.GetDelta() * 1.5);
 
-			tThisWorld.atClip[nCurrentEntity].lifeTime += fpsTimer.GetDelta();
+			tThisWorld.atClip[nCurrentEntity].lifeTime += fpsTimer.GetDelta();*/
 
 			if (tThisWorld.atClip[nCurrentEntity].lifeTime > tThisWorld.atClip[nCurrentEntity].maxLifeTime)
 			{
@@ -9369,7 +9375,7 @@ int CGameMangerSystem::RealLevelUpdate()
 				pcGraphicsSystem->CleanD3DObject(&tThisWorld, nCurrentEntity);
 			}
 		}
-		if (GamePaused == false && GameOver == false)
+		if (GamePaused == false && GameOver == false&&tThisWorld.atProjectiles[nCurrentEntity].m_tnProjectileMask<=1)
 		{
 			tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = pcPhysicsSystem->ResolveForces(&tThisWorld.atRigidBody[nCurrentEntity], tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, true);
 		}

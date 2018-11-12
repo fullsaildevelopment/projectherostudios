@@ -86,10 +86,11 @@ public:
 	void AiStopShooting(TWorld * ptWorld,int currentinty);
 
 	vector<int> allAI;
+	vector<int> ShootingActiveAI;
 private:
 	
 	int CurrentShooter;
-	vector<int> ShootingActiveAI;
+
 
 	int numberofAI;
 	struct tiledata 

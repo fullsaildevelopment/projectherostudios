@@ -123,6 +123,7 @@ unsigned int createDebugGrid(TWorld * ptWorld);
 unsigned int CreateSkybox(TWorld * ptWorld, ID3D11ShaderResourceView* srv);
 
 unsigned int CreateClayTon(TWorld * ptWorld);
+unsigned int boxCollider(TWorld * ptWorld);
 //Meshed Bullet - ZFB
 unsigned int CreateMaterialBullet(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMeshImport tMesh, TMaterialOptimized tMaterial, XMMATRIX BulletSpawnLocation, int meshIndex, int bulletType);
 unsigned int CreateBullet(TWorld * ptWorld, XMMATRIX bulletSpawnLocation, int MaterialID, int bulletType);
