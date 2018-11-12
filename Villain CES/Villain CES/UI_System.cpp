@@ -446,8 +446,8 @@ void CUISystem::UpdateHUDBars(TWorld * tThisWorld, int & nThisEntity, CGraphicsS
 {
 	if (this->CheckIfStringsAreTheSame(tThisWorld->atBar[nThisEntity].valueToChange, tThisWorld->atBar[nThisEntity].valueToChangeSize, "Health"))
 	{
-		tUIVertexBuffer.start = (tThisWorld->atBar[nThisEntity].barBoundingBox.left + 14 - (screenWidth * .5)) / (screenWidth * .5);
-		tUIVertexBuffer.end = (tThisWorld->atBar[nThisEntity].barBoundingBox.right + 4 - (screenWidth * .5)) / (screenWidth * .5);
+		tUIVertexBuffer.start = (tThisWorld->atBar[nThisEntity].barBoundingBox.left - (screenWidth * .5)) / (screenWidth * .5);
+		tUIVertexBuffer.end = (tThisWorld->atBar[nThisEntity].barBoundingBox.right - (screenWidth * .5)) / (screenWidth * .5);
 		tUIVertexBuffer.ratio = tThisWorld->atClayton[PlayerStartIndex].health * .01;
 
 		if (tUIVertexBuffer.ratio > .6)
@@ -465,14 +465,14 @@ void CUISystem::UpdateHUDBars(TWorld * tThisWorld, int & nThisEntity, CGraphicsS
 	}
 	else if (this->CheckIfStringsAreTheSame(tThisWorld->atBar[nThisEntity].valueToChange, tThisWorld->atBar[nThisEntity].valueToChangeSize, "ShootingCooldown"))
 	{
-		tUIVertexBuffer.start = (tThisWorld->atBar[nThisEntity].barBoundingBox.left + 14 - (screenWidth * .5)) / (screenWidth * .5);
-		tUIVertexBuffer.end = (tThisWorld->atBar[nThisEntity].barBoundingBox.right + 4 - (screenWidth * .5)) / (screenWidth * .5);
+		tUIVertexBuffer.start = (tThisWorld->atBar[nThisEntity].barBoundingBox.left - (screenWidth * .5)) / (screenWidth * .5);
+		tUIVertexBuffer.end = (tThisWorld->atBar[nThisEntity].barBoundingBox.right - (screenWidth * .5)) / (screenWidth * .5);
 		tUIVertexBuffer.ratio = (tThisWorld->atClip[GunIndexForPlayer].fShootingCoolDown) / tThisWorld->atClip[GunIndexForPlayer].FValueOfCoolDown;
 	}
 	else if (this->CheckIfStringsAreTheSame(tThisWorld->atBar[nThisEntity].valueToChange, tThisWorld->atBar[nThisEntity].valueToChangeSize, "CaelisAbilityCooldown"))
 	{
-		tUIVertexBuffer.start = (tThisWorld->atBar[nThisEntity].barBoundingBox.left + 14 - (screenWidth * .5)) / (screenWidth * .5);
-		tUIVertexBuffer.end = (tThisWorld->atBar[nThisEntity].barBoundingBox.right + 4 - (screenWidth * .5)) / (screenWidth * .5);
+		tUIVertexBuffer.start = (tThisWorld->atBar[nThisEntity].barBoundingBox.left - (screenWidth * .5)) / (screenWidth * .5);
+		tUIVertexBuffer.end = (tThisWorld->atBar[nThisEntity].barBoundingBox.right - (screenWidth * .5)) / (screenWidth * .5);
 		tUIVertexBuffer.ratio = (100 - tThisWorld->atCaelis[CaelisIndex].m_tfSpecialCooldown) * .01;
 	}
 	else
