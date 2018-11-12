@@ -62,6 +62,7 @@ struct TMeshFormat
 struct TPrimitiveMesh
 {
 	float pos[4] = { 0, 0, 0, 0 };
+	float normal[3] = { 0 , 0 , 0 };
 	float uv[2] = { 0, 0 };
 	float& operator[] (int i) { return (&pos[0])[i]; }
 };

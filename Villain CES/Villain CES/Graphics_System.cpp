@@ -678,7 +678,7 @@ void CGraphicsSystem::CreateShaders(ID3D11Device * device)
 	D3D11_INPUT_ELEMENT_DESC m_d3dMyLayoutDesc[] =
 	{
 		{ "POSITION", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		//{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "NORM", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 		//{ "TANGENT", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 		//{ "BINORMAL", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
@@ -2440,8 +2440,6 @@ void CGraphicsSystem::InitAnimShaderData(ID3D11DeviceContext * pd3dDeviceContext
 	ptLightPixelBufferDataPointer->lightEyePos.w = templightEye.w;*/
 
 	//memcpy(&ptLightPixelBufferDataPointer->m_allLights, &tMaterials.m_allLights, sizeof(tMaterials.m_allLights)); 
-	
-	
 	pd3dDeviceContext->Unmap(m_pd3dLightPixelBuffer, 0);
 
 	
@@ -2499,6 +2497,7 @@ void CGraphicsSystem::InitMyShaderData(ID3D11DeviceContext * pd3dDeviceContext, 
 
 #pragma endregion
 
+
 	pd3dDeviceContext->VSSetConstantBuffers(bufferNumber, 1, &m_pd3dMyVertexBuffer);
 	pd3dDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	pd3dDeviceContext->IASetVertexBuffers(0, 1, &tMesh.m_pd3dVertexBuffer, &tMesh.m_nVertexBufferStride, &tMesh.m_nVertexBufferOffset);
@@ -2506,6 +2505,69 @@ void CGraphicsSystem::InitMyShaderData(ID3D11DeviceContext * pd3dDeviceContext, 
 	if (&tMesh.m_d3dSRVDiffuse != NULL)
 	{
 		pd3dDeviceContext->PSSetShaderResources(0, 1, &tMesh.m_d3dSRVDiffuse);
+	}
+}
+
+void CGraphicsSystem::InitMyShaderData(ID3D11DeviceContext * pd3dDeviceContext, TMyVertexBufferType d3dVertexBuffer, TMesh tSimpleMesh, TLightBufferType tMaterials, XMMATRIX CameraMatrix)
+{
+	D3D11_MAPPED_SUBRESOURCE d3dMyVertexMappedResource, d3dLightPixelMappedResource;
+
+	TMyVertexBufferType	*ptMyVertexBufferDataPointer = nullptr;
+	TLightBufferType *ptLightPixelBufferDataPointer = nullptr;
+
+	XMMATRIX d3dView;
+	d3dView = d3dVertexBuffer.m_d3dViewMatrix;
+	d3dView = XMMatrixInverse(nullptr, CameraMatrix);
+	unsigned int bufferNumber = 0;
+	m_fCameraXPosition = CameraMatrix.r[3].m128_f32[0];
+	m_fCameraYPosition = CameraMatrix.r[3].m128_f32[1];
+	m_fCameraZPosition = CameraMatrix.r[3].m128_f32[2];
+
+	XMMATRIX tempWorld = d3dVertexBuffer.m_d3dWorldMatrix;
+	XMMATRIX tempProj = d3dVertexBuffer.m_d3dProjectionMatrix;
+
+#pragma region Map To Vertex Constant Buffer
+	pd3dDeviceContext->Map(m_pd3dMyVertexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &d3dMyVertexMappedResource);
+
+	// Get a pointer to the data in the constant buffer.
+	ptMyVertexBufferDataPointer = (TMyVertexBufferType*)d3dMyVertexMappedResource.pData;
+
+	// Copy the matrices into the constant buffer.
+	ptMyVertexBufferDataPointer->m_d3dWorldMatrix = tempWorld;
+	ptMyVertexBufferDataPointer->m_d3dViewMatrix = d3dView;
+	ptMyVertexBufferDataPointer->m_d3dProjectionMatrix = tempProj;
+
+	ptMyVertexBufferDataPointer->m_d3dColor = d3dVertexBuffer.m_d3dColor;
+
+	// Unlock the constant buffer.
+	pd3dDeviceContext->Unmap(m_pd3dMyVertexBuffer, 0);
+
+#pragma endregion
+
+#pragma region Map to Light Constant Buffer
+
+	XMFLOAT4 templightEye = XMFLOAT4(-4.0f, 1.0f, 10.8f, 1.0f);
+
+
+	pd3dDeviceContext->Map(m_pd3dLightPixelBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &d3dLightPixelMappedResource);
+
+	ptLightPixelBufferDataPointer = (TLightBufferType*)d3dLightPixelMappedResource.pData;
+	memcpy(&ptLightPixelBufferDataPointer->m_allLights, &tMaterials.m_allLights, sizeof(tMaterials.m_allLights));
+	memcpy(&ptLightPixelBufferDataPointer->m_Proprties, &tMaterials.m_Proprties, sizeof(tMaterials.m_Proprties));
+	memcpy(&ptLightPixelBufferDataPointer->Ambience, &m_worldAmbience, sizeof(m_worldAmbience));
+	memcpy(&ptLightPixelBufferDataPointer->lightEyePos, &templightEye, sizeof(templightEye));
+
+	pd3dDeviceContext->Unmap(m_pd3dLightPixelBuffer, 0);
+#pragma endregion
+
+	pd3dDeviceContext->VSSetConstantBuffers(bufferNumber, 1, &m_pd3dMyVertexBuffer);
+	pd3dDeviceContext->PSSetConstantBuffers(bufferNumber, 1, &m_pd3dLightPixelBuffer);
+	pd3dDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	pd3dDeviceContext->IASetVertexBuffers(0, 1, &tSimpleMesh.m_pd3dVertexBuffer, &tSimpleMesh.m_nVertexBufferStride, &tSimpleMesh.m_nVertexBufferOffset);
+	pd3dDeviceContext->IASetIndexBuffer(tSimpleMesh.m_pd3dIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
+	if (&tSimpleMesh.m_d3dSRVDiffuse != NULL)
+	{
+		pd3dDeviceContext->PSSetShaderResources(0, 1, &tSimpleMesh.m_d3dSRVDiffuse);
 	}
 }
 

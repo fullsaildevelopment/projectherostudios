@@ -61,7 +61,8 @@ float4 AnimatedPixelShader(PixelInputType tInput) : SV_TARGET
 	totalAmbient = ambience;
 
 	float4 d3dDiffuseColor = g_d3dDiffuseTexture.Sample(g_SampleType, (float2) tInput.d3dTexture);
-
+    // totalEmissive = g_d3dEmissiveTexture.Sample(g_SampleType, (float2) tInput.d3dTexture);
+    //totalSpecular = g_d3dSpecularTexture.Sample(g_SampleType, (float2) tInput.d3dTexture);
     for (int lightIndex = 0; lightIndex < MAX_LIGHTS; lightIndex++)
     {
         if(worldLights.enabled)
@@ -72,6 +73,10 @@ float4 AnimatedPixelShader(PixelInputType tInput) : SV_TARGET
                 float lightRatio = -saturate(dot(currentLightDir, tInput.normal));
                 lightRatio = saturate(lightRatio + totalAmbient);
                 totalDiffuse += lightRatio * worldLights.lightColor;
+       //       float3 viewDirection = -normalize(lightEyePos.xyz);
+ //               float3 reflect = -currentLightDir - 2 * tInput.normal * dot(-currentLightDir, tInput.normal);
+ //               specularRatio = saturate(dot(reflect, viewDirection));
+ //               totalSpecular += worldLights[lightIndex].lightColor * pow(specularRatio, mProperties.shininess.x);
 
             }
             else if(worldLights.lightType == POINT_LIGHT)
@@ -85,6 +90,14 @@ float4 AnimatedPixelShader(PixelInputType tInput) : SV_TARGET
 
                 totalDiffuse += lightRatio * worldLights.lightColor;
 				totalDiffuse = float4(totalDiffuse.xyz + totalAmbient.xyz, 1);
+
+                 //               float3 viewDirection = -normalize(lightEyePos.xyz);
+ //               float3 currentLightDir = normalize(worldLights[lightIndex].lightDirection.xyz);
+ //               float3 reflect = currentLightDir - 2 * tInput.normal * dot(currentLightDir, tInput.normal);
+
+ //               specularRatio = saturate(dot(reflect, -viewDirection));
+ //               float4 currentColor = worldLights[lightIndex].lightColor;
+ //               totalSpecular += lightRatio * currentColor * pow(specularRatio, mProperties.shininess.x);
             }
 
         }
@@ -96,6 +109,8 @@ float4 AnimatedPixelShader(PixelInputType tInput) : SV_TARGET
 
     d3dDiffuseColor = totalDiffuse * d3dDiffuseColor;
     d3dDiffuseColor = saturate(d3dDiffuseColor);
-
+     //   totalEmissive = totalEmissive * mProperties.emissive;
+     //   totalSpecular = totalSpecular * mProperties.specular;
+    d3dDiffuseColor.w = 1;
         return d3dDiffuseColor;
 }

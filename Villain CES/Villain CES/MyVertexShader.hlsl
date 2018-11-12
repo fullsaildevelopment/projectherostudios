@@ -18,14 +18,16 @@ cbuffer MatrixBuffer : register(b0)
 struct TVertexInputType
 {
 	float4 d3dPosition : POSITION0;
+    float3 d3dNormal : NORM;
 	float2 d3dUVs: TEXCOORD;
 };
 
 struct TPixelInputType
 {
 	float4 d3dPosition : SV_POSITION;
+    float4 d3dWorldPos : POSITION0;
+    float3 d3dNormal : NORM;
 	float2 d3dUVs : TEXCOORD;
-
 	float4 d3dColor : COLOR;
 };
 
@@ -35,9 +37,15 @@ struct TPixelInputType
 TPixelInputType MyVertexShader(TVertexInputType tInput)
 {
 	TPixelInputType output;
+    float3 testNormal = tInput.d3dNormal;
+
+    float3 Magnitude = length(tInput.d3dPosition);
+    output.d3dNormal = normalize(tInput.d3dPosition.xyz / Magnitude);
 
 	tInput.d3dPosition.w = 1;
 	output.d3dPosition = mul(tInput.d3dPosition, d3dWorldMatrix);
+    output.d3dWorldPos = output.d3dPosition;
+    output.d3dNormal = mul(output.d3dNormal, (float3x3)d3dWorldMatrix);
 	output.d3dPosition = mul(output.d3dPosition, d3dViewMatrix);
 	output.d3dPosition = mul(output.d3dPosition, d3dProjectionMatrix);
 
@@ -46,14 +54,14 @@ TPixelInputType MyVertexShader(TVertexInputType tInput)
 
 	//output.d3dColor = d3dColor;
 	
-	if (d3dColor.x < 0)
-	{
-		output.d3dColor = float4(0, 0, 0, 0);
-	}
-	else
-	{
-		output.d3dColor = d3dColor;
-	}
+    if (d3dColor.x < 0)
+    {
+        output.d3dColor = float4(0, 0, 0, 0);
+    }
+    else
+    {
+        output.d3dColor = d3dColor;
+    }
 
 	return output;
 }

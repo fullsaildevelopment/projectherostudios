@@ -44,12 +44,13 @@ PixelInputType AnimatedVertexShader(VertexInputType input)
 		skinned_pos += mul(float4(input.Position.xyz, 1), joints[input.index[i]]) * input.weights[i];
 	}
 	skinned_pos.w = 1;
-    float3 Magnitude = length(input.Position);
-    output.normal = normalize(input.Position / Magnitude);
+    float3 Magnitude = length(skinned_pos);
+    output.normal = normalize(skinned_pos.xyz / Magnitude);
 	// Calculate the position of the vertex against the world, view, and projection matrices.
 	output.Position = mul(skinned_pos, worldMatrix);
     output.worldPos = output.Position;
-    output.normal = mul(output.normal, worldMatrix);
+    output.normal = mul(output.normal, (float3x3)worldMatrix);
+   // output.normal = normalize(output.normal);
 	output.Position = mul(output.Position, viewMatrix);
 	output.Position = mul(output.Position, projectionMatrix);
 

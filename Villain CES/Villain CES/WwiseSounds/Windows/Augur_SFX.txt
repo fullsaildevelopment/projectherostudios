@@ -2,6 +2,7 @@ Event	ID	Name			Wwise Object Path	Notes
 	372592918	Play_Metal_Fired			\Default Work Unit\Play_Metal_Fired	
 	491912207	Play_Caelis_Reload			\Default Work Unit\Play_Caelis_Reload	
 	532216254	Play_Laser_Fire			\Default Work Unit\Play_Laser_Fire	
+	1269264589	Play_S_FeedBack			\Default Work Unit\Play_S_FeedBack	
 	1306210889	Play_Extract			\Default Work Unit\Play_Extract	
 	1357778998	Play_Menu_Click			\Default Work Unit\Play_Menu_Click	
 	1589278981	Play_Walk			\Default Work Unit\Play_Walk	
@@ -26,10 +27,11 @@ In Memory Audio	ID	Name	Audio source file		Wwise Object Path	Notes	Data Size
 	303155662	Glass Reload	C:\Users\world\Documents\WwiseProjects\Augur_Sounds\.cache\Windows\SFX\Glass Reload_56D34C19.wem		\Actor-Mixer Hierarchy\Default Work Unit\Glass Reload		411024
 	598566666	Caelis Reload	C:\Users\world\Documents\WwiseProjects\Augur_Sounds\.cache\Windows\SFX\Caelis Reload_56D34C19.wem		\Actor-Mixer Hierarchy\Default Work Unit\Caelis Reload		413328
 	654863545	Menu Tick	C:\Users\world\Documents\WwiseProjects\Augur_Sounds\.cache\Windows\SFX\Menu Tick_56D34C19.wem		\Actor-Mixer Hierarchy\Default Work Unit\Menu Tick		7796
-	670238279	Caelis Firing	C:\Users\world\Documents\WwiseProjects\Augur_Sounds\.cache\Windows\SFX\Caelis Firing_06EEDDDA.wem		\Actor-Mixer Hierarchy\Default Work Unit\Caelis Firing		238364
+	670238279	Caelis Firing	C:\Users\world\Documents\WwiseProjects\Augur_Sounds\.cache\Windows\SFX\Caelis Firing_CACDF071.wem		\Actor-Mixer Hierarchy\Default Work Unit\Caelis Firing		238364
 	697282732	MaterialGun_Analyze (1) (online-audio-converter_com)	C:\Users\world\Documents\WwiseProjects\Augur_Sounds\.cache\Windows\SFX\MaterialGun_Analyze (1) (online-audio-converter.com)_56D34C19.wem		\Actor-Mixer Hierarchy\Default Work Unit\MaterialGun_Analyze (1) (online-audio-converter_com)		221248
 	709819371	Flintlock Fired	C:\Users\world\Documents\WwiseProjects\Augur_Sounds\.cache\Windows\SFX\Flintlock Fired_56D34C19.wem		\Actor-Mixer Hierarchy\Default Work Unit\Flintlock Fired		416720
 	728176999	Grunt-Human Male	C:\Users\world\Documents\WwiseProjects\Augur_Sounds\.cache\Windows\SFX\Grunt-Human Male_56D34C19.wem		\Actor-Mixer Hierarchy\Default Work Unit\Grunt-Human Male		57352
+	797363531	Wood Fired	C:\Users\world\Documents\WwiseProjects\Augur_Sounds\.cache\Windows\SFX\Wood Fired_56D34C19.wem		\Actor-Mixer Hierarchy\Default Work Unit\Wood Fired		11628
 	898242165	Metal Reload	C:\Users\world\Documents\WwiseProjects\Augur_Sounds\.cache\Windows\SFX\Metal Reload_56D34C19.wem		\Actor-Mixer Hierarchy\Default Work Unit\Metal Reload		98624
 	1021916076	Steel Fired	C:\Users\world\Documents\WwiseProjects\Augur_Sounds\.cache\Windows\SFX\Steel Fired_56D34C19.wem		\Actor-Mixer Hierarchy\Default Work Unit\Steel Fired		85976
 

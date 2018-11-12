@@ -3716,6 +3716,154 @@ unsigned int createMesh(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMeshImpo
 	return nThisEntity;
 }
 
+unsigned int createMesh(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMeshImport tMesh, TMaterialOptimized tMaterial, TMaterialImport tLightMaterial, int meshIndex)
+{
+	unsigned int nThisEntity = createEntity(ptWorld);
+
+	ptWorld->atRigidBody[nThisEntity].ground = true;
+
+	TMaterialOptimized temp = tMaterial;
+
+	//TMaterialImport tTempMaterial = tMaterial;
+	int entityMatIndex = temp.materialIndex[meshIndex];
+	int srvIndex = 1;
+	if (entityMatIndex == -2)
+	{
+		//glass
+		ptWorld->atShaderID[nThisEntity].m_nShaderID = 10;
+	}
+	else
+	{
+		for (int i = 0; i < temp.numberOfMaterials; i++)
+		{
+			if (temp.Map_SRVIndex_EntityIndex[i] == entityMatIndex)
+			{
+				srvIndex = i;
+			}
+		}
+		ptWorld->atMesh[nThisEntity].m_d3dSRVDiffuse = temp.SRVArrayOfMaterials[srvIndex];
+
+		if (entityMatIndex == -3)//Material Gun Projectile
+		{
+			ptWorld->atShaderID[nThisEntity].m_nShaderID = 11;
+		}
+		else
+		{
+			ptWorld->atShaderID[nThisEntity].m_nShaderID = 6;
+		}
+	}
+	ptWorld->atGraphicsMask[nThisEntity].m_tnGraphicsMask = (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_SHADERID);
+	ptWorld->atCollisionMask[nThisEntity].m_tnCollisionMask = (COMPONENT_COLLISIONMASK | COMPONENT_AABB | COMPONENT_STATIC | COMPONENT_NONTRIGGER);
+
+	//ptWorld->atAIMask[nThisEntity].m_tnAIMask = (COMPONENT_AIMASK;
+	//ptWorld->atUIMask[nThisEntity].m_tnUIMask = (COMPONENT_UIMASK;
+	//ptWorld->atPhysicsMask[nThisEntity].m_tnPhysicsMask = (COMPONENT_PHYSICSMASK | COMPONENT_RIGIDBODY;
+	//switch (tMaterial.lambert)
+	//{
+	//case 0:
+	//{
+	//	ptWorld->atShaderID[nThisEntity].m_nShaderID = 4;
+	//	break;//Phong
+	//}
+	//case 1:
+	//{
+	//	ptWorld->atShaderID[nThisEntity].m_nShaderID = 5;
+	//	break;//Lambert
+	//}
+	//case 2:
+	//{
+	//	ptWorld->atShaderID[nThisEntity].m_nShaderID = 6;
+	//	break;//PBR
+	//}
+	//default:
+	//	break;
+	//}
+
+	TPrimitiveMesh *pMesh = new TPrimitiveMesh[tMesh.nUniqueVertexCount];
+	XMFLOAT3 pos;
+	ptWorld->atMesh[nThisEntity].m_VertexData.clear();
+
+	for (int i = 0; i < tMesh.nUniqueVertexCount; i++)
+	{
+		TPrimitiveMesh tmp;
+		for (int j = 0; j < 4; j++)
+		{
+			//if (j == 1)
+			//{
+			//	tmp.pos[j] = -tMesh.meshArrays[i].pos[j];
+			//}
+			//else
+			tmp.pos[j] = tMesh.meshArrays[i].pos[j];
+			if (j < 3)
+			{
+				tmp.normal[j] = tMesh.meshArrays[i].norm[j];
+
+			}
+			if (j < 2)
+			{
+				tmp.uv[j] = tMesh.meshArrays[i].uv[j];
+			}
+		}
+
+		pos.x = tmp.pos[0];
+		pos.y = tmp.pos[1];
+		pos.z = tmp.pos[2];
+
+		ptWorld->atMesh[nThisEntity].m_VertexData.push_back(pos);
+
+		pMesh[i] = tmp;
+	}
+
+
+	ptWorld->atMesh[nThisEntity].m_nVertexCount = tMesh.nUniqueVertexCount;
+	ptWorld->atMesh[nThisEntity].m_nVertexBufferStride = sizeof(TPrimitiveMesh);
+	ptWorld->atMesh[nThisEntity].m_nVertexBufferOffset = 0;
+	ptWorld->atMesh[nThisEntity].m_d3dVertexBufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
+	ptWorld->atMesh[nThisEntity].m_d3dVertexBufferDesc.ByteWidth = sizeof(TPrimitiveMesh) * ptWorld->atMesh[nThisEntity].m_nVertexCount;
+	ptWorld->atMesh[nThisEntity].m_d3dVertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	ptWorld->atMesh[nThisEntity].m_d3dVertexBufferDesc.CPUAccessFlags = 0;
+	ptWorld->atMesh[nThisEntity].m_d3dVertexBufferDesc.MiscFlags = 0;
+	ptWorld->atMesh[nThisEntity].m_d3dVertexBufferDesc.StructureByteStride = 0;
+
+
+
+	ptWorld->atMesh[nThisEntity].m_d3dVertexData.pSysMem = pMesh;
+	ptWorld->atMesh[nThisEntity].m_d3dVertexData.SysMemPitch = 0;
+	ptWorld->atMesh[nThisEntity].m_d3dVertexData.SysMemSlicePitch = 0;
+
+	ptWorld->atMesh[nThisEntity].m_nIndexCount = tMesh.nPolygonVertexCount;
+	ptWorld->atMesh[nThisEntity].m_d3dIndexBufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
+	ptWorld->atMesh[nThisEntity].m_d3dIndexBufferDesc.ByteWidth = sizeof(unsigned int) * ptWorld->atMesh[nThisEntity].m_nIndexCount;
+	ptWorld->atMesh[nThisEntity].m_d3dIndexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+	ptWorld->atMesh[nThisEntity].m_d3dIndexBufferDesc.CPUAccessFlags = 0;
+	ptWorld->atMesh[nThisEntity].m_d3dIndexBufferDesc.MiscFlags = 0;
+	ptWorld->atMesh[nThisEntity].m_d3dIndexBufferDesc.StructureByteStride = 0;
+
+	ptWorld->atMesh[nThisEntity].m_d3dIndexData.pSysMem = tMesh.indexBuffer;
+	ptWorld->atMesh[nThisEntity].m_d3dIndexData.SysMemPitch = 0;
+	ptWorld->atMesh[nThisEntity].m_d3dIndexData.SysMemSlicePitch = 0;
+
+	ptWorld->atMaterial[nThisEntity].m_Diffuse.x = tLightMaterial.m_tDiffuseColor.r;
+	ptWorld->atMaterial[nThisEntity].m_Diffuse.y = tLightMaterial.m_tDiffuseColor.g;
+	ptWorld->atMaterial[nThisEntity].m_Diffuse.z = tLightMaterial.m_tDiffuseColor.b;
+
+
+	ptWorld->atMaterial[nThisEntity].m_Emissive.x = tLightMaterial.m_tEmissiveColor.r;
+	ptWorld->atMaterial[nThisEntity].m_Emissive.y = tLightMaterial.m_tEmissiveColor.g;
+	ptWorld->atMaterial[nThisEntity].m_Emissive.z = tLightMaterial.m_tEmissiveColor.b;
+
+	ptWorld->atMaterial[nThisEntity].m_Specular.x = tLightMaterial.m_tSpecularColor.r;
+	ptWorld->atMaterial[nThisEntity].m_Specular.y = tLightMaterial.m_tSpecularColor.g;
+	ptWorld->atMaterial[nThisEntity].m_Specular.z = tLightMaterial.m_tSpecularColor.b;
+
+	ptWorld->atMaterial[nThisEntity].shininess.x = tLightMaterial.dTransparencyOrShininess;
+
+	ptWorld->atWorldMatrix[nThisEntity].worldMatrix = XMMatrixIdentity(); /*XMMatrixMultiply(ptWorld->atWorldMatrix[nThisEntity].worldMatrix, XMMatrixTranslation(tMesh.worldTranslation[0], tMesh.worldTranslation[1], tMesh.worldTranslation[2]));
+																		  ptWorld->atWorldMatrix[nThisEntity].worldMatrix = XMMatrixMultiply(ptWorld->atWorldMatrix[nThisEntity].worldMatrix, XMMatrixRotationRollPitchYaw(tMesh.worldRotation[0], tMesh.worldRotation[1], tMesh.worldRotation[2]));
+																		  ptWorld->atWorldMatrix[nThisEntity].worldMatrix = XMMatrixMultiply(ptWorld->atWorldMatrix[nThisEntity].worldMatrix, XMMatrixScaling(tMesh.worldScaling[0], tMesh.worldScaling[1], tMesh.worldScaling[2]));*/
+	return nThisEntity;
+}
+
 unsigned int createMesh(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMeshImport tMesh, TMaterialOptimized tMaterial, int meshIndex, int shaderID)
 {
 	unsigned int nThisEntity = createEntity(ptWorld);

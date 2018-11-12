@@ -103,7 +103,7 @@ public:
 	AkGameObjectID m_Laser_Fire;
 	AkGameObjectID m_Human_Hurt;
 	AkGameObjectID m_Scylian_Hurt;
-	AkGameObjectID m_WalkSound;
+	//AkGameObjectID m_WalkSound;
 	AkGameObjectID m_HoverSound;
 	AkGameObjectID m_GunEmpty;
 	AkGameObjectID m_Extract;
@@ -112,9 +112,11 @@ public:
 	AkGameObjectID m_Story2;
 	AkGameObjectID m_Story3;
 	AkGameObjectID m_Story4;
-	AkGameObjectID m_Caelis_Walk;
-	AkGameObjectID m_Caelis_Fire;
-	AkGameObjectID m_Caelis_Reload;
+	AkGameObjectID m_FeedBack;
+	AkGameObjectID m_FeedBack2;
+	AkGameObjectID m_FeedBack3;
+
+	
 	float m_fMasterVolume;
 	float m_fMusicVolume;
 	float m_fSFXVolume;

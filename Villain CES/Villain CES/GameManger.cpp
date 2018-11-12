@@ -321,6 +321,14 @@ int CGameMangerSystem::LoadMainMenu()
 					tThisWorld.atBar[nCurrentEntity].ratio = (clickPoint.x - tThisWorld.atBar[nCurrentEntity].barBoundingBox.left - 5.0) / (tThisWorld.atBar[nCurrentEntity].barBoundingBox.right - tThisWorld.atBar[nCurrentEntity].barBoundingBox.left - 10);
 				
 					pcUISystem->CheckOptionsBars(&tThisWorld, pcInputSystem, nCurrentEntity, pcAudioSystem->m_fMasterVolume, pcAudioSystem->m_fMusicVolume, pcAudioSystem->m_fSFXVolume, masterIndex, musicIndex, fxIndex);
+#if MUSIC_ON
+					if (pcInputSystem->InputCheck(G_BUTTON_LEFT) == 0 && mouseDown && fxIndex == nCurrentEntity)
+					{
+						pcAudioSystem->SendSoundsToEngine(AK::EVENTS::PLAY_S_FEEDBACK, pcAudioSystem->m_FeedBack);
+						pcAudioSystem->SetRTPCVolume(AK::GAME_PARAMETERS::SFX_VOLUME, pcAudioSystem->m_fSFXVolume);
+
+					}
+#endif
 				}
 				else if (PtInRect(&tThisWorld.atBar[nCurrentEntity].barBoundingBox, dragPoint))
 				{
@@ -454,18 +462,15 @@ void CGameMangerSystem::InitializeMainMenu()
 		pcAudioSystem->UnRegisterGameObj(pcAudioSystem->m_Human_Hurt);
 		pcAudioSystem->UnRegisterGameObj(pcAudioSystem->m_Scylian_Hurt);
 		pcAudioSystem->UnRegisterGameObj(pcAudioSystem->m_GunEmpty);
-		pcAudioSystem->UnRegisterGameObj(pcAudioSystem->m_WalkSound);
 		pcAudioSystem->UnRegisterGameObj(pcAudioSystem->m_Extract);
 		pcAudioSystem->UnRegisterGameObj(pcAudioSystem->m_Heal);
-		pcAudioSystem->UnRegisterGameObj(pcAudioSystem->m_Caelis_Walk);
-		pcAudioSystem->UnRegisterGameObj(pcAudioSystem->m_Caelis_Fire);
-		pcAudioSystem->UnRegisterGameObj(pcAudioSystem->m_Caelis_Reload);
 		pcAudioSystem->RegisterGameObj(pcAudioSystem->m_AkMainMenuMusic);
 		soundOff = false;
 	}
 	else
 	{
 		pcAudioSystem->RegisterGameObj(pcAudioSystem->m_HoverSound);
+		pcAudioSystem->RegisterGameObj(pcAudioSystem->m_FeedBack);
 		pcAudioSystem->RegisterGameObj(pcAudioSystem->m_AkMainMenuMusic);
 	}
 	pcAudioSystem->m_playOnce1 = false;
@@ -4543,7 +4548,7 @@ void CGameMangerSystem::LoadMikesGraphicsSandbox()
 	matOpt = pcGraphicsSystem->CreateTexturesFromFile(tempImport.vtMaterials, tempImport.meshCount);
 	for (int meshIndex = 0; meshIndex < tempImport.meshCount; meshIndex++)
 	{
-		int myMesh = createMesh(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, tempImport.vtMeshes[meshIndex], matOpt, meshIndex);
+		int myMesh = createMesh(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, tempImport.vtMeshes[meshIndex], matOpt, tempImport.vtMaterials[meshIndex],meshIndex);
 	}
 
 	//tempImport = pcGraphicsSystem->ReadMesh("meshData_LaserFlintlock.txt");
@@ -4695,7 +4700,17 @@ int CGameMangerSystem::MikesGraphicsSandbox()
 			tTempVertexBuffer.m_d3dViewMatrix = debugCamera->d3d_Position;
 			tMyVertexBufferTemp.m_d3dViewMatrix = debugCamera->d3d_Position;
 
-			pcGraphicsSystem->InitMyShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tMyVertexBufferTemp, tThisWorld.atMesh[nCurrentEntity], debugCamera->d3d_Position);
+			TLights testLight;
+			testLight.m_d3dLightColor = XMFLOAT4(1, 0.5f, 0, 1);
+			testLight.m_d3dLightPosition = XMFLOAT4(-4, 1, 10.5f, 1);
+			testLight.enabled = true;
+			testLight.m_lightType = 1;
+			testLight.m_Direction = XMFLOAT4(0, 0, 0, 1);
+			testLight.m_padding = XMFLOAT2(0, 0);
+			tLightBuffer.m_allLights = testLight;
+			tLightBuffer.m_Proprties = tThisWorld.atMaterial[nCurrentEntity];
+
+			pcGraphicsSystem->InitMyShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tMyVertexBufferTemp, tThisWorld.atMesh[nCurrentEntity], tLightBuffer, debugCamera->d3d_Position);
 			pcGraphicsSystem->ExecutePipeline(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atMesh[nCurrentEntity].m_nIndexCount, tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask, tThisWorld.atShaderID[nCurrentEntity].m_nShaderID);
 		}
 
@@ -4718,8 +4733,8 @@ int CGameMangerSystem::MikesGraphicsSandbox()
 				memcpy(&tLightBuffer.m_allLights[k], &Lights_To_Send[k], sizeof(Lights_To_Send[k]));
 			}*/
 			TLights testLight;
-			testLight.m_d3dLightColor = XMFLOAT4(1, 0, 0, 0);
-			testLight.m_d3dLightPosition = XMFLOAT4(-4, 4, 10.8f, 1);
+			testLight.m_d3dLightColor = XMFLOAT4(1, 0, 0, 1);
+			testLight.m_d3dLightPosition = XMFLOAT4(-4, 1.0f, 10.8f, 1);
 			testLight.enabled = true;
 			testLight.m_lightType = 1;
 			testLight.m_Direction = XMFLOAT4(0, 0, 0, 1);
@@ -4727,7 +4742,7 @@ int CGameMangerSystem::MikesGraphicsSandbox()
 			tLightBuffer.m_allLights = testLight;
 
 			tLightBuffer.m_Proprties = tThisWorld.atMaterial[nCurrentEntity];
-			pcGraphicsSystem->InitAnimShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tAnimVertexBuffer, tThisWorld.atMesh[nCurrentEntity],tLightBuffer, debugCamera->d3d_Position);
+			pcGraphicsSystem->InitAnimShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tAnimVertexBuffer, tThisWorld.atMesh[nCurrentEntity], tLightBuffer , debugCamera->d3d_Position);
 			pcGraphicsSystem->ExecutePipeline(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atMesh[nCurrentEntity].m_nIndexCount, tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask, tThisWorld.atShaderID[nCurrentEntity].m_nShaderID);
 		}
 
@@ -4847,12 +4862,12 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 		pcAudioSystem->RegisterGameObj(pcAudioSystem->m_Human_Hurt);
 		pcAudioSystem->RegisterGameObj(pcAudioSystem->m_Scylian_Hurt);
 		pcAudioSystem->RegisterGameObj(pcAudioSystem->m_GunEmpty);
-		pcAudioSystem->RegisterGameObj(pcAudioSystem->m_WalkSound);
+		/*pcAudioSystem->RegisterGameObj(pcAudioSystem->m_WalkSound);*/
 		pcAudioSystem->RegisterGameObj(pcAudioSystem->m_Extract);
 		pcAudioSystem->RegisterGameObj(pcAudioSystem->m_Heal);
-		pcAudioSystem->RegisterGameObj(pcAudioSystem->m_Caelis_Walk);
+		/*pcAudioSystem->RegisterGameObj(pcAudioSystem->m_Caelis_Walk);
 		pcAudioSystem->RegisterGameObj(pcAudioSystem->m_Caelis_Fire);
-		pcAudioSystem->RegisterGameObj(pcAudioSystem->m_Caelis_Reload);
+		pcAudioSystem->RegisterGameObj(pcAudioSystem->m_Caelis_Reload);*/
 
 		soundOff = true;
 	}
@@ -9056,7 +9071,7 @@ int CGameMangerSystem::RealLevelUpdate()
 					{
 						//Reload Metal Sound - ZFB
 #if MUSIC_ON
-						if (tThisWorld.atClip[GunIndexForPlayer].nBulletsAvailables.size() < 3 && tThisWorld.atClip[GunIndexForPlayer].nBulletsAvailables.size() < 3)
+						if (tThisWorld.atClip[GunIndexForPlayer].nBulletsAvailables.size() < 8)
 						{
 							pcAudioSystem->SendSoundsToEngine(AK::EVENTS::PLAY_METAL_RELOAD, pcAudioSystem->m_MetalReload);
 							pcAudioSystem->SetRTPCVolume(AK::GAME_PARAMETERS::SFX_VOLUME, pcAudioSystem->m_fSFXVolume);
@@ -9561,6 +9576,15 @@ int CGameMangerSystem::RealLevelUpdate()
 						tThisWorld.atBar[nCurrentEntity].ratio = (clickPoint.x - tThisWorld.atBar[nCurrentEntity].barBoundingBox.left - 5.0) / (tThisWorld.atBar[nCurrentEntity].barBoundingBox.right - tThisWorld.atBar[nCurrentEntity].barBoundingBox.left - 10);
 
 						pcUISystem->CheckOptionsBars(&tThisWorld, pcInputSystem, nCurrentEntity, pcAudioSystem->m_fMasterVolume, pcAudioSystem->m_fMusicVolume, pcAudioSystem->m_fSFXVolume, masterIndex, musicIndex, fxIndex);
+#if MUSIC_ON
+						if (pcInputSystem->InputCheck(G_BUTTON_LEFT) == 0 && mouseDown && fxIndex == nCurrentEntity)
+						{
+							pcAudioSystem->SendSoundsToEngine(AK::EVENTS::PLAY_S_FEEDBACK, pcAudioSystem->m_FeedBack);
+							pcAudioSystem->SetRTPCVolume(AK::GAME_PARAMETERS::SFX_VOLUME, pcAudioSystem->m_fSFXVolume);
+
+						}
+#endif
+						
 					}
 					else if (PtInRect(&tThisWorld.atBar[nCurrentEntity].barBoundingBox, dragPoint) && clickTime > TIMEUNTILCLICK)
 					{
