@@ -4752,7 +4752,7 @@ unsigned int CreateTriggerForAiVision(TWorld * ptWorld, XMMATRIX SpawnPosition)
 	unsigned int nThisEntity = createEntity(ptWorld);
 
 	ptWorld->atCollisionMask[nThisEntity].m_tnCollisionMask = (COMPONENT_COLLISIONMASK | COMPONENT_AABB | COMPONENT_STATIC | COMPONENT_TRIGGER);
-	ptWorld->atGraphicsMask[nThisEntity].m_tnGraphicsMask = (COMPONENT_GRAPHICSMASK | COMPONENT_SHADERID| COMPONENT_SIMPLEMESH);
+	ptWorld->atGraphicsMask[nThisEntity].m_tnGraphicsMask = (COMPONENT_GRAPHICSMASK | COMPONENT_SHADERID);
 	ptWorld->atAIMask[nThisEntity].m_tnAIMask = (COMPONENT_AIMASK | COMPONENT_CANTSEEPLAYERTRIGGER);
 	ptWorld->atUIMask[nThisEntity].m_tnUIMask = (COMPONENT_UIMASK | COMPONENT_NOSHOW);
 	ptWorld->atPhysicsMask[nThisEntity].m_tnPhysicsMask = (COMPONENT_PHYSICSMASK);
@@ -4843,7 +4843,7 @@ unsigned int CreateTriggerForAiVisionWithListofEnemeisthatcantsee(TWorld * ptWor
 	unsigned int nThisEntity = createEntity(ptWorld);
 
 	ptWorld->atCollisionMask[nThisEntity].m_tnCollisionMask = (COMPONENT_COLLISIONMASK | COMPONENT_AABB | COMPONENT_STATIC | COMPONENT_TRIGGER);
-	ptWorld->atGraphicsMask[nThisEntity].m_tnGraphicsMask = (COMPONENT_GRAPHICSMASK | COMPONENT_SHADERID | COMPONENT_SIMPLEMESH);
+	ptWorld->atGraphicsMask[nThisEntity].m_tnGraphicsMask = (COMPONENT_GRAPHICSMASK | COMPONENT_SHADERID );
 	ptWorld->atAIMask[nThisEntity].m_tnAIMask = (COMPONENT_AIMASK | COMPONENT_CANTSEEPLAYERTRIGGER| COMPONENT_CANTSEEPLAYERTRIGGERVector);
 	ptWorld->atUIMask[nThisEntity].m_tnUIMask = (COMPONENT_UIMASK | COMPONENT_NOSHOW);
 	ptWorld->atPhysicsMask[nThisEntity].m_tnPhysicsMask = (COMPONENT_PHYSICSMASK);
