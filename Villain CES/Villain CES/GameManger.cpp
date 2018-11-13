@@ -4701,8 +4701,8 @@ int CGameMangerSystem::MikesGraphicsSandbox()
 			tMyVertexBufferTemp.m_d3dViewMatrix = debugCamera->d3d_Position;
 
 			TLights testLight;
-			testLight.m_d3dLightColor = XMFLOAT4(1, 1, 1, 1);
-			testLight.m_d3dLightPosition = XMFLOAT4(-4, 4.0f, 10.8f, 1);
+			testLight.m_d3dLightColor = XMFLOAT4(1, .5, .5, 1);
+			testLight.m_d3dLightPosition = XMFLOAT4(-4, -1.2f, -10.5f, 1);
 			testLight.enabled = true;
 			testLight.m_lightType = 1;
 			testLight.m_Direction = XMFLOAT4(0, 0, 0, 1);
@@ -4734,7 +4734,7 @@ int CGameMangerSystem::MikesGraphicsSandbox()
 			}*/
 			TLights testLight;
 			testLight.m_d3dLightColor = XMFLOAT4(1.0f, 1.0f, 1.0f, 1);
-			testLight.m_d3dLightPosition = XMFLOAT4(-4, 4.0f, 5.0f, 1);
+			testLight.m_d3dLightPosition = XMFLOAT4(0, 0, 0, 1);
 			testLight.enabled = true;
 			testLight.m_lightType = 1;
 			testLight.m_Direction = XMFLOAT4(0, -2.0f, -5.0f, 1);

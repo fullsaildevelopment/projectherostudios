@@ -39,13 +39,14 @@ TPixelInputType MyVertexShader(TVertexInputType tInput)
 	TPixelInputType output;
     float3 testNormal = tInput.d3dNormal;
 
-    float3 Magnitude = length(tInput.d3dPosition);
-    output.d3dNormal = normalize(tInput.d3dPosition.xyz / Magnitude);
+    //float3 Magnitude = length(tInput.d3dPosition);
+    output.d3dNormal = tInput.d3dNormal;
 
 	tInput.d3dPosition.w = 1;
 	output.d3dPosition = mul(tInput.d3dPosition, d3dWorldMatrix);
     output.d3dWorldPos = output.d3dPosition;
     output.d3dNormal = mul(output.d3dNormal, (float3x3)d3dWorldMatrix);
+    output.d3dNormal = normalize(output.d3dNormal);
 	output.d3dPosition = mul(output.d3dPosition, d3dViewMatrix);
 	output.d3dPosition = mul(output.d3dPosition, d3dProjectionMatrix);
 
