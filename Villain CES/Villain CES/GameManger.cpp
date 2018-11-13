@@ -9650,6 +9650,9 @@ int CGameMangerSystem::RealLevelUpdate()
 			{
 				tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = XMMatrixMultiply(pcGraphicsSystem->SetDefaultWorldPosition(),
 					tThisWorld.atWorldMatrix[tThisWorld.atParentWorldMatrix[nCurrentEntity]].worldMatrix);
+
+				//tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = XMMatrixMultiply(pcGraphicsSystem->SetDefaultWorldPosition(),
+				//	tThisWorld.atAnimation->m_tAnim[tThisWorld.atAnimationVariant[nCurrentEntity].tClaytonAnim.animType].m_vtKeyFrames[tThisWorld.atAnimationVariant[nCurrentEntity].tClaytonAnim.currentFrame].m_vd3dJointMatrices[50]);
 			}
 			else {
 				XMMATRIX CamandPlayer;
@@ -10231,8 +10234,8 @@ int CGameMangerSystem::RealLevelUpdate()
 						fallingHealth = 0;
 					}
 
-					tUIVertexBuffer.start = (tThisWorld.atBar[nCurrentEntity - 1].barBoundingBox.left + 14 - (tThisWorld.atClayton[PlayerStartIndex].health * .1) - (screenWidth * .5) + (barWidth * ((tThisWorld.atClayton[PlayerStartIndex].health) * .01))) / (screenWidth * .5);
-					tUIVertexBuffer.end = (tThisWorld.atBar[nCurrentEntity].barBoundingBox.right + 4 - (screenWidth * .5) - (barWidth * ((100 - prevHealth) * .01))) / (screenWidth * .5);
+					tUIVertexBuffer.start = (tThisWorld.atBar[nCurrentEntity - 1].barBoundingBox.left - (screenWidth * .5) + (barWidth * ((tThisWorld.atClayton[PlayerStartIndex].health) * .01))) / (screenWidth * .5);
+					tUIVertexBuffer.end = (tThisWorld.atBar[nCurrentEntity].barBoundingBox.right - (screenWidth * .5) - (barWidth * ((100 - prevHealth) * .01))) / (screenWidth * .5);
 					tUIVertexBuffer.ratio = damageRatio;
 
 					tUIPixelBuffer.hoverColor = tThisWorld.atBar[nCurrentEntity - 1].backgroundColor;
