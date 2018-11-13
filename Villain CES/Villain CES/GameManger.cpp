@@ -9042,7 +9042,8 @@ int CGameMangerSystem::RealLevelUpdate()
 					pcAiSystem->LookAtObject(tThisWorld.atWorldMatrix[tThisWorld.atAIVision[nCurrentEntity].indexLookingAt].worldMatrix, &tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix);
 					//	pcAiSystem->ShootGun(&tThisWorld.atClip[tThisWorld.atAIMask[nCurrentEntity].GunIndex]);
 					pcAiSystem->AddShootingActiveAI(nCurrentEntity);
-					if (pcAiSystem->GetCanWechooseShooter() == true) {
+					if (pcAiSystem->GetCanWechooseShooter() == true) 
+					{
 						//	tThisWorld.atClip[tThisWorld.atAIMask[pcAiSystem->ChooseRandomSHooter()].GunIndex].fsReloadingCoolDown=100;
 						pcAiSystem->SetActiveShooter(tThisWorld.atAIMask[pcAiSystem->ChooseRandomSHooter()].GunIndex);
 						tThisWorld.atClip[pcAiSystem->GetActiveShooter()].fShootingCoolDown = 200;
@@ -9051,9 +9052,9 @@ int CGameMangerSystem::RealLevelUpdate()
 					else {
 						if (
 							pcAiSystem->ActiveShooterCheck(tThisWorld.atAIMask[nCurrentEntity].GunIndex, tThisWorld.atClip[pcAiSystem->GetActiveShooter()].fShootingCoolDown
-							) == true) {
+							) == true) 
+						{
 							tThisWorld.atClip[pcAiSystem->GetActiveShooter()].tryToShoot = true;
-
 						}
 					}
 				}
@@ -9399,16 +9400,16 @@ int CGameMangerSystem::RealLevelUpdate()
 #endif
 						else
 						{
-							if (tThisWorld.atAnimationVariant[nCurrentEntity].tClaytonAnim.animType != 1)
+							if (tThisWorld.atAnimationVariant[tThisWorld.atParentWorldMatrix[nCurrentEntity]].tClaytonAnim.animType != 1)
 							{
-								tThisWorld.atAnimation[nCurrentEntity].tTimer.localTime = 0;
+								tThisWorld.atAnimation[tThisWorld.atParentWorldMatrix[nCurrentEntity]].tTimer.localTime = 0;
 
-								tThisWorld.atAnimationVariant[nCurrentEntity].tClaytonAnim.currentFrame = 0;
-								tThisWorld.atAnimationVariant[nCurrentEntity].tClaytonAnim.nextFrame = 1;
+								tThisWorld.atAnimationVariant[tThisWorld.atParentWorldMatrix[nCurrentEntity]].tClaytonAnim.currentFrame = 0;
+								tThisWorld.atAnimationVariant[tThisWorld.atParentWorldMatrix[nCurrentEntity]].tClaytonAnim.nextFrame = 1;
 
-								tThisWorld.atAnimationVariant[nCurrentEntity].tClaytonAnim.animType = 1;
+								tThisWorld.atAnimationVariant[tThisWorld.atParentWorldMatrix[nCurrentEntity]].tClaytonAnim.animType = 1;
 
-								tThisWorld.atAnimationVariant[nCurrentEntity].tClaytonAnim.playingAnimation = true;
+								tThisWorld.atAnimationVariant[tThisWorld.atParentWorldMatrix[nCurrentEntity]].tClaytonAnim.playingAnimation = true;
 							}
 
 							pcCollisionSystem->updateAABB(tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, tThisWorld.atAABB[nCurrentEntity]);
