@@ -6,7 +6,7 @@ CGraphicsSystem::CGraphicsSystem()
 	m_fCameraXPosition = 0;
 	m_fCameraYPosition = 0.5;
 	m_fCameraZPosition = -10;
-	m_worldAmbience = XMFLOAT4(0.5f, 0.5f, 0.5f, 0);
+	m_worldAmbience = XMFLOAT4(0.3f, 0.3f, 0.3f, 0);
 }
 
 CGraphicsSystem::~CGraphicsSystem()
@@ -301,7 +301,7 @@ void CGraphicsSystem::CleanD3D(TWorld *ptPlanet)
 			ptPlanet->atSimpleMesh[nEntityIndex].m_pd3dVertexBuffer->Release();
 			ptPlanet->atSimpleMesh[nEntityIndex].m_pd3dIndexBuffer->Release();
 		}
-		if (ptPlanet->atGraphicsMask[nEntityIndex].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_SHADERID) || ptPlanet->atGraphicsMask[nEntityIndex].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_SKYBOX | COMPONENT_TEXTURE | COMPONENT_SHADERID))
+		if (ptPlanet->atGraphicsMask[nEntityIndex].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_SHADERID) || ptPlanet->atGraphicsMask[nEntityIndex].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_SKYBOX | COMPONENT_TEXTURE | COMPONENT_SHADERID) || ptPlanet->atGraphicsMask[nEntityIndex].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_ANIMATION | COMPONENT_SHADERID))
 		{
 			ptPlanet->atMesh[nEntityIndex].m_pd3dVertexBuffer->Release();
 			ptPlanet->atMesh[nEntityIndex].m_pd3dIndexBuffer->Release();
@@ -2417,7 +2417,7 @@ void CGraphicsSystem::InitAnimShaderData(ID3D11DeviceContext * pd3dDeviceContext
 #pragma endregion
 	
 #pragma region Map to Light Constant Buffer
-	XMFLOAT4 templightEye = XMFLOAT4(-4.0f, 4.0f, 10.8f, 1.0f);
+	XMFLOAT4 templightEye = XMFLOAT4(0, 4.0f, 0, 1.0f);
 
 
 	pd3dDeviceContext->Map(m_pd3dLightPixelBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &d3dLightPixelMappedResource);
@@ -2460,6 +2460,52 @@ void CGraphicsSystem::InitAnimShaderData(ID3D11DeviceContext * pd3dDeviceContext
 	{
 		pd3dDeviceContext->PSSetShaderResources(0, 1, &tMesh.m_d3dSRVDiffuse);
 	}
+}
+
+void CGraphicsSystem::InitAnimShaderData(ID3D11DeviceContext * pd3dDeviceContext, TAnimatedVertexBufferType d3dVertexBuffer, TMesh tMesh, XMMATRIX CameraMatrix)
+{
+		D3D11_MAPPED_SUBRESOURCE d3dAnimatedVertexMappedResource;
+
+		TAnimatedVertexBufferType *ptAnimatedVertexBufferDataPointer = nullptr;
+		
+
+		XMMATRIX d3dView;
+		d3dView = d3dVertexBuffer.m_d3dViewMatrix;
+		d3dView = XMMatrixInverse(nullptr, CameraMatrix);
+		unsigned int bufferNumber = 0;
+		m_fCameraXPosition = CameraMatrix.r[3].m128_f32[0];
+		m_fCameraYPosition = CameraMatrix.r[3].m128_f32[1];
+		m_fCameraZPosition = CameraMatrix.r[3].m128_f32[2];
+
+		XMMATRIX tempWorld = d3dVertexBuffer.m_d3dWorldMatrix;
+		XMMATRIX tempProj = d3dVertexBuffer.m_d3dProjectionMatrix;
+
+#pragma region Map To Vertex Constant Buffer
+		pd3dDeviceContext->Map(m_pd3dAnimatedVertexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &d3dAnimatedVertexMappedResource);
+
+		// Get a pointer to the data in the constant buffer.
+		ptAnimatedVertexBufferDataPointer = (TAnimatedVertexBufferType*)d3dAnimatedVertexMappedResource.pData;
+
+		// Copy the matrices into the constant buffer.
+		ptAnimatedVertexBufferDataPointer->m_d3dWorldMatrix = tempWorld;
+		ptAnimatedVertexBufferDataPointer->m_d3dViewMatrix = d3dView;
+		ptAnimatedVertexBufferDataPointer->m_d3dProjectionMatrix = tempProj;
+		memcpy(&ptAnimatedVertexBufferDataPointer->m_d3dJointsForVS, &d3dVertexBuffer.m_d3dJointsForVS, sizeof(d3dVertexBuffer.m_d3dJointsForVS));
+		// Unlock the constant buffer.
+		pd3dDeviceContext->Unmap(m_pd3dAnimatedVertexBuffer, 0);
+
+#pragma endregion
+
+
+		pd3dDeviceContext->VSSetConstantBuffers(bufferNumber, 1, &m_pd3dAnimatedVertexBuffer);
+		
+		pd3dDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+		pd3dDeviceContext->IASetVertexBuffers(0, 1, &tMesh.m_pd3dVertexBuffer, &tMesh.m_nVertexBufferStride, &tMesh.m_nVertexBufferOffset);
+		pd3dDeviceContext->IASetIndexBuffer(tMesh.m_pd3dIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
+		if (&tMesh.m_d3dSRVDiffuse != NULL)
+		{
+			pd3dDeviceContext->PSSetShaderResources(0, 1, &tMesh.m_d3dSRVDiffuse);
+		}
 }
 
 void CGraphicsSystem::InitMyShaderData(ID3D11DeviceContext * pd3dDeviceContext, TMyVertexBufferType d3dVertexBuffer, TMesh tMesh, XMMATRIX CameraMatrix)
@@ -2546,8 +2592,9 @@ void CGraphicsSystem::InitMyShaderData(ID3D11DeviceContext * pd3dDeviceContext, 
 
 #pragma region Map to Light Constant Buffer
 
-	XMFLOAT4 templightEye = XMFLOAT4(-4.0f, 1.0f, 10.8f, 1.0f);
-
+	XMFLOAT4 templightEye = XMFLOAT4(0, 3.0f, 0, 1.0f);
+	//tMaterials.Ambience = m_worldAmbience;
+	//tMaterials.lightEyePos = templightEye;
 
 	pd3dDeviceContext->Map(m_pd3dLightPixelBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &d3dLightPixelMappedResource);
 
@@ -2556,6 +2603,7 @@ void CGraphicsSystem::InitMyShaderData(ID3D11DeviceContext * pd3dDeviceContext, 
 	memcpy(&ptLightPixelBufferDataPointer->m_Proprties, &tMaterials.m_Proprties, sizeof(tMaterials.m_Proprties));
 	memcpy(&ptLightPixelBufferDataPointer->Ambience, &m_worldAmbience, sizeof(m_worldAmbience));
 	memcpy(&ptLightPixelBufferDataPointer->lightEyePos, &templightEye, sizeof(templightEye));
+	//memcpy(d3dLightPixelMappedResource.pData, &tMaterials, sizeof(tMaterials))
 
 	pd3dDeviceContext->Unmap(m_pd3dLightPixelBuffer, 0);
 #pragma endregion

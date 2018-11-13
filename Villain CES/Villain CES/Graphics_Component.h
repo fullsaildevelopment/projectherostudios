@@ -261,8 +261,8 @@ struct TAnimation
 
 struct TLights
 {
-	XMFLOAT4 m_d3dLightPosition;
 	XMFLOAT4 m_Direction;
+	XMFLOAT4 m_d3dLightPosition;
 	XMFLOAT4 m_d3dLightColor;
 	int m_lightType;
 	int enabled;

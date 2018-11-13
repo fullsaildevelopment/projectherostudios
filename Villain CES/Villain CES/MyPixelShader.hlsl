@@ -94,16 +94,16 @@ float4 MyPixelShader(TPixelInputType tInput) : SV_TARGET
             else if (worldLights.lightType == POINT_LIGHT)
             {
                 float3 pointLight = normalize((worldLights.lightPosition - tInput.d3dWorldPos)).xyz;
-                float lightRatio = saturate(dot(pointLight, tInput.d3dNormal));
+                float lightRatio = saturate(-dot(pointLight, tInput.d3dNormal));
                // lightRatio = saturate(lightRatio + totalAmbient.y); // add ambience commented out so you can add at the end before return 
 
-                float attentuation = 1.0f - saturate(length(worldLights.lightPosition - tInput.d3dWorldPos) / 10.0f);
+                float attentuation = 1.0f - saturate(-length(worldLights.lightPosition - tInput.d3dWorldPos) / 5.0f);
                 //This will make the attentuation fall off faster
                 //attentuation *= attentuation;
                 //lightRatio = saturate((lightRatio * attentuation));
-                 
-            pointLightR = lerp(0, worldLights.lightColor, lightRatio);
-            pointLightR = saturate(pointLightR * saturate(attentuation));
+           pointLightR = lightRatio * worldLights.lightColor;
+           // pointLightR = lerp(0, worldLights.lightColor, lightRatio);
+            pointLightR = saturate((pointLightR * attentuation));
             totalDiffuse += pointLightR;
                    //float3 viewDirection = -normalize(lightEyePos.xyz);
                    //float3 currentLightDir = normalize(worldLights.lightDirection.xyz);
