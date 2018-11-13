@@ -86,8 +86,9 @@ float4 AnimatedPixelShader(PixelInputType tInput) : SV_TARGET
             else if(worldLights.lightType == POINT_LIGHT)
             {
                 float3 pointLight = normalize((worldLights.lightPosition - tInput.worldPos)).xyz;
-                float lightRatio = saturate(-dot(pointLight, tInput.normal));
-                float attentuation = 1.0f - saturate(-length(worldLights.lightPosition.xyz - tInput.worldPos.xyz) /5.0f);
+                float lightRatio = saturate(dot(pointLight, tInput.normal));
+                float lightRadius = 10.0f;
+                float attentuation = 1.0f - saturate(length(worldLights.lightPosition.xyz - tInput.worldPos.xyz) / lightRadius);
                 //This will make the attentuation fall off faster
                 attentuation *= attentuation;
                 lightRatio = saturate((lightRatio * attentuation));

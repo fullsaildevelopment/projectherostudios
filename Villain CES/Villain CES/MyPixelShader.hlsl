@@ -7,8 +7,11 @@
 
 #define MAX_LIGHTS 1
 
-Texture2D g_d3dDiffuseTexture;
-SamplerState g_SampleType;
+Texture2D g_d3dDiffuseTexture : register(t0);
+Texture2D g_d3dEmissiveTexture : register(t1);
+Texture2D g_d3dSpecularTexture : register(t2);
+
+SamplerState g_SampleType : register(s0);
 //////////////
 // TYPEDEFS //
 //////////////
@@ -66,9 +69,10 @@ float4 MyPixelShader(TPixelInputType tInput) : SV_TARGET
     float4 totalSpecular = 0;
     float specularRatio = 0;
     totalAmbient = ambience;
+    //tInput.d3dUVs.y *= -1.0f;
 	float4 d3dDiffuseColor = g_d3dDiffuseTexture.Sample(g_SampleType, (float2)tInput.d3dUVs);
-      // totalEmissive = g_d3dEmissiveTexture.Sample(g_SampleType, (float2) tInput.d3dTexture);
-    //totalSpecular = g_d3dSpecularTexture.Sample(g_SampleType, (float2) tInput.d3dTexture);
+    // totalEmissive = g_d3dEmissiveTexture.Sample(g_SampleType, (float2) tInput.d3dUVs);
+    //totalSpecular = g_d3dSpecularTexture.Sample(g_SampleType, (float2) tInput.d3dUVs);
 
  
     //for (int lightIndex = 0; lightIndex < MAX_LIGHTS; lightIndex++)
@@ -96,36 +100,44 @@ float4 MyPixelShader(TPixelInputType tInput) : SV_TARGET
                 float3 pointLight = normalize((worldLights.lightPosition - tInput.d3dWorldPos)).xyz;
                 float lightRatio = saturate(dot(pointLight, tInput.d3dNormal));
                // lightRatio = saturate(lightRatio + totalAmbient.y); // add ambience commented out so you can add at the end before return 
-            float lightRadius = 5.0f;
-                float attentuation = 1.0f - saturate(length(worldLights.lightPosition - tInput.d3dWorldPos) / lightRadius);
+                float lightRadius = 10.0f;
+                float attentuation = 1.0f - saturate(length(worldLights.lightPosition.xyz - tInput.d3dWorldPos.xyz) / lightRadius);
                 //This will make the attentuation fall off faster
-                attentuation *= attentuation;
+                //attentuation *= attentuation;
                 lightRatio = saturate((lightRatio * attentuation));
-                pointLightR = lightRatio * worldLights.lightColor;
-           // pointLightR = lerp(0, worldLights.lightColor, lightRatio);
-            //pointLightR = saturate((pointLightR * attentuation));
+           
+
+           // totalDiffuse += lightRatio * worldLights.lightColor;
+
+               // pointLightR = lightRatio * worldLights.lightColor;
+            pointLightR = lerp(0, worldLights.lightColor, lightRatio);
+            pointLightR = saturate((pointLightR * attentuation));
              totalDiffuse += pointLightR;
-                   //float3 viewDirection = -normalize(lightEyePos.xyz);
-                   //float3 currentLightDir = normalize(worldLights.lightDirection.xyz);
-                   //float3 reflect = currentLightDir - 2 * tInput.d3dNormal * dot(currentLightDir, tInput.d3dNormal);
+                 //  float3 viewDirection = -normalize(lightEyePos.xyz);
+                 //  float3 currentLightDir = normalize(worldLights.lightDirection.xyz);
+                 //  float3 reflect = currentLightDir - 2 * tInput.d3dNormal * dot(currentLightDir, tInput.d3dNormal);
 
                  //specularRatio = saturate(dot(reflect, -viewDirection));
                  // float4 currentColor = worldLights.lightColor;
                  //totalSpecular += lightRatio * currentColor * pow(specularRatio, mProperties.shininess.x);
+            totalDiffuse = float4(totalDiffuse.xyz + totalAmbient.xyz, 1);
             }
         }
     //}
-
+    if (mProperties.diffuse.x != 0 || mProperties.diffuse.y != 0 || mProperties.diffuse.z != 0)
+    {
     totalDiffuse = mProperties.diffuse * totalDiffuse;
+
+    }
+    //totalEmissive = totalEmissive * mProperties.emissive;
+    //totalSpecular = totalSpecular * mProperties.specular;
    
 
-    d3dDiffuseColor = (float4(totalAmbient.xyz + totalDiffuse.xyz, 1)) * d3dDiffuseColor;
+        d3dDiffuseColor = totalDiffuse * d3dDiffuseColor;
     d3dDiffuseColor = saturate(d3dDiffuseColor);
-     //   totalEmissive = totalEmissive * mProperties.emissive;
-     //   totalSpecular = totalSpecular * mProperties.specular;
     d3dDiffuseColor.w = 1;
     return d3dDiffuseColor;
-
+   
 }
 	
     //PUT UNDER D3D DIFFUSE COLOR VAR SIMPLE TEXTURE WITH NO LIGHTING

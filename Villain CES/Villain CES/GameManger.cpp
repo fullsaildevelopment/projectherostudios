@@ -4583,7 +4583,7 @@ void CGameMangerSystem::LoadMikesGraphicsSandbox()
 
 	tThisWorld.atWorldMatrix[myMesh].worldMatrix.r[3].m128_f32[0] = -4;
 	tThisWorld.atWorldMatrix[myMesh].worldMatrix.r[3].m128_f32[1] = -1.2;
-	tThisWorld.atWorldMatrix[myMesh].worldMatrix.r[3].m128_f32[2] = 10.8;
+	tThisWorld.atWorldMatrix[myMesh].worldMatrix.r[3].m128_f32[2] = 10.8f;
 
 	//createGSQuad(&tThisWorld, XMFLOAT4(1, 0, 0, 1) myMesh);
 	//createGSQuad(&tThisWorld, XMFLOAT4(1, 1, 1, 1) myMesh);
@@ -4701,11 +4701,11 @@ int CGameMangerSystem::MikesGraphicsSandbox()
 			tMyVertexBufferTemp.m_d3dViewMatrix = debugCamera->d3d_Position;
 
 			TLights testLight;
-			testLight.m_d3dLightColor = XMFLOAT4(1, .5, .5, 1);
-			testLight.m_d3dLightPosition = XMFLOAT4(-4, -1.2f, -10.5f, 1);
+			testLight.m_d3dLightColor = XMFLOAT4(1.0f, 1.0f, 1.0f, 1);
+			testLight.m_d3dLightPosition = XMFLOAT4(-4, -1.0f, 12.8f, 1);
 			testLight.enabled = true;
 			testLight.m_lightType = 1;
-			testLight.m_Direction = XMFLOAT4(0, 0, 0, 1);
+			testLight.m_Direction = XMFLOAT4(0, -2, -5.0f, 1);
 			testLight.m_padding = XMFLOAT2(0, 0);
 			tLightBuffer.m_allLights = testLight;
 			tLightBuffer.m_Proprties = tThisWorld.atMaterial[nCurrentEntity];
@@ -4733,8 +4733,8 @@ int CGameMangerSystem::MikesGraphicsSandbox()
 				memcpy(&tLightBuffer.m_allLights[k], &Lights_To_Send[k], sizeof(Lights_To_Send[k]));
 			}*/
 			TLights testLight;
-			testLight.m_d3dLightColor = XMFLOAT4(1.0f, 1.0f, 1.0f, 1);
-			testLight.m_d3dLightPosition = XMFLOAT4(0, 0, 0, 1);
+			testLight.m_d3dLightColor = XMFLOAT4(1, 0, 0, 1);
+			testLight.m_d3dLightPosition = XMFLOAT4(-4, -1.0f, 12.8f, 1);
 			testLight.enabled = true;
 			testLight.m_lightType = 1;
 			testLight.m_Direction = XMFLOAT4(0, -2.0f, -5.0f, 1);
