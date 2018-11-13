@@ -16,6 +16,20 @@ struct TAnimationMask
 	int m_tnAnimationMask = 0;
 };
 
+/*
+	Order of animations:
+
+	0. Idling
+	1. Walking
+	2. Walk backward
+	3. Walk left
+	4. Walk right
+	5. Shooting
+	6. Taking damage
+	7. Dying
+*/
+
+
 struct TAnimationVariant
 {
 	//union
@@ -26,42 +40,47 @@ struct TAnimationVariant
 			int animType = 0;//Idling, Walking, Running, Shooting, etc.
 			int currentFrame = 0;
 			int nextFrame = 1;
+
+			bool playingAnimation = false;
 		}tClaytonAnim;
 
-	//	struct TCaelisAnim
-	//	{
-	//		bool forward = true;
-	//		int animType = 0;//Idling, Walking, Running, Shooting, etc.
-	//		int currentFrame = 0;
-	//		int nextFrame = 1;
-	//	}tCaelisAnim;
+		//	struct TCaelisAnim
+		//	{
+		//		bool forward = true;
+		//		int animType = 0;//Idling, Walking, Running, Shooting, etc.
+		//		int currentFrame = 0;
+		//		int nextFrame = 1;
+		//	}tCaelisAnim;
 
-	//	struct TSethAnim
-	//	{
-	//		bool forward = true;
-	//		int animType = 0;//Idling, Walking, Running, Shooting, etc.
-	//		int currentFrame = 0;
-	//		int nextFrame = 1;
-	//	}tSethAnim;
+		//	struct TSethAnim
+		//	{
+		//		bool forward = true;
+		//		int animType = 0;//Idling, Walking, Running, Shooting, etc.
+		//		int currentFrame = 0;
+		//		int nextFrame = 1;
+		//	}tSethAnim;
 
-	//	struct THumanPirateAnim
-	//	{
-	//		bool forward = true;
-	//		int animType = 0;//Idling, Walking, Running, Shooting, etc.
-	//		int currentFrame = 0;
-	//		int nextFrame = 1;
-	//	}tHumanPirateAnim;
+		//	struct THumanPirateAnim
+		//	{
+		//		bool forward = true;
+		//		int animType = 0;//Idling, Walking, Running, Shooting, etc.
+		//		int currentFrame = 0;
+		//		int nextFrame = 1;
+		//	}tHumanPirateAnim;
 
-	//	struct TScyllianPirateAnim
-	//	{
-	//		bool forward = true;
-	//		int animType = 0;//Idling, Walking, Running, Shooting, etc.
-	//		int currentFrame = 0;
-	//		int nextFrame = 1;
-	//	}tScyllianPirateAnim;
+		//struct TScyllianPirateAnim
+		//{
+		//	bool forward = true;
+		//	int animType = 0;//Idling, Walking, Running, Shooting, etc.
+		//	int currentFrame = 0;
+		//	int nextFrame = 1;
+
+		//	bool playingAnimation = false;
+		//}tScyllianPirateAnim;
 
 	//};
 };
+
 
 
 

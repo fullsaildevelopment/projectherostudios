@@ -1,5 +1,5 @@
 #include "GameManger.h"
-#define AI_ON false
+#define AI_ON true
 #define MIKES_SANDBOX_ON false
 #define SKELETON_LOAD_ON false
 #define MAIN_LEVEL_ON true
@@ -4597,11 +4597,11 @@ void CGameMangerSystem::LoadMikesGraphicsSandbox()
 	//}
 
 	//Create Clayton Animated
-	tempImport = pcGraphicsSystem->ReadMesh2("meshData_PirateStrafeRight.txt", 1, nullptr, 3);
-	tempImport = pcGraphicsSystem->ReadMesh2("meshData_PirateStrafeLeft.txt", 1, &tempImport, 3);
-	tempImport = pcGraphicsSystem->ReadMesh2("meshData_PirateMoveBackward.txt", 1, &tempImport, 3);
-	tempImport = pcGraphicsSystem->ReadMesh2("meshData_PirateMoveForward.txt", 1, &tempImport, 3);
-	tempImport = pcGraphicsSystem->ReadMesh2("meshData_PirateIdle.txt", 1, &tempImport, 3);
+	tempImport = pcGraphicsSystem->ReadMesh2("meshData_PirateStrafeRight.txt", CLAYTON, nullptr, 3);
+	tempImport = pcGraphicsSystem->ReadMesh2("meshData_PirateStrafeLeft.txt", CLAYTON, &tempImport, 3);
+	tempImport = pcGraphicsSystem->ReadMesh2("meshData_PirateMoveBackward.txt", CLAYTON, &tempImport, 3);
+	tempImport = pcGraphicsSystem->ReadMesh2("meshData_PirateMoveForward.txt", CLAYTON, &tempImport, 3);
+	tempImport = pcGraphicsSystem->ReadMesh2("meshData_PirateIdle.txt", CLAYTON, &tempImport, 3);
 	//tempImport = pcGraphicsSystem->ReadMesh2("MoveForward_Clayton_output_animation.mesh", 1);
 	//tempImport = pcGraphicsSystem->ReadMesh2("Run_Mage_output_animation.mesh");
 	matOpt = pcGraphicsSystem->CreateTexturesFromFile(tempImport.vtMaterials, 1);
@@ -4629,7 +4629,7 @@ void CGameMangerSystem::LoadMikesGraphicsSandbox()
 	nodeLocation.r[3].m128_f32[1] -= 0;
 	nodeLocation.r[3].m128_f32[2] += -2;*/
 
-	tempImport = pcGraphicsSystem->ReadMesh2("meshData_TestSnake.txt");
+	tempImport = pcGraphicsSystem->ReadMesh2("meshData_SnakeIdle.txt");
 	//gunImport = pcGraphicsSystem->ReadMesh("meshData_LaserFlintlockTextured.txt");
 
 	matOpt = pcGraphicsSystem->CreateTexturesFromFile(tempImport.vtMaterials, 1);
@@ -5047,11 +5047,11 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 
 	//Clayton Import Data - ZFB
 	//tempImport = pcGraphicsSystem->ReadMesh("meshData_Pirate.txt");
-	tempImport = pcGraphicsSystem->ReadMesh2("meshData_PirateStrafeRight.txt", 1, nullptr, 3);
-	tempImport = pcGraphicsSystem->ReadMesh2("meshData_PirateStrafeLeft.txt", 1, &tempImport, 3);
-	tempImport = pcGraphicsSystem->ReadMesh2("meshData_PirateMoveBackward.txt", 1, &tempImport, 3);
-	tempImport = pcGraphicsSystem->ReadMesh2("meshData_PirateMoveForward.txt", 1, &tempImport, 3);
-	tempImport = pcGraphicsSystem->ReadMesh2("meshData_PirateIdle.txt", 1, &tempImport, 3);
+	tempImport = pcGraphicsSystem->ReadMesh2("meshData_PirateStrafeRight.txt", CLAYTON, nullptr, 3);
+	tempImport = pcGraphicsSystem->ReadMesh2("meshData_PirateStrafeLeft.txt", CLAYTON, &tempImport, 3);
+	tempImport = pcGraphicsSystem->ReadMesh2("meshData_PirateMoveBackward.txt", CLAYTON, &tempImport, 3);
+	tempImport = pcGraphicsSystem->ReadMesh2("meshData_PirateMoveForward.txt", CLAYTON, &tempImport, 3);
+	tempImport = pcGraphicsSystem->ReadMesh2("meshData_PirateIdle.txt", CLAYTON, &tempImport, 3);
 
 	matOpt = pcGraphicsSystem->CreateTexturesFromFile(tempImport.vtMaterials, 1);
 
@@ -5218,12 +5218,18 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	edges.clear();
 #pragma endregion
 
-	tempImport = pcGraphicsSystem->ReadMesh("meshData_Scyllian.txt");
-	gunImport = pcGraphicsSystem->ReadMesh("meshData_LaserFlintlockTextured.txt");
+	tempImport = pcGraphicsSystem->ReadMesh2("meshData_SnakeDeath1.txt", SCYLLIAN);
+	tempImport = pcGraphicsSystem->ReadMesh2("meshData_SnakeGetHit.txt", SCYLLIAN, &tempImport);
+	tempImport = pcGraphicsSystem->ReadMesh2("meshData_SnakeAttack1.txt", SCYLLIAN, &tempImport);
+	tempImport = pcGraphicsSystem->ReadMesh2("meshData_SnakeIdle.txt", SCYLLIAN, &tempImport);
+
+	matOpt = pcGraphicsSystem->CreateTexturesFromFile(tempImport.vtMaterials, 1);
+
 	int spacePirate;
 	for (int meshIndex = 0; meshIndex < tempImport.meshCount; ++meshIndex)
 	{
-		spacePirate = CreateScyllian(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, tempImport.vtMeshes[meshIndex], tempImport.vtMaterials[meshIndex], AILocation);
+		//spacePirate = CreateScyllian(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, tempImport.vtMeshes[meshIndex], tempImport.vtMaterials[meshIndex], AILocation);
+		spacePirate = CreateScyllianAnim(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, tempImport.vtMeshes[meshIndex], matOpt, AILocation, tempImport.vtAnimations, meshIndex, tempImport.animationCount);
 	}
 	pcAiSystem->allAI.push_back(spacePirate);
 	enemyToCopyFrom.atMesh = tThisWorld.atMesh[spacePirate];
@@ -5234,6 +5240,9 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	enemyToCopyFrom.atPhysicsMask = tThisWorld.atPhysicsMask[spacePirate];
 	enemyToCopyFrom.atAIMask = tThisWorld.atAIMask[spacePirate];
 
+	enemyToCopyFrom.atAnimation = tThisWorld.atAnimation[spacePirate];
+	enemyToCopyFrom.atAnimationVariant = tThisWorld.atAnimationVariant[spacePirate];
+
 	tThisWorld.atOffSetMatrix[spacePirate] = AILocation;
 
 	//spacePirate = CreateSpacePirate(&tThisWorld, AILocation);
@@ -5242,6 +5251,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	createGSQuad(&tThisWorld, XMFLOAT4(0, 0, 0, 1), spacePirate);
 
 
+	gunImport = pcGraphicsSystem->ReadMesh("meshData_LaserFlintlockTextured.txt");
 
 	int GunINdexai;
 	//int GunINdexai = CreateGun(&tThisWorld, m_d3dWorldMatrix, spacePirate, -1.1, 0.5, 12.5, 10, 30);
@@ -8159,7 +8169,7 @@ int CGameMangerSystem::RealLevelUpdate()
 		healing = false;
 	}
 	
-	pcGraphicsSystem->UpdateAnimationInfo(tThisWorld.atAnimation[ClaytonIndex], tThisWorld.atAnimationVariant[ClaytonIndex], forward, backward, left, right);
+	pcGraphicsSystem->UpdateAnimationInfo(tThisWorld.atAnimation[ClaytonIndex], tThisWorld.atAnimationVariant[ClaytonIndex], forward, backward, left, right, CLAYTON);
 
 #endif // INPUT_ABSTRACTED_ON
 	pcGraphicsSystem->UpdateD3D();
@@ -8747,34 +8757,110 @@ int CGameMangerSystem::RealLevelUpdate()
 			}
 			if (pcCollisionSystem->aabb_to_frustum(tThisWorld.atAABB[nCurrentEntity], tThisWorld.atClaytonVision.eyes0) || nCurrentEntity == 33)
 			{
-				if (tThisWorld.atProjectiles[nCurrentEntity].m_tnProjectileMask == (COMPONENT_PROJECTILESMASK | COMPONENT_METAL | COMPONENT_ENEMY))
+				if (tThisWorld.atAIMask[nCurrentEntity].m_tnAIMask != (COMPONENT_AIMASK))
 				{
-					// changes the color of the enemy bullets
-					tMyVertexBufferTemp.m_d3dColor = XMFLOAT4(1, 0, 0, 1);
-				}
+					tAnimVertexBuffer.m_d3dWorldMatrix = tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix;
 
-				if (tCameraMode.bWalkMode == true)
-				{
-					pcGraphicsSystem->InitMyShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tMyVertexBufferTemp, tThisWorld.atMesh[nCurrentEntity], walkCamera->d3d_Position);
-				}
-				//Calls Shader Function on Aim Camera If aim mode is active
-				else if (tCameraMode.bAimMode == true && nCurrentEntity != ClaytonIndex)
-				{
-					pcGraphicsSystem->InitMyShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tMyVertexBufferTemp, tThisWorld.atMesh[nCurrentEntity], aimCamera->d3d_Position);
+					XMFLOAT4X4 * tweenJoints = pcAnimationSystem->PlayAnimation(tThisWorld.atAnimationVariant[nCurrentEntity], tThisWorld.atAnimation[nCurrentEntity], tThisWorld.atAnimation[nCurrentEntity].tTimer.localTime, false);
+
+					for (int i = 0; i < MAX_JOINTS; ++i)
+					{
+						memcpy(&tAnimVertexBuffer.m_d3dJointsForVS[i], &tweenJoints[i], sizeof(tweenJoints[i]));
+					}
+
+					if (tCameraMode.bAimMode == true)
+					{
+						pcGraphicsSystem->InitAnimShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tAnimVertexBuffer, tThisWorld.atMesh[nCurrentEntity], aimCamera->d3d_Position);
+					}
+					else if (tCameraMode.bDebugMode == true)
+					{
+						pcGraphicsSystem->InitAnimShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tAnimVertexBuffer, tThisWorld.atMesh[nCurrentEntity], debugCamera->d3d_Position);
+					}
+
+					tThisWorld.atAnimation[nCurrentEntity].tTimer.GetLocalTime(tThisWorld.atAnimation[nCurrentEntity].tTimer.tSceneTimer, tThisWorld.atAnimation[nCurrentEntity].tTimer.localTime, 1);
+
+					if (tThisWorld.atAnimation[nCurrentEntity].tTimer.localTime > tThisWorld.atAnimation[nCurrentEntity].m_tAnim[tThisWorld.atAnimationVariant[nCurrentEntity].tClaytonAnim.animType].dDuration && tThisWorld.atAnimationVariant[nCurrentEntity].tClaytonAnim.playingAnimation == true)
+					{
+						if (tThisWorld.atAnimationVariant[nCurrentEntity].tClaytonAnim.animType == 3)
+						{
+							tThisWorld.atAnimation[nCurrentEntity].tTimer.localTime = 0;
+
+							tThisWorld.atAnimationVariant[nCurrentEntity].tClaytonAnim.currentFrame = 0;
+							tThisWorld.atAnimationVariant[nCurrentEntity].tClaytonAnim.nextFrame = 1;
+
+							tThisWorld.atAnimationVariant[nCurrentEntity].tClaytonAnim.animType = 0;
+
+							tThisWorld.atAnimationVariant[nCurrentEntity].tClaytonAnim.playingAnimation = false;
+
+							tThisWorld.atAABB[nCurrentEntity].m_IndexLocation = -1;
+							tThisWorld.atAABB[nCurrentEntity].m_dMaxPoint = XMFLOAT3(0, 0, 0);
+							tThisWorld.atAABB[nCurrentEntity].m_dMaxPointOrginal = XMFLOAT3(0, 0, 0);
+							tThisWorld.atAABB[nCurrentEntity].m_dMinPoint = XMFLOAT3(0, 0, 0);
+							tThisWorld.atAABB[nCurrentEntity].m_dMinPointOrginal = XMFLOAT3(0, 0, 0);
+
+							tThisWorld.atAiHeath[nCurrentEntity].heath = 0;
+							tThisWorld.atActiveAI[nCurrentEntity].active = false;
+							tThisWorld.atAIVision[nCurrentEntity].stopSearching = true;
+
+							tThisWorld.atClip[nCurrentEntity].tryToShoot = false;
+							tThisWorld.atClip[nCurrentEntity].tryToReload = false;
+
+							tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix.r[3].m128_f32[1] -= 10;
+						}
+						else
+						{
+							//if (tThisWorld.atAnimationVariant[nCurrentEntity].tClaytonAnim.animType != 0)
+							//{
+							tThisWorld.atAnimation[nCurrentEntity].tTimer.localTime = 0;
+
+							tThisWorld.atAnimationVariant[nCurrentEntity].tClaytonAnim.currentFrame = 0;
+							tThisWorld.atAnimationVariant[nCurrentEntity].tClaytonAnim.nextFrame = 1;
+
+							tThisWorld.atAnimationVariant[nCurrentEntity].tClaytonAnim.animType = 0;
+
+							tThisWorld.atAnimationVariant[nCurrentEntity].tClaytonAnim.playingAnimation = false;
+							//}
+						}
+					}
+
+					if (bNoMoving)
+					{
+						tThisWorld.atAnimation[nCurrentEntity].tTimer.localTime = 0;
+					}
+
+					pcGraphicsSystem->ExecutePipeline(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atMesh[nCurrentEntity].m_nIndexCount, tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask, tThisWorld.atShaderID[nCurrentEntity].m_nShaderID);
 				}
 				else
 				{
-					if (nCurrentEntity != ClaytonIndex)
+					if (tThisWorld.atProjectiles[nCurrentEntity].m_tnProjectileMask == (COMPONENT_PROJECTILESMASK | COMPONENT_METAL | COMPONENT_ENEMY))
 					{
-						pcGraphicsSystem->InitMyShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tMyVertexBufferTemp, tThisWorld.atMesh[nCurrentEntity], debugCamera->d3d_Position);
+						// changes the color of the enemy bullets
+						tMyVertexBufferTemp.m_d3dColor = XMFLOAT4(1, 0, 0, 1);
 					}
-				}
-				pcGraphicsSystem->ExecutePipeline(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atMesh[nCurrentEntity].m_nIndexCount, tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask, tThisWorld.atShaderID[nCurrentEntity].m_nShaderID);
 
-				if (tThisWorld.atProjectiles[nCurrentEntity].m_tnProjectileMask == (COMPONENT_PROJECTILESMASK | COMPONENT_METAL | COMPONENT_ENEMY))
-				{
-					//changes the color back
-					tMyVertexBufferTemp.m_d3dColor = XMFLOAT4(0, 0, 0, 0);
+					if (tCameraMode.bWalkMode == true)
+					{
+						pcGraphicsSystem->InitMyShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tMyVertexBufferTemp, tThisWorld.atMesh[nCurrentEntity], walkCamera->d3d_Position);
+					}
+					//Calls Shader Function on Aim Camera If aim mode is active
+					else if (tCameraMode.bAimMode == true && nCurrentEntity != ClaytonIndex)
+					{
+						pcGraphicsSystem->InitMyShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tMyVertexBufferTemp, tThisWorld.atMesh[nCurrentEntity], aimCamera->d3d_Position);
+					}
+					else
+					{
+						if (nCurrentEntity != ClaytonIndex)
+						{
+							pcGraphicsSystem->InitMyShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tMyVertexBufferTemp, tThisWorld.atMesh[nCurrentEntity], debugCamera->d3d_Position);
+						}
+					}
+					pcGraphicsSystem->ExecutePipeline(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atMesh[nCurrentEntity].m_nIndexCount, tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask, tThisWorld.atShaderID[nCurrentEntity].m_nShaderID);
+
+					if (tThisWorld.atProjectiles[nCurrentEntity].m_tnProjectileMask == (COMPONENT_PROJECTILESMASK | COMPONENT_METAL | COMPONENT_ENEMY))
+					{
+						//changes the color back
+						tMyVertexBufferTemp.m_d3dColor = XMFLOAT4(0, 0, 0, 0);
+					}
 				}
 			}
 		}
@@ -9274,6 +9360,7 @@ int CGameMangerSystem::RealLevelUpdate()
 							pcGraphicsSystem->CreateEntityBuffer(&tThisWorld, newbullet);*/
 #pragma endregion        
 						}
+#if CAELIS
 						else if (nCurrentEntity == GunIndexForCaelis)
 						{
 							pcCollisionSystem->updateAABB(tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, tThisWorld.atAABB[nCurrentEntity]);
@@ -9309,8 +9396,21 @@ int CGameMangerSystem::RealLevelUpdate()
 							pcCollisionSystem->AddAABBCollider(tThisWorld.atAABB[newbullet], newbullet);
 							pcGraphicsSystem->CreateEntityBuffer(&tThisWorld, newbullet);
 						}
+#endif
 						else
 						{
+							if (tThisWorld.atAnimationVariant[nCurrentEntity].tClaytonAnim.animType != 1)
+							{
+								tThisWorld.atAnimation[nCurrentEntity].tTimer.localTime = 0;
+
+								tThisWorld.atAnimationVariant[nCurrentEntity].tClaytonAnim.currentFrame = 0;
+								tThisWorld.atAnimationVariant[nCurrentEntity].tClaytonAnim.nextFrame = 1;
+
+								tThisWorld.atAnimationVariant[nCurrentEntity].tClaytonAnim.animType = 1;
+
+								tThisWorld.atAnimationVariant[nCurrentEntity].tClaytonAnim.playingAnimation = true;
+							}
+
 							pcCollisionSystem->updateAABB(tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, tThisWorld.atAABB[nCurrentEntity]);
 
 							foward.m128_f32[0] = 0;
@@ -9525,9 +9625,10 @@ int CGameMangerSystem::RealLevelUpdate()
 					&tThisWorld, nCurrentEntity, pcGraphicsSystem,
 					&tTempVertexBuffer, std::ref(tMyVertexBufferTemp.m_d3dWorldMatrix), &m_d3dPlayerMatrix, pcPhysicsSystem, pcAiSystem,
 					PlayerStartIndex, std::ref(playerDamage), std::ref(pirateDamage),
-					std::ref(prevHealth), std::ref(fallingHealth), std::ref(lerpTime)
-					, pcAudioSystem->m_fMasterVolume, pcAudioSystem->m_fSFXVolume, pcAudioSystem->m_fMusicVolume, pcAudioSystem,
-					doorEventListenerPointer, doorEventChangerPointer, std::ref(hitmarkerTime), &m_d3dClaytonMatrix, &m_d3dCaelisMatrix,  pcParticleSystem,fpsTimer.GetDelta()));
+					std::ref(prevHealth), std::ref(fallingHealth), std::ref(lerpTime),
+					pcAudioSystem->m_fMasterVolume, pcAudioSystem->m_fSFXVolume, pcAudioSystem->m_fMusicVolume, pcAudioSystem,
+					doorEventListenerPointer, doorEventChangerPointer, std::ref(hitmarkerTime), &m_d3dClaytonMatrix, &m_d3dCaelisMatrix,  pcParticleSystem,fpsTimer.GetDelta(),
+					&tThisWorld.atAnimation[nCurrentEntity], &tThisWorld.atAnimationVariant[nCurrentEntity]));
 
 
 				//	tThisWorld.atAABB[nCurrentEntity].myThread = workers.begin() + workers.size() - 1;
@@ -9570,6 +9671,7 @@ int CGameMangerSystem::RealLevelUpdate()
 
 				tThisWorld.atAABB[nCurrentEntity] = pcCollisionSystem->updateAABB(tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, tThisWorld.atAABB[nCurrentEntity]);
 			}
+#if CAELIS
 			else if (nCurrentEntity == GunIndexForCaelis)
 			{
 				tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = XMMatrixMultiply(XMMatrixRotationX(XMConvertToRadians(-90)), tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix);
@@ -9577,6 +9679,7 @@ int CGameMangerSystem::RealLevelUpdate()
 
 				tThisWorld.atAABB[nCurrentEntity] = pcCollisionSystem->updateAABB(tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, tThisWorld.atAABB[nCurrentEntity]);
 			}
+#endif
 			else
 			{
 				tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = XMMatrixMultiply(XMMatrixRotationY(XMConvertToRadians(-90)), tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix);
@@ -10144,7 +10247,7 @@ int CGameMangerSystem::RealLevelUpdate()
 		}
 #endif
 	}
-
+	
 
 	pcGraphicsSystem->m_pd3dOutsideGlassSRV->Release();
 
