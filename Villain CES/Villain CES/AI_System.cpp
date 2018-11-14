@@ -539,6 +539,7 @@ int CAISystem::ChooseRandomSHooter()
 {
 
 	chooseAnotherShooter = false;
+	
 	return  ShootingActiveAI[rand() % ShootingActiveAI.size()];;
 }
 
