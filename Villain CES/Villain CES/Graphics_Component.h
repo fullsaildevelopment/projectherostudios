@@ -2,7 +2,7 @@
 #include "Timer.h"
 #ifndef CES_GRAPHICS_COMPONENT_H
 #define CES_GRAPHICS_COMPONENT_H
-#define MAX_LIGHTS 1
+#define MAX_LIGHTS 11
 enum eGraphicsComponent
 {
 	COMPONENT_NONE = 0,

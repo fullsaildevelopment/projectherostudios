@@ -5,7 +5,7 @@
 #define POINT_LIGHT 1
 
 
-#define MAX_LIGHTS 1
+#define MAX_LIGHTS 11
 
 Texture2D g_d3dDiffuseTexture : register(t0);
 Texture2D g_d3dEmissiveTexture : register(t1);
@@ -51,7 +51,7 @@ struct MATERIAL
 cbuffer Light_Constant_Buffer : register(b0)
 {
     MATERIAL mProperties;
-    LIGHTS worldLights;
+    LIGHTS worldLights[MAX_LIGHTS];
     float4 ambience;
     float4 lightEyePos;
 }
@@ -71,69 +71,93 @@ float4 MyPixelShader(TPixelInputType tInput) : SV_TARGET
     totalAmbient = ambience;
     //tInput.d3dUVs.y *= -1.0f;
 	float4 d3dDiffuseColor = g_d3dDiffuseTexture.Sample(g_SampleType, (float2)tInput.d3dUVs);
-    // totalEmissive = g_d3dEmissiveTexture.Sample(g_SampleType, (float2) tInput.d3dUVs);
-    //totalSpecular = g_d3dSpecularTexture.Sample(g_SampleType, (float2) tInput.d3dUVs);
+     totalEmissive = g_d3dEmissiveTexture.Sample(g_SampleType, (float2) tInput.d3dUVs);
+    totalSpecular = g_d3dSpecularTexture.Sample(g_SampleType, (float2) tInput.d3dUVs);
 
  
-    //for (int lightIndex = 0; lightIndex < MAX_LIGHTS; lightIndex++)
-    //{
+    for (int lightIndex = 0; lightIndex < MAX_LIGHTS; lightIndex++)
+    {
         specularRatio = 0;
-        directionLightR = pointLightR = 0;
-    directionLightR = 0;
-        if (worldLights.enabled)
+        directionLightR = 0;
+        pointLightR = 0;
+    
+        if (worldLights[lightIndex].enabled)
         {
-            if (worldLights.lightType == DIRECTIONAL_LIGHT)
+            if (worldLights[lightIndex].lightType == DIRECTIONAL_LIGHT)
             {
-                float3 currentLightDir = normalize(-worldLights.lightDirection.xyz);
-                float lightRatio = -saturate(dot(currentLightDir, tInput.d3dNormal));
+                float3 currentLightDir = -normalize(worldLights[lightIndex].lightDirection.xyz);
+                float lightRatio = saturate(dot(currentLightDir, tInput.d3dNormal));
                // lightRatio = saturate(lightRatio + totalAmbient.y); // add ambience
-            directionLightR = lerp(0, worldLights.lightColor, lightRatio);
+                //lightRatio = saturate(lightRatio);
+                directionLightR = lerp(0, worldLights[lightIndex].lightColor, lightRatio);
             totalDiffuse += directionLightR;
-              //float3 viewDirection = -normalize(lightEyePos.xyz);
-              //float3 reflect = -currentLightDir - 2 * tInput.d3dNormal * dot(-currentLightDir, tInput.d3dNormal);
-              // specularRatio = saturate(dot(reflect, viewDirection));
-              //   totalSpecular += worldLights.lightColor * pow(specularRatio, mProperties.shininess.x);
+              float3 viewDirection = -normalize(lightEyePos.xyz);
+              float3 reflect = -currentLightDir - 2 * tInput.d3dNormal * dot(-currentLightDir, tInput.d3dNormal);
+               specularRatio = saturate(dot(reflect, viewDirection));
+                if (mProperties.shininess.x != 0)
+                {
+                    totalSpecular += lightRatio * worldLights[lightIndex].lightColor * pow(specularRatio, mProperties.shininess.x);
+                }
+                else
+                {
+                    totalSpecular += lightRatio * worldLights[lightIndex].lightColor * pow(specularRatio, 1);
+
+                }
 
             }
-            else if (worldLights.lightType == POINT_LIGHT)
+            else if (worldLights[lightIndex].lightType == POINT_LIGHT)
             {
-                float3 pointLight = normalize((worldLights.lightPosition - tInput.d3dWorldPos)).xyz;
+                float3 pointLight = normalize((worldLights[lightIndex].lightPosition - tInput.d3dWorldPos)).xyz;
                 float lightRatio = saturate(dot(pointLight, tInput.d3dNormal));
                // lightRatio = saturate(lightRatio + totalAmbient.y); // add ambience commented out so you can add at the end before return 
-                float lightRadius = 10.0f;
-                float attentuation = 1.0f - saturate(length(worldLights.lightPosition.xyz - tInput.d3dWorldPos.xyz) / lightRadius);
+                float lightRadius = 20.0f;
+                float attentuation = 1.0f - saturate(length(worldLights[lightIndex].lightPosition.xyz - tInput.d3dWorldPos.xyz) / lightRadius);
                 //This will make the attentuation fall off faster
-                //attentuation *= attentuation;
+                attentuation *= attentuation;
                 lightRatio = saturate((lightRatio * attentuation));
            
 
            // totalDiffuse += lightRatio * worldLights.lightColor;
 
                // pointLightR = lightRatio * worldLights.lightColor;
-            pointLightR = lerp(0, worldLights.lightColor, lightRatio);
-            pointLightR = saturate((pointLightR * attentuation));
-             totalDiffuse += pointLightR;
-                 //  float3 viewDirection = -normalize(lightEyePos.xyz);
-                 //  float3 currentLightDir = normalize(worldLights.lightDirection.xyz);
-                 //  float3 reflect = currentLightDir - 2 * tInput.d3dNormal * dot(currentLightDir, tInput.d3dNormal);
+                 pointLightR = lerp(0, worldLights[lightIndex].lightColor, lightRatio);
+                  pointLightR = saturate((pointLightR * attentuation));
+                   totalDiffuse += pointLightR;
+                  float3 viewDirection = -normalize(lightEyePos.xyz);
+                   float3 currentLightDir = normalize(worldLights[lightIndex].lightDirection.xyz);
+                   float3 reflect = currentLightDir - 2 * tInput.d3dNormal * dot(currentLightDir, tInput.d3dNormal);
 
-                 //specularRatio = saturate(dot(reflect, -viewDirection));
-                 // float4 currentColor = worldLights.lightColor;
-                 //totalSpecular += lightRatio * currentColor * pow(specularRatio, mProperties.shininess.x);
-            totalDiffuse = float4(totalDiffuse.xyz + totalAmbient.xyz, 1);
+                 specularRatio = saturate(dot(reflect, -viewDirection));
+                  float4 currentColor = worldLights[lightIndex].lightColor;
+                if (mProperties.shininess.x != 0)
+                {
+                    totalSpecular += lightRatio * currentColor * pow(specularRatio, mProperties.shininess.x);
+                }
+                else
+                {
+                    totalSpecular += lightRatio * currentColor * pow(specularRatio, 1);
+
+                }
             }
         }
-    //}
+    }
+            totalDiffuse = float4(totalDiffuse.xyz + totalAmbient.xyz, 1);
     if (mProperties.diffuse.x != 0 || mProperties.diffuse.y != 0 || mProperties.diffuse.z != 0)
     {
     totalDiffuse = mProperties.diffuse * totalDiffuse;
 
     }
-    //totalEmissive = totalEmissive * mProperties.emissive;
-    //totalSpecular = totalSpecular * mProperties.specular;
+    if (mProperties.emissive.x != 0 || mProperties.emissive.y != 0 || mProperties.emissive.z != 0)
+    {
+    totalEmissive = totalEmissive * mProperties.emissive;
+    }
+    if (mProperties.specular.x != 0 || mProperties.specular.y != 0 || mProperties.specular.z != 0)
+    {
+    totalSpecular = totalSpecular * mProperties.specular;
+    }
    
 
-        d3dDiffuseColor = totalDiffuse * d3dDiffuseColor;
+    d3dDiffuseColor = (totalEmissive + totalSpecular + totalDiffuse) * d3dDiffuseColor;
     d3dDiffuseColor = saturate(d3dDiffuseColor);
     d3dDiffuseColor.w = 1;
     return d3dDiffuseColor;

@@ -4587,7 +4587,7 @@ void CGameMangerSystem::LoadMikesGraphicsSandbox()
 
 	//createGSQuad(&tThisWorld, XMFLOAT4(1, 0, 0, 1) myMesh);
 	//createGSQuad(&tThisWorld, XMFLOAT4(1, 1, 1, 1) myMesh);
-	//pcGraphicsSystem->SetLights();
+	pcGraphicsSystem->SetLights();
 	pcGraphicsSystem->CreateBuffers(&tThisWorld);
 	/*
 	loop through all entities
@@ -4602,6 +4602,7 @@ int CGameMangerSystem::MikesGraphicsSandbox()
 #pragma region Camera
 	static XMMATRIX m_d3d_ResultMatrix = pcGraphicsSystem->SetDefaultWorldPosition();
 	static XMMATRIX m_d3dOffsetMatrix = pcGraphicsSystem->SetDefaultOffset();
+	TLights* setLights = pcGraphicsSystem->GetLights();
 	tCameraMode = pcInputSystem->CameraModeListen(tCameraMode);
 
 	if (tCameraMode.bSwitch == true)
@@ -4700,14 +4701,24 @@ int CGameMangerSystem::MikesGraphicsSandbox()
 			tTempVertexBuffer.m_d3dViewMatrix = debugCamera->d3d_Position;
 			tMyVertexBufferTemp.m_d3dViewMatrix = debugCamera->d3d_Position;
 
-			TLights testLight;
+			/*TLights testLight;
 			testLight.m_d3dLightColor = XMFLOAT4(1.0f, 1.0f, 1.0f, 1);
 			testLight.m_d3dLightPosition = XMFLOAT4(-4, -1.0f, 12.8f, 1);
 			testLight.enabled = true;
 			testLight.m_lightType = 1;
 			testLight.m_Direction = XMFLOAT4(0, -2, -5.0f, 1);
 			testLight.m_padding = XMFLOAT2(0, 0);
-			tLightBuffer.m_allLights = testLight;
+			tLightBuffer.m_allLights = testLight;*/
+
+			for (int currentLightIndex = 0; currentLightIndex < MAX_LIGHTS; currentLightIndex++)
+			{
+				memcpy(&tLightBuffer.m_allLights[currentLightIndex].m_d3dLightPosition, &setLights[currentLightIndex].m_d3dLightPosition, sizeof(setLights[currentLightIndex].m_d3dLightPosition));
+				memcpy(&tLightBuffer.m_allLights[currentLightIndex].m_d3dLightColor, &setLights[currentLightIndex].m_d3dLightColor, sizeof(setLights[currentLightIndex].m_d3dLightColor));
+				memcpy(&tLightBuffer.m_allLights[currentLightIndex].m_lightType, &setLights[currentLightIndex].m_lightType, sizeof(setLights[currentLightIndex].m_lightType));
+				memcpy(&tLightBuffer.m_allLights[currentLightIndex].m_Direction, &setLights[currentLightIndex].m_Direction, sizeof(setLights[currentLightIndex].m_Direction));
+				memcpy(&tLightBuffer.m_allLights[currentLightIndex].enabled, &setLights[currentLightIndex].enabled, sizeof(setLights[currentLightIndex].enabled));
+
+			}
 			tLightBuffer.m_Proprties = tThisWorld.atMaterial[nCurrentEntity];
 
 			pcGraphicsSystem->InitMyShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tMyVertexBufferTemp, tThisWorld.atMesh[nCurrentEntity], tLightBuffer, debugCamera->d3d_Position);
@@ -4732,15 +4743,24 @@ int CGameMangerSystem::MikesGraphicsSandbox()
 			{
 				memcpy(&tLightBuffer.m_allLights[k], &Lights_To_Send[k], sizeof(Lights_To_Send[k]));
 			}*/
-			TLights testLight;
+			/*TLights testLight;
 			testLight.m_d3dLightColor = XMFLOAT4(1, 0, 0, 1);
 			testLight.m_d3dLightPosition = XMFLOAT4(-4, -1.0f, 12.8f, 1);
 			testLight.enabled = true;
 			testLight.m_lightType = 1;
 			testLight.m_Direction = XMFLOAT4(0, -2.0f, -5.0f, 1);
 			testLight.m_padding = XMFLOAT2(0, 0);
-			tLightBuffer.m_allLights = testLight;
-
+			tLightBuffer.m_allLights = testLight;*/
+			
+			for ( int currentLightIndex = 0; currentLightIndex < MAX_LIGHTS; currentLightIndex++)
+			{
+				memcpy(&tLightBuffer.m_allLights[currentLightIndex].m_d3dLightPosition,&setLights[currentLightIndex].m_d3dLightPosition, sizeof(setLights[currentLightIndex].m_d3dLightPosition));
+				memcpy(&tLightBuffer.m_allLights[currentLightIndex].m_d3dLightColor, &setLights[currentLightIndex].m_d3dLightColor, sizeof(setLights[currentLightIndex].m_d3dLightColor));
+				memcpy(&tLightBuffer.m_allLights[currentLightIndex].m_lightType, &setLights[currentLightIndex].m_lightType, sizeof(setLights[currentLightIndex].m_lightType));
+				memcpy(&tLightBuffer.m_allLights[currentLightIndex].m_Direction, &setLights[currentLightIndex].m_Direction, sizeof(setLights[currentLightIndex].m_Direction));
+				memcpy(&tLightBuffer.m_allLights[currentLightIndex].enabled ,&setLights[currentLightIndex].enabled, sizeof(setLights[currentLightIndex].enabled));
+				
+			}
 			tLightBuffer.m_Proprties = tThisWorld.atMaterial[nCurrentEntity];
 			
 			pcGraphicsSystem->InitAnimShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tAnimVertexBuffer, tThisWorld.atMesh[nCurrentEntity], tLightBuffer , debugCamera->d3d_Position);
@@ -8592,15 +8612,15 @@ int CGameMangerSystem::RealLevelUpdate()
 						memcpy(&tLightBuffer.m_allLights[k], &Lights_To_Send[k], sizeof(Lights_To_Send[k]));
 					}
 					tLightBuffer.m_Proprties = tThisWorld.atMaterial[nCurrentEntity];*/
-					TLights testLight;
+					/*TLights testLight;
 					testLight.m_d3dLightColor = XMFLOAT4(1, 0, 0, 0);
 					testLight.m_d3dLightPosition = XMFLOAT4(-4, 4, 10.8f, 1);
 					testLight.enabled = true;
 					testLight.m_lightType = 1;
 					testLight.m_Direction = XMFLOAT4(0, 0, 0, 1);
-					testLight.m_padding = XMFLOAT2(0, 0);
+					testLight.m_padding = XMFLOAT2(0, 0);*/
 
-					tLightBuffer.m_allLights = testLight;
+					//tLightBuffer.m_allLights = testLight;
 					tLightBuffer.m_Proprties = tThisWorld.atMaterial[nCurrentEntity];
 					tLightBuffer.lightEyePos = XMFLOAT4(-4, 4, 10.8f, 1);
 					tLightBuffer.Ambience = XMFLOAT4(0.5f, 0.5f, 0.5f, 1);
@@ -9401,42 +9421,42 @@ int CGameMangerSystem::RealLevelUpdate()
 		}
 
 
-		if (tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_SHADERID))
-		{
-			/*if (tThisWorld.atProjectiles[nCurrentEntity].m_tnProjectileMask == (COMPONENT_PROJECTILESMASK | COMPONENT_CLIP))
-			{
-				if (tCameraMode.bWalkMode == true)
-				{
-					pcGraphicsSystem->InitPrimalShaderData3(pcGraphicsSystem->m_pd3dDeviceContext, tTempVertexBuffer, tTempPixelBuffer, tThisWorld.atMesh[nCurrentEntity], walkCamera->d3d_Position);
-				}
-				else if (tCameraMode.bAimMode == true)
-				{
-					pcGraphicsSystem->InitPrimalShaderData3(pcGraphicsSystem->m_pd3dDeviceContext, tTempVertexBuffer, tTempPixelBuffer, tThisWorld.atMesh[nCurrentEntity], aimCamera->d3d_Position);
-				}
-				else
-				{
-					pcGraphicsSystem->InitPrimalShaderData3(pcGraphicsSystem->m_pd3dDeviceContext, tTempVertexBuffer, tTempPixelBuffer, tThisWorld.atMesh[nCurrentEntity], debugCamera->d3d_Position);
-				}
-				pcGraphicsSystem->ExecutePipeline(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atMesh[nCurrentEntity].m_nIndexCount, tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask, tThisWorld.atShaderID[nCurrentEntity].m_nShaderID);
-			}
-			else if (tThisWorld.atProjectiles[nCurrentEntity].m_tnProjectileMask == (COMPONENT_PROJECTILESMASK | COMPONENT_METAL | COMPONENT_FRIENDLY) ||
-					 tThisWorld.atProjectiles[nCurrentEntity].m_tnProjectileMask == (COMPONENT_PROJECTILESMASK | COMPONENT_METAL | COMPONENT_ENEMY))
-			{
-				if (tCameraMode.bWalkMode == true)
-				{
-					pcGraphicsSystem->InitMyShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tMyVertexBufferTemp, tThisWorld.atMesh[nCurrentEntity], walkCamera->d3d_Position);
-				}
-				else if (tCameraMode.bAimMode == true)
-				{
-					pcGraphicsSystem->InitMyShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tMyVertexBufferTemp, tThisWorld.atMesh[nCurrentEntity], aimCamera->d3d_Position);
-				}
-				else
-				{
-					pcGraphicsSystem->InitMyShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tMyVertexBufferTemp, tThisWorld.atMesh[nCurrentEntity], debugCamera->d3d_Position);
-				}
-				pcGraphicsSystem->ExecutePipeline(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atMesh[nCurrentEntity].m_nIndexCount, tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask, tThisWorld.atShaderID[nCurrentEntity].m_nShaderID);
-			}*/
-		}
+		//if (tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask == (COMPONENT_GRAPHICSMASK | COMPONENT_MESH | COMPONENT_TEXTURE | COMPONENT_SHADERID))
+		//{
+		//	/*if (tThisWorld.atProjectiles[nCurrentEntity].m_tnProjectileMask == (COMPONENT_PROJECTILESMASK | COMPONENT_CLIP))
+		//	{
+		//		if (tCameraMode.bWalkMode == true)
+		//		{
+		//			pcGraphicsSystem->InitPrimalShaderData3(pcGraphicsSystem->m_pd3dDeviceContext, tTempVertexBuffer, tTempPixelBuffer, tThisWorld.atMesh[nCurrentEntity], walkCamera->d3d_Position);
+		//		}
+		//		else if (tCameraMode.bAimMode == true)
+		//		{
+		//			pcGraphicsSystem->InitPrimalShaderData3(pcGraphicsSystem->m_pd3dDeviceContext, tTempVertexBuffer, tTempPixelBuffer, tThisWorld.atMesh[nCurrentEntity], aimCamera->d3d_Position);
+		//		}
+		//		else
+		//		{
+		//			pcGraphicsSystem->InitPrimalShaderData3(pcGraphicsSystem->m_pd3dDeviceContext, tTempVertexBuffer, tTempPixelBuffer, tThisWorld.atMesh[nCurrentEntity], debugCamera->d3d_Position);
+		//		}
+		//		pcGraphicsSystem->ExecutePipeline(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atMesh[nCurrentEntity].m_nIndexCount, tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask, tThisWorld.atShaderID[nCurrentEntity].m_nShaderID);
+		//	}
+		//	else if (tThisWorld.atProjectiles[nCurrentEntity].m_tnProjectileMask == (COMPONENT_PROJECTILESMASK | COMPONENT_METAL | COMPONENT_FRIENDLY) ||
+		//			 tThisWorld.atProjectiles[nCurrentEntity].m_tnProjectileMask == (COMPONENT_PROJECTILESMASK | COMPONENT_METAL | COMPONENT_ENEMY))
+		//	{
+		//		if (tCameraMode.bWalkMode == true)
+		//		{
+		//			pcGraphicsSystem->InitMyShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tMyVertexBufferTemp, tThisWorld.atMesh[nCurrentEntity], walkCamera->d3d_Position);
+		//		}
+		//		else if (tCameraMode.bAimMode == true)
+		//		{
+		//			pcGraphicsSystem->InitMyShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tMyVertexBufferTemp, tThisWorld.atMesh[nCurrentEntity], aimCamera->d3d_Position);
+		//		}
+		//		else
+		//		{
+		//			pcGraphicsSystem->InitMyShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tMyVertexBufferTemp, tThisWorld.atMesh[nCurrentEntity], debugCamera->d3d_Position);
+		//		}
+		//		pcGraphicsSystem->ExecutePipeline(pcGraphicsSystem->m_pd3dDeviceContext, tThisWorld.atMesh[nCurrentEntity].m_nIndexCount, tThisWorld.atGraphicsMask[nCurrentEntity].m_tnGraphicsMask, tThisWorld.atShaderID[nCurrentEntity].m_nShaderID);
+		//	}*/
+		//}
 
 		if (tThisWorld.atWorldMatrix[PlayerStartIndex].worldMatrix.r[3].m128_f32[1] < -30)
 		{

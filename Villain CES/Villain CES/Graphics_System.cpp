@@ -6,7 +6,7 @@ CGraphicsSystem::CGraphicsSystem()
 	m_fCameraXPosition = 0;
 	m_fCameraYPosition = 0.5;
 	m_fCameraZPosition = -10;
-	m_worldAmbience = XMFLOAT4(0.3f, 0.3f, 0.3f, 0);
+	m_CurrentAmbience = 0.5f;
 }
 
 CGraphicsSystem::~CGraphicsSystem()
@@ -944,22 +944,95 @@ void CGraphicsSystem::CreateShaders(ID3D11Device * device)
 #pragma endregion  
 }
 
-//void CGraphicsSystem::SetLights()
-//{
-//	m_worldAmbience = XMFLOAT4(0.3f, 0.3f, 0.3f, 1);
-//	
-//	for (int i = 0; i < MAX_LIGHTS; i++)
-//	{
-//		m_AllLights[i].m_d3dLightColor = XMFLOAT4(1, 0, 0, 0);
-//		m_AllLights[i].m_d3dLightPosition = XMFLOAT4(-4, 4, 10.8f, 1);
-//		m_AllLights[i].enabled = true;
-//		m_AllLights[i].m_lightType = 1;
-//		m_AllLights[i].m_Direction = XMFLOAT4(0, 0, 0, 1);
-//		m_AllLights[i].m_padding = XMFLOAT2(0, 0);
-//	}
-//
-//	
-//}
+void CGraphicsSystem::SetLights()
+{
+	m_worldAmbience = XMFLOAT4(m_CurrentAmbience, m_CurrentAmbience, m_CurrentAmbience, 0);
+
+	//Light 1
+		m_AllLights[0].m_d3dLightColor = XMFLOAT4(1, 1, 1, 1);
+		m_AllLights[0].m_d3dLightPosition = XMFLOAT4(-4, 3, 1.5f, 1);
+		m_AllLights[0].enabled = true;
+		m_AllLights[0].m_lightType = 1;
+		m_AllLights[0].m_Direction = XMFLOAT4(0, -2, -3, 1);
+		m_AllLights[0].m_padding = XMFLOAT2(0, 0);
+		//Light 2
+		m_AllLights[1].m_d3dLightColor = XMFLOAT4(1, 1, 1, 1);
+		m_AllLights[1].m_d3dLightPosition = XMFLOAT4(8, 3, 2.0f, 1);
+		m_AllLights[1].enabled = true;
+		m_AllLights[1].m_lightType = 1;
+		m_AllLights[1].m_Direction = XMFLOAT4(0, -2, -5, 1);
+		m_AllLights[1].m_padding = XMFLOAT2(0, 0);
+
+		//Light 3
+		m_AllLights[2].m_d3dLightColor = XMFLOAT4(1, 1, 1, 1);
+		m_AllLights[2].m_d3dLightPosition = XMFLOAT4(-5.5, 3, -15.0f, 1);
+		m_AllLights[2].enabled = true;
+		m_AllLights[2].m_lightType = 1;
+		m_AllLights[2].m_Direction = XMFLOAT4(0, -2, -3, 1);
+		m_AllLights[2].m_padding = XMFLOAT2(0, 0);
+
+		//Light 4
+		m_AllLights[3].m_d3dLightColor = XMFLOAT4(1, 1, 1, 1);
+		m_AllLights[3].m_d3dLightPosition = XMFLOAT4(-5.5, 3, -30, 1);
+		m_AllLights[3].enabled = true;
+		m_AllLights[3].m_lightType = 1;
+		m_AllLights[3].m_Direction = XMFLOAT4(0, -2, -3, 1);
+		m_AllLights[3].m_padding = XMFLOAT2(0, 0);
+
+		//Light 5
+		m_AllLights[4].m_d3dLightColor = XMFLOAT4(1, 1, 1, 1);
+		m_AllLights[4].m_d3dLightPosition = XMFLOAT4(-4, 3, -54, 1);
+		m_AllLights[4].enabled = true;
+		m_AllLights[4].m_lightType = 1;
+		m_AllLights[4].m_Direction = XMFLOAT4(0, -2, -3, 1);
+		m_AllLights[4].m_padding = XMFLOAT2(0, 0);
+
+		//Light 6
+		m_AllLights[5].m_d3dLightColor = XMFLOAT4(1, 1, 1, 1);
+		m_AllLights[5].m_d3dLightPosition = XMFLOAT4(-6, 3, -72.0f, 1);
+		m_AllLights[5].enabled = true;
+		m_AllLights[5].m_lightType = 1;
+		m_AllLights[5].m_Direction = XMFLOAT4(0, -2, -3, 1);
+		m_AllLights[5].m_padding = XMFLOAT2(0, 0);
+
+		//Light 7
+		m_AllLights[6].m_d3dLightColor = XMFLOAT4(1, 1, 1, 1);
+		m_AllLights[6].m_d3dLightPosition = XMFLOAT4(6, 3, -85.0f, 1);
+		m_AllLights[6].enabled = true;
+		m_AllLights[6].m_lightType = 1;
+		m_AllLights[6].m_Direction = XMFLOAT4(0, -2, -3, 1);
+		m_AllLights[6].m_padding = XMFLOAT2(0, 0);
+        // Light 8
+		m_AllLights[7].m_d3dLightColor = XMFLOAT4(1, 1, 1, 1);
+		m_AllLights[7].m_d3dLightPosition = XMFLOAT4(-12, 3, -85.0f, 1);
+		m_AllLights[7].enabled = true;
+		m_AllLights[7].m_lightType = 1;
+		m_AllLights[7].m_Direction = XMFLOAT4(0, -2, -3, 1);
+		m_AllLights[7].m_padding = XMFLOAT2(0, 0);
+		//Light 9
+		m_AllLights[8].m_d3dLightColor = XMFLOAT4(1, 1, 1, 1);
+		m_AllLights[8].m_d3dLightPosition = XMFLOAT4(-2.5, 3, -100.0f, 1);
+		m_AllLights[8].enabled = true;
+		m_AllLights[8].m_lightType = 1;
+		m_AllLights[8].m_Direction = XMFLOAT4(0, -2, -3, 1);
+		m_AllLights[8].m_padding = XMFLOAT2(0, 0);
+
+		//Light 10
+		m_AllLights[9].m_d3dLightColor = XMFLOAT4(1, 1, 1, 1);
+		m_AllLights[9].m_d3dLightPosition = XMFLOAT4(-12, 3, -120.0f, 1);
+		m_AllLights[9].enabled = true;
+		m_AllLights[9].m_lightType = 1;
+		m_AllLights[9].m_Direction = XMFLOAT4(0, -2, -3, 1);
+		m_AllLights[9].m_padding = XMFLOAT2(0, 0);
+
+		//Light 11 
+		m_AllLights[10].m_d3dLightColor = XMFLOAT4(1, 1, 1, 1);
+		m_AllLights[10].m_d3dLightPosition = XMFLOAT4(6, 3, -120.0f, 1);
+		m_AllLights[10].enabled = true;
+		m_AllLights[10].m_lightType = 1;
+		m_AllLights[10].m_Direction = XMFLOAT4(0, -2, -3, 1);
+		m_AllLights[10].m_padding = XMFLOAT2(0, 0);
+}
 
 TMaterialOptimized CGraphicsSystem::CreateTexturesFromFile(TMaterialImport * arrayOfMaterials, int numberOfEntities)
 {
@@ -2742,10 +2815,10 @@ void CGraphicsSystem::InitQuadShaderData(ID3D11DeviceContext * pd3dDeviceContext
 	pd3dDeviceContext->IASetVertexBuffers(0, 1, &tDebugMesh.m_pd3dVertexBuffer, &tDebugMesh.m_nVertexBufferStride, &tDebugMesh.m_nVertexBufferOffset);
 }
 
-//TLights * CGraphicsSystem::GetLights()
-//{
-//	return m_AllLights;
-//}
+TLights * CGraphicsSystem::GetLights()
+{
+	return m_AllLights;
+}
 
 void CGraphicsSystem::InitLineShaderData(ID3D11DeviceContext * pd3dDeviceContext, XMMATRIX d3dWorldMatrix, XMMATRIX d3dViewMatrix, XMMATRIX d3dProjectionMatrix,  TDebugMesh tDebugMesh, XMMATRIX CameraMatrix, std::vector<TPrimalVert> m_verts, ID3D11ShaderResourceView * ParticleTexture)
 {

@@ -116,7 +116,7 @@ public:
 	struct TLightBufferType
 	{
 		TLightMaterials m_Proprties;
-		TLights m_allLights;
+		TLights m_allLights[MAX_LIGHTS];
 		XMFLOAT4 Ambience;
 		XMFLOAT4 lightEyePos;
 
@@ -236,8 +236,8 @@ private:
 	float				m_fMouseRotationSpeed;
 	float				m_fMouseMovementSpeed;
 	XMFLOAT4 m_worldAmbience;
-	//TLights m_AllLights[MAX_LIGHTS];
-	
+	TLights m_AllLights[MAX_LIGHTS];
+	float m_CurrentAmbience;
 	/* 
 		Helper function that reads the texture filepaths for Jonah's exporter.
 
