@@ -91,6 +91,9 @@ struct EnemyInfo
 	TPhysicsMask atPhysicsMask;
 	TAIMask atAIMask;
 	TAIActive atActiveAI;
+	TLightMaterials atMaterial;
+	TAnimation atAnimation;
+	TAnimationVariant atAnimationVariant;
 };
 
 struct TPrimalVert
@@ -123,6 +126,7 @@ unsigned int createDebugGrid(TWorld * ptWorld);
 unsigned int CreateSkybox(TWorld * ptWorld, ID3D11ShaderResourceView* srv);
 
 unsigned int CreateClayTon(TWorld * ptWorld);
+unsigned int boxCollider(TWorld * ptWorld);
 //Meshed Bullet - ZFB
 unsigned int CreateMaterialBullet(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMeshImport tMesh, TMaterialOptimized tMaterial, XMMATRIX BulletSpawnLocation, int meshIndex, int bulletType);
 unsigned int CreateBullet(TWorld * ptWorld, XMMATRIX bulletSpawnLocation, int MaterialID, int bulletType);
@@ -139,12 +143,14 @@ unsigned int CreateClaytonGun(TWorld* ptWorld, ID3D11Device * m_pd3dDevice, XMMA
 unsigned int CreateCaelisGun(TWorld* ptWorld, ID3D11Device * m_pd3dDevice, XMMATRIX BulletSpawnLocation, int parentWorldMatrixIndex, float xoffset, float yoffset, float zoffset, int clipSize, float shootingCOooldown, TMeshImport tMesh, TMaterialImport tMaterial);
 unsigned int CreateScyllianGun(TWorld* ptWorld, ID3D11Device * m_pd3dDevice, XMMATRIX BulletSpawnLocation, int parentWorldMatrixIndex, float xoffset, float yoffset, float zoffset,int clipSize, float shootingCOooldown, TMeshImport tMesh, TMaterialImport tMaterial);
 unsigned int createMesh(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMeshImport tMesh, TMaterialOptimized tMaterial, int meshIndex);
-unsigned int createMesh(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMeshImport tMesh, TMaterialOptimized tMaterial, int meshIndex, int shaderID);
+unsigned int createMesh(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMeshImport tMesh, TMaterialOptimized tMaterial, TMaterialImport tLightMaterial, int meshIndex, int shaderID);
+
 unsigned int createMesh(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMeshImport tMesh, TMaterialOptimized tMaterial, TMaterialImport tLightMaterial, int meshIndex);
 unsigned int createClayton(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMeshImport tMesh, TMaterialImport tMaterial);
 unsigned int createClaytonAnim(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMeshImport tMesh, TMaterialOptimized tMaterial, TMaterialImport tLightMaterial, TAnimationImport* tAnim, int meshIndex, int animationCount);
 unsigned int CreateScyllian(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMeshImport tMesh, TMaterialImport tMaterial, XMMATRIX SpawnPosition);
 unsigned int CreateScyllian(TWorld * ptWorld, XMMATRIX SpawnPosition, EnemyInfo& enemyToCopyFrom);
+unsigned int CreateScyllianAnim(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMeshImport tMesh, TMaterialOptimized tMaterial, XMMATRIX SpawnPosition, TAnimationImport* tAnim, TMaterialImport tLightMaterials, int meshIndex, int animationCount);
 unsigned int CreateTemptUIBox(TWorld * ptWorld, XMMATRIX SpawnPosition);
 unsigned int CreateSimpleGunAi(TWorld * ptWorld, XMMATRIX SpawnPosition);
 unsigned int CreateSimpleSearchAi(TWorld* ptWorld, XMMATRIX SpawnPosition);
@@ -178,3 +184,5 @@ unsigned int CreateCylinder(TWorld * ptWorld, XMMATRIX SpawnPosition);
 unsigned int CreateCaelis(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TMeshImport tMesh, TMaterialImport tMaterial);
 unsigned int ParticleTest(TWorld * ptWorld, XMMATRIX SpawnPosition,float scaler,bool yellow);
 unsigned int CreatePlayActiveFightingTrigger(TWorld * ptWorld, XMMATRIX SpawnPosition);
+unsigned int CreateTriggerForAiVision(TWorld * ptWorld, XMMATRIX SpawnPosition);
+unsigned int CreateTriggerForAiVisionWithListofEnemeisthatcantsee(TWorld * ptWorld, XMMATRIX SpawnPosition);

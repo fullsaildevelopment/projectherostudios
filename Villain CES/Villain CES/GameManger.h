@@ -119,6 +119,13 @@ private:
 	bool mouseDown = false;
 	bool mouseUp = true;
 	bool click = false;
+	bool forward = false;
+	bool backward = false;
+	bool left = false;
+	bool right = false;
+	bool shooting = false;
+	bool takingDamage = false;
+	bool death = false;
 
 	bool buttonPressed = false;
 
@@ -143,6 +150,7 @@ private:
 
 	int claytonFrustumIndex = -1;
 
+	int outOfAmmoFrames = 0;
 
 #define SAVE_INDEX 96
 #define LOAD_INDEX 97

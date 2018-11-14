@@ -82,10 +82,15 @@ public:
 	bool chooseAnotherShooter = true;
 	float GiveRandomBetweenNegative1and1();
 	float GiveRandomNuberBetweenzeroand1();
-private:
+	void AiStopShooting(TWorld * ptWorld);
+	void AiStopShooting(TWorld * ptWorld,int currentinty);
 
-	int CurrentShooter;
+	vector<int> allAI;
 	vector<int> ShootingActiveAI;
+private:
+	
+	int CurrentShooter;
+
 
 	int numberofAI;
 	struct tiledata 

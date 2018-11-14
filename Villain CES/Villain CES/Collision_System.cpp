@@ -135,15 +135,41 @@ bool CCollisionSystem::AiVisionCheck(frustum_t eyeSight,vector<int>* index)
 	return seesomething;
 }
 
-void CCollisionSystem::TestThreading(TWorld * ptWorld, int nCurrentEntity, CGraphicsSystem* pcGraphicsSystem, CGraphicsSystem::TPrimalVertexBufferType* tTempVertexBuffer, XMMATRIX& tMyVertexBufferWorldMatrix, XMMATRIX* m_d3dPlayerMatrix, CPhysicsSystem* pcPhysicsSystem, CAISystem* pcAiSystem,int PlayerStartIndex, float& playerDamage, float& pirateDamage, float& prevHealth, float& fallingHealth, float& lerpTime, float in_MasterVolume, float in_SFXVolume, float in_MusicVolume, CAudioSystem* pcAudioSystem, XMMATRIX(*doorEventListener)(int, bool), void(*doorEventChanger)(int), float &hitmarkerTime, XMMATRIX* m_d3dClaytonMatrix, XMMATRIX* m_d3dCaelisMatrix, Particle_System * pcParticleSystem,float delta)
+void CCollisionSystem::TestThreading(TWorld * ptWorld, int nCurrentEntity, CGraphicsSystem* pcGraphicsSystem, CGraphicsSystem::TPrimalVertexBufferType* tTempVertexBuffer, XMMATRIX& tMyVertexBufferWorldMatrix, XMMATRIX* m_d3dPlayerMatrix, CPhysicsSystem* pcPhysicsSystem, CAISystem* pcAiSystem, int PlayerStartIndex, float& playerDamage, float& pirateDamage, float& prevHealth, float& fallingHealth, float& lerpTime, float in_MasterVolume, float in_SFXVolume, float in_MusicVolume, CAudioSystem* pcAudioSystem, XMMATRIX(*doorEventListener)(int, bool), void(*doorEventChanger)(int), float &hitmarkerTime, XMMATRIX* m_d3dClaytonMatrix, XMMATRIX* m_d3dCaelisMatrix, Particle_System * pcParticleSystem, float delta, TAnimation* vtAnimation, TAnimationVariant* vtAnimationVariant)
 {
 	ptWorld->atAABB[nCurrentEntity].theeadmade = true;
+	if (ptWorld->atProjectiles[nCurrentEntity].m_tnProjectileMask > 1) {
+
+		ptWorld->atWorldMatrix[nCurrentEntity].worldMatrix = pcPhysicsSystem->ResolveForces(&ptWorld->atRigidBody[nCurrentEntity], ptWorld->atWorldMatrix[nCurrentEntity].worldMatrix, true);
+		
+	}
+	if (ptWorld->atProjectiles[nCurrentEntity].m_tnProjectileMask == (COMPONENT_PROJECTILESMASK | COMPONENT_METAL | COMPONENT_FRIENDLY) ||
+		ptWorld->atProjectiles[nCurrentEntity].m_tnProjectileMask == (COMPONENT_PROJECTILESMASK | COMPONENT_METAL | COMPONENT_ENEMY))
+	{
+		//ADD FORCE TO EVERY BULLET
+		pcPhysicsSystem->AddBulletForce(&ptWorld->atRigidBody[nCurrentEntity], delta * 0.3);
+
+		ptWorld->atClip[nCurrentEntity].lifeTime += delta;
+		ptWorld->atAABB[PlayerStartIndex].disabledabb = false;
+		ptWorld->atAABB[PlayerStartIndex] = updateAABB(ptWorld->atWorldMatrix[PlayerStartIndex].worldMatrix, ptWorld->atAABB[PlayerStartIndex]);
+
+
+	}
 	if (ptWorld->atCollisionMask[nCurrentEntity].m_tnCollisionMask == (COMPONENT_COLLISIONMASK | COMPONENT_TRIGGER | COMPONENT_AABB | COMPONENT_NONSTATIC)
 		|| ptWorld->atCollisionMask[nCurrentEntity].m_tnCollisionMask == (COMPONENT_COLLISIONMASK | COMPONENT_NONTRIGGER | COMPONENT_AABB | COMPONENT_NONSTATIC))
 	{
 		ptWorld->atAABB[nCurrentEntity] = updateAABB(ptWorld->atWorldMatrix[nCurrentEntity].worldMatrix, ptWorld->atAABB[nCurrentEntity]);
+		if (
+			ptWorld->atProjectiles[nCurrentEntity].m_tnProjectileMask == (COMPONENT_PROJECTILESMASK | COMPONENT_METAL | COMPONENT_ENEMY))
+		{
+			ptWorld->atAABB[nCurrentEntity].m_dMaxPoint.z += 0.1;
+			ptWorld->atAABB[nCurrentEntity].m_dMaxPoint.x += 0.1;
+			ptWorld->atAABB[nCurrentEntity].m_dMinPoint.x -= 0.1;
+
+
+		}
 	}
-	
+
 	//ptWorld->atClayton[nCurrentEntity].health = 10;
 //	float x = 0;
 	//Change Door values
@@ -154,8 +180,8 @@ void CCollisionSystem::TestThreading(TWorld * ptWorld, int nCurrentEntity, CGrap
 		{
 			for (int i = 0; i < otherCollisionsIndex.size(); ++i)
 			{
-				if ((ptWorld->atShaderID[otherCollisionsIndex[i]].m_nShaderID %10==0 /*== 20|| ptWorld->atShaderID[otherCollisionsIndex[i]].m_nShaderID == 30|| ptWorld->atShaderID[otherCollisionsIndex[i]].m_nShaderID == 40*/)
-					&& ptWorld->atInputMask[nCurrentEntity].m_tnInputMask >1 
+				if ((ptWorld->atShaderID[otherCollisionsIndex[i]].m_nShaderID % 10 == 0 /*== 20|| ptWorld->atShaderID[otherCollisionsIndex[i]].m_nShaderID == 30|| ptWorld->atShaderID[otherCollisionsIndex[i]].m_nShaderID == 40*/)
+					&& ptWorld->atInputMask[nCurrentEntity].m_tnInputMask > 1
 					)
 				{
 					ptWorld->atAABB[209].disabledabb = true;
@@ -163,22 +189,22 @@ void CCollisionSystem::TestThreading(TWorld * ptWorld, int nCurrentEntity, CGrap
 					replaceAABB(209, ptWorld->atAABB[209]);
 
 
-					for (int doorindex = 0;doorindex< ptWorld->atAABB[otherCollisionsIndex[i]].doorPeices.size(); ++doorindex) {
+					for (int doorindex = 0; doorindex < ptWorld->atAABB[otherCollisionsIndex[i]].doorPeices.size(); ++doorindex) {
 						doorEventChanger(ptWorld->atShaderID[otherCollisionsIndex[i]].m_nShaderID);
 						ptWorld->atWorldMatrix[ptWorld->atAABB[otherCollisionsIndex[i]].doorPeices[doorindex]].worldMatrix = XMMatrixMultiply(doorEventListener(ptWorld->atShaderID[ptWorld->atAABB[otherCollisionsIndex[i]].doorPeices[doorindex]].m_nShaderID, true), ptWorld->atWorldMatrix[ptWorld->atAABB[otherCollisionsIndex[i]].doorPeices[doorindex]].worldMatrix);
 						ptWorld->atAABB[ptWorld->atAABB[otherCollisionsIndex[i]].doorPeices[doorindex]] = updateAABB(ptWorld->atWorldMatrix[ptWorld->atAABB[otherCollisionsIndex[i]].doorPeices[doorindex]].worldMatrix, ptWorld->atAABB[ptWorld->atAABB[otherCollisionsIndex[i]].doorPeices[doorindex]]);
-					
+
 					}
 				}
 				if (ptWorld->atRigidBody[otherCollisionsIndex[i]].ground == true
 					&& ptWorld->atCollisionMask[nCurrentEntity].m_tnCollisionMask == (COMPONENT_COLLISIONMASK | COMPONENT_TRIGGER | COMPONENT_AABB | COMPONENT_NONSTATIC))
 				{
-				//	SHOOTING A WALL OR ANYTHING ELSE
+					//	SHOOTING A WALL OR ANYTHING ELSE
 					if (ptWorld->atProjectiles[nCurrentEntity].m_tnProjectileMask == (COMPONENT_PROJECTILESMASK | COMPONENT_METAL | COMPONENT_FRIENDLY) ||
 						ptWorld->atProjectiles[nCurrentEntity].m_tnProjectileMask == (COMPONENT_PROJECTILESMASK | COMPONENT_METAL | COMPONENT_ENEMY))
 					{
-						pcParticleSystem->CreateAlotofCubes(ptWorld->atWorldMatrix[nCurrentEntity].worldMatrix, ptWorld, 30, pcGraphicsSystem, pcAiSystem, delta,true);
-						cout << otherCollisionsIndex[i] <<" ObjectHitting" <<std::endl;
+						pcParticleSystem->CreateAlotofCubes(ptWorld->atWorldMatrix[nCurrentEntity].worldMatrix, ptWorld, 30, pcGraphicsSystem, pcAiSystem, delta, true);
+						cout << otherCollisionsIndex[i] << " ObjectHitting" << std::endl;
 						RemoveAABBCollider(nCurrentEntity);
 
 						pcGraphicsSystem->CleanD3DObject(ptWorld, nCurrentEntity);
@@ -187,7 +213,7 @@ void CCollisionSystem::TestThreading(TWorld * ptWorld, int nCurrentEntity, CGrap
 					}
 				}
 				if (ptWorld->atRigidBody[otherCollisionsIndex[i]].ground == true
-					&& ptWorld->atCollisionMask[nCurrentEntity].m_tnCollisionMask != (COMPONENT_COLLISIONMASK | COMPONENT_TRIGGER | COMPONENT_AABB | COMPONENT_NONSTATIC)&& ptWorld->atCollisionMask[otherCollisionsIndex[i]].m_tnCollisionMask != (COMPONENT_COLLISIONMASK | COMPONENT_TRIGGER | COMPONENT_AABB | COMPONENT_NONSTATIC))
+					&& ptWorld->atCollisionMask[nCurrentEntity].m_tnCollisionMask != (COMPONENT_COLLISIONMASK | COMPONENT_TRIGGER | COMPONENT_AABB | COMPONENT_NONSTATIC) && ptWorld->atCollisionMask[otherCollisionsIndex[i]].m_tnCollisionMask != (COMPONENT_COLLISIONMASK | COMPONENT_TRIGGER | COMPONENT_AABB | COMPONENT_NONSTATIC))
 				{
 
 
@@ -205,7 +231,7 @@ void CCollisionSystem::TestThreading(TWorld * ptWorld, int nCurrentEntity, CGrap
 				{
 					tTempVertexBuffer->m_d3dWorldMatrix = WalkingThrewObjectCheck(ptWorld->atWorldMatrix[nCurrentEntity].worldMatrix, ptWorld->atAABB[otherCollisionsIndex[i]], ptWorld->atAABB[nCurrentEntity]);
 					ptWorld->atWorldMatrix[nCurrentEntity].worldMatrix = tTempVertexBuffer->m_d3dWorldMatrix;
-					if (ptWorld->atInputMask[nCurrentEntity].m_tnInputMask >1)
+					if (ptWorld->atInputMask[nCurrentEntity].m_tnInputMask > 1)
 					{
 						*m_d3dPlayerMatrix = ptWorld->atWorldMatrix[nCurrentEntity].worldMatrix;
 					}
@@ -229,31 +255,31 @@ void CCollisionSystem::TestThreading(TWorld * ptWorld, int nCurrentEntity, CGrap
 						{
 							if (ptWorld->atAiHeath[otherCollisionsIndex[i]].heath <= 0)
 							{
-								pcAiSystem->SetNumberOfAI(pcAiSystem->GetNumberOfAI() - 1);
-							
-								
-									if (ptWorld->atAIMask[otherCollisionsIndex[i]].GunIndex == pcAiSystem->GetActiveShooter()) {
-										pcAiSystem->chooseAnotherShooter = true;
-										pcAiSystem->SetActiveShooter(0);
-									}
-
-									RemoveAABBCollider(nCurrentEntity);
+								/*pcAiSystem->SetNumberOfAI(pcAiSystem->GetNumberOfAI() - 1);
 
 
+								if (ptWorld->atAIMask[otherCollisionsIndex[i]].GunIndex == pcAiSystem->GetActiveShooter()) {
+									pcAiSystem->chooseAnotherShooter = true;
+									pcAiSystem->SetActiveShooter(0);
+								}
 
-									pcGraphicsSystem->CleanD3DObject(ptWorld, nCurrentEntity);
+								RemoveAABBCollider(nCurrentEntity);
 
 
-								
+
+								pcGraphicsSystem->CleanD3DObject(ptWorld, nCurrentEntity);
+
+
+
 								RemoveAABBCollider(otherCollisionsIndex[i]);
 								pcGraphicsSystem->CleanD3DObject(ptWorld, otherCollisionsIndex[i]);
-								pcGraphicsSystem->CleanD3DObject(ptWorld, ptWorld->atAIMask[otherCollisionsIndex[i]].GunIndex);
+								pcGraphicsSystem->CleanD3DObject(ptWorld, ptWorld->atAIMask[otherCollisionsIndex[i]].GunIndex);*/
 
 							}
 							else
 							{
 
-
+								pcParticleSystem->CreateAlotofCubes(ptWorld->atWorldMatrix[nCurrentEntity].worldMatrix, ptWorld, 30, pcGraphicsSystem, pcAiSystem, delta, false);
 
 								RemoveAABBCollider(nCurrentEntity);
 
@@ -264,7 +290,7 @@ void CCollisionSystem::TestThreading(TWorld * ptWorld, int nCurrentEntity, CGrap
 
 								//pcAiSystem->AddShootingActiveAI(nCurrentEntity);
 								ptWorld->atActiveAI[otherCollisionsIndex[i]].active = true;
-								for (int activate = 0; activate < ptWorld->atActiveAI[otherCollisionsIndex[i]].NoctifyOtherAi.size(); ++activate) 
+								for (int activate = 0; activate < ptWorld->atActiveAI[otherCollisionsIndex[i]].NoctifyOtherAi.size(); ++activate)
 								{
 									if (ptWorld->atAIVision[ptWorld->atActiveAI[otherCollisionsIndex[i]].NoctifyOtherAi[activate]].stopSearching == false)
 									{
@@ -274,10 +300,24 @@ void CCollisionSystem::TestThreading(TWorld * ptWorld, int nCurrentEntity, CGrap
 
 								}
 								ptWorld->atAIVision[otherCollisionsIndex[i]].indexLookingAt = PlayerStartIndex;
+								
 #if MUSIC_ON
+								if (ptWorld->atAnimationVariant[otherCollisionsIndex[i]].tClaytonAnim.animType != 2)
+								{
+									ptWorld->atAnimation[otherCollisionsIndex[i]].tTimer.localTime = 0;
+
+									ptWorld->atAnimationVariant[otherCollisionsIndex[i]].tClaytonAnim.currentFrame = 0;
+									ptWorld->atAnimationVariant[otherCollisionsIndex[i]].tClaytonAnim.nextFrame = 1;
+
+									ptWorld->atAnimationVariant[otherCollisionsIndex[i]].tClaytonAnim.animType = 2;
+
+									ptWorld->atAnimationVariant[otherCollisionsIndex[i]].tClaytonAnim.playingAnimation = true;
+								}
+
 								pcAudioSystem->SendSoundsToEngine(AK::EVENTS::PLAY_HURT_SCYLIAN, pcAudioSystem->m_Scylian_Hurt);
 								pcAudioSystem->SetRTPCVolume(AK::GAME_PARAMETERS::SFX_VOLUME, in_SFXVolume);
 #endif
+								
 
 								if (ptWorld->atAiHeath[otherCollisionsIndex[i]].heath <= 0)
 								{
@@ -287,14 +327,14 @@ void CCollisionSystem::TestThreading(TWorld * ptWorld, int nCurrentEntity, CGrap
 										pcAiSystem->SetActiveShooter(0);
 									}
 									pcAiSystem->SetNumberOfAI(pcAiSystem->GetNumberOfAI() - 1);
-									RemoveAABBCollider(otherCollisionsIndex[i]);
+								//	RemoveAABBCollider(otherCollisionsIndex[i]);
 
-									ptWorld->atAABB[otherCollisionsIndex[i]].m_IndexLocation = -1;
-									ptWorld->atAABB[otherCollisionsIndex[i]].m_dMaxPoint = XMFLOAT3(0, 0, 0);
-									ptWorld->atAABB[otherCollisionsIndex[i]].m_dMaxPointOrginal = XMFLOAT3(0, 0, 0);
-									ptWorld->atAABB[otherCollisionsIndex[i]].m_dMinPoint = XMFLOAT3(0, 0, 0);
-									ptWorld->atAABB[otherCollisionsIndex[i]].m_dMinPointOrginal = XMFLOAT3(0, 0, 0);
-
+									//ptWorld->atAABB[otherCollisionsIndex[i]].m_IndexLocation = -1;
+									//ptWorld->atAABB[otherCollisionsIndex[i]].m_dMaxPoint = XMFLOAT3(0, 0, 0);
+									//ptWorld->atAABB[otherCollisionsIndex[i]].m_dMaxPointOrginal = XMFLOAT3(0, 0, 0);
+									//ptWorld->atAABB[otherCollisionsIndex[i]].m_dMinPoint = XMFLOAT3(0, 0, 0);
+									//ptWorld->atAABB[otherCollisionsIndex[i]].m_dMinPointOrginal = XMFLOAT3(0, 0, 0);
+								//	updateAABB(ptWorld->atWorldMatrix[otherCollisionsIndex[i]].worldMatrix, ptWorld->atAABB[otherCollisionsIndex[i]]);
 									ptWorld->atAiHeath[otherCollisionsIndex[i]].heath = 0;
 									ptWorld->atActiveAI[otherCollisionsIndex[i]].active = false;
 									ptWorld->atAIVision[otherCollisionsIndex[i]].stopSearching = true;
@@ -302,21 +342,32 @@ void CCollisionSystem::TestThreading(TWorld * ptWorld, int nCurrentEntity, CGrap
 									ptWorld->atClip[otherCollisionsIndex[i]].tryToShoot = false;
 									ptWorld->atClip[otherCollisionsIndex[i]].tryToReload = false;
 
-									ptWorld->atWorldMatrix[otherCollisionsIndex[i]].worldMatrix.r[3].m128_f32[1] -= 10;
+									//ptWorld->atWorldMatrix[otherCollisionsIndex[i]].worldMatrix.r[3].m128_f32[1] -= 10;
 
-									//pcGraphicsSystem->CleanD3DObject(ptWorld, otherCollisionsIndex[i]);
-									//pcGraphicsSystem->CleanD3DObject(ptWorld, ptWorld->atAIMask[otherCollisionsIndex[i]].GunIndex);
-									
-									//pcGraphicsSystem->CleanD3DObject(ptWorld, otherCollisionsIndex[i] + 1);
-									//pcGraphicsSystem->CleanD3DObject(ptWorld, otherCollisionsIndex[i] + 2);
+									/*pcGraphicsSystem->CleanD3DObject(ptWorld, otherCollisionsIndex[i]);
+									pcGraphicsSystem->CleanD3DObject(ptWorld, ptWorld->atAIMask[otherCollisionsIndex[i]].GunIndex);*/
+
+								/*	pcGraphicsSystem->CleanD3DObject(ptWorld, otherCollisionsIndex[i] + 1);
+									pcGraphicsSystem->CleanD3DObject(ptWorld, otherCollisionsIndex[i] + 2);*/
 									pcAiSystem->RemoveeShootingActiveAI(otherCollisionsIndex[i]);
 
+									if (ptWorld->atAnimationVariant[otherCollisionsIndex[i]].tClaytonAnim.animType != 3)
+									{
+										ptWorld->atAnimation[otherCollisionsIndex[i]].tTimer.localTime = 0;
+
+										ptWorld->atAnimationVariant[otherCollisionsIndex[i]].tClaytonAnim.currentFrame = 0;
+										ptWorld->atAnimationVariant[otherCollisionsIndex[i]].tClaytonAnim.nextFrame = 1;
+
+										ptWorld->atAnimationVariant[otherCollisionsIndex[i]].tClaytonAnim.animType = 3;
+
+										ptWorld->atAnimationVariant[otherCollisionsIndex[i]].tClaytonAnim.playingAnimation = true;
+									}
 								}
 
 							}
-						//	int cubeindex = pcParticleSystem->CreateCube15(ptWorld->atWorldMatrix[nCurrentEntity].worldMatrix, ptWorld);
-						//	pcGraphicsSystem->CreateEntityBuffer(ptWorld, cubeindex);
-						    pcParticleSystem->CreateAlotofCubes(ptWorld->atWorldMatrix[nCurrentEntity].worldMatrix, ptWorld,30,pcGraphicsSystem,pcAiSystem,delta,false);
+							//	int cubeindex = pcParticleSystem->CreateCube15(ptWorld->atWorldMatrix[nCurrentEntity].worldMatrix, ptWorld);
+							//	pcGraphicsSystem->CreateEntityBuffer(ptWorld, cubeindex);
+							pcParticleSystem->CreateAlotofCubes(ptWorld->atWorldMatrix[nCurrentEntity].worldMatrix, ptWorld, 30, pcGraphicsSystem, pcAiSystem, delta, false);
 
 							cout << "WheremyCube" << std::endl;
 
@@ -325,12 +376,12 @@ void CCollisionSystem::TestThreading(TWorld * ptWorld, int nCurrentEntity, CGrap
 					}
 					else if (ptWorld->atInputMask[otherCollisionsIndex[i]].m_tnInputMask == (COMPONENT_CLAYTON | COMPONENT_INPUTMASK))
 					{
-					//	SHOOTING THE PLAYER ONLY
+						//	SHOOTING THE PLAYER ONLY
 						if (ptWorld->atProjectiles[nCurrentEntity].m_tnProjectileMask == (COMPONENT_PROJECTILESMASK | COMPONENT_METAL | COMPONENT_ENEMY))
 						{
 
 
-							pcParticleSystem->CreateAlotofCubes(ptWorld->atWorldMatrix[nCurrentEntity].worldMatrix, ptWorld, 30, pcGraphicsSystem, pcAiSystem,delta,false);
+							pcParticleSystem->CreateAlotofCubes(ptWorld->atWorldMatrix[nCurrentEntity].worldMatrix, ptWorld, 30, pcGraphicsSystem, pcAiSystem, delta, false);
 
 							RemoveAABBCollider(nCurrentEntity);
 
@@ -367,7 +418,7 @@ void CCollisionSystem::TestThreading(TWorld * ptWorld, int nCurrentEntity, CGrap
 
 
 					}
-					if (ptWorld->atInputMask[nCurrentEntity].m_tnInputMask == (COMPONENT_CLAYTON | COMPONENT_INPUTMASK)) 
+					if (ptWorld->atInputMask[nCurrentEntity].m_tnInputMask == (COMPONENT_CLAYTON | COMPONENT_INPUTMASK))
 					{
 						if (ptWorld->atProjectiles[otherCollisionsIndex[i]].m_tnProjectileMask == (COMPONENT_PROJECTILESMASK | COMPONENT_METAL | COMPONENT_ENEMY))
 						{
@@ -393,19 +444,19 @@ void CCollisionSystem::TestThreading(TWorld * ptWorld, int nCurrentEntity, CGrap
 								InitializeEndScreen(false);*/
 							}
 						}
-					 }
-				//	Wasn't being hit at all so it's been commented.
+					}
+					//	Wasn't being hit at all so it's been commented.
 					if (ptWorld->atProjectiles[nCurrentEntity].m_tnProjectileMask == (COMPONENT_PROJECTILESMASK | COMPONENT_METAL))
 					{
 						if (ptWorld->atClip[nCurrentEntity].gunIndex != -1)
 						{
 
 
-						RemoveAABBCollider(nCurrentEntity);
+							RemoveAABBCollider(nCurrentEntity);
 
 
-						pcGraphicsSystem->CleanD3DObject(ptWorld, ptWorld->atAIMask[nCurrentEntity].GunIndex);
-						pcGraphicsSystem->CleanD3DObject(ptWorld, nCurrentEntity);
+							pcGraphicsSystem->CleanD3DObject(ptWorld, ptWorld->atAIMask[nCurrentEntity].GunIndex);
+							pcGraphicsSystem->CleanD3DObject(ptWorld, nCurrentEntity);
 
 						}
 					}
@@ -419,12 +470,18 @@ void CCollisionSystem::TestThreading(TWorld * ptWorld, int nCurrentEntity, CGrap
 					pcAiSystem->MoveAiToCoverLocation(ptWorld->atCoverTrigger[otherCollisionsIndex[i]], ptWorld, PlayerStartIndex);
 
 				}
+				if (ptWorld->atInputMask[nCurrentEntity].m_tnInputMask == (COMPONENT_CLAYTON | COMPONENT_INPUTMASK) && ptWorld->atAIMask[otherCollisionsIndex[i]].m_tnAIMask == (COMPONENT_AIMASK | COMPONENT_CANTSEEPLAYERTRIGGER)) {
+					pcAiSystem->AiStopShooting(ptWorld);
+				}
+				if (ptWorld->atInputMask[nCurrentEntity].m_tnInputMask == (COMPONENT_CLAYTON | COMPONENT_INPUTMASK) && ptWorld->atAIMask[otherCollisionsIndex[i]].m_tnAIMask == (COMPONENT_AIMASK | COMPONENT_CANTSEEPLAYERTRIGGER | COMPONENT_CANTSEEPLAYERTRIGGERVector)) {
+					pcAiSystem->AiStopShooting(ptWorld, otherCollisionsIndex[i]);
+				}
 			}
-		/*	if (ptWorld->atClayton[PlayerStartIndex].health <= 0)
-			{
-				GameOver = true;
-				InitializeEndScreen(false);
-			}*/
+			/*	if (ptWorld->atClayton[PlayerStartIndex].health <= 0)
+				{
+					GameOver = true;
+					InitializeEndScreen(false);
+				}*/
 
 		}
 	}
@@ -487,7 +544,7 @@ bool CCollisionSystem::classify_aabb_to_aabb(TAABB aabb1, TAABB aabb2)
 	}
 	return (aabb1.m_dMinPoint.x <= aabb2.m_dMaxPoint.x&&aabb1.m_dMaxPoint.x >= aabb2.m_dMinPoint.x) &&
 		(aabb1.m_dMinPoint.y <= aabb2.m_dMaxPoint.y&&aabb1.m_dMaxPoint.y >= aabb2.m_dMinPoint.y) &&
-		(aabb1.m_dMinPoint.z <= aabb2.m_dMaxPoint.z&&aabb1.m_dMaxPoint.z >= aabb2.m_dMinPoint.z);
+		(aabb1.m_dMinPoint.z <= aabb2.m_dMaxPoint.z&&aabb1.m_dMaxPoint.z+2 >= aabb2.m_dMinPoint.z);
 }
 bool CCollisionSystem::IsLineInBox(XMVECTOR startPoint, XMVECTOR endPoint, XMMATRIX worldMatrix, TAABB boxclider, float* distance)
 {
@@ -670,25 +727,27 @@ XMMATRIX CCollisionSystem::WalkingThrewObjectCheck(XMMATRIX worldPos, TAABB othe
 		
 		}
 	}
-	else if (yBottom < xLeft
-		&&yBottom < xRight
-		&&yBottom < yTop
-		&&yBottom < zClose
-		&&yBottom < zFar) 
+	else if (yBottom < xLeft&&
+		yBottom < xRight&&
+		yBottom < yTop
+		&&yBottom < zFar
+		&&yBottom < zClose)
 	{
 		int numberofLoops = 0;
-		while (classify_aabb_to_aabb(otherCollision, UpdateCollision) && numberofLoops<10000)
+		while (classify_aabb_to_aabb(otherCollision, UpdateCollision) && numberofLoops < 10000)
 		{
 			//d3d_ResultMatrix = pcGraphicsSystem->SetDefaultWorldPosition();;
 			XMMATRIX moveback;
 			moveback = D3DMatrix;
-			moveback.r[3].m128_f32[1] += 0.001f;
+			moveback.r[3].m128_f32[1] += 0.01f;
 			D3DMatrix = moveback;
 			UpdateCollision = updateAABB(D3DMatrix, UpdateCollision);
 			numberofLoops += 1;
 
+
 		}
 	}
+	
 	else if (zFar < zClose
 		&&zFar < xLeft
 		&&zFar < xRight
@@ -701,7 +760,7 @@ XMMATRIX CCollisionSystem::WalkingThrewObjectCheck(XMMATRIX worldPos, TAABB othe
 			//d3d_ResultMatrix = pcGraphicsSystem->SetDefaultWorldPosition();;
 			XMMATRIX moveback;
 			moveback = D3DMatrix;
-			moveback.r[3].m128_f32[2] += 1;
+			moveback.r[3].m128_f32[2] += 0.5;
 			D3DMatrix = moveback;
 			UpdateCollision = updateAABB(D3DMatrix, UpdateCollision);
 			numberofLoops += 1;
@@ -719,7 +778,7 @@ XMMATRIX CCollisionSystem::WalkingThrewObjectCheck(XMMATRIX worldPos, TAABB othe
 			//d3d_ResultMatrix = pcGraphicsSystem->SetDefaultWorldPosition();;
 			XMMATRIX moveback;
 			moveback = D3DMatrix;
-			moveback.r[3].m128_f32[2] -= 1;
+			moveback.r[3].m128_f32[2] -= 0.5;
 			D3DMatrix = moveback;
 			UpdateCollision = updateAABB(D3DMatrix, UpdateCollision);
 			numberofLoops += 1;
@@ -748,32 +807,38 @@ bool CCollisionSystem::replaceAABB(int nIndex, TAABB m_AABB2)
 	{
 		float x = 0;
 	}
-	for (list<TAABB>::iterator ptr = m_AAbb.begin(); ptr != m_AAbb.end(); ++ptr) 
+
 	{
-		if (nIndex == ptr->m_IndexLocation)
+		if (m_AAbb.size() > m_AABB2.locationinArray)
 		{
-			for (int i = 0; i < AiFrustumCheck.size(); ++i)
+			std::list<TAABB>::iterator it = m_AAbb.begin();
+			std::advance(it, m_AABB2.locationinArray);
+			// 'it' points to the element at index 'N'
+			if (nIndex == it->m_IndexLocation)
 			{
-				if (nIndex == AiFrustumCheck[i].m_IndexLocation)
-				{
-					AiFrustumCheck[i].m_dMaxPoint = m_AABB2.m_dMaxPoint;
-					AiFrustumCheck[i].m_dMinPoint = m_AABB2.m_dMinPoint;
+				it->m_dMaxPoint = m_AABB2.m_dMaxPoint;
+				/*		ptr->m_dMaxPointOrginal = m_AABB2.m_dMaxPointOrginal;
+						ptr->m_dMinPointOrginal = m_AABB2.m_dMinPointOrginal;*/
 
-				}
+				it->m_dMinPoint = m_AABB2.m_dMinPoint;
+				it->disabledabb = m_AABB2.disabledabb;
+				it->locationinArray = m_AABB2.locationinArray;
+
 			}
-			for (list<TAABB>::iterator ptr = m_AAbb.begin(); ptr != m_AAbb.end(); ++ptr)
+
 			{
-				if (nIndex == ptr->m_IndexLocation) 
+				for (int i = 0; i < AiFrustumCheck.size(); ++i)
 				{
-					ptr->m_dMaxPoint = m_AABB2.m_dMaxPoint;
-			/*		ptr->m_dMaxPointOrginal = m_AABB2.m_dMaxPointOrginal;
-					ptr->m_dMinPointOrginal = m_AABB2.m_dMinPointOrginal;*/
+					if (nIndex == AiFrustumCheck[i].m_IndexLocation)
+					{
+						AiFrustumCheck[i].m_dMaxPoint = m_AABB2.m_dMaxPoint;
+						AiFrustumCheck[i].m_dMinPoint = m_AABB2.m_dMinPoint;
 
-					ptr->m_dMinPoint = m_AABB2.m_dMinPoint;
-					ptr->disabledabb = m_AABB2.disabledabb;
-					return true;
+					}
 				}
+
 			}
+			return true;
 		}
 	}
 
@@ -915,7 +980,7 @@ int CCollisionSystem::AddAABBCollider(TAABB m_AABB2, int nIndex)
 		m_AABB2.m_IndexLocation = nIndex;
 		m_AAbb.push_back(m_AABB2);
 
-		return (int)m_AAbb.size();
+		return (int)m_AAbb.size()-1;
 	}
 	else
 	{

@@ -19,6 +19,7 @@ struct TProjectileMask
 {
 	int m_tnProjectileMask = 0;
 	XMVECTOR Direction;
+	int bulletIndex = -1;
 };
 struct Clips
 {

@@ -22,10 +22,10 @@ struct System_Times
 		return time;
 	}
 
-	float GetLocalTime(XTime &timer, float &time)
+	float GetLocalTime(XTime &timer, float &time, double numToScaleBy = 1)
 	{
 		timer.Signal();
-		time += timer.SmoothDelta();
+		time += timer.SmoothDelta() * numToScaleBy;
 
 		return time;
 	}

@@ -36,6 +36,7 @@ struct TAABB
 	vector<int> doorPeices;
 	float TimeColiderIsDIsabled;
 	bool disabledabb=false;
+	int locationinArray = -1;
 //	thread myThread;
 };
 
