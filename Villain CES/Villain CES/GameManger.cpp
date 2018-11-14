@@ -5,7 +5,7 @@
 #define MAIN_LEVEL_ON true
 #define INPUT_ABSTRACTED_ON true
 
-#define NUMBER_OF_AI 5
+#define NUMBER_OF_AI 6
 //Don't forget to comment out PlaySoundInBank() call in VillCES.cpp if MUSIC_ON is False - ZFB
 CGameMangerSystem::CGameMangerSystem(HWND window, CInputSystem* _pcInputSystem)
 {
@@ -2453,7 +2453,7 @@ void CGameMangerSystem::LoadPathFindingTest()
 	AILocation.r[3].m128_f32[0] += -5;
 	//CreateSimpleGunAi(&tThisWorld, AILocation);
 
-
+	tThisWorld.atCaelis[CaelisIndex].m_tfSpecialCooldown=0;
 
 	AILocation = m_d3dWorldMatrix;
 	AILocation.r[3].m128_f32[0] += -1;
@@ -4824,7 +4824,10 @@ int CGameMangerSystem::MikesGraphicsSandbox()
 
 void CGameMangerSystem::LoadLevelWithMapInIt()
 {
+	pcCollisionSystem->m_AAbb.clear();
+	pcCollisionSystem->AiFrustumCheck.clear();
 	pcAiSystem->CLeanPathPlaning();
+	pcAiSystem->ClearShootingActiveAI();
 	pcGraphicsSystem->CleanD3DLevel(&tThisWorld);
 	//Stops Main Menu Music 
 #if MUSIC_ON
@@ -10214,7 +10217,7 @@ int CGameMangerSystem::ResetLevel()
 					tThisWorld.atAIVision[nCurrentEntity].keepSearching = true;
 					tThisWorld.atAIVision[nCurrentEntity].keepRotatingRight = true;
 					tThisWorld.atAIVision[nCurrentEntity].stopSearching = false;
-
+					tThisWorld.atPathPlanining[nCurrentEntity].InterRuptPathPlanning = true;
 					tThisWorld.atActiveAI[nCurrentEntity].active = false;
 
 					tThisWorld.atRigidBody[nCurrentEntity].gravity.m128_f32[1] = 0;
@@ -10225,11 +10228,15 @@ int CGameMangerSystem::ResetLevel()
 					pcAiSystem->SetCanWeChooseShooter(true);
 					pcAiSystem->ClearShootingActiveAI();
 
+
 					TAABB MyAbb = pcCollisionSystem->createAABBS(tThisWorld.atMesh[nCurrentEntity].m_VertexData, tThisWorld.atAABB[nCurrentEntity]);
 					MyAbb.m_IndexLocation = nCurrentEntity;
+					MyAbb.locationinArray = pcCollisionSystem->AddAABBCollider(MyAbb, nCurrentEntity);
+
+
 					tThisWorld.atAABB[nCurrentEntity] = MyAbb;
-					pcCollisionSystem->AddAABBCollider(MyAbb, nCurrentEntity);
 					tThisWorld.atAABB[nCurrentEntity] = pcCollisionSystem->updateAABB(tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, tThisWorld.atAABB[nCurrentEntity]);
+				//	pcCollisionSystem->AddAABBCollider(MyAbb, nCurrentEntity); orld.atAABB[nCurrentEntity]);
 				}
 			}
 		}

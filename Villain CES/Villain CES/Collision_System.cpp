@@ -322,7 +322,7 @@ void CCollisionSystem::TestThreading(TWorld * ptWorld, int nCurrentEntity, CGrap
 									ptWorld->atAABB[otherCollisionsIndex[i]].m_dMaxPointOrginal = XMFLOAT3(0, 0, 0);
 									ptWorld->atAABB[otherCollisionsIndex[i]].m_dMinPoint = XMFLOAT3(0, 0, 0);
 									ptWorld->atAABB[otherCollisionsIndex[i]].m_dMinPointOrginal = XMFLOAT3(0, 0, 0);
-									updateAABB(ptWorld->atWorldMatrix[otherCollisionsIndex[i]].worldMatrix, ptWorld->atAABB[otherCollisionsIndex[i]]);
+								//	updateAABB(ptWorld->atWorldMatrix[otherCollisionsIndex[i]].worldMatrix, ptWorld->atAABB[otherCollisionsIndex[i]]);
 									ptWorld->atAiHeath[otherCollisionsIndex[i]].heath = 0;
 									ptWorld->atActiveAI[otherCollisionsIndex[i]].active = false;
 									ptWorld->atAIVision[otherCollisionsIndex[i]].stopSearching = true;

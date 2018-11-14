@@ -216,6 +216,10 @@ void destroyEntity(TWorld * ptWorld, unsigned int nThisEntity)
 
 	ptWorld->atActiveAI[nThisEntity].active = false;
 	ptWorld->atActiveAI[nThisEntity].NoctifyOtherAi.clear();
+	ptWorld->atAIVision[nThisEntity].AIToTurnVisionOf.clear();
+	ptWorld->atPathPlanining[nThisEntity].InterRuptPathPlanning = true;
+	ptWorld->atPathPlanining[nThisEntity].DelayMovement = 0;
+	ptWorld->atPathPlanining[nThisEntity].pauseMovement = false;
 	ptWorld->atCoverTrigger[nThisEntity].AItoMove.clear();
 	ptWorld->atCoverTrigger[nThisEntity].coverAiCanGoTo.clear();
 	ptWorld->atCover[nThisEntity].CoverPositions.clear();
