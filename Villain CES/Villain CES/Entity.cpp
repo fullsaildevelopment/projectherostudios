@@ -5343,9 +5343,9 @@ unsigned int createClaytonAnim(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, TM
 	ptWorld->atMesh[nThisEntity].m_d3dIndexData.SysMemSlicePitch = 0;
 
 	ptWorld->atAnimationVariant[nThisEntity].tClaytonAnim.forward = true;
-	ptWorld->atAnimationVariant[nThisEntity].tClaytonAnim.animType = 0;//Walking
-	ptWorld->atAnimationVariant[nThisEntity].tClaytonAnim.currentFrame = 0;//Walking
-	ptWorld->atAnimationVariant[nThisEntity].tClaytonAnim.nextFrame = 1;//Walking
+	ptWorld->atAnimationVariant[nThisEntity].tClaytonAnim.animType = 0; // Idle
+	ptWorld->atAnimationVariant[nThisEntity].tClaytonAnim.currentFrame = 0;
+	ptWorld->atAnimationVariant[nThisEntity].tClaytonAnim.nextFrame = 1;
 
 	ptWorld->atAnimation[nThisEntity].invBindPosesForJoints = tAnim[0].invBindPosesForJoints;
 	ptWorld->atAnimation[nThisEntity].m_tAnim = new TAnimationClip[animationCount];
@@ -5580,6 +5580,9 @@ unsigned int CreateScyllian(TWorld* ptWorld, XMMATRIX SpawnPosition, EnemyInfo& 
 	ptWorld->atPhysicsMask[nThisEntity] = enemyToCopyFrom.atPhysicsMask;
 	ptWorld->atAIMask[nThisEntity] = enemyToCopyFrom.atAIMask;
 
+	ptWorld->atAnimation[nThisEntity] = enemyToCopyFrom.atAnimation;
+	ptWorld->atAnimationVariant[nThisEntity] = enemyToCopyFrom.atAnimationVariant;
+
 	ptWorld->atWorldMatrix[nThisEntity].worldMatrix = SpawnPosition;
 
 	return nThisEntity;
@@ -5672,9 +5675,9 @@ unsigned int CreateScyllianAnim(TWorld * ptWorld, ID3D11Device * m_pd3dDevice, T
 	ptWorld->atMesh[nThisEntity].m_d3dIndexData.SysMemSlicePitch = 0;
 
 	ptWorld->atAnimationVariant[nThisEntity].tClaytonAnim.forward = true;
-	ptWorld->atAnimationVariant[nThisEntity].tClaytonAnim.animType = 0;//Walking
-	ptWorld->atAnimationVariant[nThisEntity].tClaytonAnim.currentFrame = 0;//Walking
-	ptWorld->atAnimationVariant[nThisEntity].tClaytonAnim.nextFrame = 1;//Walking
+	ptWorld->atAnimationVariant[nThisEntity].tClaytonAnim.animType = 0;	// Idle
+	ptWorld->atAnimationVariant[nThisEntity].tClaytonAnim.currentFrame = 0;
+	ptWorld->atAnimationVariant[nThisEntity].tClaytonAnim.nextFrame = 1;
 
 	ptWorld->atAnimation[nThisEntity].invBindPosesForJoints = tAnim[0].invBindPosesForJoints;
 	ptWorld->atAnimation[nThisEntity].m_tAnim = new TAnimationClip[animationCount];

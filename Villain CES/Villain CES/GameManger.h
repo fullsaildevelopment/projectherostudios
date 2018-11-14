@@ -123,6 +123,9 @@ private:
 	bool backward = false;
 	bool left = false;
 	bool right = false;
+	bool shooting = false;
+	bool takingDamage = false;
+	bool death = false;
 
 	bool buttonPressed = false;
 

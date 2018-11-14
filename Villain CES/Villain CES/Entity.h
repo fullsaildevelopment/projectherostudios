@@ -91,6 +91,9 @@ struct EnemyInfo
 	TPhysicsMask atPhysicsMask;
 	TAIMask atAIMask;
 	TAIActive atActiveAI;
+
+	TAnimation atAnimation;
+	TAnimationVariant atAnimationVariant;
 };
 
 struct TPrimalVert
