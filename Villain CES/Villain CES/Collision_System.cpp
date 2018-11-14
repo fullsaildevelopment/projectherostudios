@@ -279,7 +279,7 @@ void CCollisionSystem::TestThreading(TWorld * ptWorld, int nCurrentEntity, CGrap
 							else
 							{
 
-
+								pcParticleSystem->CreateAlotofCubes(ptWorld->atWorldMatrix[nCurrentEntity].worldMatrix, ptWorld, 30, pcGraphicsSystem, pcAiSystem, delta, false);
 
 								RemoveAABBCollider(nCurrentEntity);
 
@@ -317,7 +317,7 @@ void CCollisionSystem::TestThreading(TWorld * ptWorld, int nCurrentEntity, CGrap
 								pcAudioSystem->SendSoundsToEngine(AK::EVENTS::PLAY_HURT_SCYLIAN, pcAudioSystem->m_Scylian_Hurt);
 								pcAudioSystem->SetRTPCVolume(AK::GAME_PARAMETERS::SFX_VOLUME, in_SFXVolume);
 #endif
-								pcParticleSystem->CreateAlotofCubes(ptWorld->atWorldMatrix[nCurrentEntity].worldMatrix, ptWorld, 30, pcGraphicsSystem, pcAiSystem, delta, false);
+								
 
 								if (ptWorld->atAiHeath[otherCollisionsIndex[i]].heath <= 0)
 								{
