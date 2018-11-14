@@ -255,7 +255,7 @@ void CCollisionSystem::TestThreading(TWorld * ptWorld, int nCurrentEntity, CGrap
 						{
 							if (ptWorld->atAiHeath[otherCollisionsIndex[i]].heath <= 0)
 							{
-								pcAiSystem->SetNumberOfAI(pcAiSystem->GetNumberOfAI() - 1);
+								/*pcAiSystem->SetNumberOfAI(pcAiSystem->GetNumberOfAI() - 1);
 
 
 								if (ptWorld->atAIMask[otherCollisionsIndex[i]].GunIndex == pcAiSystem->GetActiveShooter()) {
@@ -273,7 +273,7 @@ void CCollisionSystem::TestThreading(TWorld * ptWorld, int nCurrentEntity, CGrap
 
 								RemoveAABBCollider(otherCollisionsIndex[i]);
 								pcGraphicsSystem->CleanD3DObject(ptWorld, otherCollisionsIndex[i]);
-								pcGraphicsSystem->CleanD3DObject(ptWorld, ptWorld->atAIMask[otherCollisionsIndex[i]].GunIndex);
+								pcGraphicsSystem->CleanD3DObject(ptWorld, ptWorld->atAIMask[otherCollisionsIndex[i]].GunIndex);*/
 
 							}
 							else
@@ -300,6 +300,7 @@ void CCollisionSystem::TestThreading(TWorld * ptWorld, int nCurrentEntity, CGrap
 
 								}
 								ptWorld->atAIVision[otherCollisionsIndex[i]].indexLookingAt = PlayerStartIndex;
+								
 #if MUSIC_ON
 								if (ptWorld->atAnimationVariant[otherCollisionsIndex[i]].tClaytonAnim.animType != 2)
 								{

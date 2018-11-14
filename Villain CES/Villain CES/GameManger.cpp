@@ -5,7 +5,7 @@
 #define MAIN_LEVEL_ON true
 #define INPUT_ABSTRACTED_ON true
 
-#define NUMBER_OF_AI 6
+#define NUMBER_OF_AI 5
 //Don't forget to comment out PlaySoundInBank() call in VillCES.cpp if MUSIC_ON is False - ZFB
 CGameMangerSystem::CGameMangerSystem(HWND window, CInputSystem* _pcInputSystem)
 {
@@ -8764,7 +8764,7 @@ int CGameMangerSystem::RealLevelUpdate()
 					tThisWorld.atAABB[nCurrentEntity] = pcCollisionSystem->updateAABB(tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, tThisWorld.atAABB[nCurrentEntity]);
 				}
 			}
-			if (pcCollisionSystem->aabb_to_frustum(tThisWorld.atAABB[nCurrentEntity], tThisWorld.atClaytonVision.eyes0) || nCurrentEntity == 33)
+			//if (pcCollisionSystem->aabb_to_frustum(tThisWorld.atAABB[nCurrentEntity], tThisWorld.atClaytonVision.eyes0) || nCurrentEntity == 33)
 			{
 				if (tThisWorld.atAIMask[nCurrentEntity].m_tnAIMask != (COMPONENT_AIMASK))
 				{
@@ -8800,7 +8800,7 @@ int CGameMangerSystem::RealLevelUpdate()
 							tThisWorld.atAnimationVariant[nCurrentEntity].tClaytonAnim.animType = 0;
 
 							tThisWorld.atAnimationVariant[nCurrentEntity].tClaytonAnim.playingAnimation = false;
-
+							pcCollisionSystem->RemoveAABBCollider(nCurrentEntity);
 							tThisWorld.atAABB[nCurrentEntity].m_IndexLocation = -1;
 							tThisWorld.atAABB[nCurrentEntity].m_dMaxPoint = XMFLOAT3(0, 0, 0);
 							tThisWorld.atAABB[nCurrentEntity].m_dMaxPointOrginal = XMFLOAT3(0, 0, 0);
@@ -8815,6 +8815,7 @@ int CGameMangerSystem::RealLevelUpdate()
 							tThisWorld.atClip[nCurrentEntity].tryToReload = false;
 
 							tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix.r[3].m128_f32[1] -= 10;
+							
 						}
 						else
 						{
@@ -10456,13 +10457,13 @@ int CGameMangerSystem::ResetLevel()
 
 					tThisWorld.atAIMask[nCurrentEntity].m_tnAIMask = (COMPONENT_AIMASK | COMPONENT_SEARCH | COMPONENT_PATHFINDTEST);
 
-					tThisWorld.atAIVision[nCurrentEntity].keepSearching = true;
+					tThisWorld.atAIVision[nCurrentEntity].keepSearching = false;
 					tThisWorld.atAIVision[nCurrentEntity].keepRotatingRight = true;
 					tThisWorld.atAIVision[nCurrentEntity].stopSearching = false;
 					tThisWorld.atPathPlanining[nCurrentEntity].InterRuptPathPlanning = true;
 					tThisWorld.atActiveAI[nCurrentEntity].active = false;
 
-					tThisWorld.atRigidBody[nCurrentEntity].gravity.m128_f32[1] = 0;
+				//	tThisWorld.atRigidBody[nCurrentEntity].gravity.m128_f32[1] = 0;
 					tThisWorld.atRigidBody[nCurrentEntity].velocity = XMVectorSet(0, 0, 0, 0);
 
 					tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = tThisWorld.atOffSetMatrix[nCurrentEntity];
@@ -10470,13 +10471,16 @@ int CGameMangerSystem::ResetLevel()
 					pcAiSystem->SetCanWeChooseShooter(true);
 					pcAiSystem->ClearShootingActiveAI();
 
-
+					pcCollisionSystem->RemoveAABBCollider(nCurrentEntity);
 					TAABB MyAbb = pcCollisionSystem->createAABBS(tThisWorld.atMesh[nCurrentEntity].m_VertexData, tThisWorld.atAABB[nCurrentEntity]);
 					MyAbb.m_IndexLocation = nCurrentEntity;
 					MyAbb.locationinArray = pcCollisionSystem->AddAABBCollider(MyAbb, nCurrentEntity);
+				
 
 
-					tThisWorld.atAABB[nCurrentEntity] = MyAbb;
+						tThisWorld.atAABB[nCurrentEntity] = MyAbb;
+						
+					
 					tThisWorld.atAABB[nCurrentEntity] = pcCollisionSystem->updateAABB(tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, tThisWorld.atAABB[nCurrentEntity]);
 				//	pcCollisionSystem->AddAABBCollider(MyAbb, nCurrentEntity); orld.atAABB[nCurrentEntity]);
 				}
@@ -10489,9 +10493,9 @@ int CGameMangerSystem::ResetLevel()
 				|| tThisWorld.atAIMask[nCurrentEntity].m_tnAIMask == (COMPONENT_AIMASK | COMPONENT_SPOTEDPLAYER)
 				|| tThisWorld.atAIMask[nCurrentEntity].m_tnAIMask == (COMPONENT_AIMASK | COMPONENT_SEARCH | COMPONENT_PATHFINDTEST))
 			{
-				if (tThisWorld.atAIVision[nCurrentEntity].keepSearching == false)
+			//	if (tThisWorld.atAIVision[nCurrentEntity].keepSearching == false)
 				{
-					tThisWorld.atAIVision[nCurrentEntity].keepSearching = true;
+					tThisWorld.atAIVision[nCurrentEntity].keepSearching = false;
 				}
 
 				if (tThisWorld.atAIVision[nCurrentEntity].keepSearching == true)
@@ -10551,11 +10555,11 @@ int CGameMangerSystem::ResetLevel()
 				{
 					tThisWorld.atActiveAI[nCurrentEntity].active = false;
 
-					if (tThisWorld.atPathPlanining[nCurrentEntity].testingPathFinding == true)
+				//	if (tThisWorld.atPathPlanining[nCurrentEntity].testingPathFinding == true)
 					{
-						tThisWorld.atPathPlanining[nCurrentEntity].testingPathFinding = false;
+						tThisWorld.atPathPlanining[nCurrentEntity].testingPathFinding = true;
 					}
-					else
+					//else
 					{
 						if (tThisWorld.atPathPlanining[nCurrentEntity].DelayMovement <= 0)
 						{
@@ -10564,14 +10568,14 @@ int CGameMangerSystem::ResetLevel()
 					}
 				}
 
-				if (tThisWorld.atAABB[nCurrentEntity].m_IndexLocation == -1)
+			/*	if (tThisWorld.atAABB[nCurrentEntity].m_IndexLocation == -1)
 				{
 					tThisWorld.atAABB[nCurrentEntity] = pcCollisionSystem->createAABBS(tThisWorld.atMesh[nCurrentEntity].m_VertexData, tThisWorld.atAABB[nCurrentEntity]);
 					tThisWorld.atAABB[nCurrentEntity].m_IndexLocation = nCurrentEntity;
 
 					pcCollisionSystem->AddAABBCollider(tThisWorld.atAABB[nCurrentEntity], nCurrentEntity);
 					pcGraphicsSystem->CreateEntityBuffer(&tThisWorld, nCurrentEntity);
-				}
+				}*/
 			}
 		}
 
