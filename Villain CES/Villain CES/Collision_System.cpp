@@ -147,7 +147,7 @@ void CCollisionSystem::TestThreading(TWorld * ptWorld, int nCurrentEntity, CGrap
 		ptWorld->atProjectiles[nCurrentEntity].m_tnProjectileMask == (COMPONENT_PROJECTILESMASK | COMPONENT_METAL | COMPONENT_ENEMY))
 	{
 		//ADD FORCE TO EVERY BULLET
-		pcPhysicsSystem->AddBulletForce(&ptWorld->atRigidBody[nCurrentEntity], delta * 0.3);
+		pcPhysicsSystem->AddBulletForce(&ptWorld->atRigidBody[nCurrentEntity], delta * 1.5);
 
 		ptWorld->atClip[nCurrentEntity].lifeTime += delta;
 		ptWorld->atAABB[PlayerStartIndex].disabledabb = false;

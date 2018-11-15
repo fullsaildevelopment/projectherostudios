@@ -2410,6 +2410,19 @@ void CGameMangerSystem::InitializeHUD()
 	}
 
 	{
+		wchar_t filePath[] =
+		{ L"UI_Textures.fbm/HeartIcon.png" };
+
+		nThisEntity = createEntityReverse(&tThisWorld);
+		CreateUILabel(&tThisWorld, menuCamera->d3d_Position, .5, 1, -8.8, -8, &atUIVertices, nThisEntity, .1);
+		pcUISystem->AddTextureToUI(&tThisWorld, nThisEntity, pcGraphicsSystem->m_pd3dDevice, filePath);
+
+		pcUISystem->AddMaskToUI(&tThisWorld, nThisEntity, COMPONENT_HUD);
+
+		tThisWorld.atLabel[nThisEntity].color = XMFLOAT4(0, 0, 0, 0);
+	}
+
+	{
 		char valueToChange[] =
 		{ "CaelisAbilityCooldown" };
 
@@ -2418,6 +2431,27 @@ void CGameMangerSystem::InitializeHUD()
 		pcUISystem->AddBarToUI(&cApplicationWindow, &tThisWorld, nThisEntity, &XMFLOAT4(0, 0, 1, 1), valueToChange, ARRAYSIZE(valueToChange));
 
 		pcUISystem->AddMaskToUI(&tThisWorld, nThisEntity, COMPONENT_HUD);
+	}
+
+	{
+		nThisEntity = createEntityReverse(&tThisWorld);
+		CreateUILabel(&tThisWorld, menuCamera->d3d_Position, 3, 1, -7, -9.1, &atUIVertices, nThisEntity, .15);
+		pcUISystem->AddBarToUI(&cApplicationWindow, &tThisWorld, nThisEntity, &XMFLOAT4(0, 0, 0, 1), nullptr);
+
+		pcUISystem->AddMaskToUI(&tThisWorld, nThisEntity, COMPONENT_HUD);
+	}
+
+	{
+		wchar_t filePath[] =
+		{ L"UI_Textures.fbm/HealthIcon.png" };
+
+		nThisEntity = createEntityReverse(&tThisWorld);
+		CreateUILabel(&tThisWorld, menuCamera->d3d_Position, .5, 1, -8.8, -9.1, &atUIVertices, nThisEntity, .1);
+		pcUISystem->AddTextureToUI(&tThisWorld, nThisEntity, pcGraphicsSystem->m_pd3dDevice, filePath);
+
+		pcUISystem->AddMaskToUI(&tThisWorld, nThisEntity, COMPONENT_HUD);
+
+		tThisWorld.atLabel[nThisEntity].color = XMFLOAT4(0, 0, 0, 0);
 	}
 
 #if FPS
@@ -5126,7 +5160,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 
 	for (int meshIndex = 0; meshIndex < gunImport.meshCount; ++meshIndex)
 	{
-		GunIndexForClayton = CreateClaytonGun(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, tThisWorld.atWorldMatrix[ClaytonIndex].worldMatrix, ClaytonIndex, -.7, 1, 10.4, 8, 100, gunImport.vtMeshes[meshIndex], gunImport.vtMaterials[meshIndex]);
+		GunIndexForClayton = CreateClaytonGun(&tThisWorld, pcGraphicsSystem->m_pd3dDevice, tThisWorld.atWorldMatrix[ClaytonIndex].worldMatrix, ClaytonIndex, .2, 1.35, .9, 8, 100, gunImport.vtMeshes[meshIndex], gunImport.vtMaterials[meshIndex]);
 	}
 	GunIndexForPlayer = GunIndexForClayton;
 
@@ -7990,6 +8024,24 @@ int CGameMangerSystem::RealLevelUpdate()
 	{
 		tThisWorld.atClayton[ClaytonIndex].health = 0;
 	}
+	if (pcInputSystem->InputCheck(G_KEY_UP))
+	{
+		++testnumber;
+		buttonpressed = true;
+	}
+	else
+	{
+		buttonpressed = false;
+	}
+	if (pcInputSystem->InputCheck(G_KEY_DOWN))
+	{
+		--testnumber;
+		buttonpressed = true;
+	}
+	else
+	{
+		buttonpressed = false;
+	}
 
 #if MUSIC_ON
 	pcAudioSystem->SetRTPCVolume(AK::GAME_PARAMETERS::MUSIC_VOLUME, pcAudioSystem->m_fMusicVolume);
@@ -8583,6 +8635,8 @@ int CGameMangerSystem::RealLevelUpdate()
 						memcpy(&tAnimVertexBuffer.m_d3dJointsForVS[i], &tweenJoints[i], sizeof(tweenJoints[i]));
 					}
 
+					//memcpy(&tThisWorld.atOffSetMatrix[GunIndexForClayton], &tweenJoints[testnumber], sizeof(XMMATRIX));
+
 					if (tCameraMode.bAimMode == true)
 					{
 						pcGraphicsSystem->InitAnimShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tAnimVertexBuffer, tThisWorld.atMesh[nCurrentEntity], aimCamera->d3d_Position);
@@ -8773,6 +8827,8 @@ int CGameMangerSystem::RealLevelUpdate()
 					{
 						memcpy(&tAnimVertexBuffer.m_d3dJointsForVS[i], &tweenJoints[i], sizeof(tweenJoints[i]));
 					}
+
+					memcpy(&tThisWorld.atOffSetMatrix[tThisWorld.atAIMask[nCurrentEntity].GunIndex], &tweenJoints[50], sizeof(XMMATRIX));
 
 					if (tCameraMode.bAimMode == true)
 					{
@@ -9659,30 +9715,54 @@ int CGameMangerSystem::RealLevelUpdate()
 
 		if (tThisWorld.atParentWorldMatrix[nCurrentEntity] != -1)
 		{
-			if (nCurrentEntity != GunIndexForPlayer)
+			if (nCurrentEntity != GunIndexForPlayer && nCurrentEntity != 914)
 			{
-				tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = XMMatrixMultiply(pcGraphicsSystem->SetDefaultWorldPosition(),
+				tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = XMMatrixMultiply(XMMatrixIdentity(),
 					tThisWorld.atWorldMatrix[tThisWorld.atParentWorldMatrix[nCurrentEntity]].worldMatrix);
 
 				//tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = XMMatrixMultiply(pcGraphicsSystem->SetDefaultWorldPosition(),
 				//	tThisWorld.atAnimation->m_tAnim[tThisWorld.atAnimationVariant[nCurrentEntity].tClaytonAnim.animType].m_vtKeyFrames[tThisWorld.atAnimationVariant[nCurrentEntity].tClaytonAnim.currentFrame].m_vd3dJointMatrices[50]);
+				//tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = XMMatrixMultiply(tThisWorld.atOffSetMatrix[nCurrentEntity], tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix);
 			}
-			else {
+			else if (nCurrentEntity == 914)
+			{
+				tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = XMMatrixMultiply(pcGraphicsSystem->SetDefaultWorldPosition(),
+					tThisWorld.atWorldMatrix[tThisWorld.atParentWorldMatrix[nCurrentEntity]].worldMatrix);
+
+				//tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = XMMatrixMultiply(tThisWorld.atOffSetMatrix[nCurrentEntity], tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix);
+			}
+			else
+			{
 				XMMATRIX CamandPlayer;
 				CamandPlayer.r[0] = aimCamera->d3d_Position.r[0];
 				CamandPlayer.r[1] = aimCamera->d3d_Position.r[1];
 				CamandPlayer.r[2] = aimCamera->d3d_Position.r[2];
 
 				CamandPlayer.r[3] = tThisWorld.atWorldMatrix[tThisWorld.atParentWorldMatrix[nCurrentEntity]].worldMatrix.r[3];
-				tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = XMMatrixMultiply(pcGraphicsSystem->SetDefaultWorldPosition(),
+				tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = XMMatrixMultiply(XMMatrixIdentity(),
 					CamandPlayer);
+
+				//tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = XMMatrixMultiply(XMMatrixIdentity(), tThisWorld.atWorldMatrix[tThisWorld.atParentWorldMatrix[nCurrentEntity]].worldMatrix);
+
+				//tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = XMMatrixMultiply(XMMatrixIdentity(),
+				//	tThisWorld.atWorldMatrix[tThisWorld.atParentWorldMatrix[nCurrentEntity]].worldMatrix);
+				/*tThisWorld.atOffSetMatrix[nCurrentEntity].r[3].m128_f32[0] *= .01;
+				tThisWorld.atOffSetMatrix[nCurrentEntity].r[3].m128_f32[1] *= .01;
+				tThisWorld.atOffSetMatrix[nCurrentEntity].r[3].m128_f32[2] *= .01;
+				tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = XMMatrixMultiply(tThisWorld.atOffSetMatrix[nCurrentEntity], tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix);*/
+
+				/*tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = XMMatrixMultiply(XMMatrixRotationX(XMConvertToRadians(40)), tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix);
+				tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = XMMatrixMultiply(XMMatrixRotationY(XMConvertToRadians(65)), tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix);
+
+				tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = XMMatrixMultiply(XMMatrixTranslation(1, 0, 0), tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix);*/
 			}
 
 			tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = XMMatrixMultiply(tThisWorld.atOffSetMatrix[nCurrentEntity], tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix);
 
 			if (nCurrentEntity == GunIndexForClayton)
 			{
-				tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = XMMatrixMultiply(XMMatrixRotationY(XMConvertToRadians(90)), tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix);
+				tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = XMMatrixMultiply(XMMatrixRotationY(XMConvertToRadians(89.4)), tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix);
+				tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = XMMatrixMultiply(XMMatrixRotationZ(XMConvertToRadians(1.2)), tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix);
 
 				//tThisWorld.atOffSetMatrix[nCurrentEntity] =
 
@@ -9699,7 +9779,19 @@ int CGameMangerSystem::RealLevelUpdate()
 #endif
 			else
 			{
+				pcAiSystem->FollowObject(tThisWorld.atWorldMatrix[ClaytonIndex].worldMatrix, &tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix);
+
 				tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = XMMatrixMultiply(XMMatrixRotationY(XMConvertToRadians(-90)), tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix);
+
+				float distanceToPlayer = pcAiSystem->CalculateDistanceMatrix(tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, tThisWorld.atWorldMatrix[ClaytonIndex].worldMatrix);
+				if (distanceToPlayer > 10)
+				{
+					tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = XMMatrixMultiply(XMMatrixRotationZ(XMConvertToRadians(2.5)), tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix);
+				}
+				else
+				{
+					tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix = XMMatrixMultiply(XMMatrixRotationZ(XMConvertToRadians(8 - distanceToPlayer / 2)), tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix);
+				}
 
 				tThisWorld.atAABB[nCurrentEntity] = pcCollisionSystem->updateAABB(tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, tThisWorld.atAABB[nCurrentEntity]);
 			}

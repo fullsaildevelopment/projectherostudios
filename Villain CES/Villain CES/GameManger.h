@@ -152,6 +152,9 @@ private:
 
 	int outOfAmmoFrames = 0;
 
+	int testnumber = 26;
+	bool buttonpressed = false;
+
 #define SAVE_INDEX 96
 #define LOAD_INDEX 97
 #define OPTIONS_INDEX 98
