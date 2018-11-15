@@ -113,8 +113,7 @@ public:
 	AkGameObjectID m_Story3;
 	AkGameObjectID m_Story4;
 	AkGameObjectID m_FeedBack;
-	AkGameObjectID m_FeedBack2;
-	AkGameObjectID m_FeedBack3;
+	
 
 	
 	float m_fMasterVolume;

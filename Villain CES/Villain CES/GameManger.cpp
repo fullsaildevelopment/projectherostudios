@@ -322,7 +322,7 @@ int CGameMangerSystem::LoadMainMenu()
 				
 					pcUISystem->CheckOptionsBars(&tThisWorld, pcInputSystem, nCurrentEntity, pcAudioSystem->m_fMasterVolume, pcAudioSystem->m_fMusicVolume, pcAudioSystem->m_fSFXVolume, masterIndex, musicIndex, fxIndex);
 #if MUSIC_ON
-					if (pcInputSystem->InputCheck(G_BUTTON_LEFT) == 0 && mouseDown && fxIndex == nCurrentEntity)
+					if (click == true && fxIndex == nCurrentEntity)
 					{
 						pcAudioSystem->SendSoundsToEngine(AK::EVENTS::PLAY_S_FEEDBACK, pcAudioSystem->m_FeedBack);
 						pcAudioSystem->SetRTPCVolume(AK::GAME_PARAMETERS::SFX_VOLUME, pcAudioSystem->m_fSFXVolume);
@@ -10124,7 +10124,7 @@ int CGameMangerSystem::RealLevelUpdate()
 
 						pcUISystem->CheckOptionsBars(&tThisWorld, pcInputSystem, nCurrentEntity, pcAudioSystem->m_fMasterVolume, pcAudioSystem->m_fMusicVolume, pcAudioSystem->m_fSFXVolume, masterIndex, musicIndex, fxIndex);
 #if MUSIC_ON
-						if (pcInputSystem->InputCheck(G_BUTTON_LEFT) == 0 && mouseDown && fxIndex == nCurrentEntity)
+						if ( click == true && fxIndex == nCurrentEntity)
 						{
 							pcAudioSystem->SendSoundsToEngine(AK::EVENTS::PLAY_S_FEEDBACK, pcAudioSystem->m_FeedBack);
 							pcAudioSystem->SetRTPCVolume(AK::GAME_PARAMETERS::SFX_VOLUME, pcAudioSystem->m_fSFXVolume);
