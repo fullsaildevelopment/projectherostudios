@@ -6,7 +6,7 @@ CGraphicsSystem::CGraphicsSystem()
 	m_fCameraXPosition = 0;
 	m_fCameraYPosition = 0.5;
 	m_fCameraZPosition = -10;
-	m_CurrentAmbience = 0.5f;
+	m_CurrentAmbience = 0.45f;
 }
 
 CGraphicsSystem::~CGraphicsSystem()
@@ -1159,6 +1159,11 @@ void CGraphicsSystem::SetLights()
 		m_AllLights[10].m_lightType = 1;
 		m_AllLights[10].m_Direction = XMFLOAT4(0, -2, -3, 1);
 		m_AllLights[10].m_padding = XMFLOAT2(0, 0);
+}
+
+void CGraphicsSystem::UpdateAmbience(float currentAmbience)
+{
+	m_worldAmbience = XMFLOAT4(currentAmbience, currentAmbience, currentAmbience, 0);
 }
 
 TMaterialOptimized CGraphicsSystem::CreateTexturesFromFile(TMaterialImport * arrayOfMaterials, int numberOfEntities)

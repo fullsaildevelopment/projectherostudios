@@ -147,7 +147,7 @@ void CCollisionSystem::TestThreading(TWorld * ptWorld, int nCurrentEntity, CGrap
 		ptWorld->atProjectiles[nCurrentEntity].m_tnProjectileMask == (COMPONENT_PROJECTILESMASK | COMPONENT_METAL | COMPONENT_ENEMY))
 	{
 		//ADD FORCE TO EVERY BULLET
-		pcPhysicsSystem->AddBulletForce(&ptWorld->atRigidBody[nCurrentEntity], delta * 1.5);
+		pcPhysicsSystem->AddBulletForce(&ptWorld->atRigidBody[nCurrentEntity], delta * 1.2);
 
 		ptWorld->atClip[nCurrentEntity].lifeTime += delta;
 		ptWorld->atAABB[PlayerStartIndex].disabledabb = false;
@@ -255,6 +255,7 @@ void CCollisionSystem::TestThreading(TWorld * ptWorld, int nCurrentEntity, CGrap
 						{
 							if (ptWorld->atAiHeath[otherCollisionsIndex[i]].heath <= 0)
 							{
+								ptWorld->atAIVision[otherCollisionsIndex[i]].stopSearching = true;
 								/*pcAiSystem->SetNumberOfAI(pcAiSystem->GetNumberOfAI() - 1);
 
 
@@ -338,6 +339,8 @@ void CCollisionSystem::TestThreading(TWorld * ptWorld, int nCurrentEntity, CGrap
 									ptWorld->atAiHeath[otherCollisionsIndex[i]].heath = 0;
 									ptWorld->atActiveAI[otherCollisionsIndex[i]].active = false;
 									ptWorld->atAIVision[otherCollisionsIndex[i]].stopSearching = true;
+									ptWorld->atAIVision[otherCollisionsIndex[i]].keepSearching = false;
+									ptWorld->atAIVision[otherCollisionsIndex[i]].keepRotatingRight = false;
 
 									ptWorld->atClip[otherCollisionsIndex[i]].tryToShoot = false;
 									ptWorld->atClip[otherCollisionsIndex[i]].tryToReload = false;
@@ -467,8 +470,10 @@ void CCollisionSystem::TestThreading(TWorld * ptWorld, int nCurrentEntity, CGrap
 				}
 				if (ptWorld->atInputMask[nCurrentEntity].m_tnInputMask == (COMPONENT_CLAYTON | COMPONENT_INPUTMASK) && ptWorld->atAIMask[otherCollisionsIndex[i]].m_tnAIMask == (COMPONENT_AIMASK | COMPONENT_COVERTRIGGER))
 				{
-					pcAiSystem->MoveAiToCoverLocation(ptWorld->atCoverTrigger[otherCollisionsIndex[i]], ptWorld, PlayerStartIndex);
-
+					if (ptWorld->atAIVision[otherCollisionsIndex[i]].stopSearching == false && ptWorld->atActiveAI[otherCollisionsIndex[i]].active == true)
+					{
+						pcAiSystem->MoveAiToCoverLocation(ptWorld->atCoverTrigger[otherCollisionsIndex[i]], ptWorld, PlayerStartIndex);
+					}
 				}
 				if (ptWorld->atInputMask[nCurrentEntity].m_tnInputMask == (COMPONENT_CLAYTON | COMPONENT_INPUTMASK) && ptWorld->atAIMask[otherCollisionsIndex[i]].m_tnAIMask == (COMPONENT_AIMASK | COMPONENT_CANTSEEPLAYERTRIGGER)) {
 					pcAiSystem->AiStopShooting(ptWorld);

@@ -311,7 +311,7 @@ bool CUISystem::CheckIfStringsAreTheSame(char* string1, int& textSize1, const ch
 	}
 }
 
-void CUISystem::CheckOptionsBars(TWorld* tThisWorld, CInputSystem* pcInputSystem, int& nThisEntity, float& m_fMasterVolume/*, float& m_fDialogueVolume*/, float& m_fMusicVolume, float& m_fSFXVolume, int& masterIndex/*, int& dialogueIndex*/, int& musicIndex, int& fxIndex)
+void CUISystem::CheckOptionsBars(TWorld* tThisWorld, CGraphicsSystem* pcGraphicsSystem, CInputSystem* pcInputSystem, int& nThisEntity, float& m_fMasterVolume, float& m_fMusicVolume, float& m_fSFXVolume, int& masterIndex, int& musicIndex, int& fxIndex, float& currentAmbience, int& brightnessIndex)
 {
 	if (this->CheckIfStringsAreTheSame(tThisWorld->atBar[nThisEntity].valueToChange, tThisWorld->atBar[nThisEntity].valueToChangeSize, "Sensitivity"))
 	{
@@ -359,16 +359,12 @@ void CUISystem::CheckOptionsBars(TWorld* tThisWorld, CInputSystem* pcInputSystem
 			tThisWorld->atBar[fxIndex].ratio = m_fMasterVolume * .01;
 		}
 	}
-	/*else if (this->CheckIfStringsAreTheSame(tThisWorld->atBar[nThisEntity].valueToChange, tThisWorld->atBar[nThisEntity].valueToChangeSize, "Dialogue Volume"))
+	else if (this->CheckIfStringsAreTheSame(tThisWorld->atBar[nThisEntity].valueToChange, tThisWorld->atBar[nThisEntity].valueToChangeSize, "Brightness"))
 	{
-		m_fDialogueVolume = tThisWorld->atBar[nThisEntity].ratio * 100;
+		currentAmbience = (.6 - .3) * tThisWorld->atBar[nThisEntity].ratio + .3;
 
-		if (m_fDialogueVolume > m_fMasterVolume)
-		{
-			m_fDialogueVolume = m_fMasterVolume;
-			tThisWorld->atBar[dialogueIndex].ratio = m_fMasterVolume * .01;
-		}
-	}*/
+		pcGraphicsSystem->UpdateAmbience(currentAmbience);
+	}
 }
 
 void CUISystem::UpdateFPS(TWorld* tThisWorld, CGraphicsSystem* pcGraphicsSystem, CFPS& fpsTimer, int& fpsIndex, CGraphicsSystem::TUIVertexBufferType& tUIVertexBuffer, CGraphicsSystem::TUIPixelBufferType& tUIPixelBuffer, std::vector<TUIVert*>& atUIVertices, TCamera* menuCamera)

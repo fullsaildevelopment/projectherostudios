@@ -38,6 +38,8 @@ public:
 	ID3D11Texture2D* m_pd3dDepthStencil;
 	D3D11_VIEWPORT m_d3dViewport;
 
+	float m_CurrentAmbience = -1;
+
 	struct TLineVertexBufferType
 	{
 		XMMATRIX m_d3dWorldMatrix;
@@ -143,6 +145,7 @@ public:
 	void CreateEntityBuffer(TWorld * ptWorld, int nEnityIndex);
 	void CreateShaders(ID3D11Device* pd3dDevice);
 	void SetLights();
+	void UpdateAmbience(float currentAmbience);
 	XMMATRIX SetDefaultViewMatrix();
 	XMMATRIX SetDefaultWorldPosition();
 	XMMATRIX SetDefaultPerspective();
@@ -238,7 +241,6 @@ private:
 	float				m_fMouseMovementSpeed;
 	XMFLOAT4 m_worldAmbience;
 	TLights m_AllLights[MAX_LIGHTS];
-	float m_CurrentAmbience;
 	/* 
 		Helper function that reads the texture filepaths for Jonah's exporter.
 

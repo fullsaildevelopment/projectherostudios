@@ -320,7 +320,7 @@ int CGameMangerSystem::LoadMainMenu()
 				{
 					tThisWorld.atBar[nCurrentEntity].ratio = (clickPoint.x - tThisWorld.atBar[nCurrentEntity].barBoundingBox.left + 0.0) / (tThisWorld.atBar[nCurrentEntity].barBoundingBox.right - tThisWorld.atBar[nCurrentEntity].barBoundingBox.left);
 				
-					pcUISystem->CheckOptionsBars(&tThisWorld, pcInputSystem, nCurrentEntity, pcAudioSystem->m_fMasterVolume, pcAudioSystem->m_fMusicVolume, pcAudioSystem->m_fSFXVolume, masterIndex, musicIndex, fxIndex);
+					pcUISystem->CheckOptionsBars(&tThisWorld, pcGraphicsSystem, pcInputSystem, nCurrentEntity, pcAudioSystem->m_fMasterVolume, pcAudioSystem->m_fMusicVolume, pcAudioSystem->m_fSFXVolume, masterIndex, musicIndex, fxIndex, pcGraphicsSystem->m_CurrentAmbience, brightnessIndex);
 #if MUSIC_ON
 					if (click == true && fxIndex == nCurrentEntity)
 					{
@@ -334,7 +334,7 @@ int CGameMangerSystem::LoadMainMenu()
 				{
 					tThisWorld.atBar[nCurrentEntity].ratio = (dragPoint.x - tThisWorld.atBar[nCurrentEntity].barBoundingBox.left + 0.0) / (tThisWorld.atBar[nCurrentEntity].barBoundingBox.right - tThisWorld.atBar[nCurrentEntity].barBoundingBox.left);
 
-					pcUISystem->CheckOptionsBars(&tThisWorld, pcInputSystem, nCurrentEntity, pcAudioSystem->m_fMasterVolume, pcAudioSystem->m_fMusicVolume, pcAudioSystem->m_fSFXVolume, masterIndex, musicIndex, fxIndex);
+					pcUISystem->CheckOptionsBars(&tThisWorld, pcGraphicsSystem, pcInputSystem, nCurrentEntity, pcAudioSystem->m_fMasterVolume, pcAudioSystem->m_fMusicVolume, pcAudioSystem->m_fSFXVolume, masterIndex, musicIndex, fxIndex, pcGraphicsSystem->m_CurrentAmbience, brightnessIndex);
 				}
 
 				if (tThisWorld.atBar[nCurrentEntity].backgroundColor.x == 1 &&
@@ -1520,7 +1520,7 @@ void CGameMangerSystem::InitializeOptionsMenu()
 		tThisWorld.atLabel[nThisEntity].color = XMFLOAT4(0, 0, 0, 1);
 	}
 
-	{
+	/*{
 		wchar_t textBuffer[] =
 		{ L"SUBTITLES:" };
 
@@ -1531,13 +1531,13 @@ void CGameMangerSystem::InitializeOptionsMenu()
 		pcUISystem->AddMaskToUI(&tThisWorld, nThisEntity, COMPONENT_OPTIONS);
 
 		tThisWorld.atLabel[nThisEntity].color = XMFLOAT4(1, 0, 0, 0);
-	}
+	}*/
 
 	{
 		wchar_t textBuffer[] =
 		{ L"MASTER VOLUME:" };
 
-		nThisEntity = CreateUILabelForText2(&tThisWorld, menuCamera->d3d_Position, 3, .8, -1.4, 4.9, &atUIVertices, &atUIIndices, textBuffer, ARRAYSIZE(textBuffer), &windowRect, 16, -1, 0.1);
+		nThisEntity = CreateUILabelForText2(&tThisWorld, menuCamera->d3d_Position, 3, .8, -1.4, 3.7, &atUIVertices, &atUIIndices, textBuffer, ARRAYSIZE(textBuffer), &windowRect, 16, -1, 0.1);
 		pcUISystem->AddTextureToUI(&tThisWorld, nThisEntity, pcGraphicsSystem->m_pd3dDevice, nullptr, fontTexture);
 		pcUISystem->AddButtonToUI(&cApplicationWindow, &tThisWorld, nThisEntity, 0, false);
 
@@ -1550,7 +1550,7 @@ void CGameMangerSystem::InitializeOptionsMenu()
 		char valueToChange[] =
 		{ "Master Volume" };
 
-		nThisEntity = CreateUILabel(&tThisWorld, menuCamera->d3d_Position, 2, .5, .5, 4.8, &atUIVertices, -1, 0.1);
+		nThisEntity = CreateUILabel(&tThisWorld, menuCamera->d3d_Position, 2, .5, .5, 3.6, &atUIVertices, -1, 0.1);
 		pcUISystem->AddBarToUI(&cApplicationWindow, &tThisWorld, nThisEntity, &XMFLOAT4(1, 0, 0, 1), valueToChange, ARRAYSIZE(valueToChange));
 
 		pcUISystem->AddMaskToUI(&tThisWorld, nThisEntity, COMPONENT_OPTIONS);
@@ -1561,7 +1561,7 @@ void CGameMangerSystem::InitializeOptionsMenu()
 	}
 
 	{
-		nThisEntity = CreateUILabel(&tThisWorld, menuCamera->d3d_Position, 2, .5, .5, 4.8, &atUIVertices, -1, 0.15);
+		nThisEntity = CreateUILabel(&tThisWorld, menuCamera->d3d_Position, 2, .5, .5, 3.6, &atUIVertices, -1, 0.15);
 		pcUISystem->AddBarToUI(&cApplicationWindow, &tThisWorld, nThisEntity, &XMFLOAT4(1, 1, 1, 1), nullptr);
 
 		pcUISystem->AddMaskToUI(&tThisWorld, nThisEntity, COMPONENT_OPTIONS);
@@ -1604,7 +1604,7 @@ void CGameMangerSystem::InitializeOptionsMenu()
 		wchar_t textBuffer[] =
 		{ L"MUSIC VOLUME:" };
 
-		nThisEntity = CreateUILabelForText2(&tThisWorld, menuCamera->d3d_Position, 2.8, .8, -1.35, 3.7, &atUIVertices, &atUIIndices, textBuffer, ARRAYSIZE(textBuffer), &windowRect, 16, -1, 0.1);
+		nThisEntity = CreateUILabelForText2(&tThisWorld, menuCamera->d3d_Position, 2.8, .8, -1.35, 2.5, &atUIVertices, &atUIIndices, textBuffer, ARRAYSIZE(textBuffer), &windowRect, 16, -1, 0.1);
 		pcUISystem->AddTextureToUI(&tThisWorld, nThisEntity, pcGraphicsSystem->m_pd3dDevice, nullptr, fontTexture);
 		pcUISystem->AddButtonToUI(&cApplicationWindow, &tThisWorld, nThisEntity, 0, false);
 
@@ -1617,7 +1617,7 @@ void CGameMangerSystem::InitializeOptionsMenu()
 		char valueToChange[] =
 		{ "Music Volume" };
 
-		nThisEntity = CreateUILabel(&tThisWorld, menuCamera->d3d_Position, 2, .5, .5, 3.6, &atUIVertices, -1, 0.1);
+		nThisEntity = CreateUILabel(&tThisWorld, menuCamera->d3d_Position, 2, .5, .5, 2.4, &atUIVertices, -1, 0.1);
 		pcUISystem->AddBarToUI(&cApplicationWindow, &tThisWorld, nThisEntity, &XMFLOAT4(1, 0, 0, 1), valueToChange, ARRAYSIZE(valueToChange));
 
 		pcUISystem->AddMaskToUI(&tThisWorld, nThisEntity, COMPONENT_OPTIONS);
@@ -1629,7 +1629,7 @@ void CGameMangerSystem::InitializeOptionsMenu()
 	}
 
 	{
-		nThisEntity = CreateUILabel(&tThisWorld, menuCamera->d3d_Position, 2, .5, .5, 3.6, &atUIVertices, -1, 0.15);
+		nThisEntity = CreateUILabel(&tThisWorld, menuCamera->d3d_Position, 2, .5, .5, 2.4, &atUIVertices, -1, 0.15);
 		pcUISystem->AddBarToUI(&cApplicationWindow, &tThisWorld, nThisEntity, &XMFLOAT4(1, 1, 1, 1), nullptr);
 
 		pcUISystem->AddMaskToUI(&tThisWorld, nThisEntity, COMPONENT_OPTIONS);
@@ -1639,7 +1639,7 @@ void CGameMangerSystem::InitializeOptionsMenu()
 		wchar_t textBuffer[] =
 		{ L"FX VOLUME:" };
 
-		nThisEntity = CreateUILabelForText2(&tThisWorld, menuCamera->d3d_Position, 2.15, .8, -1.18, 2.5, &atUIVertices, &atUIIndices, textBuffer, ARRAYSIZE(textBuffer), &windowRect, 16, -1, 0.1);
+		nThisEntity = CreateUILabelForText2(&tThisWorld, menuCamera->d3d_Position, 2.15, .8, -1.18, 1.3, &atUIVertices, &atUIIndices, textBuffer, ARRAYSIZE(textBuffer), &windowRect, 16, -1, 0.1);
 		pcUISystem->AddTextureToUI(&tThisWorld, nThisEntity, pcGraphicsSystem->m_pd3dDevice, nullptr, fontTexture);
 		pcUISystem->AddButtonToUI(&cApplicationWindow, &tThisWorld, nThisEntity, 0, false);
 
@@ -1652,7 +1652,7 @@ void CGameMangerSystem::InitializeOptionsMenu()
 		char valueToChange[] =
 		{ "FX Volume" };
 
-		nThisEntity = CreateUILabel(&tThisWorld, menuCamera->d3d_Position, 2, .5, .5, 2.4, &atUIVertices, -1, 0.1);
+		nThisEntity = CreateUILabel(&tThisWorld, menuCamera->d3d_Position, 2, .5, .5, 1.2, &atUIVertices, -1, 0.1);
 		pcUISystem->AddBarToUI(&cApplicationWindow, &tThisWorld, nThisEntity, &XMFLOAT4(1, 0, 0, 1), valueToChange, ARRAYSIZE(valueToChange));
 
 		pcUISystem->AddMaskToUI(&tThisWorld, nThisEntity, COMPONENT_OPTIONS);
@@ -1663,13 +1663,13 @@ void CGameMangerSystem::InitializeOptionsMenu()
 	}
 
 	{
-		nThisEntity = CreateUILabel(&tThisWorld, menuCamera->d3d_Position, 2, .5, .5, 2.4, &atUIVertices, -1, 0.15);
+		nThisEntity = CreateUILabel(&tThisWorld, menuCamera->d3d_Position, 2, .5, .5, 1.2, &atUIVertices, -1, 0.15);
 		pcUISystem->AddBarToUI(&cApplicationWindow, &tThisWorld, nThisEntity, &XMFLOAT4(1, 1, 1, 1), nullptr);
 
 		pcUISystem->AddMaskToUI(&tThisWorld, nThisEntity, COMPONENT_OPTIONS);
 	}
 
-	{
+	/*{
 		wchar_t textBuffer[] =
 		{ L"DIFFICULTY:" };
 
@@ -1680,7 +1680,7 @@ void CGameMangerSystem::InitializeOptionsMenu()
 		pcUISystem->AddMaskToUI(&tThisWorld, nThisEntity, COMPONENT_OPTIONS);
 
 		tThisWorld.atLabel[nThisEntity].color = XMFLOAT4(1, 0, 0, 0);
-	}
+	}*/
 
 	{
 		wchar_t textBuffer[] =
@@ -1702,7 +1702,18 @@ void CGameMangerSystem::InitializeOptionsMenu()
 		nThisEntity = CreateUILabel(&tThisWorld, menuCamera->d3d_Position, 2, .5, .5, -0, &atUIVertices, -1, 0.1);
 		pcUISystem->AddBarToUI(&cApplicationWindow, &tThisWorld, nThisEntity, &XMFLOAT4(1, 0, 0, 1), valueToChange, ARRAYSIZE(valueToChange));
 
+		if (pcGraphicsSystem->m_CurrentAmbience != -1)
+		{
+			tThisWorld.atBar[nThisEntity].ratio = pcGraphicsSystem->m_CurrentAmbience;
+		}
+		else
+		{
+			tThisWorld.atBar[nThisEntity].ratio = .5;
+		}
+
 		pcUISystem->AddMaskToUI(&tThisWorld, nThisEntity, COMPONENT_OPTIONS);
+
+		brightnessIndex = nThisEntity;
 	}
 
 	{
@@ -1931,7 +1942,7 @@ void CGameMangerSystem::InitializePauseScreen()
 		{ L"CONTINUE" };
 
 		nThisEntity = createEntityReverse(&tThisWorld);
-		CreateUILabelForText2(&tThisWorld, menuCamera->d3d_Position, 2.3, 1, 0, 4.8, &atUIVertices, &atUIIndices, textBuffer, ARRAYSIZE(textBuffer), &windowRect, 20, nThisEntity, .1);
+		CreateUILabelForText2(&tThisWorld, menuCamera->d3d_Position, 2.3, 1, 0, 2.4, &atUIVertices, &atUIIndices, textBuffer, ARRAYSIZE(textBuffer), &windowRect, 20, nThisEntity, .1);
 		pcUISystem->AddTextureToUI(&tThisWorld, nThisEntity, pcGraphicsSystem->m_pd3dDevice, nullptr, fontTexture);
 		pcUISystem->AddButtonToUI(&cApplicationWindow, &tThisWorld, nThisEntity, nCurrentScene + 1, true);
 
@@ -1940,7 +1951,7 @@ void CGameMangerSystem::InitializePauseScreen()
 		tThisWorld.atLabel[nThisEntity].color = XMFLOAT4(0, 0, 0, 0);
 	}
 	
-	{
+	/*{
 		wchar_t textBuffer[] =
 		{ L"SAVE" };
 
@@ -1966,7 +1977,7 @@ void CGameMangerSystem::InitializePauseScreen()
 		pcUISystem->AddMaskToUI(&tThisWorld, nThisEntity, COMPONENT_PAUSESCREEN);
 
 		tThisWorld.atLabel[nThisEntity].color = XMFLOAT4(0, 0, 0, 0);
-	}
+	}*/
 
 	{
 		wchar_t textBuffer[] =
@@ -2012,14 +2023,14 @@ void CGameMangerSystem::InitializePauseScreen()
 
 	{
 		nThisEntity = createEntityReverse(&tThisWorld);
-		CreateUILabel(&tThisWorld, menuCamera->d3d_Position, 2.4, 6, -.3, 2.4, &atUIVertices, nThisEntity, .15);
+		CreateUILabel(&tThisWorld, menuCamera->d3d_Position, 2.4, 4, -.3, 1.2, &atUIVertices, nThisEntity, .15);
 
 		pcUISystem->AddMaskToUI(&tThisWorld, nThisEntity, COMPONENT_PAUSESCREEN);
 
 		tThisWorld.atLabel[nThisEntity].color = XMFLOAT4(.7, .7, .7, .5);
 	}
 
-	{
+	/*{
 		wchar_t textBuffer[] =
 		{ L"SUBTITLES:" };
 
@@ -2031,14 +2042,14 @@ void CGameMangerSystem::InitializePauseScreen()
 		pcUISystem->AddMaskToUI(&tThisWorld, nThisEntity, COMPONENT_OPTIONS);
 
 		tThisWorld.atLabel[nThisEntity].color = XMFLOAT4(0, 0, 0, 0);
-	}
+	}*/
 
 	{
 		wchar_t textBuffer[] =
 		{ L"MASTER VOLUME:" };
 
 		nThisEntity = createEntityReverse(&tThisWorld);
-		CreateUILabelForText2(&tThisWorld, menuCamera->d3d_Position, 3, .8, -1.4, 4.9, &atUIVertices, &atUIIndices, textBuffer, ARRAYSIZE(textBuffer), &windowRect, 16, nThisEntity, 0.1);
+		CreateUILabelForText2(&tThisWorld, menuCamera->d3d_Position, 3, .8, -1.4, 3.7, &atUIVertices, &atUIIndices, textBuffer, ARRAYSIZE(textBuffer), &windowRect, 16, nThisEntity, 0.1);
 		pcUISystem->AddTextureToUI(&tThisWorld, nThisEntity, pcGraphicsSystem->m_pd3dDevice, nullptr, fontTexture);
 		pcUISystem->AddButtonToUI(&cApplicationWindow, &tThisWorld, nThisEntity, 0, false);
 
@@ -2051,7 +2062,7 @@ void CGameMangerSystem::InitializePauseScreen()
 		char valueToChange[] =
 		{ "Master Volume" };
 
-		nThisEntity = CreateUILabel(&tThisWorld, menuCamera->d3d_Position, 2, .5, .5, 4.8, &atUIVertices, -1, 0.1);
+		nThisEntity = CreateUILabel(&tThisWorld, menuCamera->d3d_Position, 2, .5, .5, 3.6, &atUIVertices, -1, 0.1);
 		pcUISystem->AddBarToUI(&cApplicationWindow, &tThisWorld, nThisEntity, &XMFLOAT4(1, 0, 0, 1), valueToChange, ARRAYSIZE(valueToChange));
 
 		pcUISystem->AddMaskToUI(&tThisWorld, nThisEntity, COMPONENT_OPTIONS);
@@ -2061,7 +2072,7 @@ void CGameMangerSystem::InitializePauseScreen()
 	}
 
 	{
-		nThisEntity = CreateUILabel(&tThisWorld, menuCamera->d3d_Position, 2, .5, .5, 4.8, &atUIVertices, -1, 0.15);
+		nThisEntity = CreateUILabel(&tThisWorld, menuCamera->d3d_Position, 2, .5, .5, 3.6, &atUIVertices, -1, 0.15);
 		pcUISystem->AddBarToUI(&cApplicationWindow, &tThisWorld, nThisEntity, &XMFLOAT4(0, 0, 0, 1), nullptr);
 
 		pcUISystem->AddMaskToUI(&tThisWorld, nThisEntity, COMPONENT_OPTIONS);
@@ -2106,7 +2117,7 @@ void CGameMangerSystem::InitializePauseScreen()
 		{ L"MUSIC VOLUME:" };
 
 		nThisEntity = createEntityReverse(&tThisWorld);
-		CreateUILabelForText2(&tThisWorld, menuCamera->d3d_Position, 2.8, .8, -1.35, 3.7, &atUIVertices, &atUIIndices, textBuffer, ARRAYSIZE(textBuffer), &windowRect, 16, nThisEntity, .1);
+		CreateUILabelForText2(&tThisWorld, menuCamera->d3d_Position, 2.8, .8, -1.35, 2.5, &atUIVertices, &atUIIndices, textBuffer, ARRAYSIZE(textBuffer), &windowRect, 16, nThisEntity, .1);
 		pcUISystem->AddTextureToUI(&tThisWorld, nThisEntity, pcGraphicsSystem->m_pd3dDevice, nullptr, fontTexture);
 		pcUISystem->AddButtonToUI(&cApplicationWindow, &tThisWorld, nThisEntity, 0, false);
 
@@ -2119,7 +2130,7 @@ void CGameMangerSystem::InitializePauseScreen()
 		char valueToChange[] =
 		{ "Music Volume" };
 
-		nThisEntity = CreateUILabel(&tThisWorld, menuCamera->d3d_Position, 2, .5, .5, 3.6, &atUIVertices, -1, 0.1);
+		nThisEntity = CreateUILabel(&tThisWorld, menuCamera->d3d_Position, 2, .5, .5, 2.4, &atUIVertices, -1, 0.1);
 		pcUISystem->AddBarToUI(&cApplicationWindow, &tThisWorld, nThisEntity, &XMFLOAT4(1, 0, 0, 1), valueToChange, ARRAYSIZE(valueToChange));
 
 		pcUISystem->AddMaskToUI(&tThisWorld, nThisEntity, COMPONENT_OPTIONS);
@@ -2129,7 +2140,7 @@ void CGameMangerSystem::InitializePauseScreen()
 	}
 
 	{
-		nThisEntity = CreateUILabel(&tThisWorld, menuCamera->d3d_Position, 2, .5, .5, 3.6, &atUIVertices, -1, 0.15);
+		nThisEntity = CreateUILabel(&tThisWorld, menuCamera->d3d_Position, 2, .5, .5, 2.4, &atUIVertices, -1, 0.15);
 		pcUISystem->AddBarToUI(&cApplicationWindow, &tThisWorld, nThisEntity, &XMFLOAT4(0, 0, 0, 1), nullptr);
 
 		pcUISystem->AddMaskToUI(&tThisWorld, nThisEntity, COMPONENT_OPTIONS);
@@ -2140,7 +2151,7 @@ void CGameMangerSystem::InitializePauseScreen()
 		{ L"FX VOLUME:" };
 
 		nThisEntity = createEntityReverse(&tThisWorld);
-		CreateUILabelForText2(&tThisWorld, menuCamera->d3d_Position, 2.15, .8, -1.18, 2.5, &atUIVertices, &atUIIndices, textBuffer, ARRAYSIZE(textBuffer), &windowRect, 16, nThisEntity, .1);
+		CreateUILabelForText2(&tThisWorld, menuCamera->d3d_Position, 2.15, .8, -1.18, 1.3, &atUIVertices, &atUIIndices, textBuffer, ARRAYSIZE(textBuffer), &windowRect, 16, nThisEntity, .1);
 		pcUISystem->AddTextureToUI(&tThisWorld, nThisEntity, pcGraphicsSystem->m_pd3dDevice, nullptr, fontTexture);
 		pcUISystem->AddButtonToUI(&cApplicationWindow, &tThisWorld, nThisEntity, 0, false);
 
@@ -2153,7 +2164,7 @@ void CGameMangerSystem::InitializePauseScreen()
 		char valueToChange[] =
 		{ "FX Volume" };
 
-		nThisEntity = CreateUILabel(&tThisWorld, menuCamera->d3d_Position, 2, .5, .5, 2.4, &atUIVertices, -1, 0.1);
+		nThisEntity = CreateUILabel(&tThisWorld, menuCamera->d3d_Position, 2, .5, .5, 1.2, &atUIVertices, -1, 0.1);
 		pcUISystem->AddBarToUI(&cApplicationWindow, &tThisWorld, nThisEntity, &XMFLOAT4(1, 0, 0, 1), valueToChange, ARRAYSIZE(valueToChange));
 
 		pcUISystem->AddMaskToUI(&tThisWorld, nThisEntity, COMPONENT_OPTIONS);
@@ -2163,13 +2174,13 @@ void CGameMangerSystem::InitializePauseScreen()
 	}
 
 	{
-		nThisEntity = CreateUILabel(&tThisWorld, menuCamera->d3d_Position, 2, .5, .5, 2.4, &atUIVertices, -1, 0.15);
+		nThisEntity = CreateUILabel(&tThisWorld, menuCamera->d3d_Position, 2, .5, .5, 1.2, &atUIVertices, -1, 0.15);
 		pcUISystem->AddBarToUI(&cApplicationWindow, &tThisWorld, nThisEntity, &XMFLOAT4(0, 0, 0, 1), nullptr);
 
 		pcUISystem->AddMaskToUI(&tThisWorld, nThisEntity, COMPONENT_OPTIONS);
 	}
 
-	{
+	/*{
 		wchar_t textBuffer[] =
 		{ L"DIFFICULTY:" };
 
@@ -2181,7 +2192,7 @@ void CGameMangerSystem::InitializePauseScreen()
 		pcUISystem->AddMaskToUI(&tThisWorld, nThisEntity, COMPONENT_OPTIONS);
 
 		tThisWorld.atLabel[nThisEntity].color = XMFLOAT4(0, 0, 0, 0);
-	}
+	}*/
 
 	{
 		wchar_t textBuffer[] =
@@ -2204,7 +2215,11 @@ void CGameMangerSystem::InitializePauseScreen()
 		nThisEntity = CreateUILabel(&tThisWorld, menuCamera->d3d_Position, 2, .5, .5, 0, &atUIVertices, -1, 0.1);
 		pcUISystem->AddBarToUI(&cApplicationWindow, &tThisWorld, nThisEntity, &XMFLOAT4(1, 0, 0, 1), valueToChange, ARRAYSIZE(valueToChange));
 
+		tThisWorld.atBar[nThisEntity].ratio = .5;
+
 		pcUISystem->AddMaskToUI(&tThisWorld, nThisEntity, COMPONENT_OPTIONS);
+
+		brightnessIndex = nThisEntity;	
 	}
 
 	{
@@ -2276,7 +2291,7 @@ void CGameMangerSystem::InitializePauseScreen()
 
 	{
 		nThisEntity = createEntityReverse(&tThisWorld);
-		CreateUILabel(&tThisWorld, menuCamera->d3d_Position, 6, 10, -.3, 1.8, &atUIVertices, nThisEntity, .15);
+		CreateUILabel(&tThisWorld, menuCamera->d3d_Position, 6, 8, -.3, .6, &atUIVertices, nThisEntity, .15);
 
 		pcUISystem->AddMaskToUI(&tThisWorld, nThisEntity, COMPONENT_OPTIONS);
 
@@ -5019,10 +5034,7 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 	pcAudioSystem->SetRTPCVolume(AK::GAME_PARAMETERS::MUSIC_VOLUME, pcAudioSystem->m_fMusicVolume);
 #endif
 
-	/*while (ShowCursor(false) > -1)
-	{
-		continue;
-	}*/
+	pcGraphicsSystem->SetLights();
 	InitializeHUD();
 	InitializePauseScreen();
 	GameOver = false;
@@ -7005,7 +7017,6 @@ void CGameMangerSystem::LoadLevelWithMapInIt()
 
 	ExtractionBeamIndex = CreateExtractionBeam(&tThisWorld, m_d3dWorldMatrix, PlayerStartIndex, atBeamVerts);
 #endif
-	pcGraphicsSystem->SetLights();
 	pcGraphicsSystem->CreateBuffers(&tThisWorld);
 
 	int textSize = 2;
@@ -8344,6 +8355,7 @@ int CGameMangerSystem::RealLevelUpdate()
 #pragma endregion
 
 #endif // !INPUT_ABSTRACTED_ON
+
 	tThisWorld.atAnimation[ClaytonIndex].tTimer.StartClock(tThisWorld.atAnimation[ClaytonIndex].tTimer.tSceneTimer);
 	for (int nCurrentEntity = 0; nCurrentEntity < ENTITYCOUNT; nCurrentEntity++)
 	{
@@ -8928,16 +8940,12 @@ int CGameMangerSystem::RealLevelUpdate()
 
 				XMFLOAT4X4 * tweenJoints = pcAnimationSystem->PlayAnimation(tThisWorld.atAnimationVariant[nCurrentEntity], tThisWorld.atAnimation[nCurrentEntity], tThisWorld.atAnimation[nCurrentEntity].tTimer.localTime, false);
 
-					memcpy(&tThisWorld.atOffSetMatrix[tThisWorld.atAIMask[nCurrentEntity].GunIndex], &tweenJoints[50], sizeof(XMMATRIX));
+				for (int i = 0; i < MAX_JOINTS; ++i)
+				{
+					memcpy(&tAnimVertexBuffer.m_d3dJointsForVS[i], &tweenJoints[i], sizeof(tweenJoints[i]));
+				}
 
-					if (tCameraMode.bAimMode == true)
-					{
-						pcGraphicsSystem->InitAnimShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tAnimVertexBuffer, tThisWorld.atMesh[nCurrentEntity], aimCamera->d3d_Position);
-					}
-					else if (tCameraMode.bDebugMode == true)
-					{
-						pcGraphicsSystem->InitAnimShaderData(pcGraphicsSystem->m_pd3dDeviceContext, tAnimVertexBuffer, tThisWorld.atMesh[nCurrentEntity], debugCamera->d3d_Position);
-					}
+				memcpy(&tThisWorld.atOffSetMatrix[tThisWorld.atAIMask[nCurrentEntity].GunIndex], &tweenJoints[50], sizeof(XMMATRIX));
 
 				if (tCameraMode.bAimMode == true)
 				{
@@ -10214,7 +10222,7 @@ int CGameMangerSystem::RealLevelUpdate()
 					{
 						tThisWorld.atBar[nCurrentEntity].ratio = (clickPoint.x - tThisWorld.atBar[nCurrentEntity].barBoundingBox.left + 0.0) / (tThisWorld.atBar[nCurrentEntity].barBoundingBox.right - tThisWorld.atBar[nCurrentEntity].barBoundingBox.left);
 
-						pcUISystem->CheckOptionsBars(&tThisWorld, pcInputSystem, nCurrentEntity, pcAudioSystem->m_fMasterVolume, pcAudioSystem->m_fMusicVolume, pcAudioSystem->m_fSFXVolume, masterIndex, musicIndex, fxIndex);
+						pcUISystem->CheckOptionsBars(&tThisWorld, pcGraphicsSystem, pcInputSystem, nCurrentEntity, pcAudioSystem->m_fMasterVolume, pcAudioSystem->m_fMusicVolume, pcAudioSystem->m_fSFXVolume, masterIndex, musicIndex, fxIndex, pcGraphicsSystem->m_CurrentAmbience, brightnessIndex);
 #if MUSIC_ON
 						if ( click == true && fxIndex == nCurrentEntity)
 						{
@@ -10230,7 +10238,7 @@ int CGameMangerSystem::RealLevelUpdate()
               
 						tThisWorld.atBar[nCurrentEntity].ratio = (dragPoint.x - tThisWorld.atBar[nCurrentEntity].barBoundingBox.left + 0.0) / (tThisWorld.atBar[nCurrentEntity].barBoundingBox.right - tThisWorld.atBar[nCurrentEntity].barBoundingBox.left);
 
-						pcUISystem->CheckOptionsBars(&tThisWorld, pcInputSystem, nCurrentEntity, pcAudioSystem->m_fMasterVolume, pcAudioSystem->m_fMusicVolume, pcAudioSystem->m_fSFXVolume, masterIndex, musicIndex, fxIndex);
+						pcUISystem->CheckOptionsBars(&tThisWorld, pcGraphicsSystem, pcInputSystem, nCurrentEntity, pcAudioSystem->m_fMasterVolume, pcAudioSystem->m_fMusicVolume, pcAudioSystem->m_fSFXVolume, masterIndex, musicIndex, fxIndex, pcGraphicsSystem->m_CurrentAmbience, brightnessIndex);
 					}
 
 					if (tThisWorld.atBar[nCurrentEntity].backgroundColor.x == 1 &&
@@ -10574,6 +10582,7 @@ int CGameMangerSystem::ResetLevel()
 					tThisWorld.atRigidBody[nCurrentEntity].velocity = XMVectorSet(0, 0, 0, 0);
 
 					tThisWorld.atClayton[nCurrentEntity].health = 100;
+					tThisWorld.atCaelis[nCurrentEntity].m_tfSpecialCooldown = 0;
 
 #if JUMPING
 					tThisWorld.atClayton[nCurrentEntity].jumpCooldown = 0;

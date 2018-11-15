@@ -179,7 +179,9 @@ void CAuger::Update(bool* loopgame)
 		break;
 	case 16:
 	{
-		if (!pcGameMangerSystem->loading)
+		pcGameMangerSystem->nCurrentScene = pcGameMangerSystem->ResetLevel();
+
+		/*if (!pcGameMangerSystem->loading)
 		{
 			pcGameMangerSystem->LoadLevelWithMapInIt();
 		}
@@ -196,7 +198,7 @@ void CAuger::Update(bool* loopgame)
 					continue;
 				}
 			}
-		}
+		}*/
 	}
 	break;
 	default:

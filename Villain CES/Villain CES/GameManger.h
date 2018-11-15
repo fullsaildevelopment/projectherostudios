@@ -147,6 +147,7 @@ private:
 	int musicIndex = -1;
 	int fxIndex = -1;
 	int dialogueIndex = -1;
+	int brightnessIndex = -1;
 
 	int claytonFrustumIndex = -1;
 

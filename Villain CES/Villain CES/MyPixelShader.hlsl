@@ -110,7 +110,7 @@ float4 MyPixelShader(TPixelInputType tInput) : SV_TARGET
                 float3 pointLight = normalize((worldLights[lightIndex].lightPosition - tInput.d3dWorldPos)).xyz;
                 float lightRatio = saturate(dot(pointLight, tInput.d3dNormal));
                // lightRatio = saturate(lightRatio + totalAmbient.y); // add ambience commented out so you can add at the end before return 
-                float lightRadius = 20.0f;
+                float lightRadius = 15.0f;
                 float attentuation = 1.0f - saturate(length(worldLights[lightIndex].lightPosition.xyz - tInput.d3dWorldPos.xyz) / lightRadius);
                 //This will make the attentuation fall off faster
                 attentuation *= attentuation;
