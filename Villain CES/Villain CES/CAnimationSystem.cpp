@@ -186,6 +186,8 @@ void CAnimationSystem::CalculateFrameCount(TAnimationVariant& animationVariant, 
 			if (prevFrame == theAnimation.m_tAnim[animationVariant.tClaytonAnim.animType].m_vtKeyFrames.size() - 1 && !animationVariant.tClaytonAnim.currentFrame)
 			{
 				realTime = 0;//Reset The Timer
+
+				animationVariant.tClaytonAnim.animationFinished = true;
 			}
 		}
 	}

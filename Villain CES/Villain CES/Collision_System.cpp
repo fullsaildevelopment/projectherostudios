@@ -312,7 +312,7 @@ void CCollisionSystem::TestThreading(TWorld * ptWorld, int nCurrentEntity, CGrap
 
 									ptWorld->atAnimationVariant[otherCollisionsIndex[i]].tClaytonAnim.animType = 2;
 
-									ptWorld->atAnimationVariant[otherCollisionsIndex[i]].tClaytonAnim.playingAnimation = true;
+									ptWorld->atAnimationVariant[otherCollisionsIndex[i]].tClaytonAnim.animationFinished = false;
 								}
 
 								pcAudioSystem->SendSoundsToEngine(AK::EVENTS::PLAY_HURT_SCYLIAN, pcAudioSystem->m_Scylian_Hurt);
@@ -363,7 +363,7 @@ void CCollisionSystem::TestThreading(TWorld * ptWorld, int nCurrentEntity, CGrap
 
 										ptWorld->atAnimationVariant[otherCollisionsIndex[i]].tClaytonAnim.animType = 3;
 
-										ptWorld->atAnimationVariant[otherCollisionsIndex[i]].tClaytonAnim.playingAnimation = true;
+										ptWorld->atAnimationVariant[otherCollisionsIndex[i]].tClaytonAnim.animationFinished = false;
 									}
 								}
 

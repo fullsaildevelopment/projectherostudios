@@ -41,7 +41,7 @@ struct TAnimationVariant
 			int currentFrame = 0;
 			int nextFrame = 1;
 
-			bool playingAnimation = false;
+			bool animationFinished = false;
 		}tClaytonAnim;
 
 		//	struct TCaelisAnim

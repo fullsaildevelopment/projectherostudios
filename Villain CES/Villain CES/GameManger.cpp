@@ -8092,29 +8092,6 @@ int CGameMangerSystem::RealLevelUpdate()
 {
 	TLights* setLights = pcGraphicsSystem->GetLights();
 
-	if (pcInputSystem->InputCheck(G_KEY_K))
-	{
-		tThisWorld.atClayton[ClaytonIndex].health = 0;
-	}
-	if (pcInputSystem->InputCheck(G_KEY_UP))
-	{
-		++testnumber;
-		buttonpressed = true;
-	}
-	else
-	{
-		buttonpressed = false;
-	}
-	if (pcInputSystem->InputCheck(G_KEY_DOWN))
-	{
-		--testnumber;
-		buttonpressed = true;
-	}
-	else
-	{
-		buttonpressed = false;
-	}
-
 #if MUSIC_ON
 	pcAudioSystem->SetRTPCVolume(AK::GAME_PARAMETERS::MUSIC_VOLUME, pcAudioSystem->m_fMusicVolume);
 #endif
@@ -8960,7 +8937,7 @@ int CGameMangerSystem::RealLevelUpdate()
 
 				tThisWorld.atAnimation[nCurrentEntity].tTimer.GetLocalTime(tThisWorld.atAnimation[nCurrentEntity].tTimer.tSceneTimer, tThisWorld.atAnimation[nCurrentEntity].tTimer.localTime, 1);
 
-				if (tThisWorld.atAnimation[nCurrentEntity].tTimer.localTime > tThisWorld.atAnimation[nCurrentEntity].m_tAnim[tThisWorld.atAnimationVariant[nCurrentEntity].tClaytonAnim.animType].dDuration && tThisWorld.atAnimationVariant[nCurrentEntity].tClaytonAnim.playingAnimation == true)
+				if (tThisWorld.atAnimationVariant[nCurrentEntity].tClaytonAnim.animationFinished == true)
 				{
 					if (tThisWorld.atAnimationVariant[nCurrentEntity].tClaytonAnim.animType == 3)
 					{
@@ -8971,7 +8948,7 @@ int CGameMangerSystem::RealLevelUpdate()
 
 						tThisWorld.atAnimationVariant[nCurrentEntity].tClaytonAnim.animType = 0;
 
-						tThisWorld.atAnimationVariant[nCurrentEntity].tClaytonAnim.playingAnimation = false;
+						tThisWorld.atAnimationVariant[nCurrentEntity].tClaytonAnim.animationFinished = false;
 						pcCollisionSystem->RemoveAABBCollider(nCurrentEntity);
 						tThisWorld.atAABB[nCurrentEntity].m_IndexLocation = -1;
 						tThisWorld.atAABB[nCurrentEntity].m_dMaxPoint = XMFLOAT3(0, 0, 0);
@@ -8991,8 +8968,6 @@ int CGameMangerSystem::RealLevelUpdate()
 					}
 					else
 					{
-						//if (tThisWorld.atAnimationVariant[nCurrentEntity].tClaytonAnim.animType != 0)
-						//{
 						tThisWorld.atAnimation[nCurrentEntity].tTimer.localTime = 0;
 
 						tThisWorld.atAnimationVariant[nCurrentEntity].tClaytonAnim.currentFrame = 0;
@@ -9000,8 +8975,7 @@ int CGameMangerSystem::RealLevelUpdate()
 
 						tThisWorld.atAnimationVariant[nCurrentEntity].tClaytonAnim.animType = 0;
 
-						tThisWorld.atAnimationVariant[nCurrentEntity].tClaytonAnim.playingAnimation = false;
-						//}
+						tThisWorld.atAnimationVariant[nCurrentEntity].tClaytonAnim.animationFinished = false;
 					}
 				}
 
@@ -9605,7 +9579,7 @@ int CGameMangerSystem::RealLevelUpdate()
 
 								tThisWorld.atAnimationVariant[tThisWorld.atParentWorldMatrix[nCurrentEntity]].tClaytonAnim.animType = 1;
 
-								tThisWorld.atAnimationVariant[tThisWorld.atParentWorldMatrix[nCurrentEntity]].tClaytonAnim.playingAnimation = true;
+								tThisWorld.atAnimationVariant[tThisWorld.atParentWorldMatrix[nCurrentEntity]].tClaytonAnim.animationFinished = false;
 							}
 
 							pcCollisionSystem->updateAABB(tThisWorld.atWorldMatrix[nCurrentEntity].worldMatrix, tThisWorld.atAABB[nCurrentEntity]);
