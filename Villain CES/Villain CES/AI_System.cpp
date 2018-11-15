@@ -623,6 +623,7 @@ void CAISystem::RemoveeShootingActiveAI(int aiEnitity)
 void CAISystem::ClearShootingActiveAI()
 {
 	ShootingActiveAI.clear();
+	allAI.clear();
 }
 
 float CAISystem::GiveRandomBetweenNegative1and1()

@@ -239,45 +239,40 @@ void CInputSystem::gameManagerCodeAbstracted(
 			}
 		}
 		//Caelsi Movement & Camera Attachment 
-		else if (PlayerIndex == CaelisIndex)
-		{
-			if (tCameraMode.bAimMode == true)
-			{
-				d3dOffsetMatrix = CaelisAimOffSet();
-				if (tCameraMode.bSwitch == true)
-				{
-					d3dResultMatrix = this->CameraOrientationReset(d3dResultMatrix);
-
-					tCameraMode.bSwitch = false;
-				}
-
-				fRealTimeFov = this->ZoomSight(fRealTimeFov);
-				// Camera rotation Done here
-				tAimCamera->d3d_Position = this->AimMode(tAimCamera, d3dResultMatrix, delta, bNoMoving);
-				//Does Character Rotation and Movement
-				Caelis_Matrix = this->CharacterMovement(Caelis_Matrix, delta, in_Audio, clayton, playerVeclocity, bNoMoving, forward, backward, left, right);
-
-				tAimCamera->d3d_Position = XMMatrixMultiply(tAimCamera->d3d_Position, Caelis_Matrix);
-				// for shoulder offset 
-				tAimCamera->d3d_Position = XMMatrixMultiply(d3dOffsetMatrix, tAimCamera->d3d_Position);
-
-				tMyViewMatrix = tAimCamera->d3d_Position;
-				tTempViewMatrix = tAimCamera->d3d_Position;
-			}
-			else
-			{
-				if (tCameraMode.bSwitch == true)
-				{
-					d3dResultMatrix = this->CameraOrientationReset(d3dResultMatrix);
-					tCameraMode.bSwitch = false;
-				}
-				d3dResultMatrix = this->DebugCamera(d3dResultMatrix, d3dWorldMatrix, delta);
-
-				tDebugCamera->d3d_Position = XMMatrixMultiply(d3dResultMatrix, d3dWorldMatrix);
-				tMyViewMatrix = tDebugCamera->d3d_Position;
-				tTempViewMatrix = tDebugCamera->d3d_Position;
-			}
-		}
+		//else if (PlayerIndex == CaelisIndex)
+		//{
+		//	if (tCameraMode.bAimMode == true)
+		//	{
+		//		d3dOffsetMatrix = CaelisAimOffSet();
+		//		if (tCameraMode.bSwitch == true)
+		//		{
+		//			d3dResultMatrix = this->CameraOrientationReset(d3dResultMatrix);
+		//			tCameraMode.bSwitch = false;
+		//		}
+		//		fRealTimeFov = this->ZoomSight(fRealTimeFov);
+		//		// Camera rotation Done here
+		//		tAimCamera->d3d_Position = this->AimMode(tAimCamera, d3dResultMatrix, delta, bNoMoving);
+		//		//Does Character Rotation and Movement
+		//		Caelis_Matrix = this->CharacterMovement(Caelis_Matrix, delta, in_Audio, clayton, playerVeclocity, bNoMoving);
+		//		tAimCamera->d3d_Position = XMMatrixMultiply(tAimCamera->d3d_Position, Caelis_Matrix);
+		//		// for shoulder offset 
+		//		tAimCamera->d3d_Position = XMMatrixMultiply(d3dOffsetMatrix, tAimCamera->d3d_Position);
+		//		tMyViewMatrix = tAimCamera->d3d_Position;
+		//		tTempViewMatrix = tAimCamera->d3d_Position;
+		//	}
+		//	else
+		//	{
+		//		if (tCameraMode.bSwitch == true)
+		//		{
+		//			d3dResultMatrix = this->CameraOrientationReset(d3dResultMatrix);
+		//			tCameraMode.bSwitch = false;
+		//		}
+		//		d3dResultMatrix = this->DebugCamera(d3dResultMatrix, d3dWorldMatrix, delta);
+		//		tDebugCamera->d3d_Position = XMMatrixMultiply(d3dResultMatrix, d3dWorldMatrix);
+		//		tMyViewMatrix = tDebugCamera->d3d_Position;
+		//		tTempViewMatrix = tDebugCamera->d3d_Position;
+		//	}
+		//}
 	}
 
 	// toggle the modes that you are in
@@ -530,19 +525,6 @@ XMMATRIX CInputSystem::CharacterMovement(XMMATRIX d3dplayerMatrix, double delta,
 			}
 		}
 #endif
-		if (keyPressed == true && stepCount == 20)
-		{
-#if MUSIC_ON
-			in_Audio->SendSoundsToEngine(AK::EVENTS::PLAY_WALK, in_Audio->m_WalkSound);
-			in_Audio->SetRTPCVolume(AK::GAME_PARAMETERS::SFX_VOLUME, in_Audio->m_fSFXVolume);
-
-			stepCount = 0;
-#endif
-		}
-		if (stepCount > 20)
-		{
-			stepCount = 0;
-		}
 	}
 
 	return d3dTmpViewM;

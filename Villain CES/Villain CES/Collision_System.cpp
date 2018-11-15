@@ -255,7 +255,7 @@ void CCollisionSystem::TestThreading(TWorld * ptWorld, int nCurrentEntity, CGrap
 						{
 							if (ptWorld->atAiHeath[otherCollisionsIndex[i]].heath <= 0)
 							{
-								pcAiSystem->SetNumberOfAI(pcAiSystem->GetNumberOfAI() - 1);
+								/*pcAiSystem->SetNumberOfAI(pcAiSystem->GetNumberOfAI() - 1);
 
 
 								if (ptWorld->atAIMask[otherCollisionsIndex[i]].GunIndex == pcAiSystem->GetActiveShooter()) {
@@ -273,13 +273,13 @@ void CCollisionSystem::TestThreading(TWorld * ptWorld, int nCurrentEntity, CGrap
 
 								RemoveAABBCollider(otherCollisionsIndex[i]);
 								pcGraphicsSystem->CleanD3DObject(ptWorld, otherCollisionsIndex[i]);
-								pcGraphicsSystem->CleanD3DObject(ptWorld, ptWorld->atAIMask[otherCollisionsIndex[i]].GunIndex);
+								pcGraphicsSystem->CleanD3DObject(ptWorld, ptWorld->atAIMask[otherCollisionsIndex[i]].GunIndex);*/
 
 							}
 							else
 							{
 
-
+								pcParticleSystem->CreateAlotofCubes(ptWorld->atWorldMatrix[nCurrentEntity].worldMatrix, ptWorld, 30, pcGraphicsSystem, pcAiSystem, delta, false);
 
 								RemoveAABBCollider(nCurrentEntity);
 
@@ -300,6 +300,7 @@ void CCollisionSystem::TestThreading(TWorld * ptWorld, int nCurrentEntity, CGrap
 
 								}
 								ptWorld->atAIVision[otherCollisionsIndex[i]].indexLookingAt = PlayerStartIndex;
+								
 #if MUSIC_ON
 								if (ptWorld->atAnimationVariant[otherCollisionsIndex[i]].tClaytonAnim.animType != 2)
 								{
@@ -316,7 +317,7 @@ void CCollisionSystem::TestThreading(TWorld * ptWorld, int nCurrentEntity, CGrap
 								pcAudioSystem->SendSoundsToEngine(AK::EVENTS::PLAY_HURT_SCYLIAN, pcAudioSystem->m_Scylian_Hurt);
 								pcAudioSystem->SetRTPCVolume(AK::GAME_PARAMETERS::SFX_VOLUME, in_SFXVolume);
 #endif
-								pcParticleSystem->CreateAlotofCubes(ptWorld->atWorldMatrix[nCurrentEntity].worldMatrix, ptWorld, 30, pcGraphicsSystem, pcAiSystem, delta, false);
+								
 
 								if (ptWorld->atAiHeath[otherCollisionsIndex[i]].heath <= 0)
 								{
@@ -333,7 +334,7 @@ void CCollisionSystem::TestThreading(TWorld * ptWorld, int nCurrentEntity, CGrap
 									//ptWorld->atAABB[otherCollisionsIndex[i]].m_dMaxPointOrginal = XMFLOAT3(0, 0, 0);
 									//ptWorld->atAABB[otherCollisionsIndex[i]].m_dMinPoint = XMFLOAT3(0, 0, 0);
 									//ptWorld->atAABB[otherCollisionsIndex[i]].m_dMinPointOrginal = XMFLOAT3(0, 0, 0);
-									updateAABB(ptWorld->atWorldMatrix[otherCollisionsIndex[i]].worldMatrix, ptWorld->atAABB[otherCollisionsIndex[i]]);
+								//	updateAABB(ptWorld->atWorldMatrix[otherCollisionsIndex[i]].worldMatrix, ptWorld->atAABB[otherCollisionsIndex[i]]);
 									ptWorld->atAiHeath[otherCollisionsIndex[i]].heath = 0;
 									ptWorld->atActiveAI[otherCollisionsIndex[i]].active = false;
 									ptWorld->atAIVision[otherCollisionsIndex[i]].stopSearching = true;

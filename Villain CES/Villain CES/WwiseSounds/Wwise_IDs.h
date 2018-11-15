@@ -27,6 +27,7 @@ namespace AK
         static const AkUniqueID PLAY_MENU_CLICK = 1357778998U;
         static const AkUniqueID PLAY_METAL_FIRED = 372592918U;
         static const AkUniqueID PLAY_METAL_RELOAD = 4261380785U;
+        static const AkUniqueID PLAY_S_FEEDBACK = 1269264589U;
         static const AkUniqueID PLAY_SCYLIAN_DEATH = 3744242630U;
         static const AkUniqueID PLAY_STORY_1 = 877548213U;
         static const AkUniqueID PLAY_STORY_2 = 877548214U;

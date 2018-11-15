@@ -86,6 +86,7 @@
 				<Event Id="1357778998" Name="Play_Menu_Click" ObjectPath="\Events\Default Work Unit\Play_Menu_Click"/>
 				<Event Id="372592918" Name="Play_Metal_Fired" ObjectPath="\Events\Default Work Unit\Play_Metal_Fired"/>
 				<Event Id="4261380785" Name="Play_Metal_Reload" ObjectPath="\Events\Default Work Unit\Play_Metal_Reload"/>
+				<Event Id="1269264589" Name="Play_S_FeedBack" ObjectPath="\Events\Default Work Unit\Play_S_FeedBack"/>
 				<Event Id="3744242630" Name="Play_Scylian_Death" ObjectPath="\Events\Default Work Unit\Play_Scylian_Death"/>
 				<Event Id="1589278981" Name="Play_Walk" ObjectPath="\Events\Default Work Unit\Play_Walk"/>
 			</IncludedEvents>
@@ -124,7 +125,7 @@
 				</File>
 				<File Id="670238279" Language="SFX">
 					<ShortName>Caelis Firing.wav</ShortName>
-					<Path>SFX\Caelis Firing_06EEDDDA.wem</Path>
+					<Path>SFX\Caelis Firing_CACDF071.wem</Path>
 				</File>
 				<File Id="697282732" Language="SFX">
 					<ShortName>MaterialGun_Analyze (1) (online-audio-converter.com).wav</ShortName>
@@ -137,6 +138,10 @@
 				<File Id="728176999" Language="SFX">
 					<ShortName>Grunt-Human Male.wav</ShortName>
 					<Path>SFX\Grunt-Human Male_56D34C19.wem</Path>
+				</File>
+				<File Id="797363531" Language="SFX">
+					<ShortName>Wood Fired.wav</ShortName>
+					<Path>SFX\Wood Fired_56D34C19.wem</Path>
 				</File>
 				<File Id="898242165" Language="SFX">
 					<ShortName>Metal Reload.wav</ShortName>

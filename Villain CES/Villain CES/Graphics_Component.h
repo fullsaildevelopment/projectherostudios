@@ -2,6 +2,7 @@
 #include "Timer.h"
 #ifndef CES_GRAPHICS_COMPONENT_H
 #define CES_GRAPHICS_COMPONENT_H
+#define MAX_LIGHTS 11
 enum eGraphicsComponent
 {
 	COMPONENT_NONE = 0,
@@ -61,6 +62,7 @@ struct TMeshFormat
 struct TPrimitiveMesh
 {
 	float pos[4] = { 0, 0, 0, 0 };
+	float normal[3] = { 0 , 0 , 0 };
 	float uv[2] = { 0, 0 };
 	float& operator[] (int i) { return (&pos[0])[i]; }
 };
@@ -68,7 +70,7 @@ struct TPrimitiveMesh
 struct TAnimatedMesh
 {
 	float pos[4] = { 0, 0, 0, 0 };
-	//float norm[3] = {0, 0, 0};
+	float norm[3] = {0, 0, 0};
 	float uv[2] = { 0, 0 };
 	float weights[4] = { 0, 0, 0, 0 };
 	int joints[4] = { 0, 0, 0, 0 };
@@ -259,14 +261,15 @@ struct TAnimation
 
 struct TLights
 {
-	XMFLOAT4 m_d3dLightPosition;
 	XMFLOAT4 m_Direction;
+	XMFLOAT4 m_d3dLightPosition;
 	XMFLOAT4 m_d3dLightColor;
 	int m_lightType;
 	int enabled;
 	XMFLOAT2 m_padding;
 
 };
+
 struct TLightMaterials
 {
 	XMFLOAT4 m_Emissive;
